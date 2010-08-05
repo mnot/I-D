@@ -18,6 +18,10 @@ all: $(TARGETS)
 clean:
 	rm -f $(TARGETS)
 
+.PHONY: idnits
+idnits: $(TARGETS_TXT)
+	idnits $<
+
 %.html: %.xml
 	$(saxon) $< $(stylesheet) > $@
 
