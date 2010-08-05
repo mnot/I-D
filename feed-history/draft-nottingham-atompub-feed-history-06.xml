@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>   
+<!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>  
+<!ENTITY rfc4287 SYSTEM 'bibxml/reference.RFC.4287.xml'>  
+<!ENTITY xmlns SYSTEM 'bibxml/reference.W3C.REC-xml-names-19990114.xml'>  
+<!ENTITY infoset SYSTEM 'bibxml/reference.W3C.REC-xml-infoset-20040204.xml'>    
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+<rfc ipr="full3978" docName="draft-nottingham-atompub-feed-history-06">
+    <front>        
+      <title abbrev="Feed History">Extensions for Multi-Document Syndicated Feeds</title>		
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+	<organization></organization>
+	<address>		
+	  <email>mnot@pobox.com</email>	
+	  <uri>http://www.mnot.net/</uri>		
+	</address>	
+      </author>		      
+     <date year="2006"/>
+
+      <abstract>
+<t>This specification defines three types of syndicated feeds that enable
+publication of entries across one or more feed documents.</t>
+      </abstract>    
+	  
+  </front>    
+
+  <middle>
+
+<section title="Introduction">
+
+<t>Syndicated feeds of information (using such formats as Atom <xref target="RFC4287"/> or RSS 2.0) are often split up into multiple documents to save bandwidth, allow "sliding window" access, or for other purposes.</t>
+
+<t>This specification defines three types of feeds that allow the reconstruction of their state from one or more feed documents; "complete" feeds, "paged" feeds and "archived" feeds.</t>
+
+<t>These types are complementary; each has different properties and trade-offs:</t>
+
+<t><list style="symbols">
+<t>Complete feeds contain the entire set of entries in one document, and can be useful when it isn't desirable to "remember" previously-seen entries.</t>
+<t>Paged feeds split the logical feed's entries among multiple temporary documents. This can be useful when entries in the feed are not long-lived or stable, and the client needs to access an arbitrary portion of them, usually in close succession.</t>
+<t>Archived feeds split them among multiple permanent documents, and can be useful when entries are long-lived and it is important for clients to see every one.</t>
+</list></t>
+
+<t>See the feed type definitions below for examples of use cases for each.</t>
+
+</section>
+
+
+<section title="Notational Conventions">
+
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document
+are to be interpreted as described in BCP 14 <xref target="RFC2119"/>, as
+scoped to those conformance targets.</t>
+	
+<t>This specification uses XML Namespaces <xref target="W3C.REC-xml-names-19990114"/> to uniquely identify XML element names.  It uses the following namespace prefix for the indicated namespace URI;</t>
+
+<t>"fh": "http://purl.org/syndication/history/1.0"</t>
+
+<t>This specification uses terms from the XML Infoset <xref target="W3C.REC-xml-infoset-20040204"/>. However, this
+specification uses a shorthand; the phrase "Information Item" is omitted when
+naming Element Information Items. Therefore, when this specification uses the
+term "element," it is referring to an Element Information Item in Infoset
+terms.</t>
+
+<t>This specification also uses Atom link relations to identify different types 
+of links; see the Atom specification <xref target="RFC4287"/> for information about their syntax, and the IANA link relation registry for more information about specific values.</t>
+
+<t>Although they refer to Atom normatively, the mechanisms described herein can be used with similar syndication formats, such as the various flavours of RSS.</t>
+
+</section>
+
+<section title="Terminology">
+
+<t>In this specification, "feed document" refers to an Atom Feed Document,
+RSS document, or similar syndication instance document. It may contain any 
+number of entries (in RSS, items), and may or may not be a complete representation of the logical feed.</t>
+
+<t>"Head section" refers to the children of a feed document's document-wide metadata container; e.g., the child elements of the atom:feed element in an Atom Feed Document.</t>
+
+<t>A "logical feed" is the set of entries associated with a particular feed (as contrasted with a feed document, which may contain a subset of them).</t>
+
+</section>
+
+<section title="Complete Feeds">
+
+<t>A complete feed is a feed document that contains all of the entries in the logical feed; any entry not actually in the feed document SHOULD NOT be presented as part of that feed.</t>
+
+<t>It is sometimes important to distinguish a complete feed, because clients may attempt to keep a history of feed entries seen over time, presenting the aggregate as the feed's contents. This is undesireable in some situations.</t>
+
+<t>For example; a feed that represents a ranking that varies over time, such as "Top Twenty Records" or "Most Popular Items" should not have newer entries displayed alongside older ones. By marking them as complete feeds, old entries are discarded when the feed is refreshed.</t>
+
+<t>The fh:complete element, when present in a feed's head section, indicates that the feed document it occurs in is a complete representation of the logical feed's entries.</t>
+
+<figure>
+  <preamble>For example,</preamble>
+  <artwork>
+  &lt;fh:complete/>
+  </artwork>
+</figure>
+
+
+<section title="Examples">
+
+<figure>
+   <preamble>Atom-formatted Complete Feed</preamble>
+      <artwork xml:space="preserve"><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+ xmlns:fh="http://purl.org/syndication/history/1.0">
+ <title>NetTunes Queue</title>
+ <description>The CDs you'll receive next.</description>
+ <link href="http://example.org/"/>
+ <fh:complete/>
+ <link rel="self" 
+  href="http://nettunes.example.org/queue/index.atom"/>
+ <updated>2003-12-13T18:30:02Z</updated>
+ <author>
+   <name>John Doe</name>
+ </author>
+ <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+ <entry>
+   <title>A Rush of Blood to the Head</title>
+   <link href="http://nettunes.example.org/Coldplay/rush"/>
+   <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+   <updated>2003-12-13T18:30:02Z</updated>
+   <summary>More jangly guitars from Coldplay...</summary>
+ </entry>
+</feed>]]></artwork>
+</figure>
+
+
+<figure>
+   <preamble>RSS 2.0-formatted Complete Feed</preamble>
+   <artwork xml:space="preserve"><![CDATA[
+<?xml version="1.0"?>
+<rss version="2.0" 
+ xmlns:fh="http://purl.org/syndication/history/1.0">
+ <channel>
+  <title>NetTunes Queue</title>
+  <link>http://nettunes.example.org/</link>
+  <description>The CDs you'll receive next.</description>
+  <language>en-us</language>
+  <pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+  <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+  <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+  <generator>Weblog Editor 2.0</generator>
+  <managingEditor>editor@nettunes.example.org</managingEditor>
+  <webMaster>webmaster@nettunes.example.org</webMaster>
+  <fh:complete/>
+  <item>
+   <title>A Rush of Blood to the Head</title>
+   <link>http://nettunes.example.org/Coldplay/rush</link>
+   <description>More jangly guitars from Coldplay...
+   </description>
+   <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+   <guid>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</guid>
+  </item>
+ </channel>
+</rss>]]></artwork>
+</figure>
+
+</section>
+
+</section>
+
+<section title="Paged Feeds">
+
+<t>A paged feed is a set of linked feed documents that contain the entries in the logical feed, without any guarantees about the stability of the documents' contents.</t>
+
+<t>Paged feeds are lossy; that is, it is not possible to guarantee that the client will be able to reconstruct the logical feed as the server has published it. Some entries may be added to the feed as the pages of the feed are acccessed, without the client becoming aware of them.</t>
+
+<t>Paged feeds can be useful when the number of entries is very large, infinite, or indeterminate. Clients can "page" through the feed, only accessing a subset of the feed's entries as necessary.</t>
+
+<t>For example, a search engine might make query results available as a paged feed, so that queries with very large result sets do not overwhelm the server, the network, or the client.</t>
+
+<t>The feed documents in a paged feed are tied together with the following link relations:</t>
+
+<t><list style="symbols">
+<t>"first" - A URI that refers to the furthest preceding document in a
+series of documents.</t>
+
+<t>"last" - A URI that refers to the furthest following document in a
+series of documents.</t>
+
+<t>"previous" - A URI that refers to the immediately preceding
+document in a series of documents.</t>
+
+<t>"next" - A URI that refers to the immediately following document in a
+series of documents.</t>
+</list></t>
+
+<t>Paged feed documents MUST have at least one of these link relations present, and SHOULD contain as many as practical and applicable.</t>
+
+<t>Note that URI references in link relation values may be relative, and when they are used they must be absolutised, as described in Section 5.1 of <xref target="RFC3986"/>.</t>
+
+<section title="Examples">
+
+<figure>
+   <preamble>Atom-formatted Paged Feed</preamble>
+      <artwork xml:space="preserve"><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ <title>Example Feed</title>
+ <link href="http://example.org/"/>
+ <link rel="self" href="http://example.org/index.atom"/>
+ <link rel="next" href="http://example.org/index.atom?page=2"/>
+ <updated>2003-12-13T18:30:02Z</updated>
+ <author>
+   <name>John Doe</name>
+ </author>
+ <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+ <entry>
+   <title>Atom-Powered Robots Run Amok</title>
+   <link href="http://example.org/2003/12/13/atom03"/>
+   <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+   <updated>2003-12-13T18:30:02Z</updated>
+   <summary>Some text.</summary>
+ </entry>
+</feed>]]></artwork>
+</figure>
+
+
+<figure>
+   <preamble>RSS 2.0-formatted Paged Feed</preamble>
+   <artwork xml:space="preserve"><![CDATA[
+<?xml version="1.0"?>
+<rss version="2.0"
+ xmlns:atom="http://www.w3.org/2005/Atom"> 
+ <channel>
+  <title>Liftoff News</title>
+  <link>http://liftoff.nasa.gov/</link>
+  <description>Liftoff to Space Exploration.</description>
+  <language>en-us</language>
+  <pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+  <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+  <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+  <generator>Weblog Editor 2.0</generator>
+  <managingEditor>editor@example.com</managingEditor>
+  <webMaster>webmaster@example.com</webMaster>
+  <atom:link rel="next" 
+   href="http://liftof.nasa.gov/index.rss?page=2"/>
+  <item>
+   <title>Star City</title>
+   <link>http://liftoff.nasa.gov/2003/06/news-starcity</link>
+   <description>How do Americans get ready to work with Russians 
+   aboard the International Space Station? They take a crash course 
+   in culture, language and protocol at Russia's <a     
+   href="http://howe.iki.rssi.ru/GCTC/gctc_e.htm"&gt;Star 
+   City</a>.</description>
+   <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+   <guid>http://liftoff.nasa.gov/2003/06/03.html#item573</guid>
+  </item>
+ </channel>
+</rss>]]></artwork>
+</figure>
+
+</section>
+
+
+</section>
+
+<section title="Archived Feeds">
+
+<t>An archived feed is a set of feed documents that can be combined to accurately reconstruct a logical feed.</t>
+
+<t>Unlike paged feeds, archived feeds enable clients to do this without losing any entries. This is achieved by publishing a single subscription document and (potentially) many archive documents.</t>
+
+<t>A subscription document is a feed document that always contains the most recently added or changed entries available in the logical feed (often, the feed document that should be subscribed to).</t>
+
+<t>Archive documents are feed documents that contain less recent entries in the feed. The set of entries contained in an archive document published at a particular URI MUST NOT change over time.</t>
+
+<t>Likewise, the URI for a particular archive document MUST NOT change over time, so that clients can recognise it and associate it with the entries contained therein.</t>
+
+<t>Typically, a logical feed will make a subscription feed available, and link it to a set of archive documents (also linked together) which contain progressively less recent entries.</t>
+
+<t>Clients can then "subscribe" to the feed, polling the subscription document for recent changes. If a client has missed some entries, the archives can be used to synchronise its state by fetching the archive documents it has not yet seen.</t>
+
+<t>Note that because archive documents are considered stable, changes to entries in them may not be apparent to all users. Therefore, if a publisher requires a change to be visible to all users (e.g., correcting factual errors), they should consider publishing the revised entry in the subscription feed, in addition to (or instead of) the appropriate archive feed. Conversely, unimportant changes (e.g., spelling corrections) might be only effected in archive feeds.</t>
+
+<t>The following link relations are used to tie archived feeds together:</t>
+
+<t><list style="symbols">
+<t>"prev-archive" - A URI that refers to the immediately preceding
+archive document.</t>
+<t>"next-archive" - A URI that refers to the immediately following
+archive document.</t>
+<t>"current" - A URI that, when dereferenced, returns a feed document
+containing the most recent entries in the feed.</t>
+</list></t>
+
+<t>Subscription documents and archive documents MUST have a "prev-archive" link relation, unless there are no archives available.</t>
+
+<t>Archive documents SHOULD have "next-archive" and "current" link relations.</t>
+
+<t>Note that URI references in link relation values may be relative, and when they are used they must be absolutised, as described in Section 5.1 of <xref target="RFC3986"/>.</t>
+
+<t>Archive document SHOULD also contain an fh:archive element in their head sections, to indicate that they themselves are archives.</t>
+
+<figure>
+  <preamble>For example,</preamble>
+  <artwork>
+  &lt;fh:archive/>
+  </artwork>
+</figure>
+
+<t>Publishers are not required to make all archive documents available; they 
+may refuse to serve (e.g., with HTTP status code 403 or 410), or be unable to serve (e.g., with HTTP status code 404) an archive document.</t>
+
+<t>Clients SHOULD warn users when they are not able to reconstruct the complete, logical feed (e.g., by alerting the user that an archive document is unavailable, or displaying pseudo-entries that inform the user that some entries may be missing). </t>
+
+<section title="Examples">
+
+<figure>
+   <preamble>Atom-formatted Subscription Document</preamble>
+      <artwork xml:space="preserve"><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ <title>Example Feed</title>
+ <link href="http://example.org/"/>
+ <link rel="self" href="http://example.org/index.atom"/>
+ <link rel="prev-archive" 
+  href="http://example.org/2003/11/index.atom"/>
+ <updated>2003-12-13T18:30:02Z</updated>
+ <author>
+   <name>John Doe</name>
+ </author>
+ <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+ <entry>
+   <title>Atom-Powered Robots Run Amok</title>
+   <link href="http://example.org/2003/12/13/atom03"/>
+   <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+   <updated>2003-12-13T18:30:02Z</updated>
+   <summary>Some text.</summary>
+ </entry>
+</feed>]]></artwork>
+</figure>
+
+<figure>
+   <preamble>Atom-formatted Archive Document</preamble>
+      <artwork xml:space="preserve"><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ <title>Example Feed</title>
+ <link rel="current" href="http://example.org/index.atom"/>
+ <link rel="self" href="http://example.org/2003/11/index.atom"/>
+ <link rel="prev-archive" 
+  href="http://example.org/2003/10/index.atom"/>
+ <updated>2003-11-24T12:00:00Z</updated>
+ <author>
+   <name>John Doe</name>
+ </author>
+ <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+ <entry>
+   <title>Atom-Powered Robots Scheduled To Run Amok</title>
+   <link href="http://example.org/2003/11/24/robots_coming"/>
+   <id>urn:uuid:cdef5c6d5-gff8-4ebb-assa-80dwe44efkjo</id>
+   <updated>2003-11-24T12:00:00Z</updated>
+   <summary>Some text from an old, different entry.</summary>
+ </entry>
+</feed>]]></artwork>
+</figure>
+
+<figure>
+   <preamble>RSS 2.0-formatted Subscription Document</preamble>
+   <artwork xml:space="preserve"><![CDATA[
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+ <channel>
+  <title>Liftoff News</title>
+  <link>http://liftoff.nasa.gov/</link>
+  <description>Liftoff to Space Exploration.</description>
+  <language>en-us</language>
+  <pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+  <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+  <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+  <generator>Weblog Editor 2.0</generator>
+  <managingEditor>editor@example.com</managingEditor>
+  <webMaster>webmaster@example.com</webMaster>
+  <atom:link rel="prev-archive" 
+   href="http://liftoff.nasa.gov/2003/05/index.rss"/>
+
+  <item>
+   <title>Star City</title>
+   <link>http://liftoff.nasa.gov/2003/06/news-starcity</link>
+   <description>How do Americans get ready to work with Russians 
+   aboard the International Space Station? They take a crash course 
+   in culture, language and protocol at Russia's <a     
+   href="http://howe.iki.rssi.ru/GCTC/gctc_e.htm"&gt;Star 
+   City</a&gt;.</description>
+   <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+   <guid>http://liftoff.nasa.gov/2003/06/03.html#item573</guid>
+  </item>
+ </channel>
+</rss>]]></artwork>
+</figure>
+
+<figure>
+   <preamble>RSS 2.0-formatted Archive Document</preamble>
+   <artwork xml:space="preserve"><![CDATA[
+<?xml version="1.0"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+ <channel>
+  <title>Liftoff News</title>
+  <link>http://liftoff.nasa.gov/</link>
+  <description>Liftoff to Space Exploration.</description>
+  <language>en-us</language>
+  <pubDate>Tue, 30 May 2003 08:00:00 GMT</pubDate>
+  <lastBuildDate>Tue, 30 May 2003 10:31:52 GMT</lastBuildDate>
+  <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+  <generator>Weblog Editor 2.0</generator>
+  <managingEditor>editor@example.com</managingEditor>
+  <webMaster>webmaster@example.com</webMaster>
+  <atom:link rel="current" 
+   href="http://liftoff.nasa.gov/index.rss"/>
+  <atom:link rel="prev-archive" 
+   href="http://liftoff.nasa.gov/2003/04/index.rss"/>
+
+  <item>
+   <description>Sky watchers in Europe, Asia, and parts of 
+   Alaska and Canada will experience a partial eclipse of the Sun
+   on Saturday, May 31st.</description>
+   <pubDate>Fri, 30 May 2003 11:06:42 GMT</pubDate>
+   <guid>http://liftoff.nasa.gov/2003/05/30.html#item572</guid>
+  </item>
+  <item>
+   <title>The Engine That Does More</title>     
+   <link>http://liftoff.nasa.gov/2003/05/news-VASIMR.asp</link>
+   <description>Before man travels to Mars, NASA hopes to 
+   design new engines that will let us fly through the Solar 
+   System more quickly.  The proposed VASIMR engine would do 
+   that.</description>
+   <pubDate>Tue, 27 May 2003 08:37:32 GMT</pubDate>
+   <guid>http://liftoff.nasa.gov/2003/05/27.html#item571</guid>
+  </item>
+ </channel>
+</rss>]]></artwork>
+</figure>
+</section>
+
+
+</section>
+
+
+<section title="IANA Considerations">
+<t>The "previous", "next" and "current" link relations have been previously registered, and no IANA action regarding them is required.</t>
+
+<t>This specification defines the following link relations:</t>
+
+<figure>
+<artwork xml:space="preserve">
+   o  Attribute Value: prev-archive
+   o  Description: A URI that refers to the immediately 
+      preceding archive document.
+   o  Expected display characteristics: none
+   o  Security considerations: See [ this document ]
+
+   o  Attribute Value: next-archive
+   o  Description: A URI that refers to the immediately 
+      following archive document.
+   o  Expected display characteristics: none
+   o  Security considerations: See [ this document ]
+</artwork>
+</figure>
+
+</section>
+
+<section title="Security Considerations">
+
+<t>Feeds using the mechanisms described here could be crafted in such a way as to cause a client to initiate excessive (or even an unending sequence of) network requests, causing denial of service (either to the client, the target server, and/or intervening networks). Clients can mitigate this risk by requiring user intervention after a certain number of requests, or by limiting requests either according to a hard limit, or with heuristics.</t>
+
+<t>Clients should be mindful of resource limits when storing feed documents. To reiterate, they are not required to always store or reconstruct the feed when conforming to this specification; they only need inform the user when the reconstructed feed is not complete.</t>
+
+</section>
+	</middle> 
+
+	<back> 	  
+	  <references title="Normative References">
+	   &rfc2119;
+	   &rfc3986;
+	   &rfc4287;
+        &xmlns;
+        &infoset;             
+	  </references>
+	  
+	  <section title="Acknowledgements">
+	    <t>The author would like to thank the following people for their contributions, comments and help: Danny Ayers, Thomas Broyer, Stefan Eissing, David Hall, Bill de Hora, Aristotle Pagaltzis, John Panzer, Dave Pawson, Garrett Rooney, Robert Sayre, James Snell, Henry Story.</t>
+         <t>Any errors herein remain the author's, not theirs.</t>
+	  </section>
+
+
+<section title="Reconstructing Archived Feeds">
+
+<t>One algorithm for reconstructing an archived feed into a complete, logical feed (S), give the subscription document (D) follows.</t>
+
+<t>
+  <list style="numbers">
+    <t>Create an empty list L.</t>
+    <t>Consider the URI of the last archive document successfully stored to local store S as A.</t>
+    <t>Consider the set of entries in document D as E.</t>
+    <t>If the document D has a "prev-archive" link relation value P in its head section, and P is not A,
+      <list style="numbers">
+         <t>Append P to L.</t>
+         <t>Dereference P and use the resulting feed document as D.</t>
+      </list></t>
+    <t>Repeat the previous step until no new P is found.</t>
+    <t>Add all of document D's entries to the local store S, replacing any entries with the same identity.</t>
+    <t>Pop the last "prev-archive" link relation from L, dereference its value
+    and use the resulting feed document as D.</t>
+    <t>Repeat the previous two steps until L is empty.</t>
+    <t>Add the entries E to the local store S, replacing any entries with the same identity.</t>
+  </list>
+</t>
+
+<t>In these instructions, the concept of an entry's identity is format-specific; e.g., in Atom, it is conveyed by the atom:id element; in RSS 2, it is indicated by the guid element.</t>
+
+</section>
+
+     </back>
+</rfc>

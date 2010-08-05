@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "../xml2rfc/rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM '../bibxml/reference.RFC.2119.xml'>      
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+
+<rfc ipr="trust200902" docName="draft-nottingham-http-portal-00" category="info">
+   <front>
+      <title abbrev="HTTP Captive Portals">Considerations for Captive Portals in HTTP</title>
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+         <organization></organization>
+         <address>       
+            <email>mnot@mnot.net</email> 
+            <uri>http://www.mnot.net/</uri>       
+         </address>
+      </author>
+      <date year="2010"/>
+      <abstract>
+         <t>"Captive portals" are a commonly-deployed means of obtaining
+         access credentials and/or payment for a network. This memo discusses
+         issues of their use for HTTP applications, and proposes one possible
+         mitigation strategy.</t>
+         <t>This memo should be discussed on the ietf-http-wg@w3.org mailing list,
+            although it is not a work item of the HTTPbis WG.</t>
+      </abstract>
+   </front>
+
+   <middle>
+
+      <section title="Introduction">
+      
+         <t>It has become common for networks to require authentication,
+         payment and/or acceptance of terms of service before granting access.
+         Typically, this occurs when accessing "public" networks such as those
+         in hotels, trains, conference centres and similar networks.</t>
+      
+         <t>While there are several potential means of providing credentials
+         to a network, these are not yet universally supported, and in some
+         instances the network administrator requires that information (e.g.,
+         terms of service, login information) be displayed to end users.</t>
+      
+         <t>In such cases, it has become widespread practice to use a "captive
+         portal" that diverts HTTP requests to the administrator's web page.
+         Once the user has satisfied requirements (e.g., for payment,
+         acceptance of terms), the diversion is ended and "normal" access to
+         the network is allowed.</t>
+      
+         <t>Typically, this diversion is accomplished by one of several
+         possible techniques; 
+            <list style="symbols">
+               <t>IP interception - all requests on port 80 are intercepted
+               and send to to portal.</t>
+               <t>HTTP redirects - all requests on port 80 are intercepted and
+               an HTTP redirect to the portal's URL is returned.</t>
+               <t>DNS interception - all DNS lookups return the portal's IP
+               address.</t>
+            </list> 
+         </t>
+      
+         <t>In each case, the intent is that users connecting to the network
+         will open a Web browser and see the portal.</t>
+      
+         <t>This memo examines the HTTP-related issues that these techniques
+         raise, and proposes a potential mitigation strategy.</t>
+      </section>
+
+      <section title="HTTP Issues Encountered">
+
+         <t>Since clients cannot differentiate between a portal's response and
+         that of the HTTP server that they intended to communicate with, a
+         number of issues arise.</t>
+         
+          <t>One example is the "favicon.ico" <eref
+         target="http://en.wikipedia.org/wiki/Favicon"/> commonly used by
+         browsers to identify the site being accessed. If the favicon for a
+         given site is fetched from a captive portal instead of the intended
+         site (e.g., because the user is unauthenticated), it will often
+         "stick" in the browser's cache (most implementations cache favicons
+         aggressively) beyond the portal session, so that it seems as if the
+         portal's favicon has "taken over" the legitimate site.</t>
+         
+          <t>Another browser-based issue comes about when P3P <eref
+         target="http://www.w3.org/TR/P3P/"/> is supported. Depending on how
+         it is implemented, it's possible a browser might interpret a portal's
+         response for the p3p.xml file as the server's, resulting in the
+         privacy policy (or lack thereof) advertised by the portal being
+         interpreted as applying to the intended site. Other Web-based
+         protocols such as WebFinger <eref
+         target="http://code.google.com/p/webfinger/wiki/WebFingerProtocol"/>,
+         CORS <eref target="http://www.w3.org/TR/cors/"/> and OAuth <eref
+         target="http://tools.ietf.org/html/draft-ietf-oauth-v2"/> may also be
+         vulnerable to such issues.</t>
+         
+          <t>Although HTTP is most widely used with Web browsers, a growing
+         number of non-browsing applications use it as a substrate protocol.
+         For example, WebDAV <eref
+         target="http://tools.ietf.org/html/rfc4918"/> and CalDAV <eref
+         target="http://www.ietf.org/rfc/rfc4791.txt"/> both use HTTP as the
+         basis (for network filesystem access and calendaring, respectively).
+         Using these applications from behind a captive portal can result in
+         spurious errors being presented to the user, and might result in
+         content corruption, in extreme cases.</t>
+         
+          <t>Similarly, other non-browser applications using HTTP can be
+         affected as well; e.g., widgets <eref
+         target="http://www.w3.org/TR/widgets/"/>, software updates, and other
+         specialised software such as Twitter clients and the iTunes Music
+         Store.</t>
+         
+          <t>It should be noted that it's sometimes believed that using HTTP
+         redirection to direct traffic to the portal addresses these issues.
+         However, since many of these uses "follow" redirects, this is not a
+         good solution.</t>
+
+      </section>
+
+      <section title="Proposal">
+      
+         <t>The heart of the issues seen is that the client doesn't understand
+         that a response from the portal does not represent the requested
+         resource.</t>
+            
+         <t>As such, the response needs to indicate that it is
+         non-authoritative.</t>
+            
+         <t>In HTTP, response status codes indicate the type of response, and
+         therefore defining a new one is the most appropriate way to do this.
+         Status codes are divided into general classes;
+            <list>
+               <t>1xx - Informational</t>
+               <t>2xx - Successful</t>
+               <t>3xx - Redirection</t>
+               <t>4xx - Client errors</t>
+               <t>5xx - Server errors</t>
+            </list>
+         </t>
+         
+         <t>Although it's common for captive portals to use redirection status
+         codes, defining a new 3xx code for them isn't practical; current
+         implementations won't recognise the new status code, and therefore
+         won't follow it.</t>
+
+         <t>Error status codes, on the other hand, have a nice property in
+         that browsers will generally display the response content if they
+         don't understand the status code. The one exception to this is
+         Internet Explorer, which will display a "friendly" message if the
+         response body is too small; however, this is easy enough to work
+         around, by padding the response message as necessary.</t>
+         
+         <t>HTTP defines 4xx status codes as those where the error lies in the
+         client; i.e., the client shouldn't retry the same request without
+         changing something. This is arguably more appropriate than using a
+         5xx error, where the error is said to lie in the server's area of
+         responsibility, because clients might automatically retry a request
+         upon seeing a 5xx error.</t>
+         
+         <t>In fact, there's already an existing status code with similar (but
+         not quite suitable) semantics; 407 Proxy Authentication Required.
+         What's needed is a new status code with the semantics of "Network
+         Authentication Required."</t>
+
+         <t>As such, this memo proposes (but does not yet define) using a new
+         HTTP response status code in the 4xx range with the semantics
+         "Network Authentication Required" to mitigate the risks of captive
+         portals.</t>
+      
+         <t>Captive portals that deploy this status code will return it for
+         all requests other than those to the actual portal resources (e.g.,
+         images). Clients that are unaware of the specific semantics of the
+         new status code will fall back to treating it as a generic 400 error,
+         and browsers will display the portal page to users.</t>
+         
+         <t>Note that this would make the HTTP redirection technique described
+         above obsolete; the portal page would be served directly with the new
+         status code.</t>
+            
+      </section>
+      
+      <section title="What about Non-HTTP Applications and Techniques?">
+         
+         <t>This memo does not address non-HTTP applications, such as IMAP,
+         POP, or even TLS-encapsulated HTTP. Since captive portals almost
+         always target Web browsers (has anyone ever seen one that inserts an
+         e-mail into your inbox asking you to authenticate?), this is
+         appropriate.</t>
+         
+         <t>Instead, it is anticipated that well-behaved portals will block
+         all non-HTTP ports (especially port 443) until the user has
+         successfully authenticated.</t>
+            
+         <t>Overall, there may also be an interesting discussion to be had
+         about improving network access methods to the point where a user
+         interface can be presented for the same purposes, without resorting
+         to intercepting HTTP traffic. However, since such a mechanism would
+         by necessity require modifying the network stack and operating system
+         of the client, this memo takes a more modest approach.</t>
+
+      </section>
+
+      <section title="Security Considerations">
+         <t>This memo does not (yet) define any protocol elements, and
+         therefore does not (yet) have any security considerations.</t>
+      </section>
+
+      <section title="IANA Considerations">
+         <t>This document has no actions for IANA.</t>
+      </section>
+
+   </middle>
+
+   <back>
+
+      <section title="Acknowledgements">
+         <t>The author takes all responsibility for errors and omissions.</t>
+      </section>
+   </back>
+</rfc>

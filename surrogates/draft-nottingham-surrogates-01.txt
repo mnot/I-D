@@ -1,0 +1,560 @@
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                       Akamai Technologies
+Expires: January 30, 2001                                    August 2000
+
+
+                Requirements for Surrogates in the HTTP
+                     draft-nottingham-surrogates-01
+
+Status of this Memo
+
+   This document is an Internet-Draft and is in full conformance with
+   all provisions of Section 10 of RFC2026.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups. Note that other
+   groups may also distribute working documents as Internet-Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time. It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at http://
+   www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on January 30, 2001.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2000). All Rights Reserved.
+
+Abstract
+
+   This document states requirements for HTTP surrogates, also known as
+   reverse proxies and Web accelerators.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires January 30, 2001                [Page 1]
+
+Internet-Draft           Surrogate Requirements              August 2000
+
+
+1. Introduction
+
+   The WREC Taxonomy document [1] defines a surrogate as:
+
+       A gateway co-located with an origin server, or at a different
+       point in the network, delegated the authority to operate on
+       behalf of, and typically working in close co-operation with,
+       one or more origin servers. Responses are typically delivered
+       from an internal cache.
+
+       Surrogates may derive cache entries from the origin server or
+       from another of the origin server's delegates. In some cases a
+       surrogate may tunnel such requests.
+
+       Where close co-operation between origin servers and surrogates
+       exists, this enables modifications of some protocol
+       requirements, including the Cache-Control directives in [1].
+       Such modifications have yet to be fully specified.
+
+       Devices commonly known as "reverse proxies" and "(origin)
+       server accelerators" are both more properly defined as
+       surrogates.
+
+   This document expands on this definition, expresses modified HTTP
+   requirements for surrogates (such as the Cache-Control directives
+   referenced), and clarifies the role of surrogates in the network.
+
+   Other documents may express a framework for common intermediate
+   functions such as administration, authentication, reporting, and
+   service extensions. Such functions are out of scope in this document.
+
+   Additionally, some enhancements may provide optional, enhanced
+   mechanisms (such as improved coherence) unique to surrogates. This
+   document is not meant to preclude standardization of such
+   enhancements.
+
+1.1 Requirements
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [4].
+
+   An implementation is not compliant if it fails to satisfy one or more
+   of the MUST or REQUIRED level requirements. An implementation that
+   satisfies all the MUST or REQUIRED level and all the SHOULD level
+   requirements is said to be "unconditionally compliant"; one that
+   satisfies all the MUST level requirements but not all the SHOULD
+   level requirements is said to be "conditionally compliant".
+
+
+
+Nottingham              Expires January 30, 2001                [Page 2]
+
+Internet-Draft           Surrogate Requirements              August 2000
+
+
+1.2 Terminology
+
+   This document uses terms defined and explained in the WREC Taxonomy
+   [1], and the HTTP/1.1 specification [2]. The reader is expected to be
+   familiar with both.
+
+2. Overview of Demand-Driven Surrogate Origin Servers
+
+2.1 Uses and Characteristics
+
+   Typically, surrogates can be characterized by their operation on
+   behalf of origin servers, their appearance as an origin server from
+   the client's point of view, and the use of the HTTP to transfer
+   objects between the surrogate and the master origin server. As noted,
+   they can and often do implement a cache.
+
+   In normal operation, surrogates are deployed and maintained by (or on
+   behalf of) the publisher of a Web site, rather than directly for end
+   users (as a proxy would be). This is often done for a number of
+   reasons, including (a non-exhaustive list):
+
+   o  Reduction of load on the master origin server
+
+   o  Reduction ("flattening") of network traffic to the master origin
+      server
+
+   o  Distribution of objects, in order to improve perceived latency by
+      storing them closer to end users
+
+   o  Increased security, by forcing clients to communicate through an
+      intermediate
+
+   o  Introduction of transcoding or other value-added services
+      (possibly reducing semantic transparency)
+
+   Surrogate deployments may vary in several ways, including:
+
+   o  Proximity - surrogates may be deployed close to the master origin
+      server to reduce load on it, or near end users to reduce network
+      traffic and improve perceived latency.
+
+   o  Selection of surrogate objects - entire Web sites may be routed
+      through surrogates, or a subset of a site's objects may be
+      nominated for publication through them, depending on the effect
+      desired, and the nature of the surrogate.
+
+   o  Number of surrogates - surrogates may be deployed in any number.
+      Localized surrogates may use any of a number of mechanisms to
+
+
+
+Nottingham              Expires January 30, 2001                [Page 3]
+
+Internet-Draft           Surrogate Requirements              August 2000
+
+
+      distribute requests between them, while distributed surrogates
+      usually use wide-area DNS load balancing.
+
+   o  Number of master origin servers - a surrogate may be configured to
+      accept traffic for multiple master origin servers, identifying the
+      appropriate master through examination of request characteristics
+      (such as Host header or Request-URI).
+
+   o  Directing traffic to the surrogate - any number of mechanisms may
+      be used to distribute requests between multiple surrogates,
+      including DNS or BGP manipulation, Layer 4, Layer 7 or "Content
+      Aware" switching[13], and reference modification.
+
+
+2.2 General Operation
+
+2.2.1 Configuration
+
+   In order to accept and properly handle requests on behalf of a master
+   origin server, a surrogate needs to be aware of the master's
+   identity, and the profile of traffic that will be served on its
+   behalf.
+
+   Additionally, [close relationship, opportunities, out of scope]
+
+2.2.2 Request Handling
+
+   A surrogate is configured to forward traffic to a master origin
+   server, so that the hostname of the surrogate may be used in
+   published URLs.
+
+   A surrogate MAY be configured to forward traffic to multiple master
+   origin servers by using the Host request header to differentiate
+   requests.  In this scenario, requests without a Host header SHOULD be
+   responded to with a 502 Gateway Error status code.
+
+   Surrogates MUST accept Absolute-URI [3] as well as Relative-URI
+   requests and forward them to the master origin server, as configured.
+   They MUST NOT forward Absolute-URI requests to origin servers that
+   they have not been configured to serve.
+
+3. Specific Requirements
+
+   Requirements for a surrogate are the same as those for a gateway or
+   proxy in HTTP/1.1 [2], except as noted.
+
+3.1 Protocol Version Interpretation
+
+
+
+
+Nottingham              Expires January 30, 2001                [Page 4]
+
+Internet-Draft           Surrogate Requirements              August 2000
+
+
+   Implementations MUST satisfy the requirements of RFC 2145 [5],
+   including those specific to proxies.
+
+3.2 Methods
+
+   A surrogate MUST NOT accept CONNECT requests, or forward them to a
+   master origin server.
+
+   TRACE requests MAY be responded to as if max-forwards=0 were present,
+   to keep the surrogate's relationship with the origin server private.
+
+3.3 Status Codes
+
+   Surrogates SHOULD NOT change the semantics of 4xx and 5xx series
+   status codes obtained from origin servers. However, these responses
+   MAY be cached for a short period (sometimes known as 'negative
+   caching').
+
+   Surrogates SHOULD return a 502 Bad Gateway error when
+   surrogate-specific directives are incomplete, contradict themselves
+   or don't parse correctly.
+
+   A 504 Gateway Timeout response SHOULD be sent under any of the
+   following conditions:
+
+   o  DNS failure when resolving the origin server
+
+   o  no route to origin server
+
+   o  refused connection to origin server
+
+   o  connection timeout to origin server
+
+   However, a caching surrogate MAY be configured to use a cached
+   resource, a different resource, or redirect to a different location
+   under these conditions.
+
+3.4 Cache Correctness
+
+   The RECOMMENDED mechanism for assuring object freshness on caching
+   surrogates is use of Surrogate-Control request and response headers.
+
+   Caching surrogates MAY be configured to fall back to HTTP freshness
+   mechanisms (e.g., Expires and Cache-Control response headers), if
+   surrogate-specific mechanisms are not used.
+
+   Caching surrogates MAY also be configured to use a heuristic
+   freshness algorithm, as in the HTTP, to ensure coherence if no other
+
+
+
+Nottingham              Expires January 30, 2001                [Page 5]
+
+Internet-Draft           Surrogate Requirements              August 2000
+
+
+   freshness information is available.
+
+3.5 End-to-End Headers
+
+3.5.1 Cache-Control Request Header
+
+   Cache-Control headers in requests MUST NOT be honored by caching
+   surrogates.
+
+3.5.2 Cache-Control Response Header
+
+   By default, Cache-Control headers in responses from a master origin
+   server SHOULD NOT be honored by caching surrogates, and SHOULD be
+   forwarded to clients.
+
+   Caching surrogates SHOULD be able to be configured to honor
+   Cache-Control response headers when surrogate-specific directives are
+   not used.
+
+3.5.3 Host
+
+   Surrogates MUST replace any Host header in requests with the identity
+   of the appropriate master origin server before forwarding it.
+
+3.5.4 Pragma
+
+   Caching surrogates SHOULD NOT honor Pragma request directives.
+
+3.5.5 Server
+
+   Surrogates MAY set their own Server response header, replacing any
+   present.
+
+3.5.6 Via
+
+   Surrogates SHOULD append a Via header to requests, as outlined in
+   RFC2616 [2]. Surrogates MAY append or strip Via response headers,
+   depending on their configuration.
+
+3.6 Surrogate-Control HTTP Headers
+
+   Surrogate-specific HTTP headers allow specification of cache
+   directives in requests or responses to the surrogate. Similar to
+   Cache-Control headers, they allow separation of coherence from
+
+   Surrogate-Specific headers MUST be consumed before forwarding a
+   request or response.
+
+
+
+
+Nottingham              Expires January 30, 2001                [Page 6]
+
+Internet-Draft           Surrogate Requirements              August 2000
+
+
+3.6.1 Surrogate-Control Request Header
+
+   Surrogate-Control request directives have similar semantics and
+   effects as Cache-Control request headers. Defined directives are:
+
+   no-cache
+      Has same meaning as a Cache-Control: max-age request directive to
+      a proxy.
+
+   only-if-cached
+      Has same meaning as a Cache-Control: only-if-cached request
+      directive to a proxy.
+
+   Surrogates MAY require some form of client authentication when
+   honoring Surrogate-Control response directives.
+
+3.6.2 Surrogate-Control Response Header
+
+   [targeting the device?]
+
+   Surrogate-Control response directives have similar semantics and
+   effects as Cache-Control response headers. Defined directives are:
+
+   max-age
+      Has same meaning as a Cache-Control: max-age response directive to
+      a proxy.
+
+   no-cache
+      Has same meaning as a Cache-Control: no-cache response directive
+      to a proxy.
+
+   must-revalidate
+      Has same meaning as a Cache-Control: must-revalidate response
+      directive to a proxy.
+
+
+3.7 Surrogate-Generated Headers
+
+3.7.1 Surrogate-Client Request Header
+
+   Surrogates SHOULD be capable of adding a header that denotes the
+   client which requested the object.
+
+3.7.2 Surrogate-For Response Header
+
+   Surrogates MAY add a response header which denotes the name of the
+   master origin server, if it is not obvious in the Request-URI, in
+   order to enable third parties to identify the source of the content.
+
+
+
+Nottingham              Expires January 30, 2001                [Page 7]
+
+Internet-Draft           Surrogate Requirements              August 2000
+
+
+4. Security Considerations
+
+   [Because close relationship, higher security necessary]
+
+4.1 Knowledge of Surrogate/Origin Relationship
+
+   It may or may not be necessary to hide the relationship between
+   surrogates and origin servers, depending on the nature of their use.
+
+   Surrogates SHOULD allow configuration to accomplish this.
+   Specifically, this includes all HTTP headers that identify responses
+   as coming from a surrogate, TRACE requests, and error responses and
+   warnings that identify the surrogate.
+
+References
+
+   [1]  Cooper, I., Melve, I. and G. Tomlinson, "Internet Web
+        Replication and Caching Taxonomy", November 1999.
+
+   [2]  Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L.,
+        Leach, P. and T. Berners-Lee, "Hypertext Transfer Protocol -
+        HTTP/1.1", RFC 2616, June 1999.
+
+   [3]  Berners-Lee, T., Fielding, R. and L. Masinter, "Uniform Resource
+        Identifiers (URI): Generic Syntax", RFC 2396, August 1998.
+
+   [4]  Bradner, S., "Key words for use in RFCs to Indicate Requirement
+        Levels", RFC 2119, March 1997.
+
+   [5]  Fielding, R., Gettys, J., Mogul, J. and H. Frystyk, "Use and
+        Intepretation of HTTP Version Numbers", RFC 2145, May 1997.
+
+
+Author's Address
+
+   Mark Nottingham
+   Akamai Technologies
+   Suite 703, 1400 Fashion Island Bvld
+   San Mateo, CA  94404
+   US
+
+   EMail: mnot@akamai.com
+   URI:   http://www.akamai.com/
+
+Appendix A. Acknowledgements
+
+   The author gratefully acknowledges the contributions of: Ted Hardie,
+   John Dilley, John Martin, Peter Danzig, and, Chuck Neerdaels.
+
+
+
+Nottingham              Expires January 30, 2001                [Page 8]
+
+Internet-Draft           Surrogate Requirements              August 2000
+
+
+Intellectual Property Statement
+
+   The IETF takes no position regarding the validity or scope of any
+   intellectual property or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; neither does it represent that it
+   has made any effort to identify any such rights. Information on the
+   IETF's procedures with respect to rights in standards-track and
+   standards-related documentation can be found in BCP-11. Copies of
+   claims of rights made available for publication and any assurances of
+   licenses to be made available, or the result of an attempt made to
+   obtain a general license or permission for the use of such
+   proprietary rights by implementors or users of this specification can
+   be obtained from the IETF Secretariat.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights which may cover technology that may be required to practice
+   this standard. Please address the information to the IETF Executive
+   Director.
+
+
+Full Copyright Statement
+
+   Copyright (C) The Internet Society (2000). All Rights Reserved.
+
+   This document and translations of it may be copied and furnished to
+   others, and derivative works that comment on or otherwise explain it
+   or assist in its implementation may be prepared, copied, published
+   and distributed, in whole or in part, without restriction of any
+   kind, provided that the above copyright notice and this paragraph are
+   included on all such copies and derivative works. However, this
+   document itself may not be modified in any way, such as by removing
+   the copyright notice or references to the Internet Society or other
+   Internet organizations, except as needed for the purpose of
+   developing Internet standards in which case the procedures for
+   copyrights defined in the Internet Standards process must be
+   followed, or as required to translate it into languages other than
+   English.
+
+   The limited permissions granted above are perpetual and will not be
+   revoked by the Internet Society or its successors or assignees.
+
+   This document and the information contained herein is provided on an
+   "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET ENGINEERING
+   TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
+
+
+
+Nottingham              Expires January 30, 2001                [Page 9]
+
+Internet-Draft           Surrogate Requirements              August 2000
+
+
+   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
+   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Acknowledgement
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires January 30, 2001               [Page 10]
+

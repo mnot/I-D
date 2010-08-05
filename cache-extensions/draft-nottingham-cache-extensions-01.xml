@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?rfc compact="yes" ?>
+<rfc ipr="full2026" docName="draft-nottingham-cache-extensions-01">
+
+<front> 
+
+<title abbrev="Direct Cache Manipulation Extensions">HTTP Cache Control Extensions
+for Direct Cache Manipulation</title>
+
+<author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+<organization>Akamai Technologies</organization>
+<address>
+<postal>
+<street>Suite 703, 1400 Fashion Island Bvld</street>
+<city>San Mateo</city> <region>CA</region> <code>94404</code>
+<country>US</country>
+</postal>
+<email>mnot@akamai.com</email>
+<uri>http://www.mnot.net/</uri>
+</address>
+</author>
+
+<date month="November" year="2000" />
+<area>Applications</area>
+<keyword>cache</keyword>
+<keyword>HTTP</keyword>
+<keyword>Cache-Control</keyword>
+
+<abstract> 
+
+<t>HTTP/1.1 provides for extensions to Cache-Control headers, which provide
+new methods of controlling caches. This document specifies extensions which
+allow content providers more precise control over shared caches.</t>
+
+<vspace blankLines="100"/></abstract>
+
+</front>
+
+
+
+<middle>
+
+<section title="Introduction"> 
+
+<t>Shared caches are sometimes deployed into the Internet with the
+participation of the providers of content which will be flowing through
+them. For example, a content provider may use a surrogate HTTP server to
+improve performance. Likewise, an access provider who controls both the
+origin servers and caching proxies in their network may wish to optimize the
+relationship between them.</t>
+
+<t>Although HTTP/1.1 provides mechanisms for controlling caches, it does not
+provide an efficient means of controlling objects already in cache. In the
+situations outlined above, it would be useful to allow content providers to
+manipulate cached objects.</t>
+
+<t>This document provides simple mechanisms to do so, by use of
+Cache-Control request header extensions.</t>
+
+<t>It should be noted that because of their nature, the extensions lose
+efficiency when used with a large number of targets. These extensions are
+not intended to address such situations.</t>
+
+
+  <section title="Requirements">
+  <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+  "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+  document are to be interpreted as described in <xref
+  target="requirements">RFC 2119</xref>.</t>
+
+  <t>An implementation is not compliant if it fails to satisfy one or more
+  of the MUST or REQUIRED level requirements. An implementation that
+  satisfies all the MUST or REQUIRED level and all the SHOULD level
+  requirements is said to be "unconditionally compliant"; one that satisfies
+  all the MUST level requirements but not all the SHOULD level requirements is
+  said to be "conditionally compliant".</t>
+  </section>
+
+</section>
+
+<section title="Direct Cache Manipulation Extensions">
+
+<t>This section specifies Cache-Control request header extensions which
+allow specification of cache operations, as allowed for in <xref
+target="HTTP">HTTP/1.1</xref>.</t>
+
+<t>These extensions are intended for the manipulation of shared caches; they
+MUST NOT be interpreted by non-shared caches.</t>
+
+<t>Upon receiving one of these extension headers, an implementation will
+perform the operation specified, and then MUST return a response; the type
+of response returned is dependent on the nature of the operation.</t>
+
+<t>Such responses MUST NOT have an entity body included. If the entity
+returned would normally have a body (for instance, status 200), a
+'Content-Length: 0' header MUST be included.</t>
+
+<t>DCM-extensions = ( prefetch-ext | eject-ext ) *[ ";" DCM-params ]</t>
+
+<section title="Prefetch"> 
+<t>The prefetch extension allows content providers
+to insert an object into the cache without incurring the expense of a
+complete round trip for the object body.</t>
+
+<t>prefetch-ext = "prefetch"</t>
+
+<t>For example, if the resource "http://www.example.com/largeobject" were 
+requested from a DCM-capable shared cache, with a "Cache-Control: prefetch"
+header, the intermediary would operate exactly as it normally does, except 
+that the response would not contain an entity body.</t>
+
+<t>This avoids the inefficiency of transporting the object both to the cache
+and then to the device which made the request, which is frequently near the
+origin server. </t>
+
+<t>Implementations SHOULD support validation, server-driven content
+negotiation and other HTTP mechanisms in conjunction with this
+mechanism.</t>
+
+<t>The prefetch extension MUST NOT be forwarded by implementations.</t>
+</section>
+
+
+<section title="Eject"> 
+
+<t>This extension enables the eviction of objects from the cache. When an
+implementation receives this directive, it MUST evict the object identified
+by the resource, so that the next forwarded request for the resource is
+unconditional (UNLESS the instigating request itself is conditional).</t>
+
+<t>eject-ext = "eject"</t>
+
+<t>When ejecting objects, implementations MUST eject all variants of the
+resource identified.</t>
+
+<t>Requests containing the eject extension MUST NOT be forwarded by
+implementations.</t>
+</section>
+
+</section>
+
+<section title="Extension Parameters">
+<t>Extensions may optionally include parameters to further refine their
+context. Currently, one parameter is defined; Target.</t>
+
+<t>DCM-params = ( target-param )</t>
+
+<section title="Target"> 
+
+<t>The target parameter allows the client to specify the identity of the
+device(s) which they wish to handle the extension. The parameter value
+contains a comma-delimited list of the desired targets; each value MUST
+match the identity of the device as communicated in the Via header, and
+typically will be a hostname. Implementations MUST NOT process extensions
+with parameters that do not identify them, and MUST not modify or delete
+them.</t>
+
+<t>target-param = "target" "=" &lt;"&gt; 1#received-by &lt;"&gt;</t>
+
+</section>
+</section>
+
+
+<section title="Security Considerations">
+
+<t>This document does not address security-related issues, but the
+mechanisms it describes should be used in conjuction with appropriate
+authentication and authorization control. Such control may be
+implementation-specific, although there are defined mechanisms in the HTTP
+and elsewhere that may be appropriate.</t>
+
+<t>In particular, unauthorized use of these mechanisms may lead to reduced
+cache efficiency, denial of service, and may make other security issues in
+the caching device more readily exploitable.</t>
+
+</section>
+
+</middle>
+
+
+
+
+<back>
+<references>
+
+<reference anchor="HTTP">
+<front>
+  <title>Hypertext Transfer Protocol - HTTP/1.1</title>
+  <author initials="R." surname="Fielding" fullname="Roy T. Fielding">
+    <organization abbrev="UC Irvine">Information and Computer Science, 
+    University of California, Irvine</organization>
+  </author>
+  <author initials="J." surname="Gettys" fullname="James Gettys">
+    <organization abbrev="W3C">World Wide Web Consortium</organization>
+  </author>
+  <author initials="J. C." surname="Mogul" fullname="Jeffrey C. Mogul">
+    <organization abbrev="Compaq">Western Research Laboratory, Compaq Computer 
+    Corporation</organization>
+  </author>
+  <author initials="H." surname="Frystyk" fullname="Henrik Frystyk Nielsen">
+    <organization abbrev="W3C">World Wide Web Consortium</organization>
+  </author>
+  <author initials="L." surname="Masinter" fullname="Larry Masinter">
+    <organization abbrev="Xerox">Xerox Corporation</organization>
+  </author>
+  <author initials="P." surname="Leach" fullname="Paul J. Leach">
+    <organization abbrev="Microsoft">Microsoft Corporation</organization>
+  </author>
+  <author initials="T." surname="Berners-Lee" fullname="Tim Berners-Lee">
+    <organization abbrev="W3C">World Wide Web Consortium</organization>
+  </author>
+  <date month="June" year="1999"/>
+</front>
+<seriesInfo name="RFC" value="2616"/>
+</reference>
+
+<reference anchor="requirements">
+<front>
+  <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+  <author initials="S." surname="Bradner">
+  <organization></organization>
+  </author>
+  <date month="March" year="1997"/>
+</front>
+<seriesInfo name="RFC" value="2119"/>
+</reference>
+
+</references>
+
+
+
+
+<section title="Acknowledgements">
+<t>The author gratefully acknowledges the contributions of:
+Niall Doherty, 
+and John Martin.
+</t>
+</section>
+
+</back>
+</rfc>

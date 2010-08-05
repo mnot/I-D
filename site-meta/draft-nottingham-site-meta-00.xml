@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>      
+<!ENTITY rfc3023 SYSTEM 'bibxml/reference.RFC.3023.xml'>      
+<!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>      
+<!ENTITY rfc4288 SYSTEM 'bibxml/reference.RFC.4288.xml'>      
+<!ENTITY rfc4918 SYSTEM 'bibxml/reference.RFC.4918.xml'>      
+<!ENTITY P3P SYSTEM 'bibxml/reference.W3C.REC-P3P-20020416.xml'>
+<!ENTITY XML SYSTEM 'bibxml/reference.W3C.REC-xml.xml'>
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+
+<rfc ipr="full3978" docName="draft-nottingham-site-meta-00" category="info">
+    <front>
+        <title abbrev="Site-Wide Metadata for the Web"/>
+        <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+            <organization></organization>
+            <address>       
+                <email>mnot@pobox.com</email> 
+                <uri>http://www.mnot.net/</uri>       
+            </address>
+        </author>
+        <author initials="E." surname="Hammer-Lahav" fullname="Eran Hammer-Lahav">
+            <organization></organization>
+            <address>       
+                <email>eran@hueniverse.com</email> 
+                <uri>http://www.hueniverse.com/</uri>       
+            </address>
+        </author>
+        <date year="2008"/>
+        <abstract>
+            <t>This memo describes a method for locating site-wide metadata for Web sites.</t>
+        </abstract>
+    </front>
+
+    <middle>
+
+        <section title="Introduction">
+
+            <t>It is increasingly common for Web-based protocols to require the discovery of policy or metadata about a site before communicating with it. For example, the Robots Exclusion Protocol specifies a way for automated processes to obtain permission to access resources; likewise, the Platform for Privacy Preferences <xref target="W3C.REC-P3P-20020416"/> tells user-agents how to discover privacy policy beforehand.</t>
+
+            <t>While there are several ways to access per-resource metadata (e.g., HTTP headers, WebDAV's PROPFIND <xref target="RFC4918"/>), the overhead associated with them often precludes their use in these scenarios.</t>
+            
+            <t>When this happens, it is common to designate a "well-known location" for site metadata, so that it can be easily located. However, this approach has the drawback of risking collisions, both with other such designated "well-known locations" and with pre-existing resources.</t>
+            
+            <t>To address this, this memo proposes a single (and hopefully last) "well-known location", /site-meta, which acts as a directory to the interesting metadata about that site. Future mechanisms that require site-wide metadata can easily include an entry in the site-meta directory, thereby making their metadata cheaply available (indeed, because the site directory can be cached, the more mechanisms that use it, the more efficient it becomes) without impinging on sites' URI space.</t>
+            
+            <t>The directory format allows different types of site metadata to be referenced by URI or included inline.</t>
+
+			<t>Please discuss this draft on the <eref target="http://lists.w3.org/Archives/Public/www-talk/">www-talk@w3.org</eref> mailing list.</t>
+
+        </section>
+
+
+        <section title="Notational Conventions">
+            <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD
+                NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
+                described in RFC 2119 <xref target="RFC2119"/>.</t>
+
+        </section>
+
+        <section title="the site-meta File Format">
+
+            <t>The site-meta file format is an extremely simple XML-based language <xref target="W3C.REC-xml"/> that allows an authority (in the URI sense) to indicate where metadata about its resources is located.</t>
+
+            <t>The root element is the "metadata" element, which may contain any number of "meta" elements.</t>
+
+            <figure>
+                <artwork xml:space="preserve"><![CDATA[
+<metadata>
+  <meta href="/robots.txt" rel="robots"/>
+  <meta rel="privacy" type="application/p3p.xml" href="/w3c/p3p.xml"/>
+  <meta type="application/example+xml" rel="http://example.com/rel"
+        href="http://other.example.net/example">
+    <example-root xmlns="http://www.example.com">
+      <!-- some metadata here -->
+    </example-root>
+  </meta>
+  <meta type="text/example">
+foo = bar
+baz = bat
+</meta>
+</metadata>
+]]></artwork>
+            </figure>
+
+            <t>Unrecognised elements and attributes SHOULD be silently ignored when parsing the format, unless specified otherwise. Likewise, unless otherwise specified ordering of sibling elements SHOULD be ignored.</t>
+
+            <section title="Site Metadata Entries">
+                <t>Each "meta" element represents a kind of site metadata that is available. It MUST have a "rel" attribute containing a link relation [ref TBD]. It SHOULD have a "type" attribute whose content MUST be an internet media type <xref target="RFC4288"/>, hinting its format.</t> 
+                
+                <t>The actual metadata content may be inlined as the content of the "meta" element, and/or referred to using the "href" attribute. The metadata MUST be made available by at least one of these methods.</t>
+                    
+                <t>If the "href" attribute is present, its content MUST be a URI-Reference <xref target="RFC3986"/> that locates the metadata. Relative URIs MUST be evaluated with the site root URI as the base URI.</t>
+                
+                <t>If the metadata content is included inline, it MUST appear as a child of the "meta" element. If the metadata format is XML-based, the root element of the metadata will thus be the first (and only) child element of the "meta" element. If the metadata format is textual, it will be the text content of the "meta" element (appropriately escaped, with CDATA section(s) and/or entities).</t>
+                
+                <t>the "meta" element MUST NOT contain any children other than inlined metadata content.</t>
+            </section>
+
+
+        </section>
+
+        <section title="Discovering site-meta Files">
+            <t>The site-wide metadata for a given authority can be discovered by dereferencing the
+                path /site-meta. For example, in HTTP the following request would obtain site metadata
+                for the authority "www.example.com";</t>
+                
+                <figure>
+                    <artwork xml:space="preserve"><![CDATA[
+    GET /site-meta HTTP/1.1
+    Host: www.example.com
+]]></artwork>
+                </figure>                       
+
+            <t>If the resource is not available or existent (in HTTP, the 404 or 410 status code), the client SHOULD infer that site metadata is not available via this mechanism. If a representation is successfully obtained, but is not in the format described above, clients SHOULD infer that the site is using this URI for other purposes, and not process it as a site-meta file.</t>
+            
+            <t>To aid in this process, sites using this mechanism SHOULD correctly label site-meta responses with the "application/site-meta+xml" internet media type.</t>
+            
+        </section>
+
+        <section title="Security Considerations">
+            <t/>
+        </section>
+
+        <section title="IANA Considerations">
+            <section title="application/site-meta+xml media type registration">
+                <t>The site-meta format, when serialized as XML 1.0, can be identified
+                with the following media type:</t>
+
+                <t><list style="hanging">
+                    <t hangText="MIME media type name:">
+                    application</t>
+
+                    <t hangText="MIME subtype name:">
+                    site-meta+xml</t>
+
+                    <t hangText="Mandatory parameters:">
+                    None.</t>
+
+                    <t hangText="Optional parameters:">
+                        <list style="hanging"> 
+                            <t hangText='"charset":'> This parameter has identical
+                            semantics to the charset parameter of the
+                            "application/xml" media type as specified in RFC 3023
+                            <xref target="RFC3023"/>. <xref target="RFC3023"/>.</t>
+                        </list>
+                    </t>
+
+                    <t hangText="Encoding considerations:"> Identical to those of
+                    "application/xml" as described in RFC 3023 <xref
+                    target="RFC3023"/>, section 3.2.</t>
+
+                    <t hangText="Security considerations:">
+                    As defined in this specification. [[update upon publication]]
+                    </t>
+
+                    <t>In addition, as this media type uses the "+xml" convention,
+                    it shares the same security considerations as described in RFC
+                    3023 <xref target="RFC3023"/>, section 10.</t>
+
+                    <t hangText="Interoperability considerations:">
+                    There are no known interoperability issues.</t>
+
+                    <t hangText="Published specification:">
+                    This specification. [[update upon publication]]</t>
+
+                    <t hangText="Applications which use this media type:">
+                    No known applications currently use this media type.</t>
+                </list></t>
+
+                <t>Additional information:</t>
+
+                <t><list style="hanging">
+                    <t hangText="Magic number(s):">
+                    As specified for "application/xml" in RFC 3023
+                    <xref target="RFC3023"/>, section 3.2.</t>
+
+                    <t hangText="File extension:">
+                    None</t>
+
+                    <t hangText="Fragment identifiers:">
+                    As specified for "application/xml" in RFC 3023
+                    <xref target="RFC3023"/>, section 5.</t>
+
+                    <t hangText="Base URI:">
+                    As specified in RFC 3023 <xref target="RFC3023"/>, section 6.</t>
+
+                    <t hangText="Macintosh File Type code:">
+                    TEXT</t>
+
+                    <t hangText="Person and email address to contact for further
+                    information:"> Mark Nottingham &lt;mnot@pobox.com&gt;</t>
+
+                    <t hangText="Intended usage:">
+                    COMMON</t>
+
+                    <t hangText="Author/Change controller:">
+                    This specification's author(s). [[update upon publication]]</t>
+                </list></t>
+            </section>
+        </section>
+
+    </middle>
+
+    <back>
+        <references title="Normative References">&rfc2119; &rfc3023; &rfc3986; &rfc4288; &XML;</references>
+
+		<references title="Informative References">&P3P; &rfc4918;</references>
+
+        <section title="Acknowledgements">
+            <t>The authors take all responsibility for errors and omissions.</t>
+        </section>
+
+        <section title="Frequently Asked Questions">
+			<section title="Is this mechanism appropriate for all kinds of metadata?">
+				<t>No. The primary use cases are described in the introduction; when it's necessary to discover metadata or policy before a resource is accessed, and/or it's necessary to describe metadata for a whole site (or large portions of it), site-meta is appropriate. In other cases (e.g., fine-grained metadata that doesn't need to be known ahead of time), other mechanisms are more appropriate.</t>
+			</section>
+			
+            <section title="Why not use OPTIONS * with content negotiation to discover different types of metadata directly?">
+				<t>Two reasons; a) OPTIONS is not cacheable -- a severe problem for scaling -- and b) 
+					it is not well-supported in browsers, and difficult to configure in servers.</t>
+            </section>
+
+			<section title="Why not use a META tag or microformat in the root resource?">
+				<t>This places constraints on the format of a site's root resource to be HTML or similar. While extremely common, it isn't universal (e.g., mobile sites, machine-to-machine communication, etc.). Also, some root resources are very large, which would place additional overhead on clients and intervening networks.</t>
+			</section>
+
+			<section title="Why not use response headers on the root resource, and have clients use HEAD?">
+				<t>This is attractive, in that you could either put metadata directly in response headers, or you could refer to a resource in a similar manner to site-meta. However, it requires an extra round-trip for metadata discovery, which is unacceptable in some scenarios.</t>
+			</section>
+
+            <section title="Why scope metadata to be site-wide?">
+				<t>The alternative is to allow scoping to be dynamic and determined locally, but this has its own issues, which usually come down to a) an unreasonable number of requests to determine authoritative metadata, b) increased complexity, with a higher likelihood of implementation and interoperability (or even security) problems. Besides, many mechanisms on the Web already presume a site scope (e.g., robots.txt, P3P, cookies, javascript security), and the effort and cost required to mint a new URI authority is small and shrinking.</t>
+            </section>
+            
+            <section title="Why /site-meta?">
+				<t>It's short, descriptive and according to search indices, not widely used.</t>
+            </section>
+            
+			<section title="Aren't you concerned about pre-empting an authority's URI namespace?">
+				<t>Yes, but it's unfortunately a necessary (and already present) evil; this proposal tries to minimise future abuses.</t>
+			</section>
+
+			<section title="Why use link relations instead of media types to identify kinds of metadata?">
+				<t>A link relation declares the intent and use of the link (or inline content, when present); a media type defines the format and processing model for those bits.</t>
+			</section>
+			
+			<section title="What impact does this have on existing mechanisms, such as P3P and robots.txt?">
+				<t>None, until they choose to use this mechanism.</t>
+			</section>
+			<section title="Why not (insert existing similar mechanism here)?">
+				<t>We are aware that there are several existing proposals with similar functionality. In our estimation, none have gained sufficient
+					traction. This may be because they were perceived to be too complex, or tied too closely to one use case.</t>
+			</section>
+        </section>
+    </back>
+</rfc>

@@ -1,0 +1,336 @@
+﻿
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                               BEA Systems
+Expires: May 1, 2004                                            M. Baker
+                                                           November 2003
+
+
+                 The 'uri' Media Type Registration Tree
+                 draft-nottingham-uri-media-tree-00.xml
+
+Status of this Memo
+
+   This document is an Internet-Draft and is in full conformance with
+   all provisions of Section 10 of RFC2026.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups. Note that other
+   groups may also distribute working documents as Internet-Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time. It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at http://
+   www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on May 1, 2004.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2003). All Rights Reserved.
+
+Abstract
+
+   This document specifies the 'uri' media subtype registration tree,
+   which is intended to ease the deployment of new Internet applications
+   with associated media types without being constrained by the
+   necessity of a specialized central registry.  By using URIs, this
+   tree also provides the (optional) added benefit of permitting the
+   decentralized lookup of information associated with the media type.
+
+1. Requirements notation
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+
+
+Nottingham & Baker        Expires May 1, 2004                   [Page 1]
+
+Internet-Draft         The 'uri' Media Type Tree           November 2003
+
+
+2. Introduction
+
+   The registration procedures for Internet media types [RFC2048] allow
+   for the specification of media type trees, which allow for faceted
+   names to be described in order to increase the efficiency and
+   flexibility of the registration process. They also allow for the
+   creation of new registration trees, with the advice and consent of
+   the IESG.
+
+   This specification proposes one such tree for consideration.
+
+3. Motivations
+
+3.1 Decentralization
+
+   A Registry of Assignments using Ubiquitous Technologies and Careful
+   Policies" [RFC2048] was also an important motivation for the 'uri'
+   tree.  It describes some of the shortcomings of registries which
+   don't assign authoritative dereferenceable URIs for their
+   assignments.
+
+   It is an objective of the 'uri' subtree to achieve as many of the
+   benefits of this approach as possible, while still fitting into the
+   existing deployed media type based application dispatch framework.
+
+3.2 XML
+
+   The Internet media type system was designed to encourage certain
+   properties, and arguably has been quite successful because of its
+   approach. In particular, IANA acts as a central registry to bring
+   coordination and convenience, and various levels of community review
+   are required before a media type may be registered, to assure some
+   level of quality in and appropriate application of media types.
+
+   However, the advent of the Web and in particular XML has changed the
+   conditions in which formats are created and used. XML allows the
+   creation of business-specific document and protocol formats by end
+   users, rather than standards organisations. Often, these end users
+   are unfamiliar with IETF and IANA process for registration of media
+   types, and do not have a requirement for recognition by a centralized
+   registry. As such, the cost of media type registration for these
+   users is not justified.
+
+   As a result, many formats are created without corresponding media
+   types (often under the umbrella of 'text/xml' or 'application/xml').
+   Such formats are not first-class citizens on the Internet or the Web;
+   one cannot content negotiate for them, for example, and one cannot
+   use existing software dispatch mechanisms in MIME software to
+
+
+
+Nottingham & Baker        Expires May 1, 2004                   [Page 2]
+
+Internet-Draft         The 'uri' Media Type Tree           November 2003
+
+
+   accommodate them.
+
+   It should be noted that these undesirable effects disproportionately
+   affect those who wish to use the format in ways that may not have
+   been forseen by its creators. As such, the registration system
+   indirectly discourages the use of those mechanisms that leverage
+   media types.
+
+   Current registration proceedures do allow for some flexibility to
+   accommodate vendor-specific formats (the .vnd tree), "vanity" formats
+   (the .prs tree) and ad hoc, experimental formats (the x. tree and its
+   predecessor, the 'x-' convention). Unfortunately, these mechanisms do
+   not address the problems described here; the .vnd and .prs trees are
+   still based on a centralized registry, and the x- convention is too
+   brittle for most uses (and indeed its use has been discouraged for
+   some time).
+
+   This specification proposes that the widely deployed DNS
+   infrastructure be leveraged to act as a distributed registry, to
+   avoid the possibility of collision, whilst removing the need for an
+   additional centralized registry. In this manner, it is similar to
+   URIs, in that they also leverage the DNS to provide locally-managed
+   name spaces.
+
+4. The 'uri' Tree
+
+   The 'uri' tree follows the conventions of faceted name trees as
+   specified by [RFC2048], and is distinguished by the leading facet
+   'uri.'. This facet MUST be followed by an absolute URI reference per
+   [RFC2396], with the additional syntactic constraint that the URI
+   cannot include an unescaped semi-colon (";"), as this would be
+   interpreted by MIME agents as a delimiter between the media type and
+   its attributes.
+
+   Media types using this tree MUST be minted with the knowledge and
+   permission of the authority identified by the authority component of
+   the URI, if any.
+
+4.1 Format-Specific Attributes
+
+   Formats using this tree MAY designate their own attributes, which
+   SHOULD be documented at or referenced from the URI facet of the type.
+
+5. IANA Considerations
+
+   Implementation of the uri tree does not require IANA coordination.
+
+
+
+
+
+Nottingham & Baker        Expires May 1, 2004                   [Page 3]
+
+Internet-Draft         The 'uri' Media Type Tree           November 2003
+
+
+6. Security Considerations
+
+6.1 Change of Ownership
+
+   Over time, the authority for the URI in a uri tree media type may
+   change ownership. Without proper care, media types created by the
+   previous owner might collide with those created by the new owner. As
+   a result, when domains which have been used in the registration of
+   media types in the uri tree change hands, the previous owner SHOULD
+   take care to communicate existing media types to the new owner, and
+   the new owner SHOULD take care to avoid collisions. Previous owners
+   MAY publish a transition plan to a new domain, if doing so is judged
+   to cause minimal disruption.
+
+References
+
+   [RFC1591]  Postel, J., "Domain Name System Structure and Delegation",
+              RFC 1591, March 1994.
+
+   [RFC2048]  Freed, N., Klensin, J. and J. Postel, "Multipurpose
+              Internet Mail Extensions (MIME) Part Four: Registration
+              Procedures", BCP 13, RFC 2048, November 1996.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2396]  Berners-Lee, T., Fielding, R. and L. Masinter, "Uniform
+              Resource Identifiers (URI): Generic Syntax", RFC 2396,
+              August 1998.
+
+   [RFC3023]  Murata, M., St. Laurent, S. and D. Kohn, "XML Media
+              Types", RFC 3023, January 2001.
+
+
+Authors' Addresses
+
+   Mark Nottingham
+   BEA Systems
+
+
+   Mark Baker
+
+Appendix A. Acknowledgements
+
+   The following people gave input and feedback during the creation of
+   this document; Graham Klyne, Don Box, David Orchard, John Kemp and
+   Ted Hardie. All errors are the responsibility of the authors.
+
+
+
+
+Nottingham & Baker        Expires May 1, 2004                   [Page 4]
+
+Internet-Draft         The 'uri' Media Type Tree           November 2003
+
+
+Intellectual Property Statement
+
+   The IETF takes no position regarding the validity or scope of any
+   intellectual property or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; neither does it represent that it
+   has made any effort to identify any such rights. Information on the
+   IETF's procedures with respect to rights in standards-track and
+   standards-related documentation can be found in BCP-11. Copies of
+   claims of rights made available for publication and any assurances of
+   licenses to be made available, or the result of an attempt made to
+   obtain a general license or permission for the use of such
+   proprietary rights by implementors or users of this specification can
+   be obtained from the IETF Secretariat.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights which may cover technology that may be required to practice
+   this standard. Please address the information to the IETF Executive
+   Director.
+
+
+Full Copyright Statement
+
+   Copyright (C) The Internet Society (2003). All Rights Reserved.
+
+   This document and translations of it may be copied and furnished to
+   others, and derivative works that comment on or otherwise explain it
+   or assist in its implementation may be prepared, copied, published
+   and distributed, in whole or in part, without restriction of any
+   kind, provided that the above copyright notice and this paragraph are
+   included on all such copies and derivative works. However, this
+   document itself may not be modified in any way, such as by removing
+   the copyright notice or references to the Internet Society or other
+   Internet organizations, except as needed for the purpose of
+   developing Internet standards in which case the procedures for
+   copyrights defined in the Internet Standards process must be
+   followed, or as required to translate it into languages other than
+   English.
+
+   The limited permissions granted above are perpetual and will not be
+   revoked by the Internet Society or its successors or assignees.
+
+   This document and the information contained herein is provided on an
+   "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET ENGINEERING
+   TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
+
+
+
+Nottingham & Baker        Expires May 1, 2004                   [Page 5]
+
+Internet-Draft         The 'uri' Media Type Tree           November 2003
+
+
+   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
+   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Acknowledgment
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham & Baker        Expires May 1, 2004                   [Page 6]
+

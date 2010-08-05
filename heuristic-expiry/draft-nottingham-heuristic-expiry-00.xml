@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?rfc compact="yes" ?>
+<rfc ipr="full2026" docName="draft-nottingham-heuristic-expiration-00">
+
+<front> 
+
+<title>A Heuristic Expiration Algorithm for HTTP</title>
+
+<author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+<organization>Akamai Technologies</organization>
+<address>
+<postal>
+<street>Suite 703, 1400 Fashion Island Bvld</street>
+<city>San Mateo</city> <region>CA</region> <code>94404</code>
+<country>US</country>
+</postal>
+<email>mnot@akamai.com</email>
+<uri>http://www.mnot.net/</uri>
+</address>
+</author>
+
+<date month="April" year="2001" />
+<area>Applications</area>
+<keyword>HTTP</keyword>
+<keyword>cache</keyword>
+<keyword>heuristic expiration</keyword>
+<keyword>freshness</keyword>
+
+<abstract> 
+
+<t>HTTP/1.1 provides for heuristic expiration mechanisms to be used by
+caches when explicit freshness information is not available. This document
+describes one such algorithm which allows cache efficiency, while
+maintaining reasonable semantic transparency. </t>
+
+<vspace blankLines="100"/>
+</abstract>
+
+</front>
+
+
+<middle>
+
+<section title="Introduction">
+
+<t>The <xref target="HTTP">HTTP</xref> allows caches to use a heuristic
+expiry algorithm to determine the cacheability of a resource when there is
+no explicit information available from the origin server. However, it does
+not specify an algorithm to use.</t>
+
+<t>As a result, caches in both clients and intermediaries use a variety of
+mechanisms to compute expiry. Due to the lack of explicit freshness
+information for most Internet resources, this results in unpredictable
+freshness in caches, leading both end users and origin server operators to
+distrust them.</t>
+
+<t>This document seeks to define a heuristic expiry algorithm for use by
+caches. Caches which comply with its requirements will behave in a more
+predictable manner, providing greater semantic transparency whilst still
+introducing efficiencies.</t>
+
+  <section title="Requirements"> 
+  
+  <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+  "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+  document are to be interpreted as described in <xref
+  target="requirements">RFC 2119</xref>.</t>
+
+  <t>An implementation is not compliant if it fails to satisfy one or more
+  of the MUST or REQUIRED level requirements. An implementation that
+  satisfies all the MUST or REQUIRED level and all the SHOULD level
+  requirements is said to be "unconditionally compliant"; one that satisfies
+  all the MUST level requirements but not all the SHOULD level requirements
+  is said to be "conditionally compliant".</t> 
+  
+  </section>
+
+</section>
+
+<section title="Scope">
+
+<t>This document is not intended to redefine the cache expiry and coherence
+requirements specified in <xref target="HTTP">RFC2616</xref>, or to excuse
+implementations from fulfilling them. Instead, it defines a default
+heuristic freshness algorithm, which is not defined in RFC2616.</t>
+
+<t>Compliant implementations SHOULD use this heuristic as a default setting.
+However, implementations MAY be capable of being configured by the device's
+administrator or end users. When that configuration violates the
+requirements stated here, that particular device is non-compliant, and
+SHOULD inform the administrator or user (as appropriate) of this through
+some mechanism (i.e., administration interface, HTTP Warning response
+headers, etc.). Implementations SHOULD make it easy to return to a compliant
+state.</t>
+
+</section>
+
+
+<section title="General Heuristic">
+
+<t>If freshness information is available in the form of Expires or
+Cache-Control response headers, implementations MUST interpret them as
+directed by <xref target="HTTP">RFC2616</xref>.</t>
+
+<t>If no validator (Last-Modified or ETag response header) is present, the
+entity MUST be considered uncacheable, and MUST NOT be stored in the
+cache.</t>
+
+<t>If only an ETag validator is present, without any other cacheability
+information, implementations MAY cache the entity and MUST revalidate it
+before serving it.</t>
+
+<t>If a Last-Modified validator is present, with or without and ETag,
+implementations SHOULD cache the entity, and if they do so MUST assign
+freshness based on its age in cache, as outlined in "Age-Based Expiry".</t>
+
+<t>Implementations MUST NOT use the request-URI in determination of
+cacheability. For example the presence of the string "cgi-bin", a URI query,
+or path segment terminator (filename extension) such as ".gif", ".jpg" or
+".html" should not change the cacheability of the entity.</t>
+
+<t>However, implementations MUST obey the requirement in <xref
+target="HTTP">RFC 2616</xref>, Section 13.9. ("Side Effects of GET and
+HEAD") Specifically, they MUST revalidate requests which contain a query
+when there is no explicit cacheability information.</t>
+
+<t>Implementations MUST comply with the requirements placed on caches by
+<xref target="cookie">RFC2965</xref> regarding cookies.</t>
+
+</section>
+
+
+<section title="Age-Based Expiry">
+
+<t>Using the algorithm outlined in <xref target="HTTP">RFC2616</xref>,
+Section 13.2.3 ("Age Calculations"), implementations MUST calculate a
+heuristic freshness lifetime based on a percentage of the entity's age, as
+measured when it was last validated on the origin server.</t>
+
+<t>FRESHNESS_LIFETIME = AGE_AT_ENTRY * P</t>
+<t>EXPIRY_TIME = TIME_AT_ENTRY + FRESHNESS_LIFETIME</t>
+
+<t>The RECOMMENDED percentage is 20%; implementations MUST NOT allow a
+value of more than 50%.</t>
+
+</section>
+
+
+</middle>
+
+
+<back>
+<references>
+
+<reference anchor="HTTP">
+<front>
+  <title>Hypertext Transfer Protocol - HTTP/1.1</title>
+  <author initials="R." surname="Fielding" fullname="Roy T. Fielding">
+    <organization abbrev="UC Irvine">Information and Computer Science, 
+    University of California, Irvine</organization>
+  </author>
+  <author initials="J." surname="Gettys" fullname="James Gettys">
+    <organization abbrev="W3C">World Wide Web Consortium</organization>
+  </author>
+  <author initials="J. C." surname="Mogul" fullname="Jeffrey C. Mogul">
+    <organization abbrev="Compaq">Western Research Laboratory, Compaq Computer 
+    Corporation</organization>
+  </author>
+  <author initials="H." surname="Frystyk" fullname="Henrik Frystyk Nielsen">
+    <organization abbrev="W3C">World Wide Web Consortium</organization>
+  </author>
+  <author initials="L." surname="Masinter" fullname="Larry Masinter">
+    <organization abbrev="Xerox">Xerox Corporation</organization>
+  </author>
+  <author initials="P." surname="Leach" fullname="Paul J. Leach">
+    <organization abbrev="Microsoft">Microsoft Corporation</organization>
+  </author>
+  <author initials="T." surname="Berners-Lee" fullname="Tim Berners-Lee">
+    <organization abbrev="W3C">World Wide Web Consortium</organization>
+  </author>
+  <date month="June" year="1999"/>
+</front>
+<seriesInfo name="RFC" value="2616"/>
+</reference>
+
+<reference anchor="cookie">
+<front>
+  <title>HTTP State Management Mechanism</title>
+  <author initials="D. surname="Kristol" fullname="David M. Kristol">
+    <organization abbrev="Bell Labs">Bell Laboratories, Lucent
+    Technologies</organization>
+  </author>
+  <author initials="L." surname="Montulli" fullname="Lou Montulli">
+    <organization abbrev="Epinions">Epinions.com, Inc.</organization>
+  </author>
+  <date month="October" year="2000"/>
+</front>
+<seriesInfo name="RFC" value="2965"/>
+</reference>
+
+<reference anchor="requirements">
+<front>
+  <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+  <author initials="S." surname="Bradner">
+  <organization></organization>
+  </author>
+  <date month="March" year="1997"/>
+</front>
+<seriesInfo name="RFC" value="2119"/>
+</reference>
+
+</references>
+
+</back>
+</rfc>

@@ -1,0 +1,280 @@
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                         December 20, 2001
+Expires: June 20, 2002
+
+
+                        Publishing Site Metadata
+               draft-nottingham-http-options-metadata-00
+
+Status of this Memo
+
+   This document is an Internet-Draft and is in full conformance with
+   all provisions of Section 10 of RFC2026.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at http://
+   www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on June 20, 2002.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2001).  All Rights Reserved.
+
+Abstract
+
+   This note describes a means of making available metadata that
+   describes an entire Web site (or portions thereof), rather than
+   directly embedding metadata within resources' representations.
+
+   The method described does so without proscribing a "well-known
+   location" for the metadata; instead, it uses the OPTIONS HTTP request
+   method in conjunction with server-driven content negotiation.
+
+
+
+
+
+
+
+
+Nottingham                Expires June 20, 2002                 [Page 1]
+
+Internet-Draft                Site Metadata                December 2001
+
+
+1. Introduction
+
+   An increasingly common requirement for Web technologies is to
+   describe metadata about a group of resources, rather than just a
+   single resource.
+
+   The most commonly deployed solutions to this problem involve defining
+   a 'well-known location" for a resource which describes a mapping of
+   metadata to resources.
+
+   For example:
+
+      P3P[2] uses the resource on the path '/w3c/p3p.xml' as a 'Policy
+      Reference File', which maps privacy policies to different portions
+      of the site.
+
+      The Robot Exclusion[3] convention uses the path '/robots.txt' to
+      direct automated agents as to which portions of the site are not
+      to be visited.
+
+      A recent proposal, WS-Inspection[4], uses a well-known location '/
+      inspection.wsil' to aid in the location of Web Services.
+
+   There are a number of reasons for the well-known location approach;
+
+      Scoping - by defining a single metadata source that is tied to the
+      URI authority, the metadata statements contained within can be
+      considered authoritative for that site.  For example, the P3P
+      Policy Reference File at http://www.example.org/w3c/p3p.xml is
+      authoritative for www.example.org, because it is under the control
+      of www.example.org.
+
+      Efficiency - it is cumbersome to directly embed metadata in every
+      representation of a resource produced, both because of the
+      management overhead involved, and the byte bloat in the
+      representations themselves.
+
+      Flexibility - often, statements about a resource are separate in
+      time from its representations.  Separating them allows them to be
+      changed without affecting the resources themselves.
+
+      Privacy - some metadata affects the way requests are made (or not
+      made), bringing the requirement that the metadata is known
+      beforehand.  For example, the metadata in http://www.example.net/
+      robots.txt must be known before other requests can be made by a
+      robot, because it might preclude them.
+
+   However, use of a well-known location imposes the protocol designers'
+
+
+
+Nottingham                Expires June 20, 2002                 [Page 2]
+
+Internet-Draft                Site Metadata                December 2001
+
+
+   choice of identifiers into publishers' URI namespaces.  The chosen
+   identifier may not be easy to make available, depending on the nature
+   of the server implementation, or it may be impractical to integrate
+   the well-known location into content management systems.  [i18n
+   concerns?]
+
+   This document defines a mechanism whereby protocols can specify site
+   metadata without tying it to a well-known location, by using
+   mechanisms in the HTTP [1].
+
+2. Site Metadata
+
+   A Site Metadata request uses the OPTIONS HTTP method in conjunction
+   with server-driven content negotiation.  For example;
+
+     OPTIONS * HTTP/1.1
+     Host: www.example.com
+     Accept: application/p3p-prf+xml;q=1, */*;q=0
+
+   Here, the request identifies a media type, 'application/p3p-prf+xml'
+   which is the desired metadata payload.
+
+   Compliant responses will typically have an entity body containing the
+   requested representation.  Compliant responses may also be a redirect
+   or similar message.
+
+3. Falling Back to a Well-Known Location
+
+   Protocols may define a fallback well-known location which User Agents
+   can use if the origin server does not support this mechanism.
+
+   For example, a User Agent may first attempt the OPTIONS request
+   above, but receive a response which does not result in the desired
+   entity body.  In this case, the protocol could define a fallback
+   well-known location, such as '/w3c/p3p.xml'.
+
+4. Caching Site Metadata
+
+   Some metadata representations may be large, or be frequently
+   accessed.  Because OPTIONS is not cacheable, it may be desireable to
+   return a redirect to another, cacheable resource in these situations.
+
+5. Security Considerations
+
+   Statements made in site metadata representations may be modified in
+   transit, and are subject to the same risks as other Web resources.
+   Statments made in site metadata may or may not reflect the authority
+   of the author of a resource; there is no inherent way to determine
+
+
+
+Nottingham                Expires June 20, 2002                 [Page 3]
+
+Internet-Draft                Site Metadata                December 2001
+
+
+   the relationship between a resource author and a site's authority.
+
+References
+
+   [1]  Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L.,
+        Leach, P. and T. Berners-Lee, "Hypertext Transfer Protocol -
+        HTTP/1.1", RFC 2616, June 1999.
+
+   [2]  <http://www.w3.org/P3P/>
+
+   [3]  <http://www.robotstxt.org/wc/norobots.html>
+
+   [4]  <http://msdn.microsoft.com/library/default.asp?url=/library/en-
+        us/dnsrvspec/html/ws-inspection.asp>
+
+
+Author's Address
+
+   Mark Nottingham
+
+   EMail: mnot@pobox.com
+   URI:   http://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham                Expires June 20, 2002                 [Page 4]
+
+Internet-Draft                Site Metadata                December 2001
+
+
+Full Copyright Statement
+
+   Copyright (C) The Internet Society (2001).  All Rights Reserved.
+
+   This document and translations of it may be copied and furnished to
+   others, and derivative works that comment on or otherwise explain it
+   or assist in its implementation may be prepared, copied, published
+   and distributed, in whole or in part, without restriction of any
+   kind, provided that the above copyright notice and this paragraph are
+   included on all such copies and derivative works.  However, this
+   document itself may not be modified in any way, such as by removing
+   the copyright notice or references to the Internet Society or other
+   Internet organizations, except as needed for the purpose of
+   developing Internet standards in which case the procedures for
+   copyrights defined in the Internet Standards process must be
+   followed, or as required to translate it into languages other than
+   English.
+
+   The limited permissions granted above are perpetual and will not be
+   revoked by the Internet Society or its successors or assigns.
+
+   This document and the information contained herein is provided on an
+   "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET ENGINEERING
+   TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
+   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
+   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+Acknowledgement
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham                Expires June 20, 2002                 [Page 5]
+

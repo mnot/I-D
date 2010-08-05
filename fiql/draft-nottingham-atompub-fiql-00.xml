@@ -1,0 +1,650 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>   
+<!ENTITY rfc4234 SYSTEM 'bibxml/reference.RFC.4234.xml'>   
+<!ENTITY rfc2616 SYSTEM 'bibxml/reference.RFC.2616.xml'>   
+<!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>  
+<!ENTITY rfc4287 SYSTEM 'bibxml/reference.RFC.4287.xml'>  
+<!ENTITY xmlns SYSTEM 'bibxml/reference.W3C.REC-xml-names-19990114.xml'>  
+<!ENTITY infoset SYSTEM 'bibxml/reference.W3C.REC-xml-infoset-20040204.xml'> 
+<!ENTITY xpath SYSTEM 'bibxml/reference.W3C.REC-xpath-19991116.xml'>
+<!ENTITY datatypes SYSTEM 'bibxml/reference.W3C.REC-xmlschema-2-20010502.xml'>
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+<?rfc rfcedstyle="yes" ?>
+<rfc ipr="full3978" docName="draft-nottingham-atompub-fiql-00" category="info">
+    <front>        
+      <title abbrev="FIQL">FIQL: The Feed Item Query Language</title>		
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+	     <organization></organization>
+	     <address>		
+	        <email>mnot@mnot.net</email>	
+	        <uri>http://www.mnot.net/</uri>		
+	     </address>
+      </author>
+      <date year="2007"/>
+
+      <abstract><t>The Feed Item Query Language is a simple but flexible, URI-friendly syntax for expressing filters across the entries in a Web feed. It also specifies a mechanism to allow feeds to indicate what types of queries are supported.</t></abstract>
+</front>
+
+  <middle>
+
+<section title="Introduction">
+
+<t>The Feed Item Query Language (FIQL, pronounced "fickle") is a simple but flexible, URI-friendly syntax for expressing filters across the entries in a syndicated feed. For example,</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  title==foo*;(updated=lt=-P1D,title==*bar)
+]]></artwork>
+</figure>
+
+<t>will return all entries in a feed that meet the following criteria;</t>
+
+<t><list style="symbols">
+  <t>have a title beginning with "foo", AND</t>
+  <t>have been updated in the last day OR have a title ending with "bar".</t>
+</list></t>
+
+<t>This specification defines an extensible syntax for FIQL queries (in <xref target="syntax"/>), explains their use in HTTP (<xref target="http"/>),  and defines feed extensions for discovering and describing query interfaces (<xref target="feed-ext"/>).</t>
+
+</section>
+
+<section title="Notational Conventions">
+
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 <xref target="RFC2119"/>, as scoped to those conformance targets.</t>
+	
+<t>This specification uses XML Namespaces <xref target="W3C.REC-xml-names-19990114"/> to uniquely identify XML element names.  It uses the following namespace prefix for the indicated namespace URI;</t>
+
+<t>"fq": "http://purl.org/syndication/query"</t>
+
+<t>This specification uses terms from the XML Infoset <xref target="W3C.REC-xml-infoset-20040204"/>. However, this specification uses a shorthand; the phrase "Information Item" is omitted when naming Element Information Items. Therefore, when this specification uses the term "element," it is referring to an Element Information Item in Infoset terms.</t>
+
+<t>This specification uses the Augmented Backus-Naur Form (ABNF) notation of <xref target="RFC4234"/>, including the DIGIT rule from the core. Additionally, the unreserved, gen-delims, and pct-encoded rules are included from <xref target="RFC3986"/>, and QName from <xref target="W3C.REC-xml-names-19990114"/>. The complete syntax is collected in <xref target="bnf"/>.</t>
+
+<t>Although they refer to Atom <xref target="RFC4287"/> normatively, the mechanisms described herein can be used with similar syndication formats, such as the various flavours of RSS.</t>
+
+</section>
+
+
+<section title="FIQL Queries" anchor="syntax">
+
+<t>A FIQL query's input is a string of Unicode characters in the form of an expression.</t>
+
+<t>The output of an FIQL query is a feed that has the same head section as the input feed, but that only contains entries that match the given expression  (that is, those that yield True).</t>
+
+<section title="FIQL Expressions" anchor="expressions">
+
+<t>An FIQL expression is composed of one or more constraints, related to each other with Boolean operators.</t>
+
+<t>FIQL expressions yield Boolean values: True or False.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+expression  = [ "(" ] 
+              ( constraint / expression ) 
+              [ operator ( constraint / expression ) ] 
+              [ ")" ]
+operator    = ";" / ","
+]]></artwork>
+</figure>
+
+<t><list style="symbols">
+
+<t>";" is the Boolean AND operator; it yields True for a particular entry if both operands evaluate to True, otherwise False.</t>
+
+<t>"," is the Boolean OR operator; it yields True if either operand evaluates to True, otherwise False.</t> 
+
+</list></t>
+
+<t>By default, the AND operator takes precedence (i.e., it is evaluated before any OR operators are). However, a parenthesised expression can be used to  change precedence, yielding whatever the contained expression yields.</t>
+
+</section>
+<section title="FIQL Constraints" anchor="constraints">
+
+<t>A FIQL constraint is composed of a selector, which identifies a portion of an entry's content, and an optional comparison/argument pair, which refines the constraint. When processed, a constraint yields a Boolean value.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+constraint  = selector [ comparison argument ]
+selector    = 1*( unreserved / pct-encoded )
+comparison  = ( ( "=" 1*ALPHA ) / fiql-delim ) "="
+argument    = 1*arg-char
+arg-char    = unreserved / pct-encoded / fiql-delim / "="
+fiql-delim  = "!" / "$" / "'" / "*" / "+" 
+]]></artwork>
+</figure>
+
+<section title="Selectors">
+
+<t>A selector identifies the portion of an entry that a constraint applies to. When evaluated against an entry in the feed, it returns one or more node-sets <xref target="W3C.REC-xpath-19991116"/> from the entry, whether they be elements, attributes or textual content.</t>
+
+<t>By default, a selector is treated as an XML QName <xref target="W3C.REC-xml-names-19990114"/> which selects any and all child elements of the entry element which share the same syntax (i.e., the same prefix and localname; the namespace URI is not considered), along with their descendant content if any.</t>
+
+<t>For example, given the entry</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<entry xmlns="http://www.w3.org/2005/Atom"
+  xmlns:ex="http://other.example.net/">
+  <title>Test</title>
+  <ex:foo>
+    <bar/>
+  </ex:foo>
+  <ex:foo>
+    <baz/>
+  </ex:foo>
+</entry>
+]]></artwork>
+</figure>
+
+<t><list style="symbols">
+<t>"title" selects the text "Test".</t>
+<t>"ex:foo" selects both the "bar" and "baz" elements.</t>
+</list></t>
+
+<t>This behaviour can be overridden by by explicitly defining a selector in the feed; see <xref target="feed-ext"/>.</t>
+
+</section>
+
+<section title="FIQL Comparison Types">
+
+<t>Constraints with comparison operators are evaluated according to the comparison type associated with the selector. This can be determined by (in order of precedence):</t>
+
+<t><list style="numbers">
+  <t>An explicit type associated with it by the feed (see <xref target="feed-ext"/>), or</t>
+  <t>A default type defined by the specification of the selected entry-level metadata element, or</t>
+  <t>A default type for the entry-level metadata element, as specified in <xref target="types"/>, or</t>
+  <t>Falling back to the simple textual type (see <xref target="textual"/>).</t>
+</list></t>
+
+<t>A constraint with no comparison operator will yield True if the selector matches any node.</t>
+
+<t>This specification defines a number of comparison types below, and allows extension types to be identified with URIs.</t>
+
+
+
+<section title="Simple Textual Comparisons" anchor="textual">
+
+<t>Simple text comparisons allow for case insensitive, non-language-specific searching of the textual content of selected nodes.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+text-arg    = [ "*" ] 1*arg-char [ "*" ]
+]]></artwork>
+</figure>
+
+<t>Two comparison operators are applicable to simple text comparisons;</t>
+
+<t><list style="symbols">
+<t>"==" yields True if the string value (as per XPath) of any selected node matches the argument; otherwise False.</t>
+
+<t>"!=" yields True if the string value of every selected node does not match the argument; otherwise False.</t>
+</list></t>
+
+<t>A match occurs when the text in question is character-by-character equivalent with the argument, after observing the following rules, in order:</t>
+
+<t><list style="numbers">
+
+<t>Both the argument and the selected node's content MUST have their encodings (percent-encoding and entity encoding, respectively) removed, to produce Unicode strings.</t>
+
+<t>Leading and trailing white space MUST be stripped from the selected node's string. White space within the selected node's string MUST be collapsed to single space characters.</t>
+
+<t>Both strings MUST have locale-independent case folding applied, as specified in Section 5.18 of <xref target="unicode"/>.</t>
+
+<t>Both strings MUST have Normalization Form C <xref target="unicode-norm"/> applied.</t>
+
+<t>If the argument string begins or ends with an asterisk character ("*"), it acts as a wild card, matching any characters preceding or following (respectively) that position.</t>
+
+</list></t>
+
+<t>For example, given the entry:</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<entry>
+  <title>Hello world</title>
+  <description>Just    starting.</description>
+  <author>
+     <name>Mark Nottingham </name>
+  </author>
+  <content type="xhtml">
+    This is <html:em>just</html:em> the start.
+  </content>
+  <!-- other stuff -->
+</entry>
+]]></artwork>
+</figure>
+
+<t><list style="empty">
+<t>"title==Hello%20World" yields True</t>
+<t>"title!=Hello" yields True</t>
+<t>"title==Hello*" yields True</t>
+<t>"title==hello*" yields True</t>
+<t>"author==Mark*" yields True</t>
+<t>"author==*Nottingham yields True</t>
+<t>"description==*start*" yields True</t>
+<t>"description==*Just*" yields True</t>
+<t>"description==Just%20starting." yields True</t>
+<t>"content==*just%20the%20start*" yields True</t>
+<t>"description=="*just" yields False</t>
+</list></t>
+
+<t>This comparison type can be identied with the URI "http://purl.org/syndication/query/simple-text".</t>
+
+</section>
+
+<section title="Date Comparisons" anchor="date">
+
+<t>Date comparisons allow both relative and absolute comparison of date-related
+values in the string-value of selected nodes.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+date-arg    = dateTime / duration ; as defined in XML Schema Datatypes
+]]></artwork>
+</figure>
+
+<t>Four operators are relevant to date comparisons;</t>
+
+<t><list style="symbols"> <t>"==" yields True if the point in time specified in the argument matches that indicated by the string-value of the selected node; otherwise False.</t>
+
+<t>"!=" yields True if the point in time specified in the argument does not match that indicated by the string-value of the selected node; otherwise False.</t>
+
+<t>"=lt=" yields True if the point in time specified in the argument follows that indicated by the string-value of the selected node; otherwise False.</t>
+
+<t>"=le=" yields True if the point in time specified in the argument follows that indicated by the string-value of the selected node, or is equal to it; otherwise False.</t>
+
+<t>"=gt=" yields True if the point in time specified in the argument precedes that indicated by the string-value of the selected node; otherwise False.</t>
+
+<t>"=ge=" yields True if the point in time specified in the argument precedes that indicated by the string-value of the selected node, or is equal to it; otherwise False.</t>
+
+</list></t>
+
+<t>A point in time can be specified in two ways;</t>
+
+<t><list style="symbols">
+  <t>Absolutely, expressed as an XML Schema dateTime <xref target="W3C.REC-xmlschema-2-20010502"/>.</t>
+  
+  <t>Relatively, expressed as an XML Schema duration <xref target="W3C.REC-xmlschema-2-20010502"/>. By default, such arguments are relative to the time that the query is processed.</t>
+</list></t>
+
+<t>White space in the string value of the selected node MUST be ignored.</t>
+
+<t>For example, given an entry</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<entry>
+  <title>Hello World</title>
+  <updated>2003-12-13T18:30:02Z</updated>
+  <!-- other stuff -->
+</entry>
+]]></artwork>
+</figure>
+
+<t><list style="empty">
+<t>"updated==2003-12-13T18:30:02Z" yields True</t>
+<t>"updated=gt=2003-12-13T00:00:00Z" yields True</t>
+<t>"updated=lt=2005-01-01T00:00:00Z yields True</t>
+<t>"updated=gt=-P1D12H" yields False</t>
+<t>"updated=gt=-P5Y" yields True</t>
+</list></t>
+
+<t>(assuming processing on July 1st, 2006)</t>
+
+<t>This specification does not define the appropriate behaviour if a selector with a date type returns multiple nodes.</t>
+
+<t>This comparison type can be identied with the URI "http://purl.org/syndication/query/date".</t>
+
+</section>
+
+
+<section title="Numeric Comparisons">
+
+<t>Numeric comparison allows filtering of numeric values.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+number-arg  = [ "+" / "-" ] 1*DIGIT [ "." 1*DIGIT ]
+]]></artwork>
+</figure>
+
+<t>Four operators are relevant to numeric comparisons;</t>
+
+<t><list style="symbols">
+<t>"==" yields True if the string-value of the selected node is numerically equal to the argument; otherwise False.</t>
+
+<t>"!=" yields True if the string-value of the selected node is not numerically equal to the argument; otherwise False.</t>
+
+<t>"=lt=" yields True if the string-value of the selected node evaluates as numerically less than the argument; otherwise, False.</t>
+
+<t>"=le=" yields True if the string-value of the selected node evaluates as numerically less than the argument, or as equal to it; otherwise, False.</t>
+
+<t>"=gt=" yields True if the string-value of the selected node evaluates as numerically greater than the argument; otherwise, False.</t>
+
+<t>"=ge=" yields True if the string-value of the selected node evaluates as numerically greater than the argument, or as equal to it; otherwise, False.</t>
+
+</list></t>
+
+<t>White space in the string-value of selected node MUST be ignored.</t>
+  
+<t>For example, given an entry</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<entry>
+  <title>Hello World</title>
+  <x:foo>123</x:foo>
+  <x:bar>  456</x:foo>
+]]></artwork>
+</figure>
+
+<t><list style="empty">
+<t>"x:foo==123" yields True</t>
+<t>"x:foo==123.00" yields True</t>
+<t>"x:foo!=123.1" yields True</t>
+<t>"x:foo=lt=200" yields True</t>
+<t>"x:bar==456" yields True</t>
+<t>"x:foo=gt=500" yields False</t>
+</list></t>
+
+<t>This specification does not define the appropriate behaviour if a selector with a numeric type returns multiple nodes.</t>
+
+<t>This comparison type can be identied with the URI "http://purl.org/syndication/query/numeric".</t>
+
+</section>
+</section>
+</section>
+</section>
+
+<section title="Feed Queries and HTTP" anchor="http">
+
+<t>Although FIQL can be used in many contexts, it is optimised and intended for use in the query component <xref target="RFC3986"/> of an HTTP <xref target="RFC2616"/> URI. E.g.,</t>
+
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  http://example.com/feed.atom?query=title==*new*,author==bob*
+  http://example.org/feed.rss?title==*great*;ex:rating=gt=4
+]]></artwork>
+</figure>
+
+<t>Note that a FIQL query can be used as the entire query component, or as a sub-component. In the latter case, it is important to account for any encoding conventions to be used with the sub-component; for example, if queries are generated from HTML forms, the sub-component will not be a bare FIQL query, but instead an encoded one.</t>
+
+<t>The output of a HTTP query SHOULD be returned in the HTTP response body, with an appropriate media type. HTTP resources SHOULD return a 400 Bad Request status code if an FIQL expression includes an unsupported or unknown selector.</t>
+
+</section>
+
+<section title="Feed Extensions for Queries" anchor="feed-ext">
+
+<t>Although FIQL is suitable for use with unmodified Web feeds, it is often desirable to override default comparison types, and to advertise what item elements are available for queries.</t>
+
+<t>This can be accomplished using a top-level feed metadata extension, fq:interface. For example,</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<feed xmlns="http://www.w3.org/2005/Atom"
+ xmlns:ex="http://other.example.net/"
+ xmlns:fq="http://purl.org/syndication/query">
+  <title>example</title>
+  <link href="http://www.example.org/"/>
+  <id>http://example.org/</id>
+  <updated>2006-09-12T12:28:02Z</updated>
+  <fq:interface 
+   xmlns:fiql="http://purl.org/syndication/query" 
+   template="/feed-search?{fiql-exp}">
+    <fq:index name="title"/>
+    <fq:index name="ex:foo" 
+     type="http://purl.org/syndication/query/date"/>
+    <fq:index name="ex:bar" 
+     type="http://purl.org/syndication/query/numeric"/>
+  </fq:interface>
+  <entry>
+    <title>test entry</title>
+    <description>something...</description>
+    <id>http://example.org/1124</id>
+    <ex:foo>2003-12-13T18:30:02Z</ex:foo>
+    <ex:bar>15.4</ex:bar>
+  </entry>
+</feed>
+]]></artwork>
+</figure>
+
+<t>Here, the fq:interface element indicates that queries can be made at the URI template "http://www.example.org/feed-search?{fiql-exp}", where {fiql-exp} is replaced with the desired FIQL expression. Expressions will support the selectors "title", "ex:foo" and "ex:bar", and the latter two will be compared as a date and number, respectively.</t>
+
+<section title="The fq:interface element">
+
+<t>The fq:interface element describes an interface that processes queries for the feed it occurs in. One or more fq:interface elements MAY occur in a feed's head section.</t>
+
+<t>It MUST have a "template" attribute, whose content is a URI template, as defined in <xref target="I-D.gregorio-uritemplate"/>. This template SHOULD have exactly one variable, "fiql-exp", that indicates where a FIQL expression should occur. If it does not have a "fiql-exp" variable, it MUST have some other variable that indicates how to submit queries (e.g., using another query language).</t>
+
+<t>For example, given a feed with the fq:interface declaration:</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<fq:interface template="http://www.example.com/search?{fiql-exp}"/>
+]]></artwork>
+</figure>
+
+<t>someone desiring to search for all entries with a title would use this URI:</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+http://www.example.com/search?title
+]]></artwork>
+</figure>
+
+<t>fq:interface MAY have any number of fq:index child elements. Additional extension elements and attributes MAY also occur.</t>
+
+</section>
+
+<section title="The fq:index element">
+
+<t>The fq:index element indicates a selector that is available for use in queries. Optionally, it can override its default type, and refine it with an XPath expression.</t>
+
+<t>It MUST have a "name" attribute, containing a selector (see <xref target="constraints"/>) to be used to reference the indexed element.</t>
+
+<t>It MAY have a "path" attribute, containing an XPath <xref target="W3C.REC-xpath-19991116"/> expression that yields the selected node(s) when evaluated with an entry's element as the context node.</t>
+
+<t>It MAY have a "type" attribute, containing a URI indicating the comparison type that will be applied to that selector.</t>
+
+<t>For example,</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<fq:interface template="http://www.example.com/search?{fiql-exp}">
+  <fq:index name="ex:foo"
+   type="http://purl.org/syndication/query/text"/>
+  <fq:index name="foo-case-insensitive" path="ex:foo" 
+   type="http://example.org/comparison-types/case-insensitive"/>  
+<fq:interface>
+]]></artwork>
+</figure>
+
+<t>Here, the ex:foo element can compared using the simple textual algorithm described in <xref target="textual"/> with the "ex:foo" selector, or using a (here, fictional) case-insensitive extension selector "foo-case-insensitive".</t>
+
+<t>Or,</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<fq:interface template="http://www.example.com/search;{fiql-exp}">
+  <fq:index name="foo-num" path="ex:foo/ex:bar/@num"
+   type="http://purl.org/syndication/query/numeric"/>
+<fq:interface>
+]]></artwork>
+</figure>
+
+<t>Here, queries using the selector "foo-num" will be evaluated against the content(s) of the "num" attribute of the "ex:bar" child element of "ex:foo".</t>
+
+<t>By default, fq:index is an empty element; however, comparison types MAY define extension elements and attributes.</t> 
+
+</section> 
+</section>
+
+
+<section title="Security Considerations">
+
+<t>Servers processing queries should be aware of the potential resource and security issues of allowing arbitrarily long and complex queries. Nothing in this specification requires queries to be successfully processed; e.g., a HTTP response may respond with a 403 Forbidden status code if they believe a request to be a security risk.</t> </section>
+
+
+<section title="IANA Considerations">
+<t>This memo has no registration requirements.</t>
+</section>
+
+	</middle> 
+
+	<back> 	  
+	  <references title="Normative References">
+	   &rfc2119;
+	   &rfc4234;
+	   &rfc2616;
+	   &rfc3986;
+	   &rfc4287;
+       &xmlns;
+       &infoset; 
+       &xpath;
+       &datatypes;
+
+<reference anchor='I-D.gregorio-uritemplate'>
+<front>
+<title>URI Template</title>
+
+<author initials='J' surname='Gregorio' fullname='Joe Gregorio'>
+    <organization />
+</author>
+
+<date month='October' day='4' year='2006' />
+
+<abstract><t>URI Templates are strings that can be transformed into URIs after embedded variables are substituted. This document defines the structure and syntax of URI Templates.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-gregorio-uritemplate-00' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-gregorio-uritemplate-00.txt' />
+</reference>
+
+<reference anchor="unicode" target="http://www.unicode.org/versions/Unicode4.1.0">
+<front>
+<title>The Unicode Standard, Version 4.1.0</title>
+<author>
+  <organization>The Unicode Consortium</organization>
+</author>
+<date year="2003"/>
+</front>
+</reference>
+
+<reference anchor="unicode-norm" 
+target="http://www.unicode.org/reports/tr15/">
+<front>
+<title>Unicode Normalization Forms</title>
+<author initials="M." surname="Davis" fullname="Mark Davis">
+<organization/>
+</author>
+<author initials="M." surname="Duerst" fullname="Martin Duerst">
+<organization/>
+</author>
+<date year="2006" month="10" day="12"/>
+</front>
+</reference>
+
+	  </references>
+	  
+    <section title="Acknowledgements">
+    <t>Thanks to
+Wendell Craig Baker,
+Dave Beckett,
+Jason Douglas,
+Tom Gordon,
+Hugo Haas,
+John Nienart,
+Addison Phillips,
+Pasha Sadri,
+Jayavel Shanmugasundaram,
+Tex Texin,
+Evan Torrie,
+and 
+Chris Westin
+for their suggestions. The author takes all responsibility for errors and omissions.</t>
+    </section>
+
+
+<section title="Default Element Comparison Types" anchor="types">
+
+<t>Below are a selection of default comparison types for existing
+elements.</t>
+
+<section title="Atom 1.0">
+<t><list style="symbols">
+  <t>atom:author - <xref target="textual">simple text</xref></t>
+  <t>atom:category - <xref target="textual">simple text</xref></t>
+  <t>atom:content - <xref target="textual">simple text</xref></t>
+  <t>atom:contributor - <xref target="textual">simple text</xref></t>
+  <t>atom:id - <xref target="textual">simple text</xref></t>
+  <t>atom:link - <xref target="textual">simple text</xref></t>
+  <t>atom:published - <xref target="date">date</xref></t>
+  <t>atom:rights - <xref target="textual">simple text</xref></t>
+  <t>atom:source - <xref target="textual">simple text</xref></t>
+  <t>atom:summary - <xref target="textual">simple text</xref></t>
+  <t>atom:title - <xref target="textual">simple text</xref></t>
+  <t>atom:updated - <xref target="date">date</xref></t>
+</list></t>
+</section>
+
+<section title="RSS 2.0">
+<t><list style="symbols">
+  <t>title - <xref target="textual">simple text</xref></t>
+  <t>link - <xref target="textual">simple text</xref></t>
+  <t>description - <xref target="textual">simple text</xref></t>
+  <t>author - <xref target="textual">simple text</xref></t>
+  <t>category - <xref target="textual">simple text</xref></t>
+  <t>comments - <xref target="textual">simple text</xref></t>
+  <t>enclosure - <xref target="textual">simple text</xref></t>
+  <t>guid - <xref target="textual">simple text</xref></t>
+  <t>pubDate - <xref target="date">date</xref></t>
+  <t>source - <xref target="textual">simple text</xref></t>
+</list></t>
+</section>
+
+</section>
+
+
+<section title="Collected ABNF" anchor="bnf">
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+expression  = [ "(" ] 
+              ( constraint / expression ) 
+              [ operator ( constraint / expression ) ] 
+              [ ")" ]
+operator    = ";" / ","
+constraint  = selector [ comparison argument ]
+selector    = 1*( unreserved / pct-encoded )
+comparison  = ( ( "=" 1*ALPHA ) / fiql-delim ) "="
+argument    = 1*arg-char
+arg-char    = unreserved / pct-encoded / fiql-delim / "="
+fiql-delim  = "!" / "$" / "'" / "*" / "+" 
+text-arg    = [ "*" ] 1*arg-char [ "*" ]
+date-arg    = dateTime / duration ; as defined in XML Schema Datatypes
+number-arg  = [ "+" / "-" ] 1*DIGIT [ "." 1*DIGIT ]
+]]></artwork>
+</figure>
+
+</section>
+
+
+     </back>
+</rfc>

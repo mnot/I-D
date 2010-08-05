@@ -1,0 +1,560 @@
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                           August 14, 2005
+Expires: February 15, 2006
+
+
+              Feed History: Enabling Stateful Syndication
+                draft-nottingham-atompub-feed-history-02
+
+Status of this Memo
+
+   By submitting this Internet-Draft, each author represents that any
+   applicable patent or other IPR claims of which he or she is aware
+   have been or will be disclosed, and any of which he or she becomes
+   aware will be disclosed, in accordance with Section 6 of BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on February 15, 2006.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2005).
+
+Abstract
+
+   This document specifies a mechanism that allows feed publishers to
+   give hints about the nature of the feed's statefulness, and a means
+   of retrieving "missed" entries from a stateful feed.
+
+1.  Introduction
+
+   Syndication documents (e.g., those in formats such as Atom
+   [AtomSyntax] and RSS
+   <http://purl.org/rss/1.0/spec><http://blogs.law.harvard.edu/tech/
+
+
+
+Nottingham              Expires February 15, 2006               [Page 1]
+
+Internet-Draft                Feed History                   August 2005
+
+
+   rss>) usually only contain the last several entries in a larger
+   channel (or "feed") of information.  Often, consuming software keeps
+   copies of all entries that have been previously seen, effectively
+   keeping a history of the feed's contents.
+
+   However, not all feeds benefit from this practice; in some, previous
+   entries are not relevant to the current contents of the feed.  For
+   example, it's not desireable to keep history in this manner with a
+   "top ten" feed; showing old entries would imply that the previous
+   number one is now number eleven, and so forth.
+
+   Feeds that encourage this practice have a different problem.  If
+   consuming software does not poll often enough, some entries may be
+   missed, causing them to be silently omitted.  For some applications,
+   this is a serious error on its own.  Even in non-critical
+   applications, this phenomenon can cause publishers to make Feed
+   Documents contain more entries than reasonably necessary, just to
+   assure that consumers have an amply large window in which to
+   reconstruct the feed's state.
+
+   This document specifies a mechanism that allows feed publishers to
+   give hints as to the nature of the feed with regard to state, and a
+   means of retrieving "missed" entries from a stateful feed.  Although
+   it refers to Atom normatively, the mechanism described herein can be
+   used with similar syndication formats, such as the various flavours
+   of RSS.
+
+2.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in BCP 14, [RFC2119], as
+   scoped to those conformance targets.
+
+   In this specification, "subscription document" refers to an Atom Feed
+   Document or similar syndication format (e.g., RSS) that is intended
+   to be subscribed to; i.e., it contains the most recent entries
+   available in the feed.
+
+   In this specification, "archive document" refers to an Atom Feed
+   Document or similar syndication format (e.g., RSS) that is archived;
+   i.e., the set of entries inside it does not change over time.  Note
+   that some entries in the archive document may also be present in the
+   subscription document; in other words, some (but not necessarily all)
+   "live" entries might already be archived.
+
+   In this specification, "head section" refers to the children of a
+   feed document's document-wide metadata container; e.g., the child
+
+
+
+Nottingham              Expires February 15, 2006               [Page 2]
+
+Internet-Draft                Feed History                   August 2005
+
+
+   elements of the atom:feed element in an Atom Feed Document.
+
+   This specification uses XML Namespaces [W3C.REC-xml-names-19990114]
+   to uniquely identify XML element names.  It uses the following
+   namespace prefix for the indicated namespace URI;
+
+   "fh": "http://purl.org/syndication/history/1.0"
+
+   This specification uses terms from the XML Infoset [W3C.REC-xml-
+   infoset-20040204].  However, this specification uses a shorthand; the
+   phrase "Information Item" is omitted when naming Element Information
+   Items.  Therefore, when this specification uses the term "element,"
+   it is referring to an Element Information Item in Infoset terms.
+
+3.  The 'fh:stateful' Element
+
+   The fh:stateful element indicates whether the Feed is stateful, and
+   MAY occur in a subscription document's head section.  Its content
+   MUST be either "true" or "false".  Whitespace in its content MUST be
+   ignored by processors.
+
+   For example,
+
+     <fh:stateful>true</fh:stateful>
+
+   If the content of the fh:stateful element is "false", it indicates
+   that the subscription document is a complete representation of the
+   entire feed; previous entries SHOULD NOT be considered part of the
+   feed by consumers.
+
+   For example, a feed that represents a ranking that varies over time,
+   such as "Top Twenty Records" or "Most Popular Items" should be marked
+   with a fh:stateful element containing "false".
+
+   If the content of the fh:stateful element is "true", it indicates
+   that the subscription document is a potentially partial
+   representation of the entire feed; previous entries MUST be
+   considered part of the feed by consumers.
+
+   For example, a feed that represents a chronological list, such as
+   "ExampleCo Press Releases" or "Widget Project Updates" should be
+   marked with a fh:stateful element containing "true".
+
+   A subscription document whose fh:stateful element contains "true"
+   MUST contain a fh:prev element, unless there are no previous entries
+   in the feed.  A subscription document whose fh:stateful element
+   contains "false" MUST NOT contain a fh:prev element.
+
+
+
+
+Nottingham              Expires February 15, 2006               [Page 3]
+
+Internet-Draft                Feed History                   August 2005
+
+
+4.  The 'fh:prev' Element
+
+   The fh:prev element conveys the location of an archive of previous
+   entries in the feed, and MAY occur in a subscription document's head
+   section.  It MUST occur in an archive document's head section, unless
+   there are no previous entries in the feed.
+
+   Its content MUST be a URI reference indicating the previous archive
+   document's location.
+
+   For example,
+
+      <fh:prev>http://www.example.com/feed/archive/2005/05</fh:prev>
+
+
+5.  State Reconstruction
+
+   When presented with a partial representation of a feed, a consumer
+   MAY reconstruct the entire feed in a local store by following these
+   steps, starting with the subscription document as the current
+   document:
+
+   1.  Add all of the entries in the current document to the store.
+   2.  Dereference the fh:prev URI, if present.  If it is not present,
+       stop processing.
+   3.  Using the dereferenced archive document as the current document,
+       start at step one (i.e., apply these steps recursively).
+
+   A consumer MAY stop when it encounters an fh:prev URI whose entries
+   have been successfully stored beforehand when following this process.
+
+   Note that consumers MAY cache archive documents and/or use a
+   different method of reconstructing state, as long as the result is
+   the same as that achieved by following these steps.
+
+   Consumers SHOULD warn users when they do not have the complete state
+   of a feed (e.g., by alerting the user that an archive document is
+   unavailable, or inserting pseudo-entries that inform the user that
+   some entries may be missing).
+
+   Note that publishers are not required to make all archive documents
+   available.
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 15, 2006               [Page 4]
+
+Internet-Draft                Feed History                   August 2005
+
+
+6.  Examples
+
+   Atom Subscription Document with History
+
+   <?xml version="1.0" encoding="utf-8"?>
+   <feed xmlns="http://purl.org/atom/ns#draft-ietf-atompub-format-09"
+     xmlns:history="http://purl.org/syndication/history/1.0">
+     <title>Example Feed</title>
+     <link href="http://example.org/"/>
+     <updated>2003-12-13T18:30:02Z</updated>
+     <author>
+       <name>John Doe</name>
+     </author>
+     <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+     <history:stateful>true</history:stateful>
+     <history:prev>http://example.org/2003/11/index.atom</history:prev>
+
+     <entry>
+       <title>Atom-Powered Robots Run Amok</title>
+       <link href="http://example.org/2003/12/13/robots_here"/>
+       <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+       <updated>2003-12-13T18:30:02Z</updated>
+       <summary>Some text in a new, fresh entry.</summary>
+     </entry>
+
+   </feed>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 15, 2006               [Page 5]
+
+Internet-Draft                Feed History                   August 2005
+
+
+   Atom Archive Document with History
+
+   <?xml version="1.0" encoding="utf-8"?>
+   <feed xmlns="http://purl.org/atom/ns#draft-ietf-atompub-format-09"
+     xmlns:history="http://purl.org/syndication/history/1.0">
+     <title>Example Feed</title>
+     <link href="http://example.org/"/>
+     <updated>2003-11-24T12:00:00Z</updated>
+     <author>
+       <name>John Doe</name>
+     </author>
+     <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+     <history:prev>http://example.org/2003/10/index.atom</history:prev>
+
+     <entry>
+       <title>Atom-Powered Robots Scheduled To Run Amok</title>
+       <link href="http://example.org/2003/11/24/robots_coming"/>
+       <id>urn:uuid:cd3272ef-b09c-42fd-806b-e25580e59b39</id>
+       <updated>2003-11-24T12:00:00Z</updated>
+       <summary>Some text from an old, different entry.</summary>
+     </entry>
+
+   </feed>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 15, 2006               [Page 6]
+
+Internet-Draft                Feed History                   August 2005
+
+
+   RSS 2.0 Subscription Document with History
+
+   <?xml version="1.0"?>
+   <rss version="2.0"
+    xmlns:history="http://purl.org/syndication/history/1.0">
+    <channel>
+     <title>Liftoff News</title>
+     <link>http://liftoff.msfc.nasa.gov/</link>
+     <description>Liftoff to Space Exploration.</description>
+     <language>en-us</language>
+     <pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+     <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+     <generator>Weblog Editor 2.0</generator>
+     <managingEditor>editor@example.com</managingEditor>
+     <webMaster>webmaster@example.com</webMaster>
+     <history:stateful>true</history:stateful>
+     <history:prev>http://liftoff.msfc.nasa.gov/2003/05/feed.rss>
+
+     <item>
+      <title>Star City</title>
+      <link>http://liftoff.msfc.nasa.gov/2003/06/news-starcity</link>
+      <description>How do Americans get ready to work with Russians
+      aboard the International Space Station? They take a crash course
+      in culture, language and protocol at Russia's <a
+      href="http://howe.iki.rssi.ru/GCTC/gctc_e.htm">Star
+      City</a>.</description>
+      <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+      <guid>http://liftoff.msfc.nasa.gov/2003/06/03.html#item573</guid>
+     </item>
+    </channel>
+   </rss>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 15, 2006               [Page 7]
+
+Internet-Draft                Feed History                   August 2005
+
+
+   RSS 2.0 Archive Document with History
+
+   <?xml version="1.0"?>
+   <rss version="2.0"
+    xmlns:history="http://purl.org/syndication/history/1.0">
+    <channel>
+     <title>Liftoff News</title>
+     <link>http://liftoff.msfc.nasa.gov/</link>
+     <description>Liftoff to Space Exploration.</description>
+     <language>en-us</language>
+     <pubDate>Tue, 30 May 2003 08:00:00 GMT</pubDate>
+     <lastBuildDate>Tue, 30 May 2003 10:31:52 GMT</lastBuildDate>
+     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+     <generator>Weblog Editor 2.0</generator>
+     <managingEditor>editor@example.com</managingEditor>
+     <webMaster>webmaster@example.com</webMaster>
+     <history:stateful>true</history:stateful>
+     <history:prev>http://liftoff.msfc.nasa.gov/2003/04/feed.rss>
+
+     <item>
+      <description>Sky watchers in Europe, Asia, and parts of
+      Alaska and Canada will experience a partial eclipse of the Sun
+      on Saturday, May 31st.</description>
+      <pubDate>Fri, 30 May 2003 11:06:42 GMT</pubDate>
+      <guid>http://liftoff.msfc.nasa.gov/2003/05/30.html#item572</guid>
+     </item>
+     <item>
+      <title>The Engine That Does More</title>
+      <link>http://liftoff.msfc.nasa.gov/2003/05/news-VASIMR.asp</link>
+      <description>Before man travels to Mars, NASA hopes to
+      design new engines that will let us fly through the Solar
+      System more quickly.  The proposed VASIMR engine would do
+      that.</description>
+      <pubDate>Tue, 27 May 2003 08:37:32 GMT</pubDate>
+      <guid>http://liftoff.msfc.nasa.gov/2003/05/27.html#item571</guid>
+     </item>
+    </channel>
+   </rss>
+
+
+7.  Security Considerations
+
+   Feeds using the mechanisms described here could be crafted in such a
+   way as to cause a consumer to initiate excessive (or even an unending
+   sequence of) network requests, causing denial of service (either to
+   the consumer, the target server, and/or intervening networks).  This
+   risk can be mitigated by requiring user intervention after a certain
+   number of requests, or by limiting requests either according to a
+
+
+
+Nottingham              Expires February 15, 2006               [Page 8]
+
+Internet-Draft                Feed History                   August 2005
+
+
+   hard limit, or with heuristics.
+
+   Consumers should be mindful of resource limits when storing feed
+   state; to reiterate, they are not required to always store or
+   reconstruct feed state when conforming to this specification; they
+   only need inform the user when state is partial.
+
+8.  Normative References
+
+   [AtomSyntax]
+              Nottingham, M., Ed. and R. Sayre, Ed., "The Atom
+              Syndication Format", June 2005.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [W3C.REC-xml-infoset-20040204]
+              Cowan, J. and R. Tobin, "XML Information Set (Second
+              Edition)", W3C REC REC-xml-infoset-20040204,
+              February 2004.
+
+   [W3C.REC-xml-names-19990114]
+              Bray, T., Hollander, D., and A. Layman, "Namespaces in
+              XML", W3C REC REC-xml-names-19990114, January 1999.
+
+
+Author's Address
+
+   Mark Nottingham
+
+   Email: mnot@pobox.com
+   URI:   http://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 15, 2006               [Page 9]
+
+Internet-Draft                Feed History                   August 2005
+
+
+Intellectual Property Statement
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at
+   ietf-ipr@ietf.org.
+
+
+Disclaimer of Validity
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET
+   ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE
+   INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Copyright Statement
+
+   Copyright (C) The Internet Society (2005).  This document is subject
+   to the rights, licenses and restrictions contained in BCP 78, and
+   except as set forth therein, the authors retain all their rights.
+
+
+Acknowledgment
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+Nottingham              Expires February 15, 2006              [Page 10]
+

@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2026 SYSTEM 'bibxml/reference.RFC.2026.xml'>      
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>      
+<!ENTITY rfc2616 SYSTEM 'bibxml/reference.RFC.2616.xml'>      
+<!ENTITY rfc3864 SYSTEM 'bibxml/reference.RFC.3864.xml'>      
+<!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>      
+<!ENTITY rfc4918 SYSTEM 'bibxml/reference.RFC.4918.xml'>      
+<!ENTITY bcp26 SYSTEM 'bibxml/reference.RFC.5226.xml'>      
+<!ENTITY rfc5234 SYSTEM 'bibxml/reference.RFC.5234.xml'>      
+<!ENTITY P3P SYSTEM 'bibxml/reference.W3C.REC-P3P-20020416.xml'>
+<!ENTITY linkhdr SYSTEM 'bibxml/reference.I-D.draft-nottingham-http-link-header-03.xml'>
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+
+<rfc ipr="trust200811" docName="draft-nottingham-site-meta-01" category="info">
+    <front>
+        <title>Host Metadata for the Web</title>
+        <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+            <organization></organization>
+            <address>
+                <email>mnot@mnot.net</email>
+                <uri>http://www.mnot.net/</uri>
+            </address>
+        </author>
+        <author initials="E." surname="Hammer-Lahav" fullname="Eran Hammer-Lahav">
+            <organization></organization>
+            <address>
+                <email>eran@hueniverse.com</email>
+                <uri>http://hueniverse.com/</uri>
+            </address>
+        </author>
+        <date year="2009"/>
+        <abstract>
+            <t>This memo describes a method for locating host-specific metadata for the Web.</t>
+        </abstract>
+    </front>
+
+    <middle>
+
+        <section title="Introduction">
+
+            <t>It is increasingly common for Web-based protocols to require the discovery of policy or metadata before making a request. For example, the Robots Exclusion Protocol specifies a way for automated processes to obtain permission to access resources; likewise, the Platform for Privacy Preferences <xref target="W3C.REC-P3P-20020416"/> tells user-agents how to discover privacy policy beforehand.</t>
+
+            <t>While there are several ways to access per-resource metadata (e.g., HTTP headers, WebDAV's PROPFIND <xref target="RFC4918"/>), the overhead associated with them often precludes their use in these scenarios.</t>
+            
+            <t>When this happens, it is common to designate a "well-known location" for such metadata, so that it can be easily located. However, this approach has the drawback of risking collisions, both with other such designated "well-known locations" and with pre-existing resources.</t>
+            
+            <t>To address this, this memo proposes a single (and hopefully last) "well-known location", /host-meta, which acts as a directory to the interesting metadata about a particular authority. Future mechanisms that require authority-wide metadata can easily include an entry in the host-meta resource, thereby making their metadata cheaply available (indeed, because it can be cached, the more mechanisms that use it, the more efficient it becomes) without impinging on others' URI space.</t>
+
+			<t>Note that the metadata provided by a host-meta resource is explicitly scoped to apply to the entire authority (in the URI <xref target="RFC3986"/> sense) associated with it (using the process described in <xref target="discover"/>); it does not apply to a subset, nor does it apply to other authorities (e.g., using another port, or a different hostname in the same domain). However, individual mechanisms (e.g., a relation type in the Link field) MAY reduce or expand this scope. This should only be done after careful consideration of the consequences upon security, administration, interoperability and network load.</t>
+            
+			<t>Please discuss this draft on the <eref target="http://lists.w3.org/Archives/Public/www-talk/">www-talk@w3.org</eref> mailing list.</t>
+
+        </section>
+
+
+        <section title="Notational Conventions">
+            <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD
+                NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
+                described in RFC 2119 <xref target="RFC2119"/>.</t>
+
+		      <t>This documnet uses the Augmented Backus-Naur Form (ABNF) notation of <xref target="RFC5234"/>, 
+			and explicitly includes the following rules from it: CRLF (CR LF), OCTET (any 8-bit sequence of data), DIGIT, ALPHA, and WSP
+			   (white space).</t>
+        </section>
+
+        <section title="The host-meta File Format" anchor="host-meta">
+
+            <t>The host-meta file format is an extremely simple textual language that allows an authority to convey metadata about itself and its resources.</t>
+
+			<t>Its syntax is similar to that of HTTP header-fields <xref target="RFC2616"/>, but has a few differences:</t>
+			<t><list style="symbols">
+				<t>White space is permissible both before and after the block of fields, and</t>
+				<t>fields MUST NOT be folded across multiple lines.</t>
+			</list></t>
+			<t>Furthermore, this format's use diverges from HTTP header-fields in a number of ways:</t>
+			<t><list style="symbols">
+				<t>The fields are transferred as the message body, not as headers, and</t>
+				<t>rather than being related to a message, the fields in host-meta pertain to the entire associated authority (see <xref target="discover"/>), and</t>
+				<t>the permissible field-names are constrained by the host-meta field registry. This specification defines one such field, Link.</t>
+			</list></t>
+			<figure>
+				<artwork xml:space="preserve"><![CDATA[
+host-meta      = *( WSP / CRLF )
+                 *( meta-field CRLF )
+                 *( WSP / CRLF )
+meta-field     = field-name ":" [ field-value ]
+field-name     = 1*tchar
+field-value    = *( field-content / WSP )
+field-content  = <field content>
+tchar          = "!" / "#" / "$" / "%" / "&" / "'" / "*"
+               / "+" / "-" / "." / "^" / "_" / "`" / "|" / "~"
+               / DIGIT / ALPHA
+]]></artwork>
+			</figure>
+
+<t>For example,</t>
+
+<figure>
+	<artwork xml:space="preserve"><![CDATA[
+Link: </robots.txt>; rel="robots"
+Link: </w3c/p3p.xml>; rel="privacy"; type="application/p3p.xml"
+Link: <http://example.net/example>; rel="http://example.com/rel" 
+]]></artwork>
+</figure>
+
+<t>As with HTTP headers, field-names are not case-sensitive, unrecognised field-names SHOULD be silently ignored when parsing this format, and ordering of fields SHOULD NOT be considered significant unless specified otherwise. Additionally, although the syntax does not explicitly allow empty lines between fields, parsers SHOULD silently discard them (i.e., be permissive in what they accept).</t>
+
+<t>Field content is constrained by the specification indicated by its associated field-name.</t>
+
+            <section title="The Link host-meta Field">	
+				<t>The "Link" host-meta field uses the syntax of the Link HTTP header-field <xref target="I-D.nottingham-http-link-header"/> to convey links whose context is the entire authority, rather than a single resource. For example,</t>
+<figure>
+	<artwork xml:space="preserve"><![CDATA[
+Link: </terms>; rel="license"
+]]></artwork>
+</figure>
+
+<t>indicates that the URI "/terms" refers to a license for all resources associated with the authority.</t>
+
+<t>The Link host-meta field differs from the Link header in the following respects:</t>
+<t><list style="symbols">
+	<t>Its context is defined as all resources that share its authority, by default (although this MAY be overridden by a representation obtained from the indicated resource), and</t>
+	<t>When the link URI is relative, its base URI is the root resource of the authority. For example, in the example above, if the authority is "example.com", the full link URI would be "http://example.com/me".</t>
+</list></t>
+            </section>
+
+		</section>
+
+
+        <section title="Discovering host-meta Files" anchor="discover">
+            <t>The metadata for a given authority can be discovered by dereferencing the
+                path /host-meta on the same authority. For example, for an HTTP URI <xref target="RFC2616"/>, the following request would obtain metadata
+                for the authority "www.example.com:80";</t>
+                
+                <figure>
+                    <artwork xml:space="preserve"><![CDATA[
+    GET /host-meta HTTP/1.1
+    Host: www.example.com
+]]></artwork>
+                </figure>
+
+            <t>The semantics of the protocol used for access to the resource apply. Therefore, if the resource indicates the client should try a different request (in HTTP, the 301, 302, 303 or 307 response status code), the client SHOULD attempt to do so; note that this implies that the host-meta file for one authority MAY be retrieved from a different authority. Likewise, if the resource is not available or existent (in HTTP, the 404 or 410 status code), the client SHOULD infer that metadata is not available via this mechanism.</t>
+	
+	<t>If a representation is successfully obtained, but is not in the format described above, clients SHOULD infer that the authority is using this URI for other purposes, and not process it as a host-meta file.</t>
+            
+            <t>To aid in this process, authorities using this mechanism SHOULD correctly label host-meta responses with the "application/host-meta" internet media type.</t>
+            
+        </section>
+
+		<section title="Minting New meta-fields" anchor="mint">
+			<t>Applications that wish to mint new meta-fields for use in the host-meta format MUST register them in the host-meta field-registry, following the procedures in <xref target="registry"/>. Field-names MUST conform to the field-name ABNF <xref target="host-meta"/>, and field-value syntax MUST be well-defined (e.g., using ABNF, or a reference to the syntax of an existing header field-value). Field-values SHOULD use the ISO-859-1 character encoding. If a field-value applies to a scope other than the entire authority, that scope MUST be well-defined.</t>
+		</section>
+
+
+        <section title="Security Considerations">
+            <t>The metadata returned by the /host-meta resource is presumed to be under the control of the appropriate authority and representative of all resources contained by it. If this resource is compromised or otherwise under the control of another party, it may represent a risk to the security of the server and data served by it, depending on what mechanisms use /host-meta.</t>
+			<t>Scoping metadata to a single authority is the default in host-meta. Thus "http://example.com/", "https://example.com" and "http://www.example.com/" all have different host-meta files with seperate and non-overlapping scopes of applicability. Applications that change the scope of metadata can incur security risks without careful consideration.</t>
+        </section>
+
+        <section title="IANA Considerations">
+            <section title="application/host-meta Media Type Registration">
+                <t>The host-meta format can be identified with the following media type:</t>
+
+                <t><list style="hanging">
+                    <t hangText="MIME media type name:">
+                    application</t>
+
+                    <t hangText="MIME subtype name:">
+                    host-meta</t>
+
+                    <t hangText="Mandatory parameters:">
+                    None.</t>
+
+                    <t hangText="Optional parameters:">
+                    None.</t>
+
+                    <t hangText="Encoding considerations:">field-values may specify any encoding for their contents, although it is expected that most will use ISO-8859-1 or a subset thereof (for both historic and interoperability purposes).</t>
+
+                    <t hangText="Security considerations:">
+                    As defined in this specification. [[update upon publication]]
+                    </t>
+
+                    <t hangText="Interoperability considerations:">
+                    There are no known interoperability issues.</t>
+
+                    <t hangText="Published specification:">
+                    This specification. [[update upon publication]]</t>
+
+                    <t hangText="Applications which use this media type:">
+                    No known applications currently use this media type.</t>
+                </list></t>
+
+                <t>Additional information:</t>
+
+                <t><list style="hanging">
+                    <t hangText="Magic number(s):">
+                    </t>
+
+                    <t hangText="File extension:">
+                    None.</t>
+
+                    <t hangText="Fragment identifiers:">
+                    None.</t>
+
+                    <t hangText="Base URI:">
+                    None.</t>
+
+                    <t hangText="Macintosh File Type code:">
+                    TEXT</t>
+
+                    <t hangText="Person and email address to contact for further
+                    information:"> Mark Nottingham &lt;mnot@mnot.net&gt;</t>
+
+                    <t hangText="Intended usage:">
+                    COMMON</t>
+
+                    <t hangText="Author/Change controller:">
+                    This specification's author(s). [[update upon publication]]</t>
+                </list></t>
+            </section>
+
+			<section title="The host-meta Field Registry" anchor="registry">
+				<t>This document establishes the host-meta field registry as the namespace of field-names
+					for use in meta-fields. Although some meta-fields may be similar to 
+					message headers, both syntactically and semantically, the host-meta field registry
+					is separate from the message header field registry <xref target="RFC3864"/> See
+					<xref target="mint"/> for details and requirements for registered meta-fields.</t>
+					
+				<t>meta-fields may be registered on the advice of a Designated Expert (appointed by the 
+					IESG or their delegate), with a Specification Required (using terminology from <xref target="RFC5226"/>).</t>
+					
+				<t>Registration requests consist of the completed registration template 
+					<xref target="template"/>, typically published in an RFC or Open Standard (in the sense described
+				    by <xref target="RFC2026"/>, section 7). However, to allow for the
+					   allocation of values prior to publication, the Designated Expert may approve 
+					registration once they are satisfied that an RFC (or other Open Standard) will be published.</t>
+				
+				<t>Upon receiving a registration request (usually via IANA), the Designated Expert should request 
+					review and comment from the apps-discuss mailing list (or a successor designated by the APPS Area
+					Directors). Before a period of 30 days has passed, the Designated Expert will either approve or 
+					deny the registration request, communicating this decision both to the review list and to IANA.  
+					Denials should include an explanation and, if applicable, suggestions as to how to make the 
+					request successful.</t>
+					
+				<section title="Registration Template" anchor="template">
+					<t><list style="hanging">
+					   <t hangText="Field name:">
+					      The name requested for the new meta-field.  This MUST conform to
+					      the host-meta field specification details noted in <xref target="host-meta"/></t>
+
+					   <t hangText="Change controller:">
+					      For RFCs, state "IETF". For other open
+					      standards, give the name of the publishing body (e.g., ANSI, ISO,
+					      ITU, W3C, etc.). A postal address, home page URI, telephone and fax
+					      numbers may also be included.</t>
+
+					   <t hangText="Specification document(s):">
+					      Reference to document that specifies the field, preferably 
+						  including a URI that can be used to
+					      retrieve a copy of the document.  An indication of the relevant
+					      sections may also be included, but is not required.</t>
+
+					   <t hangText="Related information:">
+     					Optionally, citations to additional documents containing further
+					      relevant information.</t>
+					  </list></t>
+					</section>				   
+			
+				<section title="The Link host-meta field">
+					<t>This specification registers one host-meta field.</t>
+					<t><list style="hanging">
+					   <t hangText="Field name:">
+					      Link</t>
+
+					   <t hangText="Change controller:">
+					      IETF</t>
+
+					   <t hangText="Specification document(s):">
+					      [[this document]]</t>
+					
+					   <t hangText="Related information:">
+						 <xref target="I-D.nottingham-http-link-header"/>
+						</t>
+					  </list></t>
+				</section>
+
+			</section>
+			
+        </section>
+
+    </middle>
+
+    <back>
+        <references title="Normative References">&bcp26; &rfc2026; &rfc2119; &rfc3986; &rfc5234; &linkhdr;</references>
+
+		<references title="Informative References">&P3P; &rfc2616; &rfc3864; &rfc4918;</references>
+
+        <section title="Acknowledgements">
+            <t>We would like to acknowledge the contributions of everyone who provided feedback and use cases for this draft; in particular, 
+				Phil Archer, 
+				Dirk Balfanz,
+				Tim Bray, 
+				Paul Hoffman, 
+				Barry Leiba, 
+				Ashok Malhotra, 
+				Breno de Medeiros,
+				and John Panzer.
+			The authors take all responsibility for errors and omissions.</t>
+        </section>
+
+        <section title="Frequently Asked Questions">
+			<section title="Is this mechanism appropriate for all kinds of metadata?">
+				<t>No. The primary use cases are described in the introduction; when it's necessary to discover metadata or policy before a resource is accessed, and/or it's necessary to describe metadata for a whole authority (or large portions of it), host-meta is appropriate. In other cases (e.g., fine-grained metadata that doesn't need to be known ahead of time), other mechanisms are more appropriate.</t>
+			</section>
+			
+            <section title="Why not use OPTIONS * with content negotiation to discover different types of metadata directly?">
+				<t>Two reasons; a) OPTIONS is not cacheable -- a severe problem for scaling -- and b) 
+					it is not well-supported in browsers, and difficult to configure in servers.</t>
+            </section>
+
+			<section title="Why not use a META tag or microformat in the root resource?">
+				<t>This places constraints on the format of an authority's root resource to be HTML or similar. While extremely common, it isn't universal (e.g., mobile sites, machine-to-machine communication, etc.). Also, some root resources are very large, which would place additional overhead on clients and intervening networks.</t>
+			</section>
+
+			<section title="Why not use response headers on the root resource, and have clients use HEAD?">
+				<t>The headers on a root resource pertain to that resource, not the whole site. While it is possible to mint new message headers that apply to the whole site, such a header would need to be sent on every response for the root resource, whether it was useful or not, with the potential for substantially increasing the size of those responses (which are often popular, and not very cacheable).</t>
+			</section>
+
+            <section title="Why scope metadata to an authority?">
+				<t>The alternative is to allow scoping to be dynamic and determined locally, but this has its own issues, which usually come down to a) an unreasonable number of requests to determine authoritative metadata, b) increased complexity, with a higher likelihood of implementation and interoperability (or even security) problems. Besides, many mechanisms on the Web already presume a single authority scope (e.g., robots.txt, P3P, cookies, javascript security), and the effort and cost required to mint a new URI authority is small and shrinking.</t>
+            </section>
+            
+            <section title="Why /host-meta?">
+				<t>It's short, descriptive and according to search indices, not widely used.</t>
+            </section>
+            
+			<section title="Aren't you concerned about pre-empting an authority's URI namespace?">
+				<t>Yes, but it's unfortunately a necessary (and already present) evil; this proposal tries to minimise future abuses.</t>
+			</section>
+
+			<section title="Why use link relations instead of media types to identify kinds of metadata?">
+				<t>A link relation declares the intent and use of the link (or inline content, when present); a media type defines the format and processing model for those bits.</t>
+			</section>
+			
+			<section title="What impact does this have on existing mechanisms, such as P3P and robots.txt?">
+				<t>None, until they choose to use this mechanism.</t>
+			</section>
+			<section title="Why not (insert existing similar mechanism here)?">
+				<t>We are aware that there are several existing proposals with similar functionality. In our estimation, none have gained sufficient
+					traction. This may be because they were perceived to be too complex, or tied too closely to one use case.</t>
+			</section>
+        </section>
+		<section title="Document History">
+			<t>[[RFC Editor: please remove this section before publication.]]</t>
+			<t><list style="symbols">
+				<t>-01<list style="symbols">
+					<t>Changed "site-meta" to "host-meta" after feedback.</t>
+					<t>Changed from XML to text-based header-like format.</t>
+					<t>Remove capability for generic inline content.</t>
+					<t>Added registry for host-meta fields.</t>
+					<t>Clarified scope of metadata application.</t>
+					<t>Added security consideration about HTTP vs. HTTPS, expanding scope.</t>
+				</list></t>
+			</list></t>
+		</section>
+    </back>
+</rfc>

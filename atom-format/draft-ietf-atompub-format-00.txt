@@ -1,0 +1,1064 @@
+
+
+Network Working Group                                 M. Nottingham, Ed.
+Internet-Draft                                              July 8, 2004
+Expires: January 6, 2005
+
+
+                      The Atom Syndication Format
+                      draft-ietf-atompub-format-00
+
+Status of this Memo
+
+   By submitting this Internet-Draft, I certify that any applicable
+   patent or other IPR claims of which I am aware have been disclosed,
+   and any of which I become aware will be disclosed, in accordance with
+   RFC 3668.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as
+   Internet-Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on January 6, 2005.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2004).  All Rights Reserved.
+
+Abstract
+
+   This specification describes Atom, an XML-based Web content and
+   metadata syndication format.
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires January 6, 2005                 [Page 1]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+Table of Contents
+
+   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  4
+     1.1   Editorial Notes  . . . . . . . . . . . . . . . . . . . . .  4
+     1.2   Example  . . . . . . . . . . . . . . . . . . . . . . . . .  5
+     1.3   Conformance  . . . . . . . . . . . . . . . . . . . . . . .  5
+     1.4   Notational Conventions . . . . . . . . . . . . . . . . . .  5
+   2.  Atom Documents . . . . . . . . . . . . . . . . . . . . . . . .  6
+   3.  Common Atom Constructs . . . . . . . . . . . . . . . . . . . .  7
+     3.1   Content Constructs . . . . . . . . . . . . . . . . . . . .  7
+       3.1.1   "type" Attribute . . . . . . . . . . . . . . . . . . .  7
+       3.1.2   "mode" Attribute . . . . . . . . . . . . . . . . . . .  7
+     3.2   Person Constructs  . . . . . . . . . . . . . . . . . . . .  7
+       3.2.1   "atom:name" Element  . . . . . . . . . . . . . . . . .  7
+       3.2.2   "atom:url" Element . . . . . . . . . . . . . . . . . .  8
+       3.2.3   "atom:email" Element . . . . . . . . . . . . . . . . .  8
+     3.3   Date Constructs  . . . . . . . . . . . . . . . . . . . . .  8
+     3.4   Link Constructs  . . . . . . . . . . . . . . . . . . . . .  8
+       3.4.1   "rel" Attribute  . . . . . . . . . . . . . . . . . . .  8
+       3.4.2   "type" Attribute . . . . . . . . . . . . . . . . . . .  8
+       3.4.3   "href" Attribute . . . . . . . . . . . . . . . . . . .  9
+       3.4.4   "hreflang" Attribute . . . . . . . . . . . . . . . . .  9
+       3.4.5   "title" Attribute  . . . . . . . . . . . . . . . . . .  9
+   4.  The "atom:feed" Element  . . . . . . . . . . . . . . . . . . .  9
+     4.1   "version" Attribute  . . . . . . . . . . . . . . . . . . .  9
+     4.2   "xml:lang" Attribute . . . . . . . . . . . . . . . . . . . 10
+     4.3   "atom:title" Element . . . . . . . . . . . . . . . . . . . 10
+     4.4   "atom:link" Element  . . . . . . . . . . . . . . . . . . . 10
+     4.5   "atom:author" Element  . . . . . . . . . . . . . . . . . . 10
+     4.6   "atom:contributor" Element . . . . . . . . . . . . . . . . 10
+     4.7   "atom:tagline" Element . . . . . . . . . . . . . . . . . . 10
+     4.8   "atom:id" Element  . . . . . . . . . . . . . . . . . . . . 11
+     4.9   "atom:generator" Element . . . . . . . . . . . . . . . . . 11
+     4.10  "atom:copyright" Element . . . . . . . . . . . . . . . . . 11
+     4.11  "atom:info" Element  . . . . . . . . . . . . . . . . . . . 12
+     4.12  "atom:modified" Element  . . . . . . . . . . . . . . . . . 12
+     4.13  "atom:entry" Element . . . . . . . . . . . . . . . . . . . 12
+       4.13.1  "atom:title" Element . . . . . . . . . . . . . . . . . 13
+       4.13.2  "atom:link" Element  . . . . . . . . . . . . . . . . . 13
+       4.13.3  "atom:author" Element  . . . . . . . . . . . . . . . . 13
+       4.13.4  "atom:contributor" Element . . . . . . . . . . . . . . 13
+       4.13.5  "atom:id" Element  . . . . . . . . . . . . . . . . . . 13
+       4.13.6  "atom:modified" Element  . . . . . . . . . . . . . . . 14
+       4.13.7  "atom:issued" Element  . . . . . . . . . . . . . . . . 14
+       4.13.8  "atom:created" Element . . . . . . . . . . . . . . . . 14
+       4.13.9  "atom:summary" Element . . . . . . . . . . . . . . . . 14
+       4.13.10   "atom:content" Element . . . . . . . . . . . . . . . 14
+       4.13.11   "atom:copyright" Element . . . . . . . . . . . . . . 15
+
+
+
+Nottingham              Expires January 6, 2005                 [Page 2]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+   5.  Managing Feed State  . . . . . . . . . . . . . . . . . . . . . 15
+   6.  Embedding Atom in Other Formats  . . . . . . . . . . . . . . . 15
+   7.  Extending Atom . . . . . . . . . . . . . . . . . . . . . . . . 15
+   8.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 15
+   9.  Security Considerations  . . . . . . . . . . . . . . . . . . . 16
+   10.   Normative References . . . . . . . . . . . . . . . . . . . . 16
+       Author's Address . . . . . . . . . . . . . . . . . . . . . . . 17
+   A.  Contributors . . . . . . . . . . . . . . . . . . . . . . . . . 17
+   B.  Revision History . . . . . . . . . . . . . . . . . . . . . . . 17
+       Intellectual Property and Copyright Statements . . . . . . . . 19
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires January 6, 2005                 [Page 3]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+1.  Introduction
+
+   Atom is an XML-based file format intended to allow lists of related
+   information, known as "feeds", to be synchronised between publishers
+   and consumers.  Feeds are composed of a number of items, known as
+   "entries", each with an extensible set of attached metadata.  For
+   example, each entry has a title.
+
+   The primary use case that Atom addresses is the syndication of Web
+   content such as Weblogs and news headlines, to Web sites as well as
+   directly to consumers.  However, nothing precludes it from being used
+   for other purposes and kinds of content.
+
+   Details of comunication protocols between software agents using Atom
+   can be found in the Atom Protocol specification [Atom-protocol].
+
+   [[ more motivation / design principles ]]
+
+1.1  Editorial Notes
+
+   The Atom format is a work-in-progress, and this draft is both
+   incomplete and likely to change rapidly.  As a result, THE FORMAT
+   DESCRIBED BY THIS DRAFT SHOULD NOT BE DEPLOYED, either in production
+   systems or in any non-experimental fashion on the Internet.
+
+   Discussion of this draft happens in two fora;
+
+      The mailing list [1]
+      The Atom Wiki Web site [2]
+
+   Active development takes place on the mailing list, while the Wiki is
+   used for issue tracking and new proposals.
+
+   This document is an early draft and known to be incomplete.  Topics
+   marked [[like this]] indicate where additional text is likely to be
+   added.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires January 6, 2005                 [Page 4]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+1.2  Example
+
+   A minimal, single-entry Atom feed serialized as XML 1.0:
+
+   <?xml version="1.0" encoding="utf-8"?>
+   <feed version="draft-ietf-atompub-format-00.txt: do not deploy"
+    xmlns="http://purl.org/atom/ns#draft-ietf-atompub-format-00">
+     <title>Example</title>
+     <link rel="alternate" type="text/html"
+      href="http://example.org/"/>
+     <modified>2003-12-13T18:30:02Z</modified>
+     <author>
+       <name>John Doe</name>
+     </author>
+     <entry>
+       <title>Atom 0.3 snapshot</title>
+       <link rel="alternate" type="text/html"
+        href="http://example.org/2003/12/13/atom03"/>
+       <id>tag:example.org,2003:3.2397</id>
+       <issued>2003-12-13T08:29:29-04:00</issued>
+       <modified>2003-12-13T18:30:02Z</modified>
+     </entry>
+   </feed>
+
+
+1.3  Conformance
+
+   [[ talk about atom documents and atom consumers, and how requirements
+   are placed on them ]]
+
+1.4  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+   This specification uses XML Namespaces [W3C.REC-xml-names-19990114]
+   to uniquely identify XML elements and attribute names.  It uses the
+   following namespace prefixes for the indicated namespace URIs;
+
+   "atom":  http://purl.org/atom/ns#draft-ietf-atompub-format-00
+
+   Note that the choice of any namespace prefix is arbitrary and not
+   semantically significant.
+
+   Atom is specified using the XML Infoset
+   [W3C.REC-xml-infoset-20011024].  However, this specification uses a
+   shorthand for common terms; the phrase "Information Item" is not used
+
+
+
+Nottingham              Expires January 6, 2005                 [Page 5]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+   when naming XML constructs.
+
+   Therefore, when this specification uses the term "element," it is
+   refering to an Element Information Item in Infoset terms.  Likewise,
+   when it uses the term "attribute," it is refering to an Attribute
+   Information Item.
+
+2.  Atom Documents
+
+   An Atom document is an XML document whose document element is the
+   atom:feed element, as described below.
+
+   Atom documents are specified in terms of the XML Information Set,
+   serialised as XML 1.0 and identified with the "application/atom+xml"
+   media type.
+
+   Atom documents MAY have a Document Type Declaration.
+
+   [[Entities]]
+
+   Atom documents SHOULD NOT contain Processing Instructions, unless
+   they are a commonly used convention outside the scope of Atom (e.g.,
+   the PI for XSLT processing).
+
+   Atom documents MAY contain Comments.
+
+   All elements and attributes in an Atom document MUST be
+   namespace-qualified.  Note that this requirement does not preclude
+   the use of a default namespace.
+
+   Any element in an Atom document MAY have an xml:base attribute.  XML
+   Base [W3C.REC-xmlbase-20010627] processing MUST be applied to any
+   relative URI reference present in an Atom document.  This includes
+   such elements and attributes as specified by Atom itself, as well as
+   those specified by extensions to Atom.
+
+   Any element in an Atom document MAY have an xml:lang attribute, whose
+   content indicates the default natural language of the element's
+   content.  The content of this attribute MUST be a language tag
+   [RFC3066].  When determining element content's natural language, the
+   first xml:lang attribute encountered in that element's ancestors MUST
+   be used.
+
+   Atom is extensible.  See the section titled 'Extending Atom' later in
+   this document for a full description of how extensions can be made to
+   the format.
+
+
+
+
+
+Nottingham              Expires January 6, 2005                 [Page 6]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+3.  Common Atom Constructs
+
+   Many of Atom's elements share a common structure.  This section
+   defines a few such structures and their requirements, for convenient
+   reference by the appropriate element definitions.
+
+   When an element is identified as being a construct, it inherits the
+   corresponding requirements from that construct's definition in this
+   section.
+
+3.1  Content Constructs
+
+   A Content construct is an element with arbitrary child content, whose
+   properties are described by the following attributes:
+
+3.1.1  "type" Attribute
+
+   Content constructs MAY have a "type" attribute, whose value indicates
+   the media type of the content.  When present, this attribute's value
+   MUST be a registered media type [RFC2045].  If not present, its value
+   MUST be considered to be "text/plain".
+
+3.1.2  "mode" Attribute
+
+   Content constructs MAY have a "mode" attribute, whose value indicates
+   the method used to encode the content.  When present, this
+   attribute's value MUST be listed below.  If not present, its value
+   MUST be considered to be "xml".
+
+   "xml":  A mode attribute with the value "xml" indicates that the
+      element's content is inline xml (for example, namespace-qualified
+      XHTML).
+   "escaped":  A mode attribute with the value "escaped" indicates that
+      the element's content is an escaped string.  Processors MUST
+      unescape the element's content before considering it as content of
+      the indicated media type.
+   "base64":  A mode attribute with the value "base64" indicates that
+      the element's content is base64-encoded [RFC2045].  Processors
+      MUST decode the element's content before considering it as content
+      of the the indicated media type.
+
+3.2  Person Constructs
+
+   A Person construct is an element with the following children:
+
+3.2.1  "atom:name" Element
+
+   The "atom:name" element's content conveys a human-readable name for
+
+
+
+Nottingham              Expires January 6, 2005                 [Page 7]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+   the author.  It MAY be the name of a corporation or other entity no
+   individual authors can be named.  Person constructs MUST contain
+   exactly one "atom:name" element, whose content MUST be a string.
+
+3.2.2  "atom:url" Element
+
+   The "atom:url" element's content conveys a URI associated with the
+   author.  Person constructs MAY contain an atom:url element, but MUST
+   NOT contain more than one.  The content of atom:url in a Person
+   construct MUST be a URI [RFC2396].
+
+   xml:base [W3C.REC-xmlbase-20010627] processing MUST be applied to the
+   atom:url element's content.
+
+3.2.3  "atom:email" Element
+
+   The "atom:email" element's content conveys an e-mail address
+   associated with the Person construct.  Person constructs MAY contain
+   an atom:email element, but MUST NOT contain more than one.  Its
+   content MUST be an e-mail address [RFC2822].
+
+   Ordering of the element children of Person constructs MUST NOT be
+   considered significant.
+
+3.3  Date Constructs
+
+   A Date construct is an element whose child content is a W3C Date-Time
+   string [W3C.NOTE-datetime-19980827].
+
+3.4  Link Constructs
+
+   A Link construct is an element that MUST NOT have any child content,
+   and has the following attributes:
+
+3.4.1  "rel" Attribute
+
+   The "rel" attribute indicates the type of relationship that the link
+   represents.  Link constructs MUST have a rel attribute, whose value
+   MUST be a string, and MUST be one of the values enumerated in the
+   Atom Protocol specification [Atom-protocol].
+
+3.4.2  "type" Attribute
+
+   The "type" attribute indicates an advisory media type; it MAY be used
+   as a hint to determine the type of the representation which should be
+   returned when the URI in the href attribute is dereferenced.  Note
+   that the type attribute does not override the actual media type
+   returned with the representation.
+
+
+
+Nottingham              Expires January 6, 2005                 [Page 8]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+   Link constructs MUST have a type attribute, whose value MUST be a
+   registered media type [RFC2045].
+
+3.4.3  "href" Attribute
+
+   The "href" attribute contains the link's URI.  Link constructs MUST
+   have a href attribute, whose value MUST be a URI [RFC2396].
+
+   xml:base [W3C.REC-xmlbase-20010627] processing MUST be applied to the
+   href attribute's content.
+
+3.4.4  "hreflang" Attribute
+
+   The "hreflang" attribute's content describes the language of the
+   resource pointed to by the href attribute.  When used together with
+   the rel="alternate", it implies a translated version of the entry.
+   Link constructs MAY have an hreflang attribute, whose value MUST be a
+   language tag [RFC3066].
+
+3.4.5  "title" Attribute
+
+   The "title" attribute conveys human-readable information about the
+   link.  Link constructs MAY have a title attribute, whose value MUST
+   be a string.
+
+4.  The "atom:feed" Element
+
+   The "atom:feed" element is the document (i.e., top-level) element of
+   the format described by this specification.  Its children are a
+   (potentially partial) representation of the state of the feed.
+
+   The atom:feed element MAY contain any namespace-qualified
+   [W3C.REC-xml-names-19990114] elements as children.  Ordering of the
+   element children of atom:feed element MUST NOT be considered
+   significant.
+
+   The following attributes and child elements are defined by this
+   specification (note that it requires the presence of some of these
+   elements):
+
+4.1  "version" Attribute
+
+   atom:feed elements MUST have a "version" attribute whose content
+   indicates the version of the Atom specification that the construct
+   conforms to.  The content of this attribute is unstructured text.
+
+   The version identifier for this specification is
+   "draft-ietf-atompub-format-00: do not deploy".
+
+
+
+Nottingham              Expires January 6, 2005                 [Page 9]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+4.2  "xml:lang" Attribute
+
+   atom:feed elements SHOULD have an "xml:lang" attribute whose content
+   indicates the default natural language of the feed.  The content of
+   this attribute MUST be a language tag [RFC3066].
+
+4.3  "atom:title" Element
+
+   The "atom:title" element is a Content construct that conveys a
+   human-readable title for the feed.  atom:feed elements MUST contain
+   exactly one atom:title element.  If the feed describes a Web
+   resource, its content SHOULD be the same as that resource's title.
+
+4.4  "atom:link" Element
+
+   The "atom:link" element is a Link construct that conveys a URI
+   associated with the feed.  The nature of the relationship as well as
+   the link itself is determined by the element's content.
+
+   atom:feed elements MUST contain at least one atom:link element with a
+   rel attribute value of "alternate".
+
+   atom:feed elements MUST NOT contain more than one atom:link element
+   with a rel attribute value of "alternate" that has the same type
+   attribute value.
+
+   atom:feed elements MAY contain additional atom:link elements beyond
+   those described above.
+
+4.5  "atom:author" Element
+
+   The "atom:author" element is a Person construct that indicates the
+   default author of the feed.  atom:feed elements MUST contain exactly
+   one atom:author element, UNLESS all of the atom:feed element's child
+   atom:entry elements contain an atom:author element.  atom:feed
+   elements MUST NOT contain more than one atom:author element.
+
+   [[explain inheritence]]
+
+4.6  "atom:contributor" Element
+
+   The "atom:contributor" element is a Person construct that indicates a
+   person or other entity who contributes to the feed.  atom:feed
+   elements MAY contain one or more atom:contributor elements.
+
+4.7  "atom:tagline" Element
+
+   The "atom:tagline" element is a Content construct that conveys a
+
+
+
+Nottingham              Expires January 6, 2005                [Page 10]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+   human-readable description or tagline for the feed.  atom:feed
+   elements MAY contain an atom:tagline element, but MUST NOT contain
+   more than one.
+
+4.8  "atom:id" Element
+
+   The "atom:id" element's content conveys a permanent, globally unique
+   identifier for the feed.  It MUST NOT change over time, even if the
+   feed is relocated.  atom:feed elements MAY contain an atom:id
+   element, but MUST NOT contain more than one.  The content of this
+   element, when present, MUST be a URI.
+
+   xml:base [W3C.REC-xmlbase-20010627] processing MUST be applied to the
+   atom:id element's content.
+
+4.9  "atom:generator" Element
+
+   The "atom:generator" element's content indentifies the software agent
+   used to generate the feed, for debugging and other purposes.
+   atom:feed elements MAY contain an atom:generator element, but MUST
+   NOT contain more than one.
+
+   The content of this element, when present, MUST be a string that is a
+   human-readable name for the generating agent.
+
+   The atom:generator element MAY have a "url" attribute whose value
+   MUST be a URI.  When dereferenced, that URI SHOULD produce a
+   representation that is relevant to that agent.
+
+   The atom:generator element MAY have a "version" attribute that
+   indicates the version of the generating agent.  When present, its
+   value MUST be a string.
+
+4.10  "atom:copyright" Element
+
+   The "atom:copyright" element is Content construct that conveys a
+   human-readable copyright statement for the feed.  atom:feed elements
+   MAY contain an atom:copyright element, but MUST NOT contain more than
+   one.
+
+   The atom:copyright element SHOULD NOT be used to convey
+   machine-readable licensing information.
+
+   The atom:copyright may be assumed to apply to all entries contained
+   by the feed except those entries which contain atom:copyright
+   elements.  The atom:copyright element MUST, if present, be considered
+   to apply to the feed as a collection of entries.
+
+
+
+
+Nottingham              Expires January 6, 2005                [Page 11]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+4.11  "atom:info" Element
+
+   The "atom:info" element is a Content construct that conveys a
+   human-readable explanation of the feed format itself.  atom:feed
+   elements MAY contain an atom:info element, but MUST NOT contain more
+   than one.
+
+   The atom:info element SHOULD NOT considered meaningful by processors;
+   it is a convenience to publishers in certain situations.
+
+4.12  "atom:modified" Element
+
+   The "atom:modified" element is a Date construct that indicates the
+   time when the state of the feed was last modified, including any
+   changes to entries therein.  atom:feed elements MUST contain exactly
+   one atom:modified element.
+
+   The content of an atom:modified element SHOULD have a time zone whose
+   value MUST be "UTC".
+
+4.13  "atom:entry" Element
+
+   The "atom:entry" element represents an individual entry that is
+   contained by the feed.  atom:feed elements MAY contain one or more
+   atom:entry elements.
+
+   atom:entry elements MAY have an "xml:lang" attribute whose content
+   indicates the default natural language of the entry.  If the language
+   of the atom:entry is different from the language of the feed then the
+   atom:entry SHOULD have an "xml:lang" attribute.  The content of this
+   attribute element MUST be a language tag [RFC3066] or an empty string
+   (e.g., xml:lang=""), which indicates that there is no language
+   information available.
+
+   If used alone, atom:entry elements MUST have a "version" attribute
+   whose content indicates the version of the Atom specification that
+   the construct conforms to.
+
+   The atom:entry element MAY contain any namespace-qualified
+   [W3C.REC-xml-names-19990114] elements as children.  Ordering of the
+   element children of atom:entry element MUST NOT be considered
+   significant.
+
+   The following child elements are defined by this specification (note
+   that it requires the presence of some of these elements):
+
+
+
+
+
+
+Nottingham              Expires January 6, 2005                [Page 12]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+4.13.1  "atom:title" Element
+
+   The "atom:title" element is a Content construct that conveys a
+   human-readable title for the entry.  atom:entry elements MUST have
+   exactly one "atom:title" element.  If an entry describes a Web
+   resource, its content SHOULD be the same as that resource's title.
+
+4.13.2  "atom:link" Element
+
+   The "atom:link" element is a Link construct that conveys a URI
+   associated with the entry.  The nature of the relationship as well as
+   the link itself is determined by the element's content.
+
+   atom:entry elements MUST contain at least one atom:link element with
+   a rel attribute value of "alternate".
+
+   atom:entry elements MUST NOT contain more than one atom:link element
+   with a rel attribute value of "alternate" that has the same type
+   attribute value.
+
+   atom:entry elements MAY contain additional atom:link elements beyond
+   those described above.
+
+4.13.3  "atom:author" Element
+
+   The "atom:author" element is a Person construct that indicates the
+   default author of the entry.  atom:entry elements MUST contain
+   exactly one atom:author element, UNLESS the atom:feed element
+   containing them contains an atom:author element itself.  atom:entry
+   elements MUST NOT contain more than one atom:author element.
+
+   [[explain inheritence]]
+
+4.13.4  "atom:contributor" Element
+
+   The "atom:contributor" element is a Person construct that indicates a
+   person or other entity who contributes to the entry.  atom:entry
+   elements MAY contain one or more atom:contributor elements.
+
+4.13.5  "atom:id" Element
+
+   The "atom:id" element's content conveys a permanent, globally unique
+   identifier for the entry.  It MUST NOT change over time, even if
+   other representations of the entry (such as a web representation
+   pointed to by the entry's atom:link element) are relocated.  If the
+   same entry is syndicated in two atom:feeds published by the same
+   entity, the entry's atom:id MUST be the same in both feeds.
+
+
+
+
+Nottingham              Expires January 6, 2005                [Page 13]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+4.13.6  "atom:modified" Element
+
+   The "atom:modified" element is a Date construct that indicates the
+   time that the entry was last modified.  atom:entry elements MUST
+   contain an atom:modified element, but MUST NOT contain more than one.
+
+   The content of an atom:modified element MUST have a time zone whose
+   value SHOULD be "UTC".
+
+4.13.7  "atom:issued" Element
+
+   The "atom:issued" element is a Date construct that indicates the time
+   that the entry was issued.  atom:entry elements MUST contain an
+   atom:issued element, but MUST NOT contain more than one.
+
+   The content of an atom:issued element MAY omit a time zone.
+
+4.13.8  "atom:created" Element
+
+   The "atom:created" element is a Date construct that indicates the
+   time that the entry was created.  atom:entry elements MAY contain an
+   atom:created element, but MUST NOT contain more than one.
+
+   The content of an atom:created element MUST have a time zone whose
+   value SHOULD be "UTC".
+
+   If atom:created is not present, its content MUST considered to be the
+   same as that of atom:modified.
+
+4.13.9  "atom:summary" Element
+
+   The "atom:summary" element is a Content construct that conveys a
+   short summary, abstract or excerpt of the entry.  atom:entry elements
+   MAY contain an atom:created element, but MUST NOT contain more than
+   one.
+
+4.13.10  "atom:content" Element
+
+   The "atom:content" element is a Content construct that conveys the
+   content of the entry.  atom:entry elements MAY contain one or more
+   atom:content elements.
+
+   If @type="multipart/alternative", @mode MUST NOT be specified, and
+   content element MUST contain 1 or more content elements.  These
+   content elements MUST NOT specify @type="multipart/alternative" (i.e.
+   only one level of nesting is allowed).  Consumers SHOULD look at all
+   alternative content elements and determine which one is most
+   suitable, based on which @type and @mode the consumer supports, and
+
+
+
+Nottingham              Expires January 6, 2005                [Page 14]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+   preferences specified by the end user (if any).  Consumers SHOULD NOT
+   render more than one content alternative.
+
+4.13.11  "atom:copyright" Element
+
+   The "atom:copyright" element is a Content construct that conveys a
+   human-readable copyright statement for the entry.  atom:entry
+   elements MAY contain an atom:copyright element, but MUST NOT contain
+   more than one.
+
+   The atom:copyright element SHOULD NOT be used to convey
+   machine-readable licensing information.
+
+   If an atom:entry element does not contain an atom:copyright element,
+   then the atom:copyright element of the containing atom:feed, if
+   present, should be considered to apply to the atom:entry.
+
+5.  Managing Feed State
+
+   [[ talk about what it means to keep a view of a feed ]]
+
+6.  Embedding Atom in Other Formats
+
+   [[ ...  ]]
+
+7.  Extending Atom
+
+   [[ ...  ]]
+
+8.  IANA Considerations
+
+   The Atom format, when serialized as XML 1.0, can be identified with
+   the following media type:
+
+   MIME media type name: application
+   MIME subtype name: atom+xml
+   Mandatory parameters: None.
+   Optional parameters:
+      "charset": This parameter has identical semantics to the charset
+         parameter of the "application/xml" media type as specified in
+         RFC 3023 [RFC3023].  [RFC3023].
+   Encoding considerations: Identical to those of "application/xml" as
+      described in RFC 3023 [RFC3023], section 3.2.
+   Security considerations: As defined in this specification.  [[update
+      upon publication]]
+
+
+
+
+
+
+Nottingham              Expires January 6, 2005                [Page 15]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+      In addition, as this media type uses the "+xml" convention, it
+      shares the same security considerations as described in RFC 3023
+      [RFC3023], section 10.
+   Interoperability considerations: There are no known interoperability
+      issues.
+   Published specification: This specification.  [[update upon
+      publication]]
+   Applications which use this media type: No known applications
+      currently use this media type.
+
+   Additional information:
+
+   Magic number(s): As specified for "application/xml" in RFC 3023
+      [RFC3023], section 3.2.
+   File extension: .atom
+   Fragment identifiers: As specified for "application/xml" in RFC 3023
+      [RFC3023], section 5.
+   Base URI: As specified in RFC 3023 [RFC3023], section 6.
+   Macintosh File Type code: TEXT
+   Person and email address to contact for further information: Mark
+      Nottingham <mnot@pobox.com>
+   Intended usage: COMMON
+   Author/Change controller: This specification's author(s).  [[update
+      upon publication]]
+
+9.  Security Considerations
+
+   [[ this is required ]]
+
+10  Normative References
+
+   [Atom-protocol]
+              Gregorio, J. and R. Sayre, "The Atom Publishing Protocol",
+              work-in-progress, July 2004.
+
+   [RFC2045]  Freed, N. and N. Borenstein, "Multipurpose Internet Mail
+              Extensions (MIME) Part One: Format of Internet Message
+              Bodies", RFC 2045, November 1996.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2396]  Berners-Lee, T., Fielding, R. and L. Masinter, "Uniform
+              Resource Identifiers (URI): Generic Syntax", RFC 2396,
+              August 1998.
+
+   [RFC2822]  Resnick, P., "Internet Message Format", RFC 2822, April
+              2001.
+
+
+
+Nottingham              Expires January 6, 2005                [Page 16]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+   [RFC3023]  Murata, M., St. Laurent, S. and D. Kohn, "XML Media
+              Types", RFC 3023, January 2001.
+
+   [RFC3066]  Alvestrand, H., "Tags for the Identification of
+              Languages", BCP 47, RFC 3066, January 2001.
+
+   [W3C.NOTE-datetime-19980827]
+              Wolf, M. and C. Wicksteed, "Date and Time Formats", W3C
+              NOTE NOTE-datetime-19980827, August 1998.
+
+   [W3C.REC-xml-infoset-20011024]
+              Cowan, J. and R. Tobin, "XML Information Set", W3C REC
+              REC-xml-infoset-20011024, October 2001.
+
+   [W3C.REC-xml-names-19990114]
+              Bray, T., Hollander, D. and A. Layman, "Namespaces in
+              XML", W3C REC REC-xml-names-19990114, January 1999.
+
+   [W3C.REC-xmlbase-20010627]
+              Marsh, J., "XML Base", W3C REC REC-xmlbase-20010627, June
+              2001.
+
+   [1]  <http://www.imc.org/atom-syntax/index.html>
+
+   [2]  <http://www.intertwingly.net/wiki/pie/FrontPage>
+
+
+Author's Address
+
+   Mark Nottingham (editor)
+
+   EMail: mnot@pobox.com
+   URI:   http://www.mnot.net/
+
+Appendix A.  Contributors
+
+   The following people contributed to preliminary drafts of this
+   document: Tim Bray, Mark Pilgrim, and Sam Ruby.  The content and
+   concepts within are a product of the Atom community and the Atom
+   Publishing Format and Protocol Working Group.
+
+Appendix B.  Revision History
+
+   [[ this section should be removed before final publication.  ]]
+
+
+
+
+
+
+
+Nottingham              Expires January 6, 2005                [Page 17]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+   2004-07-06 (-00):  Initial IETF Internet-Draft submission.
+      Added optional version attribute to entry
+      (PaceEntryElementNeedsVersionAttribute).
+      Added hreflang attribute (PaceHrefLang).
+      Clarified inheritence of copyright element (PaceItemCopyright).
+      Added xml:lang to entries (PaceItemLang).
+      Tweaked Infoset-related language (PaceNoInfoSet).
+      Clarified lack of structure in version attribute
+      (PaceVersionAsText).
+      Changed approach to XML Base (PaceXmlBaseEverywhere).
+      Added XML Base processing to atom:id (PaceXmlBaseId).
+      Various editorial cleanup and adjustments for IETF publication.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires January 6, 2005                [Page 18]
+
+Internet-Draft                Atom Format                      July 2004
+
+
+Intellectual Property Statement
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at
+   ietf-ipr@ietf.org.
+
+
+Disclaimer of Validity
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET
+   ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE
+   INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Copyright Statement
+
+   Copyright (C) The Internet Society (2004).  This document is subject
+   to the rights, licenses and restrictions contained in BCP 78, and
+   except as set forth therein, the authors retain all their rights.
+
+
+Acknowledgment
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+Nottingham              Expires January 6, 2005                [Page 19]
+

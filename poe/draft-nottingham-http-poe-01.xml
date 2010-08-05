@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+    <!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>
+    <!ENTITY rfc2616 SYSTEM 'bibxml/reference.RFC.2616.xml'>
+    <!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>
+    <!ENTITY rfc3987 SYSTEM 'bibxml/reference.RFC.3987.xml'>
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+
+<rfc ipr="full3667" docName="draft-nottingham-http-poe-01">   <!-- DON'T FORGET ME! -->
+     <front>
+        <title abbrev="POE">POST Once Exactly (POE)</title>
+		<author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+			<organization></organization>
+			<address>
+				<email>mnot@pobox.com</email>
+				<uri>http://www.mnot.net/</uri>
+			</address>
+		</author>
+        <date year="2005"/>  <!-- DON'T FORGET ME! -->
+        <abstract>
+			<t>This specification describes a pattern of use that allows HTTP
+			clients to automatically retry POST requests in a manner that
+			assures no unintended side effects will take place, and defines
+			mechanisms to allow implementations to automatically determine
+			when such patterns are supported.</t>
+         </abstract>
+    </front>
+
+    <middle>
+        <section title="Introduction">
+
+            <t>A very common sight on the Web is an admonishment to only
+            "click submit once." This is because there are some cases where an
+            HTTP request's status on the server is not known to the client; in
+            some instances, a delay in a response might be due to a temporary
+            load on the server that doesn't interfere with the request's
+            processing, if given enough time. In other cases, it could be
+            caused by a server failing, or a network problem; in these cases,
+            the request may need to be retried. </t>
+
+            <t>As a result, users (as well as automated agents) are placed in
+            a quandary; without a response, they don't know whether their
+            request has been successfully processed or not.</t>
+
+            <t>This isn't a problem for those HTTP requests that use
+            idempotent methods (e.g., GET and PUT); by definition, if the same
+            request is repeated (either by an impatient user pressing "reload"
+            or an automated agent timing out), there will be no additional
+            side effects.</t>
+
+            <t>However, non-idempotent HTTP methods, namely POST, may have
+            additional side effects when the same request is sent more than
+            once. To give a common example, POST is used by Web shopping
+            baskets; when the user wishes to finalise their purchase, a POST
+            request is sent to the server which processes the credit card
+            transaction and fills the order. </t>
+
+            <t>If the POST is sent twice, there is the danger of a duplicate
+            order being made.</t>
+            
+            <t>RFC 2616, Section 8.1.4, states:</t>
+             
+            <t><list style="empty">
+                <t>Non-idempotent methods or sequences MUST NOT be
+                automatically retried, although user agents MAY offer a human
+                operator the choice of retrying the request(s). Confirmation
+                by user-agent software with semantic understanding of the
+                application MAY substitute for user confirmation. </t>
+            </list></t>
+            
+            <t>This specification provides applications with one means for
+            gaining such semantic understanding. Specifically, it describes a
+            pattern of use that allows clients to automatically retry POST
+            requests in a manner that assures no unintended side effects will
+            take place.</t>
+            
+            <t>It also defines HTTP header-fields to allow implementations to
+            automatically determine when such patterns are supported. These
+            are not an exclusive mechanism; other means for identifying POE
+            resources (e.g., format-specific markup on links in the entity body)
+            may be used.
+            </t>
+
+            <t>Note that the pattern described here can also be used in
+            situations where user intervention is required.</t>
+            
+            <section title="Notational Conventions">
+            
+                <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+                "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+                "OPTIONAL" in this document are to be interpreted as described
+                in BCP 14, <xref target="RFC2119"/>, as scoped to those
+                conformance targets.</t>
+
+                <t>This specification defines extensions to the <xref
+                target="RFC2616">HTTP/1.1</xref> specification. It uses the
+                augmented BNF of that document, and relies on both the
+                non-terminals defined in that document and other aspects of
+                the HTTP/1.1 specification.</t>
+            
+            </section>
+          
+            <section title="Relationships to Other Specifications">
+            
+                <t>There are a number of "reliable" application protocols
+                layered on top of HTTP. Generally, these operate by treating
+                HTTP as a transport protocol, rather than a transfer protocol;
+                i.e., they seek to make any message delivered by HTTP
+                reliable. </t>
+
+                <t>This specification is more focused; it only attempts to
+                provide reliable POST semantics, because most other HTTP
+                methods, being idempotent, do not require reliable delivery of
+                either the request or the response, in an
+                application-to-application sense.</t>
+
+                <t>This specification does not address methods other than
+                POST; however, similar techniques might be applied to other
+                non-idempotent methods. Likewise, it does not address
+                non-idempotent sequences of requests, or guaranteed ordered
+                delivery of requests.</t>
+        
+            </section>
+        </section>
+
+        <section title="POE Resources">
+        
+            <t>A POE resource is an HTTP <xref target="RFC2616"/> resource with
+            particular properties that clients can take advantage of to assure
+            that POST requests are made once exactly, without requiring user
+            intervention.</t>
+
+            <t>A POE resource will respond to a POST request successfully
+            exactly once; that is, a server MUST NOT respond to a POST with a
+            2xx-series status code if it has been successfully POSTed to at
+            some point in the past.</t>
+
+            <t>If a POE resource is subsequently POSTed to, it SHOULD respond
+            with a 405 Method Not Allowed status code. Such a response MUST NOT 
+            include POST in the content of the Allow header.</t>
+
+            <t>If the response to a POST to a POE resource contains an
+            entity body, that entity body SHOULD be available by GETting it
+            from the resource, to allow the client to retrieve the state of
+            the response in the case that a POST was successful, but the
+            client did not receive the response. </t>
+
+            <t>For example, if the POST response is cacheable, the same entity
+            body should be available through a subsequent GET; or, if the
+            response has a 303 See Other status code, subsequent GETs should
+            redirect to the indicated resource.</t>
+
+            <t>Note that a POE resource MAY require HTTP authentication,
+            employ some forms of HTTP redirection, etc.</t>
+            
+            <t>When a client sends a POST request to a POE resource, it MAY
+            automatically (i.e., without user intervention) retry the request
+            if the response is indeterminate (e.g., the connection is lost or
+            times out). However, clients MUST NOT retry requests
+            indefinitely.</t>
+            
+            <t>User-agents SHOULD inform users that they are retrying a
+            request automatically, and MUST inform users if they stop
+            retrying.</t>
+
+        </section>
+
+        <section title="The POE-Links HTTP Response Header">
+            
+            <t>The POE-Links HTTP header is an entity-header field whose
+            field-value is a comma-separated list of quoted <xref
+            target="RFC3986">URI-references</xref> (without fragment
+            identifiers) that the origin server asserts to be POE
+            resources.</t>
+            
+            <t><list style="empty">
+                <t>POE-Links = "POE-Links" ":" 1#( &lt;"&gt; POE-URI &lt;"&gt; )</t>
+                <t>POE-URI = absolute-URI | ( relative-part [ "?" query ] )</t>
+            </list></t>
+              
+            <t>The contents of the POE-Links response header SHOULD correspond
+            to links found in the content of the response body.</t>
+            
+            <t>[[ Some reviewers have suggested using the "Link" HTTP header
+            with a "rel" attribute instead of a special-purpose HTTP header,
+            thereby allowing link mechanisms in HTML to be used without
+            further specification.</t>
+            
+            <t> Whilst this is attractive, it would require the Link header to
+            be standardized (it never was) and would introduce the potential
+            need for implementations to scan body content, whereas this is not
+            necessary in the current design (which does not preclude in-body
+            identification of POE resources, but does not encourage it).
+            Feedback on this design decision is sought.]]</t>
+            
+        </section>
+        <section title="The POE HTTP Request Header">
+            
+            <t>The POE HTTP header is a request-header field whose
+            field-value indicates the version of POE that a client
+            supports.</t>
+            
+            <t><list style="empty">
+                <t>POE = "POE" ":" POE-version</t>
+                <t>POE-version = 1*DIGIT</t>
+            </list></t>
+            
+            <t>The POE-version that identifies this specification is "1".</t>
+            
+            <t>Clients SHOULD send the POE request header on all requests to
+            inform the decisions of the server. Servers MAY vary their content
+            based upon the presence of the POE header (e.g., changing the
+            operation of submit buttons, changing user instructions), and MAY
+            use the POE header to determine when to send a POE-Links response
+            header.</t>
+        
+        </section>
+
+<section title="Example: Hyperlinking to a POE Resource">
+
+<t>A typical use case for POE is assuring that an order to a Web shopping basket is only POSTed once, so that only one order is made. Here, the client retrieves the state of the shopping basket to allow the user to review it prior to checking out;</t>
+
+<figure><artwork>
+    C: GET /accounts/bob/shopping_basket HTTP/1.1
+       Host: www.example.com
+       POE: 1
+       ...
+</artwork></figure>
+
+<t>The server returns a summary of the shopping basket in HTML, along with a form that allows the user to check out.</t>
+
+<figure><artwork>
+    S: 200 OK HTTP/1.1
+       POE-Links: "/accounts/bob/orders/12345"
+       ...
+       &lt;form method="POST" action="/accounts/bob/orders/12345"&gt;
+         &lt;input type="submit" value="Submit Order 12345"/&gt;
+       &lt;/form&gt;
+       ...
+</artwork></figure>
+
+<t>When the user activates 'Submit Order 12345', it sends a POST request to what has been identified as a POE resource;</t>
+
+<figure><artwork>
+    C: POST /accounts/bob/orders/12345 HTTP/1.1
+       Host: www.example.com
+       POE: 1
+       ...
+</artwork></figure>
+
+<t>If the request is processed successfully, the server will respond with </t>
+
+<figure><artwork>
+    S: 200 OK HTTP/1.1
+       ...
+</artwork></figure>
+
+<t>If the client does not receive that response, it can retry the POST request automatically;</t>
+    
+<figure><artwork>
+    C: POST /accounts/bob/orders/12345
+       Host: www.example.com
+       POE: 1
+</artwork></figure>
+
+<t>If the server had received and accepted the first request, it will respond with</t>
+
+<figure><artwork>
+    S: 405 Method Not Allowed HTTP/1.1
+       Allow: GET
+       ...
+</artwork></figure>
+       
+<t>If the response status is "405 Method Not Allowed" the client can infer that the earlier POST succeeded. A 2xx response indicates that earlier POST did not succeed, but that this one has. When the client receives either of these responses, it knows that the request has been accepted, and it can stop retrying.</t>
+
+</section>
+
+<section title="Example: Manual Retry">
+
+    <t>As noted, it is not necessary to use POE-specific HTTP headers in
+    conjunction with this pattern. As such, it is possible to assure exactly
+    one POST without special accommodation on the User-Agent, because the user
+    can retry requests as needed.</t>
+
+    <t>Operation is the same as in the previous example, with the caveat that
+    POE-specific HTTP headers are optional. If the user is unsure whether the
+    POST has succeeded (e.g., the browser "hangs"), they can be instructed to
+    do one of two things;</t>
+
+    <t><list style="numbers"> 
+    
+    <t>submit a GET to the POE resource to determine its state</t>
+
+    <t>re-submit their POST to the resource</t>
+    
+    </list></t>
+
+    <t>Many implementations support one or both of these actions through "reloading" the page, or re-requesting the page manually (through an "address bar" UI widget or similar).</t>
+
+    <t>In either case, the server can return an unambiguous response as to the
+    success of the POST, along with a user-friendly message in the entity
+    body.</t>
+
+</section>
+
+
+    <section title="IANA Considerations">
+    
+      <t>[[ TBD: header registration templates ]]</t>
+    
+    </section>
+    
+    <section title="Security Considerations">
+    
+      <t>Clients that indiscriminately retry requests may be used to manufacture a denial-of-service attack on third party Web sites; i.e., if a particular implementation retries aggressively or indefinitely, an attack can be engineered whereby a number of clients send a large number of requests to a particular site. This risk can be mitigated by reasonable retry periods, backoff algorithms, a reasonable maximum count for retries before manual intervention, and selective treatment of links across administrative domains (e.g., those with different authorities).</t>
+    </section>
+  </middle>
+  <back>
+  
+      <references title="Normative References">
+        &rfc2119; &rfc2616; &rfc3986;
+      </references>
+      
+      <section title="Implementation Notes">
+        <t>Implementations of POE resources need to carefully consider how to
+        guarantee that only one POST request is allowed, whilst still assuring
+        that the desired side effects take place. In practice, this means that
+        the information needed to enact the side effects needs to be stored
+        durably and that the state of the resource needs to be updated, all in
+        an atomic fashion.</t>
+        
+        <t>Careful consideration needs to be given to the generation of URIs for
+        POE resources, since they should never be reused. Long-lived, unique 
+        identifiers can be generated by combining a date with one or more other
+        sources of context. For example,</t>
+        
+        <t><list style="empty">
+        <t>http://www.example.com/users/bob/orders/2005/03/15/no2</t>
+        </list></t>
+        
+        <t>encodes the date ("2005/03/15") along with a system-unique userid
+        ("bob") and an order number for that day (no2"), allowing the system
+        to generate unique identifiers without storing more information than
+        the userid and how many orders have been made in the current day.</t>
+        
+        <t>Note that this is an example only; the structure of POE URIs, like
+        other URIs, is opaque to consumers in the absence of authoritative
+        information.</t>
+      </section>
+            
+      <section title="Acknowledgements">
+        <t>The author would like to thank Yves Lafon, Roy Fielding and Rohit Khare for their feedback. None of the flaws in this specification are theirs.</t>
+      </section>
+      
+  </back>
+</rfc>

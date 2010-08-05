@@ -1,0 +1,336 @@
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                               Yahoo! Inc.
+Intended status: Informational                         February 19, 2007
+Expires: August 23, 2007
+
+
+            The stale-if-error HTTP Cache-Control Extension
+                draft-nottingham-http-stale-if-error-00
+
+Status of this Memo
+
+   By submitting this Internet-Draft, each author represents that any
+   applicable patent or other IPR claims of which he or she is aware
+   have been or will be disclosed, and any of which he or she becomes
+   aware will be disclosed, in accordance with Section 6 of BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on August 23, 2007.
+
+Copyright Notice
+
+   Copyright (C) The IETF Trust (2007).
+
+Abstract
+
+   The stale-if-error HTTP Cache-Control extension improves availability
+   of some kinds of cached content by allowing servers and clients to
+   instruct caches to use stale responses when certain error conditions
+   are encountered.
+
+
+
+
+
+
+
+Nottingham               Expires August 23, 2007                [Page 1]
+
+Internet-Draft               stale-if-error                February 2007
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . . . 3
+   2.  Notational Conventions  . . . . . . . . . . . . . . . . . . . . 3
+   3.  The stale-if-error Cache-Control Extension  . . . . . . . . . . 3
+   4.  Response stale-if-error Example . . . . . . . . . . . . . . . . 4
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . . . 5
+   6.  Normative References  . . . . . . . . . . . . . . . . . . . . . 5
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . . . 5
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . . . 5
+   Intellectual Property and Copyright Statements  . . . . . . . . . . 6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham               Expires August 23, 2007                [Page 2]
+
+Internet-Draft               stale-if-error                February 2007
+
+
+1.  Introduction
+
+   HTTP [RFC2616] requires that caches "respond to a request with the
+   most up-to-date response held... that is appropriate to the request,"
+   although "in carefully controlled circumstances" a stale response is
+   allowed to be returned.
+
+   Those circumstances are not well-defined.  Often, it is useful to
+   return a stale response when an error -- e.g., a 500 Internal Server
+   Error, a network segment, or DNS failure -- is encountered, but
+   caches are understandably reluctant to act without explicit
+   instructions about the appropriate behaviour.
+
+   The stale-if-error HTTP Cache-Control extension addresses this by
+   allowing origin servers as well as clients to instruct caches to use
+   a stale response under certain conditions, rather than returning a
+   "hard" error, thus improving availability.
+
+
+2.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in BCP 14 [RFC2119], as
+   scoped to those conformance targets.
+
+   This specification uses the augmented Backus-Naur Form of RFC2616
+   [RFC2616], and includes the delta-seconds rule from that
+   specification.
+
+
+3.  The stale-if-error Cache-Control Extension
+
+   The stale-if-error Cache-Control extension indicates that when an
+   error is encountered, a cached stale response MAY be used to satisfy
+   the request, regardless of other freshness information.
+
+     stale-if-error = "stale-if-error" "=" delta-seconds
+
+   When used as a request Cache-Control extension, its scope of
+   application is the request it appears in; when used as a response
+   Cache-Control extension, its scope is any request applicable to the
+   cached response it occurs in.
+
+   Its value indicates the upper limit to staleness; when the cached
+   response is more stale than the indicated amount, the cached response
+   MUST NOT be used to satisfy the request.
+
+
+
+
+Nottingham               Expires August 23, 2007                [Page 3]
+
+Internet-Draft               stale-if-error                February 2007
+
+
+   In this context, an error is any situation which would result in a
+   500, 501, 502, 503 or 504 HTTP response status code to be returned.
+   Future extensions may define additional error conditions.
+
+   Note that this directive only affects the freshness of a response in
+   an implementation that recognises it; stale cached responses that are
+   used SHOULD still be visibly stale when sent.
+
+
+4.  Response stale-if-error Example
+
+   A response containing:
+
+     HTTP/1.1 200 OK
+     Cache-Control: max-age=600, stale-if-error=1200
+     Content-Type: text/plain
+
+     success
+
+   indicates that it is fresh for 600 seconds, and that it may be used
+   if an error is encountered after becoming stale for an additional
+   1200 seconds.
+
+   Thus, if the cache attempts to validate 900 seconds afterwards and
+   encounters:
+
+     HTTP/1.1 500 Internal Server Error
+     Content-Type: text/plain
+
+     failure
+
+   the successful response can be returned instead:
+
+     HTTP/1.1 200 OK
+     Cache-Control: max-age=600, stale-if-error=1200
+     Age: 900
+     Content-Type: text/plain
+
+     succcess
+
+   After the age is greater than 1800 seconds (i.e., it has been stale
+   for 1200 seconds), the cache must write the error message through.
+
+     HTTP/1.1 500 Internal Server Error
+     Content-Type: text/plain
+
+     failure
+
+
+
+
+Nottingham               Expires August 23, 2007                [Page 4]
+
+Internet-Draft               stale-if-error                February 2007
+
+
+5.  Security Considerations
+
+   This mechanism does not have any security-specific concerns.
+
+
+6.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2616]  Fielding, R., Gettys, J., Mogul, J., Frystyk, H.,
+              Masinter, L., Leach, P., and T. Berners-Lee, "Hypertext
+              Transfer Protocol -- HTTP/1.1", RFC 2616, June 1999.
+
+
+Appendix A.  Acknowledgements
+
+   Thanks to John Nienart, Henrik Nordstrom, Evan Torrie, and Chris
+   Westin for their suggestions.  The author takes all responsibility
+   for errors and omissions.
+
+
+Author's Address
+
+   Mark Nottingham
+   Yahoo! Inc.
+
+   Email: mnot@yahoo-inc.com
+   URI:   http://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham               Expires August 23, 2007                [Page 5]
+
+Internet-Draft               stale-if-error                February 2007
+
+
+Full Copyright Statement
+
+   Copyright (C) The IETF Trust (2007).
+
+   This document is subject to the rights, licenses and restrictions
+   contained in BCP 78, and except as set forth therein, the authors
+   retain all their rights.
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY, THE IETF TRUST AND
+   THE INTERNET ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF
+   THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Intellectual Property
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at
+   ietf-ipr@ietf.org.
+
+
+Acknowledgment
+
+   Funding for the RFC Editor function is provided by the IETF
+   Administrative Support Activity (IASA).
+
+
+
+
+
+Nottingham               Expires August 23, 2007                [Page 6]
+

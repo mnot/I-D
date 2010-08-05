@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>
+<!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>
+<!ENTITY rfc2068 SYSTEM 'bibxml/reference.RFC.2068.xml'>
+<!ENTITY rfc2616 SYSTEM 'bibxml/reference.RFC.2616.xml'>
+<!ENTITY rfc3864 SYSTEM 'bibxml/reference.RFC.3864.xml'>
+<!ENTITY html SYSTEM 'bibxml/reference.W3C.REC-html401-19991224.xml'>  
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="1" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+<rfc ipr="full3978" docName="draft-nottingham-http-link-header-00">
+    <front>        
+      <title>HTTP Header Linking</title>		
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+	<organization></organization>
+	<address>		
+	  <email>mnot@pobox.com</email>	
+	  <uri>http://www.mnot.net/</uri>		
+	</address>	
+      </author>		      
+     <date year="2006"/>
+
+      <abstract>
+<t>This specification clarifies the status of the Link HTTP header and introduces
+the complimentary Profile and Link-Template HTTP headers.</t>
+      </abstract>    
+	  
+  </front>    
+
+  <middle>
+  
+<section title="Introduction">
+
+<t>A means of indicating the relationships between documents on the Web has been
+available for some time in HTML, and was considered as a HTTP 
+header in <xref target="RFC2068"/>, but removed from <xref target="RFC2616"/>, 
+due to a lack of implementation experience.</t>
+
+<t>There have since surfaced many cases where a means of including this
+information in HTTP headers has proved useful. However, because it was removed, 
+the status of the Link header is unclear, leading some to consider
+minting new application-specific HTTP headers instead of reusing it.</t>
+
+<t>Additionally, the complementary "profile" mechanism -- which is often 
+used to disambiguate link relationship types -- is not available as a 
+HTTP header.</t>
+
+<t>This specification seeks to address these shortcomings. It also introduces
+a new header, Link-Template, that allows the structure of links to be 
+described.</t>
+</section>
+
+<section title="Notational Conventions">
+
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document
+are to be interpreted as described in BCP 14, <xref target="RFC2119"/>, as
+scoped to those conformance targets.</t>
+
+<t>This specification uses the Augmented Backus-Naur Form (ABNF)
+   notation of <xref target="RFC2616"/>, and explicitly includes the following 
+   rules from it: quoted-string, token, SP (space), ALPHA (letters), 
+   DIGIT (decimal digit). Additionally, the following rules are included from
+   <xref target="RFC3986"/>: URI-Reference, reserved, unreserved.</t>
+   
+</section>
+
+<section title="The Link Header Field">
+
+<t>The Link entity-header field provides a means for describing a
+relationship between two resources, generally between the requested
+resource and some other resource. An entity MAY include multiple Link
+values. Links at the metainformation level typically indicate
+relationships like hierarchical structure and navigation paths. The
+Link field is semantically equivalent to the &lt;LINK&gt; element in
+HTML.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+    Link           = "Link" ":" #("<" URI-Reference ">" 
+                   *( ";" link-param ) )
+    
+    link-param     = ( ( "rel" "=" relationship )
+                   | ( "rev" "=" relationship )
+                   | ( "title" "=" quoted-string )
+                   | ( "anchor" "=" <"> URI-Reference <"> )
+                   | ( link-extension ) )
+    
+    link-extension = token [ "=" ( token | quoted-string ) ]
+    
+    relationship   = sgml-name
+                   | ( <"> sgml-name *( SP sgml-name) <"> )
+    
+    sgml-name      = ALPHA *( ALPHA | DIGIT | "." | "-" )
+]]></artwork>
+</figure>
+
+<t>Relationship values are case-insensitive and MAY be extended within
+the constraints of the sgml-name syntax. The title parameter MAY be
+used to label the destination of a link such that it can be used as
+identification within a human-readable menu. The anchor parameter MAY
+be used to indicate a source anchor other than the entire current
+resource, such as a fragment of this resource or a third resource.</t>
+
+<t>Examples of usage include:</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+    Link: <http://www.cern.ch/TheBook/chapter2>; rel="Previous"
+    Link: <mailto:timbl@w3.org>; rev="Made"; title="Tim Berners-Lee"
+]]></artwork>
+</figure>
+
+<t>The first example indicates that chapter2 is previous to this
+resource in a logical navigation path. The second indicates that the
+person responsible for making the resource available is identified by
+the given e-mail address.</t>
+
+</section>
+
+<section title="The Profile Header Field">
+
+<t>The Profile entity-header field provides a means to indicate the meta 
+data profile of the entity. Commonly, it is used to disambiguate the meaning
+of relationships in links.</t>
+
+<t>Note that this URI MAY be used as either an identifier (e.g., to uniquely
+identify links, without dereferencing the URI), or as a link that is intended
+to be dereferenced.</t>
+
+<t>The Profile field is semantically equivalent to the profile attribute of the 
+HEAD element in HTML <xref target="W3C.REC-html401-19991224"/>. Note, however,
+that its use is not limited to HTML entities.</t>
+    
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+    Profile       = "Profile" ":" #("<" URI-Reference ">")
+]]></artwork>
+</figure>
+
+<t>For example:</t>
+     
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+    Profile: <http://www.acme.com/profiles/core>
+    Profile: <http://example.com/p1>, </profiles/other-profile>
+]]></artwork>
+</figure>
+
+</section>
+
+
+<section title="The Link-Template Header Field">
+
+<t>The Link-Template entity-header field provides a means for describing 
+the structure of a link between two resources, so that new links can be 
+generated.</t>
+
+<t>It does so through by allowing brace ("{}") -delimited strings
+to be interposed throughout a URI reference. These correspond to variables
+which, after being replaced with content in a relation-specified manner, are
+semantically equivalent to the corresponding Link header.</t>
+
+<t>For example,</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+    Link-Template: <http://example.com/home/{userid}>; rel="home"
+]]></artwork>
+</figure>
+
+<t>This link indicates that the "home" link relation can be constructed if the
+userid variable is known; if it were known to be "bob", this header would be
+considered equivalent to</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+    Link: <http://example.com/home/bob>; rel="home"
+]]></artwork>
+</figure>
+
+<t>This specification does not define when or how template variables are
+interposed into link templates. Link relations that wish to allow templating
+SHOULD specify such details.</t>
+
+<t>This specification does not define the correct behaviour in the face of a
+conflict between a Link-Template header and a Link header with the same 
+relation. Link relations allowing templating SHOULD specify their relative
+precedence.</t>
+
+<t>Applications SHOULD NOT use link relations that do not explicitly allow
+such templating in the Link-Template header.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+    Link-Template  = "Link-Template" ":" #("<" template ">" 
+                   *( ";" link-param ) )
+
+    template       = *( uri-char | template-var )
+    
+    template-var   = "{" 1*( uri-char ) "}"
+
+    uri-char       = ( reserved | unreserved )   
+]]></artwork>
+</figure>
+
+</section>
+      
+<section title="IANA Considerations">
+
+<t>This specification requires registration of two Message Header Fields for HTTP
+<xref target="RFC3864"/>. Note that "Link" is already present in the registry; this registration only 
+updates its specification document.</t>
+
+<figure>
+<artwork xml:space="preserve">
+Header field: Link
+Applicable protocol: http
+Status: standard
+Author/change controller:
+    IETF  (iesg@ietf.org)
+    Internet Engineering Task Force
+Specification document(s):
+   [ this document ]
+</artwork>
+</figure>
+
+<figure>
+<artwork xml:space="preserve">
+Header field: Profile
+Applicable protocol: http
+Status: standard
+Author/change controller:
+    IETF  (iesg@ietf.org)
+    Internet Engineering Task Force
+Specification document(s):
+   [ this document ]
+</artwork>
+</figure>
+
+<figure>
+<artwork xml:space="preserve">
+Header field: Link-Template
+Applicable protocol: http
+Status: standard
+Author/change controller:
+    IETF  (iesg@ietf.org)
+    Internet Engineering Task Force
+Specification document(s):
+   [ this document ]
+</artwork>
+</figure>
+
+</section>
+
+<section title="Security Considerations">
+
+<t>The content of both the Link and Profile headers are not secure, private
+or integrity-guaranteed, and due caution should be excercised when using them.
+</t>
+
+<t>Applications that take advantage of these mechanisms should consider the 
+attack vectors opened by automatically following, trusting, or otherwise using
+links gathered from HTTP headers.</t>
+
+</section>
+
+
+	</middle> 
+
+	<back> 
+	  
+	  <references title="Normative References">
+	   &rfc2119;
+	   &rfc3986;
+	   &rfc2616;
+	   &rfc3864;
+       &html;
+	  </references>
+	  <references title="Informative References">
+	   &rfc2068;
+	  </references>
+	  
+<section title="Acknowledgements">
+
+<t>This specification lifts the definition of the Link header
+from RFC2068; credit for it belongs entirely to the authors of and contributors
+to that document.</t>
+
+<t>The semantics and much of the syntax of the Profile header was defined by
+HTML 4.01; credit for them belongs to the authors of and contributors to that
+document.</t>
+
+<t>Joe Gregorio, Marc Hadley and David Orchard contributed to the design of
+the Link-Template mechanism.</t>
+
+</section>
+	  
+     </back>
+</rfc>
+
+

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629/rfc2629.dtd" [
+<!ENTITY rfc2026 SYSTEM 'bibxml/reference.RFC.2026.xml'>      
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>      
+<!ENTITY rfc2616 SYSTEM 'bibxml/reference.RFC.2616.xml'>      
+<!ENTITY rfc3864 SYSTEM 'bibxml/reference.RFC.3864.xml'>      
+<!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>      
+<!ENTITY rfc4918 SYSTEM 'bibxml/reference.RFC.4918.xml'>      
+<!ENTITY bcp26 SYSTEM 'bibxml/reference.RFC.5226.xml'>      
+<!ENTITY rfc5234 SYSTEM 'bibxml/reference.RFC.5234.xml'>      
+<!ENTITY P3P SYSTEM 'bibxml/reference.W3C.REC-P3P-20020416.xml'>
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+
+<rfc ipr="trust200902" docName="draft-nottingham-site-meta-02" category="info">
+    <front>
+        <title>Defining Well-Known URIs</title>
+        <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+            <organization></organization>
+            <address>
+                <email>mnot@mnot.net</email>
+                <uri>http://www.mnot.net/</uri>
+            </address>
+        </author>
+        <author initials="E." surname="Hammer-Lahav" fullname="Eran Hammer-Lahav">
+            <organization></organization>
+            <address>
+                <email>eran@hueniverse.com</email>
+                <uri>http://hueniverse.com/</uri>
+            </address>
+        </author>
+        <date year="2009"/>
+        <abstract>
+            <t>This memo defines a path prefix for "well-known locations" in URIs.</t>
+        </abstract>
+    </front>
+
+    <middle>
+
+        <section title="Introduction">
+
+            <t>It is increasingly common for Web-based protocols to require the discovery of policy or metadata before making a request. For example, the Robots Exclusion Protocol specifies a way for automated processes to obtain permission to access resources; likewise, the Platform for Privacy Preferences <xref target="W3C.REC-P3P-20020416"/> tells user-agents how to discover privacy policy beforehand.</t>
+
+            <t>While there are several ways to access per-resource metadata (e.g., HTTP headers, WebDAV's PROPFIND <xref target="RFC4918"/>), the perceived overhead associated with them often precludes their use in these scenarios.</t>
+            
+            <t>When this happens, it is common to designate a "well-known location" for such metadata, so that it can be easily located. However, this approach has the drawback of risking collisions, both with other such designated "well-known locations" and with pre-existing resources.</t>
+            
+            <t>To address this, this memo defines a path prefix for these "well-known locations", "/.well-known/". Future specifications that need to define a resource for such site-wide metadata can register their use to avoid collisions and
+minimise impingement upon sites' URI space.</t>
+	
+			<t>Please discuss this draft on the <eref target="https://www.ietf.org/mailman/listinfo/apps-discuss">apps-discuss@ietf.org</eref> mailing list.</t>
+
+        </section>
+
+
+        <section title="Notational Conventions">
+            <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD
+                NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
+                described in RFC 2119 <xref target="RFC2119"/>.</t>
+        </section>
+
+		<section title="Well-Known URIs">
+			<t>A well-known URI is a URI <xref target="RFC3986"/> whose path component begins with the characters "/.well-known/".</t>
+
+			<t>Applications that wish to mint new well-known URIs MUST register them, following the procedures in <xref target="registry"/>.</t>
+			<t>For example, if an application registers the value 'example', the corresponding well-known URI on 'http://www.example.com/' would be 'http://www.example.com/.well-known/example'.</t>
+				
+			<t>Note that this specification defines neither how to determine the authority to use for a particular context, nor the scope of the metadata discovered by dereferencing the well-known URI; both should be defined by the application itself.</t>
+
+			<t>Typically, a registration will reference a specification that defines the format and associated media type
+			   to be obtained by dereferencing the well-known URI.</t>
+
+			<t>It MAY also contain additional information, such as the syntax of URI query strings or additional path 
+				components to be appended to the well-known URI, or protocol-specific details (e.g., HTTP <xref target="RFC2616"/> method handling).</t>
+		</section>
+
+        <section title="Security Considerations">
+			<t>This memo does not specify the scope of applicability of metadata or policy obtained from a well-known URI, and does not
+				specify how to discover a well-known URI for a particular application. Individual applications using this mechanism must define both aspects.</t>
+			
+			<t>An attacker with certain types of limited access to a server may be able to affect how well-known URIs are served; for example, they may be able to upload a file at that location, or they may be able to cause a server to redirect a well-known URI to a URI that they control.</t>
+			
+			<t>Because most URI schemes rely on DNS to resolve names, they are vulnerable to "DNS rebinding" attacks, whereby
+				a request can be directed to a server under the control of an attacker.</t>
+        </section>
+
+        <section title="IANA Considerations">
+
+			<section title="The Well-Known URI Registry" anchor="registry">
+				<t>This document establishes the well-known URI registry as the name space of URIs that 
+					have a path beginning with "/.well-known/".</t>
+					
+				<t>Well-known URIs are registered on the advice of a Designated Expert (appointed by the 
+					IESG or their delegate), with a Specification Required (using terminology from <xref target="RFC5226"/>).</t>
+					
+				<t>Registration requests consist of the completed registration template 
+					(see <xref target="template"/>), typically published in an RFC or Open Standard (in the sense described
+				    by <xref target="RFC2026"/>, section 7). However, to allow for the
+					   allocation of values prior to publication, the Designated Expert may approve 
+					registration once they are satisfied that an RFC (or other Open Standard) will be published.</t>
+				
+				<t>Upon receiving a registration request (usually via IANA), the Designated Expert should request 
+					review and comment from the apps-discuss mailing list (or a successor designated by the APPS Area
+					Directors). Before a period of 30 days has passed, the Designated Expert will either approve or 
+					deny the registration request, communicating this decision both to the review list and to IANA.  
+					Denials should include an explanation and, if applicable, suggestions as to how to make the 
+					request successful.</t>
+					
+				<section title="Registration Template" anchor="template">
+					<t><list style="hanging">
+					   <t hangText="URI suffix:">
+					      The name requested for the well-known URI, relative to "/.well-known/";
+					 	  e.g., "example".
+					  	  MUST conform to the segment-nz production in <xref target="RFC3986"/>.</t>
+
+					   <t hangText="Change controller:">
+					      For RFCs, state "IETF". For other open
+					      standards, give the name of the publishing body (e.g., ANSI, ISO,
+					      ITU, W3C, etc.). A postal address, home page URI, telephone and fax
+					      numbers may also be included.</t>
+
+					   <t hangText="Specification document(s):">
+					      Reference to document that specifies the field, preferably 
+						  including a URI that can be used to
+					      retrieve a copy of the document.  An indication of the relevant
+					      sections may also be included, but is not required.</t>
+
+					   <t hangText="Related information:">
+     					Optionally, citations to additional documents containing further
+					      relevant information.</t>
+					  </list></t>
+					</section>				   
+			
+			</section>
+			
+        </section>
+
+    </middle>
+
+    <back>
+        <references title="Normative References">&bcp26; &rfc2026; &rfc2119; &rfc3986;</references>
+
+		<references title="Informative References">&P3P; &rfc2616; &rfc4918;</references>
+
+        <section title="Acknowledgements">
+            <t>We would like to acknowledge the contributions of everyone who provided feedback and use cases for this draft; in particular, 
+				Phil Archer, 
+				Dirk Balfanz,
+				Adam Barth,
+				Tim Bray, 
+				Brian Eaton,
+				Brad Fitzpatrick,
+				Paul Hoffman, 
+				Barry Leiba, 
+				Ashok Malhotra, 
+				Breno de Medeiros,
+				John Panzer,
+				and Drummond Reed.
+			However, they are not responsible for errors and omissions.</t>
+        </section>
+
+        <section title="Frequently Asked Questions">
+
+			<section title="Aren't well-known locations bad for the Web?">
+				<t>They are, but for various reasons -- both technical and social -- they are commonly used, and their
+					use is increasing. This memo defines a "sandbox" for them, to reduce the risks of collision and to 
+					minimise the impact upon pre-existing URIs on sites.</t>
+			</section>
+            
+            <section title="Why /.well-known?">
+				<t>It's short, descriptive and according to search indices, not widely used.</t>
+            </section>
+            
+			<section title="Is this just for HTTP URIs?">
+				<t>No; although HTTP is the most typical use case, applications can define well-known URIs for 
+					any URI scheme that allows path segments.</t>
+			</section>
+
+			<section title="What impact does this have on existing mechanisms, such as P3P and robots.txt?">
+				<t>None, until they choose to use this mechanism.</t>
+			</section>
+			
+			<section title="Why aren't per-directory well-known locations defined?">
+				<t>Allowing every URI path segment to have a well-known location (e.g., "/images/.well-known/")
+					would increase the risks of colliding with a pre-existing URI on a site, and generally these
+					solutions are found not to scale well, because they're too "chatty".</t>
+			</section>
+
+        </section>
+		<section title="Document History">
+			<t>[[RFC Editor: please remove this section before publication.]]</t>
+			<t><list style="symbols">
+				<t>-02<list style="symbols">
+					<t>Rewrote to just define a namespace for well-known URIs.</t>
+					<t>Changed discussion forum to apps-discuss.</t>
+				</list></t>
+			</list></t>
+			<t><list style="symbols">
+				<t>-01<list style="symbols">
+					<t>Changed "site-meta" to "host-meta" after feedback.</t>
+					<t>Changed from XML to text-based header-like format.</t>
+					<t>Remove capability for generic inline content.</t>
+					<t>Added registry for host-meta fields.</t>
+					<t>Clarified scope of metadata application.</t>
+					<t>Added security consideration about HTTP vs. HTTPS, expanding scope.</t>
+				</list></t>
+			</list></t>
+		</section>
+    </back>
+</rfc>

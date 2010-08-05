@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+    <!ENTITY rfc1591 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.1591.xml'>
+    <!ENTITY rfc2119 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
+    <!ENTITY rfc2048 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2048.xml'>
+    <!ENTITY rfc2396 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2396.xml'>
+    <!ENTITY rfc3023 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3023.xml'>
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+<?rfc toc="no" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+
+<rfc category="std" ipr="full2026" docName="draft-nottingham-dns-media-tree-00">
+    <front>
+        <title abbrev="The 'dns' Media Type Tree">The 'dns' Media Type Registration Tree</title>
+        <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+            <organization/>
+            <address>
+			<email>mailto:mnot@pobox.com</email>
+		   </address>
+        </author>
+        <date month="January" year="2003"/>
+        <abstract>
+          <t>This document specifies the 'dns' media subtype registration tree,
+          which is intended to ease the deployment of new Internet applications
+          and their associated media types without the need for coordination with
+          a central registry.</t>
+	   </abstract>
+    </front>
+
+    <middle>
+        <section title="Requirements notation">
+            <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+            NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL"
+            in this document are to be interpreted as described in <xref
+            target="RFC2119"/>.</t>
+        </section>
+
+		<section title="Introduction">
+			<t>The <xref target="RFC2048">registration proceedures for Internet
+			media types</xref> allow for the specification of media type trees,
+			which allow for faceted names to be described in order to increase the
+			efficiency and flexibility of the registration process. They also
+			allows for the creation of new registration trees, with the advice and
+			consent of the IESG.</t> 
+			
+			<t>This specification describes one such tree.</t>
+		</section>
+
+		<section title="Motivation">
+			<t>The Internet media type system was designed to encourage certain
+			properties, and arguably has been quite successful because of its
+			approach. In particular, IANA acts as a central registry to bring
+			coordination and convenience, and various levels of community
+			review are required before a media type may be registered, to
+			assure some level of quality in and appropriate application of
+			media types.</t>
+
+			<t>However, the arrival of the Web, and in particular XML, has
+			changed the conditions under which formats are created and used.
+			XML allows the creation of business-specific document and protocol
+			formats by end users. Often, these parties are unfamiliar with IETF
+			and IANA process for registration of media types, and do not have a
+			requirement for recognition by a centralized registry. As such, the
+			cost of media type registration is not justified in the view of 
+			some parties that are minting new formats.</t>
+
+			<t>As a result, many formats are created without corresponding
+			media types (often under the umbrella of 'text/xml' or
+			'application/xml'). Such formats are not first-class citizens on
+			the Internet or the Web; one cannot content negotiate for them, for
+			example, and one cannot use existing software dispatch mechanisms
+			in MIME software to accommodate them.</t>
+
+			<t>It should be noted that these undesirable effects
+			disproportionately affect those who wish to use a format in ways
+			that may not have been forseen by its creators. As such, the
+			registration system indirectly discourages the wide use of those
+			mechanisms that leverage media types.</t>
+
+			<t>Current registration proceedures do allow for some flexibility
+			to accommodate vendor-specific formats (the .vnd tree), "vanity"
+			formats (the .prs tree) and ad hoc, experimental formats (the x.
+			tree and its predecessor, the 'x-' convention). Unfortunately,
+			these mechanisms do not address the problems described here; the x-
+			convention is too brittle for most uses (and indeed its use has
+			been discouraged for some time), and the .vnd and .prs trees are
+			still based on a centralized registry.</t> 
+				
+			<t>This specification proposes that the widely recognized DNS
+			infrastructure be leveraged to act as a distributed registry, to
+			avoid the possibility of collision, whilst removing the need for an
+			additional centralized registry. The approach is similar to URI
+			schemes that also leverage the DNS to provide locally-managed name
+			spaces.</t>
+		</section>
+		
+		<section title="The 'dns' Tree">
+			<t>The 'dns' media subtype tree is intended to be used to identify
+			proprietary, ad hoc, experimental, or limited deployment
+			formats.</t>
+
+			<t>It follows the conventions of faceted name trees as specified by
+			<xref target="RFC2048"/>, and is distinguished by the leading facet
+			'dns.'. This facet MUST be followed by one or more dot-delimited
+			facets that are derived from a domain name, in reverse order.
+			Finally, those facets MUST be followed by on or more facets that
+			indicate the format's identity within that name space.</t>
+
+			<t>Media types using this tree MUST be minted with the knowledge
+			and permission of the authority responsible for the corresponding
+			Internet domain name. The domain name used MUST be registered in
+			the Internet Registry, as delegated by IANA (see <xref
+			target="RFC1591"/>).</t>
+
+			<t>For example, if the entity responsible for example.com wished to
+			register a textual media type with the name 'foo' in this fashion,
+			its media type might be:</t>
+
+			<t>text/dns.com.example.foo</t>
+
+			<t>XML-based formats SHOULD be conformant with <xref
+			target="RFC3023"/>, e.g.:</t>
+
+			<t>application/dns.com.example.foo+xml</t>
+
+			<t>If example.com were a multinational concern, it may wish to
+			delegate authority for minting new types to regional departments.
+			It could do so by mandating an additional facet; an application
+			media type minted by the Australian division might be:</t>
+
+			<t>application/dns.com.example.au.bar</t>
+
+			<t>whilst a completely separate application format, also identified
+			as 'bar' and minted by the U.S. division might be distinguished
+			as:</t>
+
+			<t>application/dns.com.example.us.bar</t>
+
+			<section title="The 'doc' Attribute">
+				<t>Media types in the dns tree MAY use the 'doc' attribute,
+				which indicates a <xref target="RFC2396">URL</xref> that can be
+				used to locate documentation of the identified format.</t>
+
+				<t>For example:</t>
+
+				<t>application/dns.com.example.foo;
+				doc="http://www.example.com/formats/foo.html"</t>
+
+				<t>The 'doc' attribute is only informative, and MUST NOT be
+				interpreted to alter the nature of the format identified; i.e.,
+				a media type with a 'doc' attribute of "foo" MUST be
+				considered equivalent to the same media type with a 'doc'
+				attribute of "bar", or one without a 'doc' attribute. </t>
+			</section>
+			<section title="Format-Specific Attributes">
+				<t>Formats using this dns tree MAY designate their own
+				attributes, which SHOULD be documented at or referenced from
+				the URL specified in the 'doc' attribute, if present.</t>
+			</section>
+		</section>
+		<section title="IANA Considerations">
+			<t>Implementation of the dns tree does not require IANA coordination.
+			Any media type conformant with this specification is considered 
+			to be registered with IANA.</t>
+		</section>
+        <section title="Security Considerations">
+			<section title="Change of Ownership"></section>
+				<t>Over time, domain names may change ownership. Without proper
+				care, media types created by a domain name's previous owner 
+				might collide with those created by the new owner.</t>
+
+				<t>As a result, when domains which have been used in the
+				registration of media types in the dns tree change hands, the
+				previous owner SHOULD take care to communicate existing media
+				types to the new owner, and the new owner SHOULD take care to
+				avoid collisions. Previous owners MAY publish a transition plan
+				to a new domain, if doing so is judged to cause minimal
+				disruption.</t>
+			<section title="Unauthorized Registration">
+				<t>Media types using the dns tree have no enforced relationship
+				to the domain names that they are based upon; the use of domain
+				names is only a convention to assure proper name spacing.
+				Implementations SHOULD NOT make any assumptions about this
+				relationship, especially regarding security issues.</t>
+			</section>
+        </section>
+    </middle>
+
+    <back>
+        <references>&rfc1591; &rfc2119; &rfc2048; &rfc2396; &rfc3023;</references>
+    	<section title="Acknowledgements">
+    		<t>The following people gave input and feedback during the creation
+    		of this document; Mark Baker, Don Box, Yaron Goland, Ted Hardie, 
+    		John Kemp, Graham Klyne, and David Orchard. All errors are the 
+    		responsibility of the author.</t>
+    	</section>    
+    	</back>
+</rfc>

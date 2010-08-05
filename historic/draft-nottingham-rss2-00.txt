@@ -1,0 +1,785 @@
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                             April 9, 2003
+Expires: October 8, 2003
+
+
+                                RSS 2.0
+                        draft-nottingham-rss2-00
+
+Status of this Memo
+
+   This document is an Internet-Draft and is in full conformance with
+   all provisions of Section 10 of RFC2026 except that the right to
+   produce derivative works is not granted.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups. Note that other
+   groups may also distribute working documents as Internet-Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time. It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at http://
+   www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on October 8, 2003.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2003). All Rights Reserved.
+
+Abstract
+
+   This specification documents version 2.0 of RSS, an XML-based format
+   for syndicating Web content and metadata.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires October 8, 2003                 [Page 1]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+Table of Contents
+
+   1.       Introduction . . . . . . . . . . . . . . . . . . . . . .   3
+   1.1      Document terminology and conventions . . . . . . . . . .   3
+   2.       Document Structure . . . . . . . . . . . . . . . . . . .   3
+   3.       The rss Element  . . . . . . . . . . . . . . . . . . . .   3
+   4.       The channel Element  . . . . . . . . . . . . . . . . . .   3
+   4.1      Required Children  . . . . . . . . . . . . . . . . . . .   3
+   4.1.1    title Element  . . . . . . . . . . . . . . . . . . . . .   4
+   4.1.2    link Element . . . . . . . . . . . . . . . . . . . . . .   4
+   4.1.3    description Element  . . . . . . . . . . . . . . . . . .   4
+   4.2      Optional Children  . . . . . . . . . . . . . . . . . . .   4
+   4.2.1    language Element . . . . . . . . . . . . . . . . . . . .   4
+   4.2.2    copyright Element  . . . . . . . . . . . . . . . . . . .   4
+   4.2.3    managingEditor Element . . . . . . . . . . . . . . . . .   4
+   4.2.4    webMaster Element  . . . . . . . . . . . . . . . . . . .   4
+   4.2.5    pubDate Element  . . . . . . . . . . . . . . . . . . . .   4
+   4.2.6    lastBuildDate Element  . . . . . . . . . . . . . . . . .   5
+   4.2.7    category Element . . . . . . . . . . . . . . . . . . . .   5
+   4.2.8    generator Element  . . . . . . . . . . . . . . . . . . .   5
+   4.2.9    docs Element . . . . . . . . . . . . . . . . . . . . . .   5
+   4.2.10   cloud Element  . . . . . . . . . . . . . . . . . . . . .   5
+   4.2.11   ttl Element  . . . . . . . . . . . . . . . . . . . . . .   5
+   4.2.12   image Element  . . . . . . . . . . . . . . . . . . . . .   5
+   4.2.13   rating Element . . . . . . . . . . . . . . . . . . . . .   6
+   4.2.14   textInput Element  . . . . . . . . . . . . . . . . . . .   6
+   4.2.15   skipHours Element  . . . . . . . . . . . . . . . . . . .   7
+   4.2.16   skipDays Element . . . . . . . . . . . . . . . . . . . .   7
+   4.3      The item Element . . . . . . . . . . . . . . . . . . . .   7
+   4.3.1    Optional Children  . . . . . . . . . . . . . . . . . . .   7
+   4.3.1.1  title Element  . . . . . . . . . . . . . . . . . . . . .   7
+   4.3.1.2  link Element . . . . . . . . . . . . . . . . . . . . . .   7
+   4.3.1.3  description Element  . . . . . . . . . . . . . . . . . .   8
+   4.3.1.4  author Element . . . . . . . . . . . . . . . . . . . . .   8
+   4.3.1.5  category Element . . . . . . . . . . . . . . . . . . . .   8
+   4.3.1.6  comments Element . . . . . . . . . . . . . . . . . . . .   8
+   4.3.1.7  enclosure Element  . . . . . . . . . . . . . . . . . . .   8
+   4.3.1.8  guid Element . . . . . . . . . . . . . . . . . . . . . .   8
+   4.3.1.9  pubDate Element  . . . . . . . . . . . . . . . . . . . .   9
+   4.3.1.10 source Element . . . . . . . . . . . . . . . . . . . . .   9
+   5.       Date Formatting  . . . . . . . . . . . . . . . . . . . .   9
+   6.       Extending RSS  . . . . . . . . . . . . . . . . . . . . .   9
+   7.       IANA Considerations  . . . . . . . . . . . . . . . . . .  10
+   8.       Security Considerations  . . . . . . . . . . . . . . . .  10
+            References . . . . . . . . . . . . . . . . . . . . . . .  11
+            Author's Address . . . . . . . . . . . . . . . . . . . .  11
+   A.       UserLand Copyright Statement . . . . . . . . . . . . . .  11
+            Intellectual Property and Copyright Statements . . . . .  13
+
+
+
+Nottingham              Expires October 8, 2003                 [Page 2]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+1. Introduction
+
+   This specification documents version 2.0 of RSS (Really Simple
+   Syndication), an XML-based format for syndicating Web content and
+   metadata.
+
+   This specification provides stable documentation for the RSS 2.0
+   format [9] as described by Dave Winer of UserLand Software, to assist
+   in implementation. As such, RSS documents conformant with this
+   specification should be conformant with that specification, and vice
+   versa.
+
+   [[[NOTE: This Internet-Draft is being made available ONLY to allow
+   the community to ascertain whether the specification described herein
+   is true to the original RSS 2.0 specification. Comments should be
+   directed to the RSS2 Support mailing list
+   (RSS2-Support@yahoogroups.com).]]]
+
+1.1 Document terminology and conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [5].
+
+2. Document Structure
+
+   RSS documents MUST be conformant to the XML 1.0 specification [1].
+   There is explicitly no namespace URI [2] associated with the elements
+   described in this document.
+
+3. The rss Element
+
+   The root (top-level) element of an RSS document MUST be the rss
+   element. It has one mandatory attribute, version, which indicates the
+   version of RSS which the document conforms to. Documents conformant
+   to this specification MUST have a version attribute of "2.0".
+
+   The rss element MUST contain a channel element.
+
+4. The channel Element
+
+   The channel element contains metadata about the RSS channel, as well
+   as the items which comprise it.
+
+4.1 Required Children
+
+   The following elements MUST be present as children of the channel
+   element;
+
+
+
+Nottingham              Expires October 8, 2003                 [Page 3]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+4.1.1 title Element
+
+   The title element MUST contain a string, to be used as a name for the
+   channel. Its content SHOULD be the same as that of the human-readable
+   Web page it refers to.
+
+4.1.2 link Element
+
+   The link element MUST contain a URL [6] which indicates a
+   (human-readable) Web page associated with the channel.
+
+4.1.3 description Element
+
+   The description element MUST contain a string describing the channel.
+
+4.2 Optional Children
+
+   The following elements MAY be present as children of the channel
+   element;
+
+4.2.1 language Element
+
+   The langauage element, if present, MUST contain a language tag, as
+   defined in RFC3066 [8].
+
+4.2.2 copyright Element
+
+   The copyright element, if present, MUST contains a string, which
+   serves as copyright notice regarding the channel's content.
+
+4.2.3 managingEditor Element
+
+   The managingEditor element, if present, MUST contain an e-mail
+   address, indicating the person or entity responsible for the content
+   (in an editorial sense).
+
+4.2.4 webMaster Element
+
+   The webMaster element, if present, MUST contain an e-mail address,
+   indicating the person or entity responsible for the technical
+   administration of the channel.
+
+4.2.5 pubDate Element
+
+   The pubDate element, if present, MUST contain an RFC822-formatted [4]
+   date (subject to the caveats below). It represents the publication
+   date for the channel.
+
+
+
+
+Nottingham              Expires October 8, 2003                 [Page 4]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+   For example, the New York Times publishes on a daily basis, the
+   publication date flips once every 24 hours. That's when the pubDate
+   of the channel changes.
+
+4.2.6 lastBuildDate Element
+
+   The lastBuildDate element, if present, MUST contain an
+   RFC822-formatted [4] date (subject to the caveats below). It
+   represents the moment when the content of the channel last changed.
+
+4.2.7 category Element
+
+   The category element, when present, MUST contain a string that
+   identifies a categorization for the channel. It SHOULD use forward
+   slash delimitation to indicate hierarchy.
+
+   The category element MAY have a domain attribute, which MUST be a
+   string that identifies a categorization taxonomy.
+
+   The category element MAY be repeated to associate multiple
+   categorizations with a channel.
+
+4.2.8 generator Element
+
+   The generator element, if present, MUST contain a string, indicating
+   the program used to generate the document.
+
+4.2.9 docs Element
+
+   The docs element, if present, MUST contain a URL that resolves to
+   documentation for the format of the RSS file, for future reference.
+
+4.2.10 cloud Element
+
+   The cloud element, if present, allows processes to register to be
+   notified of updates to the channel, by using a lightweight
+   publish-subscribe protocol.
+
+   For more information, see the rssCloud [10] interface.
+
+4.2.11 ttl Element
+
+   The ttl element, when present, MUST contain an integer number of
+   minutes that indicates how long a channel's representation can be
+   cached.
+
+4.2.12 image Element
+
+
+
+
+Nottingham              Expires October 8, 2003                 [Page 5]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+   The image element, when present, allows an image such as an
+   illustration or photograph to be assocated with the channel. It MUST
+   have the following children: the url element, the title element, and
+   the link element.
+
+   The url element MUST contain a URL which can be used to locate the
+   image. It SHOULD be capable of returning an image with one of the
+   following media types; image/gif, image/jpeg, image/png.
+
+   The title element MUST be a string describing the image (this element
+   as the same semantic as the HTML alt attribute).
+
+   The link element MUST contain a URL which indicates the locatation of
+   the site associated with the image.
+
+   In practice, the title element and link element SHOULD be the same as
+   those associated with the channel itself.
+
+   Additionally, the image element MAY have the following children: the
+   width element and the height element.
+
+   Both the width element and the height element MUST contain integers
+   which indicate the width and height of the image in pixels,
+   respectively.
+
+   The value of the width element MUST NOT be greater than 144; if it is
+   not present, consumers MAY assume it to be 88.
+
+   The value of the height element MUST NOT be greater than 400; if it
+   is not present, consumers MAY assume it to be 31.
+
+4.2.13 rating Element
+
+   The rating element, when present, MUST contain the PICS [3] rating
+   for the channel.
+
+4.2.14 textInput Element
+
+   The textInput element describes a text input control that can be used
+   in conjunction with the channel. It MUST contain the following
+   children: the title element, the description element, the name
+   element and the link element. It is included in this specification
+   for backwards-compatibility.
+
+   The title element MUST contain a string that can be used as a label
+   for the text input submission widget.
+
+   The description element MUST contain a string that explains the text
+
+
+
+Nottingham              Expires October 8, 2003                 [Page 6]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+   input area.
+
+   The name element MUST contain a string that associates a name with
+   the input text.
+
+   The link element MUST contain a URL to which the text can be
+   submitted.
+
+4.2.15 skipHours Element
+
+   The skipHours element, if present, MUST contain one to 24 hour
+   elements.
+
+   The hour element MUST contain an integer between 0 and 23. Its value
+   indicates an hour in which consumers SHOULD NOT attempt to fetch
+   representations of the channel; a value of 0 indicates midnight GMT.
+
+4.2.16 skipDays Element
+
+   The skipDays element, if present, MUST contain one to seven day
+   elements.
+
+   The day element MUST contain one of the following strings; "Monday",
+   "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" or "Sunday".
+   Its value indicates a day on which consumers SHOULD NOT attempt to
+   fetch representation of the channel.
+
+4.3 The item Element
+
+   In addition to the required and optional children described above,
+   the channel element MAY have any number of item elements following
+   them.
+
+   item elements embody the payload of the RSS channel. Although all
+   item child elements described here are optional, each item MUST have
+   either a title element or description element as a child.
+
+4.3.1 Optional Children
+
+4.3.1.1 title Element
+
+   The title element, if present, MUST contain a string, to be used as a
+   name for the item.
+
+4.3.1.2 link Element
+
+   The link element, if present, MUST contain a URL which indicates a
+   (human-readable) Web page associated with the item.
+
+
+
+Nottingham              Expires October 8, 2003                 [Page 7]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+4.3.1.3 description Element
+
+   The description element, if present, MUST contain a string describing
+   the item.
+
+4.3.1.4 author Element
+
+   The author element, if present, MUST contain an e-mail addres,
+   indicating the author of the item.
+
+   For examples, publications syndicated via RSS might indicate the
+   person who wrote the article that the item describes. For
+   collaborative Weblogs, the author of the item might be different from
+   the managing editor or Webmaster. For a Weblog authored by a single
+   individual, it may be appropriate to omit the author element.
+
+4.3.1.5 category Element
+
+   The category element, if present, MUST contain a string that
+   identifies a categorization for the item. It SHOULD use forward slash
+   delimitation to indicate hierarchy.
+
+   The category element MAY have a domain attribute, which MUST be a
+   string that identifies a categorization taxonomy.
+
+   The category element MAY be repeated to associate multiple
+   categorizations with an item.
+
+4.3.1.6 comments Element
+
+   The comments element, if present, MUST be a URL, indicating a page
+   for comments relating to the item.
+
+4.3.1.7 enclosure Element
+
+   The enclosure element, if present, describes a media object that is
+   logically attached to the item. It MUST have a url attribute, a
+   length attribute, and a type attribute.
+
+   The url attribute indicates the location of the enclosure; it MUST be
+   a http-schemed URL.
+
+   The length attribute indicates the size of the enclosure in bytes.
+
+   The type attribute indicates the media type of the enclosure.
+
+4.3.1.8 guid Element
+
+
+
+
+Nottingham              Expires October 8, 2003                 [Page 8]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+   The guid element, if present, MUST contain a string that uniquely
+   identifies the item. Commonly, the guid element is used to determine
+   whether an item is new, and to disambiguate it from other items.
+
+   The guid element MAY have a isPermaLink attribute, whose value MUST
+   be either "true" or "false". The isPermaLink attribute indicates
+   whether the guid also serves as a long-lived URL for the item. If the
+   isPermaLink attribute is not present, the default value is "true".
+
+   If the value of the isPermaLink attribute is "true", the contents of
+   the guid element MUST contain a URL that points to a Web page
+   described by the item element.
+
+   If the value of the isPermaLink attribute is "false", consumers of
+   RSS documents MUST consider the guid string as opaque.
+
+4.3.1.9 pubDate Element
+
+   The pubDate element, if present, MUST be an RFC822-formatted [4] date
+   (subject to the caveats below) that indicates when the item was
+   published. If pubDate indicates a future date, consumers MAY choose
+   to ignore the item until that date has passed.
+
+4.3.1.10 source Element
+
+   The source element, if present, MUST contain a string that indicates
+   the RSS channel that the item came from. It SHOULD be derived from
+   the channel's title.
+
+   The source element MUST have a url attribute, which MUST be a URL
+   indicating an XML source of the channel.
+
+   This element is designed to enable the propogation of credit for
+   items, and SHOULD be generated automatically by tools where
+   appropriate.
+
+5. Date Formatting
+
+   RFC822-formatted dates in this specification MAY use two or four
+   digits to indicate a year; it is RECOMMENDED that four digits are
+   used.
+
+6. Extending RSS
+
+   Elements and attributes MAY be introduced in the RSS format to extend
+   its functionality. Such extensions MUST use XML Namespaces [2] to
+   distinguish themselves from RSS elements as well as other extensions.
+
+
+
+
+Nottingham              Expires October 8, 2003                 [Page 9]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+7. IANA Considerations
+
+   To: ietf-types@iana.org
+
+   Subject: Registration of MIME media type application/rss+xml
+
+   MIME media type name: application
+
+   MIME subtype name: rss+xml
+
+   Required parameters: none
+
+   Optional parameters:
+
+      charset
+
+      Same as charset parameter of application/xml as specified in
+      RFC3023 [7].
+
+      revision
+
+      The optional revision parameter indicates the integer version of
+      RSS used; the value is specified by the target RSS version.
+
+      namespace
+
+      The optional namespace parameter indicates the XML  namespace [2]
+      URI of the RSS format, if available.
+
+   Encoding considerations:
+
+      Same as encoding considerations of application/xml as specified in
+      RFC3023 [7].
+
+
+8. Security Considerations
+
+   Like any Internet format, values in RSS documents should be examined
+   for invalid content, and careful care should be taken if it is to be
+   used as input to further processing (e.g., using a date value as the
+   basis of a calculation).
+
+   Furthermore, because HTML is a common payload of RSS files, careful
+   consideration should be given before excecuting content such as
+   ECMAScript or similar.
+
+   Additionally, the security considerations of RFC3023 [7] should be
+   taken into account when generating and processing RSS files.
+
+
+
+Nottingham              Expires October 8, 2003                [Page 10]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+References
+
+   [1]  Bray, T., Paoli, J., Sperberg-McQueen, C. and E. Maler,
+        "Extensible Markup Language (XML) 1.0 (Second Edition)", W3C REC
+        REC-xml-20001006, October 2000.
+
+   [2]  Bray, T., Hollander, D. and A. Layman, "Namespaces in XML", W3C
+        REC REC-xml-names-19990114, January 1999.
+
+   [3]  Krauskopf, T., Miller, J., Resnick, P. and W. Treese, "PICS 1.1
+        Label Distribution -- Label Syntax and Communication Protocols",
+        W3C REC REC-PICS-labels-961031, October 1996.
+
+   [4]  Crocker, D., "Standard for the format of ARPA Internet text
+        messages", STD 11, RFC 822, August 1982.
+
+   [5]  Bradner, S., "Key words for use in RFCs to Indicate Requirement
+        Levels", BCP 14, RFC 2119, March 1997.
+
+   [6]  Berners-Lee, T., Fielding, R. and L. Masinter, "Uniform Resource
+        Identifiers (URI): Generic Syntax", RFC 2396, August 1998.
+
+   [7]  Murata, M., St. Laurent, S. and D. Kohn, "XML Media Types", RFC
+        3023, January 2001.
+
+   [8]  Alvestrand, H., "Tags for the Identification of Languages", BCP
+        47, RFC 3066, January 2001.
+
+   [9]   <http://backend.userland.com/rss>
+
+   [10]  <http://www.thetwowayweb.com/soapmeetsrss>
+
+
+Author's Address
+
+   Mark Nottingham
+
+   EMail: mnot@pobox.com
+   URI:   http://www.mnot.net/
+
+Appendix A. UserLand Copyright Statement
+
+   This work is derived from the RSS 2.0.1 specification, which requires
+   the following statement:
+
+      è Copyright 1997-2002 UserLand Software. All Rights Reserved.
+
+      This document and translations of it may be copied and furnished
+
+
+
+Nottingham              Expires October 8, 2003                [Page 11]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+      to others, and derivative works that comment on or otherwise
+      explain it or assist in its implementation may be prepared,
+      copied, published and distributed, in whole or in part, without
+      restriction of any kind, provided that the above copyright notice
+      and these paragraphs are included on all such copies and
+      derivative works.
+
+      This document may not be modified in any way, such as by removing
+      the copyright notice or references to UserLand or other
+      organizations. Further, while these copyright restrictions apply
+      to the written RSS specification, no claim of ownership is made by
+      UserLand to the format it describes. Any party may, for commercial
+      or non-commercial purposes, implement this format without royalty
+      or license fee to UserLand. The limited permissions granted herein
+      are perpetual and will not be revoked by UserLand or its
+      successors or assigns.
+
+      This document and the information contained herein is provided on
+      an "AS IS" basis and USERLAND DISCLAIMS ALL WARRANTIES, EXPRESS OR
+      IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF
+      THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+      WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires October 8, 2003                [Page 12]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+Intellectual Property Statement
+
+   The IETF takes no position regarding the validity or scope of any
+   intellectual property or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; neither does it represent that it
+   has made any effort to identify any such rights. Information on the
+   IETF's procedures with respect to rights in standards-track and
+   standards-related documentation can be found in BCP-11. Copies of
+   claims of rights made available for publication and any assurances of
+   licenses to be made available, or the result of an attempt made to
+   obtain a general license or permission for the use of such
+   proprietary rights by implementors or users of this specification can
+   be obtained from the IETF Secretariat.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights which may cover technology that may be required to practice
+   this standard. Please address the information to the IETF Executive
+   Director.
+
+
+Full Copyright Statement
+
+   Copyright (C) The Internet Society (2003). All Rights Reserved.
+
+   This document and translations of it may be copied and furnished to
+   others, and derivative works that comment on or otherwise explain it
+   or assist in its implementation may be prepared, copied, published
+   and distributed, in whole or in part, without restriction of any
+   kind, provided that the above copyright notice and this paragraph are
+   included on all such copies and derivative works. However, this
+   document itself may not be modified in any way, such as by removing
+   the copyright notice or references to the Internet Society or other
+   Internet organizations, except as needed for the purpose of
+   developing Internet standards in which case the procedures for
+   copyrights defined in the Internet Standards process must be
+   followed, or as required to translate it into languages other than
+   English.
+
+   The limited permissions granted above are perpetual and will not be
+   revoked by the Internet Society or its successors or assignees.
+
+   This document and the information contained herein is provided on an
+   "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET ENGINEERING
+   TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
+
+
+
+Nottingham              Expires October 8, 2003                [Page 13]
+
+Internet-Draft                  RSS 2.0                       April 2003
+
+
+   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
+   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Acknowledgement
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires October 8, 2003                [Page 14]
+
+

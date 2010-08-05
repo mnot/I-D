@@ -1,0 +1,1103 @@
+--- 1/draft-nottingham-http-link-header-06.txt	2009-12-14 14:22:15.000000000 +1100
++++ 2/draft-nottingham-http-link-header-07.txt	2009-12-14 14:22:15.000000000 +1100
+@@ -1,110 +1,119 @@
+ 
+ Network Working Group                                      M. Nottingham
+-Internet-Draft                                             July 12, 2009
++Internet-Draft                                         December 14, 2009
+ Updates: 4287 (if approved)
+ Intended status: Standards Track
+-Expires: January 13, 2010
++Expires: June 17, 2010
+ 
+                               Web Linking
+-                  draft-nottingham-http-link-header-06
++                  draft-nottingham-http-link-header-07
++
++Abstract
++
++   This document specifies relation types for Web links, and defines a
++   registry for them.  It also defines the use of such links in HTTP
++   headers with the Link header-field.
+ 
+ Status of this Memo
+ 
+    This Internet-Draft is submitted to IETF in full conformance with the
+-   provisions of BCP 78 and BCP 79.  This document may contain material
+-   from IETF Documents or IETF Contributions published or made publicly
+-   available before November 10, 2008.  The person(s) controlling the
+-   copyright in some of this material may not have granted the IETF
+-   Trust the right to allow modifications of such material outside the
+-   IETF Standards Process.  Without obtaining an adequate license from
+-   the person(s) controlling the copyright in such materials, this
+-   document may not be modified outside the IETF Standards Process, and
+-   derivative works of it may not be created outside the IETF Standards
+-   Process, except to format it for publication as an RFC or to
+-   translate it into languages other than English.
++   provisions of BCP 78 and BCP 79.
+ 
+    Internet-Drafts are working documents of the Internet Engineering
+    Task Force (IETF), its areas, and its working groups.  Note that
+    other groups may also distribute working documents as Internet-
+    Drafts.
+ 
+    Internet-Drafts are draft documents valid for a maximum of six months
+    and may be updated, replaced, or obsoleted by other documents at any
+    time.  It is inappropriate to use Internet-Drafts as reference
+    material or to cite them other than as "work in progress."
+ 
+    The list of current Internet-Drafts can be accessed at
+    http://www.ietf.org/ietf/1id-abstracts.txt.
+ 
+    The list of Internet-Draft Shadow Directories can be accessed at
+    http://www.ietf.org/shadow.html.
+ 
+-   This Internet-Draft will expire on January 13, 2010.
++   This Internet-Draft will expire on June 17, 2010.
+ 
+ Copyright Notice
+ 
+    Copyright (c) 2009 IETF Trust and the persons identified as the
+    document authors.  All rights reserved.
+ 
+    This document is subject to BCP 78 and the IETF Trust's Legal
+-   Provisions Relating to IETF Documents in effect on the date of
+-   publication of this document (http://trustee.ietf.org/license-info).
+-   Please review these documents carefully, as they describe your rights
+-   and restrictions with respect to this document.
+-
+-Abstract
++   Provisions Relating to IETF Documents
++   (http://trustee.ietf.org/license-info) in effect on the date of
++   publication of this document.  Please review these documents
++   carefully, as they describe your rights and restrictions with respect
++   to this document.  Code Components extracted from this document must
++   include Simplified BSD License text as described in Section 4.e of
++   the Trust Legal Provisions and are provided without warranty as
++   described in the BSD License.
+ 
+-   This document specifies relation types for Web links, and defines a
+-   registry for them.  It also defines how to send such links in HTTP
+-   headers with the Link header-field.
++   This document may contain material from IETF Documents or IETF
++   Contributions published or made publicly available before November
++   10, 2008.  The person(s) controlling the copyright in some of this
++   material may not have granted the IETF Trust the right to allow
++   modifications of such material outside the IETF Standards Process.
++   Without obtaining an adequate license from the person(s) controlling
++   the copyright in such materials, this document may not be modified
++   outside the IETF Standards Process, and derivative works of it may
++   not be created outside the IETF Standards Process, except to format
++   it for publication as an RFC or to translate it into languages other
++   than English.
+ 
+ Table of Contents
+ 
+    1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  3
+    2.  Notational Conventions . . . . . . . . . . . . . . . . . . . .  3
+    3.  Links  . . . . . . . . . . . . . . . . . . . . . . . . . . . .  4
+    4.  Link Relation Types  . . . . . . . . . . . . . . . . . . . . .  4
+      4.1.  Registered Relation Types  . . . . . . . . . . . . . . . .  5
+-     4.2.  Extension Relation Types . . . . . . . . . . . . . . . . .  6
++     4.2.  Extension Relation Types . . . . . . . . . . . . . . . . .  5
+    5.  The Link Header Field  . . . . . . . . . . . . . . . . . . . .  6
+-     5.1.  Examples . . . . . . . . . . . . . . . . . . . . . . . . .  7
+-   6.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . .  8
+-     6.1.  Link Header Registration . . . . . . . . . . . . . . . . .  8
++     5.1.  Examples . . . . . . . . . . . . . . . . . . . . . . . . .  8
++   6.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . .  9
++     6.1.  Link HTTP Header Registration  . . . . . . . . . . . . . .  9
+      6.2.  Link Relation Type Registry  . . . . . . . . . . . . . . .  9
+-   7.  Security Considerations  . . . . . . . . . . . . . . . . . . . 13
+-   8.  Internationalisation Considerations  . . . . . . . . . . . . . 13
+-   9.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+-     9.1.  Normative References . . . . . . . . . . . . . . . . . . . 13
+-     9.2.  Informative References . . . . . . . . . . . . . . . . . . 14
+-   Appendix A.  Notes on Using the Link Header with HTML4 . . . . . . 15
+-   Appendix B.  Notes on Using the Link Header with Atom  . . . . . . 16
+-   Appendix C.  Defining New Link Serialisations  . . . . . . . . . . 17
+-   Appendix D.  Acknowledgements  . . . . . . . . . . . . . . . . . . 17
+-   Appendix E.  Document history  . . . . . . . . . . . . . . . . . . 18
+-   Author's Address . . . . . . . . . . . . . . . . . . . . . . . . . 20
++     6.3.  Link Relation Field Registry . . . . . . . . . . . . . . . 14
++   7.  Security Considerations  . . . . . . . . . . . . . . . . . . . 15
++   8.  Internationalisation Considerations  . . . . . . . . . . . . . 15
++   9.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 15
++     9.1.  Normative References . . . . . . . . . . . . . . . . . . . 15
++     9.2.  Informative References . . . . . . . . . . . . . . . . . . 16
++   Appendix A.  Link Relation Registry Format . . . . . . . . . . . . 17
++     A.1.  Relax NG Grammar . . . . . . . . . . . . . . . . . . . . . 18
++     A.2.  Example  . . . . . . . . . . . . . . . . . . . . . . . . . 18
++   Appendix B.  Notes on Using the Link Header with HTML4 . . . . . . 18
++   Appendix C.  Notes on Using the Link Header with Atom  . . . . . . 19
++   Appendix D.  Acknowledgements  . . . . . . . . . . . . . . . . . . 20
++   Appendix E.  Document history  . . . . . . . . . . . . . . . . . . 20
++   Author's Address . . . . . . . . . . . . . . . . . . . . . . . . . 23
+ 
+ 1.  Introduction
+ 
+    A means of indicating the relationships between resources on the Web,
+    as well as indicating the type of those relationships, has been
+    available for some time in HTML [W3C.REC-html401-19991224], and more
+    recently in Atom [RFC4287].  These mechanisms, although conceptually
+    similar, are separately specified.  However, links between resources
+    need not be format-specific; it can be useful to have typed links
+    that are independent of their serialisation, especially when a
+    resource has representations in multiple formats.
+ 
+    To this end, this document defines a framework for typed links that
+    isn't specific to a particular serialisation.  It does so by re-
+    defining the link relation registry established by Atom to have a
+-   broader scope, and adding to it the relations that are defined by
++   broader domain, and adding to it the relations that are defined by
+    HTML.
+ 
+    Furthermore, an HTTP header-field for conveying typed links was
+    defined in [RFC2068], but removed from [RFC2616], due to a lack of
+    implementation experience.  Since then, it has been implemented in
+    some User-Agents (e.g., for stylesheets), and several additional use
+    cases have surfaced.
+ 
+    Because it was removed, the status of the Link header is unclear,
+    leading some to consider minting new application-specific HTTP
+@@ -117,23 +126,25 @@
+ 
+ 2.  Notational Conventions
+ 
+    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+    document are to be interpreted as described in BCP 14, [RFC2119], as
+    scoped to those conformance targets.
+ 
+    This document uses the Augmented Backus-Naur Form (ABNF) notation of
+    [RFC2616], and explicitly includes the following rules from it:
+-   quoted-string, token, SP (space).  Additionally, the following rules
+-   are included from [RFC3986]: URI and URI-Reference, and from
+-   [RFC4288]: type-name and subtype-name.
++   quoted-string, token, SP (space), LOALPHA, DIGIT.
++
++   Additionally, the following rules are included from [RFC3986]: URI
++   and URI-Reference, and from [RFC4288]: type-name and subtype-name.
++   Finally, the Language-Tag rule is included from [RFC4646].
+ 
+ 3.  Links
+ 
+    In this specification, a link is a typed connection between two
+    resources that are identified by IRIs [RFC3987], and is comprised of:
+    o  A context IRI, and
+    o  a link relation type (Section 4), and
+    o  a target IRI, and
+    o  optionally, target attributes.
+ 
+@@ -146,266 +157,307 @@
+    dereferencing IRIs.  Likewise, the target IRI will be converted to a
+    URI (see [RFC3987], Section 3.1) in serialisations that do not
+    support IRIs (e.g., the Link header).
+ 
+    This specification does not place restrictions on the cardinality of
+    links; there can be multiple links from and to a particular IRI, and
+    multiple links of different types between two given IRIs.  Likewise,
+    the relative ordering of links in any particular serialisation, or
+    between serialisations (e.g., the Link header and in-content links)
+    is not specified or significant in this specification; applications
+-   that wish to consider ordering significant MAY do so.
++   that wish to consider ordering significant can do so.
+ 
+    Target attributes are a set of key/value pairs that describe the link
+    or its target; for example, a media type hint.  This specification
+    does not attempt to coordinate their names or use, but does provide
+    common target attributes for use in the Link HTTP header.
+ 
+    Finally, this specification does not define a general syntax for
+    expressing links, nor mandate a specific context for any given link;
+    it is expected that serialisations of links will specify both
+    aspects.  One such serialisation is communication of links through
+    HTTP headers, specified in Section 5.
+ 
+ 4.  Link Relation Types
+ 
+-   A link relation type identifies the semantics of a link.  For
+-   example, a link with the relation type "copyright" indicates that the
+-   resource identified by the target IRI is a statement of the copyright
+-   terms applying to the current context IRI.
++   In the simplest case, a link relation type identifies the semantics
++   of a link.  For example, a link with the relation type "copyright"
++   indicates that the resource identified by the target IRI is a
++   statement of the copyright terms applying to the current context IRI.
++
++   Link relation types can also be used to indicate that the target
++   resource has particular attributes, or exhibits particular
++   behaviours; for example, a "service" link implies that the identified
++   resource is part of a defined protocol (in this case, a service
++   description).
+ 
+    Relation types are not to be confused with media types [RFC4288];
+    they do not identify the format of the representation that results
+    when the link is dereferenced.  Rather, they only describe how the
+    current context is related to another resource.
+ 
+-   As such, relation types are not format-specific, and MUST NOT specify
+-   a particular format or media type that they are to be used with.
+-   Likewise, the context IRI for a given link is usually determined by
+-   the serialisation of the link (e.g., the Link header, a HTML
+-   document, etc.); a relation type SHOULD NOT specify the context IRI.
+-
+    Relation types SHOULD NOT infer any additional semantics based upon
+-   the presence or absence of another link relation, or its own
++   the presence or absence of another link relation type, or its own
+    cardinality of occurrence.  An exception to this is the combination
+    of the "alternate" and "stylesheet" registered relation types, which
+-   have special meaning in HTML4 for historical reasons.
+-
+-   Consuming implementations SHOULD ignore relation types that they do
+-   not understand or have no need to process.
++   has special meaning in HTML4 for historical reasons.
+ 
+    There are two kinds of relation types: registered and extension.
+ 
+ 4.1.  Registered Relation Types
+ 
+-   Commonly-used relation types with a clear meaning that are shared
+-   across applications can be registered as tokens for convenience and
+-   to promote reuse.  For example, "self" and "alternate" are registered
+-   relation types, because they are broadly useful.
+-
+-   This specification establishes an IANA registry of such relation
+-   types; see Section 6.2.
+-
+-   Registered relation types MUST conform to the token rule, and SHOULD
+-   conform to the sgml-name rule for compatibility with deployed
+-   implementations;
++   Well-defined relation types can be registered as tokens for
++   convenience and to promote reuse.  This specification establishes an
++   IANA registry of such relation types; see Section 6.2.
+ 
+-    sgml-name      = ALPHA *( ALPHA | DIGIT | "." | "-" )
++   Registered relation types MUST conform to the reg-relation-type rule,
++   and MUST be compared character-by-character in a case-insensitive
++   fashion.
+ 
+-   Names that differ only in case from existing entries (e.g., "Foo" and
+-   "foo") MUST NOT be registered.  Registered relation types MUST be
+-   compared character-by-character in a case-insensitive fashion.
++   Registered relation types MUST NOT constrain the media type of the
++   context IRI, and MUST NOT constrain the available representation
++   media types of the target IRI.  However, they MAY specify the
++   behaviours and properties of the target resource (e.g., allowable
++   methods, request and response media types which must be supported).
+ 
+-   Although registered relation types are specified as tokens,
+-   applications wishing to internally refer to one using a URI MAY do so
+-   by considering it relative to the base URI
+-   "http://www.iana.org/assignments/relation/".  However, the URI form
+-   of a registered relation type SHOULD NOT be serialised when an
+-   application specifies the use of a relation type, because a consuming
+-   implementation may not recognise it.
++   Additionally, specific applications of linking may have additional
++   per-relation type attributes which are advantageous to register.  For
++   example, some link relations might not be appropriate to use in
++   particular contexts, or might have common behaviour such as whether
++   their content should be archived with the page.  To accommodate this,
++   new per-entry fields MAY be added to the registry, by registering
++   them in the Link Relation Field Registry Section 6.3.
+ 
+ 4.2.  Extension Relation Types
+ 
+-   Applications that don't merit a registered relation type may use an
++   Applications that don't wish to register a relation type may use an
+    extension relation type, which is a URI [RFC3986] that uniquely
+-   identifies the relation type.  Although the URI MAY point to a
++   identifies the relation type.  Although the URI can point to a
+    resource that contains a definition of the semantics of the relation
+    type, clients SHOULD NOT automatically access that resource to avoid
+    overburdening its server.
+ 
+    When extension relation types are compared, they MUST be compared as
+-   URIs in a case-sensitive fashion, character-by-character.
++   URIs in a case-insensitive fashion, character-by-character.  Because
++   of this, all-lowercase URIs SHOULD be used for extension relations.
+ 
+    Note that while extension relation types are required to be URIs, a
+    serialisation of links MAY specify that they are expressed in another
+    form, as long as they can be converted to URIs.
+ 
+ 5.  The Link Header Field
+ 
+    The Link entity-header field provides a means for serialising one or
+    more links in HTTP headers.  It is semantically equivalent to the
+    <LINK> element in HTML, as well as the atom:link feed-level element
+    in Atom [RFC4287].
+ 
+      Link              = "Link" ":" #link-value
+      link-value        = "<" URI-Reference ">" *( ";" link-param )
+      link-param        = ( ( "rel" "=" relation-types )
+                        | ( "rev" "=" relation-types )
+                        | ( "type" "=" type-name "/" subtype-name )
+                        | ( "title" "=" quoted-string )
+                        | ( "title*" "=" enc2231-string )
++                       | ( "hreflang" "=" Language-Tag )
+                        | ( "anchor" "=" <"> URI-Reference <"> )
+                        | ( link-extension ) )
+      link-extension    = token [ "=" ( token | quoted-string ) ]
+-     enc2231-string    = <extended-value, see [RFC2231], Section 7>
++     enc2231-string    = <extended-initial-value [RFC2231] Section 7>
+      relation-types    = relation-type |
+-                       <"> relation-type *( SP relation-type ) <">
++                       <"> relation-type *( 1*SP relation-type ) <">
+      relation-type     = reg-relation-type | ext-relation-type
+-     reg-relation-type = token
++     reg-relation-type = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+      ext-relation-type = URI
+ 
+    Each link-value conveys one target IRI as a URI-Reference (after
+    conversion to one, if necessary; see [RFC3987], Section 3.1) inside
+-   angle brackets ("<>").  If the URI-Reference is relative, it MUST be
+-   resolved as per [RFC3986], Section 5.  Note that any base IRI from
+-   the body's content is not applied.
++   angle brackets ("<>").  If the URI-Reference is relative, parsers
++   MUST resolve it as per [RFC3986], Section 5.  Note that any base IRI
++   from the message's content is not applied.
+ 
+    By default, the context of a link conveyed in the Link header field
+    is the IRI of the requested resource.  When present, the anchor
+    parameter overrides this with another URI, such as a fragment of this
+    resource, or a third resource (i.e., when the anchor value is an
+-   absolute URI).  If the anchor parameter's value is a relative URI, it
+-   MUST be resolved as per [RFC3986], Section 5.  Note that any base URI
+-   from the body's content is not applied.
++   absolute URI).  If the anchor parameter's value is a relative URI,
++   parsers MUST resolve it as per [RFC3986], Section 5.  Note that any
++   base URI from the body's content is not applied.  Applications MAY
++   specify that links with anchor parameters are to be ignored, if such
++   links are inappropriate or introduce security issues.
+ 
+-   Normally, the relation type of a link is conveyed in the "rel"
+-   parameter's value.  The "rev" parameter has also been used for this
+-   purpose historically by some formats, and is included here for
+-   compatibility with those uses, but its use is not encouraged nor
+-   defined by this specification.
++   The relation type of a link is conveyed in the "rel" parameter's
++   value.  Note that the "rev" parameter has also been used by some
++   formats, and MAY be accommodated as a link-extension, but its use is
++   neither encouraged nor defined by this specification.
++
++   The "rel" parameter MUST NOT appear more than once in a given link-
++   value; occurrences after the first MUST be ignored by parsers.
+ 
+    Note that extension relation types are REQUIRED to be absolute URIs
+    in Link headers, and MUST be quoted if they contain a semicolon (";")
+    or comma (",").
+ 
+-   The "title", "title*", "type" and any link-extension link-params are
+-   considered to be the target parameters for the link.
++   The "hreflang", "title", "title*", "type" and any link-extension
++   link-params are considered to be target parameters for the link.
+ 
+-   The "title" parameter is used to label the destination of a link such
+-   that it can be used as a human-readable identifier (e.g. a menu
+-   entry).  Alternately, the "title*" parameter MAY be used encode this
+-   label in a different character set, and/or contain language
+-   information as per [RFC2231].  When using the enc2231-string syntax,
+-   producers MUST NOT use a charset value other than 'ISO-8859-1' or
+-   'UTF-8'.
++   The "hreflang" parameter, when present, is a hint indicating what the
++   language of the result of dereferencing the link should be.  Note
++   that this is only a hint; for example, it does not override the
++   Content-Language header of a HTTP response obtained by actually
++   following the link.  Multiple hreflang parameters on a single link-
++   value indicate that multiple languages are available from the
++   indicated resource.
++
++   The "title" parameter, when present, is used to label the destination
++   of a link such that it can be used as a human-readable identifier
++   (e.g. a menu entry).  The "title" parameter MUST NOT appear more than
++   once in a given link-value; occurrences after the first MUST be
++   ignored by parsers.
++
++   The "title*" parameter MAY be used encode this label in a different
++   character set, and/or contain language information as per [RFC2231].
++   When using the enc2231-string syntax, producers MUST NOT use a
++   charset value other than 'ISO-8859-1' or 'UTF-8'.  The "title*"
++   parameter MAY appear more than once in a given link-value, but each
++   occurrence MUST indicate a different language; occurrences after the
++   first for a given language MUST be ignored by parsers.
++
++   When presenting links to users, agents SHOULD use the most
++   appropriate "title*" value, according to user preferences.  If an
++   appropriate "title*" value cannot be found, the "title" parameter's
++   value, if available, can be used.
+ 
+    The "type" parameter, when present, is a hint indicating what the
+    media type of the result of dereferencing the link should be.  Note
+    that this is only a hint; for example, it does not override the
+-   Content-Type header of a HTTP response obtained by following the
+-   link.
++   Content-Type header of a HTTP response obtained by actually following
++   the link.  There MUST NOT be more than one type parameter in a link-
++   value.
+ 
+ 5.1.  Examples
+ 
+-   NOTE: Non-ASCII characters used in prose for examples are encoded
+-   using the format "Backslash-U with Delimiters", defined in Section
+-   5.1 of [RFC5137].
+-
+    For example:
+ 
+    Link: <http://example.com/TheBook/chapter2>; rel="previous";
+          title="previous chapter"
+ 
+    indicates that "chapter2" is previous to this resource in a logical
+    navigation path.
+ 
+    Similarly,
+ 
+    Link: </>; rel="http://example.net/foo"
+ 
+-   indicates that the root resource ("/") has the extension relation
+-   "http://example.net/foo".
++   indicates that the root resource ("/") is related to this resource
++   with the extension relation type "http://example.net/foo".
+ 
+    The example below shows an instance of the Link header encoding
+    multiple links, and also the use of RFC 2231 encoding to encode both
+    non-ASCII characters and language information.
+ 
+    Link: </TheBook/chapter2>;
+-         rel="previous"; title*=UTF-8'de'letztes%20Kapitel",
++         rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
+          </TheBook/chapter4>;
+-         rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel"
++         rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
+ 
+-   Here, the second link has a title encoded in UTF-8, uses the German
+-   language ("de"), and contains the Unicode code point U+00E4 ("LATIN
+-   SMALL LETTER A WITH DIAERESIS").
++   Here, both links have titles encoded in UTF-8, use the German
++   language ("de"), and the second link contains the Unicode code point
++   U+00E4 ("LATIN SMALL LETTER A WITH DIAERESIS").
+ 
+    Note that link-values may convey multiple links between the same
+    target and context IRIs; for example:
+ 
+-       Link: <http://example.org/>; rel=index;
++       Link: <http://example.org/>;
+              rel="start http://example.net/relation/other"
+ 
+    Here, the link to "http://example.org/" has the registered relation
+-   types "index" and "start", and the extension relation type
++   type "start" and the extension relation type
+    "http://example.net/relation/other".
+ 
+ 6.  IANA Considerations
+ 
+-6.1.  Link Header Registration
++6.1.  Link HTTP Header Registration
+ 
+    This specification updates the Message Header Registry entry for
+    "Link" in HTTP [RFC3864] to refer to this document.
+ 
+    Header field: Link
+    Applicable protocol: http
+    Status: standard
+    Author/change controller:
+        IETF  (iesg@ietf.org)
+        Internet Engineering Task Force
+    Specification document(s):
+       [ this document ]
+ 
+ 6.2.  Link Relation Type Registry
+ 
+    This specification establishes the Link Relation Type Registry, and
+    updates Atom [RFC4287] to refer to it in place of the "Registry of
+    Link Relations".
+ 
+-   The requirements for registered relation types are described in
+-   Section 4.1.
++   [[ Note to IESG: Entries in the Atom registry that are not listed
++   below at the time that IANA implements this change (i.e., those that
++   are registered before this document comes into effect) should be
++   referred to the Designated Expert. ]]
++
++6.2.1.  Registering new Link Relation Types
+ 
+    Relation types are registered on the advice of a Designated Expert
+    (appointed by the IESG or their delegate), with a Specification
+    Required (using terminology from [RFC5226]).
+ 
++   The requirements for registered relation types are described in
++   Section 4.1.
++
+    Registration requests consist of the completed registration template
+    below, typically published in an RFC or Open Standard (in the sense
+    described by [RFC2026], Section 7).  However, to allow for the
+    allocation of values prior to publication, the Designated Expert may
+-   approve registration once they are satisfied that an RFC (or other
+-   Open Standard) will be published.
++   approve registration once they are satisfied that a specification
++   will be published.
+ 
+    The registration template is:
+ 
+    o  Relation Name:
++
+    o  Description:
+    o  Reference:
+    o  Notes: [optional]
++   o  Fields: [optional]
+ 
+-   Upon receiving a registration request (usually via IANA), the
+-   Designated Expert should request review and comment from the
+-   apps-discuss@ietf.org mailing list (or a successor designated by the
+-   APPS Area Directors).  Before a period of 30 days has passed, the
+-   Designated Expert will either approve or deny the registration
+-   request, communicating this decision both to the review list and to
+-   IANA.  Denials should include an explanation and, if applicable,
+-   suggestions as to how to make the request successful.
++   Registration requests should be sent to the [TBD]@ietf.org mailing
++   list, marked clearly in the subject line (e.g,.  "NEW RELATION
++   REQUEST").
++
++   Within at most 14 days of the request, the Designated Expert(s) will
++   either approve or deny the registration request, communicating this
++   decision to the review list.  Denials should include an explanation
++   and, if applicable, suggestions as to how to make the request
++   successful.  Registration requests that are undetermined for a period
++   longer than 21 days can be brought to the IESG's attention (using the
++   iesg@iesg.org mailing list) for resolution.
++
++   When a registration request is successful, the Designated Expert(s)
++   will update the registry XML file (using the format described in
++   Appendix A and send it to the [TBD-2]@ietf.org mailing list (which
++   MUST be unarchived, and only accept posts from the Designated
++   Expert(s)), so that implementers interested in receiving a machine-
++   readable registry can do so.  Simultaneously, they will send a text
++   (not XML) version of the registry to IANA for publication.
++
++   IANA should only accept registry updates from the Designated
++   Expert(s), and should direct all requests for registration to the
++   review mailing list.
++
++6.2.2.  Initial Registry Contents
+ 
+    The Link Relation Type registry's initial contents are:
+ 
+    o  Relation Name: alternate
+    o  Description: Designates a substitute for the link's context.
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+    o  Relation Name: appendix
+    o  Description: Refers to an appendix.
+    o  Reference: [W3C.REC-html401-19991224]
+@@ -427,86 +480,96 @@
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+    o  Relation Name: current
+    o  Description: Refers to a resource containing the most recent
+       item(s) in a collection of resources.
+    o  Reference: [RFC5005]
+ 
+    o  Relation Name: describedby
+    o  Description: Refers to a resource providing information about the
+       link's context.
+-   o  Documentation: <http://www.w3.org/TR/powder-dr/>
++   o  Documentation: <http://www.w3.org/TR/powder-dr/#assoc-linking>
+ 
+    o  Relation Name: edit
+    o  Description: Refers to a resource that can be used to edit the
+       link's context.
+    o  Reference: [RFC5023]
+ 
+    o  Relation Name: edit-media
+    o  Description: Refers to a resource that can be used to edit media
+       associated with the link's context.
+    o  Reference: [RFC5023]
+ 
+    o  Relation Name: enclosure
+    o  Description: Identifies a related resource that is potentially
+       large and might require special handling.
+    o  Reference: [RFC4287]
+ 
+    o  Relation Name: first
+    o  Description: An IRI that refers to the furthest preceding resource
+       in a series of resources.
+    o  Reference: [this document]
++   o  Notes: this relation type pre-exists this specification, and did
++      not indicate a reference.  Originally requested by Mark Nottingham
++      in December 2004.
++
+    o  Relation Name: glossary
+    o  Description: Refers to a glossary of terms.
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+    o  Relation Name: help
+    o  Description: Refers to a resource offering help (more information,
+       links to other sources information, etc.)
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+    o  Relation Name: index
+    o  Description: Refers to an index.
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+    o  Relation Name: last
+    o  Description: An IRI that refers to the furthest following resource
+       in a series of resources.
+    o  Reference: [this document]
++   o  Notes: this relation type pre-exists this specification, and did
++      not indicate a reference.  Originally requested by Mark Nottingham
++      in December 2004.
+ 
+    o  Relation Name: license
+    o  Description: Refers to a license associated with the link's
+       context.
+    o  Reference: [RFC4946]
+ 
+    o  Relation Name: next
+    o  Description: Refers to the next resource in a ordered series of
+       resources.
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+    o  Relation Name: next-archive
+    o  Description: Refers to the immediately following archive resource.
+    o  Reference: [RFC5005]
+ 
+    o  Relation Name: payment
+    o  Description: indicates a resource where payment is accepted.
+    o  Reference: [this document]
++   o  Notes: this relation type pre-exists this specification, and did
++      not indicate a reference.  Requested by Joshua Kinberg and Robert
++      Sayre.
+ 
+    o  Relation Name: prev
+    o  Description: Refers to the previous resource in an ordered series
+       of resources.  Synonym for "previous".
+    o  Reference: [W3C.REC-html401-19991224]
+-
+    o  Relation Name: previous
+    o  Description: Refers to the previous resource in an ordered series
+       of resources.  Synonym for "prev".
+    o  Reference: [W3C.REC-html401-19991224]
++
+    o  Relation Name: prev-archive
+    o  Description: Refers to the immediately preceding archive resource.
+    o  Reference: [RFC5005]
+ 
+    o  Relation Name: related
+    o  Description: Identifies a related resource.
+    o  Reference: [RFC4287]
+ 
+    o  Relation Name: replies
+    o  Description: Identifies a resource that is a reply to the context
+@@ -518,22 +581,23 @@
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+    o  Relation Name: self
+    o  Description: Conveys an identifier for the link's context.
+    o  Reference: [RFC4287]
+ 
+    o  Relation Name: service
+    o  Description: Indicates a URI that can be used to retrieve a
+       service document.
+    o  Reference: [RFC5023]
+-   o  Notes: When used in an Atom document, this relation specifies Atom
+-      Publishing Protocol service documents by default.
++   o  Notes: When used in an Atom document, this relation type specifies
++      Atom Publishing Protocol service documents by default.  Requested
++      by James Snell.
+ 
+    o  Relation Name: start
+    o  Description: Refers to the first resource in a collection of
+       resources.
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+    o  Relation Name: stylesheet
+    o  Description: Refers to an external style sheet.
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+@@ -533,31 +597,81 @@
+       resources.
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+    o  Relation Name: stylesheet
+    o  Description: Refers to an external style sheet.
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+    o  Relation Name: subsection
+    o  Description: Refers to a resource serving as a subsection in a
+       collection of resources.
++
+    o  Reference: [W3C.REC-html401-19991224]
+ 
+    o  Relation Name: up
+    o  Description: Refers to a parent document in a hierarchy of
+       documents.
+    o  Reference: [this document]
++   o  Notes: this relation type pre-exists this specification, and did
++      not indicate a reference.  Requested by Noah Slater.
++
+    o  Relation Name: via
+    o  Description: Identifies a resource that is the source of the
+       information in the link's context.
+    o  Reference: [RFC4287]
+ 
++6.3.  Link Relation Field Registry
++
++   This specification also establishes the Link Relation Field Registry,
++   to allow entries in the Link Relation Type Registry to be extended
++   with application-specific data (hereafter, "fields").
++
++   Fields are registered on the advice of a Designated Expert (appointed
++   by the IESG or their delegate), with a Specification Required (using
++   terminology from [RFC5226]).
++
++   Registration requests consist of the completed registration template
++   below;
++
++   o  Field Name:
++   o  Description:
++   o  Default Value:
++   o  Notes: [optional]
++
++   The Description SHOULD identify the value space of the field.  The
++   Default Value MUST be appropriate to entries which the field does not
++   apply to.
++
++   Entries that pre-date the addition of a field will automatically be
++   considered to have the default value for that field; if there are
++   exceptions, the modification of such entries should be coordinated by
++   the Designated Expert(s), in consultation with the author of the
++   proposed field as well as the registrant of the existing entry (if
++   possible).
++
++   Registration requests should be sent to the [TBD]@ietf.org mailing
++   list, marked clearly in the subject line (e.g,.  "NEW EXTENSION
++   FIELD").
++
++   Within at most 14 days of the request, the Designated Expert will
++   either approve or deny the registration request, communicating this
++   decision to the review list.  Denials should include an explanation
++   and, if applicable, suggestions as to how to make the request
++   successful.  Registration requests that are undetermined for a period
++   longer than 21 days MAY be brought to the IESG's attention (using the
++   iesg@iesg.org mailing list) for resolution.
++
++   When a registration request is successful, the Designated Expert will
++   forward it to IANA for publication.  IANA should only accept registry
++   updates from the Designated Expert(s), and should direct all requests
++   for registration to the review mailing list.
++
+ 7.  Security Considerations
+ 
+    The content of the Link header-field is not secure, private or
+    integrity-guaranteed, and due caution should be exercised when using
+    it.
+ 
+    Applications that take advantage of typed links should consider the
+    attack vectors opened by automatically following, trusting, or
+    otherwise using links gathered from HTTP headers.  In particular,
+    Link headers that use the "anchor" parameter to associate a link's
+@@ -602,20 +716,23 @@
+    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+               Resource Identifier (URI): Generic Syntax", STD 66,
+               RFC 3986, January 2005.
+ 
+    [RFC3987]  Duerst, M. and M. Suignard, "Internationalized Resource
+               Identifiers (IRIs)", RFC 3987, January 2005.
+ 
+    [RFC4288]  Freed, N. and J. Klensin, "Media Type Specifications and
+               Registration Procedures", BCP 13, RFC 4288, December 2005.
+ 
++   [RFC4646]  Phillips, A. and M. Davis, "Tags for Identifying
++              Languages", BCP 47, RFC 4646, September 2006.
++
+    [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
+               IANA Considerations Section in RFCs", BCP 26, RFC 5226,
+               May 2008.
+ 
+ 9.2.  Informative References
+ 
+    [RFC2068]  Fielding, R., Gettys, J., Mogul, J., Nielsen, H., and T.
+               Berners-Lee, "Hypertext Transfer Protocol -- HTTP/1.1",
+               RFC 2068, January 1997.
+ 
+@@ -626,107 +743,136 @@
+               September 2006.
+ 
+    [RFC4946]  Snell, J., "Atom License Extension", RFC 4946, July 2007.
+ 
+    [RFC5005]  Nottingham, M., "Feed Paging and Archiving", RFC 5005,
+               September 2007.
+ 
+    [RFC5023]  Gregorio, J. and B. de hOra, "The Atom Publishing
+               Protocol", RFC 5023, October 2007.
+ 
+-   [RFC5137]  Klensin, J., "ASCII Escaping of Unicode Characters",
+-              BCP 137, RFC 5137, February 2008.
+-
+    [W3C.REC-html401-19991224]
+               Raggett, D., Hors, A., and I. Jacobs, "HTML 4.01
+               Specification", W3C REC REC-html401-19991224,
+               December 1999.
+ 
+    [W3C.REC-rdfa-syntax-20081014]
+               Pemberton, S., Birbeck, M., Adida, B., and S. McCarron,
+               "RDFa in XHTML: Syntax and Processing", World Wide Web
+               Consortium Recommendation REC-rdfa-syntax-20081014,
+               October 2008,
+               <http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014>.
+ 
+    [W3C.REC-xhtml-basic-20080729]
+               Baker, M., Wugofski, T., Ishikawa, M., Stark, P., Matsui,
+               S., and T. Yamakami, "XHTML[TM] Basic 1.1", World Wide Web
+               Consortium Recommendation REC-xhtml-basic-20080729,
+               July 2008,
+               <http://www.w3.org/TR/2008/REC-xhtml-basic-20080729>.
+ 
+-Appendix A.  Notes on Using the Link Header with HTML4
++Appendix A.  Link Relation Registry Format
++
++   To facilitate applications that wish to use registry data, this
++   specification defines an XML-based format for the registry entries.
++
++   Each registered relation type is represented by a RelationType
++   element, and if any of the Field values are other than the default
++   value identified in the Field Registry, they will be represented by
++   field elements.
++
++   Note that this format is NOT that which IANA publishes the registry
++   in, because doing so would subject IANA's servers to, potentially,
++   very high load (e.g., if Web browsers were to automatically update
++   their copies of the registry).  Instead, this format is published to
++   the [TBD-2]@ietf.org mailing list, so that interested implementors
++   can subscribe and distribute the machine-readable document using
++   their own infrastructure.
++
++A.1.  Relax NG Grammar
++
++   element RelationTypes {
++     element RelationType {
++       attribute name { text },
++       attribute reference { text },
++       element description { text },
++       element notes { text }?,
++       element field {
++         attribute name { text },
++         text
++       }*
++     }+
++   }
++
++A.2.  Example
++
++   <RelationTypes>
++     <RelationType name="example"
++                   reference="http://www.example.org/example_spec">
++       <description>This is an example relation type.</description>
++       <field name="foo">This is the value of the Foo field.</field>
++     </RelationType>
++     <!-- ... -->
++   </RelationTypes>
++
++Appendix B.  Notes on Using the Link Header with HTML4
+ 
+    HTML motivated the original syntax of the Link header, and many of
+    the design decisions in this document are driven by a desire to stay
+    compatible with these uses.
+ 
+    In HTML4, the link element can be mapped to links as specified here
+    by using the "href" attribute for the target URI, and "rel" to convey
+    the relation type, as in the Link header.  The context of the link is
+    the URI associated with the entire HTML document.
+ 
+    HTML4 also has a "rev" parameter for links that allows a link's
+-   relation to be reversed.  The Link header has a "rev" parameter to
+-   allow the expression of these links in HTTP headers, but its use is
+-   not encouraged, due to the confusion this mechanism causes as well as
+-   conflicting interpretations among HTML versions.
+-
+-   All of the link relations defined by HTML4 have been included in the
+-   link relation registry, so they can be used without modification.
+-   However, extension link relations work differently in HTML4 and the
+-   Link header; the former uses a document-wide "profile" URI to scope
+-   the relations, while the latter allows the use of full URIs on
+-   individual relations.
+-
+-   Therefore, when using the profile mechanism in HTML4, it is necessary
+-   to map the profiled link relations to URIs when expressed in Link
+-   headers.  For example, in HTML:
+-
+-   <html>
+-     <head profile="http://example.com/profile1/">
+-       <link rel="foo" href="/bar">
+-     </head>
+-     [...]
+-
+-   could be represented as a header like this;
++   relation to be reversed.  The Link header does not define a
++   corresponding "rev" parameter to allow the expression of these links
++   in HTTP headers, due to the confusion this mechanism causes as well
++   as conflicting interpretations (briefly, some hold that rev reverses
++   the direction of the link, while others that it reverses the
++   semantics of the relation itself).
+ 
+-   Link: </bar>; rel="http://example.com/profile1/foo"
++   All of the link relation types defined by HTML4 have been included in
++   the link relation type registry, so they can be used without
++   modification.  However, there are several potential ways to serialise
++   extension relation types into HTML4, including
+ 
+-   Profile authors should note this when creating profile URIs; it may
+-   be desirable to use URIs that end in a delimiter (e.g., "/" or "#"),
+-   to make extracting the specific relation in use easier.
++   o  As absolute URIs, or
++   o  using the document-wide "profile" attribute's URI as a prefix for
++      relation types, or
++   o  using the RDFa [W3C.REC-rdfa-syntax-20081014] convention of
++      mapping token prefixes to URIs (in a manner similar to XML name
++      spaces) (note that RDFa is only defined to work in XHTML
++      [W3C.REC-xhtml-basic-20080729], but is sometimes used in HTML4).
+ 
+-   Note that RDFa [W3C.REC-rdfa-syntax-20081014] defines a different way
+-   to map link relations to URIs in XHTML
+-   [W3C.REC-xhtml-basic-20080729].  Although this convention is not
+-   defined for HTML4, some authors may still use it there.
++   Individual applications of linking will therefore need to define how
++   their extension links should be serialised into HTML4.
+ 
+    Surveys of existing HTML content have shown that unregistered link
+    relation types that are not URIs are (perhaps inevitably) common.
+    Consuming HTML implementations should not consider such unregistered
+    short links to be errors, but rather relation types with a local
+    scope (i.e., their meaning is specific and perhaps private to that
+    document).
+ 
+    HTML4 also defines several attributes on links that are not
+    explicitly defined by the Link header.  These attributes can be
+    serialised as link-extensions to maintain fidelity.
+ 
+    Finally, the HTML4 specification gives a special meaning when the
+-   "alternate" and "stylesheet" relations coincide in the same link.
+-   Such links should be serialised in the Link header using a single
+-   list of relation-types (e.g., rel="alternate stylesheet") to preserve
+-   this relationship.
++   "alternate" and "stylesheet" relation types coincide in the same
++   link.  Such links should be serialised in the Link header using a
++   single list of relation-types (e.g., rel="alternate stylesheet") to
++   preserve this relationship.
+ 
+-Appendix B.  Notes on Using the Link Header with Atom
++Appendix C.  Notes on Using the Link Header with Atom
+ 
+    Atom conveys links in the atom:link element, with the "href"
+    attribute indicating the target IRI and the "rel" attribute
+    containing the relation type.  The context of the link is either a
+    feed IRI or an entry ID, depending on where it appears; generally,
+    feed-level links are obvious candidates for transmission as a Link
+    header.
+ 
+    When serialising an atom:link into a Link header, it is necessary to
+    convert target IRIs (if used) to URIs.
+@@ -734,62 +880,86 @@
+    Atom defines extension relation types in terms of IRIs.  This
+    specification re-defines them as URIs, to simplify and reduce errors
+    in their comparison.
+ 
+    Atom allows registered link relation types to be serialised as
+    absolute URIs.  Such relation types SHOULD be converted to the
+    appropriate registered form (e.g.,
+    "http://www.iana.org/assignments/relation/self" to "self") so that
+    they are not mistaken for extension relation types.
+ 
+-   Furthermore, Atom link relations are always compared in a case-
+-   sensitive fashion; therefore, registered link relations SHOULD be
+-   converted to their registered form (usually, lower case) when
++   Furthermore, Atom link relation types are always compared in a case-
++   sensitive fashion; therefore, registered link relation types SHOULD
++   be converted to their registered form (usually, lower case) when
+    serialised in an Atom document.
+ 
+    Note also that while the Link header allows multiple relations to be
+    serialised in a single link, atom:link does not.  In this case, a
+    single link-value may map to several atom:link elements.
+ 
+    As with HTML, atom:link defines some attributes that are not
+    explicitly mirrored in the Link header syntax, but they may also be
+    used as link-extensions to maintain fidelity.
+ 
+-Appendix C.  Defining New Link Serialisations
+-
+-   New serialisations of links (as defined by this specification) need
+-   to address several issues, including:
+-
+-   o  Specific syntax for each component of the link model described in
+-      Section 3.
+-   o  What target attributes, if any, are defined by the serialisation.
+-   o  How to determine the context of the link.
+-   o  How to differentiate registered link relations from extension link
+-      relations (if the latter are serialised as URIs, this is
+-      relatively straightforward).
+-
+ Appendix D.  Acknowledgements
+ 
+    This specification lifts the idea and definition for the Link header
+    from RFC2068; credit for it belongs entirely to the authors of and
+-   contributors to that document.  The link relation registrations
++   contributors to that document.  The link relation type registrations
+    themselves are sourced from several documents; see the applicable
+    references.
+ 
+    The author would like to thank the many people who commented upon,
+    encouraged and gave feedback to this specification, especially
+    including Frank Ellermann, Roy Fielding and Julian Reschke.
+ 
+ Appendix E.  Document history
+ 
+    [[ to be removed by the RFC editor before publication as an RFC. ]]
+ 
++   -07
++
++   o  Allowed multiple spaces between relation types.
++   o  Relaxed requirements for registered relations.
++   o  Removed Defining New Link Serialisations appendix.
++   o  Added Field registry.
++   o  Added registry XML format.
++   o  Changed registration procedure to use mailing list(s), giving the
++      Designated Experts more responsibility for the smooth running of
++      the registry.
++
++   o  Loosened prohibition against media-specific relation types to
++      SHOULD NOT.
++   o  Disallowed registration of media-specific relation types (can
++      still be used as extension types).
++   o  Clarified that parsers are responsible for resolving relative
++      URIs.
++   o  Fixed ABNF for extended-initial-value.
++   o  Fixed title* parameter quoting in example.
++   o  Added notes for registered relations that lack a reference.
++   o  Added hreflang parameter.
++   o  Clarified status of 'rev'.
++   o  Removed advice to use @profile in HTML4.
++   o  Clarified what multiple *title and hreflang attributes mean.
++   o  Disallowed multiple type, rel and title attributes.
++   o  Removed text about absolute URI form of registered relations.
++   o  Required registered relations to conform to sgml-name (now just
++      rel-relation-type).
++   o  Required registered relations to be lowercase.
++   o  Made comparison of extension relations case insensitive.
++   o  Clarified requirements on registered relation types regarding
++      media types, etc.
++   o  Allowed applications to ignore links with anchor parameters if
++      they're concerned.
++   o  Made 'rev' text a bit less confusing.
++   o  Extension relation URIs SHOULD be all-lowercase.
++
+    -06
+ 
+    o  Added "up" and "service" relation types.
+    o  Fixed "type" attribute syntax and added prose.
+    o  Added note about RDFa and XHTML to HTML4 notes.
+    o  Removed specific location for the registry, since IANA seems to
+       have its own ideas about that.
+ 
+    -05
+ 

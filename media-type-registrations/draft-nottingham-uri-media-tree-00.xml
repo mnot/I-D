@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+    <!ENTITY rfc1591 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.1591.xml'>
+    <!ENTITY rfc2119 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
+    <!ENTITY rfc2048 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2048.xml'>
+    <!ENTITY rfc2396 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2396.xml'>
+    <!ENTITY rfc3023 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3023.xml'>
+]>
+
+<?rfc toc="no" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+
+<!--
+
+Other stuff to add ...
+
+- mention shortcomings of Don Eastlake's work?
+- examples and example representations from dereferenced URIs
+
+-->
+
+
+<rfc category="std" ipr="full2026" docName="draft-nottingham-uri-media-tree-00.xml">
+    <front>
+        <title abbrev="The 'uri' Media Type Tree">The 'uri' Media Type Registration Tree</title>
+        <author initials='M' surname="Nottingham" fullname='Mark Nottingham'>
+            <organization>BEA Systems</organization>
+        </author>
+        <author initials='M' surname="Baker" fullname='Mark Baker'>
+        	<organization/>
+        </author>
+        <date month="November" year="2003"/>
+        <abstract><t>This document specifies the 'uri' media subtype registration tree,
+    which is intended to ease the deployment of new Internet applications
+    with associated media types without being constrained by the 
+    necessity of a specialized central registry.  By using URIs, this tree also provides
+    the (optional) added benefit of permitting the decentralized lookup of information
+    associated with the media type.</t></abstract>
+    </front>
+
+    <middle>
+        <section title="Requirements notation">
+            <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+            "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
+            and "OPTIONAL" in this document are to be interpreted as
+            described in <xref target="RFC2119"/>.</t>
+        </section>
+
+        <section title="Introduction">
+        <t>The <xref target="RFC2048">registration procedures for Internet media types</xref> allow for the
+        specification of media type trees, which allow for faceted names to be described in order to increase 
+        the efficiency and flexibility of the registration process. They also allow for the creation of new 
+        registration trees, with the advice and consent of the IESG.</t>    
+        <t>This specification proposes one such tree for consideration.</t>
+        </section>
+        <section title="Motivations">
+            <section title="Decentralization">
+            <t><xref target="RFC2048"><!-- connoly-baker -->A Registry of Assignments using Ubiquitous Technologies and Careful Policies"</xref>
+               was also an important motivation for the 'uri' tree.  It describes
+               some of the shortcomings of registries which don't assign authoritative dereferenceable
+               URIs for their assignments.
+            </t>
+
+            <t>It is an objective of the 'uri' subtree to achieve as many of the benefits of
+               this approach as possible, while still fitting into the existing deployed media type
+               based application dispatch framework.
+            </t>
+            </section>
+
+            <section title="XML">
+            
+            <t>The Internet media type system was designed to encourage certain properties, and
+                arguably has been quite successful because of its approach. In particular, IANA acts as a central 
+                registry to bring coordination and convenience, and various levels of community review are 
+                required before a media type may be registered, to assure some level of quality in and appropriate 
+                application of media types.</t>
+
+            <t>However, the advent of the Web and in particular XML has changed the conditions in which
+                formats are created and used. XML allows the creation of business-specific document
+                and protocol formats by end users, rather than standards organisations. Often, these end
+                users are unfamiliar with IETF and IANA process for registration of media types, and do not
+                have a requirement for recognition by a centralized registry. As such, the cost of media type
+                registration for these users is not justified.</t>
+
+            <t>As a result, many formats are created without corresponding media types (often under the umbrella 
+                of 'text/xml' or 'application/xml'). Such formats are not first-class citizens on the Internet or
+                the Web; one cannot content negotiate for them, for example, and one cannot use existing software
+                dispatch mechanisms in MIME software to accommodate them.</t> 
+            
+            <t>It should be noted that these undesirable effects disproportionately affect those who wish to use 
+                the format in ways that may not have been forseen by its creators. As such, the registration 
+                system indirectly discourages the use of those mechanisms that leverage media types.</t>
+
+            <t>Current registration proceedures do allow for some flexibility to accommodate vendor-specific
+                formats (the .vnd tree), "vanity" formats (the .prs tree) and ad hoc, experimental formats 
+                (the x. tree and its predecessor, the 'x-' convention). Unfortunately, these mechanisms do not address
+                the problems described here; the .vnd and .prs trees are still based on a centralized registry, and
+                the x- convention is too brittle for most uses (and indeed its use has been discouraged for some time).
+            </t>
+
+<!--
+            <t>As a result of all of these factors, there is a need to register media types for ad hoc, experimental, limited 
+                deployment, or otherwise specialized formats that is not addressed by the 'x', 'prs' or 'vnd' trees. In the
+                case of the 'x' tree, this is caused by the lack of coordination, and, paradoxically, in the case of the 'prs'
+                and 'vnd' trees, problems arise because the burden of coordination is too great.</t>
+-->
+            <t>This specification proposes that the widely deployed DNS infrastructure be leveraged to act as a distributed
+                registry, to avoid the possibility of collision, whilst removing the need for an additional centralized 
+                registry. In this manner, it is similar to URIs, in that they also leverage the DNS to provide locally-managed
+                name spaces.</t>
+            </section>
+        </section>
+        <section title="The 'uri' Tree">
+            <t>The 'uri' tree follows the conventions of faceted name trees as specified by <xref target="RFC2048"/>, and is
+                distinguished by the leading facet 'uri.'. This facet MUST be followed by an absolute URI reference
+                per <xref target="RFC2396"/>, with the additional syntactic constraint that the URI cannot include
+                an unescaped semi-colon (";"), as this would be interpreted by MIME agents as a delimiter between
+                the media type and its attributes.
+            </t>
+            <t>Media types using this tree MUST be minted with the knowledge and permission of the authority identified
+                by the authority component of the URI, if any.
+            </t>
+            <section title="Format-Specific Attributes">
+                <t>Formats using this tree MAY designate their own attributes, which SHOULD
+                    be documented at or referenced from the URI facet of the type.</t>
+            </section>
+        </section>
+        <section title="IANA Considerations">
+            <t>Implementation of the uri tree does not require IANA coordination.</t>
+        </section>
+        <section title="Security Considerations">
+            <section title="Change of Ownership">
+                <t>Over time, the authority for the URI in a uri tree media type may change ownership. Without proper
+                    care, media types created by the previous owner might collide with those created by the new owner.
+                    As a result, when domains which have been used in the registration of media
+                    types in the uri tree change hands, the previous owner SHOULD take care to 
+                    communicate existing media types to the new owner, and the new owner SHOULD
+                    take care to avoid collisions. Previous owners MAY publish a transition plan
+                    to a new domain, if doing so is judged to cause minimal disruption.</t>
+            </section>
+<!--
+I disagree with this for the URI tree, so suggest we exclude it.  Being the person who
+determines what a GET returns is enough of a demonstration of ownership IMO.
+            <section title="Unauthorized Registration">
+
+                <t>Media types using the dns tree have no enforced relationship to the domain
+                    names that they are based upon; the use of domain names is only a convention
+                    to assure proper name spacing. Implementations SHOULD NOT make any assumptions
+                    about this relationship, especially regarding security issues.</t>
+            </section>
+-->
+        </section>
+    </middle>
+
+<!--
+Do you want to check with these folks?  Some might be surprised to learn that what they reviewed
+is now the uri tree - they may not even agree with the idea.
+-->
+    <back>
+        <references>&rfc1591; &rfc2119; &rfc2048; &rfc2396; &rfc3023;</references>
+        <section title="Acknowledgements">
+            <t>The following people gave input and feedback during the creation of this document; Graham Klyne, Don Box, 
+            David Orchard, John Kemp and Ted Hardie. All errors are the responsibility of the authors.</t>
+        </section>    </back>
+
+</rfc>

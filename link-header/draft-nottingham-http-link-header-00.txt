@@ -1,0 +1,504 @@
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                             June 16, 2006
+Expires: December 18, 2006
+
+
+                          HTTP Header Linking
+                  draft-nottingham-http-link-header-00
+
+Status of this Memo
+
+   By submitting this Internet-Draft, each author represents that any
+   applicable patent or other IPR claims of which he or she is aware
+   have been or will be disclosed, and any of which he or she becomes
+   aware will be disclosed, in accordance with Section 6 of BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on December 18, 2006.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2006).
+
+Abstract
+
+   This specification clarifies the status of the Link HTTP header and
+   introduces the complimentary Profile and Link-Template HTTP headers.
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 18, 2006               [Page 1]
+
+Internet-Draft             HTTP Header Linking                 June 2006
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . . . 3
+   2.  Notational Conventions  . . . . . . . . . . . . . . . . . . . . 3
+   3.  The Link Header Field . . . . . . . . . . . . . . . . . . . . . 3
+   4.  The Profile Header Field  . . . . . . . . . . . . . . . . . . . 4
+   5.  The Link-Template Header Field  . . . . . . . . . . . . . . . . 5
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . . . 6
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . . . 6
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . . . 7
+     8.2.  Informative References  . . . . . . . . . . . . . . . . . . 7
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . . . 7
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . . . 8
+   Intellectual Property and Copyright Statements  . . . . . . . . . . 9
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 18, 2006               [Page 2]
+
+Internet-Draft             HTTP Header Linking                 June 2006
+
+
+1.  Introduction
+
+   A means of indicating the relationships between documents on the Web
+   has been available for some time in HTML, and was considered as a
+   HTTP header in [RFC2068], but removed from [RFC2616], due to a lack
+   of implementation experience.
+
+   There have since surfaced many cases where a means of including this
+   information in HTTP headers has proved useful.  However, because it
+   was removed, the status of the Link header is unclear, leading some
+   to consider minting new application-specific HTTP headers instead of
+   reusing it.
+
+   Additionally, the complementary "profile" mechanism -- which is often
+   used to disambiguate link relationship types -- is not available as a
+   HTTP header.
+
+   This specification seeks to address these shortcomings.  It also
+   introduces a new header, Link-Template, that allows the structure of
+   links to be described.
+
+
+2.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in BCP 14, [RFC2119], as
+   scoped to those conformance targets.
+
+   This specification uses the Augmented Backus-Naur Form (ABNF)
+   notation of [RFC2616], and explicitly includes the following rules
+   from it: quoted-string, token, SP (space), ALPHA (letters), DIGIT
+   (decimal digit).  Additionally, the following rules are included from
+   [RFC3986]: URI-Reference, reserved, unreserved.
+
+
+3.  The Link Header Field
+
+   The Link entity-header field provides a means for describing a
+   relationship between two resources, generally between the requested
+   resource and some other resource.  An entity MAY include multiple
+   Link values.  Links at the metainformation level typically indicate
+   relationships like hierarchical structure and navigation paths.  The
+   Link field is semantically equivalent to the <LINK> element in HTML.
+
+
+
+
+
+
+
+Nottingham              Expires December 18, 2006               [Page 3]
+
+Internet-Draft             HTTP Header Linking                 June 2006
+
+
+       Link           = "Link" ":" #("<" URI-Reference ">"
+                      *( ";" link-param ) )
+
+       link-param     = ( ( "rel" "=" relationship )
+                      | ( "rev" "=" relationship )
+                      | ( "title" "=" quoted-string )
+                      | ( "anchor" "=" <"> URI-Reference <"> )
+                      | ( link-extension ) )
+
+       link-extension = token [ "=" ( token | quoted-string ) ]
+
+       relationship   = sgml-name
+                      | ( <"> sgml-name *( SP sgml-name) <"> )
+
+       sgml-name      = ALPHA *( ALPHA | DIGIT | "." | "-" )
+
+   Relationship values are case-insensitive and MAY be extended within
+   the constraints of the sgml-name syntax.  The title parameter MAY be
+   used to label the destination of a link such that it can be used as
+   identification within a human-readable menu.  The anchor parameter
+   MAY be used to indicate a source anchor other than the entire current
+   resource, such as a fragment of this resource or a third resource.
+
+   Examples of usage include:
+
+       Link: <http://www.cern.ch/TheBook/chapter2>; rel="Previous"
+       Link: <mailto:timbl@w3.org>; rev="Made"; title="Tim Berners-Lee"
+
+   The first example indicates that chapter2 is previous to this
+   resource in a logical navigation path.  The second indicates that the
+   person responsible for making the resource available is identified by
+   the given e-mail address.
+
+
+4.  The Profile Header Field
+
+   The Profile entity-header field provides a means to indicate the meta
+   data profile of the entity.  Commonly, it is used to disambiguate the
+   meaning of relationships in links.
+
+   Note that this URI MAY be used as either an identifier (e.g., to
+   uniquely identify links, without dereferencing the URI), or as a link
+   that is intended to be dereferenced.
+
+   The Profile field is semantically equivalent to the profile attribute
+   of the HEAD element in HTML [W3C.REC-html401-19991224].  Note,
+   however, that its use is not limited to HTML entities.
+
+
+
+
+Nottingham              Expires December 18, 2006               [Page 4]
+
+Internet-Draft             HTTP Header Linking                 June 2006
+
+
+       Profile       = "Profile" ":" #("<" URI-Reference ">")
+
+   For example:
+
+       Profile: <http://www.acme.com/profiles/core>
+       Profile: <http://example.com/p1>, </profiles/other-profile>
+
+
+5.  The Link-Template Header Field
+
+   The Link-Template entity-header field provides a means for describing
+   the structure of a link between two resources, so that new links can
+   be generated.
+
+   It does so through by allowing brace ("{}") -delimited strings to be
+   interposed throughout a URI reference.  These correspond to variables
+   which, after being replaced with content in a relation-specified
+   manner, are semantically equivalent to the corresponding Link header.
+
+   For example,
+
+       Link-Template: <http://example.com/home/{userid}>; rel="home"
+
+   This link indicates that the "home" link relation can be constructed
+   if the userid variable is known; if it were known to be "bob", this
+   header would be considered equivalent to
+
+       Link: <http://example.com/home/bob>; rel="home"
+
+   This specification does not define when or how template variables are
+   interposed into link templates.  Link relations that wish to allow
+   templating SHOULD specify such details.
+
+   This specification does not define the correct behaviour in the face
+   of a conflict between a Link-Template header and a Link header with
+   the same relation.  Link relations allowing templating SHOULD specify
+   their relative precedence.
+
+   Applications SHOULD NOT use link relations that do not explicitly
+   allow such templating in the Link-Template header.
+
+       Link-Template  = "Link-Template" ":" #("<" template ">"
+                      *( ";" link-param ) )
+
+       template       = *( uri-char | template-var )
+
+       template-var   = "{" 1*( uri-char ) "}"
+
+
+
+
+Nottingham              Expires December 18, 2006               [Page 5]
+
+Internet-Draft             HTTP Header Linking                 June 2006
+
+
+       uri-char       = ( reserved | unreserved )
+
+
+6.  IANA Considerations
+
+   This specification requires registration of two Message Header Fields
+   for HTTP [RFC3864].  Note that "Link" is already present in the
+   registry; this registration only updates its specification document.
+
+   Header field: Link
+   Applicable protocol: http
+   Status: standard
+   Author/change controller:
+       IETF  (iesg@ietf.org)
+       Internet Engineering Task Force
+   Specification document(s):
+      [ this document ]
+
+
+   Header field: Profile
+   Applicable protocol: http
+   Status: standard
+   Author/change controller:
+       IETF  (iesg@ietf.org)
+       Internet Engineering Task Force
+   Specification document(s):
+      [ this document ]
+
+
+   Header field: Link-Template
+   Applicable protocol: http
+   Status: standard
+   Author/change controller:
+       IETF  (iesg@ietf.org)
+       Internet Engineering Task Force
+   Specification document(s):
+      [ this document ]
+
+
+7.  Security Considerations
+
+   The content of both the Link and Profile headers are not secure,
+   private or integrity-guaranteed, and due caution should be excercised
+   when using them.
+
+   Applications that take advantage of these mechanisms should consider
+   the attack vectors opened by automatically following, trusting, or
+   otherwise using links gathered from HTTP headers.
+
+
+
+Nottingham              Expires December 18, 2006               [Page 6]
+
+Internet-Draft             HTTP Header Linking                 June 2006
+
+
+8.  References
+
+8.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2616]  Fielding, R., Gettys, J., Mogul, J., Frystyk, H.,
+              Masinter, L., Leach, P., and T. Berners-Lee, "Hypertext
+              Transfer Protocol -- HTTP/1.1", RFC 2616, June 1999.
+
+   [RFC3864]  Klyne, G., Nottingham, M., and J. Mogul, "Registration
+              Procedures for Message Header Fields", BCP 90, RFC 3864,
+              September 2004.
+
+   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+              Resource Identifier (URI): Generic Syntax", STD 66,
+              RFC 3986, January 2005.
+
+   [W3C.REC-html401-19991224]
+              Raggett, D., Hors, A., and I. Jacobs, "HTML 4.01
+              Specification", W3C REC REC-html401-19991224,
+              December 1999.
+
+8.2.  Informative References
+
+   [RFC2068]  Fielding, R., Gettys, J., Mogul, J., Nielsen, H., and T.
+              Berners-Lee, "Hypertext Transfer Protocol -- HTTP/1.1",
+              RFC 2068, January 1997.
+
+
+Appendix A.  Acknowledgements
+
+   This specification lifts the definition of the Link header from
+   RFC2068; credit for it belongs entirely to the authors of and
+   contributors to that document.
+
+   The semantics and much of the syntax of the Profile header was
+   defined by HTML 4.01; credit for them belongs to the authors of and
+   contributors to that document.
+
+   Joe Gregorio, Marc Hadley and David Orchard contributed to the design
+   of the Link-Template mechanism.
+
+
+
+
+
+
+
+
+Nottingham              Expires December 18, 2006               [Page 7]
+
+Internet-Draft             HTTP Header Linking                 June 2006
+
+
+Author's Address
+
+   Mark Nottingham
+
+   Email: mnot@pobox.com
+   URI:   http://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 18, 2006               [Page 8]
+
+Internet-Draft             HTTP Header Linking                 June 2006
+
+
+Intellectual Property Statement
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at
+   ietf-ipr@ietf.org.
+
+
+Disclaimer of Validity
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET
+   ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE
+   INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Copyright Statement
+
+   Copyright (C) The Internet Society (2006).  This document is subject
+   to the rights, licenses and restrictions contained in BCP 78, and
+   except as set forth therein, the authors retain all their rights.
+
+
+Acknowledgment
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+Nottingham              Expires December 18, 2006               [Page 9]
+

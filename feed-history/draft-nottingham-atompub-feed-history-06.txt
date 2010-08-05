@@ -1,0 +1,952 @@
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                             June 25, 2006
+Expires: December 27, 2006
+
+
+             Extensions for Multi-Document Syndicated Feeds
+                draft-nottingham-atompub-feed-history-06
+
+Status of this Memo
+
+   By submitting this Internet-Draft, each author represents that any
+   applicable patent or other IPR claims of which he or she is aware
+   have been or will be disclosed, and any of which he or she becomes
+   aware will be disclosed, in accordance with Section 6 of BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on December 27, 2006.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2006).
+
+Abstract
+
+   This specification defines three types of syndicated feeds that
+   enable publication of entries across one or more feed documents.
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 27, 2006               [Page 1]
+
+Internet-Draft                Feed History                     June 2006
+
+
+Table of Contents
+
+   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  3
+   2.  Notational Conventions . . . . . . . . . . . . . . . . . . . .  3
+   3.  Terminology  . . . . . . . . . . . . . . . . . . . . . . . . .  4
+   4.  Complete Feeds . . . . . . . . . . . . . . . . . . . . . . . .  4
+     4.1.  Examples . . . . . . . . . . . . . . . . . . . . . . . . .  5
+   5.  Paged Feeds  . . . . . . . . . . . . . . . . . . . . . . . . .  6
+     5.1.  Examples . . . . . . . . . . . . . . . . . . . . . . . . .  7
+   6.  Archived Feeds . . . . . . . . . . . . . . . . . . . . . . . .  8
+     6.1.  Examples . . . . . . . . . . . . . . . . . . . . . . . . . 10
+   7.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 13
+   8.  Security Considerations  . . . . . . . . . . . . . . . . . . . 14
+   9.  Normative References . . . . . . . . . . . . . . . . . . . . . 14
+   Appendix A.  Acknowledgements  . . . . . . . . . . . . . . . . . . 15
+   Appendix B.  Reconstructing Archived Feeds . . . . . . . . . . . . 15
+   Author's Address . . . . . . . . . . . . . . . . . . . . . . . . . 16
+   Intellectual Property and Copyright Statements . . . . . . . . . . 17
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 27, 2006               [Page 2]
+
+Internet-Draft                Feed History                     June 2006
+
+
+1.  Introduction
+
+   Syndicated feeds of information (using such formats as Atom [RFC4287]
+   or RSS 2.0) are often split up into multiple documents to save
+   bandwidth, allow "sliding window" access, or for other purposes.
+
+   This specification defines three types of feeds that allow the
+   reconstruction of their state from one or more feed documents;
+   "complete" feeds, "paged" feeds and "archived" feeds.
+
+   These types are complementary; each has different properties and
+   trade-offs:
+
+   o  Complete feeds contain the entire set of entries in one document,
+      and can be useful when it isn't desirable to "remember"
+      previously-seen entries.
+   o  Paged feeds split the logical feed's entries among multiple
+      temporary documents.  This can be useful when entries in the feed
+      are not long-lived or stable, and the client needs to access an
+      arbitrary portion of them, usually in close succession.
+   o  Archived feeds split them among multiple permanent documents, and
+      can be useful when entries are long-lived and it is important for
+      clients to see every one.
+
+   See the feed type definitions below for examples of use cases for
+   each.
+
+
+2.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in BCP 14 [RFC2119], as
+   scoped to those conformance targets.
+
+   This specification uses XML Namespaces [W3C.REC-xml-names-19990114]
+   to uniquely identify XML element names.  It uses the following
+   namespace prefix for the indicated namespace URI;
+
+   "fh": "http://purl.org/syndication/history/1.0"
+
+   This specification uses terms from the XML Infoset [W3C.REC-xml-
+   infoset-20040204].  However, this specification uses a shorthand; the
+   phrase "Information Item" is omitted when naming Element Information
+   Items.  Therefore, when this specification uses the term "element,"
+   it is referring to an Element Information Item in Infoset terms.
+
+   This specification also uses Atom link relations to identify
+
+
+
+Nottingham              Expires December 27, 2006               [Page 3]
+
+Internet-Draft                Feed History                     June 2006
+
+
+   different types of links; see the Atom specification [RFC4287] for
+   information about their syntax, and the IANA link relation registry
+   for more information about specific values.
+
+   Although they refer to Atom normatively, the mechanisms described
+   herein can be used with similar syndication formats, such as the
+   various flavours of RSS.
+
+
+3.  Terminology
+
+   In this specification, "feed document" refers to an Atom Feed
+   Document, RSS document, or similar syndication instance document.  It
+   may contain any number of entries (in RSS, items), and may or may not
+   be a complete representation of the logical feed.
+
+   "Head section" refers to the children of a feed document's document-
+   wide metadata container; e.g., the child elements of the atom:feed
+   element in an Atom Feed Document.
+
+   A "logical feed" is the set of entries associated with a particular
+   feed (as contrasted with a feed document, which may contain a subset
+   of them).
+
+
+4.  Complete Feeds
+
+   A complete feed is a feed document that contains all of the entries
+   in the logical feed; any entry not actually in the feed document
+   SHOULD NOT be presented as part of that feed.
+
+   It is sometimes important to distinguish a complete feed, because
+   clients may attempt to keep a history of feed entries seen over time,
+   presenting the aggregate as the feed's contents.  This is
+   undesireable in some situations.
+
+   For example; a feed that represents a ranking that varies over time,
+   such as "Top Twenty Records" or "Most Popular Items" should not have
+   newer entries displayed alongside older ones.  By marking them as
+   complete feeds, old entries are discarded when the feed is refreshed.
+
+   The fh:complete element, when present in a feed's head section,
+   indicates that the feed document it occurs in is a complete
+   representation of the logical feed's entries.
+
+   For example,
+
+     <fh:complete/>
+
+
+
+Nottingham              Expires December 27, 2006               [Page 4]
+
+Internet-Draft                Feed History                     June 2006
+
+
+4.1.  Examples
+
+   Atom-formatted Complete Feed
+
+   <?xml version="1.0" encoding="utf-8"?>
+   <feed xmlns="http://www.w3.org/2005/Atom"
+    xmlns:fh="http://purl.org/syndication/history/1.0">
+    <title>NetTunes Queue</title>
+    <description>The CDs you'll receive next.</description>
+    <link href="http://example.org/"/>
+    <fh:complete/>
+    <link rel="self"
+     href="http://nettunes.example.org/queue/index.atom"/>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <author>
+      <name>John Doe</name>
+    </author>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+    <entry>
+      <title>A Rush of Blood to the Head</title>
+      <link href="http://nettunes.example.org/Coldplay/rush"/>
+      <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+      <updated>2003-12-13T18:30:02Z</updated>
+      <summary>More jangly guitars from Coldplay...</summary>
+    </entry>
+   </feed>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 27, 2006               [Page 5]
+
+Internet-Draft                Feed History                     June 2006
+
+
+   RSS 2.0-formatted Complete Feed
+
+   <?xml version="1.0"?>
+   <rss version="2.0"
+    xmlns:fh="http://purl.org/syndication/history/1.0">
+    <channel>
+     <title>NetTunes Queue</title>
+     <link>http://nettunes.example.org/</link>
+     <description>The CDs you'll receive next.</description>
+     <language>en-us</language>
+     <pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+     <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+     <generator>Weblog Editor 2.0</generator>
+     <managingEditor>editor@nettunes.example.org</managingEditor>
+     <webMaster>webmaster@nettunes.example.org</webMaster>
+     <fh:complete/>
+     <item>
+      <title>A Rush of Blood to the Head</title>
+      <link>http://nettunes.example.org/Coldplay/rush</link>
+      <description>More jangly guitars from Coldplay...
+      </description>
+      <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+      <guid>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</guid>
+     </item>
+    </channel>
+   </rss>
+
+
+5.  Paged Feeds
+
+   A paged feed is a set of linked feed documents that contain the
+   entries in the logical feed, without any guarantees about the
+   stability of the documents' contents.
+
+   Paged feeds are lossy; that is, it is not possible to guarantee that
+   the client will be able to reconstruct the logical feed as the server
+   has published it.  Some entries may be added to the feed as the pages
+   of the feed are acccessed, without the client becoming aware of them.
+
+   Paged feeds can be useful when the number of entries is very large,
+   infinite, or indeterminate.  Clients can "page" through the feed,
+   only accessing a subset of the feed's entries as necessary.
+
+   For example, a search engine might make query results available as a
+   paged feed, so that queries with very large result sets do not
+   overwhelm the server, the network, or the client.
+
+
+
+
+Nottingham              Expires December 27, 2006               [Page 6]
+
+Internet-Draft                Feed History                     June 2006
+
+
+   The feed documents in a paged feed are tied together with the
+   following link relations:
+
+   o  "first" - A URI that refers to the furthest preceding document in
+      a series of documents.
+   o  "last" - A URI that refers to the furthest following document in a
+      series of documents.
+   o  "previous" - A URI that refers to the immediately preceding
+      document in a series of documents.
+   o  "next" - A URI that refers to the immediately following document
+      in a series of documents.
+
+   Paged feed documents MUST have at least one of these link relations
+   present, and SHOULD contain as many as practical and applicable.
+
+   Note that URI references in link relation values may be relative, and
+   when they are used they must be absolutised, as described in Section
+   5.1 of [RFC3986].
+
+5.1.  Examples
+
+   Atom-formatted Paged Feed
+
+   <?xml version="1.0" encoding="utf-8"?>
+   <feed xmlns="http://www.w3.org/2005/Atom">
+    <title>Example Feed</title>
+    <link href="http://example.org/"/>
+    <link rel="self" href="http://example.org/index.atom"/>
+    <link rel="next" href="http://example.org/index.atom?page=2"/>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <author>
+      <name>John Doe</name>
+    </author>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+    <entry>
+      <title>Atom-Powered Robots Run Amok</title>
+      <link href="http://example.org/2003/12/13/atom03"/>
+      <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+      <updated>2003-12-13T18:30:02Z</updated>
+      <summary>Some text.</summary>
+    </entry>
+   </feed>
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 27, 2006               [Page 7]
+
+Internet-Draft                Feed History                     June 2006
+
+
+   RSS 2.0-formatted Paged Feed
+
+   <?xml version="1.0"?>
+   <rss version="2.0"
+    xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+     <title>Liftoff News</title>
+     <link>http://liftoff.nasa.gov/</link>
+     <description>Liftoff to Space Exploration.</description>
+     <language>en-us</language>
+     <pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+     <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+     <generator>Weblog Editor 2.0</generator>
+     <managingEditor>editor@example.com</managingEditor>
+     <webMaster>webmaster@example.com</webMaster>
+     <atom:link rel="next"
+      href="http://liftof.nasa.gov/index.rss?page=2"/>
+     <item>
+      <title>Star City</title>
+      <link>http://liftoff.nasa.gov/2003/06/news-starcity</link>
+      <description>How do Americans get ready to work with Russians
+      aboard the International Space Station? They take a crash course
+      in culture, language and protocol at Russia's <a
+      href="http://howe.iki.rssi.ru/GCTC/gctc_e.htm"&gt;Star
+      City</a>.</description>
+      <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+      <guid>http://liftoff.nasa.gov/2003/06/03.html#item573</guid>
+     </item>
+    </channel>
+   </rss>
+
+
+6.  Archived Feeds
+
+   An archived feed is a set of feed documents that can be combined to
+   accurately reconstruct a logical feed.
+
+   Unlike paged feeds, archived feeds enable clients to do this without
+   losing any entries.  This is achieved by publishing a single
+   subscription document and (potentially) many archive documents.
+
+   A subscription document is a feed document that always contains the
+   most recently added or changed entries available in the logical feed
+   (often, the feed document that should be subscribed to).
+
+   Archive documents are feed documents that contain less recent entries
+   in the feed.  The set of entries contained in an archive document
+
+
+
+Nottingham              Expires December 27, 2006               [Page 8]
+
+Internet-Draft                Feed History                     June 2006
+
+
+   published at a particular URI MUST NOT change over time.
+
+   Likewise, the URI for a particular archive document MUST NOT change
+   over time, so that clients can recognise it and associate it with the
+   entries contained therein.
+
+   Typically, a logical feed will make a subscription feed available,
+   and link it to a set of archive documents (also linked together)
+   which contain progressively less recent entries.
+
+   Clients can then "subscribe" to the feed, polling the subscription
+   document for recent changes.  If a client has missed some entries,
+   the archives can be used to synchronise its state by fetching the
+   archive documents it has not yet seen.
+
+   Note that because archive documents are considered stable, changes to
+   entries in them may not be apparent to all users.  Therefore, if a
+   publisher requires a change to be visible to all users (e.g.,
+   correcting factual errors), they should consider publishing the
+   revised entry in the subscription feed, in addition to (or instead
+   of) the appropriate archive feed.  Conversely, unimportant changes
+   (e.g., spelling corrections) might be only effected in archive feeds.
+
+   The following link relations are used to tie archived feeds together:
+
+   o  "prev-archive" - A URI that refers to the immediately preceding
+      archive document.
+   o  "next-archive" - A URI that refers to the immediately following
+      archive document.
+   o  "current" - A URI that, when dereferenced, returns a feed document
+      containing the most recent entries in the feed.
+
+   Subscription documents and archive documents MUST have a "prev-
+   archive" link relation, unless there are no archives available.
+
+   Archive documents SHOULD have "next-archive" and "current" link
+   relations.
+
+   Note that URI references in link relation values may be relative, and
+   when they are used they must be absolutised, as described in Section
+   5.1 of [RFC3986].
+
+   Archive document SHOULD also contain an fh:archive element in their
+   head sections, to indicate that they themselves are archives.
+
+   For example,
+
+     <fh:archive/>
+
+
+
+Nottingham              Expires December 27, 2006               [Page 9]
+
+Internet-Draft                Feed History                     June 2006
+
+
+   Publishers are not required to make all archive documents available;
+   they may refuse to serve (e.g., with HTTP status code 403 or 410), or
+   be unable to serve (e.g., with HTTP status code 404) an archive
+   document.
+
+   Clients SHOULD warn users when they are not able to reconstruct the
+   complete, logical feed (e.g., by alerting the user that an archive
+   document is unavailable, or displaying pseudo-entries that inform the
+   user that some entries may be missing).
+
+6.1.  Examples
+
+   Atom-formatted Subscription Document
+
+   <?xml version="1.0" encoding="utf-8"?>
+   <feed xmlns="http://www.w3.org/2005/Atom">
+    <title>Example Feed</title>
+    <link href="http://example.org/"/>
+    <link rel="self" href="http://example.org/index.atom"/>
+    <link rel="prev-archive"
+     href="http://example.org/2003/11/index.atom"/>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <author>
+      <name>John Doe</name>
+    </author>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+    <entry>
+      <title>Atom-Powered Robots Run Amok</title>
+      <link href="http://example.org/2003/12/13/atom03"/>
+      <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+      <updated>2003-12-13T18:30:02Z</updated>
+      <summary>Some text.</summary>
+    </entry>
+   </feed>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 27, 2006              [Page 10]
+
+Internet-Draft                Feed History                     June 2006
+
+
+   Atom-formatted Archive Document
+
+   <?xml version="1.0" encoding="utf-8"?>
+   <feed xmlns="http://www.w3.org/2005/Atom">
+    <title>Example Feed</title>
+    <link rel="current" href="http://example.org/index.atom"/>
+    <link rel="self" href="http://example.org/2003/11/index.atom"/>
+    <link rel="prev-archive"
+     href="http://example.org/2003/10/index.atom"/>
+    <updated>2003-11-24T12:00:00Z</updated>
+    <author>
+      <name>John Doe</name>
+    </author>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+    <entry>
+      <title>Atom-Powered Robots Scheduled To Run Amok</title>
+      <link href="http://example.org/2003/11/24/robots_coming"/>
+      <id>urn:uuid:cdef5c6d5-gff8-4ebb-assa-80dwe44efkjo</id>
+      <updated>2003-11-24T12:00:00Z</updated>
+      <summary>Some text from an old, different entry.</summary>
+    </entry>
+   </feed>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 27, 2006              [Page 11]
+
+Internet-Draft                Feed History                     June 2006
+
+
+   RSS 2.0-formatted Subscription Document
+
+   <?xml version="1.0"?>
+   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+     <title>Liftoff News</title>
+     <link>http://liftoff.nasa.gov/</link>
+     <description>Liftoff to Space Exploration.</description>
+     <language>en-us</language>
+     <pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+     <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+     <generator>Weblog Editor 2.0</generator>
+     <managingEditor>editor@example.com</managingEditor>
+     <webMaster>webmaster@example.com</webMaster>
+     <atom:link rel="prev-archive"
+      href="http://liftoff.nasa.gov/2003/05/index.rss"/>
+
+     <item>
+      <title>Star City</title>
+      <link>http://liftoff.nasa.gov/2003/06/news-starcity</link>
+      <description>How do Americans get ready to work with Russians
+      aboard the International Space Station? They take a crash course
+      in culture, language and protocol at Russia's <a
+      href="http://howe.iki.rssi.ru/GCTC/gctc_e.htm"&gt;Star
+      City</a&gt;.</description>
+      <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+      <guid>http://liftoff.nasa.gov/2003/06/03.html#item573</guid>
+     </item>
+    </channel>
+   </rss>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 27, 2006              [Page 12]
+
+Internet-Draft                Feed History                     June 2006
+
+
+   RSS 2.0-formatted Archive Document
+
+   <?xml version="1.0"?>
+   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+     <title>Liftoff News</title>
+     <link>http://liftoff.nasa.gov/</link>
+     <description>Liftoff to Space Exploration.</description>
+     <language>en-us</language>
+     <pubDate>Tue, 30 May 2003 08:00:00 GMT</pubDate>
+     <lastBuildDate>Tue, 30 May 2003 10:31:52 GMT</lastBuildDate>
+     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+     <generator>Weblog Editor 2.0</generator>
+     <managingEditor>editor@example.com</managingEditor>
+     <webMaster>webmaster@example.com</webMaster>
+     <atom:link rel="current"
+      href="http://liftoff.nasa.gov/index.rss"/>
+     <atom:link rel="prev-archive"
+      href="http://liftoff.nasa.gov/2003/04/index.rss"/>
+
+     <item>
+      <description>Sky watchers in Europe, Asia, and parts of
+      Alaska and Canada will experience a partial eclipse of the Sun
+      on Saturday, May 31st.</description>
+      <pubDate>Fri, 30 May 2003 11:06:42 GMT</pubDate>
+      <guid>http://liftoff.nasa.gov/2003/05/30.html#item572</guid>
+     </item>
+     <item>
+      <title>The Engine That Does More</title>
+      <link>http://liftoff.nasa.gov/2003/05/news-VASIMR.asp</link>
+      <description>Before man travels to Mars, NASA hopes to
+      design new engines that will let us fly through the Solar
+      System more quickly.  The proposed VASIMR engine would do
+      that.</description>
+      <pubDate>Tue, 27 May 2003 08:37:32 GMT</pubDate>
+      <guid>http://liftoff.nasa.gov/2003/05/27.html#item571</guid>
+     </item>
+    </channel>
+   </rss>
+
+
+7.  IANA Considerations
+
+   The "previous", "next" and "current" link relations have been
+   previously registered, and no IANA action regarding them is required.
+
+   This specification defines the following link relations:
+
+
+
+
+Nottingham              Expires December 27, 2006              [Page 13]
+
+Internet-Draft                Feed History                     June 2006
+
+
+      o  Attribute Value: prev-archive
+      o  Description: A URI that refers to the immediately
+         preceding archive document.
+      o  Expected display characteristics: none
+      o  Security considerations: See [ this document ]
+
+      o  Attribute Value: next-archive
+      o  Description: A URI that refers to the immediately
+         following archive document.
+      o  Expected display characteristics: none
+      o  Security considerations: See [ this document ]
+
+
+8.  Security Considerations
+
+   Feeds using the mechanisms described here could be crafted in such a
+   way as to cause a client to initiate excessive (or even an unending
+   sequence of) network requests, causing denial of service (either to
+   the client, the target server, and/or intervening networks).  Clients
+   can mitigate this risk by requiring user intervention after a certain
+   number of requests, or by limiting requests either according to a
+   hard limit, or with heuristics.
+
+   Clients should be mindful of resource limits when storing feed
+   documents.  To reiterate, they are not required to always store or
+   reconstruct the feed when conforming to this specification; they only
+   need inform the user when the reconstructed feed is not complete.
+
+9.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+              Resource Identifier (URI): Generic Syntax", STD 66,
+              RFC 3986, January 2005.
+
+   [RFC4287]  Nottingham, M. and R. Sayre, "The Atom Syndication
+              Format", RFC 4287, December 2005.
+
+   [W3C.REC-xml-infoset-20040204]
+              Cowan, J. and R. Tobin, "XML Information Set (Second
+              Edition)", W3C REC REC-xml-infoset-20040204,
+              February 2004.
+
+   [W3C.REC-xml-names-19990114]
+              Bray, T., Hollander, D., and A. Layman, "Namespaces in
+              XML", W3C REC REC-xml-names-19990114, January 1999.
+
+
+
+Nottingham              Expires December 27, 2006              [Page 14]
+
+Internet-Draft                Feed History                     June 2006
+
+
+Appendix A.  Acknowledgements
+
+   The author would like to thank the following people for their
+   contributions, comments and help: Danny Ayers, Thomas Broyer, Stefan
+   Eissing, David Hall, Bill de Hora, Aristotle Pagaltzis, John Panzer,
+   Dave Pawson, Garrett Rooney, Robert Sayre, James Snell, Henry Story.
+
+   Any errors herein remain the author's, not theirs.
+
+
+Appendix B.  Reconstructing Archived Feeds
+
+   One algorithm for reconstructing an archived feed into a complete,
+   logical feed (S), give the subscription document (D) follows.
+
+   1.  Create an empty list L.
+   2.  Consider the URI of the last archive document successfully stored
+       to local store S as A.
+   3.  Consider the set of entries in document D as E.
+   4.  If the document D has a "prev-archive" link relation value P in
+       its head section, and P is not A,
+       1.  Append P to L.
+       2.  Dereference P and use the resulting feed document as D.
+   5.  Repeat the previous step until no new P is found.
+   6.  Add all of document D's entries to the local store S, replacing
+       any entries with the same identity.
+   7.  Pop the last "prev-archive" link relation from L, dereference its
+       value and use the resulting feed document as D.
+   8.  Repeat the previous two steps until L is empty.
+   9.  Add the entries E to the local store S, replacing any entries
+       with the same identity.
+
+   In these instructions, the concept of an entry's identity is format-
+   specific; e.g., in Atom, it is conveyed by the atom:id element; in
+   RSS 2, it is indicated by the guid element.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 27, 2006              [Page 15]
+
+Internet-Draft                Feed History                     June 2006
+
+
+Author's Address
+
+   Mark Nottingham
+
+   Email: mnot@pobox.com
+   URI:   http://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 27, 2006              [Page 16]
+
+Internet-Draft                Feed History                     June 2006
+
+
+Intellectual Property Statement
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at
+   ietf-ipr@ietf.org.
+
+
+Disclaimer of Validity
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET
+   ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE
+   INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Copyright Statement
+
+   Copyright (C) The Internet Society (2006).  This document is subject
+   to the rights, licenses and restrictions contained in BCP 78, and
+   except as set forth therein, the authors retain all their rights.
+
+
+Acknowledgment
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+Nottingham              Expires December 27, 2006              [Page 17]
+

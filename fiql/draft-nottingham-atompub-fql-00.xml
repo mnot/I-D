@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>   
+<!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>  
+<!ENTITY rfc4287 SYSTEM 'bibxml/reference.RFC.4287.xml'>  
+<!ENTITY xmlns SYSTEM 'bibxml/reference.W3C.REC-xml-names-19990114.xml'>  
+<!ENTITY infoset SYSTEM 'bibxml/reference.W3C.REC-xml-infoset-20040204.xml'>    
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+<rfc ipr="full3978" docName="draft-nottingham-atompub-fql-00">
+    <front>        
+      <title abbrev="FQL">FQL: The Feed Query Language</title>		
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+	<organization>Yahoo! Inc.</organization>
+	<address>		
+	  <email>mnot@yahoo-inc.com</email>	
+	  <uri>http://www.mnot.net/</uri>		
+	</address>
+      </author>
+     <date year="2006"/>
+
+      <abstract>
+<t>The Feed Query Language is a simple but flexible, URI-friendly syntax for 
+expressing filters across the entries in a feed.</t>
+</abstract>    
+	  
+  </front>    
+
+  <middle>
+
+<section title="Introduction">
+
+<t>The Feed Query Language is a simple but flexible, URI-friendly syntax for 
+expressing filters across the entries in a feed. For example,</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  title==foo*&(lastUpdated=lt=-1day,title==*bar)
+]]></artwork>
+</figure>
+
+<t>will return all entries in the feed that meet the following criteria;</t>
+
+
+<t><list style="symbols">
+  <t>have a title beginning with "foo", or</t>
+  <t>have been updated in the last day and have a title ending with "bar".</t>
+</list></t>
+
+<t>The output of an FQL query is a feed that has the same head section as the
+input feed, but that only contains entries that match the query expression 
+(that is, those that yield True).</t>
+
+</section>
+
+<section title="Notational Conventions">
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document
+are to be interpreted as described in BCP 14 <xref target="RFC2119"/>, as
+scoped to those conformance targets.</t>
+	
+<t>This specification uses XML Namespaces 
+<xref target="W3C.REC-xml-names-19990114"/> to uniquely identify XML element 
+names.  It uses the following namespace prefix for the indicated namespace URI;</t>
+
+<t>"fql": "http://purl.org/syndication/query/1.0"</t>
+
+<t>This specification uses terms from the XML Infoset 
+<xref target="W3C.REC-xml-infoset-20040204"/>. However, this
+specification uses a shorthand; the phrase "Information Item" is omitted when
+naming Element Information Items. Therefore, when this specification uses the
+term "element," it is referring to an Element Information Item in Infoset
+terms.</t>
+
+<t>Although they refer to Atom normatively, the mechanisms described herein can 
+be used with similar syndication formats, such as the various flavours of RSS.</t>
+
+</section>
+
+<section title="FQL Syntax and Processing">
+
+<section title="Expressions">
+
+<t>FQL Expressions yield Boolean values: True or False.</t>
+
+<t>An FQL expression is composed of one or more constraints, related to each other
+with Boolean operators.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+expression = [ "(" ] ( constraint / expression ) 
+             [ operator ( constraint / expression ) ] [ ")" ]
+operator = "&" / ","
+]]></artwork>
+</figure>
+
+<t><list style="symbols">
+<t>"&" is the Boolean AND operator; it yields True for a particular entry
+if both operands evaluate to True, otherwise False.</t>
+
+<t>"," is the Boolean OR operator; it yields True if either operand evaluates
+to True, otherwise False.</t>
+</list></t>
+
+<t>By default, the AND operator takes precedence (i.e., it is evaluated before
+any OR operators are); however, a parenthesised expression can be used to 
+change precedence, yielding whatever the contained expression yields.</t>
+
+</section>
+<section title="Constraints">
+
+<t>FQL Constraints yield Boolean values: True or False.</t>
+
+<t>A constraint is composed of a selector, which selects one more child elements of 
+the entry, and an optional comparison/argument pair, which refines the constraint.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+constraint = selector [ comparison argument ]
+selector = qname *( "." qname )
+comparison = "==" / "!=" / "=lt=" / "=gt="
+argument = text / date / number / qname
+]]></artwork>
+</figure>
+
+<t>The most common form of a selector is a single XML QName [ref], which selects
+any and all elements in the entry which share that identifier.</t>
+
+<t>Selectors can also contain multiple QNames, separated by periods ("."), 
+representing successive child elements. For example, given the entry</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<entry>
+  <foo>
+    <bar/>
+  </foo>
+</entry>
+]]></artwork>
+</figure>
+
+<t>the selector "foo.bar" will select the innermost element.</t>
+
+<t>If more than one instance of a selected element is present in an entry, the
+comparison will be evaluated against each, and will yield True if any of the
+individual element comparisons yield True; otherwise False.</t>
+
+<t>A constraint with no comparison operator will yield True if the specified qname
+is present as a child of the entry element.</t>
+
+<t>Constraints with comparison operators are compared according to the type of the 
+qname. See "FQL Feed Extensions" for one mechanism for determining
+the type of a qname in an FQL expression.</t>
+
+<t>This specification defines the following comparison types;</t>
+
+<section title="Textual Constraints">
+
+<t>Text constraints allow free-text searching of the descendant text content of 
+the selected element.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+text = [ "*" ] *( l_char | pct-encoded ) [ "*" ]
+l_char = unreserved / gen_delims / "!" / "$" / "'" / "+" / ";" / "=" 
+]]></artwork>
+</figure>
+
+<t>Two comparison operators are applicable to text constraints;</t>
+
+<t><list style="symbols">
+  <t>"==" yields True if the descendant text of the selected element matches the
+  argument to the constraint; otherwise False.</t>
+  
+  <t>"!=" yields True if the descendant text of the selected element does not match
+  the argument to the constraint; otherwise False.</t>
+</list></t>
+
+<t>If the argument begins and/or ends with an asterisk character, it should be
+treated as a globbing operator; that is, any and all characters preceding or
+following it (respectively) MUST be ignored.</t>
+
+<t>If the selected element contains markup, it MUST be ignored. Text content 
+therein MUST NOT be ignored.</t>
+
+<t>White space in the selected element's content MUST be collapsed to single space
+characters.</t>
+
+<t>Any characters not explicitly allowed in the argument MUST be percent-encoded 
+[ref].</t>
+
+<t>Text searches are case-insensitive.</t>
+
+<t>For example, given the entry:</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<entry>
+  <title>Hello world</title>
+  <description>Just    starting.</description>
+  <author>
+     <name>Mark Nottingham</name>
+  </author>
+  <!-- other stuff -->
+</entry>
+]]></artwork>
+</figure>
+
+<t><list style="">
+<t>"title==hello%20world" yields True</t>
+<t>"title!=hello" yields True</t>
+<t>"title==hello*" yields True</t>
+<t>"author.name==mark*" yields True</t>
+<t>"description==*START*" yields True</t>
+<t>"description==*just*" yields True</t>
+<t>"description==just%20starting" yields True</t>
+<t>"description=="*just" yields False</t>
+</list></t>
+<t>[ URI ]</t>
+
+</section>
+
+<section title="Date Constraints">
+
+<t>Date constraints allow both relative and absolute comparison of date-related
+elements.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+date = dateTime / duration
+]]></artwork>
+</figure>
+
+<t>Four comparison operators are relevant to date constraints;</t>
+
+<t><list style="symbols">
+  <t>"==" yields True if the point in time specified in the argument to the
+  constraint matches that indicated by the selected element; otherwise False.</t>
+
+  <t>"!=" yields True if the point in time specified in the argument to the 
+  constraint does not match that indicated by the selected element; otherwise
+  False.</t>
+  
+  <t>"=lt=" yields True if the point in time specified in the argument to the
+  constraint follows that indicated by the selected element; otherwise False.</t>
+  
+  <t>"=gt=" yields True if the point in time specified in the argument to the 
+  constraint precedes that indicated by the selected element; otherwise False.</t>
+</list></t>
+
+<t>A point in time can be specified in two ways;</t>
+
+<t><list style="symbols">
+  <t>Absolutely, expressed as an XML Schema dateTime [ref].</t>
+  
+  <t>Relatively, expressed as an XML Schema duration [ref]. By default,
+  such arguments are relative to the time that the query is processed.</t>
+</list></t>
+
+<t>White space and markup in the selected element's content MUST be ignored.</t>
+
+<t>For example, given an entry</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<entry>
+  <title>Hello World</title>
+  <updated>2003-12-13T18:30:02Z</updated>
+  <!-- other stuff -->
+</entry>
+]]></artwork>
+</figure>
+
+<t><list style="symbols">
+<t>"updated==2003-12-13T18:30:02Z" yields True</t>
+<t>"updated=gt=2003-12-13T00:00:00Z" yields True</t>
+<t>"updated=lt=2005-01-01T00:00:00Z yields True</t>
+<t>"updated=gt=-P1D12H" yields False</t>
+<t>"updated=gt=-P5Y" yields True</t>
+</list></t>
+
+<t>(assuming processing on July 1st, 2006)</t>
+
+<t>[ URI ]</t>
+
+</section>
+<section title="Numeric Constraints">
+
+<t>Numeric constraints allow comparison of decimals.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+number = [ "+" / "-" ] 1*DIGIT [ "." 1*DIGIT ]
+]]></artwork>
+</figure>
+
+<t>Four comparison operators are relevant to numeric constraints;</t>
+
+<t><list style="symbols">
+  <t>"==" yields True if the content of the selected element is 
+  numerically equal to the specified argument; otherwise False.</t>
+  
+  <t>"!=" yields True if the content of the selected element is not
+  numerically equal to the specified argument; otherwise False.</t>
+
+  <t>"=lt=" yields True if the content of the selected element evaluates as 
+  numerically less than the specified argument; otherwise, False.</t>
+  
+  <t>"=gt=" yields True if the content of the selected element evaluates as 
+  numerically greater than the specified argument; otherwise, False.</t>
+</list></t>
+
+<t>White space and markup in the selected element's content MUST be ignored.</t>
+  
+<t>For example, given an entry</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<entry>
+  <title>Hello World</title>
+  <x:foo>123</x:foo>
+  <x:bar>  456</x:foo>
+]]></artwork>
+</figure>
+
+<t><list style="symbols">
+<t>"x:foo==123" yields True</t>
+<t>"x:foo==123.00" yields True</t>
+<t>"x:foo!=123.1" yields True</t>
+<t>"x:foo=lt=200" yields True</t>
+<t>"x:bar==456" yields True</t>
+<t>"x:foo=gt=500" yields False</t>
+</list></t>
+
+<t>[ URI ]</t>
+
+</section>
+</section>
+</section>
+
+<section title="Using FQL in HTTP">
+
+<t>Although FQL can be used in many contexts, it is optimised and intended for use
+in HTTP requests. </t>
+
+<t>Expressions can be embedded in different components of the Request-URI; e.g.,</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  http://example.com/feed.atom?title==*new*,author.name==bob*
+  http://example.org/feed.rss;title==*great*&ex:rating=gt=4
+]]></artwork>
+</figure>
+
+<t>FQL expressions are also suitable for POSTing to resources as
+application/x-www-form-urlencoded body content.</t>
+
+<t>Resources SHOULD return a 400 Bad Request status code if an FQL expression
+includes an unsupported or unknown selector.</t>
+
+<t>When used in this manner, bindings for namespace prefixes SHOULD be inferred
+from the document retrieved from the same URI. For example, given the following
+document;</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<feed xmlns="http://www.w3.org/2005/Atom" 
+      xmlns:ex="http://other.example.net/">
+  <!-- ... -->
+</feed>
+]]></artwork>
+</figure>
+
+<t>and the expression</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  title==foo,ex:bar==baz
+]]></artwork>
+</figure>
+
+<t>the first comparison's selector should be considered to be in the namespace
+"http://www.w3.org/2005/Atom", and the second should be considered in the
+namespace "http://other.example.net".</t>
+
+<t>To facilitate discovery of namespace bindings using HEAD, responses MAY include
+Link HTTP headers [ref] that declare them;</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: application/atom+xml
+Link: <http://www.w3.org/2005/Atom>; rel="xmlns"; prefix=""
+Link: <http://other.example.net>; rel="xmlns"; prefix="ex"
+
+<feed xmlns="http://www.w3.org/2005/Atom" 
+      xmlns:ex="http://other.example.net/">
+  <!-- ... -->
+</feed>
+]]></artwork>
+</figure>
+
+</section>
+
+<section title="FQL Feed Extensions">
+
+<t>Although FQL is usable with feeds as-is, it is often desireable to associate
+types with extension elements, and to advertise what elements are searchable.</t>
+
+<t>This can be accomplished using a top-level feed extension, fql:indices. For
+example,</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<feed xmlns="http://www.w3.org/2005/Atom"
+ xmlns:ex="http://other.example.net/">
+  <title>example</title>
+  <link href="http://www.example.org/"/>
+  <id>http://example.org/</id>
+  <fql:indices xmlns:fql="http://tbd">
+    <fql:element name="title"/>
+    <fql:element name="ex:foo" type="http://tbd/date"/>
+    <fql:element name="ex:bar" type="http://tbd/numeric"/>
+  </fql:indices>
+  <entry>
+    <title>test entry</title>
+    <description>something...</description>
+    <id>http://example.org/1124</id>
+    <ex:foo>2003-12-13T18:30:02Z</ex:foo>
+    <ex:bar>15.4</ex:bar>
+</feed>
+]]></artwork>
+</figure>
+
+<t>Here, the fql:indices element indicates that of the standard Atom elements,
+the title element has been indexed for queries, as well as the ex:foo and ex:bar
+extensions, which are a date and number, respectively.</t>
+
+<t>{formally define fql:indices, fql:element]</t>
+</section>
+
+
+
+<section title="Security Considerations">
+<t>[ query canonicalisation? ]</t>
+</section>
+
+<section title="IANA Considerations">
+</section>
+
+	</middle> 
+
+	<back> 	  
+	  <references title="Normative References">
+	   &rfc2119;
+	   &rfc3986;
+	   &rfc4287;
+        &xmlns;
+        &infoset;             
+	  </references>
+	  
+    <section title="Acknowledgements">
+    </section>
+
+<section title="Default Element Types">
+
+<section title="Atom">
+<t><list style="symbols">
+  <t>atom:author - text</t>
+  <t>atom:category - text</t>
+  <t>atom:content - text</t>
+  <t>atom:contributor - text</t>
+  <t>atom:id - text</t>
+  <t>atom:link - text</t>
+  <t>atom:published - date</t>
+  <t>atom:rights - text</t>
+  <t>atom:source - text</t>
+  <t>atom:summary - text</t>
+  <t>atom:title - text</t>
+  <t>atom:updated - date</t>
+</list></t>
+</section>
+
+<section title="RSS 1.0">
+<t><list style="symbols">
+  <t></t>
+</list></t>
+</section>
+
+<section title="RSS 2.0">
+<t><list style="symbols">
+  <t></t>
+</list></t>
+</section>
+
+</section>
+
+
+<section title="Collected BNF">
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+expression = [ "(" ] ( constraint / expression ) 
+             [ operator ( constraint / expression ) ] [ ")" ]
+operator = "&" / ","
+constraint = selector [ comparison argument ]
+selector = qname *( "." qname )
+comparison = "==" / "!=" / "=lt=" / "=gt="
+argument = text / date / number / qname
+text = [ "*" ] *( l_char | pct-encoded ) [ "*" ]
+l_char = unreserved / gen_delims / "!" / "$" / "'" / "+" / ";" / "=" 
+number = [ "+" / "-" ] 1*DIGIT [ "." 1*DIGIT ]
+date = dateTime / duration
+]]></artwork>
+</figure>
+
+</section>
+
+
+     </back>
+</rfc>

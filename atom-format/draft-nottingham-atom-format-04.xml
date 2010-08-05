@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Use these if you want to grab the references from the Internet. May or may not work. -->
+<!--
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+    <!ENTITY rfc2045 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2045.xml'>
+    <!ENTITY rfc2119 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
+    <!ENTITY rfc2396 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2396.xml'>
+    <!ENTITY rfc2822 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2822.xml'>
+    <!ENTITY rfc3023 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3023.xml'>
+    <!ENTITY rfc3066 PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3066.xml'>
+    <!ENTITY dateTime PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.NOTE-datetime-19980827.xml'>
+    <!ENTITY infoset PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xml-infoset-20011024.xml'>
+    <!ENTITY xmlbase PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xmlbase-20010627.xml'>
+    <!ENTITY xmlns PUBLIC '' 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xml-names-19990114.xml'>
+]> -->
+
+<!-- Use local references that are modified to work with Saxon for XSLT generation. Urgh. -->
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+    <!ENTITY rfc2045 SYSTEM '/Users/mnot/Reference/bibxml/reference.RFC.2045.xml'>
+    <!ENTITY rfc2119 SYSTEM '/Users/mnot/Reference/bibxml/reference.RFC.2119.xml'>
+    <!ENTITY rfc2396 SYSTEM '/Users/mnot/Reference/bibxml/reference.RFC.2396.xml'>
+    <!ENTITY rfc2822 SYSTEM '/Users/mnot/Reference/bibxml/reference.RFC.2822.xml'>
+    <!ENTITY rfc3023 SYSTEM '/Users/mnot/Reference/bibxml/reference.RFC.3023.xml'>
+    <!ENTITY rfc3066 SYSTEM '/Users/mnot/Reference/bibxml/reference.RFC.3066.xml'>
+    <!ENTITY dateTime SYSTEM '/Users/mnot/Reference/bibxml/reference.W3C.NOTE-datetime-19980827.xml'>
+    <!ENTITY infoset SYSTEM '/Users/mnot/Reference/bibxml/reference.W3C.REC-xml-infoset-20011024.xml'>
+    <!ENTITY xmlbase SYSTEM '/Users/mnot/Reference/bibxml/reference.W3C.REC-xmlbase-20010627.xml'>
+    <!ENTITY xmlns SYSTEM '/Users/mnot/Reference/bibxml/reference.W3C.REC-xml-names-19990114.xml'>
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+
+<?rfc toc="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc private="APE (Atom/Pie/Echo) Working Group" ?>
+
+<rfc category="std" ipr="full2026" docName="draft-nottingham-atom-format-04">
+    <front>
+        <title abbrev="Atom Format">The Atom Syndication Format 0.4 (PRE-DRAFT)</title>
+		<author initials="M" surname="Nottingham" fullname="Mark Nottingham" 
+		role="editor">
+			<organization></organization>
+			<address>
+				<email>mnot@pobox.com</email>
+				<uri>http://www.mnot.net/</uri>
+			</address>
+		</author>
+        <date month="December" year="2003"/>
+        <abstract>
+			<t>This specification describes Atom, an
+			XML-based Web content and metadata syndication format.</t>
+         </abstract>
+         <note title="Editorial Notes">
+			 <t>This draft HAS NOT been submitted for publication, and does
+			 not have any status; it should be referred to as a
+			 "pre-draft."</t>
+
+			 <t>Discussion of this draft happens in two fora;</t>
+
+			 <t><list> <t>The <eref
+			 target="http://www.imc.org/atom-syntax/index.html">Atom Syntax
+			 mailing list</eref></t>
+			 
+			 <t>The <eref
+			 target="http://www.intertwingly.net/wiki/pie/FrontPage">Atom Wiki
+			 Web site</eref></t> </list></t>
+
+			 <t>Comments and suggestions can be directed to the mailing list,
+			 whilst active development happens on the Wiki. </t>
+
+			 <t>Sections called out [[like this]] indicate editorial notes
+			 that should be removed before final publication.</t>
+         </note>
+    </front>
+
+    <middle>
+		<section title="Introduction">
+		<t>Atom is an XML-based data format which encodes "feeds" that describe
+ 		a publication containing a number of items.  The items described in a feed
+ 		are called "entries", each with an extensible set of metadata. For
+		example, each entry has a title.</t>
+
+		<t>The primary use case that Atom addresses is for syndicating Web
+		content such as Weblogs and news headlines to other Web sites and
+		directly to consumers. However, nothing precludes it from being used
+		for other purposes and types of content.</t>
+		
+		<t>Details of comunication protocols between software agents using
+		Atom are to be found in the Atom API specification <eref
+		target="http://bitworking.org/projects/atom/draft-gregorio-09.html"/>.
+		</t>
+
+		<t>[[ more motivation / design principles ]]</t>
+
+			<section title="Example">
+			<figure>
+				<preamble>A minimal, single-entry Atom feed serialized
+				as XML 1.0:</preamble>
+				<artwork><![CDATA[
+<?xml version="1.0" encoding="utf-8"?>
+<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+  <title>dive into mark</title>
+  <link rel="alternate" type="text/html" 
+   href="http://diveintomark.org/"/>
+  <modified>2003-12-13T18:30:02Z</modified>
+  <author>
+    <name>Mark Pilgrim</name>
+  </author>
+  <entry>
+    <title>Atom 0.3 snapshot</title>
+    <link rel="alternate" type="text/html" 
+     href="http://diveintomark.org/2003/12/13/atom03"/>
+    <id>tag:diveintomark.org,2003:3.2397</id>
+    <issued>2003-12-13T08:29:29-04:00</issued>
+    <modified>2003-12-13T18:30:02Z</modified>
+  </entry>
+</feed>
+]]></artwork></figure>
+			</section>
+
+			<section title="Conformance">
+				<t>[[ talk about atom documents and atom consumers, and how 
+				requirements are placed on them ]]</t>
+			</section>
+			
+			<section title="Notational Conventions">
+				<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+				"SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
+				and "OPTIONAL" in this document are to be interpreted as
+				described in <xref target="RFC2119"/>.</t>			
+
+				<t>This specification uses XML Namespaces <xref
+				target="W3C.REC-xml-names-19990114"/> to uniquely identify XML
+				elements and attribute names. It uses the following namespace
+				prefixes for the indicated namespace URIs;</t>
+				
+				<t><list style="hanging">
+				  <t hangText='"atom": '>http://purl.org/atom/ns#</t>
+				</list></t>
+				
+				<t>Note that the choice of this (or any other) namespace prefix 
+				is arbitrary and not semantically significant.</t>
+				
+				<t>Atom is specified using the XML Infoset <xref
+				target="W3C.REC-xml-infoset-20011024"/>, but uses a shorthand
+				for common terms; the phrase "Information Item" is not used 
+				when naming XML constructs.</t>
+				
+				<t>Therefore, when this specification uses the term
+				"element," it is refering to an Element Information Item in
+				Infoset terms. Likewise, when it uses the term "attribute," it
+				is refering to an Attribute Information Item.</t>
+				
+				<t>Furthermore, when it indicates that the content of an
+				element or attribute is a "string," it is referring to a set
+				of one or more Character Information Items.</t>
+
+				<t>[[children / contains]]</t>
+			</section>
+		</section>
+		
+		<section title="Atom Documents">
+	
+			<t>An Atom document is an XML document whose document element
+			is the atom:feed element, as described below.</t>
+	
+			<t>Atom is specified in terms of the XML Infoset, and therefore
+			may be serialized in a variety of fashions. However, the canonical
+			serialization of an Atom document is XML 1.0, and this is the only
+			serialization that can be identified with the
+			"application/atom+xml" media type.</t>
+
+			<t>Atom documents MAY have a Document Type Declaration.</t>
+			
+			<t>[[Entities]]</t>
+			
+			<t>All elements in an Atom document MUST be
+			namespace-qualified. Note that this requirement does not preclude
+			the use of a default namespace.</t>
+	
+			<t>Any element in an Atom document MAY have an xml:base attribute.
+			However, XML Base <xref target="W3C.REC-xmlbase-20010627"/>
+			processing MUST NOT be applied to element or attribute content,
+			unless that element or attribute's specification explicitly
+			includes XML Base processing.</t>
+
+			<t>Any element MAY have an xml:lang attribute whose content
+			indicates the default natural language of the element's content.
+			The content of this attribute element MUST be a registered
+			language tag <xref target="RFC3066"/>.</t>
+	
+			<t>[[extensibility]]</t>
+			
+		</section>
+		
+		<section title="Common Atom Constructs">
+			<t>Many of Atom's elements share a few common structures. This
+			section defines their requirements, for convenient reference by
+			the appropriate element definitions.</t>
+
+			<t>When an element is identified as being a construct, it inherits 
+			the corresponding requirements from that construct's definition in 
+			this section.</t>
+			
+			<section title="Content Constructs">
+				<t>A Content construct is an element with arbitrary child 
+				content, whose properties are described by the following
+				attributes:</t>
+
+				<section title='"type" Attribute'>
+					<t>Content constructs MAY have a "type" attribute, whose
+					value indicates the media type of the content. When
+					present, this attribute's value MUST be a registered media
+					type <xref target="RFC2045"/>. If not present, its value MUST be
+					considered to be "text/plain".</t>
+				</section>
+				
+				<section title='"mode" Attribute'>
+					<t>Content constructs MAY have a "mode" attribute, whose 
+					value indicates the method used to encode the content.
+					When present, this attribute's value MUST be listed below.
+					If not present, its value MUST be considered to be "xml".</t>
+					<t><list style="hanging">
+						<t hangText='"xml": '>A mode attribute with the value
+						"xml" indicates that the element's content is inline
+						xml (for example, namespace-qualified XHTML).</t>
+
+						<t hangText='"escaped": '>A mode attribute with the
+						value "escaped" indicates that the element's content
+						is an escaped string. Processors MUST unescape the
+						element's content before considering it as content of
+						the indicated media type.</t>
+
+						<t hangText='"base64": '>A mode attribute with the
+						value "base64" indicates that the element's content is
+						base64-encoded <xref target="RFC2045"/>. Processors
+						MUST decode the element's content before considering
+						it as content of the the indicated media type.</t>
+					</list></t>
+				</section>
+			</section>
+			
+			<section title="Person Constructs">
+				<t>A Person construct is an element with the following
+				children:</t>
+
+				<section title='"atom:name" Element'>
+					<t>The "atom:name" element's content conveys a
+					human-readable name for the author. It MAY be the name of
+					a corporation or other entity if no individual authors can be
+					named. Person constructs MUST contain exactly one
+					"atom:name" element, whose content MUST be a string.</t>
+				</section>
+				
+				<section title='"atom:url" Element'> 
+					<t>The "atom:url" element's content conveys a URI
+					associated with the author. Person constructs MAY contain
+					an atom:url element, but MUST NOT contain more than one.
+					The content of atom:url in a Person construct MUST be a
+					URI <xref target="RFC2396"/>.</t>
+					
+					<t>xml:base <xref target="W3C.REC-xmlbase-20010627"/>
+					processing MUST be applied to the atom:url element.</t>
+				</section>
+	
+				<section title='"atom:email" Element'> 
+					<t>The "atom:email" element's content conveys an e-mail
+					address associated with the Person construct. Person
+					constructs MAY contain an atom:email element, but MUST NOT
+					contain more than one. Its content MUST be an e-mail
+					address <xref target="RFC2822"/>.</t>
+				</section>
+				
+				<t>Ordering of the element children of Person constructs MUST
+				NOT be considered significant.</t>
+			</section>
+
+			<section title="Date Constructs"> 
+				<t>A Date construct is an element whose child content is a W3C
+				Date-Time string <xref target="W3C.NOTE-datetime-19980827"/>.
+				</t>
+			</section>
+
+			<section title="Link Constructs">
+				<t>A Link construct is an element that MUST NOT have any child
+				content, and has the following attributes:</t>
+				
+				<section title='"rel" Attribute'>
+					<t>The "rel" attribute indicates the type of relationship
+					that the link represents. Link constructs MUST have a rel
+					attribute, whose value MUST be a string, and MUST be one
+					of the values enumerated in the Atom API specification
+					<eref
+					target="http://bitworking.org/projects/atom/draft-gregorio-09.html"/>.</t>
+				</section>
+
+				<section title='"type" Attribute'>
+					<t>The "type" attribute indicates an advisory media type; it
+					MAY be used as a hint to determine the type of the representation
+					which should be returned when the URI in the href attribute is 
+					dereferenced. Note that the type attribute does not override the
+					actual media type returned with the representation.</t>
+					
+					<t>Link constructs MUST have a type attribute, whose value
+					MUST be a registered media type <xref
+					target="RFC2045"/>.</t>
+				</section>
+
+				<section title='"href" Attribute'>
+					<t>The "href" attribute contains the link's URI. Link
+					constructs MUST have a href attribute, whose value MUST be
+					a URI <xref target="RFC2396"/>.</t>
+					
+					<t>xml:base <xref target="W3C.REC-xmlbase-20010627"/>
+					processing MUST be applied to the atom:url element.</t>
+				</section>
+
+				<section title='"title" Attribute'>
+					<t>The "title" attribute conveys human-readable
+					information about the link. Link constructs MAY have a title
+					attribute, whose value MUST be a string.</t>
+				</section>
+			</section>
+		</section>
+		
+		<section title='The "atom:feed" Element'>
+			
+			<t>The "atom:feed" element is the document (i.e., top-level)
+			element of the format described by this specification. Its
+			children are a (potentially partial) representation of the state
+			of the feed.</t>
+
+			<t>The atom:feed element MAY contain any namespace-qualified <xref
+			target="W3C.REC-xml-names-19990114"/> elements as children.
+			Ordering of the element children of atom:feed element MUST NOT be
+			considered significant.</t>
+
+			<t>The following attributes and child elements are defined
+			by this specification (note that it requires the
+			presence of some of these elements):</t>
+				
+			<section title='"version" Attribute'> 
+				<t>atom:feed elements MUST have a "version" attribute whose
+				content indicates the version of the Atom specification that
+				the construct conforms to.</t>
+
+				<t>The version identifier for this specification is "0.3".</t>
+			</section>
+
+			<section title='"xml:lang" Attribute'> 
+				<t>atom:feed elements SHOULD have an "xml:lang" attribute
+				whose content indicates the default natural language of the
+				feed. The content of this attribute element MUST be
+				a registered language tag <xref target="RFC3066"/>.</t>
+			</section>
+
+			<section title='"atom:title" Element'> 
+				<t>The "atom:title" element is a Content construct that
+				conveys a human-readable title for the feed. atom:feed
+				elements MUST contain exactly one atom:title element. If the
+				feed describes a Web resource, its content SHOULD be the same
+				as that resource's title.</t>
+			</section>
+				
+			<section title='"atom:link" Element'> 
+				<t>The "atom:link" element is a Link construct that conveys a
+				URI associated with the feed. The nature of the relationship
+				as well as the link itself is determined by the element's
+				content.</t>
+				
+				<t>atom:feed elements MUST contain at least one atom:link
+				element with a rel attribute value of "alternate".</t>
+				
+				<t>atom:feed elements MUST NOT contain more than one atom:link
+				element with a rel attribute value of "alternate" that has
+				the same type attribute value.</t>
+
+				<t>atom:feed elements MAY contain additional atom:link
+				elements beyond those described above.</t>
+
+			</section>
+
+			<section title='"atom:author" Element'> 
+				<t>The "atom:author" element is a Person construct that
+				indicates the default author of the feed. atom:feed elements
+				MUST contain exactly one atom:author element, UNLESS all of
+				the atom:feed element's child atom:entry elements contain an
+				atom:author element. atom:feed elements MUST NOT contain more
+				than one atom:author element.</t>
+
+				<t>[[explain inheritence]]</t> 
+			</section>
+
+			<section title='"atom:contributor" Element'> 
+				<t>The "atom:contributor" element is a Person construct that
+				indicates a person or other entity who contributes to the
+				feed. atom:feed elements MAY contain one or more
+				atom:contributor elements.</t>
+			</section>
+
+			<section title='"atom:tagline" Element'> 
+				<t>The "atom:tagline" element is a Content construct that
+				conveys a human-readable description or tagline for the feed.
+				atom:feed elements MAY contain an atom:tagline element, but
+				MUST NOT contain more than one.</t>
+			</section>
+
+			<section title='"atom:id" Element'> 
+				<t>The "atom:id" element's content conveys a permanent,
+				globally unique identifier for the feed. It MUST NOT change
+				over time, even if the feed is relocated. atom:feed elements
+				MAY contain an atom:id element, but MUST NOT contain more than
+				one. The content of this element, when present, MUST be a
+				URI.</t>
+			</section>
+
+			<section title='"atom:generator" Element'> 
+				<t>The "atom:generator" element's content indentifies the
+				software agent used to generate the feed, for debugging and
+				other purposes. atom:feed elements MAY contain an
+				atom:generator element, but MUST NOT contain more than one.</t>
+				
+				<t>The content of this element, when present, MUST be a 
+				string that is a human-readable name for the generating 
+				agent.</t>
+				
+				<t>The atom:generator element MAY have a "url"
+				attribute whose value MUST be a URI. When dereferenced, that
+				URI SHOULD produce a representation that is relevant to that
+				agent.</t>
+				
+				<t>The atom:generator element MAY have a "version" attribute
+				that indicates the version of the generating agent. When
+				present, its value MUST be a string.</t>
+			</section>
+
+			<section title='"atom:copyright" Element'> 
+				<t>The "atom:copyright" element is Content construct that
+				conveys a human-readable copyright statement for the feed.
+				atom:feed elements MAY contain an atom:copyright element, but
+				MUST NOT contain more than one.</t>
+				
+				<t>The atom:copyright element SHOULD NOT be used to convey
+				machine-readable licensing information.</t>
+			</section>
+
+			<section title='"atom:info" Element'>
+				<t>The "atom:info" element is a Content construct that conveys
+				a human-readable explanation of the feed format itself.
+				atom:feed elements MAY contain an atom:info element, but MUST
+				NOT contain more than one.</t>
+				
+				<t>The atom:info element SHOULD NOT considered meaningful by
+				processors; it is a convenience to publishers in certain 
+				situations.</t>
+			</section>
+				
+			<section title='"atom:modified" Element'> 
+				<t>The "atom:modified" element is a Date construct that
+				indicates the time when the state of the feed was last
+				modified, including any changes to entries therein. atom:feed
+				elements MUST contain exactly one atom:modified element.</t>
+				
+				<t>The content of an atom:modified element SHOULD have a time
+				zone whose value MUST be "UTC".</t>
+			</section>
+
+			<section title='"atom:entry" Element'> 
+			
+				<t>The "atom:entry" element's represents an individual entry
+				that is contained by the feed. atom:feed elements MAY contain
+				one or more atom:entry elements.</t>
+
+				<t>The atom:entry element MAY contain any namespace-qualified
+				<xref target="W3C.REC-xml-names-19990114"/> elements as children. Ordering of the
+				element children of atom:entry element MUST NOT be considered
+				significant.</t>
+
+				<t>The following child elements are defined by this
+				specification (note that it requires the presence of some of
+				these elements):</t>
+
+				<section title='"atom:title" Element'>
+					<t>The "atom:title" element is a Content construct that
+					conveys a human-readable title for the entry. atom:entry
+					elements MUST have exactly one "atom:title" element. If an
+					entry describes a Web resource, its content SHOULD be the
+					same as that resource's title.</t>
+				</section>
+						
+				<section title='"atom:link" Element'> 
+					<t>The "atom:link" element is a Link construct that
+					conveys a URI associated with the entry. The nature of the
+					relationship as well as the link itself is determined by
+					the element's content.</t>
+
+					<t>atom:entry elements MUST contain at least one atom:link
+					element with a rel attribute value of "alternate".</t>
+
+					<t>atom:entry elements MUST NOT contain more than one
+					atom:link element with a rel attribute value of
+					"alternate" that has the same type attribute value.</t>
+
+					<t>atom:entry elements MAY contain additional atom:link
+					elements beyond those described above.</t>
+				</section>
+						
+				<section title='"atom:author" Element'>
+					<t>The "atom:author" element is a Person construct that
+					indicates the default author of the entry. atom:entry
+					elements MUST contain exactly one atom:author element,
+					UNLESS the atom:feed element containing them contains an
+					atom:author element itself. atom:entry elements MUST NOT
+					contain more than one atom:author element.</t>
+						
+					<t>[[explain inheritence]]</t>
+				</section>
+									
+				<section title='"atom:contributor" Element'>
+					<t>The "atom:contributor" element is a Person construct that
+					indicates a person or other entity who contributes
+					to the entry. atom:entry elements MAY contain one or more
+					atom:contributor elements.</t>
+				</section>
+			
+				<section title='"atom:id" Element'> 
+					<t>The "atom:id" element's content conveys a permanent,
+					globally unique identifier for the entry. It MUST NOT
+					change over time, even if other representations of the
+					entry (such as a web representation pointed to by the
+					entry's atom:link element) are relocated. If the same
+					entry is syndicated in two atom:feeds published by the
+					same entity, the entry's atom:id MUST be the same in both
+					feeds.</t>
+				</section>
+			
+				<section title='"atom:modified" Element'>
+					<t>The "atom:modified" element is a Date construct that
+					indicates the time that the entry was last modified.
+					atom:entry elements MUST contain an atom:modified element,
+					but MUST NOT contain more than one.</t>
+
+					<t>The content of an atom:modified element MUST have a
+					time zone whose value SHOULD be "UTC".</t>
+				</section>
+					
+				<section title='"atom:issued" Element'>
+					<t>The "atom:issued" element is a Date construct that
+					indicates the time that the entry was issued. atom:entry
+					elements MUST contain an atom:issued element, but MUST
+					NOT contain more than one.</t>
+
+					<t>The content of an atom:issued element MAY omit
+					a time zone.</t>
+					</section>
+			
+				<section title='"atom:created" Element'>
+					<t>The "atom:created" element is a Date construct that
+					indicates the time that the entry was created. atom:entry
+					elements MAY contain an atom:created element, but MUST NOT
+					contain more than one.</t>
+
+					<t>The content of an atom:created element MUST have a time
+					zone whose value SHOULD be "UTC".</t>
+	
+					<t>If atom:created is not present, its content MUST
+					considered to be the same as that of
+					atom:modified.</t>
+				</section>
+			
+				<section title='"atom:summary" Element'>
+					<t>The "atom:summary" element is a Content construct that
+					conveys a short summary, abstract or excerpt of the
+					entry. atom:entry elements MAY contain an atom:created
+					element, but MUST NOT contain more than one.</t>
+				</section>
+				
+				<section title='"atom:content" Element'>
+					<t>The "atom:content" element is a Content construct that
+					conveys the content of the entry. atom:entry elements MAY
+					contain one or more atom:content elements.</t>
+			
+					<t>If @type="multipart/alternative", @mode MUST NOT
+					be specified, and content element MUST contain 1 or
+					more content elements.  These content elements MUST
+					NOT specify @type="multipart/alternative" (i.e. only
+					one level of nesting is allowed).  Consumers SHOULD
+					look at all alternative content elements and
+					determine which one is most suitable, based on which
+					@type and @mode the consumer supports, and
+					preferences specified by the end user (if any).
+					Consumers SHOULD NOT render more than one content
+					alternative.</t>
+				</section>
+			</section>	
+		</section>
+				
+		<section title="Managing Feed State">
+		<t>[[ talk about what it means to keep a view of a feed ]]</t>
+		</section>
+		
+		<section title="Embedding Atom in Other Formats">
+		<t>[[ ... ]]</t>
+		</section>
+		
+		<section title="Extending Atom">
+		<t>[[ ... ]]</t>
+		</section>
+		
+		<section title="IANA Considerations">
+			<t>The Atom format, when serialized as XML 1.0, can be identified
+			with the following media type:</t>
+
+			<t><list style="hanging">
+				<t hangText="MIME media type name:">
+				application</t>
+				
+				<t hangText="MIME subtype name:">
+				atom+xml</t>
+				
+				<t hangText="Mandatory parameters:">
+				None.</t>
+				
+				<t hangText="Optional parameters:">
+					<list style="hanging"> 
+						<t hangText='"charset":'> This parameter has identical
+						semantics to the charset parameter of the
+						"application/xml" media type as specified in RFC 3023
+						<xref target="RFC3023"/>. <xref target="RFC3023"/>.</t>
+					</list>
+				</t>
+
+				<t hangText="Encoding considerations:"> Identical to those of
+				"application/xml" as described in RFC 3023 <xref
+				target="RFC3023"/>, section 3.2.</t>
+				
+				<t hangText="Security considerations:">
+				As defined in this specification. [[update upon publication]]
+				</t>
+			
+				<t>In addition, as this media type uses the "+xml" convention,
+				it shares the same security considerations as described in RFC
+				3023 <xref target="RFC3023"/>, section 10.</t>
+				 
+				<t hangText="Interoperability considerations:">
+				There are no known interoperability issues.</t>
+				
+				<t hangText="Published specification:">
+				This specification. [[update upon publication]]</t>
+				
+				<t hangText="Applications which use this media type:">
+				No known applications currently use this media type.</t>
+			</list></t>
+				
+			<t>Additional information:</t>
+				
+			<t><list style="hanging">
+				<t hangText="Magic number(s):">
+				As specified for "application/xml" in RFC 3023
+				<xref target="RFC3023"/>, section 3.2.</t>
+				
+				<t hangText="File extension:">
+				.atom</t>
+				
+				<t hangText="Fragment identifiers:">
+				As specified for "application/xml" in RFC 3023
+				<xref target="RFC3023"/>, section 5.</t>
+				
+				<t hangText="Base URI:">
+				As specified in RFC 3023 <xref target="RFC3023"/>, section 6.</t>
+				
+				<t hangText="Macintosh File Type code:">
+				TEXT</t>
+				
+				<t hangText="Person and email address to contact for further
+				information:"> Mark Nottingham &lt;mnot@pobox.com&gt;</t>
+				
+				<t hangText="Intended usage:">
+				COMMON</t>
+				
+				<t hangText="Author/Change controller:">
+				This specification's author(s). [[update upon publication]]</t>
+			</list></t>
+		</section>
+		
+		<section title="Security Considerations">
+			<t>[[ this is required ]]</t>
+		</section>
+    </middle>
+
+    <back>
+        <references>&rfc2045; &rfc2119; &rfc2396; &rfc2822; &rfc3023; &rfc3066; &dateTime; &infoset; &xmlbase; &xmlns;</references>
+        <section title="Contributors">
+        <t>The following people contributed to this specification's content:
+                  Tim Bray, Mark Pilgrim, and Sam Ruby. The content and 
+                  concepts within are a product of the Atom community.</t>
+        </section>
+        <section title="Revision History">
+        	<t><list style="hanging">
+        		<t hangText="2003-12-31 (-04)">Editorial cleanup, clarifications.</t>
+        		<t hangText="(-03): ">Not published.</t>
+        		<t hangText="2003-12-12 (-02): ">Fixed several typos, clarified some langauge.</t>
+        		<t>Reference to RFC3066 for language tags.</t>
+        		<t>Explained purpose, clarified requirements of atom:info.</t>
+        		<t>Relaxed requirements for atom:issued date.</t>
+        		<t>Added reference to API spec.</t>
+        		<t>Added example.</t>
+        		<t>Expanded upon Atom's use of XML (now "Atom Documents").</t>
+        		<t>Expanded upon notational conventions.</t>
+        		<t>Added xml:base requirements to atom:author, atom:link.</t>
+        		<t>Adjusted time zone requirements for dates.</t>
+        		<t>rel attribute values are constrained to those listed in the Atom API.</t>
+        		<t hangText="2003-12-11 (-01): ">New format for atom:generator.</t>
+        		<t>New format for atom:link.</t>
+        		<t>Added atom:info</t>
+        		<t>Many elements are now Content constructs.</t>
+        		<t>Made it explicit that ordering in containers isn't significant.</t>
+        		<t>Added references.</t>
+        		<t>Added media type registration template.</t>
+        		<t>Reorganization.</t>
+		</list></t>
+        </section>
+    </back>
+
+</rfc>

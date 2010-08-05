@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>   
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="no" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+<rfc ipr="full3978" docName="draft-nottingham-atompub-feed-history-00">
+    <front>        
+      <title abbrev="Feed History">Feed History: Enabling Stateful Syndication</title>		
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+	<organization></organization>
+	<address>		
+	  <email>mnot@pobox.com</email>	
+	  <uri>http://www.mnot.net/</uri>		
+	</address>	
+      </author>		
+      
+      <date day="24" month="June" year="2005"/>        
+
+      <abstract>
+<t>This document specifies mechanisms that allow feed publishers to give hints about the nature of the feed's statefulness, and a means of retrieving "missed" entries from a stateful feed.</t>
+      </abstract>    
+	  
+  </front>    
+
+  <middle>
+  
+<section title="Introduction">
+
+<t>RFCxxxx describes a Feed Document as 'a representation of an Atom feed, including metadata about the feed, and some or all of the entries associated with it'. Because Feed Documents usually only contain the last several entries in a logical feed, consuming software often keeps copies of all entries that have been previously seen, effectively keeping a history of its contents.</t>
+
+<t>However, not all feeds benefit from this practice; in some, old entries are not relevant to the current contents of the feed. For example, it's not desireable to keep history in this manner with a "top ten" feed; it is not desireable to show old entries, because it would imply that the previous number one is now number eleven, and so forth.</t>
+
+<t>Feeds that encourage this practice have a different problem. If consuming software does not poll often enough, some entries may be missed, causing them to be silently omitted. For some applications, this is a serious error on its own. Even in non-critical applications, this phenomenon can cause publishers to make Feed Documents contain more entries than reasonably necessary, just to assure that consumers have an amply large window in which to reconstruct the feed's state.</t>
+
+<t>This document specifies mechanisms that allow feed publishers to give hints as to the nature of the feed with regard to state, and a means of retrieving "missed" entries from a stateful feed.</t>
+</section>
+
+<section title="Notational Conventions">
+
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document
+are to be interpreted as described in BCP 14, <xref target="RFC2119"/>, as
+scoped to those conformance targets.</t>
+	
+<t>In this specification, "Feed Document" refers to an Atom Feed Document. Note that these mechanisms MAY also be used in other XML-based syndication formats, such as the various flavours of RSS.</t>
+
+<t>In this specification, "head section" refers to the children of the Feed Document's document-wide metadata container; e.g., the child elements of the atom:feed element in an Atom Feed Document.</t>
+
+<t>This specification uses XML Namespaces to uniquely identify XML element names.  It uses the following namespace prefix for the indicated namespace URI;</t>
+
+<t>"atom": [[TBD]]</t>
+<t>"fh": [[TBD]]</t>
+</section>
+
+<section title="The Stateful Flag">
+
+<t>The stateful flag is an XML element in a Feed Document's head section whose content is either "0" or "1". Whitespace in its content MUST be ignored by processors.</t>
+
+<figure>
+  <preamble>For example,</preamble>
+  <artwork>
+  &lt;fh:Stateful>1&lt;/fs:Stateful>
+  </artwork>
+</figure>
+
+<t>If the content of the stateful flag is "0", it indicates that the Feed Document is a complete representation of the entire feed; previous entries SHOULD NOT be considered part of the feed by consumers.</t>
+
+<t>For example, a feed that represents a ranking that varies over time, such as "Top Twenty Records" or "Most Popular Items" should be marked with a stateful flag of "0".</t>
+
+<t>If the content of the stateful flag is "1", it indicates that the Feed Document is a potentially partial representation of the entire feed; previous entries MUST be considered part of the feed by consumers.</t>
+
+<t>For example, a feed that represents a chronological list, such as "ExampleCo Press Releases" or "Widget Project Updates" should be marked with a stateful flag of "1".</t>
+</section>
+
+<section title="The 'this' and 'prev' Link Relations">
+
+<t>A Feed Document containing a stateful flag with the content "1" SHOULD also contain an atom:link element with the relation "this", and optionally a Link element with the relation "prev", in its head section.</t>
+
+<t>The value of the "this" link relation's href attribute MUST be a URI indicating a permanent location that is unique to that Feed Document instance; i.e., the content obtained by dereferencing that URI SHOULD NOT change over time. This URI can be thought of as pointing to a snapshot of the feed at a particular point in time.</t>
+
+<t>The value of the "prev" link relation's href attribute MUST be a URI indicating the location of the previous representation of the feed; i.e., the last Feed Document's "this" URI.</t>
+
+<figure>
+  <preamble>For example,</preamble>
+  <artwork>
+&lt;atom:link rel="this" href="http://example.com/feed/2005/05/20"/>
+&lt;atom:link rel="prev" href="http://example.com/feed/2005/05/13"/>
+  </artwork>
+</figure>
+</section>
+
+<section title="State Reconstruction">
+
+<t>When presented with a partial representation of a feed, a consumer MAY reconstruct the entire feed in a local store by following these steps, starting with the most recent Feed Document available:</t>
+
+<t>
+<list style="numbers">
+<t>Add all of the entries in the Feed Document to the store.</t>
+<t>Dereference the 'prev' link in the Feed Document's head, if present. If it is    
+   not present, stop processing.</t>
+<t>Using the new Feed Document, start at step one (i.e., apply these steps recursively).</t>
+</list>
+</t>
+
+<t>Note that implementations MAY cache previous Feed Documents and/or use a different method of reconstructing state, as long as the result is the same as that achieved by following these steps.</t>
+
+<t>User-Agents SHOULD warn when they do not have the complete state of a feed (e.g., by alerting the user that a Feed Document is unavailable, or inserting pseudo-entries that inform the user that some entries may be missing). </t>
+
+<t>Note that publishers are not required to make all previous Feed Documents available.</t>
+
+</section>
+
+<section title="IANA Considerations">
+
+<t>[[register the link relations]]</t>
+
+</section>
+
+<section title="Security Considerations">
+
+<t>Feed Documents using the mechainsms described here could be crafted in such a way as to cause a User-Agent to initiate excessive (or even an unending sequence of) network requests, causing denial of service (either to the User-Agent, the target server, and/or intervening networks). This risk can be mitigated by requiring user intervention after a certain number of requests, or by limiting requests either according to a hard limit, or with heuristics.</t>
+
+<t>User-Agents should be mindful of resource limits when storing feed state; to reiterate, they are not required to always store or reconstruct feed state when conforming to this specification; they only need inform the user when state is partial.</t>
+
+</section>
+
+	</middle> 
+
+	<back> 
+	  
+	  <references title="Normative References">
+	    &rfc2119;
+	  </references>
+	  
+     </back>
+</rfc>

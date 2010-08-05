@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>   
+<!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>  
+<!ENTITY xmlns SYSTEM 'bibxml/reference.W3C.REC-xml-names-19990114.xml'>  
+<!ENTITY infoset SYSTEM 'bibxml/reference.W3C.REC-xml-infoset-20040204.xml'>    
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+<rfc ipr="full3978" docName="draft-nottingham-atompub-feed-history-04">
+    <front>        
+      <title abbrev="Feed History">Feed History: Enabling Incremental Syndication</title>		
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+	<organization></organization>
+	<address>		
+	  <email>mnot@pobox.com</email>	
+	  <uri>http://www.mnot.net/</uri>		
+	</address>	
+      </author>		      
+<!--      <date day="24" month="June" year="2005"/>      -->  
+    <date year="2005"/>
+
+      <abstract>
+<t>This document specifies a mechanism for feed publishers to give hints about the completeness of a feed, and a means of retrieving "missed" entries from a incremental feed.</t>
+      </abstract>    
+	  
+  </front>    
+
+  <middle>
+  
+<section title="Introduction">
+
+<t>Syndication documents (e.g., those in formats such as Atom <xref target="AtomSyntax"/> and RSS <eref target="http://purl.org/rss/1.0/spec"/><eref target="http://blogs.law.harvard.edu/tech/rss"/>) usually only contain the last several entries in a larger channel (or "feed") of information. Often, consuming software keeps copies of all entries that have been previously seen, effectively keeping a history of the feed's contents.</t>
+
+<t>However, not all feeds benefit from this practice; in some, previous entries are not relevant to the current contents of the feed. For example, it's not desireable to keep history in this manner with a "top ten" feed; showing old entries would imply that the previous number one is now number eleven, and so forth.</t>
+
+<t>Feeds that encourage this practice have a different problem. If consuming software does not poll often enough, some entries may be missed, causing them to be silently omitted. For some applications, this is a serious error on its own. Even in non-critical applications, this phenomenon can cause publishers to make Feed Documents contain more entries than reasonably necessary, just to assure that consumers have an amply large window in which to reconstruct the feed.</t>
+
+<t>This document specifies a mechanism that allows feed publishers to give hints as to the completeness of a feed, and a means of retrieving "missed" entries from a partial, or incremental, feed. Although it refers to Atom normatively, the mechanism described herein can be used with similar syndication formats, such as the various flavours of RSS.</t>
+
+</section>
+
+<section title="Notational Conventions">
+
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document
+are to be interpreted as described in BCP 14, <xref target="RFC2119"/>, as
+scoped to those conformance targets.</t>
+	
+<t>In this specification, "feed document" refers to an Atom Feed Document,
+RSS document or similar syndication format instance. It may contain any 
+number of entries (in RSS, items), and may or may not be a complete representation of the logical feed.</t>
+	
+<t>Similarly, "subscription document" refers to a feed document that is intended to be subscribed to; i.e., it contains the most recent entries available in the feed.</t>
+
+<t>"Archive document" refers to a feed document that is archived; i.e., the set of entries inside it does not change over time. Entries within an archive MAY change themselves. Note that some entries in the archive document may also be present in the subscription document; in other words, some (but not necessarily all) "live" entries might already be archived.</t>
+
+<t>Finally, "head section" refers to the children of a feed document's document-wide metadata container; e.g., the child elements of the atom:feed element in an Atom Feed Document.</t>
+
+<t>This specification uses XML Namespaces <xref target="W3C.REC-xml-names-19990114"/> to uniquely identify XML element names.  It uses the following namespace prefix for the indicated namespace URI;</t>
+
+<t>"fh": "http://purl.org/syndication/history/1.0"</t>
+
+<t>This specification uses terms from the XML Infoset <xref target="W3C.REC-xml-infoset-20040204"/>. However, this
+specification uses a shorthand; the phrase "Information Item" is omitted when
+naming Element Information Items. Therefore, when this specification uses the
+term "element," it is referring to an Element Information Item in Infoset
+terms.</t>
+
+</section>
+
+<section title="The 'fh:incremental' Element">
+
+<t>The fh:incremental element indicates whether the subscription document is a complete representation of the logical feed's entries, and SHOULD occur in a subscription document's head section. It MUST NOT occur there more than once, or elsewhere in a feed document. Its content MUST be either "true" or "false". Whitespace in its content MUST be ignored by consumers.</t>
+
+<figure>
+  <preamble>For example,</preamble>
+  <artwork>
+  &lt;fh:incremental>true&lt;/fh:incremental>
+  </artwork>
+</figure>
+
+<t>Subscription feeds MAY omit the fh:incremental element if the fh:prev element is present; a consumer encountering a subscription document that contains a fh:prev element but does not contain a fh:incremental element MAY behave as if the fh:incremental is present and contains "true".</t>
+
+<t>If the content of the fh:incremental element is "false", it indicates that the subscription document is a complete representation of the entire feed; previous entries SHOULD NOT be considered part of the feed by consumers.</t>
+
+<t>For example, a feed that represents a ranking that varies over time, such as "Top Twenty Records" or "Most Popular Items" should be marked with a fh:incremental element containing "false".</t>
+
+<t>If the content of the fh:incremental element is "true", it indicates that the subscription document is a potentially partial representation of the entire feed; previous entries MUST be considered part of the feed by consumers.</t>
+
+<t>For example, a feed that represents a chronological list, such as "ExampleCo Press Releases" or "Widget Project Updates" should be marked with a fh:incremental element containing "true".</t>
+
+<t>A subscription document whose fh:incremental element contains "true" MUST contain a fh:prev element, unless there are no previous entries in the feed. A subscription document whose fh:incremental element contains "false" MUST NOT contain a fh:prev element.</t>
+
+</section>
+
+<section title="The 'fh:archive' Element">
+
+<t>The fh:archive element is an empty element that indicates that the feed document is an archive document and SHOULD occur in an archive document's head section. It MUST NOT occur there more than once, or elsewhere in a feed document.
+</t>
+
+<figure>
+    <preamble>For example,</preamble>
+    <artwork>
+    &lt;fh:archive/>
+    </artwork>
+</figure>
+
+<t>Consumers can use this element to distinguish between subscription documents and archive documents; e.g., to assure that an archive document isn't subscribed to by mistake.</t>
+
+</section>
+
+<section title="The 'fh:prev' Element">
+
+<t>The fh:prev element conveys the location of an archive of previous entries from the feed which sequentially precede those in the current document, and MAY occur in a subscription document's head section. It MUST occur in an archive document's head section, unless there are no previous entries in the feed. It MUST NOT occur there more than once, or elsewhere in a feed document.</t>
+
+<t>Its content MUST be a URI reference <xref target="RFC3986"/> indicating the previous archive document's location. Whitespace surrounding its content MUST be ignored by consumers.</t>
+
+<figure>
+   <preamble>For example,</preamble>
+   <artwork>
+   &lt;fh:prev>http://www.example.com/feed/archive/2005/05&lt;/fh:prev>
+   </artwork>
+</figure>
+
+<t>Note that URI references may be relative, and when they are used they must be absolutised, as described in Section 5.1 of <xref target="RFC3986"/>.</t>
+
+<t>Also, note that the fh:prev element, on its own, does not bestow any semantics on the ordering of entries in a feed; the only purpose of introducing ordering here is to allow the feed to be reconstructed.</t>
+
+</section>
+
+<section title="Feed Reconstruction">
+
+<t>When presented with an incremental subscription document, a consumer MAY reconstruct the entire feed in a local store by following these steps, starting with the subscription document as the current document:</t>
+
+<t>
+<list style="numbers">
+<t>Add all of the entries in the current document to the store.</t>
+<t>Dereference the fh:prev URI, if present. If it is not present, stop processing.</t>
+<t>Using the dereferenced archive document as the current document, start at step one (i.e., apply these steps recursively).</t>
+</list>
+</t>
+
+<t>A consumer MAY stop when it encounters an fh:prev URI whose entries have been successfully stored beforehand when following this process.</t>
+
+<t>Note that consumers MAY cache archive documents and/or use a different method of reconstructing the feed, as long as the result is the same as that achieved by following these steps.</t>
+
+<t>Consumers SHOULD warn users when they do not have the complete feed (e.g., by alerting the user that an archive document is unavailable, or inserting pseudo-entries that inform the user that some entries may be missing). </t>
+
+<t>Note that publishers are not required to make all archive documents available.</t>
+
+</section>
+
+
+<section title="Examples">
+
+<figure>
+   <preamble>Atom Subscription Document</preamble>
+      <artwork xml:space="preserve">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;feed xmlns="http://purl.org/atom/ns#draft-ietf-atompub-format-09"
+  xmlns:history="http://purl.org/syndication/history/1.0"&gt;
+  &lt;title&gt;Example Feed&lt;/title&gt; 
+  &lt;link href="http://example.org/"/&gt;
+  &lt;updated&gt;2003-12-13T18:30:02Z&lt;/updated&gt;
+  &lt;author&gt; 
+    &lt;name&gt;John Doe&lt;/name&gt;
+  &lt;/author&gt; 
+  &lt;id&gt;urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6&lt;/id&gt;
+  &lt;history:incremental&gt;true&lt;/history:incremental&gt;
+  &lt;history:prev&gt;http://example.org/2003/11/index.atom&lt;/history:prev&gt;
+  
+  &lt;entry&gt;
+    &lt;title&gt;Atom-Powered Robots Run Amok&lt;/title&gt;
+    &lt;link href="http://example.org/2003/12/13/robots_here"/&gt;
+    &lt;id&gt;urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a&lt;/id&gt;
+    &lt;updated&gt;2003-12-13T18:30:02Z&lt;/updated&gt;
+    &lt;summary&gt;Some text in a new, fresh entry.&lt;/summary&gt;
+  &lt;/entry&gt;
+
+&lt;/feed&gt;</artwork>
+</figure>
+
+<figure>
+   <preamble>Atom Archive Document</preamble>
+      <artwork xml:space="preserve">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;feed xmlns="http://purl.org/atom/ns#draft-ietf-atompub-format-09"
+  xmlns:history="http://purl.org/syndication/history/1.0"&gt;
+  &lt;title&gt;Example Feed&lt;/title&gt; 
+  &lt;link href="http://example.org/"/&gt;
+  &lt;updated&gt;2003-11-24T12:00:00Z&lt;/updated&gt;
+  &lt;author&gt; 
+    &lt;name&gt;John Doe&lt;/name&gt;
+  &lt;/author&gt; 
+  &lt;id&gt;urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6&lt;/id&gt;
+  &lt;history:archive/>
+  &lt;history:prev&gt;http://example.org/2003/10/index.atom&lt;/history:prev&gt;
+  
+  &lt;entry&gt;
+    &lt;title&gt;Atom-Powered Robots Scheduled To Run Amok&lt;/title&gt;
+    &lt;link href="http://example.org/2003/11/24/robots_coming"/&gt;
+    &lt;id&gt;urn:uuid:cd3272ef-b09c-42fd-806b-e25580e59b39&lt;/id&gt;
+    &lt;updated&gt;2003-11-24T12:00:00Z&lt;/updated&gt;
+    &lt;summary&gt;Some text from an old, different entry.&lt;/summary&gt;
+  &lt;/entry&gt;
+
+&lt;/feed&gt;</artwork>
+</figure>
+
+<figure>
+   <preamble>RSS 2.0 Subscription Document</preamble>
+   <artwork xml:space="preserve">
+&lt;?xml version="1.0"?>
+&lt;rss version="2.0" 
+ xmlns:history="http://purl.org/syndication/history/1.0">
+ &lt;channel>
+  &lt;title>Liftoff News&lt;/title>
+  &lt;link>http://liftoff.nasa.gov/&lt;/link>
+  &lt;description>Liftoff to Space Exploration.&lt;/description>
+  &lt;language>en-us&lt;/language>
+  &lt;pubDate>Tue, 10 Jun 2003 04:00:00 GMT&lt;/pubDate>
+  &lt;lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT&lt;/lastBuildDate>
+  &lt;docs>http://blogs.law.harvard.edu/tech/rss&lt;/docs>
+  &lt;generator>Weblog Editor 2.0&lt;/generator>
+  &lt;managingEditor>editor@example.com&lt;/managingEditor>
+  &lt;webMaster>webmaster@example.com&lt;/webMaster>
+  &lt;history:prev&gt;http://liftoff.nasa.gov/2003/05/feed&lt;history:prev>
+
+  &lt;item>
+   &lt;title>Star City&lt;/title>
+   &lt;link>http://liftoff.nasa.gov/2003/06/news-starcity&lt;/link>
+   &lt;description>How do Americans get ready to work with Russians 
+   aboard the International Space Station? They take a crash course 
+   in culture, language and protocol at Russia's &lt;a     
+   href="http://howe.iki.rssi.ru/GCTC/gctc_e.htm"&gt;Star 
+   City&lt;/a&gt;.&lt;/description>
+   &lt;pubDate>Tue, 03 Jun 2003 09:39:21 GMT&lt;/pubDate>
+   &lt;guid>http://liftoff.nasa.gov/2003/06/03.html#item573&lt;/guid>
+  &lt;/item>
+ &lt;/channel>
+&lt;/rss>   
+   </artwork>
+</figure>
+
+<t>(note that the incremental element has been omitted in this instance, because
+the presense of the prev element indicates that the feed is incremental.)</t>
+
+<figure>
+   <preamble>RSS 2.0 Archive Document</preamble>
+   <artwork xml:space="preserve">
+&lt;?xml version="1.0"?>
+&lt;rss version="2.0"
+ xmlns:history="http://purl.org/syndication/history/1.0">
+ &lt;channel>
+  &lt;title>Liftoff News&lt;/title>
+  &lt;link>http://liftoff.nasa.gov/&lt;/link>
+  &lt;description>Liftoff to Space Exploration.&lt;/description>
+  &lt;language>en-us&lt;/language>
+  &lt;pubDate>Tue, 30 May 2003 08:00:00 GMT&lt;/pubDate>
+  &lt;lastBuildDate>Tue, 30 May 2003 10:31:52 GMT&lt;/lastBuildDate>
+  &lt;docs>http://blogs.law.harvard.edu/tech/rss&lt;/docs>
+  &lt;generator>Weblog Editor 2.0&lt;/generator>
+  &lt;managingEditor>editor@example.com&lt;/managingEditor>
+  &lt;webMaster>webmaster@example.com&lt;/webMaster>
+  &lt;history:archive/>
+  &lt;history:prev&gt;http://liftoff.nasa.gov/2003/04/feed&lt;/history:prev>
+
+  &lt;item>
+   &lt;description>Sky watchers in Europe, Asia, and parts of 
+   Alaska and Canada will experience a partial eclipse of the Sun
+   on Saturday, May 31st.&lt;/description>
+   &lt;pubDate>Fri, 30 May 2003 11:06:42 GMT&lt;/pubDate>
+   &lt;guid>http://liftoff.nasa.gov/2003/05/30.html#item572&lt;/guid>
+  &lt;/item>
+  &lt;item>
+   &lt;title>The Engine That Does More&lt;/title>     
+   &lt;link>http://liftoff.nasa.gov/2003/05/news-VASIMR.asp&lt;/link>
+   &lt;description>Before man travels to Mars, NASA hopes to 
+   design new engines that will let us fly through the Solar 
+   System more quickly.  The proposed VASIMR engine would do 
+   that.&lt;/description>
+   &lt;pubDate>Tue, 27 May 2003 08:37:32 GMT&lt;/pubDate>
+   &lt;guid>http://liftoff.nasa.gov/2003/05/27.html#item571&lt;/guid>
+  &lt;/item>
+ &lt;/channel>
+&lt;/rss>   
+   </artwork>
+</figure>
+
+
+</section>
+
+
+
+<section title="Security Considerations">
+
+<t>Feeds using the mechanisms described here could be crafted in such a way as to cause a consumer to initiate excessive (or even an unending sequence of) network requests, causing denial of service (either to the consumer, the target server, and/or intervening networks). Consumers can mitigate this risk by requiring user intervention after a certain number of requests, or by limiting requests either according to a hard limit, or with heuristics.</t>
+
+<t>Consumers should be mindful of resource limits when storing feed documents; to reiterate, they are not required to always store or reconstruct the feed when conforming to this specification; they only need inform the user when the reconstructed feed is not complete.</t>
+
+</section>
+
+	</middle> 
+
+	<back> 
+	  
+	  <references title="Normative References">
+	   &rfc2119;
+	   &rfc3986;
+        &xmlns;
+        &infoset;
+        <reference anchor="AtomSyntax">
+            <front>
+                <title abbrev="Atom Format">The Atom Syndication Format</title> 
+                <author initials="M." surname="Nottingham" fullname="Mark Nottingham" role="editor">
+                    <organization>
+                    </organization>
+                    <address>
+                        <email>
+                            mnot@pobox.com
+                        </email>
+                        <uri>
+                            http://www.mnot.net/
+                        </uri>
+                    </address>
+                </author>
+                <author initials="R." surname="Sayre" fullname="Robert Sayre" role="editor">
+                    <organization />
+                    <address>
+                        <email>
+                            rfsayre@boswijck.com
+                        </email>
+                        <uri>
+                            http://boswijck.com
+                        </uri>
+                    </address>
+                </author>
+                <date day="07" month="June" year="2005" />
+                <abstract>
+                    <t>
+                        This document specifies Atom, an XML-based Web content and metadata syndication format.
+                    </t>
+                </abstract>
+            </front>
+        </reference>
+             
+	  </references>
+	  
+	  <section title="Acknowledgements">
+	    <t>The author would like to thanks the following people for their contributions, comments and help: Danny Ayers, Thomas Broyer, Stefan Eissing, David Hall, Aristotle Pagaltzis, Dave Pawson, Garrett Rooney, Robert Sayre, James Snell, Henry Story. [[This is who showed up in the e-mail archive; contact me if I missed you.]]</t>
+         <t>Any errors herein remain the author's, not theirs.</t>
+	  </section>
+	  
+     </back>
+</rfc>

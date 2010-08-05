@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2068 SYSTEM 'bibxml/reference.RFC.2068.xml'>
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>
+<!ENTITY rfc2434 SYSTEM 'bibxml/reference.RFC.2434.xml'>
+<!ENTITY rfc2616 SYSTEM 'bibxml/reference.RFC.2616.xml'>
+<!ENTITY rfc3864 SYSTEM 'bibxml/reference.RFC.3864.xml'>
+<!ENTITY rfc3986 SYSTEM 'bibxml/reference.RFC.3986.xml'>
+<!ENTITY rfc4287 SYSTEM 'bibxml/reference.RFC.4287.xml'>
+<!ENTITY rfc4288 SYSTEM 'bibxml/reference.RFC.4288.xml'>
+<!ENTITY rfc4685 SYSTEM 'bibxml/reference.RFC.4685.xml'>
+<!ENTITY rfc4946 SYSTEM 'bibxml/reference.RFC.4946.xml'>
+<!ENTITY rfc5005 SYSTEM 'bibxml/reference.RFC.5005.xml'>
+<!ENTITY rfc5023 SYSTEM 'bibxml/reference.RFC.5023.xml'>
+<!ENTITY html SYSTEM 'bibxml/reference.W3C.REC-html401-19991224.xml'>  
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="1" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+<rfc ipr="full3978" docName="draft-nottingham-http-link-header-02" category="std" updates="4287">
+    <front>        
+      <title>HTTP Header Linking</title>		
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+	<organization></organization>
+	<address>		
+	  <email>mnot@mnot.net</email>	
+	  <uri>http://www.mnot.net/</uri>		
+	</address>	
+      </author>		      
+     <date year="2008"/>
+
+      <abstract>
+<t>This document clarifies the status of the Link HTTP header and attempts to consolidate
+link relations in a single registry.</t>
+      </abstract>    
+	  
+  </front>    
+
+  <middle>
+  
+<section title="Introduction">
+
+<t>A means of indicating the relationships between documents on the Web has been
+available for some time in HTML <xref target="W3C.REC-html401-19991224"/>, and was considered as a HTTP 
+header in <xref target="RFC2068"/>, but removed from <xref target="RFC2616"/>, 
+due to a lack of implementation experience.</t>
+
+<t>There have since surfaced many cases where a means of including this
+information in HTTP headers has proved useful. However, because it was removed, 
+the status of the Link header is unclear, leading some to consider
+minting new application-specific HTTP headers instead of reusing it.</t>
+
+<t>This document seeks to address these shortcomings.</t>
+
+<t>Additionally, formats other than HTML -- namely, Atom <xref target="RFC4287"/> -- 
+have also defined generic linking mechanisms that are similar to those in HTML, 
+but not identical. This document aims to reconcile these differences when
+such links are expressed as headers.</t>
+
+<t>[[ NOTE: This is a straw-man draft that is intended to give a ROUGH idea of what it would take
+to align and consolidate the HTML and Atom link relations into a single registry with reasonable
+extensibility rules. In particular; a) it changes the registry for Atom link relations, and the 
+process for registration; b) it assigns more generic semantics to several existing link relations, both
+Atom and HTML; c) it changes the syntax of the Link header (in the case where extensions are present). 
+Feedback is welcome on the ietf-http-wg@w3.org mailing list, although this is NOT a work item of the
+HTTPBIS WG.
+]]</t>
+
+</section>
+
+<section title="Notational Conventions">
+
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document
+are to be interpreted as described in BCP 14, <xref target="RFC2119"/>, as
+scoped to those conformance targets.</t>
+
+<t>This document uses the Augmented Backus-Naur Form (ABNF)
+   notation of <xref target="RFC2616"/>, and explicitly includes the following 
+   rules from it: quoted-string, token, SP (space). Additionally, the following rules are included from
+   <xref target="RFC3986"/>: URI-Reference, and from <xref target="RFC4288"/>: type-name.</t>
+   
+</section>
+
+<section title="The Link Header Field">
+
+<t>The Link entity-header field provides a means for describing a
+relationship between two resources, generally between that of the entity
+associated with the header and some other resource. An entity MAY include 
+multiple Link values.</t>
+
+<t>The Link header field is semantically equivalent to the &lt;LINK&gt; element in
+HTML, as well as the atom:link element in Atom <xref target="RFC4287"/>. </t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+    Link           = "Link" ":" #("<" URI-Reference ">"  
+                   *( ";" link-param ) )
+    
+    link-param     = ( ( "rel" "=" relationship )
+                   | ( "type" "=" type-name )
+                   | ( "title" "=" quoted-string )
+                   | ( link-extension ) )
+    
+    link-extension = token [ "=" ( token | quoted-string ) ]
+    
+    relationship   = URI-Reference |
+                   <"> URI-Reference *( SP URI-Reference) <"> )
+    ]]></artwork>
+</figure>
+
+<t>Relationship values that include a semicolon (";") or comma (",") MUST
+	be quoted.</t>
+
+<t>The title parameter MAY be used to label the destination of a link 
+such that it can be used as identification within a human-readable menu.</t>
+
+<t>For example:</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+    Link: <http://www.cern.ch/TheBook/chapter2>; rel="previous";
+          title="previous chapter"
+]]></artwork>
+</figure>
+
+<t>This indicates that chapter2 is previous to this
+resource in a logical navigation path.</t>
+
+<section title="Link Relationships">
+
+<t>Relationship values are URIs that identify the type of link. If the 
+relationship is a relative URI, its base URI MUST be considered to be
+"http://www.iana.org/assignments/relation/", and the value MUST 
+be present in the link relation registry.</t>
+
+</section>
+
+</section>
+      
+<section title="IANA Considerations">
+
+<section title="Link Header Registration">
+
+<t>This specification requires that the Message Header Registry entry for "Link" in HTTP
+<xref target="RFC3864"/> be updated to refer to this document, and located at
+"http://www.iana.org/assignments/relation/".</t>
+
+<figure>
+<artwork xml:space="preserve">
+Header field: Link
+Applicable protocol: http
+Status: standard
+Author/change controller:
+    IETF  (iesg@ietf.org)
+    Internet Engineering Task Force
+Specification document(s):
+   [ this document ]
+</artwork>
+</figure>
+
+</section>
+
+<section title="Link Relation Registry">
+
+<t>This specification is intended to update Atom to become the 
+reference for the Link Relation registry, and clarifies its nature and use.</t>
+
+<t>A Link relation is a way of indicating the semantics of a link.
+Link relations are not format-specific, and MUST NOT specify a particular
+format or media type that they are to be used with.</t>
+
+<t>The security considerations of following a particular link are not determined by the link's 
+relation type; they are determined by the specific context of the use and the media type of the response.</t>
+
+<t>Likewise, a link relation SHOULD NOT specify what the context of its use is, although
+the media type of the dereferenced link may constrain how it is applied.</t>
+
+<t>Link relations that differ only in case (e.g., "Foo" and "foo") MUST NOT be registered.</t>
+
+<t>New relations MAY be registered, subject to IESG Approval, as outlined in <xref target="RFC2434"/>.
+Requests should be made by email to IANA, which will then forward the
+request to the IESG, requesting approval.  The request should use the
+following template:</t>
+
+<t><list style="symbols">
+  <t> Relation Name: </t>
+  <t> Description:</t>
+  <t> Reference: </t>
+</list></t>
+
+<t>The Link Relation registry replaces the Atom Link Relation registry, using
+the same address with the following
+contents:</t>
+
+<t><list style="symbols">
+  <t> Relation Name: alternate</t>
+  <t> Description: Designates a substitute for the link's context.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: appendix</t>
+  <t> Description: Refers to an appendix.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: bookmark</t>
+  <t> Description: Refers to a bookmark or entry point. </t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: chapter</t>
+  <t> Description: Refers to a chapter in a collection of resources.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: contents</t>
+  <t> Description: Refers to a table of contents.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: copyright</t>
+  <t> Description: Refers to a copyright statement.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: current</t>
+  <t> Description: Refers to a resource containing the most recent item(s) in a collection of resources.</t>
+  <t> Reference: <xref target="RFC5005"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: edit</t>
+  <t> Description: Refers to a resource that can be used to edit the link's context.</t>
+  <t> Reference: <xref target="RFC5023"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: edit-media</t>
+  <t> Description: Refers to a resource that can be used to edit media associated with the link's context.</t>
+  <t> Reference: <xref target="RFC5023"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: enclosure</t>
+  <t> Description: Identifies a related resource that is potentially large and might require special handling.</t>
+  <t> Reference: <xref target="RFC4287"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: first</t>
+  <t> Description: A URI that refers to the furthest preceding resource in a series of resources.</t>
+  <t> Reference: <eref target="http://www.iana.org/assignments/link-relations/first"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: glossary</t>
+  <t> Description: Refers to a glossary of terms.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: help</t>
+  <t> Description: Refers to a resource offering help (more information, links to other sources information, etc.)</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: index</t>
+  <t> Description: Refers to an index.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: last</t>
+  <t> Description: A URI that refers to the furthest following resource in a series of resources.</t>
+  <t> Reference: <eref target="http://www.iana.org/assignments/link-relations/last"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: license</t>
+  <t> Description: Refers to a license associated with the link's context.</t>
+  <t> Reference: <xref target="RFC4946"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: next</t>
+  <t> Description: Refers to the next resource in a ordered series of resources.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: next-archive</t>
+  <t> Description: Refers to the immediately following archive resource.</t>
+  <t> Reference: <xref target="RFC5005"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: payment</t>
+  <t> Description: indicates a resource where payment is accepted.</t>
+  <t> Reference: <eref target="http://www.iana.org/assignments/link-relations/payment"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: prev</t>
+  <t> Description: Refers to the previous resource in an ordered series of resources. Synonym for "previous".</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: previous</t>
+  <t> Description: Refers to the previous resource in an ordered series of resources. Synonym for "prev".</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: prev-archive</t>
+  <t> Description: Refers to the immediately preceding archive resource.</t>
+  <t> Reference: <xref target="RFC5005"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: related</t>
+  <t> Description: Identifies a related resource.</t>
+  <t> Reference: <xref target="RFC4287"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: replies</t>
+  <t> Description: Identifies a resource that is a reply to the context of the link.</t>
+  <t> Reference: <xref target="RFC4685"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: section</t>
+  <t> Description: Refers to a section in a collection of resources.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: self</t>
+  <t> Description: Conveys an identifier for the link's context.</t>
+  <t> Reference: <xref target="RFC4287"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: start</t>
+  <t> Description: Refers to the first resource in a collection of resources.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: stylesheet</t>
+  <t> Description: Refers to an external style sheet.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: subsection</t>
+  <t> Description: Refers to a resource serving as a subsection in a collection of resources.</t>
+  <t> Reference: <xref target="W3C.REC-html401-19991224"/></t>
+</list></t>
+
+<t><list style="symbols">
+  <t> Relation Name: via</t>
+  <t> Description: Identifies a resource that is the source of the information in the link's context.</t>
+  <t> Reference: <xref target="RFC4287"/></t>
+</list></t>
+
+</section>
+
+</section>
+
+<section title="Security Considerations">
+
+<t>The content the Link headers is not secure, private
+or integrity-guaranteed, and due caution should be excercised when using it.
+</t>
+
+<t>Applications that take advantage of these mechanisms should consider the 
+attack vectors opened by automatically following, trusting, or otherwise using
+links gathered from HTTP headers.</t>
+
+</section>
+
+
+	</middle> 
+
+	<back> 
+	  
+	  <references title="Normative References">
+	   &rfc2119;
+	   &rfc2434;
+	   &rfc3986;
+	   &rfc2616;
+	   &rfc3864;
+	   &rfc4288;
+	  </references>
+	  <references title="Informative References">
+	   &rfc2068;
+	   &rfc4287;
+	   &rfc4685;
+	   &rfc4946;
+	   &rfc5005;
+	   &rfc5023;
+       &html;
+	  </references>
+
+<section title="Notes on HTML Links">
+
+<t>HTML motivated the original syntax of the Link header, and many of the design decisions
+in this document are driven by a desire to stay compatible with these uses.</t>
+
+<t>All of the link relations defined by HTML4 have been included in the link relation registry,
+so they can be used without modification. However, extension link relations work differently in HTML4
+and the Link header; the former uses a document-wide "profile" URI to scope the relations, while the latter
+allows the use of full URIs on individual relations.</t>
+
+<t>Therefore, when using the profile mechanism in HTML4, it is necessary to map the profiled link relations
+to URIs when expressed in Link headers. For example, in HTML:</t>
+
+<figure>
+<artwork xml:space="preserve">
+<![CDATA[
+<html>
+  <head profile="http://example.com/profile1/">
+    <link rel="foo" href="/foo">
+  </head>
+  [...]
+]]>
+</artwork>
+</figure>
+
+<t>could be represented as a header like this;</t>
+
+<figure>
+<artwork xml:space="preserve">
+Link: &lt;/foo&gt;; rel="http://example.com/profile1/foo"
+</artwork>
+</figure>
+
+<t>Profile authors should note this when creating profile URIs; it may be desirable to 
+	use URIs that end in a delimiter (e.g., "/" or "#"), to make extracting the specific
+	relation in use easier.</t>
+
+<t>HTML defines link relation values as case-insensitive, while the Link header's syntax does not. Therefore,
+it is important to case-normalise relation values in HTML before comparing or converting them to Link
+headers.</t>
+
+<t>HTML also defines several attributes on links that are not explicitly defined by the Link header.
+Although most of these are believed to be defunct, they can be used as link-extensions.</t>
+
+</section>
+
+<section title="Notes on Atom Links">
+
+<t>Atom conveys links in the atom:link element. When serialising an atom:link into a Link header, 
+it is necessary to convert IRIs (if used) to URIs.</t>
+
+<t>Additionally, since the base URI for link relations in Link headers is fixed, extension links
+(i.e,. those not in the registry) MUST be represented as absolute URIs.</t>
+
+<t>Note also that while the Link header allows multiple relations to be associated with a single
+link, atom:link does not. In this case, a single Link header may map to several atom:link elements.
+</t>
+
+<t>As with HTML, atom:link defines some attributes that are not explicitly mirrored in the Link header
+syntax, but they may also be used as link-extensions.</t>
+
+</section>
+
+	  
+<section title="Acknowledgements">
+
+<t>This specification lifts the definition of the Link header
+from RFC2068; credit for it belongs entirely to the authors of and contributors
+to that document. The link relation registrations themselves are sourced from several documents;
+see the applicable references.</t>
+
+<t>The author would like to thank the many people who commented upon, encouraged and gave feedback
+	to this draft, especially including Frank Ellermann and Julian Reschke.</t>
+
+</section>
+
+<section title="Document history">
+
+<t>-02</t>
+<t><list style="symbols">
+	<t>Dropped XLink language.</t>
+	<t>Removed 'made' example.</t>
+	<t>Removed 'rev'. Can still be used as an extension.</t>
+	<t>Added HTML reference to introduction.</t>
+	<t>Required relationship values that have a ; or , to be quoted.</t>
+	<t>Changed base URI for relation values.</t>
+	<t>Noted registry location.</t>
+	<t>Added advisory text about HTML profile URIs.</t>
+	<t>Disallowed registration of relations that only differ in case.</t>
+	<t>Clarified language about IRIs in Atom.</t>
+	<t>Added descriptions for 'first', 'last', and 'payment', referring to
+		current IANA registry entries, as these were sourced from e-mail. Will
+		this cause self-referential implosion?</t>
+	<t>Explicitly updates RFC4287.</t>
+	<t>Added 'type' parameter.</t>
+	<t>Removed unnecessary advice about non-HTML relations in HTML section.</t>
+</list></t>
+
+<t>-01</t>
+<t><list style="symbols">
+ <t>Changed syntax of link-relation to one or more URI; dropped Profile.</t>
+ <t>Dropped anchor parameter; can still be an extension.</t>
+ <t>Removed Link-Template header; can be specified by templates spec or elsewhere.</t>
+ <t>Straw-man for link relation registry.</t>
+</list></t>
+
+<t>-00</t>
+<t><list style="symbols">
+  <t>Initial draft; normative text lifted from RFC2068.</t>
+</list></t>
+
+</section>
+	  
+     </back>
+</rfc>
+
+

@@ -1,0 +1,392 @@
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                              January 2003
+Expires: July 2, 2003
+
+
+                 The 'dns' Media Type Registration Tree
+                   draft-nottingham-dns-media-tree-00
+
+Status of this Memo
+
+   This document is an Internet-Draft and is in full conformance with
+   all provisions of Section 10 of RFC2026.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups. Note that other
+   groups may also distribute working documents as Internet-Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time. It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at http://
+   www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on July 2, 2003.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2003). All Rights Reserved.
+
+Abstract
+
+   This document specifies the 'dns' media subtype registration tree,
+   which is intended to ease the deployment of new Internet applications
+   and their associated media types without the need for coordination
+   with a central registry.
+
+1. Requirements notation
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+2. Introduction
+
+
+
+
+Nottingham                Expires July 2, 2003                  [Page 1]
+
+Internet-Draft         The 'dns' Media Type Tree            January 2003
+
+
+   The registration proceedures for Internet media types [RFC2048] allow
+   for the specification of media type trees, which allow for faceted
+   names to be described in order to increase the efficiency and
+   flexibility of the registration process. They also allows for the
+   creation of new registration trees, with the advice and consent of
+   the IESG.
+
+   This specification describes one such tree.
+
+3. Motivation
+
+   The Internet media type system was designed to encourage certain
+   properties, and arguably has been quite successful because of its
+   approach. In particular, IANA acts as a central registry to bring
+   coordination and convenience, and various levels of community review
+   are required before a media type may be registered, to assure some
+   level of quality in and appropriate application of media types.
+
+   However, the arrival of the Web, and in particular XML, has changed
+   the conditions under which formats are created and used. XML allows
+   the creation of business-specific document and protocol formats by
+   end users. Often, these parties are unfamiliar with IETF and IANA
+   process for registration of media types, and do not have a
+   requirement for recognition by a centralized registry. As such, the
+   cost of media type registration is not justified in the view of some
+   parties that are minting new formats.
+
+   As a result, many formats are created without corresponding media
+   types (often under the umbrella of 'text/xml' or 'application/xml').
+   Such formats are not first-class citizens on the Internet or the Web;
+   one cannot content negotiate for them, for example, and one cannot
+   use existing software dispatch mechanisms in MIME software to
+   accommodate them.
+
+   It should be noted that these undesirable effects disproportionately
+   affect those who wish to use a format in ways that may not have been
+   forseen by its creators. As such, the registration system indirectly
+   discourages the wide use of those mechanisms that leverage media
+   types.
+
+   Current registration proceedures do allow for some flexibility to
+   accommodate vendor-specific formats (the .vnd tree), "vanity" formats
+   (the .prs tree) and ad hoc, experimental formats (the x. tree and its
+   predecessor, the 'x-' convention). Unfortunately, these mechanisms do
+   not address the problems described here; the x- convention is too
+   brittle for most uses (and indeed its use has been discouraged for
+   some time), and the .vnd and .prs trees are still based on a
+   centralized registry.
+
+
+
+Nottingham                Expires July 2, 2003                  [Page 2]
+
+Internet-Draft         The 'dns' Media Type Tree            January 2003
+
+
+   This specification proposes that the widely recognized DNS
+   infrastructure be leveraged to act as a distributed registry, to
+   avoid the possibility of collision, whilst removing the need for an
+   additional centralized registry. The approach is similar to URI
+   schemes that also leverage the DNS to provide locally-managed name
+   spaces.
+
+4. The 'dns' Tree
+
+   The 'dns' media subtype tree is intended to be used to identify
+   proprietary, ad hoc, experimental, or limited deployment formats.
+
+   It follows the conventions of faceted name trees as specified by
+   [RFC2048], and is distinguished by the leading facet 'dns.'. This
+   facet MUST be followed by one or more dot-delimited facets that are
+   derived from a domain name, in reverse order. Finally, those facets
+   MUST be followed by on or more facets that indicate the format's
+   identity within that name space.
+
+   Media types using this tree MUST be minted with the knowledge and
+   permission of the authority responsible for the corresponding
+   Internet domain name. The domain name used MUST be registered in the
+   Internet Registry, as delegated by IANA (see [RFC1591]).
+
+   For example, if the entity responsible for example.com wished to
+   register a textual media type with the name 'foo' in this fashion,
+   its media type might be:
+
+   text/dns.com.example.foo
+
+   XML-based formats SHOULD be conformant with [RFC3023], e.g.:
+
+   application/dns.com.example.foo+xml
+
+   If example.com were a multinational concern, it may wish to delegate
+   authority for minting new types to regional departments. It could do
+   so by mandating an additional facet; an application media type minted
+   by the Australian division might be:
+
+   application/dns.com.example.au.bar
+
+   whilst a completely separate application format, also identified as
+   'bar' and minted by the U.S. division might be distinguished as:
+
+   application/dns.com.example.us.bar
+
+4.1 The 'doc' Attribute
+
+
+
+
+Nottingham                Expires July 2, 2003                  [Page 3]
+
+Internet-Draft         The 'dns' Media Type Tree            January 2003
+
+
+   Media types in the dns tree MAY use the 'doc' attribute, which
+   indicates a URL [RFC2396] that can be used to locate documentation of
+   the identified format.
+
+   For example:
+
+   application/dns.com.example.foo; doc="http://www.example.com/formats/
+   foo.html"
+
+   The 'doc' attribute is only informative, and MUST NOT be interpreted
+   to alter the nature of the format identified; i.e., a media type with
+   a 'doc' attribute of "foo" MUST be considered equivalent to the same
+   media type with a 'doc' attribute of "bar", or one without a 'doc'
+   attribute.
+
+4.2 Format-Specific Attributes
+
+   Formats using this dns tree MAY designate their own attributes, which
+   SHOULD be documented at or referenced from the URL specified in the
+   'doc' attribute, if present.
+
+5. IANA Considerations
+
+   Implementation of the dns tree does not require IANA coordination.
+   Any media type conformant with this specification is considered to be
+   registered with IANA.
+
+6. Security Considerations
+
+6.1 Change of Ownership
+
+   Over time, domain names may change ownership. Without proper care,
+   media types created by a domain name's previous owner might collide
+   with those created by the new owner.
+
+   As a result, when domains which have been used in the registration of
+   media types in the dns tree change hands, the previous owner SHOULD
+   take care to communicate existing media types to the new owner, and
+   the new owner SHOULD take care to avoid collisions. Previous owners
+   MAY publish a transition plan to a new domain, if doing so is judged
+   to cause minimal disruption.
+
+6.2 Unauthorized Registration
+
+   Media types using the dns tree have no enforced relationship to the
+   domain names that they are based upon; the use of domain names is
+   only a convention to assure proper name spacing. Implementations
+   SHOULD NOT make any assumptions about this relationship, especially
+
+
+
+Nottingham                Expires July 2, 2003                  [Page 4]
+
+Internet-Draft         The 'dns' Media Type Tree            January 2003
+
+
+   regarding security issues.
+
+References
+
+   [RFC1591]  Postel, J., "Domain Name System Structure and Delegation",
+              RFC 1591, March 1994.
+
+   [RFC2048]  Freed, N., Klensin, J. and J. Postel, "Multipurpose
+              Internet Mail Extensions (MIME) Part Four: Registration
+              Procedures", BCP 13, RFC 2048, November 1996.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC2396]  Berners-Lee, T., Fielding, R. and L. Masinter, "Uniform
+              Resource Identifiers (URI): Generic Syntax", RFC 2396,
+              August 1998.
+
+   [RFC3023]  Murata, M., St. Laurent, S. and D. Kohn, "XML Media
+              Types", RFC 3023, January 2001.
+
+
+Author's Address
+
+   Mark Nottingham
+
+   EMail: mailto:mnot@pobox.com
+
+Appendix A. Acknowledgements
+
+   The following people gave input and feedback during the creation of
+   this document; Mark Baker, Don Box, Yaron Goland, Ted Hardie, John
+   Kemp, Graham Klyne, and David Orchard. All errors are the
+   responsibility of the author.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham                Expires July 2, 2003                  [Page 5]
+
+Internet-Draft         The 'dns' Media Type Tree            January 2003
+
+
+Intellectual Property Statement
+
+   The IETF takes no position regarding the validity or scope of any
+   intellectual property or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; neither does it represent that it
+   has made any effort to identify any such rights. Information on the
+   IETF's procedures with respect to rights in standards-track and
+   standards-related documentation can be found in BCP-11. Copies of
+   claims of rights made available for publication and any assurances of
+   licenses to be made available, or the result of an attempt made to
+   obtain a general license or permission for the use of such
+   proprietary rights by implementors or users of this specification can
+   be obtained from the IETF Secretariat.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights which may cover technology that may be required to practice
+   this standard. Please address the information to the IETF Executive
+   Director.
+
+
+Full Copyright Statement
+
+   Copyright (C) The Internet Society (2003). All Rights Reserved.
+
+   This document and translations of it may be copied and furnished to
+   others, and derivative works that comment on or otherwise explain it
+   or assist in its implementation may be prepared, copied, published
+   and distributed, in whole or in part, without restriction of any
+   kind, provided that the above copyright notice and this paragraph are
+   included on all such copies and derivative works. However, this
+   document itself may not be modified in any way, such as by removing
+   the copyright notice or references to the Internet Society or other
+   Internet organizations, except as needed for the purpose of
+   developing Internet standards in which case the procedures for
+   copyrights defined in the Internet Standards process must be
+   followed, or as required to translate it into languages other than
+   English.
+
+   The limited permissions granted above are perpetual and will not be
+   revoked by the Internet Society or its successors or assignees.
+
+   This document and the information contained herein is provided on an
+   "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET ENGINEERING
+   TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
+
+
+
+Nottingham                Expires July 2, 2003                  [Page 6]
+
+Internet-Draft         The 'dns' Media Type Tree            January 2003
+
+
+   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
+   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Acknowledgment
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham                Expires July 2, 2003                  [Page 7]
+

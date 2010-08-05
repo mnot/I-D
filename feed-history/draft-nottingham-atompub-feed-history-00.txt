@@ -1,0 +1,336 @@
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                             June 24, 2005
+Expires: December 26, 2005
+
+
+              Feed History: Enabling Stateful Syndication
+                draft-nottingham-atompub-feed-history-00
+
+Status of this Memo
+
+   By submitting this Internet-Draft, each author represents that any
+   applicable patent or other IPR claims of which he or she is aware
+   have been or will be disclosed, and any of which he or she becomes
+   aware will be disclosed, in accordance with Section 6 of BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on December 26, 2005.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2005).
+
+Abstract
+
+   This document specifies mechanisms that allow feed publishers to give
+   hints about the nature of the feed's statefulness, and a means of
+   retrieving "missed" entries from a stateful feed.
+
+1.  Introduction
+
+   RFCxxxx describes a Feed Document as 'a representation of an Atom
+   feed, including metadata about the feed, and some or all of the
+   entries associated with it'.  Because Feed Documents usually only
+
+
+
+Nottingham              Expires December 26, 2005               [Page 1]
+
+Internet-Draft                Feed History                     June 2005
+
+
+   contain the last several entries in a logical feed, consuming
+   software often keeps copies of all entries that have been previously
+   seen, effectively keeping a history of its contents.
+
+   However, not all feeds benefit from this practice; in some, old
+   entries are not relevant to the current contents of the feed.  For
+   example, it's not desireable to keep history in this manner with a
+   "top ten" feed; it is not desireable to show old entries, because it
+   would imply that the previous number one is now number eleven, and so
+   forth.
+
+   Feeds that encourage this practice have a different problem.  If
+   consuming software does not poll often enough, some entries may be
+   missed, causing them to be silently omitted.  For some applications,
+   this is a serious error on its own.  Even in non-critical
+   applications, this phenomenon can cause publishers to make Feed
+   Documents contain more entries than reasonably necessary, just to
+   assure that consumers have an amply large window in which to
+   reconstruct the feed's state.
+
+   This document specifies mechanisms that allow feed publishers to give
+   hints as to the nature of the feed with regard to state, and a means
+   of retrieving "missed" entries from a stateful feed.
+
+2.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in BCP 14, [RFC2119], as
+   scoped to those conformance targets.
+
+   In this specification, "Feed Document" refers to an Atom Feed
+   Document.  Note that these mechanisms MAY also be used in other XML-
+   based syndication formats, such as the various flavours of RSS.
+
+   In this specification, "head section" refers to the children of the
+   Feed Document's document-wide metadata container; e.g., the child
+   elements of the atom:feed element in an Atom Feed Document.
+
+   This specification uses XML Namespaces to uniquely identify XML
+   element names.  It uses the following namespace prefix for the
+   indicated namespace URI;
+
+   "atom": [[TBD]]
+
+   "fh": [[TBD]]
+
+
+
+
+
+Nottingham              Expires December 26, 2005               [Page 2]
+
+Internet-Draft                Feed History                     June 2005
+
+
+3.  The Stateful Flag
+
+   The stateful flag is an XML element in a Feed Document's head section
+   whose content is either "0" or "1".  Whitespace in its content MUST
+   be ignored by processors.
+
+   For example,
+
+     <fh:Stateful>1</fs:Stateful>
+
+   If the content of the stateful flag is "0", it indicates that the
+   Feed Document is a complete representation of the entire feed;
+   previous entries SHOULD NOT be considered part of the feed by
+   consumers.
+
+   For example, a feed that represents a ranking that varies over time,
+   such as "Top Twenty Records" or "Most Popular Items" should be marked
+   with a stateful flag of "0".
+
+   If the content of the stateful flag is "1", it indicates that the
+   Feed Document is a potentially partial representation of the entire
+   feed; previous entries MUST be considered part of the feed by
+   consumers.
+
+   For example, a feed that represents a chronological list, such as
+   "ExampleCo Press Releases" or "Widget Project Updates" should be
+   marked with a stateful flag of "1".
+
+4.  The 'this' and 'prev' Link Relations
+
+   A Feed Document containing a stateful flag with the content "1"
+   SHOULD also contain an atom:link element with the relation "this",
+   and optionally a Link element with the relation "prev", in its head
+   section.
+
+   The value of the "this" link relation's href attribute MUST be a URI
+   indicating a permanent location that is unique to that Feed Document
+   instance; i.e., the content obtained by dereferencing that URI SHOULD
+   NOT change over time.  This URI can be thought of as pointing to a
+   snapshot of the feed at a particular point in time.
+
+   The value of the "prev" link relation's href attribute MUST be a URI
+   indicating the location of the previous representation of the feed;
+   i.e., the last Feed Document's "this" URI.
+
+
+
+
+
+
+
+Nottingham              Expires December 26, 2005               [Page 3]
+
+Internet-Draft                Feed History                     June 2005
+
+
+   For example,
+
+   <atom:link rel="this" href="http://example.com/feed/2005/05/20"/>
+   <atom:link rel="prev" href="http://example.com/feed/2005/05/13"/>
+
+
+5.  State Reconstruction
+
+   When presented with a partial representation of a feed, a consumer
+   MAY reconstruct the entire feed in a local store by following these
+   steps, starting with the most recent Feed Document available:
+
+   1.  Add all of the entries in the Feed Document to the store.
+   2.  Dereference the 'prev' link in the Feed Document's head, if
+       present.  If it is not present, stop processing.
+   3.  Using the new Feed Document, start at step one (i.e., apply these
+       steps recursively).
+
+   Note that implementations MAY cache previous Feed Documents and/or
+   use a different method of reconstructing state, as long as the result
+   is the same as that achieved by following these steps.
+
+   User-Agents SHOULD warn when they do not have the complete state of a
+   feed (e.g., by alerting the user that a Feed Document is unavailable,
+   or inserting pseudo-entries that inform the user that some entries
+   may be missing).
+
+   Note that publishers are not required to make all previous Feed
+   Documents available.
+
+6.  IANA Considerations
+
+   [[register the link relations]]
+
+7.  Security Considerations
+
+   Feed Documents using the mechainsms described here could be crafted
+   in such a way as to cause a User-Agent to initiate excessive (or even
+   an unending sequence of) network requests, causing denial of service
+   (either to the User-Agent, the target server, and/or intervening
+   networks).  This risk can be mitigated by requiring user intervention
+   after a certain number of requests, or by limiting requests either
+   according to a hard limit, or with heuristics.
+
+   User-Agents should be mindful of resource limits when storing feed
+   state; to reiterate, they are not required to always store or
+   reconstruct feed state when conforming to this specification; they
+   only need inform the user when state is partial.
+
+
+
+Nottingham              Expires December 26, 2005               [Page 4]
+
+Internet-Draft                Feed History                     June 2005
+
+
+8.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+
+Author's Address
+
+   Mark Nottingham
+
+   Email: mnot@pobox.com
+   URI:   http://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 26, 2005               [Page 5]
+
+Internet-Draft                Feed History                     June 2005
+
+
+Intellectual Property Statement
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at
+   ietf-ipr@ietf.org.
+
+
+Disclaimer of Validity
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET
+   ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE
+   INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Copyright Statement
+
+   Copyright (C) The Internet Society (2005).  This document is subject
+   to the rights, licenses and restrictions contained in BCP 78, and
+   except as set forth therein, the authors retain all their rights.
+
+
+Acknowledgment
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+Nottingham              Expires December 26, 2005               [Page 6]
+

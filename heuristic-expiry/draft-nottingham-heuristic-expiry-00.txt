@@ -1,0 +1,280 @@
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                       Akamai Technologies
+Expires: October 10, 2001                                 April 11, 2001
+
+
+               A Heuristic Expiration Algorithm for HTTP
+                draft-nottingham-heuristic-expiration-00
+
+Status of this Memo
+
+   This document is an Internet-Draft and is in full conformance with
+   all provisions of Section 10 of RFC2026.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups. Note that other
+   groups may also distribute working documents as Internet-Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time. It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on October 10, 2001.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2001). All Rights Reserved.
+
+Abstract
+
+   HTTP/1.1 provides for heuristic expiration mechanisms to be used by
+   caches when explicit freshness information is not available. This
+   document describes one such algorithm which allows cache efficiency,
+   while maintaining reasonable semantic transparency.
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires October 10, 2001                [Page 1]
+
+Internet-Draft    A Heuristic Expiration Algorithm for HTTP   April 2001
+
+
+1. Introduction
+
+   The HTTP[1] allows caches to use a heuristic expiry algorithm to
+   determine the cacheability of a resource when there is no explicit
+   information available from the origin server. However, it does not
+   specify an algorithm to use.
+
+   As a result, caches in both clients and intermediaries use a variety
+   of mechanisms to compute expiry. Due to the lack of explicit
+   freshness information for most Internet resources, this results in
+   unpredictable freshness in caches, leading both end users and origin
+   server operators to distrust them.
+
+   This document seeks to define a heuristic expiry algorithm for use by
+   caches. Caches which comply with its requirements will behave in a
+   more predictable manner, providing greater semantic transparency
+   whilst still introducing efficiencies.
+
+1.1 Requirements
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119[3].
+
+   An implementation is not compliant if it fails to satisfy one or more
+   of the MUST or REQUIRED level requirements. An implementation that
+   satisfies all the MUST or REQUIRED level and all the SHOULD level
+   requirements is said to be "unconditionally compliant"; one that
+   satisfies all the MUST level requirements but not all the SHOULD
+   level requirements is said to be "conditionally compliant".
+
+2. Scope
+
+   This document is not intended to redefine the cache expiry and
+   coherence requirements specified in RFC2616[1], or to excuse
+   implementations from fulfilling them. Instead, it defines a default
+   heuristic freshness algorithm, which is not defined in RFC2616.
+
+   Compliant implementations SHOULD use this heuristic as a default
+   setting. However, implementations MAY be capable of being configured
+   by the device's administrator or end users. When that configuration
+   violates the requirements stated here, that particular device is non-
+   compliant, and SHOULD inform the administrator or user (as
+   appropriate) of this through some mechanism (i.e., administration
+   interface, HTTP Warning response headers, etc.). Implementations
+   SHOULD make it easy to return to a compliant state.
+
+
+
+
+
+Nottingham              Expires October 10, 2001                [Page 2]
+
+Internet-Draft    A Heuristic Expiration Algorithm for HTTP   April 2001
+
+
+3. General Heuristic
+
+   If freshness information is available in the form of Expires or
+   Cache-Control response headers, implementations MUST interpret them
+   as directed by RFC2616[1].
+
+   If no validator (Last-Modified or ETag response header) is present,
+   the entity MUST be considered uncacheable, and MUST NOT be stored in
+   the cache.
+
+   If only an ETag validator is present, without any other cacheability
+   information, implementations MAY cache the entity and MUST revalidate
+   it before serving it.
+
+   If a Last-Modified validator is present, with or without and ETag,
+   implementations SHOULD cache the entity, and if they do so MUST
+   assign freshness based on its age in cache, as outlined in "Age-Based
+   Expiry".
+
+   Implementations MUST NOT use the request-URI in determination of
+   cacheability. For example the presence of the string "cgi-bin", a URI
+   query, or path segment terminator (filename extension) such as
+   ".gif", ".jpg" or ".html" should not change the cacheability of the
+   entity.
+
+   However, implementations MUST obey the requirement in RFC 2616[1],
+   Section 13.9. ("Side Effects of GET and HEAD") Specifically, they
+   MUST revalidate requests which contain a query when there is no
+   explicit cacheability information.
+
+   Implementations MUST comply with the requirements placed on caches by
+   RFC2965[2] regarding cookies.
+
+4. Age-Based Expiry
+
+   Using the algorithm outlined in RFC2616[1], Section 13.2.3 ("Age
+   Calculations"), implementations MUST calculate a heuristic freshness
+   lifetime based on a percentage of the entity's age, as measured when
+   it was last validated on the origin server.
+
+   FRESHNESS_LIFETIME = AGE_AT_ENTRY * P
+
+   EXPIRY_TIME = TIME_AT_ENTRY + FRESHNESS_LIFETIME
+
+   The RECOMMENDED percentage is 20%; implementations MUST NOT allow a
+   value of more than 50%.
+
+References
+
+
+
+Nottingham              Expires October 10, 2001                [Page 3]
+
+Internet-Draft    A Heuristic Expiration Algorithm for HTTP   April 2001
+
+
+   [1]  Fielding, R., Gettys, J., Mogul, J. C., Frystyk, H., Masinter,
+        L., Leach, P. and T. Berners-Lee, "Hypertext Transfer Protocol -
+        HTTP/1.1", RFC 2616, June 1999.
+
+   [2]  , D. surname= and L. Montulli, "HTTP State Management
+        Mechanism", RFC 2965, October 2000.
+
+   [3]  Bradner, S., "Key words for use in RFCs to Indicate Requirement
+        Levels", RFC 2119, March 1997.
+
+
+Author's Address
+
+   Mark Nottingham
+   Akamai Technologies
+   Suite 703, 1400 Fashion Island Bvld
+   San Mateo, CA  94404
+   US
+
+   EMail: mnot@akamai.com
+   URI:   http://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires October 10, 2001                [Page 4]
+
+Internet-Draft    A Heuristic Expiration Algorithm for HTTP   April 2001
+
+
+Full Copyright Statement
+
+   Copyright (C) The Internet Society (2001). All Rights Reserved.
+
+   This document and translations of it may be copied and furnished to
+   others, and derivative works that comment on or otherwise explain it
+   or assist in its implementation may be prepared, copied, published
+   and distributed, in whole or in part, without restriction of any
+   kind, provided that the above copyright notice and this paragraph are
+   included on all such copies and derivative works. However, this
+   document itself may not be modified in any way, such as by removing
+   the copyright notice or references to the Internet Society or other
+   Internet organizations, except as needed for the purpose of
+   developing Internet standards in which case the procedures for
+   copyrights defined in the Internet Standards process must be
+   followed, or as required to translate it into languages other than
+   English.
+
+   The limited permissions granted above are perpetual and will not be
+   revoked by the Internet Society or its successors or assigns.
+
+   This document and the information contained herein is provided on an
+   "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET ENGINEERING
+   TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
+   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
+   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+Acknowledgement
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires October 10, 2001                [Page 5]
+

@@ -1,0 +1,1089 @@
+
+
+<pre>
+Network Working Group                                      M. Nottingham
+Internet-Draft                                        <del class="diff modified">     June 25, </del><ins class="diff modified">September 10, </ins>2006
+<ins class="diff">Intended status: Standards Track
+</ins>Expires: <del class="diff modified">December 27, 2006
+
+
+             Extensions for Multi-Document Syndicated Feeds
+                draft-nottingham-atompub-feed-history-06
+</del><ins class="diff modified">March 14, 2007
+
+
+                       Feed Paging and Archiving
+                draft-nottingham-atompub-feed-history-07
+</ins>
+Status of <del class="diff modified">this </del><ins class="diff modified">This </ins>Memo
+
+   By submitting this Internet-Draft, each author represents that any
+   applicable patent or other IPR claims of which he or she is aware
+   have been or will be disclosed, and any of which he or she becomes
+   aware will be disclosed, in accordance with Section 6 of BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on <del class="diff modified">December 27, 2006.
+</del><ins class="diff modified">March 14, 2007.
+</ins>
+Copyright Notice
+
+   Copyright (C) The Internet Society (2006).
+
+Abstract
+
+   This specification defines three types of syndicated feeds that
+   enable publication of entries across one or more feed documents.
+
+
+
+
+
+
+
+
+
+<del class="diff">
+</del>Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>              [Page 1]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+
+Table of Contents
+
+   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  3
+   <del class="diff modified">2. </del><ins class="diff modified">  1.1. </ins> Notational Conventions . . . . . . . . . . . . . . . . . . <del class="diff">. . </del> 3
+   <del class="diff modified">3. </del><ins class="diff modified">  1.2. </ins> Terminology  . . . . . . . . . . . . . . . . . . . . . . . <del class="diff modified">. .  4
+   4. </del><ins class="diff modified"> 3
+   2. </ins> Complete Feeds . . . . . . . . . . . . . . . . . . . . . . . .  4
+     <del class="diff modified">4.1. </del><ins class="diff modified">2.1. </ins> Examples . . . . . . . . . . . . . . . . . . . . . . . . .  5
+   <del class="diff modified">5. </del><ins class="diff modified">3. </ins> Paged Feeds  . . . . . . . . . . . . . . . . . . . . . . . . .  6
+     <del class="diff modified">5.1. </del><ins class="diff modified">3.1. </ins> Examples . . . . . . . . . . . . . . . . . . . . . . . . .  7
+   <del class="diff modified">6. </del><ins class="diff modified">4. </ins> Archived Feeds . . . . . . . . . . . . . . . . . . . . . . . .  8
+     <del class="diff modified">6.1. </del><ins class="diff modified">4.1. </ins> Examples . . . . . . . . . . . . . . . . . . . . . . . . . 10
+   <del class="diff modified">7. </del><ins class="diff modified">5. </ins> IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 13
+   <del class="diff modified">8. </del><ins class="diff modified">6. </ins> Security Considerations  . . . . . . . . . . . . . . . . . . . 14
+   <del class="diff modified">9. </del><ins class="diff modified">7. </ins> Normative References . . . . . . . . . . . . . . . . . . . . . 14
+   Appendix A.  Acknowledgements  . . . . . . . . . . . . . . . . . . 15
+   Appendix B.  Reconstructing Archived Feeds . . . . . . . . . . . . 15
+<del class="diff modified">   Author's Address . . . . . . . . . . . . . . . . . . . . . . . . . 16
+   Intellectual Property and Copyright Statements . . . . . . . . . . 17
+</del><ins class="diff modified">
+
+</ins>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>              [Page 2]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+
+1.  Introduction
+
+   Syndicated <ins class="diff">Web </ins>feeds <del class="diff">of information </del>(using such formats as Atom <del class="diff modified">[RFC4287]
+   </del><ins class="diff modified">[RFC4287] </ins>or <del class="diff modified">RSS </del><ins class="diff modified">RSS
+   </ins>2.0) are often split up into multiple documents to <del class="diff modified">save
+   bandwidth, </del><ins class="diff modified">save bandwidth,
+   </ins>allow "sliding window" access, or for other purposes.
+
+   This specification <del class="diff modified">defines three </del><ins class="diff modified">formalizes two </ins>types of feeds that <del class="diff modified">allow the
+   reconstruction of their state from </del><ins class="diff modified">can span </ins>one <del class="diff modified">or </del><ins class="diff modified">or
+   </ins>more feed <del class="diff modified">documents;
+   "complete" feeds, </del><ins class="diff modified">documents; </ins>"paged" feeds and "archived" feeds.
+<ins class="diff">   Additionally, it defines "complete" feeds to cover the case when a
+   single feed document explicitly represents all of the feed's entries.
+</ins>
+   These types are complementary; each has different properties and
+   trade-offs:
+
+   o  Complete feeds contain the entire set of entries in one document,
+      and can be useful when it isn't desirable to "remember"
+      previously-seen entries.
+   o  Paged feeds split the logical feed's entries among multiple
+      temporary documents.  This can be useful when entries in the feed
+      are not long-lived or stable, and the client needs to access an
+      arbitrary portion of them, usually in close succession.
+   o  Archived feeds split them among multiple permanent documents, and
+      can be useful when entries are long-lived and it is important for
+      clients to see every one.
+
+   <del class="diff modified">See the feed type definitions below for examples </del><ins class="diff modified">Although they refer to Atom normatively, the mechanisms described
+   herein can be used with similar syndication formats, such as the
+   various flavors </ins>of <del class="diff modified">use cases for
+   each.
+
+
+2. </del><ins class="diff modified">RSS.
+
+1.1. </ins> Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in BCP 14 [RFC2119], as
+   scoped to those conformance targets.
+
+   This specification uses XML Namespaces [W3C.REC-xml-names-19990114]
+   to uniquely identify XML element names.  It uses the following
+   namespace prefix for the indicated namespace URI;
+
+   "fh": "http://purl.org/syndication/history/1.0"
+
+<del class="diff modified">   This specification uses terms from the XML Infoset [W3C.REC-xml-
+   infoset-20040204].  However, this specification uses a shorthand; the
+   phrase "Information Item" is omitted when naming Element Information
+   Items.  Therefore, when this specification uses the term "element,"
+   it is referring to an Element Information Item in Infoset terms.
+
+   This specification also uses Atom link relations to identify
+
+
+
+Nottingham              Expires December 27, 2006               [Page 3]
+
+Internet-Draft                Feed History                     June 2006
+
+
+   different types of links; see the Atom specification [RFC4287] for
+   information about their syntax, and the IANA link relation registry
+   for more information about specific values.
+
+   Although they refer to Atom normatively, the mechanisms described
+   herein can be used with similar syndication formats, such as the
+   various flavours of RSS.
+
+
+3. </del><ins class="diff modified">1.2. </ins> Terminology
+
+   In this specification, "feed document" refers to an Atom Feed
+   Document, RSS document, or similar syndication instance document.  It
+   may contain any number of entries (in RSS, items), and may or may not
+   be a complete representation of the logical feed.
+
+<del class="diff modified">   "Head section" refers to the children of a feed document's document-
+   wide metadata container; e.g., the child elements of the atom:feed
+   element in an Atom </del><ins class="diff modified">
+
+Nottingham               Expires March 14, 2007                 [Page 3]
+
+Internet-Draft          </ins>Feed <del class="diff modified">Document.
+</del><ins class="diff modified">Paging and Archiving         September 2006
+
+</ins>
+   A "logical feed" is the set of entries associated with a particular
+   feed (as contrasted with a feed document, which may contain a subset
+   of them).
+
+<del class="diff modified">
+4. </del><ins class="diff modified">   "Head section" refers to the children of a feed document's document-
+   wide metadata container; e.g., the child elements of the atom:feed
+   element in an Atom Feed Document.
+
+   This specification uses terms from the XML Infoset
+   [W3C.REC-xml-infoset-20040204].  However, this specification uses a
+   shorthand; the phrase "Information Item" is omitted when naming
+   Element Information Items.  Therefore, when this specification uses
+   the term "element," it is referring to an Element Information Item in
+   Infoset terms.
+
+   This specification also uses Atom link relations to identify
+   different types of links; see the Atom specification [RFC4287] for
+   information about their syntax, and the IANA link relation registry
+   for more information about specific values.
+
+2. </ins> Complete Feeds
+
+   A complete feed is a feed document that contains all of the entries
+   in the logical feed; any entry not actually in the feed document
+   SHOULD NOT be <del class="diff modified">presented as </del><ins class="diff modified">considered to be </ins>part of that feed.
+<del class="diff">
+   It is sometimes important to distinguish a complete feed, because
+   clients may attempt to keep a history of feed entries seen over time,
+   presenting the aggregate as the feed's contents.  This is
+   undesireable in some situations.
+</del>
+   For example; a feed that represents a ranking that varies over time,
+   such as "Top Twenty Records" or "Most Popular Items" should not have
+   newer entries displayed alongside older ones.  By marking them as
+   complete feeds, old entries are discarded when the feed is refreshed.
+
+   The fh:complete element, when present in a feed's head section,
+   indicates that the feed document it occurs in is a complete
+   representation of the logical feed's entries.
+
+   For example,
+
+     <fh:complete/>
+
+
+
+<ins class="diff">
+
+
+
+
+
+
+
+
+
+</ins>Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>              [Page 4]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+
+<del class="diff modified">4.1. </del><ins class="diff modified">2.1. </ins> Examples
+
+   Atom-formatted Complete Feed
+
+   <?xml version="1.0" encoding="utf-8"?>
+   <feed xmlns="http://www.w3.org/2005/Atom"
+    xmlns:fh="http://purl.org/syndication/history/1.0">
+    <title><del class="diff modified">NetTunes </del><ins class="diff modified">NetMovies </ins>Queue</title>
+    <description>The <del class="diff modified">CDs </del><ins class="diff modified">DVDs </ins>you'll receive next.</description>
+    <link href="http://example.org/"/>
+    <fh:complete/>
+    <del class="diff modified"><link rel="self"
+     href="http://nettunes.example.org/queue/index.atom"/></del><ins class="diff modified"><link rel="self"
+     href="http://netmovies.example.org/jdoe/queue/index.atom"/></ins>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <author>
+      <name>John Doe</name>
+    </author>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+    <entry>
+      <title><del class="diff modified">A Rush of Blood to the Head</del><ins class="diff modified">Casablanca</ins></title>
+      <del class="diff modified"><link href="http://nettunes.example.org/Coldplay/rush"/></del><ins class="diff modified"><link href="http://netmovies.example.org/movies/Casablanca"/></ins>
+      <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+      <updated>2003-12-13T18:30:02Z</updated>
+      <summary><del class="diff modified">More jangly guitars from Coldplay...</del><ins class="diff modified">Here's looking at you, kid...</ins></summary>
+    </entry>
+   </feed>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>              [Page 5]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+
+   RSS 2.0-formatted Complete Feed
+
+   <?xml version="1.0"?>
+   <rss version="2.0"
+    xmlns:fh="http://purl.org/syndication/history/1.0">
+    <channel>
+     <title><del class="diff modified">NetTunes </del><ins class="diff modified">NetMovies </ins>Queue</title>
+     <link><del class="diff modified">http://nettunes.example.org/</del><ins class="diff modified">http://netmovies.example.org/</ins></link>
+     <description>The <del class="diff modified">CDs </del><ins class="diff modified">DVDs </ins>you'll receive next.</description>
+     <language>en-us</language>
+     <pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+     <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+     <generator>Weblog Editor 2.0</generator>
+     <managingEditor><del class="diff modified">editor@nettunes.example.org</del><ins class="diff modified">editor@netmovies.example.org</ins></managingEditor>
+     <webMaster><del class="diff modified">webmaster@nettunes.example.org</del><ins class="diff modified">webmaster@netmovies.example.org</ins></webMaster>
+     <fh:complete/>
+     <item>
+      <title><del class="diff modified">A Rush of Blood to the Head</del><ins class="diff modified">Casablanca</ins></title>
+      <link><del class="diff modified">http://nettunes.example.org/Coldplay/rush</del><ins class="diff modified">http://netmovies.example.org/movies/Casablanca</ins></link>
+      <description><del class="diff modified">More jangly guitars from Coldplay...
+</del><ins class="diff modified">Here's looking at you, kid...
+</ins>      </description>
+      <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+      <guid>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</guid>
+     </item>
+    </channel>
+   </rss>
+
+<del class="diff modified">
+5. </del><ins class="diff modified">3. </ins> Paged Feeds
+
+   A paged feed is a set of linked feed documents that <del class="diff modified">contain the
+   </del><ins class="diff modified">together contain
+   the </ins>entries in the logical feed, without any guarantees about the
+   stability of the documents' contents.
+
+   Paged feeds are lossy; that is, it is not possible to guarantee that
+   the client will be able to reconstruct the <del class="diff modified">logical </del><ins class="diff modified">contents of the logical
+   </ins>feed <del class="diff modified">as the server
+   has published it. </del><ins class="diff modified">at a particular time. </ins> Some entries may be added <del class="diff modified">to the feed as the pages
+   </del><ins class="diff modified">or changed as
+   the pages </ins>of the feed are <del class="diff modified">acccessed, </del><ins class="diff modified">accessed, </ins>without the client becoming <del class="diff modified">aware </del><ins class="diff modified">aware
+   </ins>of them.
+
+   Paged feeds can be useful when the number of entries is very large,
+   infinite, or indeterminate.  Clients can "page" through the feed,
+   only accessing a subset of the feed's entries as necessary.
+
+   For example, a search engine might make query results available as a
+   paged feed, so that queries with very large result sets do not
+   overwhelm the server, the network, or the client.
+
+
+
+
+Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>              [Page 6]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+
+   The feed documents in a paged feed are tied together with the
+   following link relations:
+
+   o  "first" - A URI that refers to the furthest preceding document in
+      a series of documents.
+   o  "last" - A URI that refers to the furthest following document in a
+      series of documents.
+   o  "previous" - A URI that refers to the immediately preceding
+      document in a series of documents.
+   o  "next" - A URI that refers to the immediately following document
+      in a series of documents.
+
+   Paged feed documents MUST have at least one of these link relations
+   present, and SHOULD contain as many as practical and applicable.
+
+   Note that URI references in link relation values may be relative, and
+   when they are used they must be absolutised, as described in Section
+   5.1 of [RFC3986].
+
+<del class="diff modified">5.1. </del><ins class="diff modified">3.1. </ins> Examples
+
+   Atom-formatted Paged Feed
+
+   <?xml version="1.0" encoding="utf-8"?>
+   <feed xmlns="http://www.w3.org/2005/Atom">
+    <title>Example Feed</title>
+    <link href="http://example.org/"/>
+    <link rel="self" href="http://example.org/index.atom"/>
+    <link rel="next" href="http://example.org/index.atom?page=2"/>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <author>
+      <name>John Doe</name>
+    </author>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+    <entry>
+      <title>Atom-Powered Robots Run Amok</title>
+      <link href="http://example.org/2003/12/13/atom03"/>
+      <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+      <updated>2003-12-13T18:30:02Z</updated>
+      <summary>Some text.</summary>
+    </entry>
+   </feed>
+
+
+
+
+
+
+
+
+
+Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>              [Page 7]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+
+   RSS 2.0-formatted Paged Feed
+
+   <?xml version="1.0"?>
+   <rss version="2.0"
+    xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+     <title>Liftoff News</title>
+     <link>http://liftoff.nasa.gov/</link>
+     <description>Liftoff to Space Exploration.</description>
+     <language>en-us</language>
+     <pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+     <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+     <generator>Weblog Editor 2.0</generator>
+     <managingEditor>editor@example.com</managingEditor>
+     <webMaster>webmaster@example.com</webMaster>
+     <atom:link rel="next"
+      href="http://liftof.nasa.gov/index.rss?page=2"/>
+     <item>
+      <title>Star City</title>
+      <link>http://liftoff.nasa.gov/2003/06/news-starcity</link>
+      <description>How do Americans get ready to work with Russians
+      aboard the International Space Station? They take a crash course
+      in culture, language and protocol at Russia's <a
+      href="http://howe.iki.rssi.ru/GCTC/gctc_e.htm"&gt;Star
+      City</a>.</description>
+      <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+      <guid>http://liftoff.nasa.gov/2003/06/03.html#item573</guid>
+     </item>
+    </channel>
+   </rss>
+
+<del class="diff modified">
+6. </del><ins class="diff modified">4. </ins> Archived Feeds
+
+   An archived feed is a set of feed documents that can be combined to
+   accurately reconstruct a logical feed.
+
+   Unlike paged feeds, archived feeds enable clients to do this without
+   losing any entries.  This is achieved by publishing a single
+   subscription document and (potentially) many archive documents.
+
+   A subscription document is a feed document that always contains the
+   most recently added or changed entries available in the logical feed
+   (often, the feed document that should be subscribed to).
+
+   Archive documents are feed documents that contain less recent entries
+   in the feed.  The set of entries contained in an archive document
+<del class="diff">
+
+
+Nottingham              Expires December 27, 2006               [Page 8]
+
+Internet-Draft                Feed History                     June 2006
+
+
+</del>   published at a particular URI <del class="diff modified">MUST </del><ins class="diff modified">SHOULD </ins>NOT change over <del class="diff modified">time.
+
+   Likewise, </del><ins class="diff modified">time.  Likewise,
+
+
+
+Nottingham               Expires March 14, 2007                 [Page 8]
+
+Internet-Draft          Feed Paging and Archiving         September 2006
+
+
+   </ins>the URI for a particular archive document <del class="diff modified">MUST </del><ins class="diff modified">SHOULD </ins>NOT <del class="diff modified">change
+   over time, so </del><ins class="diff modified">change over
+   time.
+
+   These stability requirements allow clients to safely assume </ins>that <ins class="diff">if
+   they have retrieved the archive document at a particular URI once, it
+   will not meaningfully change in the future.  As a result, if an
+   archive document's contents are changed, </ins>clients <del class="diff modified">can recognise it and associate it with the
+   entries contained therein.
+</del><ins class="diff modified">may not become aware
+   of it.
+
+   Therefore, if a publisher requires a change to be visible to all
+   users (e.g., correcting factual errors), they should consider
+   publishing the revised entry in the subscription feed, in addition to
+   (or instead of) the appropriate archive feed.  Conversely,
+   unimportant changes (e.g., spelling corrections) might be only
+   effected in archive feeds.
+</ins>
+   Typically, <del class="diff">a logical feed will make </del>a subscription feed <del class="diff modified">available,
+   and </del><ins class="diff modified">will </ins>link <del class="diff">it </del>to a set of <del class="diff modified">archive </del><ins class="diff modified">archive
+   </ins>documents (also linked <del class="diff modified">together)
+   </del><ins class="diff modified">together) </ins>which contain progressively <del class="diff modified">less </del><ins class="diff modified">less
+   </ins>recent entries.
+
+   Clients can then "subscribe" to the feed, polling the subscription
+   document for recent changes.  If a client has missed some entries,
+   the archives can be used to synchronise its state by fetching the
+   archive documents it has not yet seen.
+
+   <del class="diff">Note that because archive documents are considered stable, changes to
+   entries in them may not be apparent to all users.  Therefore, if a
+   publisher requires a change to be visible to all users (e.g.,
+   correcting factual errors), they should consider publishing the
+   revised entry in the subscription feed, in addition to (or instead
+   of) the appropriate archive feed.  Conversely, unimportant changes
+   (e.g., spelling corrections) might be only effected in archive feeds.
+
+   </del>The following link relations are used to tie <ins class="diff">subscription and
+   </ins>archived feeds together:
+
+   o  "prev-archive" - A URI that refers to the immediately preceding
+      archive document.
+   o  "next-archive" - A URI that refers to the immediately following
+      archive document.
+   o  "current" - A URI that, when dereferenced, returns a feed document
+      containing the most recent entries in the feed.
+
+   Subscription documents and archive documents MUST have a "prev-
+   archive" link relation, unless there are no archives available.
+
+   Archive documents SHOULD have "next-archive" and "current" link
+   relations.
+
+   Note that URI references in link relation values may be relative, and
+   when they are used they must be absolutised, as described in Section
+   5.1 of [RFC3986].
+
+   Archive document SHOULD also contain an fh:archive element in their
+   head sections, to indicate that they <del class="diff">themselves </del>are archives.
+
+<del class="diff">   For example,
+
+     <fh:archive/>
+</del>
+
+
+Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>              [Page 9]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+<ins class="diff">
+
+   For example,
+
+     <fh:archive/></ins>
+
+   Publishers are not required to make all archive documents available;
+   they may refuse to serve (e.g., with HTTP status code 403 or 410), or
+   be unable to serve (e.g., with HTTP status code 404) an archive
+   document.
+
+   Clients SHOULD warn users when they are not able to reconstruct the
+   complete, logical feed (e.g., by alerting the user that an archive
+   document is unavailable, or displaying pseudo-entries that inform the
+   user that some entries may be missing).
+
+<del class="diff modified">6.1. </del><ins class="diff modified">4.1. </ins> Examples
+
+   Atom-formatted Subscription Document
+
+   <?xml version="1.0" encoding="utf-8"?>
+   <feed xmlns="http://www.w3.org/2005/Atom">
+    <title>Example Feed</title>
+    <link href="http://example.org/"/>
+    <link rel="self" href="http://example.org/index.atom"/>
+    <link rel="prev-archive"
+     href="http://example.org/2003/11/index.atom"/>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <author>
+      <name>John Doe</name>
+    </author>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+    <entry>
+      <title>Atom-Powered Robots Run Amok</title>
+      <link href="http://example.org/2003/12/13/atom03"/>
+      <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+      <updated>2003-12-13T18:30:02Z</updated>
+      <summary>Some text.</summary>
+    </entry>
+   </feed>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<del class="diff">
+
+
+
+</del>Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>             [Page 10]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+
+   Atom-formatted Archive Document
+
+   <?xml version="1.0" encoding="utf-8"?>
+   <del class="diff modified"><feed xmlns="http://www.w3.org/2005/Atom"></del><ins class="diff modified"><feed xmlns="http://www.w3.org/2005/Atom"
+    xmlns:fh="http://purl.org/syndication/history/1.0"></ins>
+    <title>Example Feed</title>
+    <link rel="current" href="http://example.org/index.atom"/>
+    <link rel="self" href="http://example.org/2003/11/index.atom"/><ins class="diff">
+    <fh:archive/></ins>
+    <link rel="prev-archive"
+     href="http://example.org/2003/10/index.atom"/>
+    <updated>2003-11-24T12:00:00Z</updated>
+    <author>
+      <name>John Doe</name>
+    </author>
+    <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+    <entry>
+      <title>Atom-Powered Robots Scheduled To Run Amok</title>
+      <link href="http://example.org/2003/11/24/robots_coming"/>
+      <id>urn:uuid:cdef5c6d5-gff8-4ebb-assa-80dwe44efkjo</id>
+      <updated>2003-11-24T12:00:00Z</updated>
+      <summary>Some text from an old, different entry.</summary>
+    </entry>
+   </feed>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<del class="diff">
+
+</del>Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>             [Page 11]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+
+   RSS 2.0-formatted Subscription Document
+
+   <?xml version="1.0"?>
+   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+     <title>Liftoff News</title>
+     <link>http://liftoff.nasa.gov/</link>
+     <description>Liftoff to Space Exploration.</description>
+     <language>en-us</language>
+     <pubDate>Tue, 10 Jun 2003 04:00:00 GMT</pubDate>
+     <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+     <generator>Weblog Editor 2.0</generator>
+     <managingEditor>editor@example.com</managingEditor>
+     <webMaster>webmaster@example.com</webMaster>
+     <atom:link rel="prev-archive"
+      href="http://liftoff.nasa.gov/2003/05/index.rss"/>
+
+     <item>
+      <title>Star City</title>
+      <link>http://liftoff.nasa.gov/2003/06/news-starcity</link>
+      <description>How do Americans get ready to work with Russians
+      aboard the International Space Station? They take a crash course
+      in culture, language and protocol at Russia's <a
+      href="http://howe.iki.rssi.ru/GCTC/gctc_e.htm"&gt;Star
+      City</a&gt;.</description>
+      <pubDate>Tue, 03 Jun 2003 09:39:21 GMT</pubDate>
+      <guid>http://liftoff.nasa.gov/2003/06/03.html#item573</guid>
+     </item>
+    </channel>
+   </rss>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>             [Page 12]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+
+   RSS 2.0-formatted Archive Document
+
+   <?xml version="1.0"?>
+   <del class="diff modified"><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"></del><ins class="diff modified"><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:fh="http://purl.org/syndication/history/1.0"></ins>
+    <channel>
+     <title>Liftoff News</title>
+     <link>http://liftoff.nasa.gov/</link>
+     <description>Liftoff to Space Exploration.</description>
+     <language>en-us</language>
+     <pubDate>Tue, 30 May 2003 08:00:00 GMT</pubDate>
+     <lastBuildDate>Tue, 30 May 2003 10:31:52 GMT</lastBuildDate>
+     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+     <generator>Weblog Editor 2.0</generator>
+     <managingEditor>editor@example.com</managingEditor>
+     <webMaster>webmaster@example.com</webMaster><ins class="diff">
+     <fh:archive/></ins>
+     <atom:link rel="current"
+      href="http://liftoff.nasa.gov/index.rss"/>
+     <atom:link rel="prev-archive"
+      href="http://liftoff.nasa.gov/2003/04/index.rss"/>
+
+     <item>
+      <description>Sky watchers in Europe, Asia, and parts of
+      Alaska and Canada will experience a partial eclipse of the Sun
+      on Saturday, May 31st.</description>
+      <pubDate>Fri, 30 May 2003 11:06:42 GMT</pubDate>
+      <guid>http://liftoff.nasa.gov/2003/05/30.html#item572</guid>
+     </item>
+     <item>
+      <title>The Engine That Does More</title>
+      <link>http://liftoff.nasa.gov/2003/05/news-VASIMR.asp</link>
+      <description>Before man travels to Mars, NASA hopes to
+      design new engines that will let us fly through the Solar
+      System more quickly.  The proposed VASIMR engine would do
+      that.</description>
+      <pubDate>Tue, 27 May 2003 08:37:32 GMT</pubDate>
+      <guid>http://liftoff.nasa.gov/2003/05/27.html#item571</guid>
+     </item>
+    </channel>
+   </rss>
+
+<del class="diff modified">
+7. </del><ins class="diff modified">5. </ins> IANA Considerations
+
+   The "previous", "next" and "current" link relations have been
+   previously registered, and no IANA action regarding them is required.
+
+   This specification defines the following link relations:
+
+
+
+<del class="diff">
+</del>Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>             [Page 13]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+
+      o  Attribute Value: prev-archive
+      o  Description: A URI that refers to the immediately
+         preceding archive document.
+      o  Expected display characteristics: none
+      o  Security considerations: See [ this document ]
+
+      o  Attribute Value: next-archive
+      o  Description: A URI that refers to the immediately
+         following archive document.
+      o  Expected display characteristics: none
+      o  Security considerations: See [ this document ]
+
+<del class="diff modified">
+8. </del><ins class="diff modified">6. </ins> Security Considerations
+
+   Feeds using the mechanisms described here could be crafted in such a
+   way as to cause a client to initiate excessive (or even an unending
+   sequence of) network requests, causing denial of service (either to
+   the client, the target server, and/or intervening networks).  Clients
+   can mitigate this risk by requiring user intervention after a certain
+   number of requests, or by limiting requests either according to a
+   hard limit, or with heuristics.
+
+   Clients should be mindful of resource limits when storing feed
+   documents.  To reiterate, they are not required to always store or
+   reconstruct the feed when conforming to this specification; they only
+   need inform the user when the reconstructed feed is not complete.
+
+<del class="diff modified">9. </del><ins class="diff modified">7. </ins> Normative References
+
+   [RFC2119] <ins class="diff">                     </ins> Bradner, S., "Key words for use <del class="diff modified">in </del><ins class="diff modified">in
+                                   </ins>RFCs to <del class="diff modified">Indicate
+              </del><ins class="diff modified">Indicate </ins>Requirement <del class="diff modified">Levels", </del><ins class="diff modified">Levels",
+                                   </ins>BCP 14, RFC 2119, March 1997.
+
+   [RFC3986]  <ins class="diff">                     </ins>Berners-Lee, T., Fielding, R., and <del class="diff modified">L. </del><ins class="diff modified">L.
+                                   </ins>Masinter, <del class="diff modified">"Uniform
+              Resource </del><ins class="diff modified">"Uniform Resource
+                                   </ins>Identifier (URI): Generic <del class="diff modified">Syntax", </del><ins class="diff modified">Syntax",
+                                   </ins>STD <del class="diff modified">66,
+              </del><ins class="diff modified">66, </ins>RFC 3986, January 2005.
+
+   [RFC4287] <ins class="diff">                     </ins> Nottingham, M. and R. Sayre, <del class="diff modified">"The </del><ins class="diff modified">"The
+                                   </ins>Atom <del class="diff modified">Syndication
+              </del><ins class="diff modified">Syndication </ins>Format", RFC <del class="diff modified">4287, </del><ins class="diff modified">4287,
+                                   </ins>December 2005.
+
+   <del class="diff modified">[W3C.REC-xml-infoset-20040204]
+             </del><ins class="diff modified">[W3C.REC-xml-infoset-20040204] </ins> Cowan, J. and R. Tobin, <del class="diff modified">"XML </del><ins class="diff modified">"XML
+                                   </ins>Information Set <del class="diff modified">(Second
+              Edition)", </del><ins class="diff modified">(Second Edition)",
+                                   </ins>W3C REC REC-xml-infoset-20040204,
+              <ins class="diff">                     </ins>February 2004.
+
+   <del class="diff modified">[W3C.REC-xml-names-19990114]
+           </del><ins class="diff modified">[W3C.REC-xml-names-19990114] </ins>   Bray, T., Hollander, D., and <del class="diff modified">A. Layman, "Namespaces in
+              XML", W3C REC REC-xml-names-19990114, January 1999.
+</del><ins class="diff modified">A.
+</ins>
+
+
+Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>             [Page 14]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+<ins class="diff">
+                                   Layman, "Namespaces in XML", W3C
+                                   REC REC-xml-names-19990114,
+                                   January 1999.
+</ins>
+Appendix A.  Acknowledgements
+
+   The author would like to thank the following people for their
+   contributions, comments and help: Danny Ayers, Thomas Broyer, Stefan
+   Eissing, David Hall, Bill de Hora, Aristotle Pagaltzis, John Panzer,
+   Dave Pawson, Garrett Rooney, Robert Sayre, James Snell, Henry Story.
+
+   Any errors herein remain the author's, not theirs.
+
+<del class="diff">
+</del>Appendix B.  Reconstructing Archived Feeds
+
+   One algorithm for reconstructing an archived feed into a complete,
+   logical feed (S), give the subscription document (D) follows.
+
+   1.  Create an empty list L.
+   2.  Consider the URI of the last archive document successfully stored
+       to local store S as A.
+   3.  Consider the set of entries in document D as E.
+   4.  If the document D has a "prev-archive" link relation value P in
+       its head section, and P is not A,
+       1.  Append P to L.
+       2.  Dereference P and use the resulting feed document as D.
+   5.  Repeat the previous step until no new P is found.
+   6.  Add all of document D's entries to the local store S, replacing
+       any entries with the same identity.
+   7.  Pop the last "prev-archive" link relation from L, dereference its
+       value and use the resulting feed document as D.
+   8.  Repeat the previous two steps until L is empty.
+   9.  Add the entries E to the local store S, replacing any entries
+       with the same identity.
+
+   In these instructions, the concept of an entry's identity is format-
+   specific; e.g., in Atom, it is conveyed by the atom:id element; in
+   RSS 2, it is indicated by the guid element.
+
+<del class="diff modified">
+
+
+
+
+
+
+
+
+</del><ins class="diff modified">Author's Address
+
+   Mark Nottingham
+
+   EMail: mnot@pobox.com
+   URI:   http://www.mnot.net/
+</ins>
+
+
+
+
+
+Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>             [Page 15]
+
+Internet-Draft          <del class="diff">      </del>Feed <del class="diff modified">History                     June </del><ins class="diff modified">Paging and Archiving         September </ins>2006
+
+
+<del class="diff modified">Author's Address
+
+   Mark Nottingham
+
+   Email: mnot@pobox.com
+   URI:   http://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 27, 2006              [Page 16]
+
+Internet-Draft                Feed History                     June 2006
+
+</del><ins class="diff modified">Full Copyright Statement
+
+   Copyright (C) The Internet Society (2006).
+
+   This document is subject to the rights, licenses and restrictions
+   contained in BCP 78, and except as set forth therein, the authors
+   retain all their rights.
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET
+   ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE
+   INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+</ins>
+Intellectual <del class="diff modified">Property Statement
+</del><ins class="diff modified">Property
+</ins>
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at
+   ietf-ipr@ietf.org.
+
+<del class="diff modified">
+Disclaimer of Validity
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET
+   ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE
+   INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Copyright Statement
+
+   Copyright (C) The Internet Society (2006).  This document is subject
+   to the rights, licenses and restrictions contained in BCP 78, and
+   except as set forth therein, the authors retain all their rights.
+
+
+Acknowledgment
+</del><ins class="diff modified">Acknowledgement
+</ins>
+   Funding for the RFC Editor function is <del class="diff">currently </del>provided by <del class="diff modified">the
+   Internet Society.
+</del><ins class="diff modified">the IETF
+   Administrative Support Activity (IASA).
+
+
+
+</ins>
+
+
+
+Nottingham              <ins class="diff"> </ins>Expires <del class="diff modified">December 27, 2006 </del><ins class="diff modified">March 14, 2007   </ins>             [Page <del class="diff modified">17]
+</del><ins class="diff modified">16]
+</ins>
+
+</pre>
