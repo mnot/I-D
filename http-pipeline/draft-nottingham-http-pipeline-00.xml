@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "../xml2rfc/rfc2629.dtd" [
+   <!ENTITY rfc2119 SYSTEM '../bibxml/reference.RFC.2119.xml'>  
+   <!ENTITY rfc2616 SYSTEM '../bibxml/reference.RFC.2616.xml'>  
+   <!ENTITY p1-messaging SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p1-messaging-11.xml'>
+   <!ENTITY p3-payload SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p3-payload-11.xml'>
+   <!ENTITY p6-cache SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p6-cache-11.xml'>
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+
+<rfc ipr="trust200902" docName="draft-nottingham-http-pipeline-00" category="info">
+
+   <front>
+      <title abbrev="HTTP Pipelining Enhancements">Making HTTP Pipelining Usable on the Open Web</title>
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+         <organization></organization>
+         <address>       
+            <email>mnot@mnot.net</email> 
+            <uri>http://www.mnot.net/</uri>
+         </address>
+      </author>
+      <date year="2010"/>
+      <abstract>
+         <t>Pipelining was added to HTTP/1.1 as a means of improving the
+         performance of persistent connections in common cases. While it is
+         deployed in some limited circumstances, it is not widely used by
+         clients on the open Internet. This memo suggests some measures
+         designed to make it more possible for clients to reliably and safely
+         use HTTP pipelining in these situations.</t>
+
+         <t>This memo should be discussed on the ietf-http-wg@w3.org mailing
+         list, although it is not a work item of the HTTPbis WG.</t>
+
+      </abstract>
+   </front>
+
+   <middle>
+
+      <section title="Introduction">
+
+         <t>HTTP/1.1 <xref target="RFC2616"/> added pipelining -- that is, the
+         ability to have more than one outstanding request on a connection at
+         a particular time -- to improve performance when many requests need
+         to be made (e.g., when an HTML page references several images).</t>
+
+         <t>Although not usable in all circumstances (e.g., POST, PUT and
+         other non-idempotent requests cannot be pipelined), for the common
+         case of Web browsing, pipelining seems at first like a broadly useful
+         improvement -- especially since the number of TCP connections
+         browsers and servers can use for a given interaction is limited, and
+         especially where there is noticeable latency present.</t>
+
+         <t>Indeed, in constrained applications of HTTP such as Subversion,
+         pipelining has been shown to improve end-user perceived latency
+         considerably.</t>
+
+         <t>However, pipelining is not broadly used on the Web today; while
+         most (but not all) servers and intermediaries support pipelining (to
+         varying degrees), only one major Web browser uses it in its default
+         configuration, and that implementation is reported to use a number of
+         proprietary heuristics to determine when it is safe to pipeline.</t>
+
+         <t>This memo characterises issues currently encountered in the use of
+         HTTP pipelining, and suggests the use of mechanisms that, when
+         used in concert, are designed to make its use more reliable and safe
+         for browsers. It does not propose large protocol changes (e.g.,
+         out-of-order messages), but rather incremental improvements that can
+         be deployed within the confines of existing infrastructure.</t>
+
+      </section>
+      
+      <section title="Requirements">
+         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+         NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in
+         this document are to be interpreted as described in <xref
+         target="RFC2119"/>.</t>
+      </section>
+      
+      <section title="HTTP Pipelining Issues">
+
+         <t>Anecdotal evidence suggests there are a number of reasons why
+            clients don't use HTTP pipelining by default. Briefly, they are:
+            
+            <list style="numbers">
+
+               <t>Server implementations may stall pipelined requests, or
+               close their connection. This is one of the most commonly cited
+               problems.</t>
+
+               <t>Server implementations may pipeline responses in the wrong
+               order. Some implementations mix up the order of pipelined
+               responses; e.g., when they hit an error state but don't "fill"
+               the response pipeline with a corresponding representation.</t>
+
+               <t>A few server implementations may corrupt pipelined
+               responses. It's been said that a very small number of
+               implementations actually interleave pipelined responses so that
+               part of response A appears in response B, which is both a
+               security and interoperability problem.</t>
+
+               <t>Clients don't have enough information about what is useful
+               to pipeline. A given response may take an inordinate amount of
+               time to generate, and/or be large enough to block subsequent
+               responses. Clients who pipeline may face worse performance if
+               they stack requests behind such an expensive request.</t>
+
+            </list>
+         </t>
+
+         <t>Note that here, "servers" can also include proxies and other
+         intermediaries.</t>
+         
+         <t>The remainder of this memo proposes mechanisms that, together, can
+         be used to mitigate these issues.</t>
+
+      </section>
+      
+      <section title="Discovering Faulty Proxies">
+      
+         <t>Issues specific to proxies are limited to the network
+         infrastructure currently used by the client, and it is reasonable to
+         assume that testing the infrastructure at the beginning of a session
+         will indicate how safe it is to pipeline while that infrastructure is
+         in use.</t>
+
+         <t>Such issues can be detected by sending pipelined requests to a
+         known server, and examining the responses for errors.</t>
+            
+         <t>For example, if the ExampleBrowser implementation wishes to probe
+         for faulty proxies, it can send a series of requests to
+         "http://browser.example.com/pipeline-test/" and subresources. If the
+         bodies of the resulting responses deviate from those it expects in
+         any way, it is reasonable to assume that a faulty proxy is present,
+         and pipelining SHOULD NOT be used through it.</t>
+         
+         <t>Typically, user agents will do this upon startup and changes in
+         the network, although they might periodically test to assure that a
+         new proxy hasn't been interposed.</t>
+         
+         <t>Note that proxies aren't always configured explicitly.</t>
+      
+      </section>
+
+      <section title="Identifying Responses">
+                     
+         <t>HTTP relies on the context of the connection to associate a given
+         request with its intended response. In HTTP/1.0, this was a
+         reasonable assumption, since only one request could be outstanding at
+         a given time, and each request had exactly one response.</t>
+         
+         <t>HTTP/1.1 made associating requests and responses in a given
+         connection more complex (and therefore fault-prone). Not only does
+         pipelining mean that multiple requests can be outstanding, but also
+         the 1xx series of response status codes introduce the possibility of
+         multiple response messages (syntactically) being associated with a
+         single request.</t>
+
+         <t>To improve the client's ability to correlate responses with their
+         requests and identify responses that are out of order (as well as
+         serve other potential use cases), this memo introduces the
+         "Assoc-Req" response header field.</t>
+         
+<figure><artwork>
+  Assoc-Req   = "Assoc-Req" ":" OWS Assoc-Req-v
+  Assoc-Req-v = Method SP absolute-URI
+</artwork></figure>
+
+         <t>The field-value of the Assoc-Req header field is the method and
+         effective request URI of the request associated with the response
+         that it appears in. The URI used MUST be generated using the
+         algorithm for finding the Effective Request URI in <xref
+         target="I-D.ietf-httpbis-p1-messaging"/>. The header field MUST NOT
+         be generated by proxies.</t>
+         
+         <t>For example, given the following request over port 80:</t>
+         
+<figure><artwork>
+  GET /foo?it HTTP/1.1
+  Host: www.example.com
+</artwork></figure>
+
+         <t>the appropriate Assoc-Req header field would be:</t>
+         
+<figure><artwork>
+  Assoc-Req: GET http://www.example.com/foo?it
+</artwork></figure>
+         
+         <t>Note that the Assoc-Req header field is not a perfectly reliable
+         identifier for the request associated with a response; for example,
+         it does not incorporate the selecting headers for content negotiation
+         <xref target="I-D.ietf-httpbis-p6-cache"/>, nor does it
+         differentiate request bodies, when present. However, for the purposes
+         of making pipelining more reliable, it is sufficient.</t>
+         
+         <t>Clients who wish to use the Assoc-Req response header field to aid
+         in identifying problems in pipelining can compare its values to those
+         of the request that they believe it to be associated with (based upon
+         HTTP's message parsing rules, defined in <xref
+         target="I-D.ietf-httpbis-p1-messaging"/>). If either the method or
+         the URI differ, it indicates that there may be a pipelining-related
+         issue.</t>
+
+      </section>
+      
+      <section title="Signing Content for Integrity">
+         
+         <t>Another means of protecting against server issues (whether proxy
+         or origin server) is to sign the response content for integrity, so
+         that any corruption becomes apparent.</t>
+         
+         <t>One existing way to do this is to use the Content-MD5 header
+         field <xref target="I-D.ietf-httpbis-p3-payload"/>.</t>
+         
+         <t>Clients who wish to use the Content-MD5 response header field to
+         aid in identifying corrupted content due to pipelining issues can
+         compare the hash to a calculated hash of the content.</t>
+            
+         <t>In some circumstances, it may be impractical for the server to
+         buffer the response content in order to calculate a hash before
+         sending it. In these cases, the Content-MD5 response header can be
+         send in an HTTP trailer, provided that the connection is HTTP/1.1
+         from end to end, and the client is able to process trailers.</t>
+         
+         <t>Additional means of verifying HTTP response integrity may become
+         available in time.</t>
+
+      </section>
+      
+      <section title="Hinting Pipelinable Content">
+         
+         <t>Finally, to assist clients in determining what requests are
+         suitable for pipelining, we define extensions to allow hinting by
+         origin servers.</t>
+         
+         <t>Each of these hints indicates URLs that, when dereferenced, will
+         likely not incur significant latency on the server in generating the
+         response, nor significant latency on the network in transferring the
+         response.</t>
+         
+         <t>What is "significant" is determined by the server. Clients will
+         use these hints to determine what request(s) it is safe to pipeline
+         something else after.</t>
+            
+         <t>For example, if "http://example.com/a" is hinted, a client can be
+         more confident pipelining another request (e.g., to
+         "http://example.com/b") on the same request afterwards.</t>
+         
+         <t>To allow flexibility and ease of administration, different kinds
+            of hints are defined:
+            <list style="symbols"> 
+
+               <t>The "quick" link relation type [TBD: ref] can appear on
+               individual HTML elements such as "img", "script" and
+               "link" to indicate that the link they contain has low overhead.
+               Additionally, it can be used in the HTTP link header to
+               indicate links within the response in a format-neutral way.</t>
+         
+               <t>A document can indicate that all links from the indicated
+               elements have low overhead by using the HTML META "quick"
+               element, with the content indicating the element names that are
+               "quick". For example, "&lt;META name='quick' content='img
+               script link'/>".</t>
+
+               <t>[DISCUSS: is it worthwhile to define a /.well-known lookup
+                  mechanism for quick links?]</t>
+         
+            </list>
+         </t>
+
+      </section>
+      
+      <section title="Origin Server Considerations for Pipelining">
+         
+         <t>To maximise the potential for request pipelining from clients
+            that support this specification, origin servers:
+            <list style="symbols">
+               <t>SHOULD send the Assoc-Req response header field in all
+               potentially pipelinable responses (keeping in mind that
+               downstream caches might be serving responses in the
+               future).</t>
+               <t>SHOULD send the Content-MD5 response header (or trailer)
+               field in potentially pipelinable responses.</t>
+               <t>SHOULD hint potentially pipelinable requests as outlined
+               above.</t>
+            </list>
+         </t>
+         
+      </section>
+      
+      <section title="User Agent Considerations for Pipelining">
+
+         <t>To take advantage of the server-side mechanisms defined in this
+         specification, user agents:
+            <list style="symbols">
+               <t>SHOULD ascertain whether any proxies present (either
+               configured or interposed by interception) support pipelining by
+               following the protocol described above. If they do not,
+               pipelining SHOULD NOT be used.</t>
+               <t>SHOULD check the Assoc-Req response header field-value, when
+               present, on all pipelined responses.</t>
+               <t>SHOULD check the Content-MD5 response header (or trailer)
+               field-value, when present, on all pipelined responses.</t>
+               <t>MAY use content hints for pipelining to assist in
+               determining whether to pipeline a given request.</t>
+            </list>
+         </t>
+
+         <t>Upon encountering an indication of pipelining problems with a
+         particular response (e.g., an incorrect Assoc-Req field-value, an
+         incorrect Content-MD5 field-value), user agents SHOULD discard the
+         response in question, all subsequent responses on the same
+         connection, close the connection. Unsatisfied requests can be
+         resubmitted, without pipelining, and the implementation can choose
+         not to use pipelining to the same server in the future.</t>
+
+      </section>
+
+      <section title="Security Considerations">
+         <t>TBD</t>
+      </section>
+
+      <section title="IANA Considerations">
+         <t>TBD</t>
+      </section>
+
+   </middle>
+
+   <back>
+      <references title="Normative References">
+         &rfc2119; &p1-messaging; &p3-payload;
+      </references>
+
+      <references title="Informative References">
+         &rfc2616; &p6-cache;
+      </references>
+      
+      <section title="Acknowledgements">
+         <t>Thanks to Julian Reschke for help in defining the Assoc-Req
+         field-value. The author takes all responsibility for errors and
+         omissions.</t>
+      </section>
+      
+      <section title="Frequently Asked Questions">
+
+         <t>Isn't full multiplexing better?</t>
+
+         <t>While "full" multiplexing is theoretically better, pipelining --
+         once usable -- is adequate for almost all common Web browsing cases.
+         Since the browser needs to download HTML first, it has an opportunity
+         to receive hints about subsequent requests and pipeline them
+         appropriately. Likewise, by far the most common case for multiplexing
+         on the Web is when a large number of images and other page assets
+         need to be fetched with GET; a perfect use of pipelining, provided
+         that the client has enough information to avoid head-of-line
+         blocking.</t>
+         
+         <t>Why not have the client generate a unique request identifier?</t>
+         
+         <t>While in some ways this would be easier than the approach that the
+            Assoc-Req header takes, it would be more difficult to deploy,
+            because existing caching proxies wouldn't be able to serve
+            the correct identifier when using a cached response.</t>
+      </section>
+   </back>
+
+</rfc>
