@@ -4,7 +4,7 @@ saxon = java -classpath $(saxpath) net.sf.saxon.Transform -novw -l
 stylesheet = ../rfc2629xslt/rfc2629.xslt
 
 TITLE= nottingham-http-pipeline
-VERSION= 00
+VERSION= 01
 
 TARGETS_XML= draft-$(TITLE)-$(VERSION).xml
 TARGETS_HTML= $(TARGETS_XML:.xml=.html)
