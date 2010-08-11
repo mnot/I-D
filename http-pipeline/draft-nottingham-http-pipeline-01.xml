@@ -20,7 +20,7 @@
 <?rfc comments="yes" ?>
 <?rfc inline="yes" ?>
 
-<rfc ipr="trust200902" docName="draft-nottingham-http-pipeline-00" category="info">
+<rfc ipr="trust200902" docName="draft-nottingham-http-pipeline-01" category="info">
 
    <front>
       <title abbrev="HTTP Pipelining Enhancements">Making HTTP Pipelining Usable on the Open Web</title>
@@ -55,9 +55,9 @@
          a particular time -- to improve performance when many requests need
          to be made (e.g., when an HTML page references several images).</t>
 
-         <t>Although not usable in all circumstances (e.g., POST, PUT and
-         other non-idempotent requests cannot be pipelined), for the common
-         case of Web browsing, pipelining seems at first like a broadly useful
+         <t>Although not usable in all circumstances (POST other
+         non-idempotent requests cannot be pipelined), for the common case of
+         Web browsing, pipelining seems at first like a broadly useful
          improvement -- especially since the number of TCP connections
          browsers and servers can use for a given interaction is limited, and
          especially where there is noticeable latency present.</t>
@@ -78,6 +78,13 @@
          for browsers. It does not propose large protocol changes (e.g.,
          out-of-order messages), but rather incremental improvements that can
          be deployed within the confines of existing infrastructure.</t>
+         
+         <t>Note that this memo does not suggest drastic changes to HTTP, nor
+         does it require that intermediaries change to better support
+         pipelining. Instead, it takes the position that removing the
+         responsibility for making pipelining decisions from browsers, as well
+         as reduce associated risks for browsers, we make it more likely that
+         browsers will support it.</t>
 
       </section>
       
@@ -113,8 +120,9 @@
                <t>Clients don't have enough information about what is useful
                to pipeline. A given response may take an inordinate amount of
                time to generate, and/or be large enough to block subsequent
-               responses. Clients who pipeline may face worse performance if
-               they stack requests behind such an expensive request.</t>
+               responses (so-called "head-of-line blocking"). Clients who
+               pipeline may face worse performance if they stack requests
+               behind such an expensive request.</t>
 
             </list>
          </t>
