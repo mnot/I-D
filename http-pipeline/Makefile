@@ -6,20 +6,24 @@ stylesheet = ../rfc2629xslt/rfc2629.xslt
 TITLE= nottingham-http-pipeline
 VERSION= 01
 
-TARGETS_XML= draft-$(TITLE)-$(VERSION).xml
-TARGETS_HTML= $(TARGETS_XML:.xml=.html)
-TARGETS_TXT= $(TARGETS_XML:.xml=.txt)
+TARGET_XML= draft-$(TITLE)-$(VERSION).xml
+TARGET_HTML= $(TARGET_XML:.xml=.html)
+TARGET_TXT= $(TARGET_XML:.xml=.txt)
+NEXT_XML= draft-$(TITLE)-$(shell printf "%.2d" `echo ${VERSION}+1 | bc`).xml
 
-TARGETS = $(TARGETS_HTML) \
-          $(TARGETS_TXT)
+TARGETS = $(TARGET_HTML) \
+          $(TARGET_TXT)
 
 all: $(TARGETS)
 
 clean:
 	rm -f $(TARGETS)
 
+next: 
+	cp $(TARGET_XML) $(NEXT_XML)
+
 .PHONY: idnits
-idnits: $(TARGETS_TXT)
+idnits: $(TARGET_TXT)
 	idnits $<
 
 %.html: %.xml
