@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "../xml2rfc/rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM '../bibxml/reference.RFC.2119.xml'>      
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+
+<rfc ipr="trust200902" docName="draft-nottingham-http-portal-01" category="std">
+   <front>
+      <title abbrev="Network Authentication Required">The Network Authentication Required HTTP Status Code</title>
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+         <organization></organization>
+         <address>       
+            <email>mnot@mnot.net</email> 
+            <uri>http://www.mnot.net/</uri>       
+         </address>
+      </author>
+      <date year="2010"/>
+      <abstract>
+         <t>"Captive portals" are a commonly-deployed means of obtaining
+         access credentials and/or payment for a network. This memo introduces
+         a new HTTP status code as a means of addressing issues found in these
+         deployments.</t>
+         
+         <t>This memo should be discussed on the ietf-http-wg@w3.org mailing
+         list, although it is not a work item of the HTTPbis WG.</t>
+      </abstract>
+   </front>
+
+   <middle>
+
+      <section title="Introduction">
+      
+         <t>It has become common for networks to require authentication,
+         payment and/or acceptance of terms of service before granting access.
+         Typically, this occurs when accessing "public" networks such as those
+         in hotels, trains, conference centres and similar networks.</t>
+      
+         <t>While there are several potential means of providing credentials
+         to a network, these are not yet universally supported, and in some
+         instances the network administrator requires that information (e.g.,
+         terms of service, login information) be displayed to end users.</t>
+      
+         <t>In such cases, it has become widespread practice to use a "captive
+         portal" that diverts HTTP requests to the administrator's web page.
+         Once the user has satisfied requirements (e.g., for payment,
+         acceptance of terms), the diversion is ended and "normal" access to
+         the network is allowed.</t>
+      
+         <t>Typically, this diversion is accomplished by one of several
+         possible techniques; 
+            <list style="symbols">
+               <t>IP interception - all requests on port 80 are intercepted
+               and send to the portal.</t>
+               <t>HTTP redirects - all requests on port 80 are intercepted and
+               an HTTP redirect to the portal's URL is returned.</t>
+               <t>DNS interception - all DNS lookups return the portal's IP
+               address.</t>
+            </list> 
+         </t>
+      
+         <t>In each case, the intent is that users connecting to the network
+         will open a Web browser and see the portal.</t>
+         
+         <t>However, because port 80 is used for non-browser traffic, a number
+         of issues (see <xref target="issues"/>) have been encountered.</t>
+
+         <t>This memo introduces a new HTTP status code, 428 Network
+         Authentication Required, as a solution to some of these issues. <xref
+         target="use"/> outlines how it might be used in typical
+         deployments.</t>
+
+      </section>
+
+
+      <section title="428 Network Authentication Required" anchor="status-code">
+      
+         <t>This status code indicates that the client should authenticate to
+         gain network access before resubmitting the request.</t>
+         
+         <t>The associated representation SHOULD indicate how to do this;
+         e.g., with an HTML form for submitting credentials.</t>
+         
+         <t>Responses with the 428 status code MUST NOT be stored by a
+         cache.</t>
+            
+      </section>
+      
+      <section title="Security Considerations">
+         
+         <t>In common use, a response carrying the 428 status code will not
+         come from the origin server indicated in the request's URL. This
+         presents many security issues; e.g., an attacking intermediary may be
+         inserting cookies into the original domain's name space, may be
+         observing cookies or HTTP authentication credentials sent from the
+         user agent, and so on.</t>
+         
+         <t>However, these risks are not unique to the 428 status code; in
+         other words, a captive portal that is not using this status code
+         introduces the same issues.</t>
+
+      </section>
+
+      <section title="IANA Considerations">
+
+         <t>The HTTP Status Codes Registry should be updated with the
+         following entry:</t>
+
+         <t><list style="symbols">
+            <t>Code: 428</t>
+            <t>Description: Network Authentication Required</t>
+            <t>Specification: [ this document ]</t>
+         </list></t>
+
+      </section>
+
+   </middle>
+
+   <back>
+
+      <section title="Using the 428 Status Code" anchor="use">
+      
+         <t>This appendix demonstrates a typical use of the 428 status code;
+         it is not normative.</t>
+      
+         <t>A network operator wishing to require some authentication,
+         acceptance of terms or other user interaction before granting access
+         usually does so by identify clients who have not done so ("unknown
+         clients") using their MAC addresses.</t>
+            
+         <t>Unknown clients then have all traffic blocked, except for that on
+         TCP port 80, which is sent to a HTTP server (the "login server")
+         dedicated to "logging in" unknown clients, and of course traffic to
+         the login server itself.</t>
+            
+         <t>For example, a user agent might connect to a network and make the
+         following HTTP request on TCP port 80:</t>
+            
+         <figure><artwork xml:space="preserve"><![CDATA[            
+GET /index.htm HTTP/1.1
+Host: www.example.com
+User-Agent: ExampleAgent
+]]></artwork></figure>
+
+         <t>Upon receiving such a request, the login server would generate a
+         428 response:</t>
+
+         <figure><artwork xml:space="preserve"><![CDATA[            
+HTTP/1.1 428 Network Authentication Required
+Refresh: 0; url=https://login.example.net/
+Content-Type: text/html
+
+<html>
+   <head>
+   </head>
+   <body>
+      <h1>You are being redirected to log into the network...</h1>
+   </body>
+</html>
+]]></artwork></figure>
+
+         <t>Here, the 428 status code assures that non-browser clients will
+         not interpret the response as being from the origin server, and the
+         Refresh header redirects the user agent to the login server (an HTML
+         META element can be used for this as well).</t>
+            
+         <t>Note that the 428 response can itself contain the login
+         interface, but it may not be desirable to do so, because browsers
+         would show the login interface as being associated with the
+         originally requested URL, which may cause confusion.</t>
+      
+      </section>
+ 
+      <section title="Issues Raised by Captive Portals" anchor="issues">
+
+         <t>Since clients cannot differentiate between a portal's response and
+         that of the HTTP server that they intended to communicate with, a
+         number of issues arise.</t>
+         
+          <t>One example is the "favicon.ico" <eref
+         target="http://en.wikipedia.org/wiki/Favicon"/> commonly used by
+         browsers to identify the site being accessed. If the favicon for a
+         given site is fetched from a captive portal instead of the intended
+         site (e.g., because the user is unauthenticated), it will often
+         "stick" in the browser's cache (most implementations cache favicons
+         aggressively) beyond the portal session, so that it seems as if the
+         portal's favicon has "taken over" the legitimate site.</t>
+         
+          <t>Another browser-based issue comes about when P3P <eref
+         target="http://www.w3.org/TR/P3P/"/> is supported. Depending on how
+         it is implemented, it's possible a browser might interpret a portal's
+         response for the p3p.xml file as the server's, resulting in the
+         privacy policy (or lack thereof) advertised by the portal being
+         interpreted as applying to the intended site. Other Web-based
+         protocols such as WebFinger <eref
+         target="http://code.google.com/p/webfinger/wiki/WebFingerProtocol"/>,
+         CORS <eref target="http://www.w3.org/TR/cors/"/> and OAuth <eref
+         target="http://tools.ietf.org/html/draft-ietf-oauth-v2"/> may also be
+         vulnerable to such issues.</t>
+         
+          <t>Although HTTP is most widely used with Web browsers, a growing
+         number of non-browsing applications use it as a substrate protocol.
+         For example, WebDAV <eref
+         target="http://tools.ietf.org/html/rfc4918"/> and CalDAV <eref
+         target="http://www.ietf.org/rfc/rfc4791.txt"/> both use HTTP as the
+         basis (for network filesystem access and calendaring, respectively).
+         Using these applications from behind a captive portal can result in
+         spurious errors being presented to the user, and might result in
+         content corruption, in extreme cases.</t>
+         
+          <t>Similarly, other non-browser applications using HTTP can be
+         affected as well; e.g., widgets <eref
+         target="http://www.w3.org/TR/widgets/"/>, software updates, and other
+         specialised software such as Twitter clients and the iTunes Music
+         Store.</t>
+         
+          <t>It should be noted that it's sometimes believed that using HTTP
+         redirection to direct traffic to the portal addresses these issues.
+         However, since many of these uses "follow" redirects, this is not a
+         good solution.</t>
+
+      </section>
+
+      <section title="Non-HTTP Applications and Techniques">
+         
+         <t>This memo does not address non-HTTP applications, such as IMAP,
+         POP, or even TLS-encapsulated HTTP. Since captive portals almost
+         always target Web browsers (has anyone ever seen one that inserts an
+         e-mail into your inbox asking you to authenticate?), this is
+         appropriate.</t>
+         
+         <t>Instead, it is anticipated that well-behaved portals will block
+         all non-HTTP ports (especially port 443) until the user has
+         successfully authenticated.</t>
+            
+         <t>Overall, there may also be an interesting discussion to be had
+         about improving network access methods to the point where a user
+         interface can be presented for the same purposes, without resorting
+         to intercepting HTTP traffic. However, since such a mechanism would
+         by necessity require modifying the network stack and operating system
+         of the client, this memo takes a more modest approach.</t>
+
+      </section>
+
+      <section title="Acknowledgements">
+         <t>The author takes all responsibility for errors and omissions.</t>
+      </section>
+
+
+   </back>
+</rfc>
