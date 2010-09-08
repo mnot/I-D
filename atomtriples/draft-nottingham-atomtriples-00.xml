@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>      
+<!ENTITY rfc4287 SYSTEM 'bibxml/reference.RFC.4287.xml'>      
+<!ENTITY xmlns SYSTEM 'bibxml/reference.W3C.REC-xml-names-19990114.xml'>      
+<!ENTITY rdfsg SYSTEM 'bibxml/reference.W3C.WD-rdf-syntax-grammar-20031010.xml'>      
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+
+<rfc ipr="full3978" docName="draft-nottingham-atomtriples-00" category="info">
+    <front>
+        <title abbrev="AtomTriples">AtomTriples: Embedding RDF Statements in Atom</title>
+        <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+            <organization></organization>
+            <address>       
+                <email>mnot@pobox.com</email> 
+                <uri>http://www.mnot.net/</uri>       
+            </address>
+        </author>
+        <author initials="D." surname="Beckett" fullname="Dave Beckett">
+            <organization></organization>
+            <address>       
+                <email>dave@dajobe.org</email> 
+                <uri>http://www.dajobe.org/</uri>       
+            </address>
+        </author>
+        <date year="2008"/>
+        <abstract>
+            <t>This specification describes AtomTriples, a set of Atom extension elements for embedding 
+			RDF statements in Atom documents (both element and feed), and declaring how they can be derived
+			from existing content.</t>
+        </abstract>
+    </front>
+
+    <middle>
+
+        <section title="Introduction">
+            <t>This specification describes AtomTriples, a set of <xref target="RFC4287">Atom</xref> extension elements for embedding <xref target="W3C.WD-rdf-syntax-grammar-20031010">RDF</xref> statements in Atom documents (both element and feed), as well as declaring how they can be derived from existing content.</t>
+
+			<t>Statements can be embedded directly as RDF/XML using the at:md element at the feed or entry level. Additionally, a feed can declare that specific Atom elements (or extensions) can be parsed into RDF statements using the at:feedmap element (for metadata attached to a feed) or an at:entrymap element (for metadata attached to entries).</t>
+			
+			<t>The semantics of a property that appears in both places (e.g., in a feed-level at:md as well as derived from a at:feedmap) is undefined; presumably, they would be added to the model as two separate statements.</t>
+
+			<t>Likewise, the mechanics of combining metadata from multiple instances of the same entry, or from multiple feed documents, is out of the scope of this specification.</t>
+
+        </section>
+
+
+        <section title="Notational Conventions">
+            <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD
+                NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
+                described in RFC 2119 <xref target="RFC2119"/>.</t>
+
+			<t>All XML elements in this specification use the the <xref target="W3C.REC-xml-names-19990114">namespace URI</xref> "http://purl.org/syndication/atomtriples/1". In this document, that URI is mapped to the "at" prefix.</t>
+
+			<t>Unless specified otherwise, AtomTriples elements MAY contain foreign markup, which SHOULD be handled according as it is in the Atom syndication format.</t>
+
+        </section>
+
+		<section title="Embedded Statements">
+
+			<t>RDF statements can be directly embedded in Atom feeds and entries as RDF/XML using the at:md element.</t>
+
+			<section title="The at:md Element">
+				<t>The at:md element MAY occur as a child of atom:feed or atom:entry, and contains any number of RDF statements which MUST serialised as RDF/XML. It MAY occur in a given context any number of times.</t>
+
+				<t>The subject of these statements is, by default, the value of the atom:id element in the same context (atom:element or atom:feed). However, this behaviour MAY be overridden by specifying the subject attribute.</t>
+
+				<t>After the subject is determined, the contents SHOULD be processed as a propertyEltList in <xref target="W3C.WD-rdf-syntax-grammar-20031010"/>.</t>
+			</section>
+			
+			<section title="The subject Attribute">
+					<t>When present, the subject attribute indicates how to derive the RDF subject of statements sourced from the element it is attached to.</t>
+					
+					<t>It MUST contain a URI which MUST be interpreted as a link relation; the first such occurrence of an atom:link element in the same context as its parent element with that relation (in lexical order) will indicate the URI to use as the subject.</t>
+					
+				<t>For example,</t>
+
+            <figure>
+                <artwork xml:space="preserve"><![CDATA[
+  <entry>
+    <title>Atom-Powered Robots Run Amok</title>
+    <link href="http://example.org/2003/12/13/atom03"/>
+    <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <summary>Some text.</summary>
+    <at:md subject="alternate">
+       <!-- .. -->
+    </at:md>
+  </entry>
+]]></artwork>
+            </figure>
+					
+				<t>indicates that the subject of statements in this entry is "http://example.org/2003/12/13/atom03" (because
+					Atom links default to the "alternate" relation).</t>
+					
+				<t>This specification does not define the semantics of the subject attribute when a suitable link cannot be found.</t>
+			</section>
+
+		</section>
+
+		<section title="Derived Statements">
+
+			<t>Atom documents can declare mappings of existing content to RDF statements using the at:feedmap and at:entrymap elements.</t>
+
+			<section title="The at:feedmap Element">
+				<t>The at:feedmap element MAY occur as a child of atom:feed, and MUST NOT occur more than once. It MAY contain any number of at:map elements which indicate mappings for feed-level element contents to statements, within the scope of the feed document it occurs in.</t>
+			</section>
+
+			<section title="The at:entrymap Element">
+				<t>The at:entrymap element MAY occur as a child of atom:feed, and MAY occur as the child of atom:entry in an Atom Entry Document. It MUST NOT occur more than once, and MAY contain any number of at:map elements which indicate mappings for entry-level element contents to statements, within the scope of the document it occurs in.</t>
+			</section>
+
+			<section title="The at:map Element">
+				<t>The at:map element indicates how an element in a given context (either feed or entry, depending on use) maps to RDF statements. Its content MUST be an XML QName, and indicates the element that is being mapped. It MUST have a property attribute that MUST be a URI, which associates the element in the appropriate context with the given RDF property.</t>
+				<t>For example,</t>
+
+            <figure>
+                <artwork xml:space="preserve"><![CDATA[
+<at:map 
+ property="http://purl.org/dc/elements/1.1/title">atom:title</at:map>
+]]></artwork>
+            </figure>
+
+				<t>indicates that the atom:title element's content should be mapped to the http://purl.org/dc/elements/1.1/title property. Given the entry</t>
+
+            <figure>
+                <artwork xml:space="preserve"><![CDATA[
+<atom:entry>
+ <atom:id>http://example.com/a</atom:id>
+ <atom:title>Test</atom:title>
+</atom:entry>
+]]></artwork>
+            </figure>
+
+				<t>and the map above as a child of at:entrymap, the following triple would be implied;</t>
+
+            <figure>
+                <artwork xml:space="preserve"><![CDATA[
+<http://example.com/a> <http://purl.org/dc/elements/1.1/title> "Test" .
+]]></artwork>
+            </figure>
+
+				<t>The exact URI to use as the subject of the statements derived by mapping is, by default, the value of the atom:id element in the same context. However, this behaviour MAY be overridden by specifying the subject attribute.</t>
+
+				<t>By default, the content of the given element will be converted to an RDF Literal if it contains no markup, and to an XML Literal if it does. This behaviour may be modified by future revisions of this specification.</t>
+			</section>
+
+		</section>
+
+
+        <section title="Example">
+
+            <figure>
+                <artwork xml:space="preserve"><![CDATA[
+<feed xmlns="http://www.w3.org/2005/Atom"
+   xmlns:at="http://purl.org/syndication/atomtriples/1">
+  <title>Example Feed</title>
+  <link href="http://example.org/"/>
+  <updated>2003-12-13T18:30:02Z</updated>
+  <author>
+    <name>John Doe</name>
+  </author>
+  <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+  <at:md>
+    <!-- This is feed-level metadata in plain RDF/XML -->
+    <!-- @about defaults to atom:id; can be overridden with @subject -->
+    <!-- xml base is available and applies, as per RDF -->
+  </at:md>
+  <at:feedmap>
+   <!-- How to map feed-level RDF statements into Atom metadata -->
+   <at:map property="http://dc.org/#title">atom:title</at:map>
+  </at:feedmap>
+  <at:entrymap>
+   <!-- entry-level mapping -->
+   <at:map property="http://dc.org/#title" 
+	       subject="alternate">atom:title</at:map>
+  </at:entrymap>
+  
+  <entry>
+    <title>Atom-Powered Robots Run Amok</title>
+    <link href="http://example.org/2003/12/13/atom03"/>
+    <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <summary>Some text.</summary>
+    <at:md>
+       <!-- this is entry-level metadata in plain RDF/XML -->
+       <!-- @about defaults to atom:id; 
+            can be overridden with @subject -->
+       <!-- xml base is available and applies, as per RDF -->
+    </at:md>
+  </entry>
+</feed>
+]]></artwork>
+            </figure>
+        </section>
+
+
+
+        <section title="Security Considerations">
+            <t>The security considerations for these extensions are the union of those that apply to processing 
+	both Atom and RDF.</t>
+        </section>
+
+        <section title="IANA Considerations">
+            <t>This document has no actions for IANA.</t>
+        </section>
+
+    </middle>
+
+    <back>
+        <references title="Normative References"> &rfc2119; &rfc4287; &xmlns; &rdfsg;</references>
+
+        <section title="Acknowledgements">
+            <t>The authors would like to thank Hong Zhang for his help and feedback; they take all responsibility for errors and omissions.</t>
+        </section>
+
+    </back>
+</rfc>

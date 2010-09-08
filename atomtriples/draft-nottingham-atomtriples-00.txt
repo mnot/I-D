@@ -1,0 +1,448 @@
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                                D. Beckett
+Intended status: Informational                             June 30, 2008
+Expires: January 1, 2009
+
+
+             AtomTriples: Embedding RDF Statements in Atom
+                    draft-nottingham-atomtriples-00
+
+Status of this Memo
+
+   By submitting this Internet-Draft, each author represents that any
+   applicable patent or other IPR claims of which he or she is aware
+   have been or will be disclosed, and any of which he or she becomes
+   aware will be disclosed, in accordance with Section 6 of BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   http://www.ietf.org/ietf/1id-abstracts.txt.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   http://www.ietf.org/shadow.html.
+
+   This Internet-Draft will expire on January 1, 2009.
+
+Abstract
+
+   This specification describes AtomTriples, a set of Atom extension
+   elements for embedding RDF statements in Atom documents (both element
+   and feed), and declaring how they can be derived from existing
+   content.
+
+
+
+
+
+
+
+
+
+
+
+Nottingham & Beckett     Expires January 1, 2009                [Page 1]
+
+Internet-Draft                 AtomTriples                     June 2008
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . . . 3
+   2.  Notational Conventions  . . . . . . . . . . . . . . . . . . . . 3
+   3.  Embedded Statements . . . . . . . . . . . . . . . . . . . . . . 3
+     3.1.  The at:md Element . . . . . . . . . . . . . . . . . . . . . 4
+     3.2.  The subject Attribute . . . . . . . . . . . . . . . . . . . 4
+   4.  Derived Statements  . . . . . . . . . . . . . . . . . . . . . . 4
+     4.1.  The at:feedmap Element  . . . . . . . . . . . . . . . . . . 5
+     4.2.  The at:entrymap Element . . . . . . . . . . . . . . . . . . 5
+     4.3.  The at:map Element  . . . . . . . . . . . . . . . . . . . . 5
+   5.  Example . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . . . 7
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . . . 7
+   8.  Normative References  . . . . . . . . . . . . . . . . . . . . . 7
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . . . 7
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . . . 7
+   Intellectual Property and Copyright Statements  . . . . . . . . . . 8
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham & Beckett     Expires January 1, 2009                [Page 2]
+
+Internet-Draft                 AtomTriples                     June 2008
+
+
+1.  Introduction
+
+   This specification describes AtomTriples, a set of Atom [RFC4287]
+   extension elements for embedding RDF
+   [W3C.WD-rdf-syntax-grammar-20031010] statements in Atom documents
+   (both element and feed), as well as declaring how they can be derived
+   from existing content.
+
+   Statements can be embedded directly as RDF/XML using the at:md
+   element at the feed or entry level.  Additionally, a feed can declare
+   that specific Atom elements (or extensions) can be parsed into RDF
+   statements using the at:feedmap element (for metadata attached to a
+   feed) or an at:entrymap element (for metadata attached to entries).
+
+   The semantics of a property that appears in both places (e.g., in a
+   feed-level at:md as well as derived from a at:feedmap) is undefined;
+   presumably, they would be added to the model as two separate
+   statements.
+
+   Likewise, the mechanics of combining metadata from multiple instances
+   of the same entry, or from multiple feed documents, is out of the
+   scope of this specification.
+
+
+2.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [RFC2119].
+
+   All XML elements in this specification use the the namespace URI
+   [W3C.REC-xml-names-19990114]
+   "http://purl.org/syndication/atomtriples/1".  In this document, that
+   URI is mapped to the "at" prefix.
+
+   Unless specified otherwise, AtomTriples elements MAY contain foreign
+   markup, which SHOULD be handled according as it is in the Atom
+   syndication format.
+
+
+3.  Embedded Statements
+
+   RDF statements can be directly embedded in Atom feeds and entries as
+   RDF/XML using the at:md element.
+
+
+
+
+
+
+
+Nottingham & Beckett     Expires January 1, 2009                [Page 3]
+
+Internet-Draft                 AtomTriples                     June 2008
+
+
+3.1.  The at:md Element
+
+   The at:md element MAY occur as a child of atom:feed or atom:entry,
+   and contains any number of RDF statements which MUST serialised as
+   RDF/XML.  It MAY occur in a given context any number of times.
+
+   The subject of these statements is, by default, the value of the
+   atom:id element in the same context (atom:element or atom:feed).
+   However, this behaviour MAY be overridden by specifying the subject
+   attribute.
+
+   After the subject is determined, the contents SHOULD be processed as
+   a propertyEltList in [W3C.WD-rdf-syntax-grammar-20031010].
+
+3.2.  The subject Attribute
+
+   When present, the subject attribute indicates how to derive the RDF
+   subject of statements sourced from the element it is attached to.
+
+   It MUST contain a URI which MUST be interpreted as a link relation;
+   the first such occurrence of an atom:link element in the same context
+   as its parent element with that relation (in lexical order) will
+   indicate the URI to use as the subject.
+
+   For example,
+
+     <entry>
+       <title>Atom-Powered Robots Run Amok</title>
+       <link href="http://example.org/2003/12/13/atom03"/>
+       <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+       <updated>2003-12-13T18:30:02Z</updated>
+       <summary>Some text.</summary>
+       <at:md subject="alternate">
+          <!-- .. -->
+       </at:md>
+     </entry>
+
+   indicates that the subject of statements in this entry is
+   "http://example.org/2003/12/13/atom03" (because Atom links default to
+   the "alternate" relation).
+
+   This specification does not define the semantics of the subject
+   attribute when a suitable link cannot be found.
+
+
+4.  Derived Statements
+
+   Atom documents can declare mappings of existing content to RDF
+
+
+
+Nottingham & Beckett     Expires January 1, 2009                [Page 4]
+
+Internet-Draft                 AtomTriples                     June 2008
+
+
+   statements using the at:feedmap and at:entrymap elements.
+
+4.1.  The at:feedmap Element
+
+   The at:feedmap element MAY occur as a child of atom:feed, and MUST
+   NOT occur more than once.  It MAY contain any number of at:map
+   elements which indicate mappings for feed-level element contents to
+   statements, within the scope of the feed document it occurs in.
+
+4.2.  The at:entrymap Element
+
+   The at:entrymap element MAY occur as a child of atom:feed, and MAY
+   occur as the child of atom:entry in an Atom Entry Document.  It MUST
+   NOT occur more than once, and MAY contain any number of at:map
+   elements which indicate mappings for entry-level element contents to
+   statements, within the scope of the document it occurs in.
+
+4.3.  The at:map Element
+
+   The at:map element indicates how an element in a given context
+   (either feed or entry, depending on use) maps to RDF statements.  Its
+   content MUST be an XML QName, and indicates the element that is being
+   mapped.  It MUST have a property attribute that MUST be a URI, which
+   associates the element in the appropriate context with the given RDF
+   property.
+
+   For example,
+
+   <at:map
+    property="http://purl.org/dc/elements/1.1/title">atom:title</at:map>
+
+   indicates that the atom:title element's content should be mapped to
+   the http://purl.org/dc/elements/1.1/title property.  Given the entry
+
+   <atom:entry>
+    <atom:id>http://example.com/a</atom:id>
+    <atom:title>Test</atom:title>
+   </atom:entry>
+
+   and the map above as a child of at:entrymap, the following triple
+   would be implied;
+
+ <http://example.com/a> <http://purl.org/dc/elements/1.1/title> "Test" .
+
+   The exact URI to use as the subject of the statements derived by
+   mapping is, by default, the value of the atom:id element in the same
+   context.  However, this behaviour MAY be overridden by specifying the
+   subject attribute.
+
+
+
+Nottingham & Beckett     Expires January 1, 2009                [Page 5]
+
+Internet-Draft                 AtomTriples                     June 2008
+
+
+   By default, the content of the given element will be converted to an
+   RDF Literal if it contains no markup, and to an XML Literal if it
+   does.  This behaviour may be modified by future revisions of this
+   specification.
+
+
+5.  Example
+
+<feed xmlns="http://www.w3.org/2005/Atom"
+   xmlns:at="http://purl.org/syndication/atomtriples/1">
+  <title>Example Feed</title>
+  <link href="http://example.org/"/>
+  <updated>2003-12-13T18:30:02Z</updated>
+  <author>
+    <name>John Doe</name>
+  </author>
+  <id>urn:uuid:60a76c80-d399-11d9-b93C-0003939e0af6</id>
+  <at:md>
+    <!-- This is feed-level metadata in plain RDF/XML -->
+    <!-- @about defaults to atom:id; can be overridden with @subject -->
+    <!-- xml base is available and applies, as per RDF -->
+  </at:md>
+  <at:feedmap>
+   <!-- How to map feed-level RDF statements into Atom metadata -->
+   <at:map property="http://dc.org/#title">atom:title</at:map>
+  </at:feedmap>
+  <at:entrymap>
+   <!-- entry-level mapping -->
+   <at:map property="http://dc.org/#title"
+               subject="alternate">atom:title</at:map>
+  </at:entrymap>
+
+  <entry>
+    <title>Atom-Powered Robots Run Amok</title>
+    <link href="http://example.org/2003/12/13/atom03"/>
+    <id>urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</id>
+    <updated>2003-12-13T18:30:02Z</updated>
+    <summary>Some text.</summary>
+    <at:md>
+       <!-- this is entry-level metadata in plain RDF/XML -->
+       <!-- @about defaults to atom:id;
+            can be overridden with @subject -->
+       <!-- xml base is available and applies, as per RDF -->
+    </at:md>
+  </entry>
+</feed>
+
+
+
+
+
+Nottingham & Beckett     Expires January 1, 2009                [Page 6]
+
+Internet-Draft                 AtomTriples                     June 2008
+
+
+6.  Security Considerations
+
+   The security considerations for these extensions are the union of
+   those that apply to processing both Atom and RDF.
+
+
+7.  IANA Considerations
+
+   This document has no actions for IANA.
+
+
+8.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC4287]  Nottingham, M. and R. Sayre, "The Atom Syndication
+              Format", RFC 4287, December 2005.
+
+   [W3C.REC-xml-names-19990114]
+              Bray, T., Hollander, D., and A. Layman, "Namespaces in
+              XML", W3C REC REC-xml-names-19990114, January 1999.
+
+   [W3C.WD-rdf-syntax-grammar-20031010]
+              Beckett, D., "RDF/XML Syntax Specification (Revised)", W3C
+              LastCall WD-rdf-syntax-grammar-20031010, October 2003.
+
+
+Appendix A.  Acknowledgements
+
+   The authors would like to thank Hong Zhang for his help and feedback;
+   they take all responsibility for errors and omissions.
+
+
+Authors' Addresses
+
+   Mark Nottingham
+
+   Email: mnot@pobox.com
+   URI:   http://www.mnot.net/
+
+
+   Dave Beckett
+
+   Email: dave@dajobe.org
+   URI:   http://www.dajobe.org/
+
+
+
+
+
+Nottingham & Beckett     Expires January 1, 2009                [Page 7]
+
+Internet-Draft                 AtomTriples                     June 2008
+
+
+Full Copyright Statement
+
+   Copyright (C) The IETF Trust (2008).
+
+   This document is subject to the rights, licenses and restrictions
+   contained in BCP 78, and except as set forth therein, the authors
+   retain all their rights.
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY, THE IETF TRUST AND
+   THE INTERNET ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF
+   THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Intellectual Property
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at
+   ietf-ipr@ietf.org.
+
+
+
+
+
+
+
+
+
+
+
+Nottingham & Beckett     Expires January 1, 2009                [Page 8]
+
