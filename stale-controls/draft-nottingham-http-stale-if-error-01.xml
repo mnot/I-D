@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>    
+<!ENTITY rfc2616 SYSTEM 'bibxml/reference.RFC.2616.xml'>   
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+<rfc ipr="full3978" docName="draft-nottingham-http-stale-if-error-01" category="info">
+    <front>        
+      <title abbrev="stale-if-error">The stale-if-error HTTP Cache-Control Extension</title>		
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+	<organization>Yahoo! Inc.</organization>
+	<address>		
+	  <email>mnot@yahoo-inc.com</email>	
+	  <uri>http://www.mnot.net/</uri>		
+	</address>
+      </author>
+     <date year="2008"/>
+      <abstract>
+      <t>The stale-if-error HTTP Cache-Control extension improves availability of some kinds of cached content by allowing servers and clients to instruct caches to use stale responses when certain error conditions are encountered.</t>
+     </abstract>
+</front>
+
+  <middle>
+
+<section title="Introduction">
+
+<t><xref target="RFC2616">HTTP</xref> requires that caches "respond to a request with the most up-to-date response held... that is appropriate to the request," although "in carefully controlled circumstances" a stale response is allowed to be returned.</t>
+
+<t>Those circumstances are not well-defined. Often, it is useful to return a stale response when an error -- e.g., a 500 Internal Server Error, a network segment, or DNS failure -- is encountered, but caches are understandably reluctant to act without explicit instructions about the appropriate behaviour.</t>
+
+<t>The stale-if-error HTTP Cache-Control extension addresses this by allowing origin servers as well as clients to instruct caches to use a stale response under certain conditions, rather than returning a "hard" error, thus improving availability.</t>
+
+</section>
+
+
+<section title="Notational Conventions">
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document
+are to be interpreted as described in RFC 2119 <xref target="RFC2119"/>.</t>
+	
+<t>This specification uses the augmented Backus-Naur Form of RFC2616 <xref target="RFC2616"/>, and includes the delta-seconds rule from that specification.</t>
+
+</section>
+
+
+<section title="The stale-if-error Cache-Control Extension">
+
+<t>The stale-if-error Cache-Control extension indicates that when an error is encountered, a cached stale response MAY be used to satisfy the request, regardless of other freshness information.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  stale-if-error = "stale-if-error" "=" delta-seconds
+]]></artwork>
+</figure>
+
+<t>When used as a request Cache-Control extension, its scope of application is the request it appears in; when used as a response Cache-Control extension, its scope is any request applicable to the cached response it occurs in.</t>
+
+<t>Its value indicates the upper limit to staleness; when the cached response is more stale than the indicated amount, the cached response MUST NOT be used to satisfy the request, absent other information.</t>
+
+<t>In this context, an error is any situation which would result in a 500, 502, 503 or 504 HTTP response status code being returned.</t>
+
+<t>Note that this directive only affects the freshness of a response in an implementation that recognises it; stale cached responses that are used SHOULD still be visibly stale when sent (i.e.,  have a non-zero Age header and a warning header, as per HTTP's requirements.).</t>
+
+</section>
+
+<section title="Response stale-if-error Example">
+
+<t>A response containing:</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  HTTP/1.1 200 OK
+  Cache-Control: max-age=600, stale-if-error=1200
+  Content-Type: text/plain
+  
+  success
+]]></artwork>
+</figure>
+  
+<t>indicates that it is fresh for 600 seconds, and that it may be used if an error is encountered after becoming stale for an additional 1200 seconds.</t>
+
+<t>Thus, if the cache attempts to validate 900 seconds afterwards and encounters:</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  HTTP/1.1 500 Internal Server Error
+  Content-Type: text/plain
+  
+  failure
+]]></artwork>
+</figure>
+
+<t>the successful response can be returned instead:</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  HTTP/1.1 200 OK
+  Cache-Control: max-age=600, stale-if-error=1200
+  Age: 900
+  Content-Type: text/plain
+  
+  succcess
+]]></artwork>
+</figure>
+
+<t>After the age is greater than 1800 seconds (i.e., it has been stale for 1200 seconds), the cache must write the error message through.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  HTTP/1.1 500 Internal Server Error
+  Content-Type: text/plain
+  
+  failure
+]]></artwork>
+</figure>
+
+</section>
+
+<section title="Security Considerations">
+<t>This document provides origin servers and clients a mechanism for dictating that stale content should be served from caches under certain circumstances, and does not pose additional security considerations over those of RFC2616, which also allows stale content to be served.</t>
+</section>
+
+<section title="IANA Considerations">
+<t>This document has no actions for IANA.</t>
+</section>
+
+
+	</middle> 
+
+	<back> 	  
+	  <references title="Normative References">
+	   &rfc2119;
+	   &rfc2616;
+
+	  </references>
+	  
+    <section title="Acknowledgements">
+    <t>Thanks to
+John Nienart,
+Henrik Nordstrom,
+Evan Torrie,
+and 
+Chris Westin
+for their suggestions. The author takes all responsibility for errors and omissions.</t>
+    </section>
+
+
+
+     </back>
+</rfc>

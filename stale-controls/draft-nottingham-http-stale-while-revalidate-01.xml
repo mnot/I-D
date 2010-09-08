@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'bibxml/reference.RFC.2119.xml'>      
+<!ENTITY rfc2616 SYSTEM 'bibxml/reference.RFC.2616.xml'>   
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+<rfc ipr="full3978" docName="draft-nottingham-http-stale-while-revalidate-01" category="info">
+    <front>        
+      <title abbrev="stale-while-revalidate">The stale-while-revalidate HTTP Cache-Control Extension</title>		
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+	<organization>Yahoo! Inc.</organization>
+	<address>		
+	  <email>mnot@yahoo-inc.com</email>	
+	  <uri>http://www.mnot.net/</uri>		
+	</address>
+      </author>
+     <date year="2008"/>
+      <abstract>
+      <t>The stale-while-revalidate HTTP response Cache-Control extension allows servers to instruct caches to serve stale responses while validating them, to avoid latency in some situations.</t>
+     </abstract>
+</front>
+
+  <middle>
+
+<section title="Introduction">
+
+<t>The potential for latency (due to the network as well as server processing) introduced by cache validation in <xref target="RFC2616">HTTP</xref> is often undesirable; while subsequent requests can be served from the cache quickly, the request that triggers validation sees degraded service.</t>
+
+<t>In some situations, it may be useful to avoid this latency, at the cost of serving slightly stale responses. the stale-while-revalidate HTTP response Cache-Control extension allows caches to do this.</t>
+
+</section>
+
+
+<section title="Notational Conventions">
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document
+are to be interpreted as described in RFC 2119 <xref target="RFC2119"/>.</t>
+	
+<t>This specification uses the augmented Backus-Naur Form of RFC2616 <xref target="RFC2616"/>, and includes the delta-seconds rule from that specification.</t>
+
+</section>
+
+<section title="The stale-while-revalidate Cache-Control Extension">
+
+<t>When present in an HTTP response, the stale-while-revalidate Cache-Control extension indicates that caches MAY serve the response it appears in after it becomes stale, up to the indicated number of seconds.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  stale-while-revalidate = "stale-while-revalidate" "=" delta-seconds
+]]></artwork>
+</figure>
+
+<t>If a cached response is served stale due to the presence of this extension, the cache SHOULD attempt to revalidate it while still serving stale responses (i.e., without blocking).</t>
+
+<t>Note that 'stale' implies that the response will have a non-zero Age header and a warning header, as per HTTP's requirements.</t>
+
+<t>If delta-seconds passes without the cached entity being revalidated, it MUST NOT continue to be served stale, absent other information.</t>
+
+</section>
+
+<section title="Example">
+
+<t>A response containing:</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  Cache-Control: max-age=600, stale-while-revalidate=30
+]]></artwork>
+</figure>
+  
+<t>indicates that it is fresh for 600 seconds, and it may continue to be served stale for up to 30 seconds while an asynchronous validation is attempted. If validation is inconclusive, or if there is not traffic that triggers it, after 30 seconds the stale-while-revalidate function will cease to operate, and the cached response will be "truly" stale (i.e., the next request will block and be handled normally).</t>
+
+<t>Generally, servers will want to set the combination of max-age and stale-while-revalidate to the longest total potential freshness lifetime that they can tolerate. For example, with both set to 600, the server must be able to tolerate the response being served from cache for up to 20 minutes.</t>
+
+<t>Since asynchronous validation will only happen if a request occurs after the response has become stale, but before the end of the stale-while-revalidate window, the size of that window and the likelihood of a request during it determines how likely it is that all requests will be served without delay. if the window is too small, or traffic too sparse, some requests will fall outside of it, and block until the server can validate the cached response.</t>
+
+</section>
+
+<section title="Security Considerations">
+<t>This document provides origin servers with a mechanism for dictating that stale content should be served from caches under certain circumstances, with the expectation that the cached response will be revalidated in the background. It is suggested that such validation be predicated upon an incoming request, to avoid the possibility of an amplification attack (as can be seen in some other pre-fetching and automatic refresh mechanisms). Cache implementers should keep this in mind when deciding the circumstances under which they will generate a request that is not directly initiated by a user or client.</t>
+</section>
+
+<section title="IANA Considerations">
+<t>This document has no actions for IANA.</t>
+</section>
+
+	</middle> 
+
+	<back> 	  
+	  <references title="Normative References">
+	   &rfc2119;
+	   &rfc2616;
+
+	  </references>
+	  
+    <section title="Acknowledgements">
+    <t>Thanks to
+Ben Drees,
+John Nienart,
+Henrik Nordstrom,
+Evan Torrie,
+and 
+Chris Westin
+for their suggestions. The author takes all responsibility for errors and omissions.</t>
+    </section>
+
+
+
+     </back>
+</rfc>
