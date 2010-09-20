@@ -412,16 +412,6 @@ Specification document(s):
 			on http://www.iesg.org/ 
 			website) and, if the appellant is not satisfied with the response, to the full IESG (using the iesg@iesg.org mailing
 			list).</t>
-
-		<t>When a registration request is successful, the Designated Expert(s) will update the registry XML file (using the format
-			described in <xref target="registry_format"/> including the MIT license) and send it 
-			to the link-relations-announce@ietf.org mailing list (which SHOULD NOT be centrally archived, so as to avoid load issues from automated
-			agents, and only accept posts from the Designated Expert(s)), 
-			so that implementers interested in receiving a machine-readable registry can do so. Simultaneously, they will 
-			send a text (not XML) version of the registry to IANA for publication.</t>
-
-		<t>IANA should only accept registry updates from the Designated Expert(s), and should direct all requests for registration
-			to the review mailing list.</t>
 			
 		</section>
 		
@@ -825,9 +815,6 @@ Specification document(s):
 			for a period longer than 21 days can be brought to the IESG's attention (using the iesg@iesg.org mailing list) 
 			for resolution.</t>
 
-		<t>When a registration request is successful, the Designated Expert will forward it to IANA for publication.
-		IANA should only accept registry updates from the Designated Expert(s), and should direct all requests for registration
-			to the review mailing list.</t>
 	</section>
 
     </section>
@@ -958,98 +945,6 @@ Specification document(s):
 </references>
 
 <?rfc rfcedstyle="yes" ?>
-	<section title="Link Relation Registry Format" anchor="registry_format">
-		<t>To facilitate applications that wish to use registry data in an automated fashion, this specification defines an XML-based
-			format for the registry entries.</t>
-			
-	    <t>Each registered relation type is represented by a RelationType element, and if any of the app data
-		values are other than the default value identified in the Application Data registry, they will be represented
-		by appdata elements.</t>
-			
-		<t>Note that this format is NOT that in which IANA publishes the registry,
-		because doing so would subject IANA's servers to, potentially, very high load (e.g.,
-		if Web browsers were to automatically update their copies of the registry). Instead,
-		this format is published to the link-relations-announce@ietf.org mailing list, so that interested implementers
-		can subscribe and distribute the machine-readable document using their own
-		infrastructure.</t>
-			
-		<section title="Relax NG Grammar">
-			<figure>
-			  <artwork xml:space="preserve"><![CDATA[
-element RelationTypes {
-  element RelationType {
-    attribute name { text },
-    attribute reference { text },
-    element description { text }, 
-    element notes { text }?,
-    element appdata {
-      attribute name { text },
-      text
-    }*
-  }+
-}
-]]></artwork>
-			</figure>
-		</section>
-		
-		<section title="Example">
-
-<!-- [rfced] Regarding the license text in A.2: It appears to be a
-copyright statement that is not currently used by the IETF Trust. This
-may be confusing to readers. Is it intended as 1) the license for code
-in this RFC, or 2) an example of license text that could appear in a
-RelationTypes element?
-
-If 1, then it seems the text should be updated to the current license
-in item 4c of TLP 4.0 on http://trustee.ietf.org/license-info (or the
-short form in item 6d).
-
-If 2, then the choice of sample text here seems odd.
-Could it be changed to different sample text? 
-For example, if it's a placeholder, perhaps it could be:
-   License statement would be placed here, if applicable. 
-Or it could be updated to the current license text in 
-item 4c of TLP 4.0 on http://trustee.ietf.org/license-info/
-(or the short form in item 6d).
--->
-
-			<figure>
-			  <artwork xml:space="preserve"><![CDATA[
-<RelationTypes>
-  <!--
-  Copyright (c) <year> The IETF Trust
-
-  Permission is hereby granted, free of charge, to any person obtaining
-  a copy of this software and associated documentation files (the 
-  "Software"), to deal in the Software without restriction, including 
-  without limitation the rights to use, copy, modify, merge, publish, 
-  distribute, sublicense, and/or sell copies of the Software, and to 
-  permit persons to whom the Software is furnished to do so, subject to
-  the following conditions:
-
-  The above copyright notice and this permission notice shall be 
-  included in all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
-  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS 
-  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN 
-  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
-  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
-  SOFTWARE.
-  -->
-  <RelationType name="example"
-                reference="http://www.example.org/example_spec">
-    <description>This is an example relation type.</description>
-    <appdata name="foo">This is the value of Foo.</appdata>
-  </RelationType>
-  <!-- ... -->
-</RelationTypes>
-				]]></artwork>
-			</figure>			
-		</section>
-	</section>
 
     <section title="Notes on Using the Link Header with the HTML4 Format">
       <t>HTML motivated the original syntax of the Link header, and many of the design decisions in
