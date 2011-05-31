@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "../xml2rfc/rfc2629.dtd" [
+   <!ENTITY rfc2119 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>  
+   <!ENTITY rfc2616 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616.xml'>  
+   <!ENTITY rfc4627 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml'>  
+   <!ENTITY rfc5226 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5226.xml'>  
+   <!ENTITY rfc5246 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml'>  
+   <!ENTITY rfc5785 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5785.xml'>  
+   <!ENTITY rfc6265 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6265.xml'>  
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+
+<rfc ipr="trust200902" docName="draft-nottingham-http-browser-hints-02" category="info">
+
+   <front>
+      <title>HTTP Browser Hints</title>
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+         <organization></organization>
+         <address>       
+            <email>mnot@mnot.net</email> 
+            <uri>http://www.mnot.net/</uri>
+         </address>
+      </author>
+      <date year="2011"/>
+      <abstract>
+
+         <t>Over time, Web browsers have adapted how they use HTTP based upon
+         common server configurations and behaviours. While this is necessary
+         in the common case, it can be detrimental for performance and
+         interoperability.</t>
+
+         <t>This document establishes a mechanism whereby origin servers can make
+         available hints for browsers about their preferences and
+         capabilities, without imposing overhead on their interactions or
+         requiring support for them.</t>
+
+         <t>This is intended to allow browsers to safely optimise connections
+         to servers.</t>
+
+      </abstract>
+   </front>
+
+   <middle>
+
+      <section title="Introduction">
+
+        <t>HTTP <xref target="RFC2616"/> clients -- especially browsers --
+        typically use hardcoded values or heuristics to determine how many TCP
+        connections to use to a server, based on common-case server behaviours
+        and limitations.</t>
+
+        <t>Likewise, they often send voluminous request headers (e.g., in
+        User-Agent and Allow) because they fear that changing those headers'
+        values will break some sites that depend upon specific values.</t>
+
+        <t>These are just two examples of common, conservative behaviour by
+          browsers that is good for interoperability, but potentially bad
+          for performance in certain circumstances.</t>
+
+        <t>This memo proposes a mechanism whereby a HTTP server can advertise
+        hints for browsers (and other clients), so that communication with
+        them can be optimised.</t>
+
+        <t>It does so by defining a file format for such Browser Hints <xref
+        target="format"/>, and defining how clients can discover it for a
+        given Web site <xref target="discover"/>. Finally, an extensible
+        vocabulary of hints is defined <xref target="hints"/>.</t>
+
+        <t>Feedback for this draft should take place on the
+        apps-discuss@ietf.org mailing list 
+				<eref target="https://www.ietf.org/mailman/listinfo/apps-discuss"/>.
+				</t>
+
+      </section>
+
+      <section title="Requirements">
+         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+         NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in
+         this document are to be interpreted as described in <xref
+         target="RFC2119"/>.</t>
+      </section>
+
+      <section title="A file format for Browser Hints" anchor="format">
+
+        <t>Browser hints are indicating using a JSON <xref target="RFC4627"/>
+        formatted file, containing a single object whose member's names are
+        browser hints, as defined by the registry <xref
+        target="registry"/>.</t>
+
+        <t>For example;</t>
+        
+        <figure><artwork>
+          {
+          "max-conns": 5,
+          "small-hdrs": true
+          }
+        </artwork></figure>
+
+        <t>By their nature, all browser hints are optional; i.e., browsers are
+        free to ignore them.</t>
+
+				<section title="The 'prefixlist' Value Type">
+					
+					<t>Each browser hint is defined to have a JSON-derived value type;
+          e.g., 'string' or 'array'. This section defines a special value
+          type, 'prefixlist' that is an array containing one or more arrays,
+          each containing a path prefix followed by either 'true' or 'false'
+          to indicate whether the hint applies to that path.</t>
+
+					<t>Prefixlists are evaluated in order, with the first
+          case-sensitive, character-by-character prefix match for a given
+          URI's path determining whether the hint applies.</t>
+
+					<t>For example, given the following hint document:</t>
+					
+        	<figure><artwork>
+{
+  "omit-cookies": [
+    ["/images/users/", false],
+    ["/images/", true]
+  ]
+}
+</artwork></figure>
+
+					<t>We can tell that "omit-cookies" applies to resources under the
+						"/images/" path (such as "/images/123.jpg"), except for those 
+						under "/images/users/" (such as "/images/users/bob.jpg").</t>
+
+					<t>If a value specified to be a prefixlist is either 'true' or
+						'false' that indicates that the hint applies to the whole site,
+						or does not apply to the whole site, respectively.</t>
+						
+					<t>For example,</t>
+
+        	<figure><artwork>
+{
+  "omit-cookies": true
+}
+</artwork></figure>
+
+					<t>Indicates that the "omit-cookies" hint applies to the entire
+						site.</t>
+					
+					<t>Prefixlists can only be used when the browser hint's registration
+						nominates their use.</t>
+					
+				</section>
+
+      </section>
+
+      <section title="Discovering Browser Hints for a Web site" anchor="discover">
+
+        <t>The hints relevant to a given site can be determined by fetching
+        the URI path "/.well-known/browser-hints" for that site.</t>
+
+        <t>Typically, clients (especially browsers) will not block other 
+          requests to a site while fetching the browser hints (because 
+          they're optional); instead, it will usually be done concurrently
+          with other requests, or on idle connections for future use.</t>
+
+        <t>In this specification, "site" is scoped by the URI scheme and
+        authority. As such, all of the following are considered to be
+        different sites, and therefore have different browser hints:</t>
+
+        <t><list style="symbols">
+          <t>http://foo.com/</t>
+          <t>https://foo.com/</t>
+          <t>http://foo.com:8000/</t>
+          <t>http://www.foo.com/</t>
+        </list></t>
+
+        <t>Clients SHOULD follow HTTP 3xx redirects when retrieving
+        hints.</t>
+
+        <t>A successful response is valid for its associated site for as long
+        as it can be cached in HTTP.</t>
+
+        <t>If the response has a 200 status code but no explicit freshness
+        (e.g., a Cache-Control: max-age or Expires: header), clients SHOULD
+        cache the response heuristically for a generous fixed period (e.g., 14
+        days).</t>
+
+				<t>If the response has a 404 status code but no explicit freshness,
+					clients SHOULD cache the response heuristically for a generous
+					fixed period (e.g., 14 days).</t>
+
+      </section>
+      
+      <section title="Pre-defined Browser Hints" anchor="hints">
+        
+        <section title="max-conns">
+
+          <t>
+            <list style="symbols">
+              <t>Browser Hint Name: max-conns</t>
+              <t>Description: When present, this hint indicates the maximum
+              number of concurrent persistent connections that the site 
+              would like clients to use.</t>
+              <t>Value Type: number</t>
+              <t>Contact: mnot@mnot.net</t>
+            </list>
+          </t>
+
+        </section>
+        
+        <section title="pconn-ip">
+
+          <t>
+            <list style="symbols">
+              <t>Browser Hint Name: pconn-ip</t>
+              <t>Description: When true, this hint indicates that the site
+              allows clients to reuse persistent connections keyed by IP
+              address, rather than by hostname. Note that all sites that are 
+              sharing the connection MUST declare this hint for it to be
+              used, and if a transport-layer certificate is in use 
+              (e.g., for TLS <xref target="RFC5246"/>), it MUST be valid 
+              for all sites.</t>
+              <t>Value Type: true | false</t>
+              <t>Contact: mnot@mnot.net</t>
+              <t>Specification: [this document]</t>
+            </list>
+          </t>
+
+          <t>In other words, if both www.example.com and foo.example.org resolve
+            to the address 192.0.2.5, and indicate this hint, then clients
+            can send a request to www.example.com and then a request to 
+            foo.example.org on the same TCP connection to that address.</t>
+            
+          <t>If any of the sites grouped together for the purposes of
+            pconn-ip declare a max-conns hint, the max-conns value for that 
+            address is considered to be the maximum of the declared 
+            max-conn hints present.</t>
+
+        </section>
+        
+        <section title="max-pipeline-depth">
+
+          <t>
+            <list style="symbols">
+              <t>Browser Hint Name: max-pipeline-depth</t>
+              <t>Description: When present, this hint indicates the maximum
+              number of pipelined requests per connection that the site would
+              like clients to use.</t>
+              <t>Value Type: number</t>
+              <t>Contact: mnot@mnot.net</t>
+            </list>
+          </t>
+
+        </section>
+        
+        <section title="small-hdrs">
+
+          <t>
+            <list style="symbols">
+              <t>Browser Hint Name: small-hdrs</t>
+              <t>Description: When true, this hint indicates that clients
+              can omit the Accept and Accept-Charset request headers when
+              communicating with the resource, and that they can use a 
+							shortened version of the User-Agent header.</t>
+              <t>Value Type: prefixlist</t>
+              <t>Contact: mnot@mnot.net</t>
+            </list>
+          </t>
+
+        </section>
+        
+        <section title="relative-referer">
+
+          <t>
+            <list style="symbols">
+              <t>Browser Hint Name: relative-referer</t>
+              <t>Description: When true, this hint indicates that servers
+	 							 prefer a relative URI in the Referer request header.</t>
+              <t>Value Type: true | false</t>
+              <t>Contact: mnot@mnot.net</t>
+            </list>
+          </t>
+
+        </section>
+        
+				<section title="chunk-req-bodies">
+					
+          <t>
+						<list style="symbols">
+							<t>Browser Hint Name: chunk-req-bodies</t>
+							<t>Description: When true, this hint indicates that the server
+              can successfully process a request with a chunk-encoded body;
+              i.e., that it should not return a 411 Length Required status.
+              Note that clients may still require a 411 response status, even
+              in when this hint is present. When false, the server may or may
+              not require a Content-Length on requests with bodies.</t>
+							<t>Value Type: true | false</t>
+							<t>Contact: mnot@mnot.net</t>
+						</list>
+					</t>
+
+				</section>
+
+				<section title="omit-cookies">
+
+          <t>
+						<list style="symbols">
+							<t>Browser Hint Name: omit-cookies</t>
+							<t>Description: When true, this hint indicates that cookies <xref
+		          target="RFC6265"/> can be omitted in requests.</t>
+							<t>Value Type: prefixlist</t>
+							<t>Contact: mnot@mnot.net</t>
+						</list>
+  				</t>
+
+				</section>
+
+      </section>
+                  
+      <section title="Security Considerations">
+         <t>TBD</t>
+      </section>
+
+      <section title="IANA Considerations">
+      
+       <section title="The 'browser-hints' Well-Known URI">
+      
+         <t>This document defines the "browser-hints" Well-Known URI 
+         <xref target="RFC5785"/>.</t>
+
+         <t><list style="symbols">
+            <t>URI suffix: browser-hints</t>
+            <t>Change controller: mnot@mnot.net</t>
+            <t>Specification document(s): [this document]</t>
+            <t>Related information:</t> 
+         </list></t>  
+
+       </section>
+      
+       <section title="The HTTP Browser Hints Registry" anchor="registry">
+      
+       <t>This document establishes the HTTP Browser Hints Registry.</t>
+       
+       <t>New hints are registered First Come First Served (see 
+         <xref target="RFC5226"/>), by sending e-mail to <eref 
+         target="mailto:iana@iana.org"/> (or using other mechanisms, as
+         established by IANA).</t>
+         
+       <t>Registration requests MUST use the following template:</t>
+       
+       <t>
+          <list style="symbols">
+            <t>Browser Hint Name: [name of hint]</t>
+            <t>Description: [description of hint]</t>
+            <t>Value Type: [JSON value type] </t>
+	          <t>Contact: [e-mail address(es)]</t>
+	          <t>Specification: [optional; reference or URI to more info]</t>
+          </list>
+        </t>
+      
+       <t>New hints MUST be optional; they cannot place requirements upon
+       implementations.</t>
+       
+       <t>Likewise, new hints MUST be relevant to browser use
+       cases; other non-browsing hints and metadata would make the hints
+       response undesirably large. However, note that non-browser clients
+       MAY use them.</t>
+       
+       <t>Finally, new hints MUST NOT make communication non-conformant with
+         HTTP itself; i.e., this is not a mechanism for changing the HTTP
+         protocol in incompatible ways. For example, if a hint indicates
+         that browsers can compress request headers using GZIP, intermediaries
+         that are interposed are likely to fail.</t>
+      
+       <t>The initial contents of the registry are defined in
+         <xref target="hints"/>.</t>
+      
+       </section>
+
+     </section>
+
+   </middle>
+
+   <back>
+      <references title="Normative References">
+         &rfc2119; &rfc2616; &rfc4627;
+      </references>
+
+      <references title="Informative References">
+         &rfc5226; &rfc5246; &rfc5785; &rfc6265;
+      </references>
+      
+      <section title="Acknowledgements">
+         <t>Thanks to 
+           Mike Belshe,
+           Poul-Henning Kamp,
+           Anirban Kundu,
+           Patrick McManus,
+           Steve Souders, and
+					 Martin Thompson
+           for their suggestions and feedback.           
+          </t>
+         <t>The author takes all responsibility for errors and
+         omissions.</t>
+      </section>
+      
+   </back>
+
+</rfc>
