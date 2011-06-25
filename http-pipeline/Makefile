@@ -1,7 +1,7 @@
-xml2rfc = "../xml2rfc/xml2rfc.tcl"
+xml2rfc = "xml2rfc/xml2rfc.tcl"
 saxpath = "/opt/local/share/java/saxon8.jar"
 saxon = java -classpath $(saxpath) net.sf.saxon.Transform -novw -l
-stylesheet = ../rfc2629xslt/rfc2629.xslt
+stylesheet = rfc2629xslt/rfc2629.xslt
 
 TITLE= nottingham-http-pipeline
 VERSION= 01
