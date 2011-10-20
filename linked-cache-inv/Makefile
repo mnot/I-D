@@ -4,7 +4,7 @@ saxon = java -classpath $(saxpath) net.sf.saxon.Transform -novw -l
 stylesheet = ../rfc2629xslt/rfc2629.xslt
 
 TITLE= nottingham-linked-cache-inv
-VERSION= 00
+VERSION= 01
 
 TARGET_XML= draft-$(TITLE)-$(VERSION).xml
 TARGET_HTML= $(TARGET_XML:.xml=.html)
