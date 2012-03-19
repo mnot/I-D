@@ -4,7 +4,7 @@ saxon = java -classpath $(saxpath) net.sf.saxon.Transform -novw -l
 stylesheet = rfc2629xslt/rfc2629.xslt
 
 TITLE= nottingham-http-browser-hints
-VERSION= 02
+VERSION= 03
 
 TARGET_XML= draft-$(TITLE)-$(VERSION).xml
 TARGET_HTML= $(TARGET_XML:.xml=.html)
