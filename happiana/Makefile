@@ -1,5 +1,5 @@
 xml2rfc = "../xml2rfc/xml2rfc.tcl"
-saxon = saxon
+saxon = java -jar /usr/local/share/saxon-b/saxon9.jar
 stylesheet = /usr/local/share/rfc2629xslt/rfc2629.xslt
 
 TITLE= nottingham-appsawg-happiana
@@ -41,7 +41,7 @@ idnits: $(TARGET_TXT)
 	idnits $<
 
 %.html: %.xml
-	$(saxon) $< $(stylesheet) > $@
+	$(saxon) -s:$< -xsl:$(stylesheet) > $@
 
 %.txt: %.xml
 	$(xml2rfc) $< $@
