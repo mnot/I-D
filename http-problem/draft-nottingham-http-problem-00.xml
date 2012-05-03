@@ -7,7 +7,6 @@
    <!ENTITY rfc4627 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml'>  
    <!ENTITY rfc5987 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5987.xml'>  
    <!ENTITY rfc5988 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5988.xml'>  
-   <!ENTITY rfc6585 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6585.xml'>  
 ]>
 
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -79,7 +78,7 @@
          
           <t>This specification defines a common data model for HTTP Problems
           as a JSON <xref target="RFC4627"/> object. That object can be
-          serialised as an "application/problem+json" HTTP response, or it can
+          serialised as an "application/json-problem" HTTP response, or it can
           be conveyed using a Link HTTP response header field <xref
           target="RFC5988"/>.</t>
          
@@ -101,7 +100,7 @@
 
          <t>The canonical format for a HTTP problem is a JSON <xref
          target="RFC4627"/> document, identified with the
-         "application/problem+json" media type. Its root object has the
+         "application/json-problem" media type. Its root object has the
          following properties:</t>
          
          <t><list style='symbols'>
@@ -124,7 +123,7 @@
 
          <figure><artwork><![CDATA[
    HTTP/1.1 403 Forbidden
-   Content-Type: application/problem+json
+   Content-Type: application/json-problem
    Content-Language: en
 
    {
@@ -146,7 +145,7 @@
 
       </section>
 
-      <section anchor="the-problem-http-response-header-field" title="Expressing Problems as Link Headers">
+      <section anchor="the-problem-http-response-header-field" title="Expressing Problems with Link Headers">
 
       <t>Because resources often use formats other than JSON to convey
       human-readable problem details, it is also possible to serialise a HTTP
@@ -327,7 +326,7 @@
 		<section title="IANA Considerations">
 
 <t>This specification defines a new Internet media type,
-"application/problem+json":</t>
+"application/json-problem":</t>
 
       <figure><artwork><![CDATA[
    Type name: application
@@ -366,9 +365,8 @@
 			&rfc5988;
 		</references>
 
-      <references title="Informative References">
-         &rfc6585;
-		</references>
+<!--      <references title="Informative References">
+		</references> -->
 
 
 
@@ -394,51 +392,6 @@
 ]]></artwork></figure>
 
 </section>
-
-<section title="Pre-Defined Problems">
-
-   <section anchor="required-preconditions" title="Required Preconditions">
-
-      <t>This HTTP Problem gives detail about the preconditions required to
-      avoid a 428 Precondition Required <xref target="RFC6585"/> response.</t>
-
-      <t><list style='symbols'>
-        <t>describedBy: http://purl.org/NET/http-precondition</t>
-        <t>title: A precondition must be used on this request.</t>
-        <t>extensions:
-        <list style='symbols'>
-            <t>supported_conditions: a space-separated list of preconditional
-            request headers that are supported; usually, one or more of
-            If-Match and If-Unmodified-Since.</t>
-          </list></t>
-      </list></t>
-
-      <t>For example:</t>
-
-      <figure><artwork><![CDATA[
-   HTTP/1.1 428 Precondition Required
-   Content-Language: en
-   Content-Type: application/problem+json
-   
-   {
-      "describedBy": "http://purl.org/NET/http-precondition",
-      "title": "A precondition must be used on this request.",
-      "supported_conditions": "If-Match If-Unmodified-Since"
-   }
-]]></artwork></figure>
-
-      <t>Or, as a Link header:</t>
-      
-      <figure><artwork><![CDATA[
-   HTTP/1.1 428 Precondition Required
-   Content-Language: en
-   Link: <http://purl.org/NET/http-precondition>; rel="describedBy";
-            title="A precondition must be used on this request.";
-            supported_conditions="If-Match If-Unmodified-Since"
-]]></artwork></figure>
-
-   </section>
-   </section>
 
 
 	</back>
