@@ -1,9 +1,10 @@
-ID_BASE = ".."
+# Base directory for I-D
+ID_BASE = ..
 
-saxpath = "/opt/local/share/java/saxon8.jar"
+saxpath = "/usr/local/share/saxon-b/saxon9.jar"
 saxon = java -classpath $(saxpath) net.sf.saxon.Transform -novw -l
-stylesheet = "$(ID_BASE)/rfc2629xslt/rfc2629.xslt"
-xml2rfc = "$(ID_BASE)/xml2rfc/xml2rfc.tcl"
+stylesheet = "$(ID_BASE)/Tools/rfc2629xslt/rfc2629.xslt"
+xml2rfc = "$(ID_BASE)/Tools/xml2rfc/xml2rfc.tcl"
 
 TITLE = nottingham-$(shell basename ${CURDIR})
 LATEST = $(shell ls draft-${TITLE}-*.xml | sort | tail -1)

@@ -1,23 +1,21 @@
-xml2rfc = "../xml2rfc/xml2rfc.tcl"
-saxon = java -jar /usr/local/share/saxon-b/saxon9.jar
-stylesheet = /usr/local/share/rfc2629xslt/rfc2629.xslt
+# Base directory for I-D
+ID_BASE = ..
 
-TITLE= nottingham-appsawg-happiana
-VERSION= 00
-# Once the RFC number is assigned by IANA
-# RFC= 0
+saxpath = "/usr/local/share/saxon-b/saxon9.jar"
+saxon = java -classpath $(saxpath) net.sf.saxon.Transform -novw -l
+stylesheet = "$(ID_BASE)/Tools/rfc2629xslt/rfc2629.xslt"
+xml2rfc = "$(ID_BASE)/Tools/xml2rfc/xml2rfc.tcl"
 
-ifndef ($RFC) 
-	TARGET_XML= draft-$(TITLE)-$(VERSION).xml
-	PREV_TXT= draft-$(TITLE)-$(shell printf "%.2d" `echo ${VERSION}-1 | bc`).txt
-	NEXT_XML= draft-$(TITLE)-$(shell printf "%.2d" `echo ${VERSION}+1 | bc`).xml
-else
-	TARGET_XML= rfc$(RFC).xml
-	PREV_TXT= draft-$(TITLE)-$(VERSION).txt
-endif
+TITLE = nottingham-$(shell basename ${CURDIR})
+LATEST = $(shell ls draft-${TITLE}-*.xml | sort | tail -1)
+VERSION = $(shell basename ${LATEST} .xml | awk -F- '{print $$NF}')
 
-TARGET_HTML= $(TARGET_XML:.xml=.html)
-TARGET_TXT= $(TARGET_XML:.xml=.txt)
+TARGET_XML = draft-$(TITLE)-$(VERSION).xml
+PREV_TXT = draft-$(TITLE)-$(shell printf "%.2d" `echo ${VERSION}-1 | bc`).txt
+NEXT_XML = draft-$(TITLE)-$(shell printf "%.2d" `echo ${VERSION}+1 | bc`).xml
+
+TARGET_HTML = $(TARGET_XML:.xml=.html)
+TARGET_TXT = $(TARGET_XML:.xml=.txt)
 TARGETS = $(TARGET_HTML) \
           $(TARGET_TXT)
 
@@ -41,7 +39,7 @@ idnits: $(TARGET_TXT)
 	idnits $<
 
 %.html: %.xml
-	$(saxon) -s:$< -xsl:$(stylesheet) > $@
+	$(saxon) $< $(stylesheet) > $@
 
 %.txt: %.xml
 	$(xml2rfc) $< $@
