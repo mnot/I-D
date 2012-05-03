@@ -40,10 +40,10 @@
 		<keyword>HTTP problem</keyword>
 		<abstract>
 
-			<t>This specification proposes a "HTTP Problem" as an extensible
-            way to carry machine-readable details of errors in a response, to
-            avoid the need to invent new status codes and/or response formats
-            for non-human consumers.</t>
+			<t>This specification proposes a "HTTP Problem Detail" as an
+            extensible way to carry machine-readable details of errors in a
+            response, to avoid the need to invent new status codes and/or
+            response formats for non-human consumers.</t>
 
 		</abstract>
 	</front>
@@ -52,17 +52,24 @@
 
 		<section title="Introduction">
 
-         <t>While HTTP <xref target="RFC2616"/> defines the status code as
-         the primary indicator of response semantics, it is often not
-         fine-grained enough to convey error semantics to non-human
-         clients.</t>
+         <t>While HTTP <xref target="RFC2616"/> defines the status code as the
+         primary indicator of response semantics, it is sometimes not
+         fine-grained enough to convey full error semantics, particularly to
+         non-human consumers.</t>
+
+		 <t>For example, while a 403 Forbidden response that indicates that
+         the client's account doesn't have enough credit can be adequately
+         expressed in HTML if it's presented to a human in front of a Web
+         browser, a non-browser client will have difficulty understanding the
+         response, because it doesn't understand the structure of the
+         HTML.</t>
          
-          <t>This specification proposes a "HTTP Problem" as an extensible way
-          to carry machine-readable details of errors in a response, to avoid
-          the need to invent new status codes and/or response formats for
-          non-human consumers.</t>
+         <t>This specification proposes a "HTTP Problem Detail" as an
+         extensible way to carry machine-readable details of errors in a
+         response, to avoid the need to invent new status codes and/or
+         response formats.</t>
          
-          <t>HTTP problems have: 
+          <t>HTTP problem details have: 
              <list style="symbols">
              <t>A generic status, identified and solely conveyed by the HTTP
              status code <eref
@@ -76,10 +83,10 @@
             </list>
          </t>
          
-          <t>This specification defines a common data model for HTTP Problems
-          as a JSON <xref target="RFC4627"/> object. That object can be
-          serialised as an "application/json-problem" HTTP response, or it can
-          be conveyed using a Link HTTP response header field <xref
+          <t>This specification defines a common data model for problem
+          details as a JSON <xref target="RFC4627"/> object. That object can
+          be serialised as an "application/json-problem" HTTP response, or it
+          can be conveyed using a Link HTTP response header field <xref
           target="RFC5988"/>.</t>
          
           <t>Future work may include defining a HTML Microformat <eref
@@ -96,9 +103,9 @@
 		</section>
 
 
-      <section title="The HTTP Problem JSON Object">
+      <section title="The HTTP Problem Details JSON Object">
 
-         <t>The canonical format for a HTTP problem is a JSON <xref
+         <t>The canonical format for aproblem details is a JSON <xref
          target="RFC4627"/> document, identified with the
          "application/json-problem" media type. Its root object has the
          following properties:</t>
@@ -114,9 +121,9 @@
             detail specific to this instance of the problem.</t>
          </list></t>
          
-          <t>HTTP problems, when serialised as JSON objects, MUST include the
-          "describedby" and "title" properties. The "detail" property is
-          always OPTIONAL.</t>
+          <t>HTTP problem details, when serialised as JSON objects, MUST
+          include the "describedby" and "title" properties. The "detail"
+          property is always OPTIONAL.</t>
          
           <t>Problem types MAY extend their instances with additional
           properties. For example:</t>
@@ -149,8 +156,8 @@
 
       <t>Because resources often use formats other than JSON to convey
       human-readable problem details, it is also possible to serialise a HTTP
-      Problem for machine consumption using a Link response header field <xref
-      target="RFC5988"/>. For example:</t>
+      Problem for non-browser consumption alongside them using a Link response
+      header field <xref target="RFC5988"/>. For example:</t>
 
       <figure><artwork><![CDATA[
    HTTP/1.1 403 Forbidden
@@ -164,7 +171,7 @@
       <t>Here, the same problem as above is conveyed using the header in
       previous examples, but without the optional detail.</t>
 
-      <t>HTTP Problems are serialised into Link headers using the
+      <t>HTTP problem details are serialised into Link headers using the
       "describedby" link relation type, with the URL for the problem type as
       the link target. The title is conveyed using the "title" parameter, 
       and the detail can be conveyed using the "detail" parameter.</t>
@@ -191,10 +198,10 @@
 
       </section>
 
-      <section anchor="defining" title="Defining New HTTP Problems">
+      <section anchor="defining" title="Defining New HTTP Problem Details">
 
-         <t>Before defining a new HTTP problem, it’s important to understand
-         what they are good for, and what’s better left to other
+         <t>Before defining a new type of HTTP problem detail, it’s important
+         to understand what they are good for, and what’s better left to other
          mechanisms.</t>
          
          <t>Problems are not a debugging tool for the underlying
@@ -236,7 +243,7 @@
          that explains how to resolve the problem.</t>
          
          <t>Optionally, a problem definition MAY specify additional properties
-         on the HTTP Problem JSON object.</t>
+         on the HTTP Problem Details JSON object.</t>
          
          <t>For example, an extension might use typed links <xref
          target="RFC5988"/> to another resource that can be used by machines
@@ -275,7 +282,7 @@
             title*=UTF-8''Du%20%C3%A4r%20ute%20p%C3%A5%20pengar.
 ]]></artwork></figure>
 
-         <t>Note the use of RFC5987 encoding here. HTTP Problems SHOULD be
+         <t>Note the use of RFC5987 encoding here. Problem details SHOULD be
          served with Content-Language headers, even if negotiation isn't
          used, to aid in localisation.</t>
 
@@ -300,13 +307,13 @@
          by clients; extensions are more suitable and less error-prone ways to
          obtain such information.</t>
 
-         <t>Clients consuming HTTP Problems MUST ignore unrecognised
+         <t>Clients consuming problem details MUST ignore unrecognised
          extensions; this allows problems to evolve and include additional
          information in the future. </t>
 
-         <t>Finally, clients consuming HTTP Problems SHOULD NOT automatically
-         deference the describedby URL; it is not intended for machine
-         interaction.</t>
+         <t>Finally, clients consuming problem details SHOULD NOT
+         automatically deference the describedby URL; it is not intended for
+         machine interaction.</t>
 
       </section>
             
@@ -389,7 +396,7 @@
 
 <figure><artwork><![CDATA[
    {
-     "description": "HTTP Problem",
+     "description": "HTTP Problem Details",
      "type": "object",
      "properties": {
        "describedby": {
