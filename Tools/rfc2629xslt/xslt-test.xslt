@@ -1,7 +1,7 @@
 <!--
     XSLT test cases
 
-    Copyright (c) 2007, Julian Reschke (julian.reschke@greenbytes.de)
+    Copyright (c) 2007-2010, Julian Reschke (julian.reschke@greenbytes.de)
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
                 version="1.0"
                 xmlns:msxsl="urn:schemas-microsoft-com:xslt"
                 xmlns:exslt="http://exslt.org/common"
+                xmlns:date="http://exslt.org/dates-and-times"
                 exclude-result-prefixes="msxsl exslt">
 
 <xsl:output method="html" encoding="iso-8859-1" version="4.0" doctype-public="-//W3C//DTD HTML 4.01//EN" indent="no"/>
@@ -72,6 +73,7 @@
       <xsl:call-template name="info"/>
       <xsl:call-template name="nodeset"/>
       <xsl:call-template name="whitespace-treatment"/>
+      <xsl:call-template name="date-time"/>
     </body>
   </html>
 </xsl:template>
@@ -120,6 +122,18 @@
         <td>
           <tt>
             <a href="{system-property('xsl:vendor-url')}"><xsl:value-of select="system-property('xsl:vendor-url')"/></a>
+          </tt>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <code>
+            msxsl:version
+          </code>
+        </td>
+        <td>
+          <tt>
+            <xsl:value-of select="system-property('msxsl:version')"/>
           </tt>
         </td>
       </tr>
@@ -195,6 +209,24 @@
     <xsl:choose>
       <xsl:when test="/*/whitespace-test[@id='ws-pres']/text()">
         <span class="green">Yes</span>
+      </xsl:when>
+      <xsl:otherwise>
+        <span class="red">No</span>
+      </xsl:otherwise>
+    </xsl:choose>
+  </p>
+</xsl:template>
+
+<xsl:template name="date-time">
+  <h2 id="date-time">Date-Time Support</h2>
+  
+  <p>
+    <code>
+      <a href="http://www.exslt.org/date/functions/date-time/">exslt:date-time()</a>
+    </code>:
+    <xsl:choose>
+      <xsl:when test="function-available('date:date-time')">
+        <span class="green">Yes</span>, and returns: <xsl:value-of select="date:date-time()"/>
       </xsl:when>
       <xsl:otherwise>
         <span class="red">No</span>

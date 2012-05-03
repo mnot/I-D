@@ -26,6 +26,7 @@ include "rfc2629.rnc" {
         | x_abnf-char-sequence
         | x_bb
         | x_bc
+        | x_bcp14
         | x_bt
         | x_highlight
         | x_length-of
@@ -98,8 +99,9 @@ include "rfc2629.rnc" {
         | iref
         | cref
         | spanx
-        | x_anchor-alias)*
-    }
+        | x_anchor-alias*
+        | x_bcp14)*
+  }
 
   # Redefine <postamble> to allow our extension elements
   postamble =
@@ -120,6 +122,7 @@ include "rfc2629.rnc" {
       attlist.reference,
       front,
       seriesInfo*,
+      x_prose?,
       format*,
       annotation*,
       x_source?
@@ -130,6 +133,7 @@ include "rfc2629.rnc" {
     element rfc {
       attlist.rfc,
       x_link*,
+      x_feedback?,
       x_assign-section-number*,
       front,
       middle,
@@ -190,15 +194,20 @@ include "rfc2629.rnc" {
 attlist.artwork &=
   attribute x:indent-with { ATEXT }?
 
-# Allow anchor attribute on <author>
+# Allow anchor and x:annotation attributes on <author>
 attlist.author &=
-  attribute anchor { xsd:ID }?
+  attribute anchor { xsd:ID }?,
+  attribute x:annotation { ATEXT }?
   
-  # Extend attribute set for <iref> (see Section 10.22)
+# Extend attribute set for <c> (see Section 11.24)
+attlist.c &=
+  attribute anchor { xsd:ID }?
+
+# Extend attribute set for <iref> (see Section 11.24)
 attlist.iref &=
   attribute x:for-anchor { ATEXT }?
 
-# Extend attribute set for <list> (see Section 10.23)
+# Extend attribute set for <list> (see Section 11.25)
 attlist.list &=
   attribute x:indent { ATEXT }?
 
@@ -211,7 +220,7 @@ attlist.rfc &=
   attribute grddl:transformation { ATEXT }?,
   attribute x:maturity-level { "proposed" | "draft" | "internet" }?
 
-# Extend attribute set for <section> (see Section 10.25)
+# Extend attribute set for <section> (see Section 11.27)
 attlist.section &=
   attribute x:fixed-section-number { ATEXT }?
 
@@ -219,23 +228,38 @@ attlist.section &=
 attlist.spanx &=
   attribute anchor { xsd:ID }?
 
-# Extend attribute set for <xref> (see Section 10.26)
+# Allow x:quotes attribute on <title>
+attlist.title &=
+  attribute x:quotes { "true" | "false" }?
+
+# Allow annotation attribute on <uri>
+attlist.uri &=
+  attribute x:annotation { ATEXT }?
+
+# Extend attribute set for <xref> (see Section 11.28)
 attlist.xref &=
   attribute x:fmt  { "()" | "," | "anchor" | "of" | "number" | "sec" |
                      "none" }?,
   attribute x:rel  { ATEXT }?,
   attribute x:sec  { ATEXT }?
 
-# Conversion to ABNF char sequence (see Section 10.1)
+# Conversion to ABNF char sequence (see Section 11.1)
 x_abnf-char-sequence =
   element x:abnf-char-sequence {
     TEXT
   }
 
-# Aliasing of anchors (see Section 10.2)
+# Aliasing of anchors (see Section 11.2)
 x_anchor-alias =
   element x:anchor-alias {
     attribute value { TEXT },
+    empty
+  }
+
+# Supply feedback links (see Section 11.10)
+x_feedback =
+  element x:feedback {
+    attribute template { TEXT },
     empty
   }
 
@@ -255,7 +279,7 @@ x_assign-section-number =
     empty
   }
 
-# Bottom line of box drawing (see Section 10.4)
+# Bottom line of box drawing (see Section 11.4)
 x_bb =
   element x:bb {
     (TEXT
@@ -267,11 +291,12 @@ x_bb =
       | x_ref)* 
   }
 
-# Center line of box drawing (see Section 10.5)
+# Center line of box drawing (see Section 11.5)
 x_bc =
   element x:bc {
     (TEXT
       | iref
+      | spanx
       | xref
       | x_bb
       | x_bc
@@ -279,7 +304,7 @@ x_bc =
       | x_ref)* 
   }
 
-# BCP14/RFC2119 keywords (see Section 10.3)
+# BCP14/RFC2119 keywords (see Section 11.3)
 x_bcp14 =
   element x:bcp14 {
     "MAY"
@@ -295,20 +320,20 @@ x_bcp14 =
     | "SHOULD NOT"
   }
   
-# Blockquote (see Section 10.6)
+# Blockquote (see Section 11.6)
 x_blockquote =
   element x:blockquote {
     attribute cite { URI }?,
     t+
   }
 
-# Boilerplate (see Section 10.6) 
+# Boilerplate (see Section 11.6) 
 x_boilerplate =
   element x:boilerplate {
     section+
   }
 
-# Top line of box drawing (see Section 10.8)
+# Top line of box drawing (see Section 11.8)
 x_bt =
   element x:bt {
     (TEXT
@@ -320,7 +345,7 @@ x_bt =
       | x_ref)* 
   }
 
-# Definition (see Section 10.9)
+# Definition (see Section 11.9)
 x_dfn =
   element x:dfn {
     attribute anchor { xsd:ID }?,
@@ -328,19 +353,19 @@ x_dfn =
       | iref)*
   }
   
-# Heading (see Section 10.10)
+# Heading (see Section 11.11)
 x_h =
   element x:h {
     TEXT
   }
 
-# Heading (see Section 10.11)
+# Heading (see Section 11.12)
 x_highlight =
   element x:highlight {
     TEXT
   }
 
-# Length Measurement (see Section 10.12)
+# Length Measurement (see Section 11.13)
 x_length-of =
   element x:length-of {
     attribute indented { NUMBER }?,
@@ -348,16 +373,17 @@ x_length-of =
     empty
   }
 
-# Link (see Section 10.13)
+# Link (see Section 11.14)
 x_link =
   element x:link {
-    attribute href { URI },
+    attribute basename { URI }?,
+    attribute href { URI }?,
     attribute title { TEXT }?,
     attribute rel { TEXT },
     empty
   }
   
-# Extended list item (see Section 10.14)
+# Extended list item (see Section 11.15)
 x_lt =
   element x:lt {
     attribute anchor { xsd:ID }?,
@@ -365,32 +391,39 @@ x_lt =
     t+
   }
 
-# Note (see Section 10.15)
+# Note (see Section 11.16)
 x_note =
   element x:note {
     t+
   }
 
-# Signal XML content (see Section 10.16)
+# Signal XML content (see Section 11.17)
 x_parse-xml =
   element x:parse-xml {
+    (TEXT
+      | xref)* 
+  }
+
+# Inline prose in a reference (see Section 11.18)
+x_prose =
+  element x:prose {
     TEXT
   }
 
-# Inline quote (see Section 10.17)
+# Inline quote (see Section 11.19)
 x_q =
   element x:q {
     TEXT
   }
 
-# Anchor reference (see Section 10.18)  
+# Anchor reference (see Section 11.20)  
 x_ref =
   element x:ref {
     attribute anchor { xsd:ID }?,
     TEXT
   }
 
-# source information (see Section 10.19)  
+# source information (see Section 11.21)  
 x_source =
   element x:source {
     attribute basename { ATEXT }?,
@@ -398,7 +431,7 @@ x_source =
     empty
   }
 
-# superscript (see Section 10.20)
+# superscript (see Section 11.22)
 x_sup =
   element x:sup {
     TEXT

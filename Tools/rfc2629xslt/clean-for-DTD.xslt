@@ -1,7 +1,7 @@
 <!--
     Strip rfc2629.xslt extensions, generating XML input for MTR's xml2rfc
 
-    Copyright (c) 2006-2009, Julian Reschke (julian.reschke@greenbytes.de)
+    Copyright (c) 2006-2011, Julian Reschke (julian.reschke@greenbytes.de)
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -138,16 +138,33 @@
 <xsl:template match="x:assign-section-number" mode="cleanup"/>  
 <xsl:template match="x:link" mode="cleanup"/>
 <xsl:template match="x:source" mode="cleanup"/>
+<xsl:template match="x:feedback" mode="cleanup"/>
 
 <xsl:template match="x:parse-xml" mode="cleanup">
   <xsl:apply-templates/>
 </xsl:template>
 
+<xsl:template match="x:prose" mode="cleanup">
+  <xsl:variable name="text" select="."/>
+  <xsl:comment>Converted from rfc2629.xslt x:prose extension</xsl:comment>
+  <xsl:choose>
+    <xsl:when test="contains($text,' ')">
+      <seriesInfo name="{substring-before($text,' ')}" value="{substring-after($text,' ')}"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <seriesInfo name="" value="{$text}"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
 <xsl:template match="x:ref" mode="cleanup">
   <xsl:variable name="val" select="."/>
-  <xsl:variable name="target" select="//*[@anchor and (@anchor=$val or x:anchor-alias/@value=$val)]"/>
+  <xsl:variable name="target" select="//*[@anchor and (@anchor=$val or x:anchor-alias/@value=$val)][not(ancestor::ed:del)]"/>
   <xsl:choose>
     <xsl:when test="$target">
+      <xsl:if test="count($target)!=1">
+        <xsl:message terminate="yes">FATAL: multiple x:ref targets found for <xsl:value-of select="$val"/>.</xsl:message>
+      </xsl:if>
       <xsl:variable name="current" select="."/>
       <xsl:for-each select="$target">
         <!-- make it the context -->
@@ -229,6 +246,11 @@
   <xsl:apply-templates mode="cleanup" />
 </xsl:template>
 
+<xsl:template match="x:span" mode="cleanup">
+  <xsl:apply-templates mode="cleanup" />
+</xsl:template>
+<xsl:template match="x:span/@anchor" mode="cleanup"/>
+
 <xsl:template match="author/@anchor" mode="cleanup"/>
 <xsl:template match="x:include-author" mode="cleanup">
   <t>
@@ -241,7 +263,7 @@
 
 <!-- extended reference formatting -->
 
-<xsl:template match="xref[@x:* and not(node())]" mode="cleanup">
+<xsl:template match="xref[(@x:fmt or @x:sec or @x:rel) and not(node())]" mode="cleanup">
   <xsl:call-template name="insert-iref-for-xref"/>
   <xsl:variable name="node" select="$src//*[@anchor=current()/@target]" />
 
@@ -329,7 +351,7 @@
   </xsl:choose>
 </xsl:template>
 
-<xsl:template match="xref[@x:fmt and node()]" mode="cleanup">
+<xsl:template match="xref[(@x:fmt or @x:sec or @x:rel) and node()]" mode="cleanup">
   <xsl:call-template name="insert-iref-for-xref"/>
   <xsl:choose>
     <xsl:when test="@x:fmt='none'">
@@ -366,7 +388,7 @@
 </xsl:template>
 
 <xsl:template name="insert-iref-for-xref">
-  <xsl:if test="$xml2rfc-ext-include-references-in-index='yesxxx'">
+  <xsl:if test="$xml2rfc-ext-include-references-in-index='yesxxx' and $xml2rfc-ext-include-index='yes'">
     <xsl:if test="@target=/rfc/back//reference/@anchor">
       <iref item="{@target}"/>
       <xsl:if test="@x:sec">
@@ -382,6 +404,16 @@
     </xsl:if>
   </xsl:if>
 </xsl:template>
+
+<!-- drop index gen extension -->
+<xsl:template match="iref" mode="cleanup">
+  <xsl:if test="$xml2rfc-ext-include-index='yes'">
+    <iref>
+      <xsl:apply-templates select="@*|node()" mode="cleanup"/>
+    </iref>
+  </xsl:if>
+</xsl:template>
+
 
 <!-- issue tracking extensions -->
 
@@ -658,6 +690,17 @@
   <xsl:value-of select="$text"/>
 </xsl:template>
 
+<!-- annotations -->
+<xsl:template match="@x:annotation" mode="cleanup">
+  <xsl:comment>
+    <xsl:value-of select="."/>
+  </xsl:comment>
+  <xsl:call-template name="warning">
+    <xsl:with-param name="inline" select="'no'"/>
+    <xsl:with-param name="msg">Dropping annotation on <xsl:value-of select="local-name(..)"/> element.</xsl:with-param>
+  </xsl:call-template>
+</xsl:template>
+
 <!-- artwork extensions -->
 <xsl:template match="artwork/@x:extraction-note" mode="cleanup"/>
 
@@ -679,10 +722,17 @@
 <!-- maturity level stripped -->
 <xsl:template match="@x:maturity-level" mode="cleanup"/>
 
+<!-- normativity stripped -->
+<xsl:template match="@x:nrm" mode="cleanup"/>
+
+<!-- title extensions -->
+<xsl:template match="title/@x:quotes" mode="cleanup"/>
+
 <!-- RDF info stripped -->
 <xsl:template match="rdf:*" mode="cleanup"/>
 
 <!-- cases where xml2rfc does not allow anchors -->
+<xsl:template match="c/@anchor" mode="cleanup"/>
 <xsl:template match="preamble/@anchor" mode="cleanup"/>
 <xsl:template match="spanx/@anchor" mode="cleanup"/>
 

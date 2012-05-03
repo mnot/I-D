@@ -29,7 +29,7 @@
   		</address>
   	</author>
      
-    <date month="October" year="2009"/>
+    <date month="March" year="2012"/>
 
     <keyword>RFC2629</keyword>
     <keyword>xml2rfc</keyword>
@@ -38,6 +38,7 @@
     <keyword>XSL-FO</keyword>
     <keyword>PDF</keyword>
     <keyword>GRDDL</keyword>
+    <keyword>epub</keyword>
     <keyword>Dublin Core</keyword>
 	</front>
 
@@ -56,6 +57,7 @@
     <t>outputting HTML (<xref target="output.html"/>) and XHTML (<xref target="output.xhtml"/>),</t>
     <t>outputting CHM (Compiled Microsoft Help, <xref target="output.chm"/>),</t>
     <t>outputting PDF (<xref target="output.pdf"/>),</t>
+    <t>outputting ePub (<xref target="output.epub"/>),</t>
     <t>extensions to the xml2rfc vocabulary (<xref target="extensions"/>).</t>
     <t>various utilities (<xref target="utilities"/>).</t>
   </list>
@@ -68,7 +70,7 @@
 <section title="Supported RFC2629 elements" anchor="supported.elements">
 <t>
   <spanx style="verb">rfc2629.xslt</spanx> supports both all RFC2629 grammar elements and the extensions
-  implemented in xml2rfc 1.33.
+  implemented in xml2rfc 1.36.
 </t>
 <section title="Extension elements">
 <t>
@@ -296,6 +298,12 @@ xsltproc --param xml2rfc-toc '"yes"' \
   <c>When set to "yes", format the PDF output for doublesided printing.</c>
 
   <c>rfc-ext</c>
+  <c>include-index<iref item="include-index PI pseudo-attribute"/><iref item="Processing Instruction pseudo attributes" subitem="include-index"/></c>
+  <c>xml2rfc-ext-include-index<iref item="xml2rfc-ext-include-index parameter"/> <iref item="Parameters" subitem="xml2rfc-ext-include-index"/></c>
+  <c>"yes"</c>
+  <c>When set to "no", no index will be generated.</c>
+
+  <c>rfc-ext</c>
   <c>include-references-in-index<iref item="include-references-in-index PI pseudo-attribute"/><iref item="Processing Instruction pseudo attributes" subitem="include-references-in-index"/></c>
   <c>xml2rfc-ext-include-references-in-index<iref item="xml2rfc-ext-include-references-in-index parameter"/> <iref item="Parameters" subitem="xml2rfc-ext-include-references-in-index"/></c>
   <c></c>
@@ -368,10 +376,17 @@ xsltproc --param xml2rfc-toc '"yes"' \
 
 <section title="Supported XSLT engines" anchor="xslt.engines">
 <t>
-  The transformation requires a non-standard extension function (see <eref target="http://www.exslt.org/exsl/functions/node-set/exsl.node-set.html">
+  The transformation requires a non-standard extension function (see <eref target="http://www.exslt.org/exsl/functions/node-set/index.html">
   exsl:node-set</eref>)
   which is however widely available. XSLT processors that do not support this
-  extension (or a functional equivalent) currently are not supported.
+  extension (or a functional equivalent, such as msxsl:node-set) currently are not supported.
+</t>
+<t anchor="exsl-date-time">
+  Input documents do not always specify the date completely. In this case, the
+  transformation attempts to let the XSLT engine to compute the system date,
+  using either scripting in Microsoft's XSLT engine, or
+  the  <eref target="http://www.exslt.org/date/functions/date-time/">
+  exsl:date-time</eref> extension function.
 </t>
 <section title="Standalone Engines">
 <t>
@@ -395,7 +410,7 @@ xsltproc --param xml2rfc-toc '"yes"' \
       <t><iref item="Internet Explorer 5.5"/>Internet Explorer 5.5 (Windows version, if MSXML3 is installed)</t>
     </x:lt>
     <x:lt>
-      <t><iref item="Internet Explorer 6"/><iref item="Internet Explorer 7"/><iref item="Internet Explorer 8"/>Internet Explorer 6 and newer</t>
+      <t><iref item="Internet Explorer 6"/><iref item="Internet Explorer 7"/><iref item="Internet Explorer 8"/><iref item="Internet Explorer 9"/>Internet Explorer 6 and newer</t>
     </x:lt>
     <x:lt>
       <t anchor="firefox3"><iref item="Mozilla"/><iref item="Firefox" subitem="3.*"/>Firefox 3.0 and newer</t>
@@ -405,17 +420,37 @@ xsltproc --param xml2rfc-toc '"yes"' \
           <t>Firefox does not load external DTDs nor external entities,
           see <eref target="https://bugzilla.mozilla.org/show_bug.cgi?id=22942">Mozilla Bug 22942</eref>, thus entities
           like &amp;nbsp; need to be declared in the internal subset (<xref target="examples.internalsubset"/>)</t>
+          <t>There seems to be a new problem in Firefox 4 where it occasionally
+          does the initial rendering with the wrong width (people who can reproduce
+          this problem please comment on <eref target="https://bugzilla.mozilla.org/show_bug.cgi?id=640390"/>.
+          </t>
+          <t>Date computation is available in Firefox starting with Firefox 6 (see <eref target="https://bugzilla.mozilla.org/show_bug.cgi?id=603159"/>)</t>
         </list>
       </t>
     </x:lt>
     <x:lt>
       <t><iref item="Safari"/><iref item="Safari" subitem="3.*"/>Safari 3 (starting with version 3.0.4)</t>
+      <t>
+        <list style="symbols">
+          <t>Date computation not available (see <eref target="https://bugs.webkit.org/show_bug.cgi?id=4079"/>)</t>
+        </list>
+      </t>
     </x:lt>
     <x:lt>
-      <t><iref item="Google Chrome"/>Google Chrome (beta available)</t>
+      <t><iref item="Google Chrome"/>Google Chrome</t>
+      <t>
+        <list style="symbols">
+          <t>Date computation not available (see <eref target="https://bugs.webkit.org/show_bug.cgi?id=4079"/>)</t>
+        </list>
+      </t>
     </x:lt>
     <x:lt>
-      <t><iref item="Opera"/>Opera 10 (beta version available)</t>
+      <t><iref item="Opera"/>Opera (starting with version 10)</t>
+      <t>
+        <list style="symbols">
+          <t>Date computation not available<!--DSK-336575@bugs.opera.com--></t>
+        </list>
+      </t>
     </x:lt>
   </list>
 </t>
@@ -608,17 +643,17 @@ hhc rfc2616.hhp
   AntennaHouse XSL Formatter), but not both at the same time.
 </t>
 <t>
-  As Apache FOP needs special workarounds (page breaking, table layout), and
+  As Apache FOP needs special workarounds (index generation), and
   some popular extensions aren't standardized yet, the translation produces
   a generic output (hopefully) conforming to <xref target="XSL-FO"/>.
-  Specific backends (<spanx style="verb">xsl11toFop-0.95xslt</spanx>,
+  Specific backends (<spanx style="verb">xsl11toFop.xslt</spanx>,
   <spanx style="verb">xsl11toXep.xslt</spanx>, <spanx style="verb">xsl11toAn.xslt</spanx>)
   then provide post-processing for the individual processors.
 </t>
 <x:note>
   <t>
     <x:h>Note:</x:h>
-    the output is currently targeted at Apache FOP 0.95.
+    the output is currently targeted at Apache FOP 1.0.
   </t>
 </x:note>
 
@@ -662,7 +697,7 @@ hhc rfc2616.hhp
 <preamble>Example:</preamble>
 <artwork type="example">
 saxon rfc2616.xml rfc2629toFo.xslt > tmp.fo
-saxon tmp.fo xsl11toFop-0.95.xslt > rfc2629.fo
+saxon tmp.fo xsl11toFop.xslt > rfc2629.fo
 </artwork>
 </figure>
 </section>
@@ -692,6 +727,23 @@ prince output.xhtml output.pdf</artwork>
 </figure>
 </section>
 
+</section>
+
+<section title="Transforming to ePub" anchor="output.epub">
+<t>
+  Experimental transformation to ePub format is available through a set
+  of stylesheets, and the Unix Shell script
+  <spanx style="verb">mkepub.sh</spanx> (which requires that "zip" and either
+  "saxon" or "xsltproc" are installed).
+</t>
+<figure>
+  <preamble>
+    For instance, an epub version of rfc2616.xml can be generated like this:
+  </preamble>
+  <artwork type="example">
+mkepub.sh rfc2616.xml
+</artwork>
+</figure>
 </section>
 
 <section title="Generic Extensions" anchor="extensions">
@@ -845,6 +897,25 @@ prince output.xhtml output.pdf</artwork>
   </t>
 </section>
 
+<section title="&lt;feedback> element" anchor="ext.element.feedback">
+  <iref item="Extension Elements" subitem="feedback" primary="true"/>
+  <iref item="feedback Extension Element" primary="true"/>
+  <x:anchor-alias value="feedback"/>
+  <t>
+    This elements allows declaring a feedback link for document reviewers.
+    The template string takes the form of a URI template, such as:
+  </t>
+  <figure>
+    <artwork type="example">
+&lt;x:feedback template="mailto:ietf-http-wg@w3.org?subject={docname},%20%22{section}%22&amp;amp;body=&amp;lt;{ref}&amp;gt;:"/>
+</artwork></figure>
+  <t>
+    where "docname" is substituted by the document name, "section" is substituted
+    by section title (number and name), and "ref" is substituted by a URI pointing
+    to the section being referenced.
+  </t>
+</section>
+
 <section title="&lt;h> element" anchor="ext.element.h">
   <iref item="Extension Elements" subitem="h" primary="true"/>
   <iref item="h Extension Element" primary="true"/>
@@ -914,6 +985,20 @@ Content-Length: &lt;x:length-of target="req"/>
             title="IETF WEBDAV Working Group"
             href="http://ftp.ics.uci.edu/pub/ietf/webdav/"/></artwork>
   </figure>
+  <t>
+    If the attribute "basename" is present, it is used to compute the 
+    target href based on the output format being generated (this is handy
+    for "next"/"prev" links in a series of documents. In this case, the href
+    attribute is not required.
+  </t>
+  <figure>
+    <preamble>For instance:</preamble>
+    <artwork type="example">
+        &lt;x:link xmlns="http://purl.org/net/xml2rfc/ext"
+            rel="next"
+            title="Part2"
+            basename="draft-foobar-protocol-p2-latest"/></artwork>
+  </figure>
 </section>
 
 <section title="&lt;lt> element" anchor="ext.element.lt">
@@ -942,6 +1027,16 @@ Content-Length: &lt;x:length-of target="req"/>
   <t>
     This element instructs the processor to parse the contents as XML and 
     to warn when there's a problem (requires either MSXML or Saxon8 or newer).
+  </t>
+</section>
+
+<section title="&lt;prose> element" anchor="ext.element.prose">
+  <iref item="Extension Elements" subitem="prose" primary="true"/>
+  <iref item="prose Extension Element" primary="true"/>
+  <x:anchor-alias value="prose"/>
+  <t>
+    This element can be used inside &lt;reference> to add plain text (before
+    the date, when present). 
   </t>
 </section>
 
@@ -1083,7 +1178,7 @@ Content-Length: &lt;x:length-of target="req"/>
   The extension attributes below are allowed on the standard &lt;rfc&gt; element:
   <list style="symbols">
     <t>grddl:transformation can be used to reference a GRDDL transform.</t>
-    <t>x:maturiy-level can be used to specify the IETF Standards Track
+    <t>x:maturity-level can be used to specify the IETF Standards Track
     Maturity Level of "proposed", "draft" or "internet" (see <xref target="RFC2026" x:fmt="of" x:sec="4.1"/>).</t>
   </list>
 </t>
@@ -1163,7 +1258,8 @@ Content-Length: &lt;x:length-of target="req"/>
   If the document is supposed to be published on the IETF standards track,
   the desired level can be specified using the parameter <spanx style='verb'>intended-level</spanx>
   as 'proposed', 'draft' or 'internet'. Alternatively, it can be specified
-  inside the document using the attribute x:maturity-level on the &lt;rfc> element.
+  inside the document using the attribute x:maturity-level on the &lt;rfc> element
+  (see <xref target="ext-rfc2629.rfc"/>).
 </t>
 <t>
   <x:h>Note:</x:h> Downward references should be
@@ -1173,7 +1269,7 @@ Content-Length: &lt;x:length-of target="req"/>
 <t>
   When an XSLT 2.0 processor is used, links in the document can be checked as well
   using the <spanx style='verb'>link-check</spanx> paramerer ('yes' or 'no').
-  Note that this only works for http links to documents of tytpe text/*.
+  Note that this only works for http links to documents of type text/*.
 </t>
 <figure>
 <preamble>
@@ -1227,6 +1323,14 @@ Link Targets
     must be the "shorthand" name of the specification, such as "REC-xml-19980210".</t>
   </list>
 </t>
+<x:note>
+<t>
+  <x:h>Note:</x:h> this stylesheet will need network access to check links and
+  status of Internet Drafts. When running a Java-based XSLT engine, you may have
+  to supply Java system properties specifying the HTTP proxy to be used, such
+  as "-Dhttp.proxyHost=hostname -Dhttp.proxyPort=80".
+</t>
+</x:note>
 
 </section>
 
@@ -1323,12 +1427,21 @@ The picture below shows the RFC dependencies in RFC2629.
       &lt;x:<x:ref>link</x:ref>> elements get stripped. 
     </t>
     <t>
+      &lt;x:<x:ref>lt</x:ref>> elements get collapsed into a single &lt;lt>
+      element with added &lt;vspace> added to simulate paragraph breaks. 
+    </t>
+    <t>
       &lt;x:<x:ref>note</x:ref>> elements get converted to
       indented text (through a &lt;list> element).
     </t>
     <t>
       &lt;x:<x:ref>q</x:ref>> elements get stripped, with apostrophes
       added around the text. 
+    </t>
+    <t>
+      &lt;x:<x:ref>prose</x:ref>> elements are transformed into
+      &lt;seriesInfo> elements (which is an abuse of the element and only
+      a workaround until xml2rfc gets a matching extension).
     </t>
     <t>
       &lt;x:<x:ref>ref</x:ref>> elements get replaced by &lt;xref>
@@ -1357,6 +1470,14 @@ The picture below shows the RFC dependencies in RFC2629.
 <artwork type="example">saxon rfc3986.xml extract-artwork.xslt type=abnf
 </artwork>
 </figure>
+<t>
+  When extracting by type, artwork elements with a specified name can be
+  excluded; this can be handy when the document uses some kind of schema
+  language, and an appendix contains the collected schema, repeating definitions
+  from earlier on. Example:
+</t>
+<figure><artwork type="example">saxon rfc3986.xml extract-artwork.xslt type=abnf except-name=clschm
+</artwork></figure>
 </section>
 
 <section title="GRRDL" anchor="grddl">
@@ -1611,6 +1732,17 @@ The picture below shows the RFC dependencies in RFC2629.
   <seriesInfo name="RFC" value="5234"/>
 </reference>
 
+<reference anchor='RFC5741'>
+  <front>
+    <title>RFC Streams, Headers, and Boilerplates</title>
+    <author initials='L.' surname='Daigle' fullname='Leslie Daigle'/>
+    <author initials='O.' surname='Kolkman' fullname='Olaf Kolkman'/>
+    <date month='December' year='2009' />
+  </front>
+  <seriesInfo name='RFC' value='5741' />
+</reference>
+
+
 <reference anchor="HTML" target="http://www.w3.org/TR/html401/">
   <front>
     <title>HTML 4.01 Specification</title>
@@ -1788,6 +1920,7 @@ include "rfc2629.rnc" {
         <spanx style="strong">| <x:ref>x_abnf-char-sequence</x:ref></spanx>
         <spanx style="strong">| <x:ref>x_bb</x:ref></spanx>
         <spanx style="strong">| <x:ref>x_bc</x:ref></spanx>
+        <spanx style="strong">| <x:ref>x_bcp14</x:ref></spanx>
         <spanx style="strong">| <x:ref>x_bt</x:ref></spanx>
         <spanx style="strong">| <x:ref>x_highlight</x:ref></spanx>
         <spanx style="strong">| <x:ref>x_length-of</x:ref></spanx>
@@ -1860,8 +1993,9 @@ include "rfc2629.rnc" {
         | iref
         | cref
         | spanx
-        <spanx style="strong">| <x:ref>x_anchor-alias</x:ref></spanx>)*
-    }
+        <spanx style="strong">| <x:ref>x_anchor-alias</x:ref></spanx>*
+        <spanx style="strong">| <x:ref>x_bcp14</x:ref></spanx>)*
+  }
 
   <spanx># Redefine &lt;postamble> to allow our extension elements</spanx>
   postamble =
@@ -1882,6 +2016,7 @@ include "rfc2629.rnc" {
       attlist.reference,
       front,
       seriesInfo*,
+      <spanx style="strong"><x:ref>x_prose</x:ref>?</spanx>,
       format*,
       annotation*,
       <spanx style="strong"><x:ref>x_source</x:ref>?</spanx>
@@ -1892,6 +2027,7 @@ include "rfc2629.rnc" {
     element rfc {
       attlist.rfc,
       <spanx style="strong"><x:ref>x_link</x:ref>*,</spanx>
+      <spanx style="strong"><x:ref>x_feedback</x:ref>?,</spanx>
       <spanx style="strong"><x:ref>x_assign-section-number</x:ref>*,</spanx>
       front,
       middle,
@@ -1952,11 +2088,16 @@ include "rfc2629.rnc" {
 attlist.artwork &amp;=
   attribute x:indent-with { ATEXT }?
 
-<spanx># Allow anchor attribute on &lt;author></spanx>
+<spanx># Allow anchor and x:annotation attributes on &lt;author></spanx>
 attlist.author &amp;=
-  attribute anchor { xsd:ID }?
+  attribute anchor { xsd:ID }?,
+  attribute x:annotation { ATEXT }?
   
-  <spanx># Extend attribute set for &lt;iref> (see <xref target="ext-rfc2629.iref"/>)</spanx>
+<spanx># Extend attribute set for &lt;c> (see <xref target="ext-rfc2629.iref"/>)</spanx>
+attlist.c &amp;=
+  attribute anchor { xsd:ID }?
+
+<spanx># Extend attribute set for &lt;iref> (see <xref target="ext-rfc2629.iref"/>)</spanx>
 attlist.iref &amp;=
   attribute x:for-anchor { ATEXT }?
 
@@ -1981,6 +2122,14 @@ attlist.section &amp;=
 attlist.spanx &amp;=
   attribute anchor { xsd:ID }?
 
+<spanx># Allow x:quotes attribute on &lt;title></spanx>
+attlist.title &amp;=
+  attribute x:quotes { "true" | "false" }?
+
+<spanx># Allow annotation attribute on &lt;uri></spanx>
+attlist.uri &amp;=
+  attribute x:annotation { ATEXT }?
+
 <spanx># Extend attribute set for &lt;xref> (see <xref target="ext-rfc2629.xref"/>)</spanx>
 attlist.xref &amp;=
   attribute x:fmt  { "()" | "," | "anchor" | "of" | "number" | "sec" |
@@ -2000,6 +2149,14 @@ attlist.xref &amp;=
 <x:ref>x_anchor-alias</x:ref> =
   element x:anchor-alias {
     attribute value { TEXT },
+    empty
+  }
+
+<spanx anchor="x_feedback"><iref item="feedback Extension Element"/><iref item="Extension Elements" subitem="feedback"
+/># Supply feedback links (see <xref target="ext.element.feedback"/>)</spanx>
+<x:ref>x_feedback</x:ref> =
+  element x:feedback {
+    attribute template { TEXT },
     empty
   }
 
@@ -2040,6 +2197,7 @@ attlist.xref &amp;=
   element x:bc {
     (TEXT
       | iref
+      | spanx
       | xref
       | <x:ref>x_bb</x:ref>
       | <x:ref>x_bc</x:ref>
@@ -2128,7 +2286,8 @@ attlist.xref &amp;=
 /># Link (see <xref target="ext.element.link"/>)</spanx>
 <x:ref>x_link</x:ref> =
   element x:link {
-    attribute href { URI },
+    attribute basename { URI }?,
+    attribute href { URI }?,
     attribute title { TEXT }?,
     attribute rel { TEXT },
     empty
@@ -2154,6 +2313,14 @@ attlist.xref &amp;=
 /># Signal XML content (see <xref target="ext.element.parse-xml"/>)</spanx>
 <x:ref>x_parse-xml</x:ref> =
   element x:parse-xml {
+    (TEXT
+      | xref)* 
+  }
+
+<spanx anchor="x_prose"><iref item="prose Extension Element"/><iref item="Extension Elements" subitem="prose"
+/># Inline prose in a reference (see <xref target="ext.element.prose"/>)</spanx>
+<x:ref>x_prose</x:ref> =
+  element x:prose {
     TEXT
   }
 
@@ -2261,8 +2428,14 @@ rdf_content =
   "&amp;#160;">
 
   &lt;!-- <spanx>allow later RFC2616 reference using "&amp;rfc2616;"</spanx> -->
+  &lt;!-- <spanx>the data will be fetched from xml.resource.org</spanx> -->
+  &lt;!ENTITY rfc2616 PUBLIC
   "http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616.xml">
 
+  &lt;!-- <spanx>allow a custom reference using "&amp;mydraft;"</spanx> -->
+  &lt;!-- <spanx>the data will be fetched from the same location as the 
+       source file</spanx> -->
+  &lt;!ENTITY mydraft PUBLIC "reference.mydraft.xml">
 ]>
 </artwork>
 <postamble>
@@ -2325,15 +2498,344 @@ rdf_content =
     future.
   </t>
 </x:note>
+</section>
+</section>
+
+<section title="Producing the IETF 'Boilerplate'" anchor="boilerplate">
+<t>
+  Various attributes of the <spanx style="verb">&lt;rfc&gt;</spanx>
+  element plus some child elements of <spanx style="verb">&lt;front&gt;</spanx>
+  affect the automatically generated parts of the front page, such as the
+  tabular information at the beginning, the "Status Of This Memo", and the
+  "Copyright Notice".
+</t>
+<t>
+  When submitting an Internet Draft, this "boilerplate" is checked
+  by "Idnits" (<eref target="http://tools.ietf.org/tools/idnits/"/>) for
+  compliance with the current Intellectual Property rules, and thus
+  it is important to set the correct values.
+</t>
+<t>
+  Furthermore, the RFC Production Center uses RFC2629-based tools to 
+  generate the final RFC text, so the more accurate the supplied information
+  is, the less additional work is left, and the risk for errors in producing
+  the final (and immutable!) document is reduced.
+</t>
+<x:note>
+  <t>
+    <x:h>Note:</x:h> this only applies to the case when IETF documents are
+    produced. The "private" processing instruction <iref item="private PI pseudo-attribute"/><iref item="Processing Instruction pseudo attributes" subitem="private"/>
+    allows to switch off most of the autogeneration logic.
+  </t>
+</x:note>
+
+<section title="The /rfc/@ipr Attribute" anchor="attribute-ipr">
+<t>
+  As of the time of this writing, this attribute value can take a long list of values. As
+  frequently, this is not the result of a grand plan, but simply for historic
+  reasons. Of these values, only a few are currently in use; all others are
+  supported by the various tools for backwards compatibility with old source
+  files.
+</t>
+<x:note>
+  <t>
+    <x:h>Note:</x:h> some variations of the boilerplate are selected based
+    on the document's date; therefore it is important to specify the "year",
+    "month" and "day" attributes of the <spanx style="verb">&lt;date&gt;</spanx> element
+    when archiving the XML source of an Internet Draft on the day of submission.
+  </t>
+</x:note>
+<t>
+  <spanx>Disclaimer: THIS ONLY PROVIDES IMPLEMENTATION INFORMATION. IF YOU NEED
+  LEGAL ADVICE, PLEASE CONTACT A LAWYER.</spanx>
+  For further information, refer to <eref target="http://trustee.ietf.org/docs/IETF-Copyright-FAQ.pdf"/>.
+</t>
+<t>
+  Finally, for the current "Status Of This Memo" text, the <spanx style="verb">submissionType</spanx> attribute
+  determines whether a statement about "Code Components" is inserted (this is the
+  case for the value "IETF", which also happens to be the default). Other values,
+  such as "independent", suppress this part of the text. 
+</t>
 
 
-  </section>
+<section title="Current Values: '*trust200902'" anchor="attribute-ipr-current">
+<t>
+  The name for these values refers to the "TLP" ("IETF TRUST Legal Provisions Relating 
+  to IETF Documents"), on effect February 15, 2009 (see <eref target="http://trustee.ietf.org/license-info/archive/IETF-Trust-License-Policy-20090215.pdf"/>).
+  Updates to this document were published on September 12, 2009 (TLP 3.0, <eref target="http://trustee.ietf.org/license-info/archive/IETF-Trust-License-Policy-20090912.pdf"/>)
+  and on December 28, 2009 (TLP 4.0, <eref target="http://trustee.ietf.org/license-info/archive/IETF-Trust-License-Policy-20091228.pdf"/>),
+  modifying the license for code components.
+  The actual text is located in Section 6 ("Text To Be Included in IETF Documents")
+  of these documents.
+</t>
+<t>  
+  The tools will automatically produce the "right" text depending on the
+  document's date information (see above):
+</t>
+<texttable align="left">
+  <ttcol>TLP</ttcol><ttcol>URI</ttcol><ttcol>starting with publication date</ttcol>
 
-  </section>
+  <c>3.0</c>
+  <c><eref target="http://trustee.ietf.org/license-info/archive/IETF-Trust-License-Policy-20090912.pdf"/></c>
+  <c>2009-11-01</c>
+
+  <c>4.0</c>
+  <c><eref target="http://trustee.ietf.org/license-info/archive/IETF-Trust-License-Policy-20091228.pdf"/></c>
+  <c>2010-04-01</c>
+
+</texttable> 
+
+
+<section title="trust200902" anchor="attribute-ipr-trust200902">
+<t>
+  This should be the default, unless one of the more specific '*trust200902'
+  values is a better fit. It produces the text in Sections 6.a and 6.b of
+  the TLP.
+</t>
+</section>
+
+<section title="noModificationTrust200902" anchor="attribute-ipr-noModificationTrust200902">
+<t>
+  This produces the additional text from Section 6.c.i of the TLP:
+</t>
+<x:blockquote>
+  <t>
+    This document may not be modified, and derivative works of it may
+    not be created, except to format it for publication as an RFC or
+    to translate it into languages other than English.
+  </t>
+</x:blockquote>
+<x:note>
+  <t>
+    <x:h>Note:</x:h> this clause is incompatible with RFCs to be published
+    on the Standards Track.
+  </t>
+</x:note>
+</section>
+
+<section title="noDerivativesTrust200902" anchor="attribute-ipr-noDerivativesTrust200902">
+<t>
+  This produces the additional text from Section 6.c.ii of the TLP:
+</t>
+<x:blockquote>
+  <t>
+    This document may not be modified, and derivative works of it may
+    not be created, and it may not be published except as an Internet-Draft.
+  </t>
+</x:blockquote>
+<x:note>
+  <t>
+    <x:h>Note:</x:h> this clause is incompatible with RFCs to be published
+    on the Standards Track.
+  </t>
+</x:note>
+</section>
+
+<section title="pre5378Trust200902" anchor="attribute-ipr-pre5378Trust200902">
+<t>
+  This produces the additional text from Section 6.c.iii of the TLP, frequently
+  called the "pre-5378 escape clause":
+</t>
+<x:blockquote>
+  <t>
+    This document may contain material from IETF Documents or IETF Contributions published or
+    made publicly available before November 10, 2008. The person(s) controlling the copyright in
+    some of this material may not have granted the IETF Trust the right to allow modifications of such
+    material outside the IETF Standards Process. Without obtaining an adequate license from the
+    person(s) controlling the copyright in such materials, this document may not be modified outside
+    the IETF Standards Process, and derivative works of it may not be created outside the IETF
+    Standards Process, except to format it for publication as an RFC or to translate it into languages
+    other than English.
+  </t>
+</x:blockquote>
+<t>
+  See Section 4 of <eref target="http://trustee.ietf.org/docs/IETF-Copyright-FAQ.pdf"/>
+  for further information about when to use this value.
+</t>
+<x:note>
+  <t>
+    <x:h>Note:</x:h> this text appears under "Copyright Notice", unless the 
+    document was published before November 2009, in which case it appears
+    under "Status Of This Memo".
+  </t>
+</x:note>
+</section>
+</section> 
+
+<section title="Historic Values" anchor="attribute-ipr-historic">
+
+<section title="Historic Values: '*trust200811'" anchor="attribute-ipr-200811">
+<t>
+  The attribute values "<x:span anchor="attribute-ipr-trust200811">trust200811</x:span>",
+  "<x:span anchor="attribute-ipr-noModificationTrust200811">noModificationTrust200811</x:span>" and
+  "<x:span anchor="attribute-ipr-noDerivativesTrust200811">noDerivativesTrust200811</x:span>"
+  are similar to their "trust200902" counterparts, except that they use text
+  specified in <eref target="http://trustee.ietf.org/license-info/archive/IETF-Trust-License-Policy_11-10-08.pdf"/>.
+</t>
+</section>
+
+<section title="Historic Values: '*3978'" anchor="attribute-ipr-3978">
+<t>
+  The attribute values "<x:span anchor="attribute-ipr-full3978">full3978</x:span>",
+  "<x:span anchor="attribute-ipr-noModification3978">noModification3978</x:span>" and
+  "<x:span anchor="attribute-ipr-noDerivatives3978">noDerivatives3978</x:span>"
+  are similar to their counterparts above, except that they use text
+  specified in RFC 3978 (March 2005).
+</t>
+</section>
+
+<section title="Historic Values: '*3667'" anchor="attribute-ipr-3667">
+<t>
+  The attribute values "<x:span anchor="attribute-ipr-full3667">full3667</x:span>",
+  "<x:span anchor="attribute-ipr-noModification3667">noModification3667</x:span>" and
+  "<x:span anchor="attribute-ipr-noDerivatives3667">noDerivatives3667</x:span>"
+  are similar to their counterparts above, except that they use text
+  specified in RFC 3667 (February 2004).
+</t>
+</section>
+
+<section title="Historic Values: '*2026'" anchor="attribute-ipr-2026">
+<t>
+  The attribute values "<x:span anchor="attribute-ipr-full2026">full2026</x:span>" and
+  "<x:span anchor="attribute-ipr-noDerivativeWorks2026">noDerivativeWorks2026</x:span>"
+  are similar to their counterparts above, except that they use text
+  specified in RFC 2026 (October 1996).
+</t>
+<t>
+  The special value "<x:span anchor="attribute-ipr-none">none</x:span>"
+  was also used back then, and denied the IETF any rights beyond publication
+  as Internet Draft.
+</t>
+</section>
+
+</section>
+</section>
+
+<section title="The /rfc/@category Attribute" anchor="attribute-category">
+<t>
+  For RFCs, the <spanx style="verb">category</spanx> determines the "maturity level"
+  (see <xref target="RFC2026" x:fmt="of" x:sec="4"/>). The allowed values
+  are "std" for "Standards Track", "bcp" for "BCP", "info" for "Informational",
+  "exp" for "Experimental", and "historic" for - surprise - "Historic".
+</t>
+<t>
+  For Internet Drafts, the category attribute is not needed, but <spanx>will</spanx>
+  appear on the front page ("Intended Status"). Supplying this information can 
+  be useful, because reviewers may want to know.
+</t>
+<x:note>
+  <t>
+    <x:h>Note:</x:h> the Standards Track consists of "Proposed Standard",
+    "Draft Standards", and "Internet Standard". These do not appear in the
+    boilerplate, thus the category attribute doesn't handle them.
+    However, this information can be useful for validity checkers, and thus
+    <spanx style="verb">rfc2629.xslt</spanx> supports an extension attribute
+    for that purpose (see <xref target="ext-rfc2629.rfc"/> for details).
+  </t>
+</x:note>
+</section>
+
+<section title="The /rfc/@submissionType Attribute" anchor="attribute-submissiontype">
+<t>
+  The RFC Editor publishes documents from different "document streams", of which
+  the "IETF stream" of course is the most prominent one. Other streams are the "independent stream"
+  (used for things like administrative information or April 1st RFCs),
+  the "IAB stream" (Internet Architecture Board) and the "IRTF stream" (Internet Research Task Force).
+</t>
+<t>
+  Not surprisingly, the values for the attribute are "IETF" (the default value),
+  "independent", "IAB", and "IRTF".
+</t>
+<t>
+  Historically, this did not affect the final appearance of RFCs, except for
+  subtle differences in Copyright notices.
+  Nowadays (as of <xref target="RFC5741"/>), the stream name appears in the first
+  line of the front page, and it also affects the text in the "Status Of This Memo"
+  section.
+</t>
+<t>
+  For current documents, setting <spanx style="verb">submissionType</spanx> attribute will
+  have the following effect:
+  <list style="symbols">
+    <t>
+      For RFCs, the stream name appears in the upper left corner of the 
+      first page (in Internet Drafts, this is either "Network Working Group",
+      or the value of the <spanx style="verb">&lt;workgroup&gt;</spanx> element).
+    </t>
+    <t>
+      For RFCs, if affects the whole "Status Of This Memo" section (see
+      <xref x:sec="3.2.2" x:fmt="of" target="RFC5741"/>).
+    </t>
+    <t>
+      For all RFCs and Internet Drafts, it determines whether the "Copyright
+      Notice" mentions the Copyright on Code Components (see TLP, Section "Text To Be Included in IETF Documents"). 
+    </t>
+  </list>
+</t>
+</section>
+
+<section title="The /rfc/@consensus Attribute" anchor="attribute-consensus">
+<t>
+  For some of the publication streams (see <xref target="attribute-submissiontype"/>),
+  the "Status Of This Memo" section depends on whether there was a consensus
+  to publish (again, see <xref x:sec="3.2.2" x:fmt="of" target="RFC5741"/>).
+</t>
+<t>
+  The <spanx style="verb">consensus</spanx> attribute ("yes"/"no", defaulting to "yes")
+  can be used to supply this information. The effect for the various streams is:
+  <list style="symbols">
+    <t>"independent" and "IAB": none.</t>
+    <t>"IETF": mention that there was an IETF consensus.</t>
+    <t>"IRTF": mention that there was a research group consensus (where the name of the research
+    group is extracted from the <spanx style="verb">&lt;workgroup&gt;</spanx> element).</t>
+  </list>
+</t>
+</section>
+
+<section title="The /rfc/@number Attribute" anchor="attribute-number">
+<t>
+  For RFCs, this attribute supplies the RFC number.
+</t>
+</section>
+
+<section title="The /rfc/@docName Attribute" anchor="attribute-docname">
+<t>
+  For Internet Drafts, this specifies the draft name (which appears
+  below the title). The file extension is <spanx>not</spanx> part
+  of the draft, so in general it should end with the current draft number
+  ("-", plus two digits).
+</t>
+<x:note>
+  <t>
+  <x:h>Note:</x:h> "Idnits" (<eref target="http://tools.ietf.org/tools/idnits/"/>)
+  checks the in-document draft name for consistency with the filename of
+  the submitted document.
+  </t>
+</x:note>
+</section>
+
+<section title="The /rfc/@obsoletes Attribute" anchor="attribute-obsoletes">
+<t> 
+  The RFC Editor maintains a database (<eref target="http://www.rfc-editor.org/rfc.html"/>)
+  of all RFCs, including information about which one obsoletes which. Upon publication of an RFC, this
+  database is updated from the data on the front page.
+</t>
+<t>
+  This attribute takes a list of comma-separated RFC <spanx>numbers</spanx>.
+  Do <spanx>not</spanx> put the string "RFC" here.
+</t>
+</section>
   
+<section title="The /rfc/@updates Attribute" anchor="attribute-updates">
+<t>
+  This is like <spanx style="verb">obsoletes</spanx>, but for the "updates"
+  relation.
+</t>
+</section>
+</section>
   <section title="License" anchor="license">
   <t>
-Copyright (c) 2006-2009, Julian Reschke (julian.reschke@greenbytes.de)
+Copyright (c) 2006-2010, Julian Reschke (julian.reschke@greenbytes.de)
   </t>
   <t>
 All rights reserved.
@@ -2421,6 +2923,27 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 </t>
 <t hangText="2009-10-27">
     Upgrade to xml2rfc v1.34.
+</t>
+<t hangText="2010-01-08">
+    For RFC generation (not IDs), experimentally support RFC 5741 headers and boilerplate and Trust
+    Legal Provisions 4.0.
+</t>
+<t hangText="2010-03-31">
+    Upgrade to xml2rfc v1.35.
+</t>
+<t hangText="2010-06-27">
+    Be consistent with xml2rfc.tcl in formatting initials (truncate after
+    the first); see <eref target="http://trac.tools.ietf.org/tools/xml2rfc/trac/ticket/10"/>.
+</t>
+<t hangText="2010-08-31">
+    Experimental support for prose in references.
+</t>
+<t hangText="2011-01-27">
+    Update to xml2rfc v1.36pre1.
+</t>
+<t hangText="2011-04-17">
+    Update to xml2rfc v1.36.
+    Add support for more /rfc/@ipr values when producing RFCs.
 </t>
       </list></t>
     </section>
@@ -3119,6 +3642,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 <t hangText="2009-09-24">
   Support double-sided layout using CSS page:left/right selectors.
 </t>
+<t hangText="2009-11-27">
+  Generate unordered lists instead of broken definition lists for list style empty.
+</t>
       </list></t>
     </section>
     <section title="rfc2629toFO.xslt">
@@ -3214,17 +3740,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
     <section title="xsl11toFop.xslt">
     <t><list style="hanging">
-<t hangText="2004-05-17">
-     Initial release.
+<t hangText="2010-08-25">
+    Switch to Apache FOP 1.0.
 </t>
-<t hangText="2006-06-02">
-    Use XSL 1.1 WD Feb 2006.
-</t>
-    </list></t>
-    </section>
-
-    <section title="xsl11toFop-0.95.xslt">
-    <t><list style="hanging">
 <t hangText="2009-09-12">
     Support for FOP 0.20.5 and FOP 0.93 removed. Please use FOP 0.95.
 </t>

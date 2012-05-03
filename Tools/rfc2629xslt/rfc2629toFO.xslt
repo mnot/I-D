@@ -1,7 +1,7 @@
 <!-- 
     XSLT transformation from RFC2629 XML format to XSL-FO
       
-    Copyright (c) 2006-2009, Julian Reschke (julian.reschke@greenbytes.de)
+    Copyright (c) 2006-2011, Julian Reschke (julian.reschke@greenbytes.de)
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -215,6 +215,11 @@
       <xsl:if test="@role">
         <fo:wrapper> (<xsl:value-of select="@role" />)</fo:wrapper>
       </xsl:if>
+      <!-- annotation support for Martin "uuml" Duerst -->
+      <xsl:if test="@x:annotation">
+        <xsl:text> </xsl:text> 
+        <fo:wrapper font-style="italic"><xsl:value-of select="@x:annotation"/></fo:wrapper>
+      </xsl:if>
     </fo:block>
     <fo:block><xsl:value-of select="organization" /></fo:block>
     <xsl:for-each select="address/postal/street">
@@ -251,7 +256,14 @@
       <xsl:variable name="uri">
         <xsl:call-template name="extract-uri"/>
       </xsl:variable>
-      <fo:block>URI:&#0160;<fo:basic-link external-destination="url('{$uri}')" xsl:use-attribute-sets="external-link"><xsl:value-of select="$uri" /></fo:basic-link></fo:block>
+      <fo:block>
+        <xsl:text>URI:&#0160;</xsl:text>
+        <fo:basic-link external-destination="url('{$uri}')" xsl:use-attribute-sets="external-link"><xsl:value-of select="$uri" /></fo:basic-link>
+        <xsl:if test="@x:annotation">
+          <xsl:text> </xsl:text> 
+          <fo:wrapper font-style="italic"><xsl:value-of select="@x:annotation"/></fo:wrapper>
+        </xsl:if>
+      </fo:block>
     </xsl:for-each>
   </fo:block>
 </xsl:template>
@@ -332,7 +344,7 @@
   
   <xsl:apply-templates select="x:boilerplate"/>
   <xsl:apply-templates select="abstract" />
-  <xsl:apply-templates select="note" />
+  <xsl:apply-templates select="note[@title!='IESG Note' or $xml2rfc-private!='']" />
 
   <xsl:if test="$xml2rfc-private='' and $abstract-first">
     <xsl:call-template name="emit-ietf-preamble"/>
@@ -347,7 +359,9 @@
    
 <xsl:template match="eref[node()]">
   <fo:basic-link external-destination="url('{@target}')" xsl:use-attribute-sets="external-link">
-    <xsl:apply-templates />
+    <xsl:call-template name="format-uri">
+      <xsl:with-param name="s" select="."/>
+    </xsl:call-template>
   </fo:basic-link>
   <fo:footnote>
     <fo:inline font-size="6pt" vertical-align="super"><xsl:number level="any" count="eref[node()]" /></fo:inline>
@@ -522,7 +536,6 @@
 <xsl:template match="list">
   <xsl:if test="@style!='' and @style!='empty' and @style">
     <xsl:call-template name="warning">
-      <xsl:with-param name="inline" select="'no'"/>
       <xsl:with-param name="msg">unknown style '<xsl:value-of select="@style"/>' for list, continueing with default format.</xsl:with-param>
     </xsl:call-template>
   </xsl:if>
@@ -691,14 +704,15 @@
         <xsl:variable name="initials">
           <xsl:call-template name="format-initials"/>
         </xsl:variable>
+        <xsl:variable name="truncated-initials" select="concat(substring-before($initials,'.'),'.')"/>
         <xsl:choose>
           <xsl:when test="@surname and @surname!=''">
             <xsl:choose>
               <xsl:when test="@surname and position()=last() and position()!=1">
-                <xsl:value-of select="concat($initials,' ',@surname)" />
+                <xsl:value-of select="concat($truncated-initials,' ',@surname)" />
               </xsl:when>
               <xsl:when test="@surname">
-                <xsl:value-of select="concat(@surname,', ',$initials)" />
+                <xsl:value-of select="concat(@surname,', ',$truncated-initials)" />
               </xsl:when>
               <xsl:when test="organization/text()">
                 <xsl:value-of select="organization" />
@@ -734,7 +748,7 @@
         </xsl:choose>
       </xsl:for-each>
 
-      <xsl:text>"</xsl:text>
+      <xsl:if test="not(front/title/@x:quotes='false')">"<!--&#8220;--></xsl:if>
       <xsl:choose>
         <xsl:when test="string-length($target) &gt; 0">
           <fo:basic-link external-destination="url('{$target}')" xsl:use-attribute-sets="external-link"><xsl:value-of select="normalize-space(front/title)" /></fo:basic-link>
@@ -743,7 +757,7 @@
           <xsl:value-of select="normalize-space(front/title)" />
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:text>"</xsl:text>
+      <xsl:if test="not(front/title/@x:quotes='false')">"<!--&#8221;--></xsl:if>
       
       <xsl:for-each select="seriesInfo">
         <xsl:text>, </xsl:text>
@@ -755,6 +769,12 @@
             <xsl:if test="translate(@name,$ucase,$lcase)='internet-draft'"> (work in progress)</xsl:if>
           </xsl:otherwise>
         </xsl:choose>
+      </xsl:for-each>
+
+      <!-- avoid hacks using seriesInfo when it's not really series information -->
+      <xsl:for-each select="x:prose">
+        <xsl:text>, </xsl:text>
+        <xsl:value-of select="."/>
       </xsl:for-each>
 
       <xsl:if test="front/date/@year!=''">
@@ -1507,10 +1527,6 @@
   <xsl:message terminate="yes">ERROR: unknown or unexpected element: {<xsl:value-of select="namespace-uri()" />}<xsl:value-of select="local-name()" /><xsl:call-template name="lineno"/>: '<xsl:value-of select="."/>'</xsl:message>
 </xsl:template>
 
-<xsl:template match="text()">
-  <xsl:copy-of select="."/>
-</xsl:template>
-
 <xsl:template name="emitheader">
   <xsl:param name="lc" />
   <xsl:param name="rc" />
@@ -1767,7 +1783,7 @@
   <xsl:apply-templates mode="toc" />
 </xsl:template>
 
-<xsl:template match="back" mode="toc">
+<xsl:template name="back-toc">
 
   <xsl:apply-templates select="references" mode="toc" />
 
@@ -1775,7 +1791,7 @@
     <xsl:apply-templates select="/rfc/front" mode="toc" />
   </xsl:if>
 
-  <xsl:apply-templates select="*[not(self::references)]" mode="toc" />
+  <xsl:apply-templates select="back/*[not(self::references)]" mode="toc" />
 
   <!-- insert the index if index entries exist -->
   <xsl:if test="$has-index">
@@ -2057,7 +2073,7 @@
     <xsl:call-template name="get-author-summary" />
   </xsl:variable>
   <xsl:variable name="center">
-    <xsl:call-template name="get-category-long" />
+    <xsl:call-template name="get-bottom-center" />
   </xsl:variable>
   <xsl:variable name="right">[Page 999]</xsl:variable>
 
@@ -2303,24 +2319,16 @@
 </xsl:template>
 
 <xsl:template match="rfc" mode="bookmarks">
-  <xsl:if test="$xml2rfc-private=''">
-    <!-- Get status info formatted as per RFC2629-->
-    <xsl:variable name="preamble"><xsl:call-template name="insertPreamble" /></xsl:variable>
-    
-    <!-- emit it -->
-    <xsl:choose>
-      <xsl:when test="function-available('exslt:node-set')">
-        <xsl:apply-templates select="exslt:node-set($preamble)/node()" mode="bookmarks"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:variable name="temp" select="$preamble"/>
-        <xsl:apply-templates select="$temp/node()" mode="bookmarks"/>
-      </xsl:otherwise>
-    </xsl:choose>
+  <xsl:if test="$xml2rfc-private='' and not($abstract-first)">
+    <xsl:call-template name="emit-ietf-preamble-bookmarks"/>    
   </xsl:if>
   
   <xsl:apply-templates select="front/abstract" mode="bookmarks"/>
-  <xsl:apply-templates select="front/note" mode="bookmarks"/>
+  <xsl:apply-templates select="front/note[@title!='IESG Note' or $xml2rfc-private!='']" mode="bookmarks"/>
+
+  <xsl:if test="$xml2rfc-private='' and $abstract-first">
+    <xsl:call-template name="emit-ietf-preamble-bookmarks"/>    
+  </xsl:if>
 
   <xsl:if test="$xml2rfc-toc='yes'">
     <fo:bookmark internal-destination="{concat($anchor-prefix,'.toc')}">
@@ -2329,6 +2337,22 @@
   </xsl:if>
   
   <xsl:apply-templates select="middle|back" mode="bookmarks"/>
+</xsl:template>
+
+<xsl:template name="emit-ietf-preamble-bookmarks">
+  <!-- Get status info formatted as per RFC2629-->
+  <xsl:variable name="preamble"><xsl:call-template name="insertPreamble" /></xsl:variable>
+  
+  <!-- emit it -->
+  <xsl:choose>
+    <xsl:when test="function-available('exslt:node-set')">
+      <xsl:apply-templates select="exslt:node-set($preamble)/node()" mode="bookmarks"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:variable name="temp" select="$preamble"/>
+      <xsl:apply-templates select="$temp/node()" mode="bookmarks"/>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <!-- experimental table formatting -->
@@ -2575,7 +2599,6 @@
     </xsl:when>
     <xsl:otherwise>
       <xsl:call-template name="warning">
-        <xsl:with-param name="inline" select="'no'"/>
         <xsl:with-param name="msg">internal link target for '<xsl:value-of select="."/>' does not exist.</xsl:with-param>
       </xsl:call-template>
       <xsl:apply-templates/>
