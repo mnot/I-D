@@ -68,10 +68,10 @@ Table of Contents
    7.  Consuming Problems  . . . . . . . . . . . . . . . . . . . . . . 7
    8.  Security Considerations . . . . . . . . . . . . . . . . . . . . 7
    9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . . . 7
-   10. Normative References  . . . . . . . . . . . . . . . . . . . . . 8
-   Appendix A.  Non-Normative JSON Schema  . . . . . . . . . . . . . . 8
+   10. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . 8
+   11. Normative References  . . . . . . . . . . . . . . . . . . . . . 8
+   Appendix A.  Non-Normative JSON Schema  . . . . . . . . . . . . . . 9
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . . . 9
-
 
 
 
@@ -155,7 +155,7 @@ Internet-Draft                HTTP Problems                     May 2012
    identified with the "application/json-problem" media type.  Its root
    object has the following properties:
 
-   o  "describedBy" (string) - A URL that identifies the type of
+   o  "describedby" (string) - A URL that identifies the type of
       problem.  When dereferenced, it SHOULD provide human-readable
       documentation (e.g., using HTML).
    o  "title" (string) - A short, human-readable summary of the problem.
@@ -173,7 +173,7 @@ Internet-Draft                HTTP Problems                     May 2012
       specific to this instance of the problem.
 
    HTTP problems, when serialised as JSON objects, MUST include the
-   "describedBy" and "title" properties.  The "detail" property is
+   "describedby" and "title" properties.  The "detail" property is
    always OPTIONAL.
 
    Problem types MAY extend their instances with additional properties.
@@ -184,7 +184,7 @@ Internet-Draft                HTTP Problems                     May 2012
       Content-Language: en
 
       {
-        "describedBy": "http://example.com/probs/out-of-credit",
+        "describedby": "http://example.com/probs/out-of-credit",
         "title": "You do not have enough credits.",
         "detail": "Your current balance is 30, but that costs 50.",
         "balance": 30,
@@ -197,7 +197,7 @@ Internet-Draft                HTTP Problems                     May 2012
    balance, and "account" gives a link where the account can be topped
    up.
 
-   Note that "describedBy" is case-sensitive in the JSON object, as are
+   Note that "describedby" is case-sensitive in the JSON object, as are
    all other property names.
 
 
@@ -211,7 +211,7 @@ Internet-Draft                HTTP Problems                     May 2012
       HTTP/1.1 403 Forbidden
       Content-Type: text/html
       Content-Language: en
-      Link: <http://example.com/probs/out-of-credit>; rel="describedBy";
+      Link: <http://example.com/probs/out-of-credit>; rel="describedby";
                title="You do not have enough credits."; balance=30;
                account="http://api.example.com/account/12345"
 
@@ -226,7 +226,7 @@ Internet-Draft                HTTP Problems                     May 2012
 
 
    HTTP Problems are serialised into Link headers using the
-   "describedBy" link relation type, with the URL for the problem type
+   "describedby" link relation type, with the URL for the problem type
    as the link target.  The title is conveyed using the "title"
    parameter, and the detail can be conveyed using the "detail"
    parameter.
@@ -241,7 +241,7 @@ Internet-Draft                HTTP Problems                     May 2012
 
    For example, the following are all valid:
 
-      Link: <http://example.com/p/1>; rel="describedBy"; title="Hi"
+      Link: <http://example.com/p/1>; rel="describedby"; title="Hi"
       Link: <ftp://example.com/p/1>; rel="describedby"; title="Hi"
       Link: <http://example.com/p/1>; rel="describedby";
             title="Hi there"; detail="something happened."
@@ -282,7 +282,7 @@ Internet-Draft                HTTP Problems                     May 2012
 
 
    If defining a new problem still seems wise, one can be created by:
-   1.  Nominating a describedBy URL (typically, with the "http" scheme),
+   1.  Nominating a describedby URL (typically, with the "http" scheme),
    2.  Choosing a title that appropriately describes it (think short),
        and
    3.  Nominating one or more HTTP status code that it should be used
@@ -292,7 +292,7 @@ Internet-Draft                HTTP Problems                     May 2012
    with, and MAY specify the use of the Retry-After response header in
    appropriate circumstances.
 
-   A problem's describedBy URL SHOULD resolve to HTML documentation that
+   A problem's describedby URL SHOULD resolve to HTML documentation that
    explains how to resolve the problem.
 
    Optionally, a problem definition MAY specify additional properties on
@@ -312,7 +312,7 @@ Internet-Draft                HTTP Problems                     May 2012
 
 6.  Generating Problems
 
-   The URL used in the describedBy property MUST NOT be changed in any
+   The URL used in the describedby property MUST NOT be changed in any
    way from that defined by its specification; doing so turns it into a
    different problem that most consumers will not recognise.
 
@@ -326,7 +326,7 @@ Internet-Draft                HTTP Problems                     May 2012
       Content-Type: text/html
       Content-Language: se
       Vary: Accept-Language
-      Link: <http://example.com/probs/out-of-credit>; rel="describedBy";
+      Link: <http://example.com/probs/out-of-credit>; rel="describedby";
                title*=UTF-8''Du%20%C3%A4r%20ute%20p%C3%A5%20pengar.
 
 
@@ -351,7 +351,7 @@ Internet-Draft                HTTP Problems                     May 2012
 
 7.  Consuming Problems
 
-   Consumers should use the describedBy URL as the primary identifier
+   Consumers should use the describedby URL as the primary identifier
    for the problem; the title string is advisory, and included only for
    users who are not aware of the semantics of the URL, and don't have
    the ability to discover them (e.g., offline log analysis).
@@ -365,7 +365,7 @@ Internet-Draft                HTTP Problems                     May 2012
    the future.
 
    Finally, clients consuming HTTP Problems SHOULD NOT automatically
-   deference the describedBy URL; it is not intended for machine
+   deference the describedby URL; it is not intended for machine
    interaction.
 
 
@@ -415,7 +415,14 @@ Internet-Draft                HTTP Problems                     May 2012
       Change controller: IESG
 
 
-10.  Normative References
+10.  Acknowledgements
+
+   The author would like to thank Subbu Allamaraju, Sam Johnston, Julian
+   Reschke, James Snell, and Erik Wilde for early review of this
+   specification (even if some disagree with parts of it).
+
+
+11.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, March 1997.
@@ -435,13 +442,6 @@ Internet-Draft                HTTP Problems                     May 2012
               Hypertext Transfer Protocol (HTTP) Header Field
               Parameters", RFC 5987, August 2010.
 
-   [RFC5988]  Nottingham, M., "Web Linking", RFC 5988, October 2010.
-
-
-Appendix A.  Non-Normative JSON Schema
-
-   This schema is non-normative, and will probably disappear unless JSON
-
 
 
 Nottingham              Expires November 4, 2012                [Page 8]
@@ -449,13 +449,19 @@ Nottingham              Expires November 4, 2012                [Page 8]
 Internet-Draft                HTTP Problems                     May 2012
 
 
+   [RFC5988]  Nottingham, M., "Web Linking", RFC 5988, October 2010.
+
+
+Appendix A.  Non-Normative JSON Schema
+
+   This schema is non-normative, and will probably disappear unless JSON
    Schema actually starts moving forward.
 
       {
         "description": "HTTP Problem",
         "type": "object",
         "properties": {
-          "describedBy": {
+          "describedby": {
             "type": "string",
             "required": "true",
             "format": "uri"
@@ -473,12 +479,6 @@ Author's Address
 
    Email: mnot@mnot.net
    URI:   http://www.mnot.net/
-
-
-
-
-
-
 
 
 

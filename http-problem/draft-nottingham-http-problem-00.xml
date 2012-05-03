@@ -104,7 +104,7 @@
          following properties:</t>
          
          <t><list style='symbols'>
-            <t>"describedBy" (string) - A URL that identifies the type of
+            <t>"describedby" (string) - A URL that identifies the type of
             problem. When dereferenced, it SHOULD provide human-readable
             documentation (e.g., using HTML).</t>
             <t>"title" (string) - A short, human-readable summary of the
@@ -115,7 +115,7 @@
          </list></t>
          
           <t>HTTP problems, when serialised as JSON objects, MUST include the
-          "describedBy" and "title" properties. The "detail" property is
+          "describedby" and "title" properties. The "detail" property is
           always OPTIONAL.</t>
          
           <t>Problem types MAY extend their instances with additional
@@ -127,7 +127,7 @@
    Content-Language: en
 
    {
-     "describedBy": "http://example.com/probs/out-of-credit",
+     "describedby": "http://example.com/probs/out-of-credit",
      "title": "You do not have enough credits.",
      "detail": "Your current balance is 30, but that costs 50.",
      "balance": 30,
@@ -140,7 +140,7 @@
          account's balance, and "account" gives a link where the account can
          be topped up.</t>
 
-         <t>Note that "describedBy" is case-sensitive in the JSON object, as
+         <t>Note that "describedby" is case-sensitive in the JSON object, as
             are all other property names.</t>
 
       </section>
@@ -156,7 +156,7 @@
    HTTP/1.1 403 Forbidden
    Content-Type: text/html
    Content-Language: en
-   Link: <http://example.com/probs/out-of-credit>; rel="describedBy";
+   Link: <http://example.com/probs/out-of-credit>; rel="describedby";
             title="You do not have enough credits."; balance=30;
             account="http://api.example.com/account/12345"
 ]]></artwork></figure>
@@ -165,7 +165,7 @@
       previous examples, but without the optional detail.</t>
 
       <t>HTTP Problems are serialised into Link headers using the
-      "describedBy" link relation type, with the URL for the problem type as
+      "describedby" link relation type, with the URL for the problem type as
       the link target. The title is conveyed using the "title" parameter, 
       and the detail can be conveyed using the "detail" parameter.</t>
           
@@ -180,7 +180,7 @@
       <t>For example, the following are all valid:</t>
 
       <figure><artwork><![CDATA[
-   Link: <http://example.com/p/1>; rel="describedBy"; title="Hi"
+   Link: <http://example.com/p/1>; rel="describedby"; title="Hi"
    Link: <ftp://example.com/p/1>; rel="describedby"; title="Hi"
    Link: <http://example.com/p/1>; rel="describedby";
          title="Hi there"; detail="something happened."
@@ -220,7 +220,7 @@
          by:
          
          <list style="numbers">
-            <t>Nominating a describedBy URL (typically, with the "http"
+            <t>Nominating a describedby URL (typically, with the "http"
             scheme),</t>
             <t>Choosing a title that appropriately describes it (think
             short), and</t>
@@ -232,7 +232,7 @@
          used with, and MAY specify the use of the Retry-After response header
          in appropriate circumstances.</t>
          
-         <t>A problem’s describedBy URL SHOULD resolve to HTML documentation
+         <t>A problem’s describedby URL SHOULD resolve to HTML documentation
          that explains how to resolve the problem.</t>
          
          <t>Optionally, a problem definition MAY specify additional properties
@@ -256,7 +256,7 @@
          <section anchor="generating-problems" title="Generating
          Problems">
          
-          <t>The URL used in the describedBy property MUST NOT be changed in
+          <t>The URL used in the describedby property MUST NOT be changed in
          any way from that defined by its specification; doing so turns it
          into a different problem that most consumers will not recognise.</t>
          
@@ -271,7 +271,7 @@
    Content-Type: text/html
    Content-Language: se
    Vary: Accept-Language
-   Link: <http://example.com/probs/out-of-credit>; rel="describedBy"; 
+   Link: <http://example.com/probs/out-of-credit>; rel="describedby"; 
             title*=UTF-8''Du%20%C3%A4r%20ute%20p%C3%A5%20pengar.
 ]]></artwork></figure>
 
@@ -291,7 +291,7 @@
 
       <section anchor="consuming-problems" title="Consuming Problems">
 
-         <t>Consumers should use the describedBy URL as the primary identifier
+         <t>Consumers should use the describedby URL as the primary identifier
          for the problem; the title string is advisory, and included only for
          users who are not aware of the semantics of the URL, and don’t have
          the ability to discover them (e.g., offline log analysis).</t>
@@ -305,7 +305,7 @@
          information in the future. </t>
 
          <t>Finally, clients consuming HTTP Problems SHOULD NOT automatically
-         deference the describedBy URL; it is not intended for machine
+         deference the describedby URL; it is not intended for machine
          interaction.</t>
 
       </section>
@@ -353,6 +353,18 @@
 
 		</section>
       
+		<section title="Acknowledgements">
+			<t>The author would like to thank 
+				Subbu Allamaraju,
+				Sam Johnston,
+				Julian Reschke,
+				James Snell, and
+				Erik Wilde
+			for early review of this specification (even if some disagree
+			with parts of it).
+			</t>
+		</section>
+
 	</middle>
 
 	<back>
@@ -380,7 +392,7 @@
      "description": "HTTP Problem",
      "type": "object",
      "properties": {
-       "describedBy": {
+       "describedby": {
          "type": "string",
          "required": "true",
          "format": "uri"
