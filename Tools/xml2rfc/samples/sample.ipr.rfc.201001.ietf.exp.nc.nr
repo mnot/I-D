@@ -16,9 +16,10 @@
 .ad l
 .nf
 .in 0
-Network Working Group                                             J. Doe
+Internet Engineering Task Force (IETF)                            J. Doe
 Request for Comments: 9999                                  January 2010
 Category: Experimental
+ISSN: \%2070-1721
 
 
 .ce
@@ -34,10 +35,20 @@ Dummy Abstract.
 .ti 0
 Status of This Memo
 
-This memo defines an Experimental Protocol for the Internet
-community.  It does not specify an Internet standard of any kind.
-Discussion and suggestions for improvement are requested.
-Distribution of this memo is unlimited.
+This document is not an Internet Standards Track specification; it is
+published for examination, experimental implementation, and
+evaluation.
+
+This document defines an Experimental Protocol for the Internet
+community.  This document is a product of the Internet Engineering
+Task Force (IETF).  It has been approved for publication by the
+Internet Engineering Steering Group (IESG).  Not all documents
+approved by the IESG are a candidate for any level of Internet
+Standard; see Section 2 of RFC 5741.
+
+Information about the current status of this document, any errata,
+and how to provide feedback on it may be obtained at
+\%http://www.rfc-editor.org/info/rfc9999.
 
 .ti 0
 Copyright Notice
@@ -61,7 +72,7 @@ described in the Simplified BSD License.
 .in 3
 
 Dummy Section.
-
+.bp
 .nf
 .ti 0
 Author\'s Address

@@ -16,9 +16,10 @@
 .ad l
 .nf
 .in 0
-Network Working Group                                             J. Doe
+Internet Architecture Board (IAB)                                 J. Doe
 Request for Comments: 9999                                  January 2010
 Category: Informational
+ISSN: \%2070-1721
 
 
 .ce
@@ -34,9 +35,18 @@ Dummy Abstract.
 .ti 0
 Status of This Memo
 
-This memo provides information for the Internet community.  It does
-not specify an Internet standard of any kind.  Distribution of this
-memo is unlimited.
+This document is not an Internet Standards Track specification; it is
+published for informational purposes.
+
+This document is a product of the Internet Architecture Board (IAB)
+and represents information that the IAB has deemed valuable to
+provide for permanent record.  Documents approved for publication by
+the IAB are not a candidate for any level of Internet Standard; see
+Section 2 of RFC 5741.
+
+Information about the current status of this document, any errata,
+and how to provide feedback on it may be obtained at
+\%http://www.rfc-editor.org/info/rfc9999.
 
 .ti 0
 Copyright Notice

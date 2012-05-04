@@ -16,9 +16,10 @@
 .ad l
 .nf
 .in 0
-Network Working Group                                             J. Doe
+Internet Engineering Task Force (IETF)                            J. Doe
 Request for Comments: 9999                                  January 2010
 Category: Best Current Practice
+ISSN: \%2070-1721
 
 
 .ce
@@ -34,9 +35,17 @@ Dummy Abstract.
 .ti 0
 Status of This Memo
 
-This document specifies an Internet Best Current Practices for the
-Internet Community, and requests discussion and suggestions for
-improvements.  Distribution of this memo is unlimited.
+This memo documents an Internet Best Current Practice.
+
+This document is a product of the Internet Engineering Task Force
+(IETF).  It represents the consensus of the IETF community.  It has
+received public review and has been approved for publication by the
+Internet Engineering Steering Group (IESG).  Further information on
+BCPs is available in Section 2 of RFC 5741.
+
+Information about the current status of this document, any errata,
+and how to provide feedback on it may be obtained at
+\%http://www.rfc-editor.org/info/rfc9999.
 
 .ti 0
 Copyright Notice
@@ -62,6 +71,7 @@ described in the Simplified BSD License.
 Dummy Section.
 
 .nf
+.bp
 .ti 0
 Author\'s Address
 
