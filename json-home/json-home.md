@@ -56,7 +56,6 @@ For example:
     Connection: close
     
     {
-      "profile": "http://example.org/widget-api"
       "resources": {
         "http://example.org/rel/widgets": {
           "href": "/widgets/"
@@ -356,3 +355,4 @@ The following is a list of placeholders for open issues.
 * Object for documentation, contact details
 * Object for ToS, rate limiting?
 * Defining new hints
+* Figure out API profiles
