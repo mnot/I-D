@@ -1,4 +1,5 @@
 
+**Note: This source document doesn't reflect recent edits; see the .html or .txt.**
 
 Home Documents for HTTP APIs
 ============================
