@@ -2,6 +2,12 @@
 
 <!DOCTYPE rfc SYSTEM "http://xml.resource.org/authoring/rfc2629.dtd" [
    <!ENTITY rfc2119 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>  
+   <!ENTITY rfc2616 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616.xml'>  
+   <!ENTITY rfc3986 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml'>  
+   <!ENTITY rfc4288 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4288.xml'>  
+   <!ENTITY rfc4627 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml'>  
+   <!ENTITY rfc5988 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5988.xml'>  
+   <!ENTITY rfc6570 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6570.xml'>  
 ]>
 
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -51,17 +57,19 @@
          resulted in brittle, tight coupling between clients and servers. </t>
 
          <t>Sometimes, these APIs are documented by a document format like
-         WADL [ref] that is used as a “design-time” description; i.e., the
-         URIs and other information they describe are “baked into” client
+         <eref target="http://www.w3.org/Submission/wadl/">WADL</eref> that is
+         used as a “design-time” description; i.e., the URIs and other
+         information they describe are “baked into” client
          implementations.</t>
 
          <t>In contrast, a “follow your nose” API advertises the resources
-         available to clients using link relations [RFC5988] and the formats
-         they support using internet media types [ref]. A client can then
-         decide – at “run time” – which resources to interact with based upon
-         its capabilities (as described by link relations), and the server can
-         safely add new resources and formats without disturbing clients that
-         are not yet aware of them.</t>
+         available to clients using link relations <xref target="RFC5988"/>
+         and the formats they support using internet media types <xref
+         target="RFC4288"/>. A client can then decide – at “run time” – which
+         resources to interact with based upon its capabilities (as described
+         by link relations), and the server can safely add new resources and
+         formats without disturbing clients that are not yet aware of
+         them.</t>
 
          <t>As such, the client needs to be able to discover this information
          quickly and efficiently use it to interact with the server. Just as
@@ -73,7 +81,7 @@
          <t>Of course, an HTTP API might use any format to do so; however,
          there are advantages to having a standard home document format. This
          specification suggests one for consideration, using the JSON
-         [RFC4627] format.</t>
+         format <xref target="RFC4627"/>.</t>
 
 		</section>
 
@@ -87,12 +95,14 @@
 
       <section anchor="json-home-documents" title="JSON Home Documents">
 
-         <t>A JSON Home Document uses the format described in [RFC4627] and
-         has the media type “application/json-home”.</t>
+         <t>A JSON Home Document uses the format described in <xref
+         target="RFC4627"/> and has the media type
+         “application/json-home”.</t>
 
          <t>Its content consists of a root object with a “resources” property,
-         whose names are link relation types (as defined by [RFC5988], and
-         values are Resource Objects, defined below.</t>
+         whose names are link relation types (as defined by <xref
+         target="RFC5988"/>), and values are Resource Objects, defined
+         below.</t>
 
          <t>For example:</t>
 
@@ -131,12 +141,14 @@ Connection: close
          <t>Here, we have a home document that links two a resource,
          “/widgets/” with the relation “http://example.org/rel/widgets”, and
          also links to one or more with the relation type
-         “http://example.org/rel/widget” using a URI Template [ref].</t>
+         “http://example.org/rel/widget” using a URI Template <xref
+         target="RFC6570"/>.</t>
          
           <t>It also gives several hints about interacting with the latter
-         “widget” resources, including the HTTP methods usable with them, the
-         patch formats they accept, and the fact that they support partial
-         requests [ref] using the “bytes” range-specifier.</t>
+          “widget” resources, including the HTTP methods usable with them, the
+          patch formats they accept, and the fact that they support partial
+          requests <xref target="RFC2616"/> using the “bytes”
+          range-specifier.</t>
          
           <t>It gives no such hints about the “widgets” resource. This does
          not mean that it (for example) doesn’t support any HTTP methods; it
@@ -154,19 +166,19 @@ Connection: close
          resources.</t>
          
           <t>Direct links are indicated with an “href” property, whose value
-         is a URI [RFC3986].</t>
+          is a URI <xref target="RFC3986"/>.</t>
          
           <t>Templated links are indicated with an “href-template” property,
-         whose value is a URI Template [RFC6570]. When “href-template” is
-         present, the Resource Object MUST have a “href-vars” property; see
-         “Resolving Templated Links”.</t>
+          whose value is a URI Template <xref target="RFC6570"/>. When
+          “href-template” is present, the Resource Object MUST have a
+          “href-vars” property; see “Resolving Templated Links”.</t>
          
           <t>Resource Objects MUST have exactly one of the “href” and
          “href-vars” properties.</t>
          
           <t>In both forms, the links that “href” and “href-template” refer to
-         are URI-references [RFC3986] whose base URI is that of the JSON Home
-         Document itself.</t>
+          are URI-references <xref target="RFC3986"/> whose base URI is that
+          of the JSON Home Document itself.</t>
          
           <t>Resource Objects MAY also have a “hints” property, whose value is
          an object that uses named Resource Hints as its properties.</t>
@@ -174,8 +186,9 @@ Connection: close
          <section anchor="resolving-templates" title="Resolving Templated Links">
 
             <t>A URI can be derived from a Templated Link by treating the
-            “href-template” value as a Level 3 URI Template [RFC6570], using
-            the “href-vars” property to fill the template.</t>
+            “href-template” value as a Level 3 URI Template <xref
+            target="RFC6570"/>, using the “href-vars” property to fill the
+            template.</t>
             
              <t>The “href-vars” property, in turn, is an object that acts as a
             mapping between variable names available to the template and
@@ -374,11 +387,11 @@ Connection: close
          represent a “contract”, but rather is expected to be inspected before
          each interaction. In particular, links from the home document MUST
          NOT be assumed to be valid beyond the freshness lifetime of the home
-         document, as per HTTP’s caching model [httpbis-p6].</t>
+         document, as per HTTP’s caching model <xref target="RFC2616"/>.</t>
          
-          <t>As a result, clients SHOULD cache the home document (as per
-         [httpbis-p6]), to avoid fetching it before every interaction (which
-         would otherwise be required).</t>
+          <t>As a result, clients SHOULD cache the home document (as per <xref
+          target="RFC2616"/>, to avoid fetching it before every interaction
+          (which would otherwise be required).</t>
          
           <t>Likewise, a client encountering a 404 Not Found on a link SHOULD
          obtain a fresh copy of the home document, to assure that it is
@@ -402,11 +415,16 @@ Connection: close
 	<back>
 		<references title="Normative References">
 			&rfc2119;
+			&rfc2616;
+			&rfc3986;
+			&rfc4627;
+			&rfc5988;
+			&rfc6570;
 		</references>
 
-<!--		<references title="Informative References">
-
-		</references> -->
+		<references title="Informative References">
+			&rfc4288;
+		</references>
 
 <!--		<section title="Acknowledgements">
 			<t>Thanks to 
@@ -423,8 +441,9 @@ Connection: close
 
             <t>Browser-centric Web applications use HTML as their
             representation format of choice. While it is possible to augment
-            HTML for non-browser clients (using techniques like Microformats
-            [ref]), a few issues become evident when doing so:</t>
+            HTML for non-browser clients (using techniques like <eref
+            target="http://microformats.org/">Microformats</eref> ), a few
+            issues become evident when doing so:</t>
 
             <t><list style='symbols'>
               <t>HTML has a very forgiving syntax. While this is appropriate
