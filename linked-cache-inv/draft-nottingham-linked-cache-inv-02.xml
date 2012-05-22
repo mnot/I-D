@@ -279,15 +279,21 @@ Cache-Control: no-cache, inv-maxage=300
 
 			<t>HTTP caches using inv-maxage to calculate freshness MUST
          invalidate all stored responses whose request-URIs (after
-         normalisation) are indicated by the 'invalidates' link relation type
+         normalisation) are the target of a 'invalidates' link relation
          contained in a successful response to a state-changing request,
          provided that they are allowed.</t>
 
 			<t>HTTP caches using inv-maxage to calculate freshness MUST
-         invalidate all stored responses containing the 'inv-by' relation that
-         indicates the current request-URI (after normalisation) upon receipt
+         invalidate all stored responses containing a 'inv-by' link relation
+         whose target is the current request-URI (after normalisation) upon
+         receipt of a successful response to a state-changing request.</t>
+
+			<t>Likewise, HTTP caches using inv-maxage to calculate freshness MUST
+         invalidate all stored responses containing a 'inv-by' link relation
+         whose target is the content of either the Location or
+         Content-Location response headers (after normalisation) upon receipt
          of a successful response to a state-changing request.</t>
-				
+
 			<t>Here, a response is considered to "contain" a link relation if it
          is carried in the Link HTTP header <xref target="RFC5988"/>. I.e., it
          is not necessary to look at the response body.</t>
