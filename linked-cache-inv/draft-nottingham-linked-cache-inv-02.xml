@@ -192,21 +192,13 @@ Cache-Control: no-cache, inv-maxage=300
 					
 				<t>It is important to note that the invalidations are only
             effective in the caches that the client's request stream travels
-            through. Typically, this means that the client making the changes
-            (e.g., the blog update above) will see the effects immediately,
-            while other users whose requests travel through different caches
-            will only see the changes once the content becomes stale (if it is
-            cached).</t>
-					
-				<t>This makes Linked Cache Invalidation useful in a number of
-            cases, but not all; when it's important that changes be propagated
-            quickly, the freshness lifetime of cached responses can be
-            reduced, but there will still be lag.</t>
+            through. This means other caches will continue to serve the "old"
+            content until the invalidation event is propagated to them
+            (see below) or the cached responses become stale.</t>
 					
 				<t>When multiple caches are close together, the HyperText Caching
             Protocol (HTCP) <xref target="RFC2756"/> can be used to propagate
-            invalidation events between caches, reducing (but not eliminating)
-            these effects.</t>
+            invalidation events between them.</t>
 				
 			</section>
 
@@ -227,7 +219,7 @@ Cache-Control: no-cache, inv-maxage=300
 
 		<section title="The 'invalidates' link relation type" anchor="invalidates">
 			
-			<t>The 'invalidates' link relation type allows a response that is an
+			<t>The 'invalidates' link relation type allows a response that
          signifies a state change on the server to indicate one or more
          associated URIs whose states have also changed.</t>
 			
