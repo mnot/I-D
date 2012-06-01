@@ -3,8 +3,8 @@
 
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                  M. Kelly
-Intended status: Informational                              May 22, 2012
-Expires: November 23, 2012
+Intended status: Informational                              June 1, 2012
+Expires: December 3, 2012
 
 
                        Linked Cache Invalidation
@@ -33,7 +33,7 @@ Status of this Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 23, 2012.
+   This Internet-Draft will expire on December 3, 2012.
 
 Copyright Notice
 
@@ -52,9 +52,9 @@ Copyright Notice
 
 
 
-Nottingham & Kelly      Expires November 23, 2012               [Page 1]
+Nottingham & Kelly      Expires December 3, 2012                [Page 1]
 
-Internet-Draft          Linked Cache Invalidation               May 2012
+Internet-Draft          Linked Cache Invalidation              June 2012
 
 
 Table of Contents
@@ -63,7 +63,7 @@ Table of Contents
      1.1.  Example . . . . . . . . . . . . . . . . . . . . . . . . . . 3
    2.  Notational Conventions  . . . . . . . . . . . . . . . . . . . . 5
    3.  The 'invalidates' link relation type  . . . . . . . . . . . . . 5
-   4.  The 'inv-by' link relation type . . . . . . . . . . . . . . . . 6
+   4.  The 'inv-by' link relation type . . . . . . . . . . . . . . . . 5
    5.  The 'inv-maxage' response cache-control extension . . . . . . . 6
    6.  Security Considerations . . . . . . . . . . . . . . . . . . . . 7
    7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . . . 7
@@ -108,9 +108,9 @@ Table of Contents
 
 
 
-Nottingham & Kelly      Expires November 23, 2012               [Page 2]
+Nottingham & Kelly      Expires December 3, 2012                [Page 2]
 
-Internet-Draft          Linked Cache Invalidation               May 2012
+Internet-Draft          Linked Cache Invalidation              June 2012
 
 
 1.  Introduction
@@ -164,9 +164,9 @@ Internet-Draft          Linked Cache Invalidation               May 2012
 
 
 
-Nottingham & Kelly      Expires November 23, 2012               [Page 3]
+Nottingham & Kelly      Expires December 3, 2012                [Page 3]
 
-Internet-Draft          Linked Cache Invalidation               May 2012
+Internet-Draft          Linked Cache Invalidation              June 2012
 
 
    HTTP/1.1 302 Moved Temporarily
@@ -220,9 +220,9 @@ Internet-Draft          Linked Cache Invalidation               May 2012
 
 
 
-Nottingham & Kelly      Expires November 23, 2012               [Page 4]
+Nottingham & Kelly      Expires December 3, 2012                [Page 4]
 
-Internet-Draft          Linked Cache Invalidation               May 2012
+Internet-Draft          Linked Cache Invalidation              June 2012
 
 
    ... or they can only allow caching by LCI-aware caches, like this:
@@ -233,20 +233,14 @@ Internet-Draft          Linked Cache Invalidation               May 2012
    related responses.
 
    It is important to note that the invalidations are only effective in
-   the caches that the client's request stream travels through.
-   Typically, this means that the client making the changes (e.g., the
-   blog update above) will see the effects immediately, while other
-   users whose requests travel through different caches will only see
-   the changes once the content becomes stale (if it is cached).
-
-   This makes Linked Cache Invalidation useful in a number of cases, but
-   not all; when it's important that changes be propagated quickly, the
-   freshness lifetime of cached responses can be reduced, but there will
-   still be lag.
+   the caches that the client's request stream travels through.  This
+   means other caches will continue to serve the "old" content until the
+   invalidation event is propagated to them (see below) or the cached
+   responses become stale.
 
    When multiple caches are close together, the HyperText Caching
    Protocol (HTCP) [RFC2756] can be used to propagate invalidation
-   events between caches, reducing (but not eliminating) these effects.
+   events between them.
 
 
 2.  Notational Conventions
@@ -262,9 +256,9 @@ Internet-Draft          Linked Cache Invalidation               May 2012
 
 3.  The 'invalidates' link relation type
 
-   The 'invalidates' link relation type allows a response that is an
-   signifies a state change on the server to indicate one or more
-   associated URIs whose states have also changed.
+   The 'invalidates' link relation type allows a response that signifies
+   a state change on the server to indicate one or more associated URIs
+   whose states have also changed.
 
    o  Relation name: invalidates
    o  Description: Indicates that when the link context changes, the
@@ -273,20 +267,19 @@ Internet-Draft          Linked Cache Invalidation               May 2012
    o  Notes:
 
 
-
-
-
-Nottingham & Kelly      Expires November 23, 2012               [Page 5]
-
-Internet-Draft          Linked Cache Invalidation               May 2012
-
-
 4.  The 'inv-by' link relation type
 
    The 'inv-by' link relation type allows a response to nominate one or
    more other resources that affect the state of the resource it's
    associated with.  That is, when one of the nominated resources
    changes, it also changes the state of this response's resource.
+
+
+
+Nottingham & Kelly      Expires December 3, 2012                [Page 5]
+
+Internet-Draft          Linked Cache Invalidation              June 2012
+
 
    o  Relation name: inv-by
    o  Description: Indicates that when the link target changes, the
@@ -329,20 +322,20 @@ Internet-Draft          Linked Cache Invalidation               May 2012
    to look at the response body.
 
    "Invalidate" means that the cache will either remove all stored
-
-
-
-Nottingham & Kelly      Expires November 23, 2012               [Page 6]
-
-Internet-Draft          Linked Cache Invalidation               May 2012
-
-
    responses related to the effective request URI, or will mark these as
    "invalid" and in need of a mandatory validation before they can be
    returned in response to a subsequent request.
 
    A "successful" response is one with a 2xx or redirecting 3xx (e.g.,
    301, 302, 303, 307) status code.
+
+
+
+
+Nottingham & Kelly      Expires December 3, 2012                [Page 6]
+
+Internet-Draft          Linked Cache Invalidation              June 2012
+
 
    A "state-changing" request is one with an unsafe method (e.g., POST,
    PUT, DELETE, PATCH), or one that is not known to be safe.
@@ -387,13 +380,18 @@ Internet-Draft          Linked Cache Invalidation               May 2012
    Registry; see Section 3 and Section 4.
 
 
-
-Nottingham & Kelly      Expires November 23, 2012               [Page 7]
-
-Internet-Draft          Linked Cache Invalidation               May 2012
-
-
 8.  References
+
+
+
+
+
+
+
+Nottingham & Kelly      Expires December 3, 2012                [Page 7]
+
+Internet-Draft          Linked Cache Invalidation              June 2012
+
 
 8.1.  Normative References
 
@@ -444,5 +442,7 @@ Authors' Addresses
 
 
 
-Nottingham & Kelly      Expires November 23, 2012               [Page 8]
+
+
+Nottingham & Kelly      Expires December 3, 2012                [Page 8]
 
