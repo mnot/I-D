@@ -3,8 +3,8 @@
 
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                 Rackspace
-Intended status: Informational                               May 4, 2012
-Expires: November 5, 2012
+Intended status: Informational                              June 8, 2012
+Expires: December 10, 2012
 
 
            Indicating Details of Problems to Machines in HTTP
@@ -32,7 +32,7 @@ Status of this Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 5, 2012.
+   This Internet-Draft will expire on December 10, 2012.
 
 Copyright Notice
 
@@ -52,9 +52,9 @@ Copyright Notice
 
 
 
-Nottingham              Expires November 5, 2012                [Page 1]
+Nottingham              Expires December 10, 2012               [Page 1]
 
-Internet-Draft            HTTP Problem Details                  May 2012
+Internet-Draft            HTTP Problem Details                 June 2012
 
 
 Table of Contents
@@ -70,7 +70,6 @@ Table of Contents
    9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . . . 8
    10. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . 8
    11. Normative References  . . . . . . . . . . . . . . . . . . . . . 9
-   Appendix A.  Non-Normative JSON Schema  . . . . . . . . . . . . . . 9
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . . . 9
 
 
@@ -108,22 +107,25 @@ Table of Contents
 
 
 
-Nottingham              Expires November 5, 2012                [Page 2]
+
+Nottingham              Expires December 10, 2012               [Page 2]
 
-Internet-Draft            HTTP Problem Details                  May 2012
+Internet-Draft            HTTP Problem Details                 June 2012
 
 
 1.  Introduction
 
    While HTTP [RFC2616] defines the status code as the primary indicator
    of response semantics, it is sometimes not fine-grained enough to
-   convey full error semantics, particularly to non-human consumers.
+   convey helpful information about the error, particularly to non-human
+   consumers.
 
-   For example, while a 403 Forbidden response that indicates that the
-   client's account doesn't have enough credit can be adequately
-   expressed in HTML if it's presented to a human in front of a Web
-   browser, a non-browser client will have difficulty understanding the
-   response, because it doesn't understand the structure of the HTML.
+   For example, consider a 403 Forbidden response that indicates that
+   the client's account doesn't have enough credit.  This can be
+   adequately expressed in HTML if it's presented to a human in front of
+   a Web browser, a non-browser client will have difficulty
+   understanding the response, because it doesn't understand the
+   structure of the markup.
 
    This specification proposes a "HTTP Problem Detail" as an extensible
    way to carry machine-readable details of errors in a response, to
@@ -156,17 +158,15 @@ Internet-Draft            HTTP Problem Details                  May 2012
 
 3.  The HTTP Problem Details JSON Object
 
-   The canonical format for aproblem details is a JSON [RFC4627]
+   The canonical format for problem details is a JSON [RFC4627]
    document, identified with the "application/json-problem" media type.
    Its root object has the following properties:
 
 
 
-
-
-Nottingham              Expires November 5, 2012                [Page 3]
+Nottingham              Expires December 10, 2012               [Page 3]
 
-Internet-Draft            HTTP Problem Details                  May 2012
+Internet-Draft            HTTP Problem Details                 June 2012
 
 
    o  "describedby" (string) - A URL that identifies the type of
@@ -220,9 +220,9 @@ Internet-Draft            HTTP Problem Details                  May 2012
 
 
 
-Nottingham              Expires November 5, 2012                [Page 4]
+Nottingham              Expires December 10, 2012               [Page 4]
 
-Internet-Draft            HTTP Problem Details                  May 2012
+Internet-Draft            HTTP Problem Details                 June 2012
 
 
       HTTP/1.1 403 Forbidden
@@ -271,17 +271,17 @@ Internet-Draft            HTTP Problem Details                  May 2012
    interface of the application itself.
 
    For example, an "out of credit" problem is an appropriate explanation
-   as to why a request was forbidden.  In contrast, an error explaining
-   the internal conditions that led to a 500 Internal Server Error along
+   as to why a request was forbidden.  In contrast, a description of the
+   internal conditions that led to a 500 Internal Server Error along
 
 
 
-Nottingham              Expires November 5, 2012                [Page 5]
+Nottingham              Expires December 10, 2012               [Page 5]
 
-Internet-Draft            HTTP Problem Details                  May 2012
+Internet-Draft            HTTP Problem Details                 June 2012
 
 
-   with a stack trace is not an appropriate use of this mechanism,
+   with a stack trace are not an appropriate use of this mechanism,
    because it exposes implementation detail, rather than explaining the
    interface.
 
@@ -332,9 +332,9 @@ Internet-Draft            HTTP Problem Details                  May 2012
 
 
 
-Nottingham              Expires November 5, 2012                [Page 6]
+Nottingham              Expires December 10, 2012               [Page 6]
 
-Internet-Draft            HTTP Problem Details                  May 2012
+Internet-Draft            HTTP Problem Details                 June 2012
 
 
 6.  Generating Problems
@@ -388,9 +388,9 @@ Internet-Draft            HTTP Problem Details                  May 2012
 
 
 
-Nottingham              Expires November 5, 2012                [Page 7]
+Nottingham              Expires December 10, 2012               [Page 7]
 
-Internet-Draft            HTTP Problem Details                  May 2012
+Internet-Draft            HTTP Problem Details                 June 2012
 
 
    interaction.
@@ -444,9 +444,9 @@ Internet-Draft            HTTP Problem Details                  May 2012
 
 
 
-Nottingham              Expires November 5, 2012                [Page 8]
+Nottingham              Expires December 10, 2012               [Page 8]
 
-Internet-Draft            HTTP Problem Details                  May 2012
+Internet-Draft            HTTP Problem Details                 June 2012
 
 
 11.  Normative References
@@ -470,39 +470,6 @@ Internet-Draft            HTTP Problem Details                  May 2012
               Parameters", RFC 5987, August 2010.
 
    [RFC5988]  Nottingham, M., "Web Linking", RFC 5988, October 2010.
-
-
-Appendix A.  Non-Normative JSON Schema
-
-   This schema is non-normative, and will probably disappear unless JSON
-   Schema actually starts moving forward.
-
-      {
-        "description": "HTTP Problem Details",
-        "type": "object",
-        "properties": {
-          "describedby": {
-            "type": "string",
-            "required": "true",
-            "format": "uri"
-          },
-          "title": { "type": "string", required: true },
-          "detail": { "type": "string" }
-        }
-      }
-
-
-
-
-
-
-
-
-
-
-Nottingham              Expires November 5, 2012                [Page 9]
-
-Internet-Draft            HTTP Problem Details                  May 2012
 
 
 Author's Address
@@ -533,28 +500,5 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Nottingham              Expires November 5, 2012               [Page 10]
+Nottingham              Expires December 10, 2012               [Page 9]
 
