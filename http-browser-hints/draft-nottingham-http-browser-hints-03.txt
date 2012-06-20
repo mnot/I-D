@@ -2,9 +2,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                            August 3, 2011
+Internet-Draft                                             June 20, 2012
 Intended status: Informational
-Expires: February 4, 2012
+Expires: December 22, 2012
 
 
                            HTTP Browser Hints
@@ -40,11 +40,11 @@ Status of this Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on February 4, 2012.
+   This Internet-Draft will expire on December 22, 2012.
 
 Copyright Notice
 
-   Copyright (c) 2011 IETF Trust and the persons identified as the
+   Copyright (c) 2012 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -52,9 +52,9 @@ Copyright Notice
 
 
 
-Nottingham              Expires February 4, 2012                [Page 1]
+Nottingham              Expires December 22, 2012               [Page 1]
 
-Internet-Draft             HTTP Browser Hints                August 2011
+Internet-Draft             HTTP Browser Hints                  June 2012
 
 
    (http://trustee.ietf.org/license-info) in effect on the date of
@@ -68,30 +68,31 @@ Internet-Draft             HTTP Browser Hints                August 2011
 
 Table of Contents
 
-   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . . . 3
-   2.  Requirements  . . . . . . . . . . . . . . . . . . . . . . . . . 3
-   3.  A file format for Browser Hints . . . . . . . . . . . . . . . . 3
-     3.1.  The 'prefixlist' Value Type . . . . . . . . . . . . . . . . 4
-   4.  Discovering Browser Hints for a Web site  . . . . . . . . . . . 4
-   5.  Pre-defined Browser Hints . . . . . . . . . . . . . . . . . . . 5
-     5.1.  max-conns . . . . . . . . . . . . . . . . . . . . . . . . . 5
-     5.2.  pconn-ip  . . . . . . . . . . . . . . . . . . . . . . . . . 5
-     5.3.  ip-balance  . . . . . . . . . . . . . . . . . . . . . . . . 6
-     5.4.  connect-timeout . . . . . . . . . . . . . . . . . . . . . . 6
-     5.5.  max-pipeline-depth  . . . . . . . . . . . . . . . . . . . . 6
-     5.6.  small-hdrs  . . . . . . . . . . . . . . . . . . . . . . . . 7
-     5.7.  relative-referer  . . . . . . . . . . . . . . . . . . . . . 7
-     5.8.  chunk-req-bodies  . . . . . . . . . . . . . . . . . . . . . 7
-     5.9.  omit-cookies  . . . . . . . . . . . . . . . . . . . . . . . 7
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . . . 7
-   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . . . 8
-     7.1.  The 'browser-hints' Well-Known URI  . . . . . . . . . . . . 8
-     7.2.  The HTTP Browser Hints Registry . . . . . . . . . . . . . . 8
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . . . 9
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . . . 9
-     8.2.  Informative References  . . . . . . . . . . . . . . . . . . 9
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . . . 9
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . . . 9
+   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  3
+   2.  Requirements . . . . . . . . . . . . . . . . . . . . . . . . .  3
+   3.  A file format for Browser Hints  . . . . . . . . . . . . . . .  3
+     3.1.  The 'prefixlist' Value Type  . . . . . . . . . . . . . . .  4
+   4.  Discovering Browser Hints for a Web site . . . . . . . . . . .  4
+   5.  Pre-defined Browser Hints  . . . . . . . . . . . . . . . . . .  5
+     5.1.  max-conns  . . . . . . . . . . . . . . . . . . . . . . . .  5
+     5.2.  pconn-ip . . . . . . . . . . . . . . . . . . . . . . . . .  5
+     5.3.  ip-balance . . . . . . . . . . . . . . . . . . . . . . . .  6
+     5.4.  connect-timeout  . . . . . . . . . . . . . . . . . . . . .  6
+     5.5.  read-timeout . . . . . . . . . . . . . . . . . . . . . . .  6
+     5.6.  max-pipeline-depth . . . . . . . . . . . . . . . . . . . .  7
+     5.7.  small-hdrs . . . . . . . . . . . . . . . . . . . . . . . .  7
+     5.8.  relative-referer . . . . . . . . . . . . . . . . . . . . .  7
+     5.9.  chunk-req-bodies . . . . . . . . . . . . . . . . . . . . .  7
+     5.10. omit-cookies . . . . . . . . . . . . . . . . . . . . . . .  8
+   6.  Security Considerations  . . . . . . . . . . . . . . . . . . .  8
+   7.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . .  8
+     7.1.  The 'browser-hints' Well-Known URI . . . . . . . . . . . .  8
+     7.2.  The HTTP Browser Hints Registry  . . . . . . . . . . . . .  8
+   8.  References . . . . . . . . . . . . . . . . . . . . . . . . . .  9
+     8.1.  Normative References . . . . . . . . . . . . . . . . . . .  9
+     8.2.  Informative References . . . . . . . . . . . . . . . . . .  9
+   Appendix A.  Acknowledgements  . . . . . . . . . . . . . . . . . .  9
+   Author's Address . . . . . . . . . . . . . . . . . . . . . . . . . 10
 
 
 
@@ -107,10 +108,9 @@ Table of Contents
 
 
 
-
-Nottingham              Expires February 4, 2012                [Page 2]
+Nottingham              Expires December 22, 2012               [Page 2]
 
-Internet-Draft             HTTP Browser Hints                August 2011
+Internet-Draft             HTTP Browser Hints                  June 2012
 
 
 1.  Introduction
@@ -164,9 +164,9 @@ Internet-Draft             HTTP Browser Hints                August 2011
 
 
 
-Nottingham              Expires February 4, 2012                [Page 3]
+Nottingham              Expires December 22, 2012               [Page 3]
 
-Internet-Draft             HTTP Browser Hints                August 2011
+Internet-Draft             HTTP Browser Hints                  June 2012
 
 
    By their nature, all browser hints are optional; i.e., browsers are
@@ -220,9 +220,9 @@ Internet-Draft             HTTP Browser Hints                August 2011
 
 
 
-Nottingham              Expires February 4, 2012                [Page 4]
+Nottingham              Expires December 22, 2012               [Page 4]
 
-Internet-Draft             HTTP Browser Hints                August 2011
+Internet-Draft             HTTP Browser Hints                  June 2012
 
 
    Typically, clients (especially browsers) will not block other
@@ -276,9 +276,9 @@ Internet-Draft             HTTP Browser Hints                August 2011
 
 
 
-Nottingham              Expires February 4, 2012                [Page 5]
+Nottingham              Expires December 22, 2012               [Page 5]
 
-Internet-Draft             HTTP Browser Hints                August 2011
+Internet-Draft             HTTP Browser Hints                  June 2012
 
 
       it MUST be valid for all sites.
@@ -319,31 +319,44 @@ Internet-Draft             HTTP Browser Hints                August 2011
 
    o  Browser Hint Name: connect-timeout
    o  Description: When present, this hint indicates how long the site
-      wishes browsers to wait before considering a given IP address
-      associated with it as unresponsive.
+      wishes browsers to wait for a connection to be established, in
+      seconds, before considering that connection unresponsive.
    o  Value Type: integer
    o  Contact: mnot@mnot.net
 
-5.5.  max-pipeline-depth
+5.5.  read-timeout
+
+   o  Browser Hint Name: read-timeout
+
+
+
+
+
+Nottingham              Expires December 22, 2012               [Page 6]
+
+Internet-Draft             HTTP Browser Hints                  June 2012
+
+
+   o  Description: When present, this hint indicates how long the site
+      wishes browsers to wait before considering a connection
+      unresponsive, when data is outstanding (either a response or part
+      thereof), in seconds.
+   o  Value Type: integer
+   o  Contact: mnot@mnot.net
+
+   Note that requests on timed-out connections can be retried, subjects
+   to the constraints of HTTP.
+
+5.6.  max-pipeline-depth
 
    o  Browser Hint Name: max-pipeline-depth
-
-
-
-
-
-Nottingham              Expires February 4, 2012                [Page 6]
-
-Internet-Draft             HTTP Browser Hints                August 2011
-
-
    o  Description: When present, this hint indicates the maximum number
       of pipelined requests per connection that the site would like
       clients to use.
    o  Value Type: number
    o  Contact: mnot@mnot.net
 
-5.6.  small-hdrs
+5.7.  small-hdrs
 
    o  Browser Hint Name: small-hdrs
    o  Description: When true, this hint indicates that clients can omit
@@ -353,7 +366,7 @@ Internet-Draft             HTTP Browser Hints                August 2011
    o  Value Type: prefixlist
    o  Contact: mnot@mnot.net
 
-5.7.  relative-referer
+5.8.  relative-referer
 
    o  Browser Hint Name: relative-referer
    o  Description: When true, this hint indicates that servers prefer a
@@ -361,7 +374,7 @@ Internet-Draft             HTTP Browser Hints                August 2011
    o  Value Type: true | false
    o  Contact: mnot@mnot.net
 
-5.8.  chunk-req-bodies
+5.9.  chunk-req-bodies
 
    o  Browser Hint Name: chunk-req-bodies
    o  Description: When true, this hint indicates that the server can
@@ -370,10 +383,20 @@ Internet-Draft             HTTP Browser Hints                August 2011
       clients may still require a 411 response status, even in when this
       hint is present.  When false, the server may or may not require a
       Content-Length on requests with bodies.
+
+
+
+
+
+Nottingham              Expires December 22, 2012               [Page 7]
+
+Internet-Draft             HTTP Browser Hints                  June 2012
+
+
    o  Value Type: true | false
    o  Contact: mnot@mnot.net
 
-5.9.  omit-cookies
+5.10.  omit-cookies
 
    o  Browser Hint Name: omit-cookies
    o  Description: When true, this hint indicates that cookies [RFC6265]
@@ -385,12 +408,6 @@ Internet-Draft             HTTP Browser Hints                August 2011
 6.  Security Considerations
 
    TBD
-
-
-
-Nottingham              Expires February 4, 2012                [Page 7]
-
-Internet-Draft             HTTP Browser Hints                August 2011
 
 
 7.  IANA Considerations
@@ -424,6 +441,14 @@ Internet-Draft             HTTP Browser Hints                August 2011
    implementations.
 
    Likewise, new hints MUST be relevant to browser use cases; other non-
+
+
+
+Nottingham              Expires December 22, 2012               [Page 8]
+
+Internet-Draft             HTTP Browser Hints                  June 2012
+
+
    browsing hints and metadata would make the hints response undesirably
    large.  However, note that non-browser clients MAY use them.
 
@@ -437,17 +462,6 @@ Internet-Draft             HTTP Browser Hints                August 2011
 
 
 8.  References
-
-
-
-
-
-
-
-Nottingham              Expires February 4, 2012                [Page 8]
-
-Internet-Draft             HTTP Browser Hints                August 2011
-
 
 8.1.  Normative References
 
@@ -484,6 +498,13 @@ Appendix A.  Acknowledgements
    Kundu, Patrick McManus, Steve Souders, and Martin Thompson for their
    suggestions and feedback.
 
+
+
+Nottingham              Expires December 22, 2012               [Page 9]
+
+Internet-Draft             HTTP Browser Hints                  June 2012
+
+
    The author takes all responsibility for errors and omissions.
 
 
@@ -500,5 +521,40 @@ Author's Address
 
 
 
-Nottingham              Expires February 4, 2012                [Page 9]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 22, 2012              [Page 10]
 
