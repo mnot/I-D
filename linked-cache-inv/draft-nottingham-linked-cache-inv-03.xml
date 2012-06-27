@@ -217,7 +217,7 @@ Cache-Control: no-cache, inv-maxage=300
 
 		</section>
 
-		<section title="The 'invalidates' link relation type" anchor="invalidates">
+		<section title="The 'invalidates' Link Relation Type" anchor="invalidates">
 			
 			<t>The 'invalidates' link relation type allows a response that
          signifies a state change on the server to indicate one or more
@@ -233,7 +233,7 @@ Cache-Control: no-cache, inv-maxage=300
 			
 		</section>
 		
-		<section title="The 'inv-by' link relation type" anchor="inv-by">
+		<section title="The 'inv-by' Link Relation Type" anchor="inv-by">
 
    		<t>The 'inv-by' link relation type allows a response to nominate one
          or more other resources that affect the state of the resource it's
@@ -250,7 +250,7 @@ Cache-Control: no-cache, inv-maxage=300
 
 		</section>
 		
-		<section title="The 'inv-maxage' response cache-control extension"
+		<section title="The 'inv-maxage' Response Cache-Control Extension"
     anchor="inv-maxage">
 
 			<t>When present, the 'inv-maxage' cache-control extension indicates
@@ -258,16 +258,35 @@ Cache-Control: no-cache, inv-maxage=300
          invalidation can consider responses fresh for, provided they are not
          invalidated.</t>
 
-			<figure>
-			<artwork xml:space="preserve"><![CDATA[	
-"inv-maxage" "=" delta-seconds				
+         <section title="inv-maxage Syntax">
+
+            <t>The inv-maxage cache-control extension is parameterised with
+               a numeric argument:</t>
+
+   			<figure>
+   			<artwork xml:space="preserve"><![CDATA[	
+"inv-maxage" "=" ( delta-seconds | ( <"> delta-seconds <"> ) )			
 ]]></artwork>
-			</figure>	
+   			</figure>
+
+            <t>Note that the argument MAY occur in either token or
+            quoted-string form.</t>
+
+            <t>If the argument is missing or otherwise does not conform to 
+               the BNF rule, it is invalid and MUST be ignored by caches.</t>
+               
+            <t>If the directive appears more than once in a response, each
+            instance is invalid and MUST be ignored by caches.</t>
+            
+         </section>
+         
+         <section title="inv-maxage Semantics">
 
 			<t>HTTP caches MAY, if they fully implement this specification,
          disregard the HTTP response cache-control directives 'no-cache',
-         'max-age' and 's-maxage' and use the value of inv-maxage as a
-         replacement for max-age.</t>
+         'max-age' and 's-maxage' when a valid 'inv-maxage' cache-control
+         directive is present in a response, using its value as a replacement
+         for max-age.</t>
 
 			<t>HTTP caches using inv-maxage to calculate freshness MUST
          invalidate all stored responses whose request-URIs (after
@@ -315,6 +334,8 @@ Cache-Control: no-cache, inv-maxage=300
          CLR messages, upon invalidations caused by other links (i.e., chained
          "cascades" of linked invalidations), or when a changed response is
          seen (such as when HTTP validation is unsuccessful).</t>
+
+         </section>
 			
 		</section>
 
@@ -342,6 +363,9 @@ Cache-Control: no-cache, inv-maxage=300
 			<t>This document registers two entries in the Link Relation Type
          Registry; see <xref target="invalidates"/> and <xref
          target="inv-by"/>.</t>
+
+         <t>It also registers a HTTP Cache Directive, "inv-maxage"; see <xref
+         target="inv-maxage"/>.</t>
 
 		</section>
 	</middle>
