@@ -106,8 +106,57 @@
             the same as those for a Link header field; in particular, the
             "rel" parameter MUST NOT appear more than once, and if it does,
             the linkt-value MUST be ignored by parsers.</t>
+            
+         <t>This specification defines additional semantics for the
+            "var-base" parameter on linkt-values; see below.</t>
 
 		</section>
+
+      <section title="The 'var-base' parameter">
+         <t>When a linkt-value has a 'var-base' parameter, its value
+            conveys a URI-reference that is used as a base URI for the
+            variable names in the URI template.</t>
+
+         <t>To determine the URI for a given variable, the value given
+            is used as a base URI in reference resolution (as specified in
+            <xref target="RFC3986"/>). If the resulting URI is still relative,
+            the context of the link is used as the base URI in a further
+            resolution; see <xref target="RFC5988"/>.</t>
+            
+         <t>For example:</t>
+
+		      <figure>
+		        <artwork xml:space="preserve"><![CDATA[
+Link-Template: </widgets/{widget_id}>; 
+               rel="http://example.org/rel/widget";
+               var-base="http://example.org/vars/"
+]]></artwork>
+		      </figure>
+
+         <t>indicates that a resource with the relation type
+         "http;//example.org/rel/widget" can be found by interpolating the
+         "http://example.org/vars/widget_id" variable into the template
+         given.</t>
+         
+         <t>If the current context of the link is "http://example.org/", 
+            the same information could be conveyed by this header field:</t>
+
+		      <figure>
+		        <artwork xml:space="preserve"><![CDATA[
+Link-Template: </widgets/{widget_id}>; 
+               rel="http://example.org/rel/widget";
+               var-base="/vars/"
+]]></artwork>
+		      </figure>
+         
+         <t>This mechanism allows template variables to be globally
+         identified, rather than specific to the context of use. Dereferencing
+         the URI for a particular variable might lead to more information
+         about the syntax or semantics of that variable; specification of
+         particular formats for this information is out of scope for this
+         document.</t>
+         
+      </section>
 
 		<section title="Examples">
 
