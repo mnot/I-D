@@ -50,6 +50,21 @@
 
 	<middle>
 
+      <section title="Note to Readers">
+         
+         <t>This specification is tentative (as all Internet-Drafts are).
+            It's not yet clear whether defining this format will improve
+            things enough to balance out the harm it may cause, and so
+            it may disappear at any time. Using it before it becomes an
+            RFC may subject you to ridicule; you have been warned.</t>
+            
+         <t>What's the problem? In a nutshell, this sort of thing might 
+            encourage tighter coupling, making applications more brittle.
+            On the other hand, lots of people are doing this already, so 
+            having a common way to do it -- with lots of caveats about 
+            how it can be misused -- might be better. Stay tuned.</t>
+      </section>
+
 		<section title="Introduction">
 
          <t>While HTTP <xref target="RFC2616"/> defines the status code as the
@@ -58,7 +73,7 @@
          particularly to non-human consumers.</t>
 
          <t>For example, consider a 403 Forbidden response that indicates that
-         the client's account doesn't have enough credit. This can be
+         the client's account doesn't have enough credit. While this can be
          adequately expressed in HTML if it's presented to a human in front of
          a Web browser, a non-browser client will have difficulty
          understanding the response, because it doesn't understand the
@@ -218,15 +233,17 @@
          conditions that could potentially apply to any resource on the Web –
          are usually better expressed as plain status codes.</t>
 
-         <t>For example, a "write access disallowed" problem is likely
+         <t>For example, a "write access disallowed" problem is
          unnecessary, since a 403 Forbidden status code on a PUT request is
-         largely self-explanatory.</t>
+         self-explanatory.</t>
          
-		 <t>Finally, a problem domain may have a more appropriate way to carry
+         <t>Finally, a problem domain may have a more appropriate way to carry
          an error in a format that it already defines. HTTP problem details
          are intended to avoid the necessity of establishing new "fault" or
          "error" document formats, not to replace existing domain-specific
-         formats.</t>
+         formats. That said, it is possible to add support for problems using
+         HTTP server-driven content negotiation (i.e., the client uses the
+         Accept request header to indicate a preference for problems).</t>
 		
          <t>If defining a new problem still seems wise, one can be created
          by:
@@ -236,12 +253,10 @@
             scheme),</t>
             <t>Choosing a title that appropriately describes it (think
             short), and</t>
-            <t>Nominating one or more HTTP status code that it should
-            be used with.</t>
+            <t>Nominating a HTTP status code for it to be used with.</t>
          </list></t>
          
-         <t>Problems SHOULD document the HTTP status code(s) they are to be
-         used with, and MAY specify the use of the Retry-After response header
+         <t>Problems MAY specify the use of the Retry-After response header
          in appropriate circumstances.</t>
          
          <t>A problem’s describedby URL SHOULD resolve to HTML documentation
@@ -330,7 +345,7 @@
          scrutinised.</t>
          
           <t>Risks include leaking information that can be exploited to
-         compromise the system, an account in the system, or the privacy of
+         compromise the system, access to the system, or the privacy of
          users of the system.</t>
 
 		</section>
@@ -342,7 +357,7 @@
 
       <figure><artwork><![CDATA[
    Type name: application
-   Subtype name: problem+json
+   Subtype name: json-problem
    Required parameters: None
    Optional parameters: None; unrecognised parameters 
                         should be ignored
