@@ -24,7 +24,7 @@
 <rfc ipr="trust200902" docName="draft-nottingham-http-problem-00" category="info">
 
 	<front>
-		<title abbrev="HTTP Problem Details">Indicating Details of Problems to Machines in HTTP</title>
+		<title abbrev="Problem Details">Indicating Details of Problems to Machines in HTTP</title>
 		<author initials="M." surname="Nottingham" fullname="Mark Nottingham">
 			<organization>Rackspace</organization>
 			<address>       
@@ -37,20 +37,16 @@
 		<keyword>HTTP</keyword>
 		<keyword>error</keyword>
 		<keyword>problem</keyword>
-		<keyword>HTTP problem</keyword>
 		<abstract>
 
-			<t>This specification proposes a "HTTP Problem Detail" as an
-            extensible way to carry machine-readable details of errors in a
-            response, to avoid the need to invent new status codes and/or
-            response formats for non-human consumers.</t>
+			<t>This specification proposes a "Problem Detail" as an extensible
+         way to carry machine-readable details of HTTP errors in a response,
+         to avoid the need to invent new response formats for non-human
+         consumers.</t>
 
 		</abstract>
-	</front>
 
-	<middle>
-
-      <section title="Note to Readers">
+      <note title="Note to Readers">
          
          <t>This specification is tentative (as all Internet-Drafts are).
             It's not yet clear whether defining this format will improve
@@ -63,7 +59,11 @@
             On the other hand, lots of people are doing this already, so 
             having a common way to do it -- with lots of caveats about 
             how it can be misused -- might be better. Stay tuned.</t>
-      </section>
+      </note>
+
+	</front>
+
+	<middle>
 
 		<section title="Introduction">
 
@@ -79,11 +79,11 @@
          understanding the response, because it doesn't understand the
          structure of the markup.</t>
          
-         <t>This specification proposes a "HTTP Problem Detail" as an
+         <t>This specification proposes a "Problem Detail" as an
          extensible way to carry machine-readable details of errors in a
          response, to avoid the need to invent new response formats.</t>
          
-          <t>HTTP problem details have: 
+          <t>Problem details have: 
              <list style="symbols">
              <t>A generic status, identified and solely conveyed by the HTTP
              status code <eref
@@ -117,7 +117,7 @@
 		</section>
 
 
-      <section title="The HTTP Problem Details JSON Object">
+      <section title="The Problem Details JSON Object">
 
          <t>The canonical format for problem details is a JSON <xref
          target="RFC4627"/> document, identified with the
@@ -135,7 +135,7 @@
             detail specific to this instance of the problem.</t>
          </list></t>
          
-          <t>HTTP problem details, when serialised as JSON objects, MUST
+          <t>Problem details, when serialised as JSON objects, MUST
           include the "describedby" and "title" properties. The "detail"
           property is always OPTIONAL.</t>
          
@@ -169,8 +169,8 @@
       <section anchor="the-problem-http-response-header-field" title="Expressing Problems with Link Headers">
 
       <t>Because resources often use formats other than JSON to convey
-      human-readable problem details, it is also possible to serialise a HTTP
-      Problem for non-browser consumption alongside them using a Link response
+      human-readable problem details, it is also possible to serialise Problem
+      Details for non-browser consumption alongside them using a Link response
       header field <xref target="RFC5988"/>. For example:</t>
 
       <figure><artwork><![CDATA[
@@ -185,7 +185,7 @@
       <t>Here, the same problem as above is conveyed using the header in
       previous examples, but without the optional detail.</t>
 
-      <t>HTTP problem details are serialised into Link headers using the
+      <t>Problem details are serialised into Link headers using the
       "describedby" link relation type, with the URL for the problem type as
       the link target. The title is conveyed using the "title" parameter, 
       and the detail can be conveyed using the "detail" parameter.</t>
@@ -212,13 +212,13 @@
 
       </section>
 
-      <section anchor="defining" title="Defining New HTTP Problem Details">
+      <section anchor="defining" title="Defining New Problem Details">
 
-         <t>Before defining a new type of HTTP problem detail, it’s important
-         to understand what they are good for, and what’s better left to other
+         <t>Before defining a new type of problem detail, it’s important to
+         understand what they are good for, and what’s better left to other
          mechanisms.</t>
          
-         <t>Problems are not a debugging tool for the underlying
+         <t>Problem details are not a debugging tool for the underlying
          implementation; rather, they are a way to expose greater detail about
          the HTTP interface of the application itself.</t>
          
@@ -238,7 +238,7 @@
          self-explanatory.</t>
          
          <t>Finally, a problem domain may have a more appropriate way to carry
-         an error in a format that it already defines. HTTP problem details
+         an error in a format that it already defines. Problem details
          are intended to avoid the necessity of establishing new "fault" or
          "error" document formats, not to replace existing domain-specific
          formats. That said, it is possible to add support for problems using
@@ -256,14 +256,14 @@
             <t>Nominating a HTTP status code for it to be used with.</t>
          </list></t>
          
-         <t>Problems MAY specify the use of the Retry-After response header
-         in appropriate circumstances.</t>
+         <t>Problem types MAY specify the use of the Retry-After response
+         header in appropriate circumstances.</t>
          
          <t>A problem’s describedby URL SHOULD resolve to HTML documentation
          that explains how to resolve the problem.</t>
          
          <t>Optionally, a problem definition MAY specify additional properties
-         on the HTTP Problem Details JSON object.</t>
+         on the Problem Details JSON object.</t>
          
          <t>For example, an extension might use typed links <xref
          target="RFC5988"/> to another resource that can be used by machines
@@ -281,7 +281,7 @@
          </section>
          
          <section anchor="generating-problems" title="Generating
-         Problems">
+         Problem Details">
          
           <t>The URL used in the describedby property MUST NOT be changed in
          any way from that defined by its specification; doing so turns it
@@ -316,7 +316,7 @@
 
       </section>
 
-      <section anchor="consuming-problems" title="Consuming Problems">
+      <section anchor="consuming-problems" title="Consuming Problem Details">
 
          <t>Consumers should use the describedby URL as the primary identifier
          for the problem; the title string is advisory, and included only for
@@ -417,7 +417,7 @@
 
 <figure><artwork><![CDATA[
    {
-     "description": "HTTP Problem Details",
+     "description": "Problem Details",
      "type": "object",
      "properties": {
        "describedby": {
