@@ -79,7 +79,7 @@
          understanding the response, because it doesn't understand the
          structure of the markup.</t>
          
-         <t>This specification proposes a "Problem Detail" as an
+         <t>This specification defines a "Problem Detail" as an
          extensible way to carry machine-readable details of errors in a
          response, to avoid the need to invent new response formats.</t>
          
@@ -97,15 +97,24 @@
             </list>
          </t>
          
-          <t>This specification defines a common data model for problem
-          details as a JSON <xref target="RFC4627"/> object. That object can
-          be serialised as an "application/json-problem" HTTP response, or it
-          can be conveyed using a Link HTTP response header field <xref
+          <t>The common data model for problem details as a JSON <xref
+          target="RFC4627"/> object. That object can be serialised as an
+          "application/json-problem" HTTP response, or it can be conveyed
+          using a Link HTTP response header field <xref
           target="RFC5988"/>.</t>
          
           <t>Future work may include defining a HTML Microformat <eref
           target="http://microformats.org/"/> that allows this information to
           be carried in an HTML document as well.</t>
+
+          <t>Note that Problem Details are not the only way to convey the
+             details of a problem in HTTP; if the response is still a
+             representation of a resource, for example, it's often preferable
+             to accommodate describing the details in that format.</t>
+         
+          <t>Rather, the aim of this specification is to define a common 
+             format for those applications that need one, so that they
+             aren't required to define their own.</t>
 
 		</section>
 
@@ -298,8 +307,9 @@
    Content-Type: text/html
    Content-Language: se
    Vary: Accept-Language
-   Link: <http://example.com/probs/out-of-credit>; rel="describedby"; 
-            title*=UTF-8''Du%20%C3%A4r%20ute%20p%C3%A5%20pengar.
+   Link: <http://example.com/probs/out-of-credit>; 
+         rel="describedby"; 
+         title*=UTF-8''Du%20%C3%A4r%20ute%20p%C3%A5%20pengar.
 ]]></artwork></figure>
 
          <t>Note the use of RFC5987 encoding here. Problem details SHOULD be
@@ -383,6 +393,7 @@
 		<section title="Acknowledgements">
 			<t>The author would like to thank 
 				Jan Algermissen,
+				Mike Amundsen,
 				Subbu Allamaraju,
 				Roy Fielding,
 				Sam Johnston,
