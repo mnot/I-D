@@ -4,7 +4,7 @@
 <!DOCTYPE rfc SYSTEM "http://xml.resource.org/authoring/rfc2629.dtd" [
 ]>
 
-<rfc ipr="trust200902" docName="draft-nottingham-registry-custodian-00" category="std">
+<rfc ipr="trust200902" docName="draft-nottingham-registry-custodian-01" category="std">
 
 <?rfc toc="yes"?>
 <?rfc tocindent="yes"?>
@@ -16,7 +16,7 @@
 <?rfc inline="yes"?>
 
   <front>
-    <title abbrev="Registry Custodians">Managing IANA Registries with Custodians</title>
+    <title abbrev="Registry Custodians">Custodial Review Criteria for Designated Experts</title>
 
     <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
       <organization></organization>
@@ -33,14 +33,14 @@
 	<keyword>IANA</keyword>
 	<keyword>registry</keyword>
 	<keyword>custodian</keyword>
+	<keyword>designated expert</keyword>
 
     <abstract>
 
-      <t>This document specifies an opt-in augmentation to the Well-Known IANA
-      Policy Definitions; appointing a “Custodian”.</t>
+      <t>This document specifies a set of review criteria for IANA registry
+      Designated Experts.</t>
 
     </abstract>
-
 
   </front>
 
@@ -49,25 +49,29 @@
 
 <section anchor="introduction" title="Introduction">
 
-   <t>This document specifies an opt-in augmentation to the Well-Known IANA
-   Policy Definitions <xref target="RFC5226"/>; appointing a “Custodian”.</t>
+   <t>This document specifies a set of review criteria for IANA registry
+   Designated Experts <xref target="RFC5226"/>.</t>
 
-   <t>The custodial process is designed to be used when a registry is likely
-   to have a large number of entries from outside the standards community,
-   because it gives an individual limited powers to maintain the registry’s
+   <t>They are designed to be used when a registry is likely to have a large
+   number of registrations from outside the IETF community, because they give
+   the Designated Expert(s) limited powers to maintain the registry’s
    contents, while still having a low bar to entry.</t>
 
-   <t>The goal of a custodial registry is to reflect deployment experience as
-   closely as possible; in other words, if a protocol element is in use on the
-   Internet, it ought to appear in the registry.</t>
+   <t>Colloquially, such a Designated Expert is known as a "Custodian."</t>
+
+   <t>The goal of a registry using them is to reflect deployment with the
+   registry as closely as possible; in other words, if a protocol element is
+   in use on the Internet, it ought to appear in the registry.</t>
 
    <t>It is a non-goal to use the registry as a measure of quality (e.g.,
    allowing only “good” registrations, imposing architectural constraints onto
    registrations).</t>
 
-   <t>Usually, a registry defined as Expert Review or Specification Required
-   will define the Expert as a Custodian. However, registries with more
-   stringent requirements can also use this process.</t>
+   <t>As such, these review criteria are not appropriate for all
+   registries.</t>
+
+   <t>A registry defined as Expert Review or Specification Required can define
+   the Expert's role as that of a Custodian by referencing this document.</t>
 
 <section anchor="notational-conventions" title="Notational Conventions">
 
@@ -102,6 +106,8 @@
      <t>MUST NOT act as a “gatekeeper” to the registry (e.g., refusing
      registrations based upon perceived or actual architectural or aesthetic
      issues)</t>
+     <t>MUST respect additional requirements placed upon registrations by the
+     registry definition when making decisions</t>
      <t>SHOULD consult with the community (using a nominated mailing list)
      when there are disputes or questions about pending or existing
      registrations</t>
@@ -119,6 +125,17 @@
      review</t>
    </list></t>
 
+   <t>Additionally, for Specification Required registries, a Custodian:</t>
+
+   <t><list style="symbols">
+     <t>MAY approve registrations when it is, in their judgement, apparent
+	 that a specification will be published</t>
+	 <t>MAY consider specifications other than standards as meeting
+     "Specification Required". References are encouraged to be reasonably
+     stable, but references stability on its own SHOULD NOT be an impediment
+     to registration, because the Custodian(s) MAY update it as necessary.</t>
+   </list></t>
+
    <t>Members of the community who disagree with a Custodian’s actions MAY
    appeal to the Area Director(s) identified by the registry. However, such
    appeals will be judged upon the criteria above, along with any criteria
@@ -127,20 +144,10 @@
 </section>
 <section anchor="specifying-custodial-registries" title="Specifying Custodial Registries">
 
-   <t>Registries established with a <xref target="RFC5226"/> policy can refer
-   to this specification if they wish to use a custodial process.</t>
-
-   <t>Such registries still need to specify a base policy for registrations;
-   suitable policies in <xref target="RFC5226"/> include Expert Review and
-   Specification Required (in both cases, the Designated Expert would be the
-   Custodian, and this specification would fulfil the requirement to define
-   review criteria).</t>
-
-   <t>It is also possible to specify a custodial process for registries with
-   more stringent policies; e.g., IETF Review. In these cases, the Custodian
-   can still register new protocol elements to reflect non-standard protocol
-   elements in common use, but MUST identify them with an appropriate status
-   (e.g., “non-standard”).</t>
+   <t>Registries established with a <xref target="RFC5226"/> Expert Review or
+   Specification Required policy can refer to this specification if they wish
+   to nominate the guidelines described here as review criteria for Designated
+   Expert(s).</t>
 
    <t>Registries using the custodial process:</t>
 
@@ -153,8 +160,10 @@
      one).</t>
      <t>MUST nominate the area whose Area Directors are responsible for
      appointing Custodians and handling appeals.</t>
-     <t>SHOULD identify the URL of the registry in their specification</t>
-     <t>SHOULD give IANA as the point of contact for new registrations</t>
+     <t>SHOULD identify the URL of the registry in their specification.</t>
+     <t>SHOULD give IANA as the point of contact for new registrations.</t>
+	 <t>MAY place additional requirements upon registrations (e.g., syntactic
+     constraints, clear guidelines for appropriate use)</t>
    </list></t>
 
 </section>
@@ -176,7 +185,12 @@
 </section>
 <section anchor="security-considerations" title="Security Considerations">
 
-   <t>TBD.</t>
+   <t>A Custodian has a considerable amount of leeway regarding the contents
+	of the registry, because they can effect a change in it merely by
+	asking IANA to do so. Therefore, registries that contain 
+	security-sensitive information are advised to consider whether this could
+	form the basis of an attack; e.g., if an implementation retrieves and
+	utilises the contents of the registry automatically.</t>
 
 </section>
   </middle>
