@@ -8,7 +8,7 @@ xml2rfc = "$(ID_BASE)/Tools/xml2rfc/xml2rfc.tcl"
 rfc2629dir = "..\\/Tools\\/rfc2629xslt\\/"
 
 TITLE = nottingham-$(shell basename ${CURDIR})
-LATEST = $(shell ls draft-${TITLE}-*.xml || echo "draft-${TITLE}-00.xml" | sort | tail -1)
+LATEST = $(shell (ls draft-${TITLE}-*.xml || echo "draft-${TITLE}-00.xml") | sort | tail -1)
 VERSION = $(shell basename ${LATEST} .xml | awk -F- '{print $$NF}')
 
 TARGET_XML = draft-$(TITLE)-$(VERSION).xml
