@@ -5,9 +5,10 @@ saxpath = "/usr/local/share/saxon-b/saxon9.jar"
 saxon = java -classpath $(saxpath) net.sf.saxon.Transform -novw -l
 stylesheet = "$(ID_BASE)/Tools/rfc2629xslt/rfc2629.xslt"
 xml2rfc = "$(ID_BASE)/Tools/xml2rfc/xml2rfc.tcl"
+rfc2629dir = "..\\/Tools\\/rfc2629xslt\\/"
 
 TITLE = nottingham-$(shell basename ${CURDIR})
-LATEST = $(shell ls draft-${TITLE}-*.xml | sort | tail -1)
+LATEST = $(shell ls draft-${TITLE}-*.xml || echo "draft-${TITLE}-00.xml" | sort | tail -1)
 VERSION = $(shell basename ${LATEST} .xml | awk -F- '{print $$NF}')
 
 TARGET_XML = draft-$(TITLE)-$(VERSION).xml
@@ -43,3 +44,11 @@ idnits: $(TARGET_TXT)
 
 %.txt: %.xml
 	$(xml2rfc) $< $@
+
+.PHONY: kramdown
+kramdown: draft.md
+	kramdown-rfc2629 draft.md > $(TARGET_XML)
+	xmllint --format $(TARGET_XML) > tmp
+	mv tmp $(TARGET_XML)
+	sed -i '' -e"s/rfc2629\.xslt/$(rfc2629dir)rfc2629.xslt/" $(TARGET_XML)
+	sed -i '' -e"s/rfc2629\.dtd/$(rfc2629dir)rfc2629.dtd/" $(TARGET_XML)
