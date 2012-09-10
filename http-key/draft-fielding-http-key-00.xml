@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../Tools/rfc2629xslt/rfc2629.xslt" ?>
+<!DOCTYPE rfc SYSTEM "../Tools/rfc2629xslt/rfc2629.dtd">
+<rfc ipr="trust200902" docName="draft-fielding-http-key-00" category="info">
+  <?rfc toc="yes"?>
+  <?rfc tocindent="yes"?>
+  <?rfc sortrefs="yes"?>
+  <?rfc symrefs="yes"?>
+  <?rfc strict="yes"?>
+  <?rfc compact="yes"?>
+  <?rfc comments="yes"?>
+  <?rfc inline="yes"?>
+  <front>
+    <title>The Key HTTP Response Header Field</title>
+    <author initials="R." surname="Fielding" fullname="Roy T. Fielding">
+      <organization>Adobe Systems Incorporated</organization>
+      <address>
+        <email>fielding@gbiv.com</email>
+        <uri>http://roy.gbiv.com/</uri>
+      </address>
+    </author>
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization/>
+      <address>
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net/</uri>
+      </address>
+    </author>
+    <date year="2012"/>
+    <area>General</area>
+    <keyword>Internet-Draft</keyword>
+    <abstract>
+      <t>This memo defines the ‘Key’ HTTP response header field, to allow fine-grained
+description of the request characteristics used to select a negotiated
+response by caches.</t>
+    </abstract>
+  </front>
+  <middle>
+    <section anchor="introduction" title="Introduction">
+      <t>In HTTP caching <xref target="I-D.ietf-httpbis-p6-cache"/>, the Vary response header field
+effectively modifies the key used to store and access a response to include
+information from the request’s headers.</t>
+      <t>This makes server-driven content negotiation <xref target="I-D.ietf-httpbis-p2-semantics"/>
+work with caches. However, Vary’s operation is very coarse-grained; although
+caches are allowed to normalise the values of headers based upon their
+semantics, this requires the cache to understand those semantics, and is still
+quite limited.</t>
+      <t>For example, if a response is cached with the response header field:</t>
+      <figure>
+        <artwork><![CDATA[
+  Vary: Accept-Encoding
+]]></artwork>
+      </figure>
+      <t>and and its associated request is:</t>
+      <figure>
+        <artwork><![CDATA[
+  Accept-Encoding: gzip
+]]></artwork>
+      </figure>
+      <t>then a subsequent request with the following header is (in a strict reading of
+HTTP) not a match, resulting in a cache miss:</t>
+      <figure>
+        <artwork><![CDATA[
+  Accept-Encoding: identity, gzip
+]]></artwork>
+      </figure>
+      <t>This document defines a new response header field, “Key”, that allows servers
+to describe the cache key in a much more fine-grained manner, leading to
+improved cache efficiency.</t>
+      <section anchor="notational-conventions" title="Notational Conventions">
+        <t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”,
+“SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this
+document are to be interpreted as described in <xref target="RFC2119"/>.</t>
+        <t>This document uses the Augmented Backus-Naur Form (ABNF) notation of
+<xref target="RFC5234"/> with the list rule extension defined in
+<xref target="I-D.ietf-httpbis-p1-messaging"/>, Appendix B. It includes by reference the
+OWS, field-name and quoted-string rules from that document, and the
+parameter rule from <xref target="I-D.ietf-httpbis-p2-semantics"/>.</t>
+      </section>
+    </section>
+    <section anchor="the-key-response-header-field" title="The “Key” Response Header Field">
+      <t>The “Key” response header field describes the request attributes that the
+server has used to select the current representation. </t>
+      <t>As such, its semantics are similar to the “Vary” response header field, but it
+allows more fine-grained description, using “key modifiers”.</t>
+      <t>Caches can use this information as part of determining whether a stored
+response can be used to satisfy a given request. When a cache fully 
+implements this mechanism, it MAY ignore the Vary response header field.</t>
+      <t>Its value is a comma-delimited list of selecting header fields (just as 
+with Vary), with zero to many modifiers to each, delimited by semicolons.</t>
+      <figure>
+        <artwork><![CDATA[
+  Key = 1#field-name *( OWS ";" OWS parameter )
+]]></artwork>
+      </figure>
+      <t>The following headers therefore have identical semantics:</t>
+      <figure>
+        <artwork><![CDATA[
+  Vary: Accept-Encoding, Accept-Language
+  Key: Accept-Encoding, Accept-Language
+]]></artwork>
+      </figure>
+      <t>However, Key’s use of modifiers allows:</t>
+      <figure>
+        <artwork><![CDATA[
+  Key: Accept-Encoding;tok="gzip", Accept-Language; beg="fr"
+]]></artwork>
+      </figure>
+      <t>to indicate that the response it occurs in is allowed to be reused for
+requests that contain the token “gzip” (in any case) in the Accept-Encoding
+header field and an Accept-Language header field value that starts with “fr”.</t>
+      <section anchor="header-matching" title="Header Matching">
+        <t>When used by a cache to determine whether a stored response can be used to
+satisfy a presented request, each field-name identifies a potential request
+header, just as with the Vary response header field.</t>
+        <t>However, each of these can have zero to many “key modifiers” that change how
+the response selection process (as defined in <xref target="I-D.ietf-httpbis-p6-cache"/>,
+Section 4.3)) works.</t>
+        <t>In particular, a cache that implements the Key header field MUST NOT use a
+stored response unless all of the selecting header fields nominated by the 
+Key header field match in both the original request (i.e., that associated
+with the stored response) and the presented request.</t>
+        <t>Modifiers operate on a list of zero to many field-values. This list is
+constructed by:</t>
+        <t>
+          <list style="numbers">
+            <t>Starting with the field-values of all headers who have the given
+field-name.</t>
+            <t>Splitting each field-value on commas, excluding any that occur inside of
+a quoted-string production.</t>
+            <t>Flattening the list of lists into a single list that represents the
+individual header field-values.</t>
+            <t>Trimming any OWS from the start and end of the field-values.</t>
+          </list>
+        </t>
+        <t>For example, given the set of headers:</t>
+        <figure>
+          <artwork><![CDATA[
+ Foo: 1
+ Bar: z
+ Foo: 2, a="b,c"
+]]></artwork>
+        </figure>
+        <t>A modifier for “Foo” would operate on the list of presented values ‘1’, ‘2’,
+‘a=”b,c”’.</t>
+        <t>Once the appropriate headers from both the original request and the stored
+request are processed in this manner, the result is two (possibly empty) lists
+of values for each specified header field.</t>
+        <t>The key modifiers (as specified in the Key header field) are then applied to
+the lists, in lexical order. If any modifier does not return a match (as per
+its definition), the headers are said not to match. If all of the modifiers
+return a match, the headers are said to match.</t>
+        <t>Note that some types of modifiers are said to always match; they can be used
+to alter the input lists, or to alter the semantics of subsequent matches.</t>
+        <t>Unrecognised modifiers MUST result in a failure to match.</t>
+      </section>
+      <section anchor="key-modifiers" title="Key Modifiers">
+        <t>This document defines the following key modifiers:</t>
+        <section anchor="str-string-match-modifier" title="“str”: String Match Modifier">
+          <t>The “str” modifier matches if the parameter value (after unquoting) matches
+(character-for-character) any whole value in both lists.</t>
+        </section>
+        <section anchor="sub-substring-match-modifier" title="“sub”: Substring Match Modifier">
+          <t>The “sub” modifier matches if the parameter value (after unquoting) is
+contained as a sequence of characters within both lists.</t>
+        </section>
+        <section anchor="beg-beginning-substring-match-modifier" title="“beg”: Beginning Substring Match Modifier">
+          <t>The “beg” modifier matches if both lists contain a value that begins with the
+same sequence of characters as the parameter value (after unquoting).</t>
+        </section>
+        <section anchor="end-end-substring-match-modifier" title="“end”: End Substring Match Modifier">
+          <t>The “end” modifier matches if both lists contain a value that ends with the
+same sequence of characters as the parameter value (after unquoting).</t>
+        </section>
+        <section anchor="i-case-insensitivity-flag" title="“I”: Case Insensitivity Flag">
+          <t>The “I” modifier always matches, and has the side effect of case normalising
+the list values to lowercase for purposes of subsequent matches (i.e., the
+match modifiers to its right, lexically).</t>
+        </section>
+        <section anchor="n-not-flag" title="“N”: Not Flag">
+          <t>The “N” modifier always matches, and has the side effect of modifying the
+semantics of subsequent modifiers (i.e., the match modifiers to its right,
+lexically) so that they will be considered to match if they do not, and 
+likewise they will be considered not to match if they do.</t>
+          <t>For example, given a response with:</t>
+          <figure>
+            <artwork><![CDATA[
+  Key: Foo;str="a";N;str="b"
+]]></artwork>
+          </figure>
+          <t>then the presented header:</t>
+          <figure>
+            <artwork><![CDATA[
+  Foo: a, c
+]]></artwork>
+          </figure>
+          <t>would match, while</t>
+          <figure>
+            <artwork><![CDATA[
+  Foo: a, b
+]]></artwork>
+          </figure>
+          <t>would not (because it contains “b”).</t>
+        </section>
+      </section>
+      <section anchor="examples" title="Examples">
+        <t>For example, this response header field:</t>
+        <figure>
+          <artwork><![CDATA[
+  Key: cookie;str="ID=\"Roy\"";I;str="_sess=fhd378", 
+       Accept-Encoding;i;str="gzip"
+]]></artwork>
+        </figure>
+        <t>would allow the cache to reuse the response it occurs in if the presented
+request contains:</t>
+        <t>
+          <list style="symbols">
+            <t>A Cookie header containing both ID=”Roy” (in that case) and _sess=fhd378
+(evaluated case insensitively), and</t>
+            <t>An Accept-Encoding header containing the token “gzip” (evaluated case
+insensitively).</t>
+          </list>
+        </t>
+        <t>Less convoluted examples include matching any request with a User-Agent field
+value containing “MSIE” in any combination of case:</t>
+        <figure>
+          <artwork><![CDATA[
+  Key: user-agent;I;sub="MSIE"
+]]></artwork>
+        </figure>
+        <t>And an Accept-Language field value for French:</t>
+        <figure>
+          <artwork><![CDATA[
+  Key: accept-language;beg="fr"
+]]></artwork>
+        </figure>
+      </section>
+    </section>
+    <section anchor="iana-considerations" title="IANA Considerations">
+      <t>TBD</t>
+    </section>
+    <section anchor="security-considerations" title="Security Considerations">
+      <t>TBD</t>
+    </section>
+  </middle>
+  <back>
+    <references title="Normative References">
+      <reference anchor="RFC2119">
+        <front>
+          <title abbrev="RFC Key Words">Key words for use in RFCs to Indicate Requirement Levels</title>
+          <author initials="S." surname="Bradner" fullname="Scott Bradner">
+            <organization>Harvard University</organization>
+            <address>
+              <postal>
+                <street>1350 Mass. Ave.</street>
+                <street>Cambridge</street>
+                <street>MA 02138</street>
+              </postal>
+              <phone>- +1 617 495 3864</phone>
+              <email>sob@harvard.edu</email>
+            </address>
+          </author>
+          <date year="1997" month="March"/>
+          <area>General</area>
+          <keyword>keyword</keyword>
+          <abstract>
+            <t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list><t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+            <t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t>
+          </abstract>
+        </front>
+        <seriesInfo name="BCP" value="14"/>
+        <seriesInfo name="RFC" value="2119"/>
+        <format type="TXT" octets="4723" target="http://www.rfc-editor.org/rfc/rfc2119.txt"/>
+        <format type="HTML" octets="17491" target="http://xml.resource.org/public/rfc/html/rfc2119.html"/>
+        <format type="XML" octets="5777" target="http://xml.resource.org/public/rfc/xml/rfc2119.xml"/>
+      </reference>
+      <reference anchor="RFC5234">
+        <front>
+          <title>Augmented BNF for Syntax Specifications: ABNF</title>
+          <author initials="D." surname="Crocker" fullname="D. Crocker">
+            <organization/>
+          </author>
+          <author initials="P." surname="Overell" fullname="P. Overell">
+            <organization/>
+          </author>
+          <date year="2008" month="January"/>
+          <abstract>
+            <t>Internet technical specifications often need to define a formal syntax.  Over the years, a modified version of Backus-Naur Form (BNF), called Augmented BNF (ABNF), has been popular among many Internet specifications.  The current specification documents ABNF.  It balances compactness and simplicity with reasonable representational power.  The differences between standard BNF and ABNF involve naming rules, repetition, alternatives, order-independence, and value ranges.  This specification also supplies additional rule definitions and encoding for a core lexical analyzer of the type common to several Internet specifications. [STANDARDS-TRACK]</t>
+          </abstract>
+        </front>
+        <seriesInfo name="STD" value="68"/>
+        <seriesInfo name="RFC" value="5234"/>
+        <format type="TXT" octets="26359" target="http://www.rfc-editor.org/rfc/rfc5234.txt"/>
+      </reference>
+      <reference anchor="I-D.ietf-httpbis-p1-messaging">
+        <front>
+          <title>HTTP/1.1, part 1: Message Routing and Syntax"</title>
+          <author initials="R" surname="Fielding" fullname="Roy Fielding">
+            <organization/>
+          </author>
+          <author initials="Y" surname="Lafon" fullname="Yves Lafon">
+            <organization/>
+          </author>
+          <author initials="J" surname="Reschke" fullname="Julian Reschke">
+            <organization/>
+          </author>
+          <date month="July" day="16" year="2012"/>
+          <abstract>
+            <t>The Hypertext Transfer Protocol (HTTP) is an application-level protocol for distributed, collaborative, hypertext information systems.  HTTP has been in use by the World Wide Web global information initiative since 1990.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes general security concerns for implementations.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-p1-messaging-20"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p1-messaging-20.txt"/>
+      </reference>
+      <reference anchor="I-D.ietf-httpbis-p2-semantics">
+        <front>
+          <title>HTTP/1.1, part 2: Semantics and Payloads</title>
+          <author initials="R" surname="Fielding" fullname="Roy Fielding">
+            <organization/>
+          </author>
+          <author initials="Y" surname="Lafon" fullname="Yves Lafon">
+            <organization/>
+          </author>
+          <author initials="J" surname="Reschke" fullname="Julian Reschke">
+            <organization/>
+          </author>
+          <date month="July" day="16" year="2012"/>
+          <abstract>
+            <t>The Hypertext Transfer Protocol (HTTP) is an application-level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-p2-semantics-20"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p2-semantics-20.txt"/>
+      </reference>
+      <reference anchor="I-D.ietf-httpbis-p6-cache">
+        <front>
+          <title>HTTP/1.1, part 6: Caching</title>
+          <author initials="R" surname="Fielding" fullname="Roy Fielding">
+            <organization/>
+          </author>
+          <author initials="Y" surname="Lafon" fullname="Yves Lafon">
+            <organization/>
+          </author>
+          <author initials="M" surname="Nottingham" fullname="Mark Nottingham">
+            <organization/>
+          </author>
+          <author initials="J" surname="Reschke" fullname="Julian Reschke">
+            <organization/>
+          </author>
+          <date month="July" day="16" year="2012"/>
+          <abstract>
+            <t>The Hypertext Transfer Protocol (HTTP) is an application-level protocol for distributed, collaborative, hypertext information systems.  This document defines requirements on HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-p6-cache-20"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p6-cache-20.txt"/>
+      </reference>
+    </references>
+  </back>
+</rfc>
