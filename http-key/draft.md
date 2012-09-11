@@ -141,9 +141,11 @@ However, Key's use of modifiers allows:
   
 to indicate that the response it occurs in is allowed to be reused for
 requests that contain the token "gzip" (in any case) in the Accept-Encoding
-header field and an Accept-Language header field value that starts with "fr".
+header field and an Accept-Language header field value that starts with "fr"
+(in any case).
 
-Note that both the field-name and parameter name are case insensitive.
+Note that both the field-name and modifier names themselves are case
+insensitive.
   
 Header Matching
 --------------- 
@@ -173,7 +175,8 @@ constructed by:
      a quoted-string production.
   3. Flattening the list of lists into a single list that represents the
      individual header field-values.
-  4. Trimming any OWS from the start and end of the field-values.
+  4. Case-normalising each value in both lists to lowercase.
+  5. Trimming any OWS from the start and end of the field-values.
 
 For example, given the set of headers:
 
@@ -220,15 +223,11 @@ contained as a sequence of characters within both lists.
 The "b" modifier matches if both lists contain a value that begins with the
 same sequence of characters as the parameter value (after unquoting).
 
-### "I": Case Insensitivity Flag
+### "C": Case Sensitivity Flag
 
-The "I" modifier always matches, and has the side effect of case normalising
-the list values to lowercase for purposes of subsequent matches (i.e., the
-match modifiers to its right, lexically).
-
-	I know this is from regex, but almost all header matching will be
-	case-insensitive -- wouldn't it be more efficient to flag only when
-	a match is case-sensitive?
+The "C" modifier always matches, and has the side effect of reverting the case
+normalisation of the header lists (see #4 in the list above), so that
+subsequent matches become case sensitive.
 
 ### "N": Not Flag
 
@@ -264,8 +263,8 @@ Examples
 For example, this response header field:
 
 ~~~
-  Key: cookie;w="ID=\"Roy\"";I;w="_sess=fhd378", 
-       Accept-Encoding;i;w="gzip"
+  Key: cookie;w="_sess=fhd378";C;w="ID=\"Roy\"", 
+       Accept-Encoding;w="gzip"
 ~~~
 
 would allow the cache to reuse the response it occurs in if the presented
@@ -280,7 +279,7 @@ Less convoluted examples include matching any request with a User-Agent field
 value containing "MSIE" in any combination of case:
 
 ~~~
-  Key: user-agent;I;s="MSIE"
+  Key: user-agent;s="MSIE"
 ~~~
 
 And an Accept-Language field value for French:
