@@ -40,9 +40,15 @@ informative:
 
 --- abstract
 
-This memo defines the 'Key' HTTP response header field, to allow fine-grained
-description of the request characteristics used to select a negotiated
-response by caches.
+The 'Key' header field for HTTP responses allows an origin server
+to describe the cache key for a negotiated response: a short algorithm
+that can be used upon later requests to determine if the same response
+is reusable. Key has the advantage of avoiding an additional round trip
+for validation whenever a new request differs slightly, but not
+significantly, from prior requests. Key also informs user agents of the
+request characteristics that might result in different content, which
+can be useful if the user agent is not sending Accept* fields in order
+to reduce the risk of fingerprinting.
 
 --- middle
 
@@ -51,10 +57,9 @@ Introduction
 
 In HTTP caching {{I-D.ietf-httpbis-p6-cache}}, the Vary response header field
 effectively modifies the key used to store and access a response to include
-information from the request's headers.
+information from the request's headers. This allows proactive content negotiation {{I-D.ietf-httpbis-p2-semantics}} to work with caches.
 
-This makes server-driven content negotiation {{I-D.ietf-httpbis-p2-semantics}}
-work with caches. However, Vary's operation is very coarse-grained; although
+However, Vary's operation is coarse-grained; although
 caches are allowed to normalise the values of headers based upon their
 semantics, this requires the cache to understand those semantics, and is still
 quite limited.
@@ -108,14 +113,17 @@ Caches can use this information as part of determining whether a stored
 response can be used to satisfy a given request. When a cache fully 
 implements this mechanism, it MAY ignore the Vary response header field.
 
-Its value is a comma-delimited list of selecting header fields (just as 
-with Vary), with zero to many modifiers to each, delimited by semicolons.
+User agents can use this information to discover if additional content negotiation header fields might influence the resulting response.
+
+The Key field-value is a comma-delimited list of selecting header fields
+(similar to Vary), with zero to many modifiers to each, delimited by semicolons.  Whitespace is not allowed in the field-value between each
+field-name and its parameter set.
 
 ~~~
-  Key = 1#field-name *( OWS ";" OWS parameter )
+  Key = 1#field-name *( ";" parameter )
 ~~~
 
-The following headers therefore have identical semantics:
+The following header fields therefore have identical semantics:
 
 ~~~
   Vary: Accept-Encoding, Accept-Language
@@ -125,7 +133,7 @@ The following headers therefore have identical semantics:
 However, Key's use of modifiers allows:
 
 ~~~
-  Key: Accept-Encoding;tok="gzip", Accept-Language; beg="fr"
+  Key: Accept-Encoding;tok="gzip", Accept-Language;beg="fr"
 ~~~
   
 to indicate that the response it occurs in is allowed to be reused for
@@ -148,10 +156,13 @@ stored response unless all of the selecting header fields nominated by the
 Key header field match in both the original request (i.e., that associated
 with the stored response) and the presented request.
 
+	Does this mean the cache doesn't respond to the original request?
+	Or just doesn't cache the response? Is it necessary?
+
 Modifiers operate on a list of zero to many field-values. This list is
 constructed by:
 
-  1. Starting with the field-values of all headers who have the given
+  1. Starting with the field-values of all header fields that have the given
      field-name.
   2. Splitting each field-value on commas, excluding any that occur inside of
      a quoted-string production.
@@ -170,14 +181,14 @@ For example, given the set of headers:
 A modifier for "Foo" would operate on the list of presented values '1', '2',
 'a="b,c"'.
 
-Once the appropriate headers from both the original request and the stored
+Once the appropriate header fields from both the original request and the stored
 request are processed in this manner, the result is two (possibly empty) lists
 of values for each specified header field.
 
 The key modifiers (as specified in the Key header field) are then applied to
-the lists, in lexical order. If any modifier does not return a match (as per
-its definition), the headers are said not to match. If all of the modifiers
-return a match, the headers are said to match.
+the lists in the order they appear in Key (left to right). If any modifier
+does not return a match (as per its definition), the headers are said not to
+match. If all of the modifiers return a match, the headers are said to match.
 
 Note that some types of modifiers are said to always match; they can be used
 to alter the input lists, or to alter the semantics of subsequent matches.
@@ -188,6 +199,12 @@ Key Modifiers
 -------------
 
 This document defines the following key modifiers:
+
+	What happened to tok? How about word? I prefer those to str.
+	Are the modifiers case-insensitive?
+	Do we have a use case for "end"? (it is harder to check).
+	It seems odd that we use 3 letters for everything except the
+	flags (e.g., not).  We could make them all 1 (t,s,b,e,i,n).
 
 ### "str": String Match Modifier
 
@@ -214,6 +231,10 @@ same sequence of characters as the parameter value (after unquoting).
 The "I" modifier always matches, and has the side effect of case normalising
 the list values to lowercase for purposes of subsequent matches (i.e., the
 match modifiers to its right, lexically).
+
+	I know this is from regex, but almost all header matching will be
+	case-insensitive -- wouldn't it be more efficient to flag only when
+	a match is case-sensitive?
 
 ### "N": Not Flag
 
