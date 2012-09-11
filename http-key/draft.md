@@ -57,7 +57,8 @@ Introduction
 
 In HTTP caching {{I-D.ietf-httpbis-p6-cache}}, the Vary response header field
 effectively modifies the key used to store and access a response to include
-information from the request's headers. This allows proactive content negotiation {{I-D.ietf-httpbis-p2-semantics}} to work with caches.
+information from the request's headers. This allows proactive content
+negotiation {{I-D.ietf-httpbis-p2-semantics}} to work with caches.
 
 However, Vary's operation is coarse-grained; although
 caches are allowed to normalise the values of headers based upon their
@@ -113,10 +114,12 @@ Caches can use this information as part of determining whether a stored
 response can be used to satisfy a given request. When a cache fully 
 implements this mechanism, it MAY ignore the Vary response header field.
 
-User agents can use this information to discover if additional content negotiation header fields might influence the resulting response.
+User agents can use this information to discover if additional content
+negotiation header fields might influence the resulting response.
 
 The Key field-value is a comma-delimited list of selecting header fields
-(similar to Vary), with zero to many modifiers to each, delimited by semicolons.  Whitespace is not allowed in the field-value between each
+(similar to Vary), with zero to many modifiers to each, delimited by
+semicolons. Whitespace is not allowed in the field-value between each
 field-name and its parameter set.
 
 ~~~
@@ -181,9 +184,9 @@ For example, given the set of headers:
 A modifier for "Foo" would operate on the list of presented values '1', '2',
 'a="b,c"'.
 
-Once the appropriate header fields from both the original request and the stored
-request are processed in this manner, the result is two (possibly empty) lists
-of values for each specified header field.
+Once the appropriate header fields from both the original request and the
+stored request are processed in this manner, the result is two (possibly
+empty) lists of values for each specified header field.
 
 The key modifiers (as specified in the Key header field) are then applied to
 the lists in the order they appear in Key (left to right). If any modifier
