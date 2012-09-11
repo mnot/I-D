@@ -136,7 +136,7 @@ The following header fields therefore have identical semantics:
 However, Key's use of modifiers allows:
 
 ~~~
-  Key: Accept-Encoding;tok="gzip", Accept-Language;beg="fr"
+  Key: Accept-Encoding;w="gzip", Accept-Language;b="fr"
 ~~~
   
 to indicate that the response it occurs in is allowed to be reused for
@@ -205,22 +205,19 @@ Key Modifiers
 
 This document defines the following key modifiers:
 
-	It seems odd that we use 3 letters for everything except the
-	flags (e.g., not).  We could make them all 1 (t,s,b,e,i,n).
+### "w": Word Match Modifier
 
-### "wrd": Word Match Modifier
-
-The "wrd" modifier matches if the parameter value (after unquoting) matches
+The "w" modifier matches if the parameter value (after unquoting) matches
 (character-for-character) any whole value in both lists.
 
-### "sub": Substring Match Modifier
+### "s": Substring Match Modifier
 
-The "sub" modifier matches if the parameter value (after unquoting) is
+The "s" modifier matches if the parameter value (after unquoting) is
 contained as a sequence of characters within both lists.
 
-### "beg": Beginning Substring Match Modifier
+### "b": Beginning Substring Match Modifier
 
-The "beg" modifier matches if both lists contain a value that begins with the
+The "b" modifier matches if both lists contain a value that begins with the
 same sequence of characters as the parameter value (after unquoting).
 
 ### "I": Case Insensitivity Flag
@@ -243,7 +240,7 @@ likewise they will be considered not to match if they do.
 For example, given a response with:
 
 ~~~
-  Key: Foo;wrd="a";N;wrd="b"
+  Key: Foo;w="a";N;w="b"
 ~~~
   
 then the presented header:
@@ -267,8 +264,8 @@ Examples
 For example, this response header field:
 
 ~~~
-  Key: cookie;wrd="ID=\"Roy\"";I;wrd="_sess=fhd378", 
-       Accept-Encoding;i;wrd="gzip"
+  Key: cookie;w="ID=\"Roy\"";I;w="_sess=fhd378", 
+       Accept-Encoding;i;w="gzip"
 ~~~
 
 would allow the cache to reuse the response it occurs in if the presented
@@ -283,13 +280,13 @@ Less convoluted examples include matching any request with a User-Agent field
 value containing "MSIE" in any combination of case:
 
 ~~~
-  Key: user-agent;I;sub="MSIE"
+  Key: user-agent;I;s="MSIE"
 ~~~
 
 And an Accept-Language field value for French:
 
 ~~~
-  Key: accept-language;beg="fr"
+  Key: accept-language;b="fr"
 ~~~
 
 
