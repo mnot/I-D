@@ -142,6 +142,8 @@ However, Key's use of modifiers allows:
 to indicate that the response it occurs in is allowed to be reused for
 requests that contain the token "gzip" (in any case) in the Accept-Encoding
 header field and an Accept-Language header field value that starts with "fr".
+
+Note that both the field-name and parameter name are case insensitive.
   
 Header Matching
 --------------- 
@@ -204,7 +206,6 @@ Key Modifiers
 This document defines the following key modifiers:
 
 	What happened to tok? How about word? I prefer those to str.
-	Are the modifiers case-insensitive?
 	Do we have a use case for "end"? (it is harder to check).
 	It seems odd that we use 3 letters for everything except the
 	flags (e.g., not).  We could make them all 1 (t,s,b,e,i,n).
