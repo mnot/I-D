@@ -206,7 +206,6 @@ Key Modifiers
 This document defines the following key modifiers:
 
 	What happened to tok? How about word? I prefer those to str.
-	Do we have a use case for "end"? (it is harder to check).
 	It seems odd that we use 3 letters for everything except the
 	flags (e.g., not).  We could make them all 1 (t,s,b,e,i,n).
 
@@ -223,11 +222,6 @@ contained as a sequence of characters within both lists.
 ### "beg": Beginning Substring Match Modifier
 
 The "beg" modifier matches if both lists contain a value that begins with the
-same sequence of characters as the parameter value (after unquoting).
-
-### "end": End Substring Match Modifier
-
-The "end" modifier matches if both lists contain a value that ends with the
 same sequence of characters as the parameter value (after unquoting).
 
 ### "I": Case Insensitivity Flag
