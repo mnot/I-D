@@ -205,13 +205,12 @@ Key Modifiers
 
 This document defines the following key modifiers:
 
-	What happened to tok? How about word? I prefer those to str.
 	It seems odd that we use 3 letters for everything except the
 	flags (e.g., not).  We could make them all 1 (t,s,b,e,i,n).
 
-### "str": String Match Modifier
+### "wrd": Word Match Modifier
 
-The "str" modifier matches if the parameter value (after unquoting) matches
+The "wrd" modifier matches if the parameter value (after unquoting) matches
 (character-for-character) any whole value in both lists.
 
 ### "sub": Substring Match Modifier
@@ -244,7 +243,7 @@ likewise they will be considered not to match if they do.
 For example, given a response with:
 
 ~~~
-  Key: Foo;str="a";N;str="b"
+  Key: Foo;wrd="a";N;wrd="b"
 ~~~
   
 then the presented header:
@@ -268,8 +267,8 @@ Examples
 For example, this response header field:
 
 ~~~
-  Key: cookie;str="ID=\"Roy\"";I;str="_sess=fhd378", 
-       Accept-Encoding;i;str="gzip"
+  Key: cookie;wrd="ID=\"Roy\"";I;wrd="_sess=fhd378", 
+       Accept-Encoding;i;wrd="gzip"
 ~~~
 
 would allow the cache to reuse the response it occurs in if the presented
