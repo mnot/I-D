@@ -30,18 +30,24 @@
     <area>General</area>
     <keyword>Internet-Draft</keyword>
     <abstract>
-      <t>This memo defines the ‘Key’ HTTP response header field, to allow fine-grained
-description of the request characteristics used to select a negotiated
-response by caches.</t>
+      <t>The ‘Key’ header field for HTTP responses allows an origin server
+to describe the cache key for a negotiated response: a short algorithm
+that can be used upon later requests to determine if the same response
+is reusable. Key has the advantage of avoiding an additional round trip
+for validation whenever a new request differs slightly, but not
+significantly, from prior requests. Key also informs user agents of the
+request characteristics that might result in different content, which
+can be useful if the user agent is not sending Accept* fields in order
+to reduce the risk of fingerprinting.</t>
     </abstract>
   </front>
   <middle>
     <section anchor="introduction" title="Introduction">
       <t>In HTTP caching <xref target="I-D.ietf-httpbis-p6-cache"/>, the Vary response header field
 effectively modifies the key used to store and access a response to include
-information from the request’s headers.</t>
-      <t>This makes server-driven content negotiation <xref target="I-D.ietf-httpbis-p2-semantics"/>
-work with caches. However, Vary’s operation is very coarse-grained; although
+information from the request’s headers. This allows proactive content
+negotiation <xref target="I-D.ietf-httpbis-p2-semantics"/> to work with caches.</t>
+      <t>However, Vary’s operation is coarse-grained; although
 caches are allowed to normalise the values of headers based upon their
 semantics, this requires the cache to understand those semantics, and is still
 quite limited.</t>
@@ -86,14 +92,18 @@ allows more fine-grained description, using “key modifiers”.</t>
       <t>Caches can use this information as part of determining whether a stored
 response can be used to satisfy a given request. When a cache fully 
 implements this mechanism, it MAY ignore the Vary response header field.</t>
-      <t>Its value is a comma-delimited list of selecting header fields (just as 
-with Vary), with zero to many modifiers to each, delimited by semicolons.</t>
+      <t>User agents can use this information to discover if additional content
+negotiation header fields might influence the resulting response.</t>
+      <t>The Key field-value is a comma-delimited list of selecting header fields
+(similar to Vary), with zero to many modifiers to each, delimited by
+semicolons. Whitespace is not allowed in the field-value between each
+field-name and its parameter set.</t>
       <figure>
         <artwork><![CDATA[
-  Key = 1#field-name *( OWS ";" OWS parameter )
+  Key = 1#field-name *( ";" parameter )
 ]]></artwork>
       </figure>
-      <t>The following headers therefore have identical semantics:</t>
+      <t>The following header fields therefore have identical semantics:</t>
       <figure>
         <artwork><![CDATA[
   Vary: Accept-Encoding, Accept-Language
@@ -103,12 +113,15 @@ with Vary), with zero to many modifiers to each, delimited by semicolons.</t>
       <t>However, Key’s use of modifiers allows:</t>
       <figure>
         <artwork><![CDATA[
-  Key: Accept-Encoding;tok="gzip", Accept-Language; beg="fr"
+  Key: Accept-Encoding;w="gzip", Accept-Language;b="fr"
 ]]></artwork>
       </figure>
       <t>to indicate that the response it occurs in is allowed to be reused for
 requests that contain the token “gzip” (in any case) in the Accept-Encoding
-header field and an Accept-Language header field value that starts with “fr”.</t>
+header field and an Accept-Language header field value that starts with “fr”
+(in any case).</t>
+      <t>Note that both the field-name and modifier names themselves are case
+insensitive.</t>
       <section anchor="header-matching" title="Header Matching">
         <t>When used by a cache to determine whether a stored response can be used to
 satisfy a presented request, each field-name identifies a potential request
@@ -120,16 +133,23 @@ Section 4.3)) works.</t>
 stored response unless all of the selecting header fields nominated by the 
 Key header field match in both the original request (i.e., that associated
 with the stored response) and the presented request.</t>
+        <figure>
+          <artwork><![CDATA[
+Does this mean the cache doesn't respond to the original request?
+Or just doesn't cache the response? Is it necessary?
+]]></artwork>
+        </figure>
         <t>Modifiers operate on a list of zero to many field-values. This list is
 constructed by:</t>
         <t>
           <list style="numbers">
-            <t>Starting with the field-values of all headers who have the given
+            <t>Starting with the field-values of all header fields that have the given
 field-name.</t>
             <t>Splitting each field-value on commas, excluding any that occur inside of
 a quoted-string production.</t>
             <t>Flattening the list of lists into a single list that represents the
 individual header field-values.</t>
+            <t>Case-normalising each value in both lists to lowercase.</t>
             <t>Trimming any OWS from the start and end of the field-values.</t>
           </list>
         </t>
@@ -143,39 +163,35 @@ individual header field-values.</t>
         </figure>
         <t>A modifier for “Foo” would operate on the list of presented values ‘1’, ‘2’,
 ‘a=”b,c”’.</t>
-        <t>Once the appropriate headers from both the original request and the stored
-request are processed in this manner, the result is two (possibly empty) lists
-of values for each specified header field.</t>
+        <t>Once the appropriate header fields from both the original request and the
+stored request are processed in this manner, the result is two (possibly
+empty) lists of values for each specified header field.</t>
         <t>The key modifiers (as specified in the Key header field) are then applied to
-the lists, in lexical order. If any modifier does not return a match (as per
-its definition), the headers are said not to match. If all of the modifiers
-return a match, the headers are said to match.</t>
+the lists in the order they appear in Key (left to right). If any modifier
+does not return a match (as per its definition), the headers are said not to
+match. If all of the modifiers return a match, the headers are said to match.</t>
         <t>Note that some types of modifiers are said to always match; they can be used
 to alter the input lists, or to alter the semantics of subsequent matches.</t>
         <t>Unrecognised modifiers MUST result in a failure to match.</t>
       </section>
       <section anchor="key-modifiers" title="Key Modifiers">
         <t>This document defines the following key modifiers:</t>
-        <section anchor="str-string-match-modifier" title="“str”: String Match Modifier">
-          <t>The “str” modifier matches if the parameter value (after unquoting) matches
+        <section anchor="w-word-match-modifier" title="“w”: Word Match Modifier">
+          <t>The “w” modifier matches if the parameter value (after unquoting) matches
 (character-for-character) any whole value in both lists.</t>
         </section>
-        <section anchor="sub-substring-match-modifier" title="“sub”: Substring Match Modifier">
-          <t>The “sub” modifier matches if the parameter value (after unquoting) is
+        <section anchor="s-substring-match-modifier" title="”s”: Substring Match Modifier">
+          <t>The “s” modifier matches if the parameter value (after unquoting) is
 contained as a sequence of characters within both lists.</t>
         </section>
-        <section anchor="beg-beginning-substring-match-modifier" title="“beg”: Beginning Substring Match Modifier">
-          <t>The “beg” modifier matches if both lists contain a value that begins with the
+        <section anchor="b-beginning-substring-match-modifier" title="“b”: Beginning Substring Match Modifier">
+          <t>The “b” modifier matches if both lists contain a value that begins with the
 same sequence of characters as the parameter value (after unquoting).</t>
         </section>
-        <section anchor="end-end-substring-match-modifier" title="“end”: End Substring Match Modifier">
-          <t>The “end” modifier matches if both lists contain a value that ends with the
-same sequence of characters as the parameter value (after unquoting).</t>
-        </section>
-        <section anchor="i-case-insensitivity-flag" title="“I”: Case Insensitivity Flag">
-          <t>The “I” modifier always matches, and has the side effect of case normalising
-the list values to lowercase for purposes of subsequent matches (i.e., the
-match modifiers to its right, lexically).</t>
+        <section anchor="c-case-sensitivity-flag" title="“C”: Case Sensitivity Flag">
+          <t>The “C” modifier always matches, and has the side effect of reverting the case
+normalisation of the header lists (see #4 in the list above), so that
+subsequent matches become case sensitive.</t>
         </section>
         <section anchor="n-not-flag" title="“N”: Not Flag">
           <t>The “N” modifier always matches, and has the side effect of modifying the
@@ -185,7 +201,7 @@ likewise they will be considered not to match if they do.</t>
           <t>For example, given a response with:</t>
           <figure>
             <artwork><![CDATA[
-  Key: Foo;str="a";N;str="b"
+  Key: Foo;w="a";N;w="b"
 ]]></artwork>
           </figure>
           <t>then the presented header:</t>
@@ -207,8 +223,8 @@ likewise they will be considered not to match if they do.</t>
         <t>For example, this response header field:</t>
         <figure>
           <artwork><![CDATA[
-  Key: cookie;str="ID=\"Roy\"";I;str="_sess=fhd378", 
-       Accept-Encoding;i;str="gzip"
+  Key: cookie;w="_sess=fhd378";C;w="ID=\"Roy\"", 
+       Accept-Encoding;w="gzip"
 ]]></artwork>
         </figure>
         <t>would allow the cache to reuse the response it occurs in if the presented
@@ -225,13 +241,13 @@ insensitively).</t>
 value containing “MSIE” in any combination of case:</t>
         <figure>
           <artwork><![CDATA[
-  Key: user-agent;I;sub="MSIE"
+  Key: user-agent;s="MSIE"
 ]]></artwork>
         </figure>
         <t>And an Accept-Language field value for French:</t>
         <figure>
           <artwork><![CDATA[
-  Key: accept-language;beg="fr"
+  Key: accept-language;b="fr"
 ]]></artwork>
         </figure>
       </section>

@@ -4,7 +4,7 @@
 Network Working Group                                        R. Fielding
 Internet-Draft                                Adobe Systems Incorporated
 Intended status: Informational                             M. Nottingham
-Expires: March 14, 2013                               September 10, 2012
+Expires: March 15, 2013                               September 11, 2012
 
 
                    The Key HTTP Response Header Field
@@ -12,9 +12,15 @@ Expires: March 14, 2013                               September 10, 2012
 
 Abstract
 
-   This memo defines the 'Key' HTTP response header field, to allow
-   fine-grained description of the request characteristics used to
-   select a negotiated response by caches.
+   The 'Key' header field for HTTP responses allows an origin server to
+   describe the cache key for a negotiated response: a short algorithm
+   that can be used upon later requests to determine if the same
+   response is reusable.  Key has the advantage of avoiding an
+   additional round trip for validation whenever a new request differs
+   slightly, but not significantly, from prior requests.  Key also
+   informs user agents of the request characteristics that might result
+   in different content, which can be useful if the user agent is not
+   sending Accept* fields in order to reduce the risk of fingerprinting.
 
 Status of this Memo
 
@@ -31,7 +37,7 @@ Status of this Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on March 14, 2013.
+   This Internet-Draft will expire on March 15, 2013.
 
 Copyright Notice
 
@@ -43,18 +49,18 @@ Copyright Notice
    (http://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
+
+
+
+Fielding & Nottingham    Expires March 15, 2013                 [Page 1]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2012
+
+
    to this document.  Code Components extracted from this document must
    include Simplified BSD License text as described in Section 4.e of
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
-
-
-
-
-
-Fielding & Nottingham    Expires March 14, 2013                 [Page 1]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2012
 
 
 Table of Contents
@@ -63,14 +69,13 @@ Table of Contents
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . . . 3
    2.  The "Key" Response Header Field . . . . . . . . . . . . . . . . 3
      2.1.  Header Matching . . . . . . . . . . . . . . . . . . . . . . 4
-     2.2.  Key Modifiers . . . . . . . . . . . . . . . . . . . . . . . 5
-       2.2.1.  "str": String Match Modifier  . . . . . . . . . . . . . 5
-       2.2.2.  "sub": Substring Match Modifier . . . . . . . . . . . . 5
-       2.2.3.  "beg": Beginning Substring Match Modifier . . . . . . . 6
-       2.2.4.  "end": End Substring Match Modifier . . . . . . . . . . 6
-       2.2.5.  "I": Case Insensitivity Flag  . . . . . . . . . . . . . 6
-       2.2.6.  "N": Not Flag . . . . . . . . . . . . . . . . . . . . . 6
-     2.3.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . 6
+     2.2.  Key Modifiers . . . . . . . . . . . . . . . . . . . . . . . 6
+       2.2.1.  "w": Word Match Modifier  . . . . . . . . . . . . . . . 6
+       2.2.2.  "s": Substring Match Modifier . . . . . . . . . . . . . 6
+       2.2.3.  "b": Beginning Substring Match Modifier . . . . . . . . 6
+       2.2.4.  "C": Case Sensitivity Flag  . . . . . . . . . . . . . . 6
+       2.2.5.  "N": Not Flag . . . . . . . . . . . . . . . . . . . . . 6
+     2.3.  Examples  . . . . . . . . . . . . . . . . . . . . . . . . . 7
    3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . . . 7
    4.  Security Considerations . . . . . . . . . . . . . . . . . . . . 7
    5.  Normative References  . . . . . . . . . . . . . . . . . . . . . 7
@@ -103,12 +108,7 @@ Table of Contents
 
 
 
-
-
-
-
-
-Fielding & Nottingham    Expires March 14, 2013                 [Page 2]
+Fielding & Nottingham    Expires March 15, 2013                 [Page 2]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2012
 
@@ -117,14 +117,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2012
 
    In HTTP caching [I-D.ietf-httpbis-p6-cache], the Vary response header
    field effectively modifies the key used to store and access a
-   response to include information from the request's headers.
+   response to include information from the request's headers.  This
+   allows proactive content negotiation [I-D.ietf-httpbis-p2-semantics]
+   to work with caches.
 
-   This makes server-driven content negotiation
-   [I-D.ietf-httpbis-p2-semantics] work with caches.  However, Vary's
-   operation is very coarse-grained; although caches are allowed to
-   normalise the values of headers based upon their semantics, this
-   requires the cache to understand those semantics, and is still quite
-   limited.
+   However, Vary's operation is coarse-grained; although caches are
+   allowed to normalise the values of headers based upon their
+   semantics, this requires the cache to understand those semantics, and
+   is still quite limited.
 
    For example, if a response is cached with the response header field:
 
@@ -164,7 +164,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2012
 
 
 
-Fielding & Nottingham    Expires March 14, 2013                 [Page 3]
+Fielding & Nottingham    Expires March 15, 2013                 [Page 3]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2012
 
@@ -178,25 +178,33 @@ Internet-Draft     The Key HTTP Response Header Field     September 2012
    fully implements this mechanism, it MAY ignore the Vary response
    header field.
 
-   Its value is a comma-delimited list of selecting header fields (just
-   as with Vary), with zero to many modifiers to each, delimited by
-   semicolons.
+   User agents can use this information to discover if additional
+   content negotiation header fields might influence the resulting
+   response.
 
-     Key = 1#field-name *( OWS ";" OWS parameter )
+   The Key field-value is a comma-delimited list of selecting header
+   fields (similar to Vary), with zero to many modifiers to each,
+   delimited by semicolons.  Whitespace is not allowed in the field-
+   value between each field-name and its parameter set.
 
-   The following headers therefore have identical semantics:
+     Key = 1#field-name *( ";" parameter )
+
+   The following header fields therefore have identical semantics:
 
      Vary: Accept-Encoding, Accept-Language
      Key: Accept-Encoding, Accept-Language
 
    However, Key's use of modifiers allows:
 
-     Key: Accept-Encoding;tok="gzip", Accept-Language; beg="fr"
+     Key: Accept-Encoding;w="gzip", Accept-Language;b="fr"
 
    to indicate that the response it occurs in is allowed to be reused
    for requests that contain the token "gzip" (in any case) in the
    Accept-Encoding header field and an Accept-Language header field
-   value that starts with "fr".
+   value that starts with "fr" (in any case).
+
+   Note that both the field-name and modifier names themselves are case
+   insensitive.
 
 2.1.  Header Matching
 
@@ -209,29 +217,34 @@ Internet-Draft     The Key HTTP Response Header Field     September 2012
    change how the response selection process (as defined in
    [I-D.ietf-httpbis-p6-cache], Section 4.3)) works.
 
+
+
+
+Fielding & Nottingham    Expires March 15, 2013                 [Page 4]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2012
+
+
    In particular, a cache that implements the Key header field MUST NOT
    use a stored response unless all of the selecting header fields
    nominated by the Key header field match in both the original request
    (i.e., that associated with the stored response) and the presented
    request.
 
+   Does this mean the cache doesn't respond to the original request?
+   Or just doesn't cache the response? Is it necessary?
+
    Modifiers operate on a list of zero to many field-values.  This list
    is constructed by:
 
-
-
-Fielding & Nottingham    Expires March 14, 2013                 [Page 4]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2012
-
-
-   1.  Starting with the field-values of all headers who have the given
-       field-name.
+   1.  Starting with the field-values of all header fields that have the
+       given field-name.
    2.  Splitting each field-value on commas, excluding any that occur
        inside of a quoted-string production.
    3.  Flattening the list of lists into a single list that represents
        the individual header field-values.
-   4.  Trimming any OWS from the start and end of the field-values.
+   4.  Case-normalising each value in both lists to lowercase.
+   5.  Trimming any OWS from the start and end of the field-values.
 
    For example, given the set of headers:
 
@@ -242,15 +255,15 @@ Internet-Draft     The Key HTTP Response Header Field     September 2012
    A modifier for "Foo" would operate on the list of presented values
    '1', '2', 'a="b,c"'.
 
-   Once the appropriate headers from both the original request and the
-   stored request are processed in this manner, the result is two
+   Once the appropriate header fields from both the original request and
+   the stored request are processed in this manner, the result is two
    (possibly empty) lists of values for each specified header field.
 
    The key modifiers (as specified in the Key header field) are then
-   applied to the lists, in lexical order.  If any modifier does not
-   return a match (as per its definition), the headers are said not to
-   match.  If all of the modifiers return a match, the headers are said
-   to match.
+   applied to the lists in the order they appear in Key (left to right).
+   If any modifier does not return a match (as per its definition), the
+   headers are said not to match.  If all of the modifiers return a
+   match, the headers are said to match.
 
    Note that some types of modifiers are said to always match; they can
    be used to alter the input lists, or to alter the semantics of
@@ -258,48 +271,43 @@ Internet-Draft     The Key HTTP Response Header Field     September 2012
 
    Unrecognised modifiers MUST result in a failure to match.
 
-2.2.  Key Modifiers
-
-   This document defines the following key modifiers:
-
-2.2.1.  "str": String Match Modifier
-
-   The "str" modifier matches if the parameter value (after unquoting)
-   matches (character-for-character) any whole value in both lists.
-
-2.2.2.  "sub": Substring Match Modifier
-
-   The "sub" modifier matches if the parameter value (after unquoting)
-   is contained as a sequence of characters within both lists.
 
 
 
 
 
-Fielding & Nottingham    Expires March 14, 2013                 [Page 5]
+Fielding & Nottingham    Expires March 15, 2013                 [Page 5]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2012
 
 
-2.2.3.  "beg": Beginning Substring Match Modifier
+2.2.  Key Modifiers
 
-   The "beg" modifier matches if both lists contain a value that begins
+   This document defines the following key modifiers:
+
+2.2.1.  "w": Word Match Modifier
+
+   The "w" modifier matches if the parameter value (after unquoting)
+   matches (character-for-character) any whole value in both lists.
+
+2.2.2.  "s": Substring Match Modifier
+
+   The "s" modifier matches if the parameter value (after unquoting) is
+   contained as a sequence of characters within both lists.
+
+2.2.3.  "b": Beginning Substring Match Modifier
+
+   The "b" modifier matches if both lists contain a value that begins
    with the same sequence of characters as the parameter value (after
    unquoting).
 
-2.2.4.  "end": End Substring Match Modifier
+2.2.4.  "C": Case Sensitivity Flag
 
-   The "end" modifier matches if both lists contain a value that ends
-   with the same sequence of characters as the parameter value (after
-   unquoting).
+   The "C" modifier always matches, and has the side effect of reverting
+   the case normalisation of the header lists (see #4 in the list
+   above), so that subsequent matches become case sensitive.
 
-2.2.5.  "I": Case Insensitivity Flag
-
-   The "I" modifier always matches, and has the side effect of case
-   normalising the list values to lowercase for purposes of subsequent
-   matches (i.e., the match modifiers to its right, lexically).
-
-2.2.6.  "N": Not Flag
+2.2.5.  "N": Not Flag
 
    The "N" modifier always matches, and has the side effect of modifying
    the semantics of subsequent modifiers (i.e., the match modifiers to
@@ -309,7 +317,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2012
 
    For example, given a response with:
 
-     Key: Foo;str="a";N;str="b"
+     Key: Foo;w="a";N;w="b"
 
    then the presented header:
 
@@ -321,22 +329,22 @@ Internet-Draft     The Key HTTP Response Header Field     September 2012
 
    would not (because it contains "b").
 
-2.3.  Examples
-
-   For example, this response header field:
-
-     Key: cookie;str="ID=\"Roy\"";I;str="_sess=fhd378",
-          Accept-Encoding;i;str="gzip"
-
-   would allow the cache to reuse the response it occurs in if the
 
 
 
-Fielding & Nottingham    Expires March 14, 2013                 [Page 6]
+Fielding & Nottingham    Expires March 15, 2013                 [Page 6]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2012
 
 
+2.3.  Examples
+
+   For example, this response header field:
+
+     Key: cookie;w="_sess=fhd378";C;w="ID=\"Roy\"",
+          Accept-Encoding;w="gzip"
+
+   would allow the cache to reuse the response it occurs in if the
    presented request contains:
 
    o  A Cookie header containing both ID="Roy" (in that case) and
@@ -347,11 +355,11 @@ Internet-Draft     The Key HTTP Response Header Field     September 2012
    Less convoluted examples include matching any request with a User-
    Agent field value containing "MSIE" in any combination of case:
 
-     Key: user-agent;I;sub="MSIE"
+     Key: user-agent;s="MSIE"
 
    And an Accept-Language field value for French:
 
-     Key: accept-language;beg="fr"
+     Key: accept-language;b="fr"
 
 
 3.  IANA Considerations
@@ -378,6 +386,13 @@ Internet-Draft     The Key HTTP Response Header Field     September 2012
               draft-ietf-httpbis-p2-semantics-20 (work in progress),
               July 2012.
 
+
+
+Fielding & Nottingham    Expires March 15, 2013                 [Page 7]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2012
+
+
    [I-D.ietf-httpbis-p6-cache]
               Fielding, R., Lafon, Y., Nottingham, M., and J. Reschke,
               "HTTP/1.1, part 6: Caching",
@@ -385,14 +400,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2012
               July 2012.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-
-
-
-Fielding & Nottingham    Expires March 14, 2013                 [Page 7]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2012
-
-
               Requirement Levels", BCP 14, RFC 2119, March 1997.
 
    [RFC5234]  Crocker, D. and P. Overell, "Augmented BNF for Syntax
@@ -437,12 +444,5 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-Fielding & Nottingham    Expires March 14, 2013                 [Page 8]
+Fielding & Nottingham    Expires March 15, 2013                 [Page 8]
 
