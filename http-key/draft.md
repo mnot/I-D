@@ -223,15 +223,15 @@ contained as a sequence of characters within both lists.
 The "b" modifier matches if both lists contain a value that begins with the
 same sequence of characters as the parameter value (after unquoting).
 
-### "C": Case Sensitivity Flag
+### "c": Case Sensitivity Flag
 
-The "C" modifier always matches, and has the side effect of reverting the case
+The "c" modifier always matches, and has the side effect of reverting the case
 normalisation of the header lists (see #4 in the list above), so that
 subsequent matches become case sensitive.
 
-### "N": Not Flag
+### "n": Not Flag
 
-The "N" modifier always matches, and has the side effect of modifying the
+The "n" modifier always matches, and has the side effect of modifying the
 semantics of subsequent modifiers (i.e., the match modifiers to its right,
 lexically) so that they will be considered to match if they do not, and 
 likewise they will be considered not to match if they do.
@@ -239,7 +239,7 @@ likewise they will be considered not to match if they do.
 For example, given a response with:
 
 ~~~
-  Key: Foo;w="a";N;w="b"
+  Key: Foo;w="a";n;w="b"
 ~~~
   
 then the presented header:
@@ -263,7 +263,7 @@ Examples
 For example, this response header field:
 
 ~~~
-  Key: cookie;w="_sess=fhd378";C;w="ID=\"Roy\"", 
+  Key: cookie;w="_sess=fhd378";c;w="ID=\"Roy\"", 
        Accept-Encoding;w="gzip"
 ~~~
 
