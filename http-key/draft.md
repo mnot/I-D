@@ -163,9 +163,6 @@ stored response unless all of the selecting header fields nominated by the
 Key header field match in both the original request (i.e., that associated
 with the stored response) and the presented request.
 
-	Does this mean the cache doesn't respond to the original request?
-	Or just doesn't cache the response? Is it necessary?
-
 Modifiers operate on a list of zero to many field-values. This list is
 constructed by:
 
