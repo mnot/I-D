@@ -92,6 +92,8 @@
              <t>An problem type that refines the status code semantics,
              identified by an absolute URI <xref target="RFC3986"/> and paired
              with a summary title.</t>
+             <t>Optionally, an identifier for the specific instance of the 
+                problem (i.e., one per occurrence).</t>
              <t>Optionally, detail that is specific to an instance
              of the problem.</t>
             </list>
@@ -140,6 +142,9 @@
             <t>"title" (string) - A short, human-readable summary of the
             problem. It SHOULD NOT change from instance to instance of the
             problem, except for purposes of localisation.</t>
+            <t>"instance" (string) - A URI that identifies the instance of the
+            problem. It may or may not yield further information if
+            dereferenced.</t>
             <t>"detail" (string) - Optionally, additional, human readable
             detail specific to this instance of the problem.</t>
          </list></t>
@@ -160,15 +165,16 @@
      "describedby": "http://example.com/probs/out-of-credit",
      "title": "You do not have enough credits.",
      "detail": "Your current balance is 30, but that costs 50.",
+     "instance": "http://server.example.net/problems/12345abc",
      "balance": 30,
      "account": "http://api.example.com/account/12345"
    }]]></artwork></figure>
 
          <t>Here, the out-of-credit problem (identified by its URI) indicates
-         the reason for the 403 in "title", gives instance-specific
-         details in "detail", and adds two extensions; "balance" conveys the
-         account's balance, and "account" gives a link where the account can
-         be topped up.</t>
+         the reason for the 403 in "title", identifies the problem with
+         "instance" and gives instance-specific details in "detail", and adds
+         two extensions; "balance" conveys the account's balance, and
+         "account" gives a link where the account can be topped up.</t>
 
          <t>Note that "describedby" is case-sensitive in the JSON object, as
             are all other property names.</t>
@@ -187,6 +193,7 @@
    Content-Type: text/html
    Content-Language: en
    Link: <http://example.com/probs/out-of-credit>; rel="describedby";
+            instance="http://server.example.net/problems/12345abc";
             title="You do not have enough credits."; balance=30;
             account="http://api.example.com/account/12345"
 ]]></artwork></figure>
@@ -319,6 +326,9 @@
          <t>The information conveyed in the detail property, if present,
          SHOULD focus on helping the client correct the problem, rather than
          giving debugging information.</t>
+
+         <t>The instance property, if present, MUST be globally unique to
+            that particular occurrence of the problem.</t>
 
           <t>Software that generates problems should note that only one
          problem can be sent at at time. </t>
