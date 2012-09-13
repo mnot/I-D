@@ -12,24 +12,13 @@ Expires: March 17, 2013
 
 Abstract
 
-   This specification proposes a "Problem Detail" as an extensible way
-   to carry machine-readable details of HTTP errors in a response, to
-   avoid the need to invent new response formats for non-human
-   consumers.
+   This document defines a "Problem Detail" as an extensible way to
+   carry machine-readable details of HTTP errors in a response, to avoid
+   the need to invent new response formats for non-human consumers.
 
 Note to Readers
 
-   This specification is tentative (as all Internet-Drafts are, but even
-   more so).  It's not yet clear whether defining this format will
-   improve things enough to balance out the harm it may cause, and so it
-   may disappear at any time.  Using it before it becomes an RFC may
-   subject you to ridicule; you have been warned.
-
-   What's the problem?  In a nutshell, this sort of thing might
-   encourage tighter coupling, making applications more brittle.  On the
-   other hand, lots of people are doing this already, so having a common
-   way to do it -- with lots of caveats about how it can be misused --
-   might be better.  Stay tuned.
+   This draft should be discussed on the apps-discuss mailing list [1].
 
 Status of this Memo
 
@@ -50,13 +39,6 @@ Status of this Memo
 
 Copyright Notice
 
-
-
-Nottingham               Expires March 17, 2013                 [Page 1]
-
-Internet-Draft               Problem Details              September 2012
-
-
    Copyright (c) 2012 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
@@ -67,24 +49,42 @@ Internet-Draft               Problem Details              September 2012
    carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
    include Simplified BSD License text as described in Section 4.e of
+
+
+
+Nottingham               Expires March 17, 2013                 [Page 1]
+
+Internet-Draft               Problem Details              September 2012
+
+
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
 
 
 Table of Contents
 
-   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  3
-   2.  Requirements . . . . . . . . . . . . . . . . . . . . . . . . .  4
-   3.  The Problem Details JSON Object  . . . . . . . . . . . . . . .  4
-   4.  Expressing Problem Details with Link Headers . . . . . . . . .  5
-   5.  Defining New Problem Details . . . . . . . . . . . . . . . . .  6
-   6.  Generating Problem Details . . . . . . . . . . . . . . . . . .  7
-   7.  Consuming Problem Details  . . . . . . . . . . . . . . . . . .  8
-   8.  Security Considerations  . . . . . . . . . . . . . . . . . . .  8
-   9.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . .  8
-   10. Acknowledgements . . . . . . . . . . . . . . . . . . . . . . .  9
-   11. Normative References . . . . . . . . . . . . . . . . . . . . .  9
-   Author's Address . . . . . . . . . . . . . . . . . . . . . . . . . 10
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . . . 3
+   2.  Requirements  . . . . . . . . . . . . . . . . . . . . . . . . . 3
+   3.  The Problem Details JSON Object . . . . . . . . . . . . . . . . 3
+   4.  Expressing Problem Details with Link Headers  . . . . . . . . . 4
+   5.  Defining New Problem Details  . . . . . . . . . . . . . . . . . 5
+   6.  Generating Problem Details  . . . . . . . . . . . . . . . . . . 7
+   7.  Consuming Problem Details . . . . . . . . . . . . . . . . . . . 7
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . . . 8
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . . . 8
+   10. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . 9
+   11. Normative References  . . . . . . . . . . . . . . . . . . . . . 9
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . . . 9
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -116,9 +116,9 @@ Internet-Draft               Problem Details              September 2012
 1.  Introduction
 
    While HTTP [RFC2616] defines the status code as the primary indicator
-   of response semantics, it is sometimes not fine-grained enough to
-   convey helpful information about the error, particularly to non-human
-   consumers.
+   of generic response semantics, it is sometimes not fine-grained
+   enough to convey helpful information about the error, particularly to
+   non-human consumers.
 
    For example, consider a 403 Forbidden response that indicates that
    the client's account doesn't have enough credit.  While this can be
@@ -129,44 +129,21 @@ Internet-Draft               Problem Details              September 2012
 
    This specification defines a "Problem Detail" as an extensible way to
    carry machine-readable details of errors in a response, to avoid the
-   need to invent new response formats.
-
-   Problem details have:
-   o  A generic status, identified and solely conveyed by the HTTP
-      status code <http://www.iana.org/assignments/http-status-codes/>.
-      For example, "403 Forbidden".
-   o  An problem type that refines the status code semantics, identified
-      by an absolute URI [RFC3986] and paired with a summary title.
-   o  Optionally, an identifier for the specific instance of the problem
-      (i.e., one per occurrence).
-   o  Optionally, detail that is specific to an instance of the problem.
+   need to invent new, application-specific response formats.
 
    The common data model for problem details as a JSON [RFC4627] object.
    That object can be serialised as an "application/json-problem" HTTP
    response, or it can be conveyed using a Link HTTP response header
    field [RFC5988].
 
-   Future work may include defining a HTML Microformat
-   <http://microformats.org/> that allows this information to be carried
-   in an HTML document as well.
+   Note that this format is (naturally) not the only way to convey the
+   details of a problem in HTTP; if the response is still a
+   representation of a resource, for example, it's often preferable to
+   accommodate describing the details in that format.
 
-   Note that Problem Details are not the only way to convey the details
-   of a problem in HTTP; if the response is still a representation of a
-   resource, for example, it's often preferable to accommodate
-   describing the details in that format.
-
-   Rather, the aim of this specification is to define a common format
+   As such, the aim of this specification is to define a common format
    for those applications that need one, so that they aren't required to
    define their own.
-
-
-
-
-
-
-Nottingham               Expires March 17, 2013                 [Page 3]
-
-Internet-Draft               Problem Details              September 2012
 
 
 2.  Requirements
@@ -182,21 +159,31 @@ Internet-Draft               Problem Details              September 2012
    document, identified with the "application/json-problem" media type.
    Its root object has the following properties:
 
-   o  "describedby" (string) - A URL that identifies the type of
-      problem.  When dereferenced, it SHOULD provide human-readable
-      documentation (e.g., using HTML).
+
+
+
+
+
+Nottingham               Expires March 17, 2013                 [Page 3]
+
+Internet-Draft               Problem Details              September 2012
+
+
+   o  "describedby" (string) - An absolute URI [RFC3986] that identifies
+      the type of problem.  When dereferenced, it SHOULD provide human-
+      readable documentation (e.g., using HTML).
    o  "title" (string) - A short, human-readable summary of the problem.
       It SHOULD NOT change from instance to instance of the problem,
       except for purposes of localisation.
-   o  "instance" (string) - A URI that identifies the instance of the
-      problem.  It may or may not yield further information if
-      dereferenced.
-   o  "detail" (string) - Optionally, additional, human readable detail
-      specific to this instance of the problem.
+   o  "instance" (string) - An absolute URI that identifies the specific
+      instance of the problem.  It may or may not yield further
+      information if dereferenced.
+   o  "detail" (string) - Optionally, an additional, human readable
+      explanation specific to this instance of the problem.
 
    Problem details, when serialised as JSON objects, MUST include the
-   "describedby" and "title" properties.  The "detail" property is
-   always OPTIONAL.
+   "describedby" and "title" properties.  The "instance" and "detail"
+   properties are always OPTIONAL.
 
    Problem types MAY extend their instances with additional properties.
    For example:
@@ -215,18 +202,11 @@ Internet-Draft               Problem Details              September 2012
       }
 
    Here, the out-of-credit problem (identified by its URI) indicates the
-   reason for the 403 in "title", identifies the problem with "instance"
-   and gives instance-specific details in "detail", and adds two
-
-
-
-Nottingham               Expires March 17, 2013                 [Page 4]
-
-Internet-Draft               Problem Details              September 2012
-
-
-   extensions; "balance" conveys the account's balance, and "account"
-   gives a link where the account can be topped up.
+   reason for the 403 in "title", gives a reference for the specific
+   problem occurrence with "instance" and gives instance-specific
+   details in "detail", and adds two extensions; "balance" conveys the
+   account's balance, and "account" gives a link where the account can
+   be topped up.
 
    Note that "describedby" is case-sensitive in the JSON object, as are
    all other property names.
@@ -237,6 +217,14 @@ Internet-Draft               Problem Details              September 2012
    Because resources often use formats other than JSON to convey human-
    readable problem details, it is also possible to serialise Problem
    Details for non-browser consumption alongside them using a Link
+
+
+
+Nottingham               Expires March 17, 2013                 [Page 4]
+
+Internet-Draft               Problem Details              September 2012
+
+
    response header field [RFC5988].  For example:
 
       HTTP/1.1 403 Forbidden
@@ -275,12 +263,6 @@ Internet-Draft               Problem Details              September 2012
             detail*=UTF-8''something%20happened
 
 
-
-Nottingham               Expires March 17, 2013                 [Page 5]
-
-Internet-Draft               Problem Details              September 2012
-
-
 5.  Defining New Problem Details
 
    Before defining a new type of problem detail, it's important to
@@ -290,6 +272,14 @@ Internet-Draft               Problem Details              September 2012
    Problem details are not a debugging tool for the underlying
    implementation; rather, they are a way to expose greater detail about
    the HTTP interface of the application itself.
+
+
+
+
+Nottingham               Expires March 17, 2013                 [Page 5]
+
+Internet-Draft               Problem Details              September 2012
+
 
    For example, an "out of credit" problem is an appropriate explanation
    as to why a request was forbidden.  In contrast, a description of the
@@ -329,14 +319,6 @@ Internet-Draft               Problem Details              September 2012
    Optionally, a problem definition MAY specify additional properties on
    the Problem Details JSON object.
 
-
-
-
-Nottingham               Expires March 17, 2013                 [Page 6]
-
-Internet-Draft               Problem Details              September 2012
-
-
    For example, an extension might use typed links [RFC5988] to another
    resource that can be used by machines to resolve the problem.
 
@@ -347,6 +329,12 @@ Internet-Draft               Problem Details              September 2012
    values strings, or explain how to map their values to strings that
    are safe to include in HTTP headers (noting the special semantics of
    a comma there).
+
+
+
+Nottingham               Expires March 17, 2013                 [Page 6]
+
+Internet-Draft               Problem Details              September 2012
 
 
 6.  Generating Problem Details
@@ -384,15 +372,6 @@ Internet-Draft               Problem Details              September 2012
    can be sent at at time.
 
 
-
-
-
-
-Nottingham               Expires March 17, 2013                 [Page 7]
-
-Internet-Draft               Problem Details              September 2012
-
-
 7.  Consuming Problem Details
 
    Consumers should use the describedby URL as the primary identifier
@@ -406,6 +385,14 @@ Internet-Draft               Problem Details              September 2012
 
    Clients consuming problem details MUST ignore unrecognised
    extensions; this allows problems to evolve and include additional
+
+
+
+Nottingham               Expires March 17, 2013                 [Page 7]
+
+Internet-Draft               Problem Details              September 2012
+
+
    information in the future.
 
    Finally, clients consuming problem details SHOULD NOT automatically
@@ -430,25 +417,6 @@ Internet-Draft               Problem Details              September 2012
    This specification defines a new Internet media type, "application/
    json-problem":
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Nottingham               Expires March 17, 2013                 [Page 8]
-
-Internet-Draft               Problem Details              September 2012
-
-
       Type name: application
       Subtype name: json-problem
       Required parameters: None
@@ -469,6 +437,16 @@ Internet-Draft               Problem Details              September 2012
       Restrictions on usage: None.
       Author: Mark Nottingham <mnot@mnot.net>
       Change controller: IESG
+
+
+
+
+
+
+
+Nottingham               Expires March 17, 2013                 [Page 8]
+
+Internet-Draft               Problem Details              September 2012
 
 
 10.  Acknowledgements
@@ -497,17 +475,11 @@ Internet-Draft               Problem Details              September 2012
 
    [RFC5987]  Reschke, J., "Character Set and Language Encoding for
               Hypertext Transfer Protocol (HTTP) Header Field
-
-
-
-Nottingham               Expires March 17, 2013                 [Page 9]
-
-Internet-Draft               Problem Details              September 2012
-
-
               Parameters", RFC 5987, August 2010.
 
    [RFC5988]  Nottingham, M., "Web Linking", RFC 5988, October 2010.
+
+   [1]  <https://www.ietf.org/mailman/listinfo/apps-discuss>
 
 
 Author's Address
@@ -528,33 +500,5 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Nottingham               Expires March 17, 2013                [Page 10]
+Nottingham               Expires March 17, 2013                 [Page 9]
 
