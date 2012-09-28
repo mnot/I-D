@@ -218,20 +218,38 @@ BH: 1
             the origin associated with the effective request URI has a 
             Browser Hints resource available at the well-known URI.</t>
             
-          <t>The header field value is not significant, and SHOULD be ignored
-            by clients. I.e., the presence of the field is the indicator, not
-            its value.</t>
+          <t>The header field value MAY be "0" or "1".</t>
 
           <t>Origin servers that wish to indicate to clients that Browser
-            Hints are available SHOULD include a BH header in all responses.
-            Its value SHOULD be "1".
+            Hints are available SHOULD include a BH header in all responses
+            with a value of "1".
           </t>
             
         </section>
         
         <section title="Interaction with HTTP Proxies">
           
-          <t></t>
+          <t>Browser Hints are intended to optimise the connection between a
+          client and the origin server. However, HTTP allows proxies to be
+          interposed between browsers and origin servers, meaning that
+          careless use of some hints -- especially those that are
+          connection-oriented -- might not be applicable, and might even be
+          harmful to the proxy.</t>
+          
+          <t>To mitigate these risks, some hints identify additional
+            requirements for clients consuming browser hints when there
+            is evidence of a proxy in use.</t>
+            
+          <t>A proxy is considered to be in use if:</t>
+          <t><list style="symbols">
+            <t>The Via response header field is present, or</t>
+            <t>The BH response header field has a value of "0".</t>
+          </list></t>
+          
+          <t>Proxies MAY modify the value of the BH header field to be
+            "0", or insert a BH header field with the value "0" if it is
+            not present. Proxies MUST NOT modify a response so that the
+            BH header field is "1" where it was previously not.</t>
           
         </section>
 
