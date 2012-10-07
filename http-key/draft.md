@@ -62,10 +62,9 @@ effectively modifies the key used to store and access a response to include
 information from the request's headers. This allows proactive content
 negotiation {{I-D.ietf-httpbis-p2-semantics}} to work with caches.
 
-However, Vary's operation is coarse-grained; although
-caches are allowed to normalise the values of headers based upon their
-semantics, this requires the cache to understand those semantics, and is still
-quite limited.
+However, Vary's operation is coarse-grained; although caches are allowed to
+normalise the values of headers based upon their semantics, doing so requires
+the cache to understand those semantics, and is still quite limited.
 
 For example, if a response is cached with the response header field:
 
