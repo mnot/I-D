@@ -115,8 +115,8 @@ Caches can use this information as part of determining whether a stored
 response can be used to satisfy a given request. When a cache fully 
 implements this mechanism, it MAY ignore the Vary response header field.
 
-User agents can use this information to discover if additional content
-negotiation header fields might influence the resulting response.
+Additionally, user agents can use this information to discover if additional
+request header fields might influence the resulting response.
 
 The Key field-value is a comma-delimited list of selecting header fields
 (similar to Vary), with zero to many modifiers to each, delimited by
