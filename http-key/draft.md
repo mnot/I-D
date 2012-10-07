@@ -187,6 +187,11 @@ For example, given the set of headers:
 A modifier for "Foo" would operate on the list of presented values '1', '2',
 'a="b,c"'.
 
+Note that step 2 of this algorithm optimistically assumes that double-quotes
+in a header field value denote the use of the quoted-string as defined by
+{{I-D.ietf-httpbis-p1-messaging}}; the cache does not need to "understand"
+the specific header field. 
+
 Once the appropriate header fields from both the original request and the
 stored request are processed in this manner, the result is two (possibly
 empty) lists of values for each specified header field.
