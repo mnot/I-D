@@ -228,7 +228,7 @@ same sequence of characters as the parameter value (after unquoting).
 
 ### "p": Parameter Prefix Match Modifier
 
-The "b" modifier matches if the parameter value (after unquoting) matches
+The "p" modifier matches if the parameter value (after unquoting) matches
 (character-for-character) the sequence of characters up to (but not including)
 the first semi-colon (";") in both lists, after any whitespace is removed.
 
@@ -238,7 +238,7 @@ For example, given the key:
  Key: Accept;p="text/html"
 ~~~
 
-all of the following headers can be considered to match:
+then each of the following header fields is a match:
 
 ~~~
  Accept: text/html
