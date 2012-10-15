@@ -313,6 +313,19 @@ And an Accept-Language field value for French:
 ~~~
 
 
+Relationship to Vary
+--------------------
+
+Origin servers SHOULD still send Vary as normal with Key, to accommodate
+implementations that do not (yet) understand it. For example,
+
+~~~
+  Vary: Accept-Encoding
+  Key: Accept-Encoding;w="gzip"
+~~~
+
+
+
 IANA Considerations
 ===================
 
