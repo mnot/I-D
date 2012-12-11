@@ -63,17 +63,15 @@
       <section title="Introduction">
 
         <t>HTTP <xref target="RFC2616"/> clients -- especially browsers --
-        typically use hardcoded values or heuristics to determine how many TCP
-        connections to use to a server, based on common-case server behaviours
-        and limitations.</t>
+        typically use hardcoded values or heuristics to determine how they use
+        TCP, based on common-case server behaviours and limitations.</t>
 
         <t>Likewise, they often send voluminous request headers (e.g., in
         User-Agent and Allow) because they fear that changing those headers'
         values will break some sites that depend upon specific values.</t>
 
-        <t>These are just two examples of common, conservative behaviour by
-          browsers that is good for interoperability, but potentially bad
-          for performance in certain circumstances.</t>
+        <t>These conservatives behaviours are good for interoperability, but
+        potentially bad for performance in certain circumstances.</t>
 
         <t>This document specifies a mechanism whereby a HTTP server can
         advertise hints for browsers (and other clients), so that
@@ -264,23 +262,7 @@ BH: 1
       </section>
       
       <section title="Pre-defined Browser Hints" anchor="hints">
-        
-        <section title="max-conns">
-
-          <t>
-            <list style="symbols">
-              <t>Browser Hint Name: max-conns</t>
-              <t>Description: When present, this hint indicates the maximum
-              number of concurrent persistent connections that the site 
-              would like clients to use.</t>
-              <t>Value Type: number</t>
-              <t>Contact: mnot@mnot.net</t>
-              <t>Notes: Not to be used when there is evidence of a proxy.</t>
-            </list>
-          </t>
-
-        </section>
-        
+                
         <section title="pconn-ip">
 
           <t>
@@ -300,84 +282,18 @@ BH: 1
             </list>
           </t>
 
-          <t>In other words, if both www.example.com and foo.example.org resolve
-            to the address 192.0.2.5, and indicate this hint, then clients
-            can send a request to www.example.com and then a request to 
-            foo.example.org on the same TCP connection to that address.</t>
+          <t>In other words, if both www.example.com and foo.example.org
+          resolve to the address 192.0.2.5, and indicate this hint, then
+          clients can send a request to www.example.com and then a request to
+          foo.example.org on the same TCP connection to that address.</t>
             
-          <t>If any of the sites grouped together for the purposes of
-            pconn-ip declare a max-conns hint, the max-conns value for that 
-            address is considered to be the maximum of the declared 
-            max-conn hints present.</t>
+          <t>If any of the sites grouped together for the purposes of pconn-ip
+          declare a max-conns hint, the max-conns value for that address is
+          considered to be the maximum of the declared max-conn hints
+          present.</t>
 
         </section>
         
-				<section title="ip-balance">
-
-					<t>
-						<list style="symbols">
-							<t>Browser Hint Name: ip-balance</t>
-							<t>Description: When present, this hint indicates a preferred
-								policy for clients to handle a DNS lookup that return multiple
-								IPv4 addresses for the site.</t>
-							<t>Value Type: string</t>
-							<t>Contact: mnot@mnot.net</t>
-              <t>Notes: Not to be used when there is evidence of a proxy.</t>
-						</list>
-					</t>
-					
-					<t>Defined values include:</t>
-					<t>
-						<list style="symbols">
-							<t>round-robin - Use each IP address in succession, using the
-								next address each time a new connection is opened.</t>
-							<t>random - Use a random IP address from the list for each new 
-								connection.</t>
-							<t>failover - Use the first IP address, falling back to the
-								following address upon failure, and so forth.</t>
-						</list>
-					</t>
-
-				</section>
-
-				<section title="connect-timeout">
-
-					<t>
-						<list style="symbols">
-							<t>Browser Hint Name: connect-timeout</t>
-							<t>Description: When present, this hint indicates how long
-								the site wishes browsers to wait for a connection to be
-								established, in seconds, before considering that connection
-								unresponsive.
-								</t>
-							<t>Value Type: integer</t>
-							<t>Contact: mnot@mnot.net</t>
-              <t>Notes: Not to be used when there is evidence of a proxy.</t>
-						</list>
-					</t>
-
-				</section>
-
-				<section title="read-timeout">
-
-					<t>
-						<list style="symbols">
-							<t>Browser Hint Name: read-timeout</t>
-							<t>Description: When present, this hint indicates how long
-								the site wishes browsers to wait before considering a 
-								connection unresponsive, when data is outstanding (either
-								a response or part thereof), in seconds.
-								</t>
-							<t>Value Type: integer</t>
-							<t>Contact: mnot@mnot.net</t>
-						</list>
-					</t>
-
-          <t>Note that requests on timed-out connections can be retried, 
-            subject to the constraints of HTTP.</t>
-
-				</section>
-
         <section title="max-pipeline-depth">
 
           <t>
@@ -424,25 +340,6 @@ BH: 1
 
         </section>
         
-				<section title="chunk-req-bodies">
-					
-          <t>
-						<list style="symbols">
-							<t>Browser Hint Name: chunk-req-bodies</t>
-							<t>Description: When true, this hint indicates that the server
-              can successfully process a request with a chunk-encoded body;
-              i.e., that it should not return a 411 Length Required status.
-              Note that clients may still encounter a 411 response status,
-              even in when this hint is present (e.g., a proxy). When false,
-              the server may or may not require a Content-Length on requests
-              with bodies.</t>
-							<t>Value Type: true | false</t>
-							<t>Contact: mnot@mnot.net</t>
-						</list>
-					</t>
-
-				</section>
-
 				<section title="omit-cookies">
 
           <t>
