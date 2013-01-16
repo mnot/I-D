@@ -665,329 +665,6 @@
       </section>
 
 
-      <section anchor="well-known" title="Well-Known IANA Policy Definitions">
-        <t>
-   The following are some defined policies, most of which are in use
-   today.  These cover a range of typical policies that have been used
-   to describe the procedure for assigning new values in a namespace.
-   It is not strictly required that documents use these terms; the
-   actual requirement is that the instructions to IANA be clear and
-   unambiguous.  However, use of these terms is strongly RECOMMENDED,
-   because their meanings are widely understood.
-   The terms are fully explained in the following subsections.
-        </t>
-        <t>
-<?rfc subcompact="yes"?>
-     <list style="empty"><t>
-          <list style="numbers">
-            <t>Private Use</t>
-            <t>Experimental Use</t>
-            <t>Hierarchical Allocation</t>
-            <t>First Come First Served</t>
-            <t>Expert Review</t>
-            <t>Specification Required</t>
-            <t>RFC Required</t>
-            <t>IETF Review</t>
-            <t>Standards Action</t>
-            <t>IESG Approval</t>
-          </list>
-     </t></list>  
-<?rfc subcompact="no"?>
-        </t>
-        <t>
-   It should be noted that it often makes sense to partition a namespace
-   into multiple categories, with assignments within each category
-   handled differently.
-   Many protocols now partition
-   namespaces into two or more parts, with one range reserved
-   for Private or Experimental Use while other ranges are reserved for
-   globally unique assignments assigned following some review process.
-   Dividing a namespace into ranges makes it possible to have different
-   policies in place for different ranges and different use cases.
-        </t>
-        <t>
-          Similarly, it will often be useful to specify multiple policies in parallel,
-          with each policy being used under different circumstances.
-          For more discussion of that topic, see <xref target="multiple-policies"/>.
-        </t>
-        <t>
-<?rfc subcompact="yes"?>
-   Examples:
-   <list>
-     <t>LDAP <xref target="RFC4520"/></t>
-     <t>TLS ClientCertificateType Identifiers <xref target="RFC5246"/>
-        (as detailed in the subsections below)</t>
-     <t>Pseudowire Edge to Edge Emulation (PWE3) <xref target="RFC4446"/></t>
-   </list>
-<?rfc subcompact="no"?>
-        </t>
-
-        <section anchor="policy-private" title="Policy: Private Use">
-          <t>
-            For private or local use only, with the type and
-            purpose defined by the local site.  No attempt is made to
-            prevent multiple sites from using the same value in
-            different (and incompatible) ways.  There is no need for
-            IANA to review such assignments (since IANA does not record
-            them) and assignments are not generally useful for broad
-            interoperability.  It is the responsibility of the sites
-            making use of the Private Use range to ensure that no
-            conflicts occur (within the intended scope of use).
-          </t>
-          <t>
-<?rfc subcompact="yes"?>
-            Examples:
-            <list>
-              <t>Site-specific options in DHCP <xref target="RFC2939"/></t>
-              <t>Fibre Channel Port Type Registry <xref target="RFC4044"/></t>
-              <t>TLS ClientCertificateType Identifiers 224-255 <xref target="RFC5246"/></t>
-            </list>
-<?rfc subcompact="no"?>
-          </t>
-        </section>
-
-        <section anchor="policy-experimental" title="Policy: Experimental Use">
-          <t>
-            Similar to private or local use only, with the
-            purpose being to facilitate experimentation.  See
-            <xref target="RFC3692"/> for details.
-          </t>
-          <t>
-<?rfc subcompact="yes"?>
-            Example:
-            <list>
-              <t>Experimental Values in IPv4, IPv6, ICMPv4, ICMPv6,
-                 UDP, and TCP Headers <xref target="RFC4727"/></t>
-            </list>
-<?rfc subcompact="no"?>
-          </t>
-        </section>
-
-        <section anchor="policy-hierarchical" title="Policy: Hierarchical Allocation">
-          <t>
-            Delegated managers can assign values
-            provided they have been given control over that part of the
-            namespace.  IANA controls the higher levels of the namespace
-            according to one of the other policies.
-          </t>
-          <t>
-<?rfc subcompact="yes"?>
-            Examples:
-            <list>
-              <t>DNS names</t>
-              <t>Object Identifiers</t>
-              <t>IP addresses</t>
-            </list>
-<?rfc subcompact="no"?>
-          </t>
-        </section>
-
-        <section anchor="policy-fcfs" title="Policy: First Come First Served">
-          <t>
-            Assignments are made to anyone on a
-            first come, first served basis.  There is no substantive
-            review of the request, other than to ensure that it is
-            well-formed and doesn't duplicate an existing assignment.
-            However, requests must include a minimal amount of clerical
-            information, such as a point of contact (including an email
-            address) and a brief description of how the value will be
-            used.  Additional information specific to the type of value
-            requested may also need to be provided, as defined by the
-            namespace.  For numbers, the exact value is generally
-            assigned by IANA; with names, specific text strings can
-            usually be requested.
-          </t>
-          <t>
-<?rfc subcompact="yes"?>
-            Examples:
-            <list>
-              <t>SASL mechanism names <xref target="RFC4422"/></t>
-              <t>LDAP Protocol Mechanisms and LDAP Syntax <xref target="RFC4520"/></t>
-            </list>
-<?rfc subcompact="no"?>
-          </t>
-        </section>
-
-        <section anchor="policy-expert" title="Policy: Expert Review">
-          <t>
-            (Sometimes also called "Designated Expert" in earlier editions of this document.)
-            Review and approval by a designated expert is required.
-            The required documentation and review
-            criteria for use by the designated expert should be provided
-            when defining the registry.  For example, see Sections 6 and
-            7.2 in <xref target="RFC3748"/>.
-          </t>
-          <t>
-            It is particularly important, when using a designated expert, to give
-            clear guidance to the expert, laying out criteria for
-            performing an evaluation and reasons for rejecting a request.
-            When specifying a policy that involves a designated expert, the
-            IANA Considerations SHOULD contain such guidance.
-            It is also a good idea to include, when possible, a sense of whether
-            many registrations are expected over time, or if the registry is
-            expected to be updated infrequently or in exceptional circumstances only.
-          </t>
-          <t>
-<?rfc subcompact="yes"?>
-            Examples:
-            <list>
-              <t>EAP Method Types <xref target="RFC3748"/></t>
-              <t>HTTP Digest AKA algorithm versions <xref target="RFC4169"/></t>
-              <t>URI schemes <xref target="RFC4395"/></t>
-              <t>GEOPRIV Location Types <xref target="RFC4589"/></t>
-            </list>
-<?rfc subcompact="no"?>
-          </t>
-        </section>
-
-        <section anchor="policy-specification" title="Policy: Specification Required">
-          <t>
-            Review and approval by a Designated Expert is required,
-            (as in <xref target="policy-expert"/>)
-            and the values and their meanings must be
-            documented in a permanent and readily available public
-            specification, in sufficient detail so that interoperability
-            between independent implementations is possible.
-            The Designated Expert will review the public specification and
-            evaluate whether it is sufficiently clear to allow
-            interoperable implementations.  The intention behind
-            "permanent and readily available" is that a document can
-            reasonably be expected to be findable and retrievable long
-            after IANA assignment of the requested value.  Publication
-            of an RFC is an ideal means of achieving this requirement,
-            but Specification Required is intended to also cover the
-            case of a document published outside of the RFC path.  For
-            RFC publication, the normal RFC review process is expected
-            to provide the necessary review for interoperability, though
-            the designated expert may be a particularly well-qualified
-            person to perform such a review.
-          </t>
-          <t>
-            When specifying this policy, just use the term "Specification Required".
-            Some specifications have chosen to refer to it as "Expert Review with
-            Specification Required", and that only causes confusion.
-          </t>
-          <t>
-<?rfc subcompact="yes"?>
-            Examples:
-            <list>
-              <t>Diffserv-aware TE Bandwidth Constraints Model Identifiers <xref target="RFC4124"/></t>
-              <t>TLS ClientCertificateType Identifiers 64-223 <xref target="RFC5246"/></t>
-              <t>ROHC Profile Identifiers <xref target="RFC5795"/></t>
-            </list>
-<?rfc subcompact="no"?>
-          </t>
-        </section>
-
-        <section anchor="policy-rfc" title="Policy: RFC Required">
-          <t>
-            RFC publication suffices, as an IETF submission or in any other stream
-            (currently an RFC Editor Independent Submission <xref target="RFC5742"/>
-            or an RFC in the IRTF or IAB Stream).
-            Unless otherwise specified, any type of RFC is sufficient
-            (currently Standards Track, BCP, Informational, Experimental, Historic).
-          </t>
-        </section>
-
-        <section anchor="policy-ietf" title="Policy: IETF Review">
-          <t>
-            (Formerly called "IETF Consensus" in the first edition of this document.)
-            New values are assigned only through RFCs in the IETF Stream --
-            those that have been shepherded through the IESG as AD-Sponsored or
-            IETF working group Documents <xref target="RFC2026"/> <xref target="RFC5378"/>.
-            The intention is that the document and proposed assignment will
-            be reviewed by the IESG and appropriate IETF working groups (or
-            experts, if suitable working groups no longer exist) to
-            ensure that the proposed assignment will not negatively
-            impact interoperability or otherwise extend IETF protocols
-            in an inappropriate or damaging manner.
-          </t>
-          <t>
-            To ensure adequate community review, such documents are
-            shepherded through the IESG as AD-sponsored or working group
-            documents with an IETF Last Call.
-          </t>
-          <t>
-<?rfc subcompact="yes"?>
-            Examples:
-            <list>
-              <t>IPSECKEY Algorithm Types <xref target="RFC4025"/></t>
-              <t>Accounting-Auth-Method AVP values in DIAMETER <xref target="RFC4005"/></t>
-              <t>TLS Extension Types <xref target="RFC5246"/></t>
-            </list>
-<?rfc subcompact="no"?>
-          </t>
-        </section>
-
-        <section anchor="policy-standards" title="Policy: Standards Action">
-          <t>
-            Values are assigned only for Standards Track RFCs approved by the IESG.
-          </t>
-          <t>
-<?rfc subcompact="yes"?>
-            Examples:
-            <list>
-              <t>BGP message types <xref target="RFC4271"/></t>
-              <t>Mobile Node Identifier option types <xref target="RFC4283"/></t>
-              <t>TLS ClientCertificateType Identifiers 0-63 <xref target="RFC5246"/></t>
-              <t>DCCP Packet Types <xref target="RFC4340"/></t>
-            </list>
-<?rfc subcompact="no"?>
-          </t>
-        </section>
-
-        <section anchor="policy-iesg" title="Policy: IESG Approval">
-          <t>
-            New assignments may be approved by the IESG.
-            Although there is no requirement that the request be
-            documented in an RFC, the IESG has discretion to request
-            documents or other supporting materials on a case-by-case
-            basis.
-          </t>
-          <t>
-            IESG Approval is not intended to be used often or as a
-            "common case"; indeed, it has seldom been used in practice
-            during the period RFC 2434 was in effect.  Rather, it is
-            intended to be available in conjunction with other policies
-            as a fall-back mechanism in the case where one of the other
-            allowable approval mechanisms cannot be employed in a timely
-            fashion or for some other compelling reason.  IESG Approval
-            is not intended to circumvent the public review processes
-            implied by other policies that could have been employed for
-            a particular assignment.  IESG Approval would be
-            appropriate, however, in cases where expediency is desired
-            and there is strong consensus (such as from a working group)
-            for making the assignment.
-          </t>
-          <t>
-            The following guidelines are suggested for any evaluation
-            under IESG Approval:
-              <list style="symbols">
-                <t>
-              The IESG can (and should) reject a request if another path
-              for registration is available that is more appropriate and
-              there is no compelling reason not to use that path.
-                </t>
-                <t>
-              Before approving a request, the community should be
-              consulted, via a "call for comments" that provides as much
-              information as is reasonably possible about the request.
-                </t>
-              </list>
-          </t>
-          <t>
-<?rfc subcompact="yes"?>
-            Examples:
-            <list>
-              <t>IPv4 Multicast address assignments <xref target="RFC5771"/></t>
-              <t>IPv4 IGMP Type and Code values <xref target="RFC3228"/></t>
-              <t>Mobile IPv6 Mobility Header Type and Option values <xref target="RFC6275"/></t>
-            </list>
-<?rfc subcompact="no"?>
-          </t>
-        </section>
-      </section>
-
       <section anchor="selecting-policy" title="Best Practice for Selecting an Appropriate Policy">
         <t>
           The definitions above from "First Come First Served" to "Standards Action"
@@ -1322,6 +999,331 @@
         </t>
       </section>
     </section>
+
+    <section anchor="well-known" title="Well-Known IANA Policy Definitions">
+      <t>
+ The following are some defined policies, most of which are in use
+ today.  These cover a range of typical policies that have been used
+ to describe the procedure for assigning new values in a namespace.
+ It is not strictly required that documents use these terms; the
+ actual requirement is that the instructions to IANA be clear and
+ unambiguous.  However, use of these terms is strongly RECOMMENDED,
+ because their meanings are widely understood.
+ The terms are fully explained in the following subsections.
+      </t>
+      <t>
+<?rfc subcompact="yes"?>
+   <list style="empty"><t>
+        <list style="numbers">
+          <t>Private Use</t>
+          <t>Experimental Use</t>
+          <t>Hierarchical Allocation</t>
+          <t>First Come First Served</t>
+          <t>Expert Review</t>
+          <t>Specification Required</t>
+          <t>RFC Required</t>
+          <t>IETF Review</t>
+          <t>Standards Action</t>
+          <t>IESG Approval</t>
+        </list>
+   </t></list>  
+<?rfc subcompact="no"?>
+      </t>
+      <t>
+ It should be noted that it often makes sense to partition a namespace
+ into multiple categories, with assignments within each category
+ handled differently.
+ Many protocols now partition
+ namespaces into two or more parts, with one range reserved
+ for Private or Experimental Use while other ranges are reserved for
+ globally unique assignments assigned following some review process.
+ Dividing a namespace into ranges makes it possible to have different
+ policies in place for different ranges and different use cases.
+      </t>
+      <t>
+        Similarly, it will often be useful to specify multiple policies in parallel,
+        with each policy being used under different circumstances.
+        For more discussion of that topic, see <xref target="multiple-policies"/>.
+      </t>
+      <t>
+<?rfc subcompact="yes"?>
+ Examples:
+ <list>
+   <t>LDAP <xref target="RFC4520"/></t>
+   <t>TLS ClientCertificateType Identifiers <xref target="RFC5246"/>
+      (as detailed in the subsections below)</t>
+   <t>Pseudowire Edge to Edge Emulation (PWE3) <xref target="RFC4446"/></t>
+ </list>
+<?rfc subcompact="no"?>
+      </t>
+
+      <section anchor="policy-private" title="Policy: Private Use">
+        <t>
+          For private or local use only, with the type and
+          purpose defined by the local site.  No attempt is made to
+          prevent multiple sites from using the same value in
+          different (and incompatible) ways.  There is no need for
+          IANA to review such assignments (since IANA does not record
+          them) and assignments are not generally useful for broad
+          interoperability.  It is the responsibility of the sites
+          making use of the Private Use range to ensure that no
+          conflicts occur (within the intended scope of use).
+        </t>
+        <t>
+<?rfc subcompact="yes"?>
+          Examples:
+          <list>
+            <t>Site-specific options in DHCP <xref target="RFC2939"/></t>
+            <t>Fibre Channel Port Type Registry <xref target="RFC4044"/></t>
+            <t>TLS ClientCertificateType Identifiers 224-255 <xref target="RFC5246"/></t>
+          </list>
+<?rfc subcompact="no"?>
+        </t>
+      </section>
+
+      <section anchor="policy-experimental" title="Policy: Experimental Use">
+        <t>
+          Similar to private or local use only, with the
+          purpose being to facilitate experimentation.  See
+          <xref target="RFC3692"/> for details.
+        </t>
+        <t>
+<?rfc subcompact="yes"?>
+          Example:
+          <list>
+            <t>Experimental Values in IPv4, IPv6, ICMPv4, ICMPv6,
+               UDP, and TCP Headers <xref target="RFC4727"/></t>
+          </list>
+<?rfc subcompact="no"?>
+        </t>
+      </section>
+
+      <section anchor="policy-hierarchical" title="Policy: Hierarchical Allocation">
+        <t>
+          Delegated managers can assign values
+          provided they have been given control over that part of the
+          namespace.  IANA controls the higher levels of the namespace
+          according to one of the other policies.
+        </t>
+        <t>
+<?rfc subcompact="yes"?>
+          Examples:
+          <list>
+            <t>DNS names</t>
+            <t>Object Identifiers</t>
+            <t>IP addresses</t>
+          </list>
+<?rfc subcompact="no"?>
+        </t>
+      </section>
+
+      <section anchor="policy-fcfs" title="Policy: First Come First Served">
+        <t>
+          Assignments are made to anyone on a
+          first come, first served basis.  There is no substantive
+          review of the request, other than to ensure that it is
+          well-formed and doesn't duplicate an existing assignment.
+          However, requests must include a minimal amount of clerical
+          information, such as a point of contact (including an email
+          address) and a brief description of how the value will be
+          used.  Additional information specific to the type of value
+          requested may also need to be provided, as defined by the
+          namespace.  For numbers, the exact value is generally
+          assigned by IANA; with names, specific text strings can
+          usually be requested.
+        </t>
+        <t>
+<?rfc subcompact="yes"?>
+          Examples:
+          <list>
+            <t>SASL mechanism names <xref target="RFC4422"/></t>
+            <t>LDAP Protocol Mechanisms and LDAP Syntax <xref target="RFC4520"/></t>
+          </list>
+<?rfc subcompact="no"?>
+        </t>
+      </section>
+
+      <section anchor="policy-expert" title="Policy: Expert Review">
+        <t>
+          (Sometimes also called "Designated Expert" in earlier editions of this document.)
+          Review and approval by a designated expert is required.
+          The required documentation and review
+          criteria for use by the designated expert should be provided
+          when defining the registry.  For example, see Sections 6 and
+          7.2 in <xref target="RFC3748"/>.
+        </t>
+        <t>
+          It is particularly important, when using a designated expert, to give
+          clear guidance to the expert, laying out criteria for
+          performing an evaluation and reasons for rejecting a request.
+          When specifying a policy that involves a designated expert, the
+          IANA Considerations SHOULD contain such guidance.
+          It is also a good idea to include, when possible, a sense of whether
+          many registrations are expected over time, or if the registry is
+          expected to be updated infrequently or in exceptional circumstances only.
+        </t>
+        <t>
+<?rfc subcompact="yes"?>
+          Examples:
+          <list>
+            <t>EAP Method Types <xref target="RFC3748"/></t>
+            <t>HTTP Digest AKA algorithm versions <xref target="RFC4169"/></t>
+            <t>URI schemes <xref target="RFC4395"/></t>
+            <t>GEOPRIV Location Types <xref target="RFC4589"/></t>
+          </list>
+<?rfc subcompact="no"?>
+        </t>
+      </section>
+
+      <section anchor="policy-specification" title="Policy: Specification Required">
+        <t>
+          Review and approval by a Designated Expert is required,
+          (as in <xref target="policy-expert"/>)
+          and the values and their meanings must be
+          documented in a permanent and readily available public
+          specification, in sufficient detail so that interoperability
+          between independent implementations is possible.
+          The Designated Expert will review the public specification and
+          evaluate whether it is sufficiently clear to allow
+          interoperable implementations.  The intention behind
+          "permanent and readily available" is that a document can
+          reasonably be expected to be findable and retrievable long
+          after IANA assignment of the requested value.  Publication
+          of an RFC is an ideal means of achieving this requirement,
+          but Specification Required is intended to also cover the
+          case of a document published outside of the RFC path.  For
+          RFC publication, the normal RFC review process is expected
+          to provide the necessary review for interoperability, though
+          the designated expert may be a particularly well-qualified
+          person to perform such a review.
+        </t>
+        <t>
+          When specifying this policy, just use the term "Specification Required".
+          Some specifications have chosen to refer to it as "Expert Review with
+          Specification Required", and that only causes confusion.
+        </t>
+        <t>
+<?rfc subcompact="yes"?>
+          Examples:
+          <list>
+            <t>Diffserv-aware TE Bandwidth Constraints Model Identifiers <xref target="RFC4124"/></t>
+            <t>TLS ClientCertificateType Identifiers 64-223 <xref target="RFC5246"/></t>
+            <t>ROHC Profile Identifiers <xref target="RFC5795"/></t>
+          </list>
+<?rfc subcompact="no"?>
+        </t>
+      </section>
+
+      <section anchor="policy-rfc" title="Policy: RFC Required">
+        <t>
+          RFC publication suffices, as an IETF submission or in any other stream
+          (currently an RFC Editor Independent Submission <xref target="RFC5742"/>
+          or an RFC in the IRTF or IAB Stream).
+          Unless otherwise specified, any type of RFC is sufficient
+          (currently Standards Track, BCP, Informational, Experimental, Historic).
+        </t>
+      </section>
+
+      <section anchor="policy-ietf" title="Policy: IETF Review">
+        <t>
+          (Formerly called "IETF Consensus" in the first edition of this document.)
+          New values are assigned only through RFCs in the IETF Stream --
+          those that have been shepherded through the IESG as AD-Sponsored or
+          IETF working group Documents <xref target="RFC2026"/> <xref target="RFC5378"/>.
+          The intention is that the document and proposed assignment will
+          be reviewed by the IESG and appropriate IETF working groups (or
+          experts, if suitable working groups no longer exist) to
+          ensure that the proposed assignment will not negatively
+          impact interoperability or otherwise extend IETF protocols
+          in an inappropriate or damaging manner.
+        </t>
+        <t>
+          To ensure adequate community review, such documents are
+          shepherded through the IESG as AD-sponsored or working group
+          documents with an IETF Last Call.
+        </t>
+        <t>
+<?rfc subcompact="yes"?>
+          Examples:
+          <list>
+            <t>IPSECKEY Algorithm Types <xref target="RFC4025"/></t>
+            <t>Accounting-Auth-Method AVP values in DIAMETER <xref target="RFC4005"/></t>
+            <t>TLS Extension Types <xref target="RFC5246"/></t>
+          </list>
+<?rfc subcompact="no"?>
+        </t>
+      </section>
+
+      <section anchor="policy-standards" title="Policy: Standards Action">
+        <t>
+          Values are assigned only for Standards Track RFCs approved by the IESG.
+        </t>
+        <t>
+<?rfc subcompact="yes"?>
+          Examples:
+          <list>
+            <t>BGP message types <xref target="RFC4271"/></t>
+            <t>Mobile Node Identifier option types <xref target="RFC4283"/></t>
+            <t>TLS ClientCertificateType Identifiers 0-63 <xref target="RFC5246"/></t>
+            <t>DCCP Packet Types <xref target="RFC4340"/></t>
+          </list>
+<?rfc subcompact="no"?>
+        </t>
+      </section>
+
+      <section anchor="policy-iesg" title="Policy: IESG Approval">
+        <t>
+          New assignments may be approved by the IESG.
+          Although there is no requirement that the request be
+          documented in an RFC, the IESG has discretion to request
+          documents or other supporting materials on a case-by-case
+          basis.
+        </t>
+        <t>
+          IESG Approval is not intended to be used often or as a
+          "common case"; indeed, it has seldom been used in practice
+          during the period RFC 2434 was in effect.  Rather, it is
+          intended to be available in conjunction with other policies
+          as a fall-back mechanism in the case where one of the other
+          allowable approval mechanisms cannot be employed in a timely
+          fashion or for some other compelling reason.  IESG Approval
+          is not intended to circumvent the public review processes
+          implied by other policies that could have been employed for
+          a particular assignment.  IESG Approval would be
+          appropriate, however, in cases where expediency is desired
+          and there is strong consensus (such as from a working group)
+          for making the assignment.
+        </t>
+        <t>
+          The following guidelines are suggested for any evaluation
+          under IESG Approval:
+            <list style="symbols">
+              <t>
+            The IESG can (and should) reject a request if another path
+            for registration is available that is more appropriate and
+            there is no compelling reason not to use that path.
+              </t>
+              <t>
+            Before approving a request, the community should be
+            consulted, via a "call for comments" that provides as much
+            information as is reasonably possible about the request.
+              </t>
+            </list>
+        </t>
+        <t>
+<?rfc subcompact="yes"?>
+          Examples:
+          <list>
+            <t>IPv4 Multicast address assignments <xref target="RFC5771"/></t>
+            <t>IPv4 IGMP Type and Code values <xref target="RFC3228"/></t>
+            <t>Mobile IPv6 Mobility Header Type and Option values <xref target="RFC6275"/></t>
+          </list>
+<?rfc subcompact="no"?>
+        </t>
+      </section>
+    </section>
+
+
 
     <section anchor="referring" title="Documentation References in IANA Registries">
       <t>
