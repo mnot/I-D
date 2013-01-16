@@ -114,26 +114,20 @@
 
     <abstract>
       <t>
-   Many protocols make use of identifiers consisting of constants and
-   other well-known values.  Even after a protocol has been defined and
-   deployment has begun, new values may need to be assigned (such as for a
-   new option type in DHCP, or a new encryption or authentication
-   transform for IPsec).  To ensure that such quantities have consistent
-   values and interpretations across all implementations, their
-   assignment must be administered by a central authority.  For IETF
-   protocols, that role is provided by the Internet Assigned Numbers
-   Authority (IANA).
+   Many protocols make use of fields that contain constants, and have
+   identified points of extensibility. To ensure that the values used in
+   these fields do not have conflicting uses, and to promote interoperability,
+   their allocation is coordinated by a central authority. For IETF protocols,
+   that role is provided by the Internet Assigned Numbers Authority (IANA)
       </t>
       <t>
-   In order for IANA to manage a given namespace prudently, it needs
-   guidelines describing the conditions under which new values can be
-   assigned or when modifications to existing values can be made.  If
-   IANA is expected to play a role in the management of a namespace,
-   IANA must be given clear and concise instructions describing that
-   role.  This document discusses issues that should be considered in
-   formulating a policy for assigning values to a namespace and provides
-   guidelines for authors on the specific text that must be included in
-   documents that place demands on IANA.
+   To manage a given namespace prudently, IANA needs guidance describing the
+   conditions under which new values should be assigned, as well as when and
+   how modifications to existing values can be made. This document defines a
+   framework for the documentation of these guidelines by specification
+   authors, in order to assure that the guidance given to IANA is clear and
+   addresses the various issues that are likely in the operation of a
+   registry.
       </t>
       <t>
    This document obsoletes RFC 5226.
@@ -144,48 +138,42 @@
   <middle>
     <section anchor="intro" title="Introduction">
       <t>
-   Many protocols make use of fields that contain constants and other
-   well-known values (such as the Protocol field in the IP header <xref target="RFC0791"/> and
-   MIME media types <xref target="RFC4288"/>).  Even after a protocol has been defined
-   and deployment has begun, new values may need to be assigned (such as a
-   new option type in DHCP <xref target="RFC2132"/> or a new encryption or
-   authentication transform for IPsec <xref target="RFC4301"/>).  To ensure that such
-   fields have consistent values and interpretations in different
-   implementations, their assignment must be administered by a central
-   authority.  For IETF protocols, that role is provided by the Internet
-   Assigned Numbers Authority (IANA) <xref target="RFC2860"/>.
+   Many protocols make use of fields that contain constants, and have
+   identified points of extensibility. To ensure that the values used in
+   these fields do not have conflicting uses, and to promote interoperability,
+   their allocation is coordinated by a central authority. For IETF protocols,
+   that role is provided by the Internet Assigned Numbers Authority (IANA)
+   <xref target="RFC2860"/>.
+    </t>
+    <t>
+   The Protocol field in the IP header <xref target="RFC0791"/> and MIME media
+   types <xref target="RFC4288"/> are two examples of such coordinations.
+    </t>
+    <t>
+   In this document, we call the range of possible values for such a field a
+   "namespace". The binding or association of a specific value with a
+   particular purpose within a namespace is called an assignment (or,
+   variously, an assigned number, assigned value, or sometimes a "code point",
+   "protocol constant", or "protocol parameter"). The act of assignment is
+   called a registration, and it takes place in the context of a registry.
       </t>
       <t>
-   In this document, we call the range of possible values for such a field
-   a "namespace"; its actual value may be a text string, a number, or
-   another kind of value.  The binding or association of a specific
-   value with a particular purpose within a namespace is called an
-   assigned number (or assigned value, or sometimes a "code point",
-   "protocol constant", or "protocol parameter").  Each assignment of a
-   value in a namespace is called a registration.
+   To manage a given namespace prudently, IANA needs guidance describing the
+   conditions under which new values should be assigned, as well as when and
+   how modifications to existing values can be made. This document defines a
+   framework for the documentation of these guidelines by specification
+   authors, in order to assure that the guidance given to IANA is clear and
+   addresses the various issues that are likely in the operation of a
+   registry.
       </t>
       <t>
-   In order for IANA to manage a given namespace prudently, it needs
-   guidelines describing the conditions under which new values should be
-   assigned or when (and how) modifications to existing values can be
-   made.  This document provides guidelines to authors on what sort of
-   text should be added to their documents in order to provide IANA
-   clear guidelines, and it reviews issues that should be considered in
-   formulating an appropriate policy for assigning numbers to name
-   spaces.
-      </t>
-      <t>
-   Not all namespaces require centralized administration.  In some
-   cases, it is possible to delegate a namespace in such a way that
-   further assignments can be made independently and with no further
-   (central) coordination.  In the Domain Name System, for example, IANA
-   only deals with assignments at the higher levels, while subdomains
-   are administered by the organization to which the space has been
-   delegated.  As another example, Object Identifiers (OIDs) as defined
-   by the ITU are also delegated <xref target="RFC3232"/>; IANA manages the subtree
-   rooted at "iso.org.dod.internet" (1.3.6.1) .  When a namespace is
-   delegated, the scope of IANA is limited to the parts of the namespace
-   where IANA has authority.
+   Not all namespaces require a registry; in some cases, assignments can be
+   made independently and with no further (central) coordination. In the
+   Domain Name System, for example, IANA only deals with assignments at the
+   higher levels, while subdomains are administered by the organization to
+   which the space has been delegated. When a namespace is delegated in this
+   manner, the scope of IANA is limited to the parts of the namespace where
+   IANA has authority.
       </t>
 
       <section title="Terminology Used In This Document">
