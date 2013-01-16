@@ -427,7 +427,7 @@
 
     </section>
 
-    <section anchor="creating" title="Defining a Registry">
+    <section anchor="creating" title="Defining and Revising Registries">
       <t>
    Defining a registry involves describing the namespace(s) to be created,
    listing an initial set of assignments (if appropriate), and documenting
@@ -463,7 +463,7 @@
         </list></t></list>
       </t>
 
-    <section anchor="why" title="Issues to Consider When Defining a Registry">
+    <section anchor="why" title="Issues to Consider">
       <t>
    One issue to consider in managing a namespace is its size.  If the
    space is small and limited in size, assignments must be made
@@ -517,6 +517,135 @@
       </t>
     </section>
 
+    <section anchor="what-to-put" title="Documentation Requirements">
+        <t>
+   Documents that create a new namespace (or modify the definition of an
+   existing space) and that expect IANA to play a role in maintaining that
+   space (serving as a repository for registered values) MUST provide clear
+   instructions on details of the namespace. In particular, instructions MUST
+   include (typically, in the IANA Considerations section of the document):
+          <list style="numbers">
+            <t>
+         The name of the registry (or sub-registry) being created and/or
+         maintained.
+         <vspace/>
+         The name will appear on the IANA web page and will
+         be referred to in future documents that need to allocate a
+         value from the new space.  The full name (and abbreviation, if
+         appropriate) should be provided.  It is highly desirable that
+         the chosen name not be easily confused with the name of
+         another registry.
+         When creating a sub-registry, the registry that it is a part of
+         must be clearly identified using its exact name (look it up, to be sure).
+         Providing a URL to precisely identify the registry is helpful.
+         Such URLs will be removed from the RFC prior to final publication,
+         but help to ensure that IANA will understand exactly what is being requested.
+         For example, a document could contain something like this:
+         <list style="empty"><t>
+         [TO BE REMOVED: This registration should be made in the Foobar Operational Parameters
+         registry, located at http://www.iana.org/assignments/foobar-registry]
+         </t></list>
+            </t>
+            <t>
+         What information must be provided as part of a request in order
+         to assign a new value.
+         This information may include the need
+         to document relevant security considerations, if any.
+            </t>
+            <t>
+         The review process that will apply to all future requests for a
+         value from the namespace.
+                <vspace blankLines="1"/>
+         Note: When a designated expert is used, documents MUST NOT name
+         the designated expert in the document itself; instead, any suggested names
+         should be relayed to the appropriate Area Director at the time
+         the document is sent to the IESG for approval.
+         This is usually done in the document shepherd writeup.
+                <vspace blankLines="1"/>
+         If the request should also be reviewed on a specific public
+         mailing list (such as the media-types@iana.org for media types),
+         that mailing address should be specified.  Note, however, that
+         when mailing lists are specified, the requirement for a
+         designated expert MUST also be specified (see <xref target="experts"/>).
+                <vspace blankLines="1"/>
+         If IANA is expected to make assignments without requiring an
+         outside review, sufficient guidance MUST be provided so that
+         the requests can be evaluated with minimal subjectivity.
+            </t>
+            <t>
+         The size, format, and syntax of registry entries.  When
+         creating a new name/number space, authors must describe any
+         technical requirements on registry (and sub-registry) values
+         (valid ranges for integers, length limitations on
+         strings, etc.) as well as the exact format in which registry
+         values should be displayed.  For number assignments, one should
+         specify whether values are to be recorded in decimal,
+         hexadecimal, or some other format.  For strings, the encoding
+         format should be specified (ASCII, UTF8, etc.).  Authors
+         should also clearly specify what fields to record in the
+         registry.
+            </t>
+            <t>
+         Initial assignments and reservations.  Clear instructions
+         should be provided to identify any initial assignments or
+         registrations.  In addition, any ranges that are to be reserved
+         for "Private Use", "Reserved", "Unassigned", etc. should be
+         clearly indicated.
+            </t>
+          </list>
+        </t>
+        <t>
+   When specifying the process for making future assignments, it is
+   quite acceptable to pick one (or more) of the example policies listed
+   in <xref target="well-known"/> and refer to it by name.  Indeed, this is the
+   preferred mechanism in those cases where the sample policies provide
+   the desired level of review.  It is also acceptable to cite one of
+   the above policies and include additional guidelines for what kind of
+   considerations should be taken into account by the review process.
+   For example, RADIUS <xref target="RFC3575"/> specifies the use of a Designated
+   Expert, but includes specific additional criteria the Designated
+   Expert should follow.
+        </t>
+        <t>
+   For example, a document could say something like this:
+          <figure>
+            <artwork>
+    ---------------------------------------------------------------
+    This document defines a new DHCP option, entitled "FooBar" (see
+    Section y), assigned a value of TBD1 from the DHCP Option space
+    [to be removed upon publication:
+    http://www.iana.org/assignments/bootp-dhcp-parameters]
+    [RFC2132] [RFC2939]:
+                                   Data
+          Tag     Name            Length      Meaning
+          ----    ----            ------      -------
+          TBD1    FooBar          N           FooBar server
+
+    The FooBar option also defines an 8-bit FooType field, for which
+    IANA is to create and maintain a new sub-registry entitled
+    "FooType values" under the FooBar option.  Initial values for the
+    DHCP FooBar FooType registry are given below; future assignments
+    are to be made through Expert Review [BCP26].
+    Assignments consist of a DHCP FooBar FooType name and its
+    associated value.
+
+          Value    DHCP FooBar FooType Name        Definition
+          ----     ------------------------        ----------
+          0        Reserved
+          1        Frobnitz                        See Section y.1
+          2        NitzFrob                        See Section y.2
+          3-254    Unassigned
+          255      Reserved
+    ---------------------------------------------------------------
+            </artwork>
+          </figure>          
+        </t>
+        <t>
+   For examples of documents that provide detailed guidance to IANA
+   on the issue of assigning numbers, consult <xref target="RFC6195"/>, <xref target="RFC3575"/>,
+   <xref target="RFC3968"/>, and <xref target="RFC4520"/>.
+        </t>
+      </section>
 
       <section anchor="well-known" title="Well-Known IANA Policy Definitions">
         <t>
@@ -1006,144 +1135,7 @@
         </t>
       </section>
 
-      <section anchor="what-to-put" title="What to Put in Documents That Create a Registry">
-        <t>
-   The previous sections presented some issues that should be considered
-   in formulating a policy for assigning values in namespaces.  It is
-   the working group and/or document author's job to formulate an
-   appropriate policy and specify it in the appropriate document.  In
-   almost all cases, having an explicit "IANA Considerations" section is
-   appropriate.  The following and later sections define what is needed
-   for the different types of IANA actions.
-        </t>
-        <t>
-   Documents that create a new namespace (or modify the definition of an
-   existing space) and that expect IANA to play a role in maintaining
-   that space (serving as a repository for registered values) MUST
-   provide clear instructions on details of the namespace.  In
-   particular, instructions MUST include:
-          <list style="numbers">
-            <t>
-         The name of the registry (or sub-registry) being created and/or
-         maintained.
-         <vspace/>
-         The name will appear on the IANA web page and will
-         be referred to in future documents that need to allocate a
-         value from the new space.  The full name (and abbreviation, if
-         appropriate) should be provided.  It is highly desirable that
-         the chosen name not be easily confusable with the name of
-         another registry.
-         When creating a sub-registry, the registry that it is a part of
-         must be clearly identified using its exact name (look it up, to be sure).
-         Providing a URL to precisely identify the registry is helpful.
-         Such URLs will be removed from the RFC prior to final publication,
-         but help to ensure that IANA will understand exactly what is being requested.
-         For example, a document could contain something like this:
-         <list style="empty"><t>
-         [TO BE REMOVED: This registration should be made in the Foobar Operational Parameters
-         registry, located at http://www.iana.org/assignments/foobar-registry]
-         </t></list>
-            </t>
-            <t>
-         What information must be provided as part of a request in order
-         to assign a new value.
-         This information may include the need
-         to document relevant security considerations, if any.
-            </t>
-            <t>
-         The review process that will apply to all future requests for a
-         value from the namespace.
-                <vspace blankLines="1"/>
-         Note: When a designated expert is used, documents MUST NOT name
-         the designated expert in the document itself; instead, any suggested names
-         should be relayed to the appropriate Area Director at the time
-         the document is sent to the IESG for approval.
-         This is usually done in the document shepherd writeup.
-                <vspace blankLines="1"/>
-         If the request should also be reviewed on a specific public
-         mailing list (such as the media-types@iana.org for media types),
-         that mailing address should be specified.  Note, however, that
-         when mailing lists are specified, the requirement for a
-         designated expert MUST also be specified (see <xref target="experts"/>).
-                <vspace blankLines="1"/>
-         If IANA is expected to make assignments without requiring an
-         outside review, sufficient guidance MUST be provided so that
-         the requests can be evaluated with minimal subjectivity.
-            </t>
-            <t>
-         The size, format, and syntax of registry entries.  When
-         creating a new name/number space, authors must describe any
-         technical requirements on registry (and sub-registry) values
-         (valid ranges for integers, length limitations on
-         strings, etc.) as well as the exact format in which registry
-         values should be displayed.  For number assignments, one should
-         specify whether values are to be recorded in decimal,
-         hexadecimal, or some other format.  For strings, the encoding
-         format should be specified (ASCII, UTF8, etc.).  Authors
-         should also clearly specify what fields to record in the
-         registry.
-            </t>
-            <t>
-         Initial assignments and reservations.  Clear instructions
-         should be provided to identify any initial assignments or
-         registrations.  In addition, any ranges that are to be reserved
-         for "Private Use", "Reserved", "Unassigned", etc. should be
-         clearly indicated.
-            </t>
-          </list>
-        </t>
-        <t>
-   When specifying the process for making future assignments, it is
-   quite acceptable to pick one (or more) of the example policies listed
-   in <xref target="well-known"/> and refer to it by name.  Indeed, this is the
-   preferred mechanism in those cases where the sample policies provide
-   the desired level of review.  It is also acceptable to cite one of
-   the above policies and include additional guidelines for what kind of
-   considerations should be taken into account by the review process.
-   For example, RADIUS <xref target="RFC3575"/> specifies the use of a Designated
-   Expert, but includes specific additional criteria the Designated
-   Expert should follow.
-        </t>
-        <t>
-   For example, a document could say something like this:
-          <figure>
-            <artwork>
-    ---------------------------------------------------------------
-    This document defines a new DHCP option, entitled "FooBar" (see
-    Section y), assigned a value of TBD1 from the DHCP Option space
-    [to be removed upon publication:
-    http://www.iana.org/assignments/bootp-dhcp-parameters]
-    [RFC2132] [RFC2939]:
-                                   Data
-          Tag     Name            Length      Meaning
-          ----    ----            ------      -------
-          TBD1    FooBar          N           FooBar server
 
-    The FooBar option also defines an 8-bit FooType field, for which
-    IANA is to create and maintain a new sub-registry entitled
-    "FooType values" under the FooBar option.  Initial values for the
-    DHCP FooBar FooType registry are given below; future assignments
-    are to be made through Expert Review [BCP26].
-    Assignments consist of a DHCP FooBar FooType name and its
-    associated value.
-
-          Value    DHCP FooBar FooType Name        Definition
-          ----     ------------------------        ----------
-          0        Reserved
-          1        Frobnitz                        See Section y.1
-          2        NitzFrob                        See Section y.2
-          3-254    Unassigned
-          255      Reserved
-    ---------------------------------------------------------------
-            </artwork>
-          </figure>          
-        </t>
-        <t>
-   For examples of documents that provide detailed guidance to IANA
-   on the issue of assigning numbers, consult <xref target="RFC6195"/>, <xref target="RFC3575"/>,
-   <xref target="RFC3968"/>, and <xref target="RFC4520"/>.
-        </t>
-      </section>
 
       <section anchor="updating-existing" title="Updating IANA Guidelines for Existing Registries">
         <t>
