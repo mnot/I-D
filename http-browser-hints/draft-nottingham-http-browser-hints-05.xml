@@ -36,17 +36,17 @@
       <date year="2012"/>
       <abstract>
 
-         <t>Over time, Web browsers have adapted how they use HTTP based upon
-         common server configurations and behaviours. While this is necessary
-         in the common case, it can be detrimental for performance and
-         interoperability.</t>
+         <t>Over time, HTTP clients -- especially Web browsers -- have adapted
+         how they use the protocol based upon common server configurations and
+         behaviours. While this is necessary in the common case, it can be
+         detrimental for performance and interoperability.</t>
 
-         <t>This document establishes a mechanism whereby origin servers can make
-         available hints for browsers about their preferences and
-         capabilities, without imposing overhead on their interactions or
-         requiring support for them.</t>
+         <t>This document establishes a mechanism whereby both origin servers
+         and intermediaries can make available hints for clients about their
+         preferences and capabilities, without imposing overhead on their
+         interactions or requiring support for them.</t>
 
-         <t>This is intended to allow browsers to safely optimise connections
+         <t>This is intended to allow clients to safely optimise connections
          to servers.</t>
 
       </abstract>
@@ -70,17 +70,18 @@
         User-Agent and Allow) because they fear that changing those headers'
         values will break some sites that depend upon specific values.</t>
 
-        <t>These conservatives behaviours are good for interoperability, but
+        <t>These conservative behaviours are good for interoperability, but
         potentially bad for performance in certain circumstances.</t>
 
         <t>This document specifies a mechanism whereby a HTTP server can
-        advertise hints for browsers (and other clients), so that
+        advertise hints for browsers and other clients, so that
         communication with them can be optimised.</t>
 
-        <t>It does so by defining a file format for such Browser Hints <xref
-        target="format"/>, and defining how clients can discover it for a
-        given Web site <xref target="discover"/>. Finally, an extensible
-        vocabulary of hints is defined <xref target="hints"/>.</t>
+        <t>It does so by defining two headers; "OH" (Origin Hints) for
+        end-to-end hints from the Origin Server, and "HH" (Hop Hints) for
+        hop-by-hop hints from the upstream server (origin or proxy). A
+        selection of hints are also defined in this document, and a registry
+        is defined to allow future such hints.</t>
 
       </section>
 
@@ -91,177 +92,125 @@
          target="RFC2119"/>.</t>
       </section>
 
-      <section title="A file format for Browser Hints" anchor="format">
-
-        <t>Browser hints are conveyed in a JSON <xref target="RFC4627"/>
-        formatted file, containing a single object whose member's names are
-        browser hints, as defined by the registry <xref
-        target="registry"/>.</t>
-
-        <t>For example;</t>
+      <section title="Origin Hints">
+        <t>Origin Hints are applicable to all requests to the origin
+        associated with the response, until they are overridden.</t>
         
-        <figure><artwork>
-{
-"max-conns": 5,
-"small-hdrs": true
-}
-        </artwork></figure>
-
-        <t>By their nature, all browser hints are optional; i.e., browsers are
-        free to ignore them.</t>
-
-				<section title="The 'prefixlist' Value Type">
-					
-					<t>Each browser hint is defined to have a JSON-derived value type;
-          e.g., 'string' or 'array'. This section defines a special value
-          type, 'prefixlist' that is an array containing one or more arrays,
-          each containing a path prefix followed by either 'true' or 'false'
-          to indicate whether the hint applies to that path.</t>
-
-					<t>Prefixlists are evaluated in order, with the first
-          case-sensitive, character-by-character prefix match for a given
-          URI's path determining whether the hint applies.</t>
-
-					<t>For example, given the following hint document:</t>
-					
-        	<figure><artwork>
-{
-  "omit-cookies": [
-    ["/images/users/", false],
-    ["/images/", true]
-  ]
-}
-</artwork></figure>
-
-					<t>We can tell that "omit-cookies" applies to resources under the
-						"/images/" path (such as "/images/123.jpg"), except for those 
-						under "/images/users/" (such as "/images/users/bob.jpg").</t>
-
-					<t>If a value specified to be a prefixlist is either 'true' or
-						'false' that indicates that the hint applies to the whole site,
-						or does not apply to the whole site, respectively.</t>
-						
-					<t>For example,</t>
-
-        	<figure><artwork>
-{
-  "omit-cookies": true
-}
-</artwork></figure>
-
-					<t>Indicates that the "omit-cookies" hint applies to the entire
-						site.</t>
-					
-					<t>Prefixlists can only be used when the browser hint's registration
-						nominates their use.</t>
-					
-				</section>
-
+        <t>A hint is considered overridden when an OH header field is seen 
+          from the same origin that does not contain the hint, or contains
+          a different value for the hint.</t>
+          
+        <t>Practically speaking, this means that clients MAY cache origin
+          hint values indefinitely, updating them when new OH header fields
+          are seen from an origin.</t>
+          
+        For example, if a response is seen with and OH field value of "abc",
+        any existing hints associated with that origin will be removed, and
+        that value will persist (in relation to that origin) until another
+        
+      </section>
+      
+      <section title="Hop Hints">
+        <t>Hop Hints are applicable to all requests on the TCP connection they
+        occur upon, until they are overridden.</t>
+        
+        <t>The HH header field MUST be listed in the Connection header's
+        field-value.</t>
       </section>
 
-      <section title="Discovering Browser Hints for a Web site" anchor="discover">
-
-        <t>The hints relevant to a given site can be determined by fetching
-        the URI path "/.well-known/browser-hints" for that site.</t>
-
-        <t>Typically, clients (especially browsers) will not block other 
-          requests to a site while fetching the browser hints (because 
-          they're optional); instead, it will usually be done concurrently
-          with other requests, or on idle connections for future use.</t>
-
-        <t>In this specification, "site" is scoped by the URI scheme and
-        authority. As such, all of the following are considered to be
-        different sites, and therefore have different browser hints:</t>
-
-        <t><list style="symbols">
-          <t>http://foo.com/</t>
-          <t>https://foo.com/</t>
-          <t>http://foo.com:8000/</t>
-          <t>http://www.foo.com/</t>
-        </list></t>
-
-        <t>Clients SHOULD follow HTTP 3xx redirects when retrieving
-        hints.</t>
-
-        <t>A successful response is valid for its associated site for as long
-        as it can be cached in HTTP.</t>
-
-        <t>If the response has a 200 status code but no explicit freshness
-        (e.g., a Cache-Control: max-age or Expires: header), clients SHOULD
-        cache the response heuristically for a generous fixed period (e.g., 14
-        days).</t>
-
-				<t>If the response has a 404 status code but no explicit freshness,
-					clients SHOULD cache the response heuristically for a generous
-					fixed period (e.g., 14 days).</t>
-
-        <section title="Notifying Clients with the BH Response Header Field">
-
-          <t>It is anticipated that Browser Hints will be used by some, but 
-            not all, Web sites. Because clients might be reluctant to 
-            optimistically request the well-known URI, this document
-            defines a new HTTP response header field, BH, to indicate that
-            hints are available on a site.</t>
-            
-          <t>For example,</t>
-
-          <figure><artwork>
-HTTP/1.1 200 OK
-Content-Type: text/html
-Content-Length: 324
-BH: 1
-</artwork></figure>
-
-          <t>The presence of the BH header field in a response indicates that
-            the origin associated with the effective request URI has a 
-            Browser Hints resource available at the well-known URI.</t>
-            
-          <t>The header field value MAY be "0" or "1".</t>
-
-          <t>Origin servers that wish to indicate to clients that Browser
-            Hints are available SHOULD include a BH header in all responses
-            with a value of "1".
-          </t>
-          
-          <t>Proxy servers that wish to suppress the use of certain Browser
-            Hints MAY set (or reset) the BH header's value to "0".
-          </t>
-            
-        </section>
+      <section title="Hint Syntax">
         
-        <section title="Interaction with HTTP Proxies">
+        <t>Both origin hints and hop hints share a common syntax, consisting
+          of a string of alphanumeric characters. This form is designed to
+          be compact without sacrificing readability.</t>
           
-          <t>Browser Hints are intended to optimise the connection between a
-          client and the origin server. However, HTTP allows proxies to be
-          interposed between browsers and origin servers, meaning that
-          careless use of some hints -- especially those that are
-          connection-oriented -- might not be applicable, and might even be
-          harmful to the proxy.</t>
+        <t>Every hint has a alphabetical, case-sensitive hint identifier.</t>
+        
+        hint-group = *hint
+        hint = ALPHA *[ DIGIT ]
+        
+        <t>All hints' values are one of two types:
           
-          <t>To mitigate these risks, some hints identify additional
-            requirements for clients consuming browser hints when there
-            is evidence of a proxy in use.</t>
-            
-          <t>A proxy is considered to be in use if:</t>
-          <t><list style="symbols">
-            <t>A proxy is explicitly configured by the client, or</t>
-            <t>The BH response header field has a value of "0".</t>
-          </list></t>
-          
-          <t>Note that the presence of the Via header is not considered, 
-            because it can also be generated by intermediaries working
-            on behalf of the origin server ("reverse proxies").</t>
-          
-          <t>Proxies MAY modify the value of the BH header field to be
-            "0", or insert a BH header field with the value "0" if it is
-            not present. Proxies MUST NOT modify a response so that the
-            BH header field is "1" where it was previously not.</t>
-          
-        </section>
+          <list style="symbols">
+            <t>Boolean - indicated by the presence of the hint identifier.
+              If the hint identifier is absent, it is considered false.</t>
+            <t>Numeric - value indicated by the digits after the hint
+            identifer, up to the first non-digit character.</t>
+          </list>
+      </section></t>
+      
+      <t>For example:</t>
+      
+      aS42eu9
+      
+      <t>contains the following hint identifiers, with the corresponding
+      values:
+      
+      <list style="symbols">
+        <t>a - true</t>
+        <t>S - 42</t>
+        <t>e - true</t>
+        <t>u - 9</t>
+      </list></t>
+
+    </section>
+    
+    <section title="Pre-defined Origin Hints" anchor="origin-hints">
+
+      <section title="Small Request Headers">
+
+        <t>
+          <list style="symbols">
+            <t>Origin Hint Identifier: s</t>
+            <t>Description: When true, this hint indicates that clients
+            can omit the Accept and Accept-Charset request headers when
+            communicating with the server, and that they can use a 
+						shortened version of the User-Agent header.</t>
+            <t>Value Type: boolean</t>
+            <t>Contact: mnot@mnot.net</t>
+          </list>
+        </t>
+
+        <t>This hint can help reduce request sizes.</t>
 
       </section>
       
-      <section title="Pre-defined Browser Hints" anchor="hints">
+      <section title="Relative Referers">
+
+        <t>
+          <list style="symbols">
+            <t>Origin Hint Identifier: r</t>
+            <t>Description: When true, this hint indicates that servers
+ 							 prefer a relative URI in the Referer request header.</t>
+            <t>Value Type: boolean</t>
+            <t>Contact: mnot@mnot.net</t>
+          </list>
+        </t>
+        
+        <t>This hint can help reduce request sizes.</t>
+
+      </section>
+      
+			<section title="Omitting Cookies">
+
+        <t>
+					<list style="symbols">
+            <t>Origin Hint Identifier: c</t>
+						<t>Description: When true, this hint indicates that all cookies
+            <xref target="RFC6265"/> can be omitted in requests to the
+            server.</t>
+						<t>Value Type: boolean</t>
+						<t>Contact: mnot@mnot.net</t>
+					</list>
+				</t>
+
+        <t>This hint can help reduce request sizes.</t>
+
+			</section>
+			
+    </section>
+
+      <section title="Pre-defined Hop Hints" anchor="hop-hints">
                 
         <section title="pconn-ip">
 
@@ -310,69 +259,6 @@ BH: 1
 
         </section>
         
-        <section title="small-hdrs">
-
-          <t>
-            <list style="symbols">
-              <t>Browser Hint Name: small-hdrs</t>
-              <t>Description: When true, this hint indicates that clients
-              can omit the Accept and Accept-Charset request headers when
-              communicating with the resource, and that they can use a 
-							shortened version of the User-Agent header.</t>
-              <t>Value Type: prefixlist</t>
-              <t>Contact: mnot@mnot.net</t>
-            </list>
-          </t>
-
-          <t>This hint can help reduce request sizes.</t>
-
-        </section>
-        
-        <section title="relative-referer">
-
-          <t>
-            <list style="symbols">
-              <t>Browser Hint Name: relative-referer</t>
-              <t>Description: When true, this hint indicates that servers
-	 							 prefer a relative URI in the Referer request header.</t>
-              <t>Value Type: true | false</t>
-              <t>Contact: mnot@mnot.net</t>
-            </list>
-          </t>
-          
-          <t>This hint can help reduce request sizes.</t>
-
-        </section>
-        
-				<section title="omit-cookies">
-
-          <t>
-						<list style="symbols">
-							<t>Browser Hint Name: omit-cookies</t>
-							<t>Description: When true, this hint indicates that cookies <xref
-		          target="RFC6265"/> can be omitted in requests.</t>
-							<t>Value Type: prefixlist</t>
-							<t>Contact: mnot@mnot.net</t>
-						</list>
-  				</t>
-
-          <t>This hint can help reduce request sizes.</t>
-
-				</section>
-				
-				<section title="cookie-whitelist">
-				
-				<t>
-				      <list style="symbols">
-				         <t>Browser Hint Name: cookie-whitelist</t>
-				         <t>Description: When present, indicates that the 
-				            browser can omit any cookie <xref target="RFC6265"/> whose cookie-name is not a member of the value array.</t>
-				         <t>Value Type: array</t>
-				         <t>Contact: mnot@mnot.net</t>
-				      </list>
-				</t>
-
-				</section>
       </section>
                   
       <section title="Security Considerations">
@@ -380,21 +266,7 @@ BH: 1
       </section>
 
       <section title="IANA Considerations">
-      
-       <section title="The 'browser-hints' Well-Known URI">
-      
-         <t>This document defines the "browser-hints" Well-Known URI 
-         <xref target="RFC5785"/>.</t>
-
-         <t><list style="symbols">
-            <t>URI suffix: browser-hints</t>
-            <t>Change controller: mnot@mnot.net</t>
-            <t>Specification document(s): [this document]</t>
-            <t>Related information:</t> 
-         </list></t>  
-
-       </section>
-      
+            
        <section title="The BH HTTP Response Header Field">
          
          <t>This document defines the "BH" HTTP header field, and registers
