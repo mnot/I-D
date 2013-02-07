@@ -49,11 +49,14 @@
 		<keyword>HTTP</keyword>
 		<keyword>error</keyword>
 		<keyword>problem</keyword>
+		<keyword>API</keyword>
+		<keyword>JSON</keyword>
+		<keyword>XML</keyword>
 		<abstract>
 
-			<t>This document defines a "problem detail" as an extensible
-         way to carry machine-readable details of errors in a HTTP response,
-         to avoid the need to invent new response formats for HTTP APIs.</t>
+			<t>This document defines a "problem detail" as a way to carry
+      machine-readable details of errors in a HTTP response, to avoid the need
+      to invent new error response formats for HTTP APIs.</t>
 
 		</abstract>
 
@@ -68,42 +71,59 @@
 	<middle>
 
 		<section title="Introduction">
+		  
+      <t>HTTP <xref target="RFC2616"/> status codes are sometimes not
+      sufficient to convey helpful information about an error. While humans
+      behind Web browsers can be informed about the nature of the problem with
+      an HTML response body, non-human consumers of so-called "HTTP APIs" are
+      usually not.</t>
 
-      <t>While HTTP <xref target="RFC2616"/> defines the status code as the
-      primary indicator of generic response semantics, it is sometimes not
-      fine-grained enough to convey helpful information about an error,
-      particularly to non-human consumers of so-called "HTTP APIs".</t>
+      <t>This specification defines simple JSON <xref target="RFC4627"/> and
+      XML <xref target="W3C.REC-xml-20081126"/> document formats to suit this
+      purpose. They are designed to be reused by HTTP APIs, which can identify
+      distinct "problem types" specific to their needs.</t>
       
-      <t>Consider a 403 Forbidden response that indicates that the client's
-      account doesn't have enough credit. While this can be adequately
-      expressed in HTML if presented to a human in front of a Web browser, a
-      non-browser client would have difficulty understanding the response,
-      because it doesn't understand the structure of the markup.</t>
+      <t>Thus, API clients can be informed of both the high-level error
+      class (using the status code) and the finer-grained details of the
+      problem (using one of these formats).</t>
+
+      <t>Consider a response that indicates that the client's
+      account doesn't have enough credit. The 403 Forbidden status code
+      might be deemed most appropriate to use, as it will inform HTTP-generic
+      software (such as client libraries, caches and proxies) of the general
+      semantics of the response.</t>
       
-       <t>This specification defines conventions for carrying machine-readable
-      details of errors in a response ("problem details"), to avoid the need
-      to invent new, application-specific response formats.</t>
+      <t>However, that doesn't give the API client enough information about
+      why the request was forbidden, the applicable account balance, or how to
+      correct the problem. If these details are included in the response body
+      in a machine-readable format, the client can treat it appropriately.</t>
       
-       <t>Conceptually, problem details are associated with a generic type
-      (e.g., "out of credit"). Optionally, the specific occurrence of a
-      problem can also be identified (e.g., "when Bob ran out of credit last
-      Tuesday at 5:32 pm"). Both use URIs to assure global uniqueness, and
-      provide the opportunity to fetch further information.</t>
+      <t>This specification identifies a specific type of problem (e.g., "out
+      of credit") with a URI <xref target="RFC3986"/>. HTTP APIs are expected
+      to identify problem types as necessary by nominating new URIs under
+      their control, or reusing existing ones.</t>
+
+      <t>Additionally, problems can contain other information, such as a URI
+      that identifies the specific occurrence of the problem (effectively
+      giving an identifier to the concept "The time Joe didn't have enough
+      credit last Thursday"), which may be useful for support or forensic
+      purposes. See below for a full list.</t>
       
-       <t>Problem details are specified as a JSON <xref target="RFC4627"/>
-      object; when occurring in a message body, they use the
+      <t>The data model for problem details is a JSON <xref target="RFC4627"/>
+      object; when formatted as a JSON document, it uses the
       "application/api-problem+json" media type. <xref target="xml-syntax"/>
-      defines how to translate problem details to an XML format, for those
-      APIs that need it.</t>
+      defines how to express them in an equivalent XML format.</t>
       
-       <t>Note that problem details are (naturally) not the only way to convey
+      <t>Note that problem details are (naturally) not the only way to convey
       the details of a problem in HTTP; if the response is still a
       representation of a resource, for example, it's often preferable to
-      accommodate describing the relevant details in that format.</t>
+      accommodate describing the relevant details in that application's
+      format.</t>
       
-       <t>Instead, the aim of this specification is to define a common error
-       format for those applications that need one, so that they aren't
-       required to define their own.</t>
+      <t>Instead, the aim of this specification is to define common error
+      formats for those applications that need one, so that they aren't
+      required to define their own, or worse, tempted to re-define the
+      semantics of existing HTTP status codes.</t>
 
 		</section>
 
@@ -117,11 +137,13 @@
 
     <section title="The Problem Details JSON Object">
 
-      <t>The canonical format for problem details is a JSON <xref
-      target="RFC4627"/> document, identified with the
-      "application/api-problem+json" media type, whose root MUST be an object.</t>
+      <t>The canonical model for problem details is a JSON <xref
+      target="RFC4627"/> object.</t>
 
-      <t>For example:</t>
+      <t>When serialised as a JSON document, that format is identified with
+      the "application/api-problem+json" media type.</t>
+      
+      <t>For example, a HTTP response carrying JSON problem details:</t>
 
      <figure><artwork><![CDATA[
 HTTP/1.1 403 Forbidden
@@ -134,7 +156,8 @@ Content-Language: en
  "detail": "Your current balance is 30, but that costs 50.",
  "supportId": "http://example.net/account/12345/msgs/abc",
  "balance": 30,
- "account": "http://example.net/account/12345"
+ "accounts": ["http://example.net/account/12345",
+              "http://example.net/account/67890"]
 }]]></artwork></figure>
 
       <t>Here, the out-of-credit problem (identified by its describedBy URI)
@@ -149,7 +172,7 @@ Content-Language: en
 
       <section title="Required Members">
        
-        <t>The root object MUST have the following members:</t>
+        <t>A problem details object MUST have the following members:</t>
        
         <t><list style='symbols'>
 
@@ -174,7 +197,8 @@ Content-Language: en
       </section>
       <section title="Optional Members">
 
-        <t>Furthermore, the root object MAY have the following members:</t>
+        <t>Furthermore, a problem details object MAY have the following
+        members:</t>
 
         <t><list style='symbols'>
         
@@ -182,7 +206,7 @@ Content-Language: en
           server for this occurrence of the problem.</t>
           
            <t>"detail" (string) - An human readable explanation specific to
-          this occurance of the problem.</t>
+          this occurrence of the problem.</t>
           
            <t>"supportId" (string) - An absolute URI that identifies the
           specific occurrence of the problem. It may or may not yield
@@ -208,21 +232,24 @@ Content-Language: en
       </section>
       <section title="Extension Members">
        
-        <t>Finally, problem type definitions MAY extend the root object with
-        additional members.</t>
+        <t>Finally, problem type definitions MAY extend the problem details
+        object with additional members.</t>
 
-        <t>Clients consuming problem details MUST ignore unrecognised
-        extensions; this allows problem types to evolve and include additional
-        information in the future.</t>
+        <t>Clients consuming problem details MUST ignore any such extensions
+        that they don't recognise; this allows problem types to evolve and
+        include additional information in the future.</t>
 
       </section>
     </section>
 
     <section anchor="defining" title="Defining New Problem Types">
 
-      <t>Before defining a new type of problem detail, it’s important to
-      understand what they are good for, and what’s better left to other
-      mechanisms.</t>
+      <t>When an HTTP API needs to define a response that indicates an error
+      condition, it might be appropriate to do so by defining a new problem 
+      type.</t>
+
+      <t>Before doing so, it’s important to understand what they are good for,
+      and what’s better left to other mechanisms.</t>
 
       <t>Problem details are not a debugging tool for the underlying
       implementation; rather, they are a way to expose greater detail about
@@ -250,10 +277,8 @@ Content-Language: en
       <t>New problem type definitions MUST document:
 
       <list style="numbers">
-        <t>A describedBy URL (typically, with the "http"
-        scheme),</t>
-        <t>A title that appropriately describes it (think
-        short), and</t>
+        <t>A describedBy URL (typically, with the "http" scheme),</t>
+        <t>A title that appropriately describes it (think short), and</t>
         <t>The HTTP status code for it to be used with.</t>
       </list></t>
 
@@ -264,18 +289,41 @@ Content-Language: en
       that explains how to resolve the problem.</t>
 
       <t>A problem type definition MAY specify additional members on the
-      Problem Details JSON object. For example, an extension might use
+      Problem Details object. For example, an extension might use
       typed links <xref target="RFC5988"/> to another resource that can be
       used by machines to resolve the problem.</t>
 
       <t>If such additional members are defined, their names SHOULD start with
       a letter (ALPHA, as per <xref target="RFC5234"/> and SHOULD consist of
-      characters from ALPHA, DIGIT and "_", so that it can be serialised in
-      formats other than JSON, and SHOULD be three characters or longer.</t>
+      characters from ALPHA, DIGIT and "_" (so that it can be serialised in
+      formats other than JSON), and SHOULD be three characters or longer.</t>
 
-      <t>Likewise, problem types defining extensions SHOULD either make their
-      values strings, or explain how to map their values to strings, so that
-      it's possible to include them in other formats.</t>
+      <section title="Example">
+
+        <t>For example, if your are publishing an HTTP API to your online
+        shopping cart, you might need to indicate that the user is out of
+        credit (our example from above), and therefore cannot make the
+        purchase.</t>
+
+        <t>If you already have an application-specific format that can
+        accommodate this information, it's probably best to do that. However,
+        if you don't, you might consider using one of the problem details
+        formats; JSON if your API is JSON-based, or XML if it uses that
+        convention.</t>
+          
+        <t>To do so, you might look for an already-defined describedBy URL
+        that suits your purposes. If one is available, you can reuse that URL
+        by documenting use use of both this specification and that specific
+        URL value in your API.</t>
+        
+        <t>If one isn't available, you'd reference this specification,
+        document a new describedBy URL (which ought to be under your control
+        and stable over time), an appropriate title and the HTTP status code
+        that it will be used with, along with what it means and how it should
+        be handled. This information could appear within the rest of your
+        API's documentation.</t>
+          
+      </section>
 
     </section>
       
@@ -369,9 +417,8 @@ Content-Language: en
 				Roy Fielding,
 				Sam Johnston,
 				Mike McCall,
-				Julian Reschke,
-				James Snell, and
-				Erik Wilde
+				Julian Reschke, and
+				James Snell
 			for early review of this specification (even if some disagree
 			with parts of it).
 			</t>
@@ -383,7 +430,6 @@ Content-Language: en
 		<references title="Normative References">
 			&rfc2119;
 			&rfc2616;
-			&rfc3023;
 			&rfc3986;
 			&rfc4627;
 			&rfc5234;
@@ -392,6 +438,7 @@ Content-Language: en
       <references title="Informative References">
         &xml;
         &xmls;
+        &rfc3023;
         &rfc5988;
         &rfc6838;
       </references>
@@ -400,7 +447,7 @@ Content-Language: en
    
    <t>Some HTTP-based APIs use XML <xref
    target="W3C.REC-xml-20081126"/> as their primary format convention. Such
-   APIs MAY express HTTP Problems using the format defined in this
+   APIs MAY express problem details using the format defined in this
    appendix.</t>
       
    <t>The OPTIONAL XML Schema <xref target="W3C.REC-xmlschema-0-20041028"/>
@@ -414,35 +461,15 @@ Content-Language: en
    considering an element containing a child or children to represent an
    object, except for elements that contain only child element(s) named 'i',
    which are considered arrays. For example, an alternate version of the
-   example above:</t>
-     
-     <figure><artwork><![CDATA[
-HTTP/1.1 403 Forbidden
-Content-Type: application/api-problem+json
-Content-Language: en
-
-{
- "describedBy": "http://example.com/probs/out-of-credit",
- "title": "You do not have enough credit.",
- "detail": "Your current balance is 30, but that costs 50.",
- "supportId": "http://example.net/accounts/12345/msgs/abc",
- "more": {
-   "balance": 30,
-   "accounts": [
-     "http://example.net/account/12345",
-     "http://example.net/account/67890"
-   ]
- }
-}]]></artwork></figure>     
-
-      <t>would appear in XML as:</t>
+   example above would appear in XML as:</t>
       
      <figure><artwork><![CDATA[
 HTTP/1.1 403 Forbidden
 Content-Type: application/api-problem+xml
 Content-Language: en
 
-<problem>
+<?xml version="1.0" encoding="UTF-8"?>
+<problem xmlns="urn:ietf:rfc:XXXX">
   <describedBy>http://example.com/probs/out-of-credit</describedBy>
   <title>You do not have enough credit.</title>
   <detail>Your current balance is 30, but that costs 50.</detail>
