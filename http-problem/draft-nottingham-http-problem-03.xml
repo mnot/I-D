@@ -75,13 +75,14 @@
       an HTML response body, non-human consumers of so-called "HTTP APIs" are
       usually not.</t>
 
-      <t>This specification defines a simple JSON <xref target="RFC4627"/>
-      format to suit this purpose. It is designed to be reused by HTTP APIs,
-      which can define distinct types of problems specific to their needs.</t>
+      <t>This specification defines simple JSON <xref target="RFC4627"/> and
+      XML <xref target="W3C.REC-xml-20081126"/> document formats to suit this
+      purpose. They are designed to be reused by HTTP APIs, which can define
+      distinct "problem types" specific to their needs.</t>
       
       <t>Thus, API clients can be informed of both the high-level error
       class (using the status code) and the finer-grained details of the
-      problem (using this format).</t>
+      problem (using one of these formats).</t>
 
       <t>Consider a response that indicates that the client's
       account doesn't have enough credit. The 403 Forbidden status code
@@ -105,11 +106,10 @@
       last Thursday"), which may be useful for support or forensic
       purposes. See below for a full list.</t>
       
-      <t>Problem details are specified as a JSON <xref target="RFC4627"/>
-      object; when occurring in a message body, they use the
+      <t>The data model for problem details is a JSON <xref target="RFC4627"/>
+      object; when formatted as a JSON document, it uses the
       "application/api-problem+json" media type. <xref target="xml-syntax"/>
-      defines how to express problem details in an XML format, for those
-      APIs that need it.</t>
+      defines how to express them in an equivalent XML format.</t>
       
       <t>Note that problem details are (naturally) not the only way to convey
       the details of a problem in HTTP; if the response is still a
@@ -117,8 +117,8 @@
       accommodate describing the relevant details in that application's
       format.</t>
       
-      <t>Instead, the aim of this specification is to define a common error
-      format for those applications that need one, so that they aren't
+      <t>Instead, the aim of this specification is to define common error
+      formats for those applications that need one, so that they aren't
       required to define their own, or worse, tempted to re-define the
       semantics of existing HTTP status codes.</t>
 
@@ -134,12 +134,13 @@
 
     <section title="The Problem Details JSON Object">
 
-      <t>The canonical format for problem details is a JSON <xref
-      target="RFC4627"/> document, identified with the
-      "application/api-problem+json" media type, whose root MUST be an
-      object.</t>
+      <t>The canonical model for problem details is a JSON <xref
+      target="RFC4627"/> object.</t>
 
-      <t>For example:</t>
+      <t>When serialised as a JSON document, that format is identified with
+      the "application/api-problem+json" media type.</t>
+      
+      <t>For example, a HTTP response carrying JSON problem details:</t>
 
      <figure><artwork><![CDATA[
 HTTP/1.1 403 Forbidden
@@ -168,7 +169,7 @@ Content-Language: en
 
       <section title="Required Members">
        
-        <t>The root object MUST have the following members:</t>
+        <t>A problem details object MUST have the following members:</t>
        
         <t><list style='symbols'>
 
@@ -193,7 +194,8 @@ Content-Language: en
       </section>
       <section title="Optional Members">
 
-        <t>Furthermore, the root object MAY have the following members:</t>
+        <t>Furthermore, a problem details object MAY have the following
+        members:</t>
 
         <t><list style='symbols'>
         
@@ -227,12 +229,12 @@ Content-Language: en
       </section>
       <section title="Extension Members">
        
-        <t>Finally, problem type definitions MAY extend the root object with
-        additional members.</t>
+        <t>Finally, problem type definitions MAY extend the problem details
+        object with additional members.</t>
 
-        <t>Clients consuming problem details MUST ignore unrecognised
-        extensions; this allows problem types to evolve and include additional
-        information in the future.</t>
+        <t>Clients consuming problem details MUST ignore any such extensions
+        that they don't recognise; this allows problem types to evolve and
+        include additional information in the future.</t>
 
       </section>
     </section>
@@ -240,8 +242,8 @@ Content-Language: en
     <section anchor="defining" title="Defining New Problem Types">
 
       <t>When an HTTP API needs to define a response that indicates an error
-      condition, it might be appropriate to do so by using this format and
-      defining a new problem type.</t>
+      condition, it might be appropriate to do so by defining a new problem 
+      type.</t>
 
       <t>However, before defining a new type of problem, it’s important to
       understand what they are good for, and what’s better left to other
@@ -285,7 +287,7 @@ Content-Language: en
       that explains how to resolve the problem.</t>
 
       <t>A problem type definition MAY specify additional members on the
-      Problem Details JSON object. For example, an extension might use
+      Problem Details object. For example, an extension might use
       typed links <xref target="RFC5988"/> to another resource that can be
       used by machines to resolve the problem.</t>
 
@@ -416,7 +418,7 @@ target="RFC6838"/>:</t>
    
    <t>Some HTTP-based APIs use XML <xref
    target="W3C.REC-xml-20081126"/> as their primary format convention. Such
-   APIs MAY express HTTP Problems using the format defined in this
+   APIs MAY express problem details using the format defined in this
    appendix.</t>
       
    <t>The OPTIONAL XML Schema <xref target="W3C.REC-xmlschema-0-20041028"/>
