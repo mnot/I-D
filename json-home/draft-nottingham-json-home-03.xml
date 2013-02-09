@@ -3,11 +3,11 @@
 <!DOCTYPE rfc SYSTEM "http://xml.resource.org/authoring/rfc2629.dtd" [
    <!ENTITY rfc2119 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
    <!ENTITY rfc3986 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml'>
-   <!ENTITY rfc6838 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6838.xml'>
    <!ENTITY rfc4627 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml'>
    <!ENTITY rfc5789 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5789.xml'>
    <!ENTITY rfc5988 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5988.xml'>
    <!ENTITY rfc6570 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6570.xml'>
+   <!ENTITY rfc6838 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6838.xml'>
    <!ENTITY httpbis-semenatics SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p2-semantics-19.xml'>
    <!ENTITY httpbis-conditional SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p4-conditional-19.xml'>
    <!ENTITY httpbis-range SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p5-range-19.xml'>
@@ -115,7 +115,7 @@
 
          <t>A JSON Home Document uses the format described in <xref
          target="RFC4627"/> and has the media type
-         "application/json-home".</t>
+         "application/home+json".</t>
 
          <t>Its content consists of a root object with a "resources" property,
          an object whose names are link relation types (as defined by <xref
@@ -127,10 +127,10 @@
 <figure><artwork><![CDATA[
 GET / HTTP/1.1
 Host: example.org
-Accept: application/json-home
+Accept: application/home+json
 
 HTTP/1.1 200 OK
-Content-Type: application/json-home
+Content-Type: application/home+json
 Cache-Control: max-age=3600
 Connection: close
 
@@ -147,7 +147,7 @@ Connection: close
       "hints": {
         "allow": ["GET", "PUT", "DELETE", "PATCH"],
         "representations": ["application/json"],
-        "accept-patch": ["application/json-patch"],
+        "accept-patch": ["application/patch+json"],
         "accept-post": ["application/xml"],
         "accept-ranges": ["bytes"]
       }
@@ -228,7 +228,7 @@ Connection: close
   "hints": {
     "allow": ["GET", "PUT", "DELETE", "PATCH"],
     "representations": ["application/json"],
-    "accept-patch": ["application/json-patch"],
+    "accept-patch": ["application/patch+json"],
     "accept-post": ["application/xml"],
     "accept-ranges": ["bytes"]
   }
@@ -523,7 +523,31 @@ Connection: close
       </section>
       <section anchor="iana-considerations" title="IANA Considerations">
 
-         <t>TBD</t>
+         <t>This specification defines a new Internet media type
+            <xref target="RFC6838"/>:</t>
+
+         <figure><artwork><![CDATA[
+   Type name: application
+   Subtype name: home+json
+   Required parameters: None
+   Optional parameters: None; unrecognised parameters 
+                        should be ignored
+   Encoding considerations: Same as [RFC4627]
+   Security considerations: see [this document]
+   Interoperability considerations: None.
+   Published specification: [this document]
+   Applications that use this media type: HTTP
+   Additional information:
+     Magic number(s): n/a
+     File extension(s): n/a
+     Macintosh file type code(s): n/a
+   Person & email address to contact for further information:
+     Mark Nottingham <mnot@mnot.net>
+   Intended usage: COMMON
+   Restrictions on usage: None.
+   Author: Mark Nottingham <mnot@mnot.net>
+   Change controller: IESG
+]]></artwork></figure>
 
       </section>
 
@@ -667,7 +691,7 @@ Connection: close
 	         target="W3C.REC-xml-20081126"/> as their primary format convention. Such
 	         APIs MAY express Home Documents using the format defined in this
 	         appendix. An XML-based Home Document uses the format described has the
-	         media type "application/xml-home".</t>
+	         media type "application/home+xml".</t>
 	      
 	      <t>The OPTIONAL XML Schema <xref target="W3C.REC-xmlschema-0-20041028"/>
 	         for the XML format is:</t>
