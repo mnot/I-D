@@ -2,7 +2,7 @@
 title: The Key HTTP Response Header Field
 abbrev: 
 docname: draft-fielding-http-key-01
-date: 2012
+date: 2013
 category: info
 
 ipr: trust200902
@@ -100,7 +100,7 @@ This document uses the Augmented Backus-Naur Form (ABNF) notation of
 {{RFC5234}} with the list rule extension defined in
 {{I-D.ietf-httpbis-p1-messaging}}, Appendix B. It includes by reference the
 OWS, field-name and quoted-string rules from that document, and the
-parameter rule from {{I-D.ietf-httpbis-p2-semantics}}.
+parameter and attribute rules from {{I-D.ietf-httpbis-p2-semantics}}.
 
 The "Key" Response Header Field
 ===============================
@@ -219,7 +219,7 @@ The "w" modifier matches if the parameter value (after unquoting) matches
 ### "s": Substring Match Modifier
 
 The "s" modifier matches if the parameter value (after unquoting) is
-contained as a sequence of characters within both lists.
+contained as a sequence of characters within the values of both lists.
 
 ### "b": Beginning Substring Match Modifier
 
@@ -229,8 +229,9 @@ same sequence of characters as the parameter value (after unquoting).
 ### "p": Parameter Prefix Match Modifier
 
 The "p" modifier matches if the parameter value (after unquoting) matches
-(character-for-character) the sequence of characters up to (but not including)
-the first semi-colon (";") in both lists, after any whitespace is removed.
+(character-for-character) a value starting with the sequence of characters up
+to (but not including) the first semi-colon (";") in both lists, after any
+whitespace is removed.
 
 For example, given the key:
 
@@ -246,6 +247,93 @@ then each of the following header fields is a match:
  Accept: text/html;q=0.1
  Accept: text/html; foo="bar"
 ~~~
+
+but does not match:
+
+~~~
+ Accept: text/plain
+ Accept: text/plain; type="text/html"
+~~~
+
+### "pgt": Parameter Greater Than Match Modifier
+
+The "pgt" modifier matches if the indicated attribute is greater than or equal
+to the indicated numeric amount in one value in both lists. This assumes that
+list members have a "attribute=value" format (following the parameter rule in
+{{I-D.ietf-httpbis-p2-semantics}}).
+
+In the modifier, the indicated attribute is conveyed using the characters
+before the colon character in the parameter value; the indicated value is
+that afterwards.
+
+Formally, the syntax is:
+
+~~~
+parameter_comparator =  attribute ":" [ "-" ] 1*DIGIT
+~~~
+
+For example, given the key:
+
+~~~
+Key: Foo;pgt=bar:20
+~~~
+
+the indicated attribute is 'bar', and the indicated value is 20. Thus, each
+of the following headers would match:
+
+~~~
+ Foo: bar=20
+ Foo: BAr=25
+ Foo: bar=30, baz=100
+ Foo: baz=10, bar=50, bar=10
+ Foo: bar=100000
+~~~
+
+whilst the following would not:
+
+~~~
+ Foo: bar=19
+ Foo: bar=
+ Foo: bar=-30
+ Foo: bar= 25
+ Foo: thing=100
+ Foo: bar
+~~~
+
+Note that the indicated attribute is always case-insensitive.
+
+
+### "plt": Parameter Less Than Match Modifier
+
+The "plt" modifer operates as the "pgt" does, except that the comparison is
+for amounts less than or equal to the indicated amount.
+
+Thus, given:
+
+~~~
+Key: Thing;plt=it:100
+~~~
+
+each of the following headers would match:
+
+~~~
+ Thing: it=100
+ Thing: iT=25
+ Thing: it=30, baz=100
+ Thing: baz=10, it=500, it=20
+ Thing: bar=-1000
+~~~
+
+whilst the following would not:
+
+~~~
+ Foo: it=101
+ Foo: it=
+ Foo: thing=100
+ Foo: it
+~~~
+
+Note that the indicated parameter is always case-insensitive.
 
 ### "c": Case Sensitivity Flag
 

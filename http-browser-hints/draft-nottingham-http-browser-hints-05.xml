@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!DOCTYPE rfc SYSTEM "http://xml.resource.org/authoring/rfc2629.dtd" [
-   <!ENTITY rfc2119 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>  
-   <!ENTITY rfc2616 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616.xml'>  
-   <!ENTITY rfc4627 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml'>  
-   <!ENTITY rfc5226 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5226.xml'>  
-   <!ENTITY rfc5246 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml'>  
-   <!ENTITY rfc5785 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5785.xml'>  
-   <!ENTITY rfc6265 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6265.xml'>  
+   <!ENTITY rfc2119 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
+   <!ENTITY rfc5226 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5226.xml'>
+   <!ENTITY rfc5234 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5234.xml'>
+   <!ENTITY rfc5246 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml'>
+   <!ENTITY rfc6265 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6265.xml'>
+   <!ENTITY rfc6454 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6454.xml'>
 ]>
 
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -25,15 +24,15 @@
 <rfc ipr="trust200902" docName="draft-nottingham-http-browser-hints-05" category="info">
 
    <front>
-      <title>Hints for HTTP Browsers</title>
+      <title>HTTP Origin and Hop Hints</title>
       <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
          <organization></organization>
-         <address>       
-            <email>mnot@mnot.net</email> 
+         <address>
+            <email>mnot@mnot.net</email>
             <uri>http://www.mnot.net/</uri>
          </address>
       </author>
-      <date year="2012"/>
+      <date year="2013"/>
       <abstract>
 
          <t>Over time, HTTP clients -- especially Web browsers -- have adapted
@@ -42,31 +41,32 @@
          detrimental for performance and interoperability.</t>
 
          <t>This document establishes a mechanism whereby both origin servers
-         and intermediaries can make available hints for clients about their
-         preferences and capabilities, without imposing overhead on their
-         interactions or requiring support for them.</t>
+         and intermediaries can make hints available to clients about their
+         preferences and capabilities, without imposing undue overhead on
+         their interactions or requiring support for them.</t>
 
          <t>This is intended to allow clients to safely optimise connections
          to servers.</t>
 
       </abstract>
-      
+
       <note title="Note to Readers">
           <t>Feedback for this draft should take place on the
           apps-discuss@ietf.org mailing list <eref
           target="https://www.ietf.org/mailman/listinfo/apps-discuss"/>. </t>
       </note>
+      
    </front>
 
    <middle>
 
       <section title="Introduction">
 
-        <t>HTTP <xref target="RFC2616"/> clients -- especially browsers --
+        <t>HTTP <xref target="HTTP-p1"/> clients -- especially browsers --
         typically use hardcoded values or heuristics to determine how they use
         TCP, based on common-case server behaviours and limitations.</t>
 
-        <t>Likewise, they often send voluminous request headers (e.g., in
+        <t>For example, they often send voluminous request headers (e.g., in
         User-Agent and Allow) because they fear that changing those headers'
         values will break some sites that depend upon specific values.</t>
 
@@ -85,86 +85,166 @@
 
       </section>
 
-      <section title="Requirements">
-         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
-         NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in
-         this document are to be interpreted as described in <xref
-         target="RFC2119"/>.</t>
+      <section title="Notational Conventions">
+
+        <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+        NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in
+        this document are to be interpreted as described in <xref
+        target="RFC2119"/>.</t>
+
+        <t>This document uses the Augmented Backus-Naur Form (ABNF) notation
+        of <xref target="RFC5234"/>, and explicitly includes the following
+        rules from it: ALPHA, DIGIT. Additionally, it uses the list rule
+        extension defined in <xref target="HTTP-p1"/>, Appendix B.</t>
+
       </section>
 
-      <section title="Origin Hints">
-        <t>Origin Hints are applicable to all requests to the origin
-        associated with the response, until they are overridden.</t>
-        
-        <t>A hint is considered overridden when an OH header field is seen 
-          from the same origin that does not contain the hint, or contains
-          a different value for the hint.</t>
-          
-        <t>Practically speaking, this means that clients MAY cache origin
-          hint values indefinitely, updating them when new OH header fields
-          are seen from an origin.</t>
-          
-        For example, if a response is seen with and OH field value of "abc",
-        any existing hints associated with that origin will be removed, and
-        that value will persist (in relation to that origin) until another
-        
-      </section>
-      
-      <section title="Hop Hints">
-        <t>Hop Hints are applicable to all requests on the TCP connection they
-        occur upon, until they are overridden.</t>
-        
-        <t>The HH header field MUST be listed in the Connection header's
-        field-value.</t>
-      </section>
+      <section title="Origin Hints" anchor="origin">
 
-      <section title="Hint Syntax">
+        <t>Origin Hints are applicable to all future requests to the origin
+        <xref target="RFC6454"/> associated with the response, until they are
+        overridden. They are carried in the "OH" header field's value.</t>
         
-        <t>Both origin hints and hop hints share a common syntax, consisting
-          of a string of alphanumeric characters. This form is designed to
-          be compact without sacrificing readability.</t>
-          
-        <t>Every hint has a alphabetical, case-sensitive hint identifier.</t>
-        
-        hint-group = *hint
-        hint = ALPHA *[ DIGIT ]
-        
-        <t>All hints' values are one of two types:
-          
-          <list style="symbols">
-            <t>Boolean - indicated by the presence of the hint identifier.
-              If the hint identifier is absent, it is considered false.</t>
-            <t>Numeric - value indicated by the digits after the hint
-            identifer, up to the first non-digit character.</t>
-          </list>
-      </section></t>
-      
+        <figure><artwork>
+OH = #hint
+</artwork></figure>
+
+        <t>A hint is considered overridden when an OH header field is seen
+        from the same origin that does not contain the hint, or contains a
+        different value for the hint.</t>
+
+        <t>Practically speaking, this means that clients MAY cache origin hint
+        values indefinitely, updating them when new OH header fields are seen
+        from an origin.</t>
+
+        <t>For example, an origin may send an OH header on every response, in
+        which case the latest one seen would be the value used, or it could
+        send one sporadically (e.g., upon connection), in which case the
+        origin hints in effect would be the last one seen by the client.</t>
+
+        <t>Practically speaking, origins that wish to have their hints
+        available to clients as soon as possible will send them on every
+        response; those that wish to limit the sizes of responses might use
+        some other strategy, knowing that clients will eventually cache their
+        hints.</t>
+
       <t>For example:</t>
-      
-      aS42eu9
-      
-      <t>contains the following hint identifiers, with the corresponding
-      values:
-      
-      <list style="symbols">
-        <t>a - true</t>
-        <t>S - 42</t>
-        <t>e - true</t>
-        <t>u - 9</t>
-      </list></t>
+
+      <figure><artwork>
+HTTP/1.1 200 OK
+Content-Type: text/html
+OH: a,b=6,c
+Content-Length: 1234
+Cache-Control: max-age=60
+
+...
+</artwork></figure>
+
+      <t>Here, the origin hints "a", "b", and "c" are indicated; the "b" hint
+      has a value of "6". If a subsequent message from the same origin
+      to the same client were:</t>
+
+      <figure><artwork>
+HTTP/1.1 303 See Other
+Content-Type: text/html
+OH: a,b=2
+Content-Length: 1234
+Cache-Control: max-age=60
+
+...
+</artwork></figure>
+
+      <t>The client would now consider "a" to still be true, whereas the
+        value of "b" would be 2, and "c" would be false.</t>
+
+      <t>Origin hints SHOULD NOT be generated by proxy servers.</t>
 
     </section>
-    
-    <section title="Pre-defined Origin Hints" anchor="origin-hints">
+
+    <section title="Hop Hints" anchor="hop">
+
+      <t>Hop Hints are applicable to all future requests on the TCP
+      connection they occur upon, until they are overridden. The are carried
+      in the "HH" header field's value.</t>
+
+        <figure><artwork>
+HH = #hint
+</artwork></figure>
+
+      <t>A hint is considered overridden when an HH header field is seen on
+      the same connection that does not contain the hint, or contains a
+      different value for the hint.</t>
+
+      <t>Typically, a server (whether origin or proxy) will send the HH header
+      field on the first response, omitting it from subsequent responses
+      unless it wishes to change a value.</t>
+
+      <t>When it occurs in a message, the HH header field MUST be listed in
+      the Connection header's field-value.</t>
+
+      <t>For example:</t>
+
+      <figure><artwork>
+HTTP/1.1 404 Not Found
+Content-Type: text/plain
+HH: x,ya
+Content-Length: 5678
+Connection: HH
+Cache-Control: max-age=60
+
+...
+</artwork></figure>
+
+      <t>Here, the hop hints "x" and "ya" are indicated.</t>
+
+    </section>
+
+    <section title="Hint Syntax" anchor="syntax">
+
+      <t>Both origin hints and hop hints share a common syntax, consisting of
+      a string of alphanumeric characters. This form is designed to be compact
+      without sacrificing readability.</t>
+
+      <t>Every hint has a case-sensitive hint identifier.</t>
+
+      <figure><artwork>
+hint = 1*ALPHA [ "=" 1*DIGIT ]
+</artwork></figure>
+
+      <t>Hints are allowed to have a numeric argument. However, wherever
+      possible, they are encouraged to be defined as flags (i.e., as a
+      hint identifier only), so that the hints don't consume too much
+      space in responses.</t>
+
+      <t>Hints can be defined as one of two types:
+
+        <list style="symbols">
+          <t>Boolean - indicated by the presence of the hint identifier. If
+          the hint identifier is absent in the last message containing the
+          relevant hint header field, it is considered false.</t>
+          <t>Numeric - value indicated by the digits after "=", up to the
+          first non-digit character.</t>
+        </list></t>
+
+      <t>Note that HTTP/1.1 allows headers with comma-separated values to be
+        conveyed using multiple instances of the same header; as a result,
+        the hints of a given type (origin or hop) are collected from all
+        instances of that header on the message in question before being 
+        considered complete.</t>
+        
+    </section>
+
+    <section title="Pre-defined Hints" anchor="hints">
 
       <section title="Small Request Headers">
 
         <t>
           <list style="symbols">
-            <t>Origin Hint Identifier: s</t>
+            <t>Hint Name: s</t>
+            <t>Hint Type: origin</t>
             <t>Description: When true, this hint indicates that clients
             can omit the Accept and Accept-Charset request headers when
-            communicating with the server, and that they can use a 
+            communicating with the origin, and that they can use a
 						shortened version of the User-Agent header.</t>
             <t>Value Type: boolean</t>
             <t>Contact: mnot@mnot.net</t>
@@ -174,31 +254,33 @@
         <t>This hint can help reduce request sizes.</t>
 
       </section>
-      
+
       <section title="Relative Referers">
 
         <t>
           <list style="symbols">
-            <t>Origin Hint Identifier: r</t>
-            <t>Description: When true, this hint indicates that servers
- 							 prefer a relative URI in the Referer request header.</t>
+            <t>Hint Name: r</t>
+            <t>Hint Type: origin</t>
+            <t>Description: When true, this hint indicates that the origin
+ 							 prefers a relative URI in the Referer request header.</t>
             <t>Value Type: boolean</t>
             <t>Contact: mnot@mnot.net</t>
           </list>
         </t>
-        
+
         <t>This hint can help reduce request sizes.</t>
 
       </section>
-      
+
 			<section title="Omitting Cookies">
 
         <t>
 					<list style="symbols">
-            <t>Origin Hint Identifier: c</t>
+            <t>Hint Name: c</t>
+            <t>Hint Type: origin</t>
 						<t>Description: When true, this hint indicates that all cookies
             <xref target="RFC6265"/> can be omitted in requests to the
-            server.</t>
+            origin.</t>
 						<t>Value Type: boolean</t>
 						<t>Contact: mnot@mnot.net</t>
 					</list>
@@ -207,121 +289,146 @@
         <t>This hint can help reduce request sizes.</t>
 
 			</section>
-			
-    </section>
 
-      <section title="Pre-defined Hop Hints" anchor="hop-hints">
-                
-        <section title="pconn-ip">
+      <section title="Sharing Connections">
 
-          <t>
-            <list style="symbols">
-              <t>Browser Hint Name: pconn-ip</t>
-              <t>Description: When true, this hint indicates that the site
-              allows clients to reuse persistent connections keyed by IP
-              address, rather than by hostname. Note that all sites that are 
-              sharing the connection MUST declare this hint for it to be
-              used, and if a transport-layer certificate is in use 
-              (e.g., for TLS <xref target="RFC5246"/>), it MUST be valid 
-              for all sites.</t>
-              <t>Value Type: true | false</t>
-              <t>Contact: mnot@mnot.net</t>
-              <t>Specification: [this document]</t>
-              <t>Notes: Not to be used when there is evidence of a proxy.</t>
-            </list>
-          </t>
+        <t>
+          <list style="symbols">
+            <t>Hint Name: sc</t>
+            <t>Hint Type: hop</t>
+            <t>Description: When true, this hint indicates that the server
+            allows clients to reuse persistent connections keyed by IP
+            address, rather than by hostname. Note that all origins that are
+            sharing the connection MUST declare this hint for it to be
+            used, and if a transport-layer certificate is in use
+            (e.g., for TLS <xref target="RFC5246"/>), it MUST be valid
+            for all origins.</t>
+            <t>Value Type: boolean</t>
+            <t>Contact: mnot@mnot.net</t>
+            <t>Specification: [this document]</t>
+            <t>Notes: Although it is a Hop Hint, this MUST NOT be set by
+              servers other than origins.</t>
+          </list>
+        </t>
 
-          <t>In other words, if both www.example.com and foo.example.org
-          resolve to the address 192.0.2.5, and indicate this hint, then
-          clients can send a request to www.example.com and then a request to
-          foo.example.org on the same TCP connection to that address.</t>
-            
-          <t>If any of the sites grouped together for the purposes of pconn-ip
-          declare a max-conns hint, the max-conns value for that address is
-          considered to be the maximum of the declared max-conn hints
-          present.</t>
+        <t>In other words, if both www.example.com and foo.example.org
+        resolve to the address 192.0.2.5, and indicate this hint, then
+        clients can send a request to www.example.com and then a request to
+        foo.example.org on the same TCP connection to that address.</t>
 
-        </section>
-        
-        <section title="max-pipeline-depth">
-
-          <t>
-            <list style="symbols">
-              <t>Browser Hint Name: max-pipeline-depth</t>
-              <t>Description: When present, this hint indicates the maximum
-              number of pipelined requests per connection that the site would
-              like clients to use.</t>
-              <t>Value Type: number</t>
-              <t>Contact: mnot@mnot.net</t>
-              <t>Notes: Not to be used when there is evidence of a proxy.</t>
-            </list>
-          </t>
-
-        </section>
-        
       </section>
-                  
+
+      <section title="Pipeline Depth">
+
+        <t>
+          <list style="symbols">
+            <t>Hint Name: p</t>
+            <t>Hint Type: hop</t>
+            <t>Description: When present, this hint indicates the maximum
+            number of pipelined requests per connection that the server would
+            like clients to use.</t>
+            <t>Value Type: numeric</t>
+            <t>Contact: mnot@mnot.net</t>
+          </list>
+        </t>
+
+        </section>
+
+      </section>
+
       <section title="Security Considerations">
-         <t>TBD</t>
+         <t>By their nature, hints are both optional and advisory; clients
+           ought to exercise judgement when applying them, as an attacker
+           might use a naive implementation to trick the client into 
+           generating abnormal traffic. For example, the "p" hint should not
+           be the only input into determining how deep to pipeline requests.
+           </t>
+           
+          <t>Hints are also only as secure as the channel they are
+            transmitted upon; if HTTP is used in the clear, then hints might
+            be observed (which typically is not a great risk), and modified
+            (which could be, for a naive client implementation).</t>
+            
+          <t>The Hop Hints mechanism uses the "Connection" header to scope
+            the hint to a single HTTP hop. A few old implementations have been
+            observed to not properly strip headers indicated by "Connection".
+          </t>
       </section>
 
       <section title="IANA Considerations">
-            
-       <section title="The BH HTTP Response Header Field">
-         
-         <t>This document defines the "BH" HTTP header field, and registers
+
+       <section title="The OH HTTP Response Header Field">
+
+         <t>This document defines the "OH" HTTP header field, and registers
            it in the Permanent Message Headers registry.</t>
-           
+
          <t><list style="symbols">
-           <t>Header field name: BH</t>
+           <t>Header field name: OH</t>
            <t>Applicable protocol: HTTP</t>
            <t>Status: Informational</t>
            <t>Author/Change controller: Mark Nottingham, mnot@mnot.net</t>
            <t>Specification document(s): [this document]</t>
-           <t>Related information: </t>
+           <t>Related information: for Origin Hints</t>
          </list></t>
-         
+
        </section>
-      
-       <section title="The HTTP Browser Hints Registry" anchor="registry">
-      
-       <t>This document establishes the HTTP Browser Hints Registry.</t>
-       
-       <t>New hints are registered First Come First Served (see 
-         <xref target="RFC5226"/>), by sending e-mail to <eref 
-         target="mailto:iana@iana.org"/> (or using other mechanisms, as
-         established by IANA).</t>
-         
-       <t>Registration requests MUST use the following template:</t>
-       
-       <t>
-          <list style="symbols">
-            <t>Browser Hint Name: [name of hint]</t>
-            <t>Description: [description of hint]</t>
-            <t>Value Type: [JSON value type] </t>
-	          <t>Contact: [e-mail address(es)]</t>
-	          <t>Specification: [optional; reference or URI to more info]</t>
-	          <t>Notes: [optional]</t>
-          </list>
-        </t>
-      
-       <t>New hints MUST be optional; they cannot place requirements upon
-       implementations.</t>
-       
-       <t>Likewise, new hints MUST be relevant to browser use
-       cases; other non-browsing hints and metadata would make the hints
-       response undesirably large. However, note that non-browser clients
-       MAY use them.</t>
-       
-       <t>Finally, new hints MUST NOT make communication non-conformant with
-         HTTP itself; i.e., this is not a mechanism for changing the HTTP
-         protocol in incompatible ways. For example, if a hint indicates
-         that browsers can compress request headers using GZIP, intermediaries
-         that are interposed are likely to fail.</t>
-      
-       <t>The initial contents of the registry are defined in
-         <xref target="hints"/>.</t>
-      
+
+       <section title="The HH HTTP Response Header Field">
+
+         <t>This document defines the "HH" HTTP header field, and registers
+           it in the Permanent Message Headers registry.</t>
+
+         <t><list style="symbols">
+           <t>Header field name: HH</t>
+           <t>Applicable protocol: HTTP</t>
+           <t>Status: Informational</t>
+           <t>Author/Change controller: Mark Nottingham, mnot@mnot.net</t>
+           <t>Specification document(s): [this document]</t>
+           <t>Related information: for Hop Hints</t>
+         </list></t>
+
+       </section>
+
+
+       <section title="The HTTP Hints Registry" anchor="registry">
+
+         <t>This document establishes the HTTP Hints Registry.</t>
+
+         <t>New hints are registered using Expert Review (see
+           <xref target="RFC5226"/>), by sending e-mail to <eref
+           target="mailto:iana@iana.org"/> (or using other mechanisms, as
+           established by IANA).</t>
+           
+         <t>New hints are expected to be implemented in at least one client in
+         common use. The Expert MAY use their judgement in determining what
+         "common" is, and when something is considered to be implemented.</t>
+
+         <t>New hints MUST be optional; they cannot place requirements upon
+         implementations.</t>
+
+         <t>Specifically, new hints MUST NOT make communication non-conformant
+         with HTTP itself; i.e., this is not a mechanism for changing the HTTP
+         protocol in incompatible ways. For example, if a hint indicates that
+         browsers can compress request headers using GZIP, intermediaries that
+         are interposed are likely to fail.</t>
+
+         <t>Registration requests MUST use the following template:</t>
+
+         <t>
+            <list style="symbols">
+              <t>Hint Name: [name of hint]</t>
+              <t>Hint Type: ["origin" or "hop"]</t>
+              <t>Description: [description of hint]</t>
+              <t>Value Type: ["boolean" or "numeric"] </t>
+  	          <t>Contact: [e-mail address(es)]</t>
+  	          <t>Specification: [optional; reference or URI to more info]</t>
+  	          <t>Notes: [optional]</t>
+            </list>
+          </t>
+
+         <t>The initial contents of the registry are defined in <xref
+         target="hints"/>.</t>
+
        </section>
 
      </section>
@@ -330,15 +437,36 @@
 
    <back>
       <references title="Normative References">
-         &rfc2119; &rfc2616; &rfc4627;
+        &rfc2119; 
+        &rfc5234; 
+        &rfc6454;
+
+        <reference anchor="HTTP-p1">
+          <front>
+            <title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+            <author initials="R." surname="Fielding" fullname="Roy T. Fielding" role="editor">
+              <organization abbrev="Adobe">Adobe Systems Incorporated</organization>
+              <address><email>fielding@gbiv.com</email></address>
+            </author>
+            <author initials="J. F." surname="Reschke" fullname="Julian F. Reschke" role="editor">
+              <organization abbrev="greenbytes">greenbytes GmbH</organization>
+              <address><email>julian.reschke@greenbytes.de</email></address>
+            </author>
+            <date month="Feb" year="2013"/>
+          </front>
+          <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-p1-messaging-21;"/>
+        </reference>
+
       </references>
 
       <references title="Informative References">
-         &rfc5226; &rfc5246; &rfc5785; &rfc6265;
+         &rfc5226;
+         &rfc5246;
+         &rfc6265;
       </references>
-      
+
       <section title="Acknowledgements">
-         <t>Thanks to 
+         <t>Thanks to
            Mike Belshe,
            Artur Bergman,
            William Chan,
@@ -349,12 +477,34 @@
            Ryan Sleevi,
            Steve Souders, and
 			     Martin Thompson
-           for their suggestions and feedback.           
+           for their suggestions and feedback.
           </t>
          <t>The author takes all responsibility for errors and
          omissions.</t>
       </section>
-      
+
+      <section title="Open Issue: Hint Syntax">
+
+        <t>This revision defines the syntax of hints as a comma-delimited 
+          list. This is convenient (especially for delimiting hints with
+          values), but if many hints need to be conveyed, it'll be
+          inefficient.</t>
+          
+        <t>An alternate syntax could remove the commas, but we'd likely be
+          constrained in the number of hints we'd be able to define.</t>
+          
+        <t>Yet another approach would be to define a bitfield, and an ASCII
+          representation of that field. However, this would be cumbersome.</t>
+          
+        <t>Feedback appreciated.</t>
+      </section>
+
+      <section title="Open Issue: Hint Value Types">
+        <t>Are the defined hint value types sufficient? Feedback
+        appreciated.</t>
+      </section>
+
+
    </back>
 
 </rfc>
