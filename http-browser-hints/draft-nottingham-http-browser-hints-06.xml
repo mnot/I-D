@@ -205,22 +205,24 @@ Cache-Control: max-age=60
       a string of alphanumeric characters. This form is designed to be compact
       without sacrificing readability.</t>
 
-      <t>Every hint has a case-sensitive hint identifier.</t>
+      <t>Every hint has a case-sensitive hint name.</t>
 
       <figure><artwork>
-hint = 1*ALPHA [ "=" 1*DIGIT ]
+hint = hint_name [ "=" hint_value ]
+hint_name = ALPHA *( DIGIT / "_" / "-" )
+hint_value = 1*DIGIT
 </artwork></figure>
 
-      <t>Hints are allowed to have a numeric argument. However, wherever
+      <t>Hints are allowed to have a numeric value. However, wherever
       possible, they are encouraged to be defined as flags (i.e., as a
-      hint identifier only), so that the hints don't consume too much
+      hint name only), so that the hints don't consume too much
       space in responses.</t>
 
       <t>Hints can be defined as one of two types:
 
         <list style="symbols">
-          <t>Boolean - indicated by the presence of the hint identifier. If
-          the hint identifier is absent in the last message containing the
+          <t>Boolean - indicated by the presence of the hint name. If
+          the hint name is absent in the last message containing the
           relevant hint header field, it is considered false.</t>
           <t>Numeric - value indicated by the digits after "=", up to the
           first non-digit character.</t>
