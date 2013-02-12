@@ -219,7 +219,7 @@ The "w" modifier matches if the parameter value (after unquoting) matches
 ### "s": Substring Match Modifier
 
 The "s" modifier matches if the parameter value (after unquoting) is
-contained as a sequence of characters within both lists.
+contained as a sequence of characters within the values of both lists.
 
 ### "b": Beginning Substring Match Modifier
 
@@ -229,8 +229,9 @@ same sequence of characters as the parameter value (after unquoting).
 ### "p": Parameter Prefix Match Modifier
 
 The "p" modifier matches if the parameter value (after unquoting) matches
-(character-for-character) the sequence of characters up to (but not including)
-the first semi-colon (";") in both lists, after any whitespace is removed.
+(character-for-character) a value starting with the sequence of characters up
+to (but not including) the first semi-colon (";") in both lists, after any
+whitespace is removed.
 
 For example, given the key:
 
@@ -245,6 +246,13 @@ then each of the following header fields is a match:
  Accept: text/html; q=0.5
  Accept: text/html;q=0.1
  Accept: text/html; foo="bar"
+~~~
+
+but does not match:
+
+~~~
+ Accept: text/plain
+ Accept: text/plain; type="text/html"
 ~~~
 
 ### "c": Case Sensitivity Flag
