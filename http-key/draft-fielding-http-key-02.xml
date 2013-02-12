@@ -80,7 +80,7 @@ document are to be interpreted as described in <xref target="RFC2119"/>.</t>
 <xref target="RFC5234"/> with the list rule extension defined in
 <xref target="I-D.ietf-httpbis-p1-messaging"/>, Appendix B. It includes by reference the
 OWS, field-name and quoted-string rules from that document, and the
-parameter rule from <xref target="I-D.ietf-httpbis-p2-semantics"/>.</t>
+parameter and attribute rules from <xref target="I-D.ietf-httpbis-p2-semantics"/>.</t>
       </section>
     </section>
     <section anchor="the-key-response-header-field" title="The “Key” Response Header Field">
@@ -179,7 +179,7 @@ to alter the input lists, or to alter the semantics of subsequent matches.</t>
         </section>
         <section anchor="s-substring-match-modifier" title="”s”: Substring Match Modifier">
           <t>The “s” modifier matches if the parameter value (after unquoting) is
-contained as a sequence of characters within both lists.</t>
+contained as a sequence of characters within the values of both lists.</t>
         </section>
         <section anchor="b-beginning-substring-match-modifier" title="“b”: Beginning Substring Match Modifier">
           <t>The “b” modifier matches if both lists contain a value that begins with the
@@ -187,8 +187,9 @@ same sequence of characters as the parameter value (after unquoting).</t>
         </section>
         <section anchor="p-parameter-prefix-match-modifier" title="“p”: Parameter Prefix Match Modifier">
           <t>The “p” modifier matches if the parameter value (after unquoting) matches
-(character-for-character) the sequence of characters up to (but not including)
-the first semi-colon (“;”) in both lists, after any whitespace is removed.</t>
+(character-for-character) a value starting with the sequence of characters up
+to (but not including) the first semi-colon (“;”) in both lists, after any
+whitespace is removed.</t>
           <t>For example, given the key:</t>
           <figure>
             <artwork><![CDATA[
@@ -204,6 +205,87 @@ the first semi-colon (“;”) in both lists, after any whitespace is removed.</
  Accept: text/html; foo="bar"
 ]]></artwork>
           </figure>
+          <t>but does not match:</t>
+          <figure>
+            <artwork><![CDATA[
+ Accept: text/plain
+ Accept: text/plain; type="text/html"
+]]></artwork>
+          </figure>
+        </section>
+        <section anchor="pgt-parameter-greater-than-match-modifier" title="“pgt”: Parameter Greater Than Match Modifier">
+          <t>The “pgt” modifier matches if the indicated attribute is greater than or equal
+to the indicated numeric amount in one value in both lists. This assumes that
+list members have a “attribute=value” format (following the parameter rule in
+<xref target="I-D.ietf-httpbis-p2-semantics"/>).</t>
+          <t>In the modifier, the indicated attribute is conveyed using the characters
+before the colon character in the parameter value; the indicated value is
+that afterwards.</t>
+          <t>Formally, the syntax is:</t>
+          <figure>
+            <artwork><![CDATA[
+parameter_comparator =  attribute ":" [ "-" ] 1*DIGIT
+]]></artwork>
+          </figure>
+          <t>For example, given the key:</t>
+          <figure>
+            <artwork><![CDATA[
+Key: Foo;pgt=bar:20
+]]></artwork>
+          </figure>
+          <t>the indicated attribute is ‘bar’, and the indicated value is 20. Thus, each
+of the following headers would match:</t>
+          <figure>
+            <artwork><![CDATA[
+ Foo: bar=20
+ Foo: BAr=25
+ Foo: bar=30, baz=100
+ Foo: baz=10, bar=50, bar=10
+ Foo: bar=100000
+]]></artwork>
+          </figure>
+          <t>whilst the following would not:</t>
+          <figure>
+            <artwork><![CDATA[
+ Foo: bar=19
+ Foo: bar=
+ Foo: bar=-30
+ Foo: bar= 25
+ Foo: thing=100
+ Foo: bar
+]]></artwork>
+          </figure>
+          <t>Note that the indicated attribute is always case-insensitive.</t>
+        </section>
+        <section anchor="plt-parameter-less-than-match-modifier" title="“plt”: Parameter Less Than Match Modifier">
+          <t>The “plt” modifer operates as the “pgt” does, except that the comparison is
+for amounts less than or equal to the indicated amount.</t>
+          <t>Thus, given:</t>
+          <figure>
+            <artwork><![CDATA[
+Key: Thing;plt=it:100
+]]></artwork>
+          </figure>
+          <t>each of the following headers would match:</t>
+          <figure>
+            <artwork><![CDATA[
+ Thing: it=100
+ Thing: iT=25
+ Thing: it=30, baz=100
+ Thing: baz=10, it=500, it=20
+ Thing: bar=-1000
+]]></artwork>
+          </figure>
+          <t>whilst the following would not:</t>
+          <figure>
+            <artwork><![CDATA[
+ Foo: it=101
+ Foo: it=
+ Foo: thing=100
+ Foo: it
+]]></artwork>
+          </figure>
+          <t>Note that the indicated parameter is always case-insensitive.</t>
         </section>
         <section anchor="c-case-sensitivity-flag" title="“c”: Case Sensitivity Flag">
           <t>The “c” modifier always matches, and has the side effect of reverting the case
@@ -268,6 +350,16 @@ value containing “MSIE” in any combination of case:</t>
 ]]></artwork>
         </figure>
       </section>
+      <section anchor="relationship-to-vary" title="Relationship to Vary">
+        <t>Origin servers SHOULD still send Vary as normal with Key, to accommodate
+implementations that do not (yet) understand it. For example,</t>
+        <figure>
+          <artwork><![CDATA[
+  Vary: Accept-Encoding
+  Key: Accept-Encoding;w="gzip"
+]]></artwork>
+        </figure>
+      </section>
     </section>
     <section anchor="iana-considerations" title="IANA Considerations">
       <t>TBD</t>
@@ -319,7 +411,7 @@ value containing “MSIE” in any combination of case:</t>
         <seriesInfo name="BCP" value="14"/>
         <seriesInfo name="RFC" value="2119"/>
         <format type="TXT" octets="4723" target="http://www.rfc-editor.org/rfc/rfc2119.txt"/>
-        <format type="HTML" octets="17491" target="http://xml.resource.org/public/rfc/html/rfc2119.html"/>
+        <format type="HTML" octets="17970" target="http://xml.resource.org/public/rfc/html/rfc2119.html"/>
         <format type="XML" octets="5777" target="http://xml.resource.org/public/rfc/xml/rfc2119.xml"/>
       </reference>
       <reference anchor="RFC5234">
