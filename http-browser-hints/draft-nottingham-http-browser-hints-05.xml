@@ -55,6 +55,7 @@
           apps-discuss@ietf.org mailing list <eref
           target="https://www.ietf.org/mailman/listinfo/apps-discuss"/>. </t>
       </note>
+      
    </front>
 
    <middle>
@@ -347,6 +348,11 @@ hint = 1*ALPHA [ "=" 1*DIGIT ]
             transmitted upon; if HTTP is used in the clear, then hints might
             be observed (which typically is not a great risk), and modified
             (which could be, for a naive client implementation).</t>
+            
+          <t>The Hop Hints mechanism uses the "Connection" header to scope
+            the hint to a single HTTP hop. A few old implementations have been
+            observed to not properly strip headers indicated by "Connection".
+          </t>
       </section>
 
       <section title="IANA Considerations">
@@ -476,6 +482,28 @@ hint = 1*ALPHA [ "=" 1*DIGIT ]
          <t>The author takes all responsibility for errors and
          omissions.</t>
       </section>
+
+      <section title="Open Issue: Hint Syntax">
+
+        <t>This revision defines the syntax of hints as a comma-delimited 
+          list. This is convenient (especially for delimiting hints with
+          values), but if many hints need to be conveyed, it'll be
+          inefficient.</t>
+          
+        <t>An alternate syntax could remove the commas, but we'd likely be
+          constrained in the number of hints we'd be able to define.</t>
+          
+        <t>Yet another approach would be to define a bitfield, and an ASCII
+          representation of that field. However, this would be cumbersome.</t>
+          
+        <t>Feedback appreciated.</t>
+      </section>
+
+      <section title="Open Issue: Hint Value Types">
+        <t>Are the defined hint value types sufficient? Feedback
+        appreciated.</t>
+      </section>
+
 
    </back>
 
