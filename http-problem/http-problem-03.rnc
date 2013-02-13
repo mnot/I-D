@@ -1,3 +1,4 @@
+<![CDATA[
 default namespace ns = "urn:ietf:rfc:XXXX"
 
 start |= problem
@@ -8,8 +9,9 @@ problem =
      & element detail { xsd:string }?
      & element httpStatus { xsd:positiveInteger }?
      & element problemInstance { xsd:anyURI }?),
-    element ns:* {
-      text
-      | element i { text }*
-    }*
+    anyNsElement
   }
+anyNsElement =
+  (element ns:* { anyNsElement | text }
+   | attribute * { text })*
+]]>

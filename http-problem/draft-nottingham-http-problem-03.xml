@@ -11,8 +11,7 @@
    <!ENTITY rfc5988 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5988.xml'>  
    <!ENTITY rfc6838 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6838.xml'>  
    <!ENTITY xml SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xml-20081126.xml'>  
-   <!ENTITY xmls SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xmlschema-0-20041028.xml'>  
-   <!ENTITY problem-schema SYSTEM 'http-problem-03.xsd'>
+   <!ENTITY problem-schema SYSTEM 'http-problem-03.rnc'>
 ]>
 
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -444,7 +443,16 @@ Content-Language: en
 
       <references title="Informative References">
         &xml;
-        &xmls;
+        <reference anchor="ISO-19757-2">
+          <front>
+            <title>Information Technology --- Document Schema Definition Languages (DSDL) --- Part 2: Grammar-based Validation --- RELAX NG</title>
+            <author>
+              <organization>International Organization for Standardization</organization>
+            </author>
+            <date year="2003"/>
+          </front>
+          <seriesInfo name="ISO/IEC" value="19757-2"/>
+        </reference>
         &rfc3023;
         &rfc5988;
         &rfc6838;
@@ -457,7 +465,7 @@ Content-Language: en
    APIs MAY express problem details using the format defined in this
    appendix.</t>
       
-   <t>The OPTIONAL XML Schema <xref target="W3C.REC-xmlschema-0-20041028"/>
+   <t>The OPTIONAL RELAX NG schema <xref target="ISO-19757-2"/>
    for the XML format is:</t>
       
 <figure><artwork>&problem-schema;</artwork></figure>
@@ -492,7 +500,9 @@ Content-Language: en
 
   <t>Note that this format uses an XML Namespace. This is primarily to allow
     embedding it into other formats; it does not imply that it can be extended
-    with content from other namespaces.</t>
+    with content from other namespaces. The RELAX NG schema explicitly only
+    allows elements from the one namespace used in the XML format. Any
+    extension arrays and objects MUST be serialised using that namespace.</t>
 
 </section>
 
@@ -505,6 +515,10 @@ Content-Language: en
 	      <t>Is it always necessary to specify a problem media type in an
 	        Accept header, or would it also be permissible to serve them
 	        even if the client did not list them?</t>
+	      <t>Currently, the RNG requires that any extensions are serialised
+          after the standard fields have been serialised. Another possible
+          option would be to not restrict the XML that way, and to allow
+	        a random order when serialising into XML.</t>
 	    </list></t>
 	  </section>
 	  
