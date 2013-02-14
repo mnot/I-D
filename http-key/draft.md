@@ -228,10 +228,9 @@ with the same sequence of characters as the parameter value (after unquoting).
 
 ### "p": Parameter Prefix Match Modifier
 
-The "p" modifier matches if the parameter value (after unquoting) matches
-(character-for-character) at least one member starting with the sequence of
-characters up to (but not including) the first semi-colon (";") in both lists,
-after any whitespace is removed.
+The "p" modifier matches if both lists contain at least one member whose
+sequence of characters up to (but not including) the first semi-colon (";")
+matches the parameter value, case insensitively, after whitespace is removed.
 
 For example, given the key:
 
@@ -243,7 +242,7 @@ then each of the following header fields is a match:
 
 ~~~
  Accept: text/html
- Accept: text/html; q=0.5
+ Accept: text/HTML; q=0.5
  Accept: text/html;q=0.1
  Accept: text/html; foo="bar"
 ~~~
@@ -257,7 +256,7 @@ but does not match:
 
 ### "pr": Parameter Range Modifier
 
-The "pr" modifer matches if both lists contain at least one member with the
+The "pr" modifier matches if both lists contain at least one member with the
 indicated attribute, and its value falls without a specified numeric range.
 
 This modifier assumes that list members have a "attribute=value" format
