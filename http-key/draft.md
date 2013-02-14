@@ -214,24 +214,24 @@ This document defines the following key modifiers:
 ### "w": Word Match Modifier
 
 The "w" modifier matches if the parameter value (after unquoting) matches
-(character-for-character) any whole value in both lists.
+(character-for-character) at least one whole member in both lists.
 
 ### "s": Substring Match Modifier
 
 The "s" modifier matches if the parameter value (after unquoting) is
-contained as a sequence of characters within the values of both lists.
+contained as a sequence of characters in at least one member of both lists.
 
 ### "b": Beginning Substring Match Modifier
 
-The "b" modifier matches if both lists contain a value that begins with the
-same sequence of characters as the parameter value (after unquoting).
+The "b" modifier matches if both lists contain at least one member that begins
+with the same sequence of characters as the parameter value (after unquoting).
 
 ### "p": Parameter Prefix Match Modifier
 
 The "p" modifier matches if the parameter value (after unquoting) matches
-(character-for-character) a value starting with the sequence of characters up
-to (but not including) the first semi-colon (";") in both lists, after any
-whitespace is removed.
+(character-for-character) at least one member starting with the sequence of
+characters up to (but not including) the first semi-colon (";") in both lists,
+after any whitespace is removed.
 
 For example, given the key:
 
@@ -257,8 +257,8 @@ but does not match:
 
 ### "pr": Parameter Range Modifier
 
-The "pr" modifier matches if the indicated attribute falls within a specified
-numeric range in one value in both lists. 
+The "pr" modifer matches if both lists contain at least one member with the
+indicated attribute, and its value falls without a specified numeric range.
 
 This modifier assumes that list members have a "attribute=value" format
 (following the parameter rule in {{I-D.ietf-httpbis-p2-semantics}}).
