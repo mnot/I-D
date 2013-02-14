@@ -255,38 +255,39 @@ but does not match:
  Accept: text/plain; type="text/html"
 ~~~
 
-### "pgt": Parameter Greater Than Match Modifier
+### "pr": Parameter Range Modifier
 
-The "pgt" modifier matches if the indicated attribute is greater than or equal
-to the indicated numeric amount in one value in both lists. This assumes that
-list members have a "attribute=value" format (following the parameter rule in
-{{I-D.ietf-httpbis-p2-semantics}}).
+The "pr" modifier matches if the indicated attribute falls within a specified
+numeric range in one value in both lists. 
+
+This modifier assumes that list members have a "attribute=value" format
+(following the parameter rule in {{I-D.ietf-httpbis-p2-semantics}}).
 
 In the modifier, the indicated attribute is conveyed using the characters
-before the colon character in the parameter value; the indicated value is
+before the colon character in the parameter value; the range is
 that afterwards.
 
 Formally, the syntax is:
 
 ~~~
-parameter_comparator =  attribute ":" [ "-" ] 1*DIGIT
+parameter_range =  attribute ":" "[" [ range_num ] ":" [ range_num ] "]"
+range_num = [ "-" ] 1*DIGIT
 ~~~
 
 For example, given the key:
 
 ~~~
-Key: Foo;pgt=bar:20
+Key: Foo;pr=bar[20:30]
 ~~~
 
-the indicated attribute is 'bar', and the indicated value is 20. Thus, each
-of the following headers would match:
+the indicated attribute is 'bar', and the range is from 20 to 30 (inclusive).
+Thus, each of the following headers would match:
 
 ~~~
  Foo: bar=20
  Foo: BAr=25
  Foo: bar=30, baz=100
  Foo: baz=10, bar=50, bar=10
- Foo: bar=100000
 ~~~
 
 whilst the following would not:
@@ -302,38 +303,20 @@ whilst the following would not:
 
 Note that the indicated attribute is always case-insensitive.
 
-
-### "plt": Parameter Less Than Match Modifier
-
-The "plt" modifer operates as the "pgt" does, except that the comparison is
-for amounts less than or equal to the indicated amount.
-
-Thus, given:
+The range can be incomplete on either side; for example, given:
 
 ~~~
-Key: Thing;plt=it:100
+Key: Foo;pr=bar[:30]
 ~~~
 
 each of the following headers would match:
 
 ~~~
- Thing: it=100
- Thing: iT=25
- Thing: it=30, baz=100
- Thing: baz=10, it=500, it=20
- Thing: bar=-1000
+ Foo: bar=20
+ Foo: bar=1, baz=wibble
+ Foo: bar=0
+ Foo: bar=-500
 ~~~
-
-whilst the following would not:
-
-~~~
- Foo: it=101
- Foo: it=
- Foo: thing=100
- Foo: it
-~~~
-
-Note that the indicated parameter is always case-insensitive.
 
 ### "c": Case Sensitivity Flag
 
