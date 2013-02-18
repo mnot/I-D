@@ -257,7 +257,7 @@ but does not match:
 ### "pr": Parameter Range Modifier
 
 The "pr" modifier matches if both lists contain at least one member with the
-indicated attribute, and its value falls without a specified numeric range.
+indicated attribute, and its value falls within a specified numeric range.
 
 This modifier assumes that list members have a "attribute=value" format
 (following the parameter rule in {{I-D.ietf-httpbis-p2-semantics}}).
@@ -316,6 +316,7 @@ each of the following headers would match:
  Foo: bar=0
  Foo: bar=-500
 ~~~
+
 
 ### "c": Case Sensitivity Flag
 
