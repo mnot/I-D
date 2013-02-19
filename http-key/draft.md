@@ -317,6 +317,45 @@ each of the following headers would match:
  Foo: bar=-500
 ~~~
 
+### "a": Acceptable Value Modifier
+
+The "a" modifier matches if the list from the presented request contains at
+least one member with the indicated parameterised value, and the parameters on
+that value indicate that it is acceptable.
+
+This modifier assumes that list members have a parameterised value format, 
+such as that used by the Accept, Accept-Charset, Accept-Encoding and
+Accept-Language request header fields.
+
+An acceptable match is one where the portion of the member before the first
+semicolon matches the indicated value, and the "q" parameter, if present on
+the list member, does not evaluate to 0. For example, "0.0", "0.00", ".0" and
+"0" all can be considered to do so.
+
+Thus, given:
+
+~~~
+ Key: Accept-Language;a=en
+~~~
+ 
+then the following headers would match: 
+ 
+ 
+~~~
+ Accept-Language: en
+ Accept-Language: en ;q=0.9
+ Accept-Language: en-uk, en;q=0.2
+ Accept-Language: en, en-us;q=0
+~~~
+
+whilst the following would not:
+ 
+~~~
+ Accept-Language: fr
+ Accept-Language: en;q=0.0
+ Accept-Language: en;q=0
+ Accept-Language: en-uk, en;q=.0
+~~~
 
 ### "c": Case Sensitivity Flag
 
