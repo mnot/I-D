@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ietf:rfc:XXXX"
+ elementFormDefault="qualified" xmlns:home="urn:ietf:rfc:XXXX">
+ <xs:element name="resources">
+  <xs:complexType>
+   <xs:sequence maxOccurs="unbounded" minOccurs="0">
+    <xs:element name="resource">
+     <xs:complexType>
+      <xs:sequence>
+       <xs:choice>
+        <xs:element name="link">
+         <xs:complexType>
+          <xs:attribute name="href" type="xs:anyURI" use="required"/>
+         </xs:complexType>
+        </xs:element>
+        <xs:element name="template">
+         <xs:complexType>
+          <xs:sequence maxOccurs="unbounded" minOccurs="0">
+           <xs:element name="var">
+            <xs:complexType>
+             <xs:attribute name="name" use="required"/>
+             <xs:attribute name="URI" type="xs:anyURI" use="required"/>
+            </xs:complexType>
+           </xs:element>
+          </xs:sequence>
+          <xs:attribute name="href-template" use="required"/>
+         </xs:complexType>
+        </xs:element>
+       </xs:choice>
+       <xs:element minOccurs="0" name="hints">
+        <xs:complexType>
+         <xs:choice maxOccurs="unbounded" minOccurs="0">
+          <xs:element name="allow" type="home:arrayType"/>
+          <xs:element name="representations" type="home:arrayType"/>
+          <xs:element name="accept-patch" type="home:arrayType"/>
+          <xs:element name="accept-post" type="home:arrayType"/>
+          <xs:element name="accept-put" type="home:arrayType"/>
+          <xs:element name="accept-ranges" type="home:arrayType"/>
+          <xs:element name="prefer" type="home:arrayType"/>
+          <xs:element name="docs" type="xs:anyURI"/>
+          <xs:element name="precondition-req" type="home:arrayType"/>
+          <xs:element name="auth-req">
+           <xs:complexType>
+            <xs:sequence maxOccurs="unbounded" minOccurs="0">
+             <xs:element name="scheme">
+              <xs:complexType>
+               <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                <xs:element name="realm"/>
+               </xs:sequence>
+               <xs:attribute name="name" type="xs:token"/>
+              </xs:complexType>
+             </xs:element>
+            </xs:sequence>
+           </xs:complexType>
+          </xs:element>
+          <xs:element name="status">
+           <xs:simpleType>
+            <xs:restriction base="xs:token">
+             <xs:enumeration value="deprecated"/>
+             <xs:enumeration value="gone"/>
+            </xs:restriction>
+           </xs:simpleType>
+          </xs:element>
+         </xs:choice>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+      <xs:attribute name="rel" type="xs:anyURI" use="required"/>
+     </xs:complexType>
+    </xs:element>
+   </xs:sequence>
+  </xs:complexType>
+ </xs:element>
+ <xs:complexType name="arrayType">
+  <xs:sequence maxOccurs="unbounded" minOccurs="0">
+   <xs:element name="i"/>
+  </xs:sequence>
+ </xs:complexType>
+</xs:schema>
