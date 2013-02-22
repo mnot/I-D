@@ -11,8 +11,7 @@
    <!ENTITY rfc5988 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5988.xml'>  
    <!ENTITY rfc6838 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6838.xml'>
    <!ENTITY xml SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xml-20081126.xml'>  
-   <!ENTITY xmls SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xmlschema-0-20041028.xml'>  
-   <!ENTITY problem-schema SYSTEM 'http-problem-03.xsd'>
+   <!ENTITY problem-schema SYSTEM 'http-problem-03.rnc'>
 ]>
 
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -44,7 +43,7 @@
         <email>erik.wilde@emc.com</email>
       </address>
 	  </author>
-		<date year="2013"/>
+    <date year="2013"/>
 		<keyword>status</keyword>
 		<keyword>HTTP</keyword>
 		<keyword>error</keyword>
@@ -113,7 +112,7 @@
       object; when formatted as a JSON document, it uses the
       "application/api-problem+json" media type. <xref target="xml-syntax"/>
       defines how to express them in an equivalent XML format, which uses
-      the "application/api-problem+xml" media type..</t>
+      the "application/api-problem+xml" media type.</t>
       
       <t>Note that problem details are (naturally) not the only way to convey
       the details of a problem in HTTP; if the response is still a
@@ -191,7 +190,7 @@ Content-Language: en
         <t>Consumers MUST use the problemType string as the primary
         identifier for the problem type; the title string is advisory, and
         included only for users who are not aware of the semantics of the
-        URI, and don’t have the ability to discover them (e.g., offline log
+        URI, and don't have the ability to discover them (e.g., offline log
         analysis). Consumers SHOULD NOT automatically dereference the
         problemType URI.</t>
       
@@ -249,8 +248,8 @@ Content-Language: en
       condition, it might be appropriate to do so by defining a new problem 
       type.</t>
 
-      <t>Before doing so, it’s important to understand what they are good for,
-      and what’s better left to other mechanisms.</t>
+      <t>Before doing so, it's important to understand what they are good for,
+      and what's better left to other mechanisms.</t>
 
       <t>Problem details are not a debugging tool for the underlying
       implementation; rather, they are a way to expose greater detail about
@@ -286,7 +285,7 @@ Content-Language: en
       <t>Problem types MAY specify the use of the Retry-After response
       header in appropriate circumstances.</t>
 
-      <t>A problem’s problemType URI SHOULD resolve to HTML documentation
+      <t>A problem's problemType URI SHOULD resolve to HTML documentation
       that explains how to resolve the problem.</t>
 
       <t>A problem type definition MAY specify additional members on the
@@ -314,7 +313,7 @@ Content-Language: en
           
         <t>To do so, you might look for an already-defined problemType URI
         that suits your purposes. If one is available, you can reuse that URI
-        by documenting use use of both this specification and that specific
+        by documenting use of both this specification and that specific
         URI value in your API.</t>
         
         <t>If one isn't available, you'd reference this specification, mint
@@ -365,8 +364,8 @@ Content-Language: en
 
 		<section title="IANA Considerations">
 
-      <t>This specification defines two new Internet media types <xref
-      target="RFC6838"/>:</t>
+		  <t>This specification defines two new Internet media types
+		    <xref target="RFC6838"/>:</t>
 
       <figure><artwork><![CDATA[
    Type name: application
@@ -440,15 +439,24 @@ Content-Language: en
 			&rfc3986;
 			&rfc4627;
 			&rfc5234;
-    </references>
+		</references>
 
-    <references title="Informative References">
-      &xml;
-      &xmls;
-    	&rfc3023;
-    	&rfc5988;         
-      &rfc6838;
-    </references>
+      <references title="Informative References">
+        &xml;
+        <reference anchor="ISO-19757-2">
+          <front>
+            <title>Information Technology --- Document Schema Definition Languages (DSDL) --- Part 2: Grammar-based Validation --- RELAX NG</title>
+            <author>
+              <organization>International Organization for Standardization</organization>
+            </author>
+            <date year="2003"/>
+          </front>
+          <seriesInfo name="ISO/IEC" value="19757-2"/>
+        </reference>
+        &rfc3023;
+        &rfc5988;
+        &rfc6838;
+      </references>
 
 <section anchor="xml-syntax" title="HTTP Problems and XML">
    
@@ -457,7 +465,7 @@ Content-Language: en
    APIs MAY express problem details using the format defined in this
    appendix.</t>
       
-   <t>The OPTIONAL XML Schema <xref target="W3C.REC-xmlschema-0-20041028"/>
+   <t>The OPTIONAL RELAX NG schema <xref target="ISO-19757-2"/>
    for the XML format is:</t>
       
 <figure><artwork>&problem-schema;</artwork></figure>
@@ -492,11 +500,28 @@ Content-Language: en
 
   <t>Note that this format uses an XML Namespace. This is primarily to allow
     embedding it into other formats; it does not imply that it can be extended
-    with content from other namespaces.</t>
+    with content from other namespaces. The RELAX NG schema explicitly only
+    allows elements from the one namespace used in the XML format. Any
+    extension arrays and objects MUST be serialised using that namespace.</t>
 
 </section>
 
 
+	  <section anchor="open-issues" title="Open Issues">
+	    
+	    <t>The following is a list of placeholders for open issues.</t>
+	    
+	    <t><list style='symbols'>
+	      <t>Is it always necessary to specify a problem media type in an
+	        Accept header, or would it also be permissible to serve them
+	        even if the client did not list them?</t>
+	      <t>Currently, the RNG requires that any extensions are serialised
+          after the standard fields have been serialised. Another possible
+          option would be to not restrict the XML that way, and to allow
+	        a random order when serialising into XML.</t>
+	    </list></t>
+	  </section>
+	  
 	</back>
 	
 
