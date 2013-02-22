@@ -270,7 +270,7 @@ Formally, the syntax is:
 
 ~~~
 parameter_range =  attribute ":" "[" [ range_num ] ":" [ range_num ] "]"
-range_num = [ "-" ] 1*DIGIT
+range_num = [ "-" ] [ 0*DIGIT "." ] 1*DIGIT
 ~~~
 
 For example, given the key:
@@ -284,7 +284,7 @@ Thus, each of the following headers would match:
 
 ~~~
  Foo: bar=20
- Foo: BAr=25
+ Foo: BAr=25.2
  Foo: bar=30, baz=100
  Foo: baz=10, bar=50, bar=10
 ~~~
@@ -296,6 +296,7 @@ whilst the following would not:
  Foo: bar=
  Foo: bar=-30
  Foo: bar= 25
+ Foo: bar=.21
  Foo: thing=100
  Foo: bar
 ~~~
