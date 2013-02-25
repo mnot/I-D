@@ -1,0 +1,1100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?rfc compact="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="4"?>
+
+<rfc category="bcp" docName="draft-ietf-appsawg-xdash-00" ipr="trust200902">
+
+  <front>
+    <title abbrev="The X- Prefix">Deprecating Use of the "X-" Prefix in Application Protocols</title>
+
+    <author initials="P." surname="Saint-Andre" fullname="Peter Saint-Andre">
+      <organization>Cisco Systems, Inc.</organization>
+      <address>
+        <postal>
+          <street>1899 Wyknoop Street, Suite 600</street>
+          <city>Denver</city>
+          <region>CO</region>
+          <code>80202</code>
+          <country>USA</country>
+        </postal>
+        <phone>+1-303-308-3282</phone>
+        <email>psaintan@cisco.com</email>
+      </address>
+    </author>
+
+    <author fullname="D. Crocker" initials="D." surname="Crocker">
+      <organization>Brandenburg InternetWorking</organization>
+      <address>
+        <postal>
+          <street>675 Spruce Dr.</street>
+          <city>Sunnyvale</city>
+          <country>USA</country>
+        </postal>
+        <phone>+1.408.246.8253</phone>
+        <email>dcrocker@bbiw.net</email>
+        <uri>http://bbiw.net</uri>
+       </address>
+    </author> 
+
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <address>
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net</uri>
+      </address>
+    </author>
+
+    <date month="September" day="13" year="2011"/>
+
+    <area>Applications</area>
+    <keyword>Internet-Draft</keyword>
+
+    <abstract>
+      <t>Historically, designers and implementers of application protocols have often distinguished between "standard" and "non-standard" parameters by prefixing the latter with the string "X-" or similar constructions.  In practice, this convention causes more problems than it solves.  Therefore, this document deprecates the "X-" convention for most application protocol parameters.</t>
+    </abstract>
+  </front>
+
+  <middle>
+
+    <section title="Introduction" anchor="introduction">
+      <t>Many application protocols use named parameters to identify data (media types, header fields in Internet mail messages and HTTP requests, etc.).  Historically, designers and implementers of application protocols have often distinguished between "standard" and "non-standard" parameters by prefixing the latter with the string "X-" or similar constructions (e.g., "x."), where the "X" is commonly understood to stand for "eXperimental" or "eXtension".</t>
+      <t>Although in theory the "X-" convention was a good way to avoid collisions (and attendant interoperability problems) between standard parameters and non-standard parameters, in practice the costs associated with the advancement of non-standard parameters into the standards space have outweighed the benefits.  Therefore this document deprecates the "X-" convention for most application protocols and makes specific recommendations about how to proceed in a world without the distinction between standard and non-standard parameters.</t>
+      <t>See <xref target="background"/> for background information about the history of the "X-" convention, and <xref target="analysis"/> for the reasoning that led to the recommendations in this document.</t>
+    </section>
+
+    <section title="Terminology" anchor="terminology">
+      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <xref target='RFC2119'/>.</t>
+    </section>
+
+    <section title="Recommendations for Implementers of Application Protocols" anchor="implementers">
+      <t>Implementers of application protocols:</t>
+      <t>
+        <list style='numbers'>
+          <t>MUST NOT treat the general categories of "standard" and "non-standard" parameters in programatically different ways within their applications.</t>
+        </list>
+      </t>
+    </section>
+
+    <section title="Recommendations for Creators of New Parameters" anchor="creators">
+
+      <t>Creators of new parameters to be used in the context of existing application protocols (e.g., HTTP headers, Internet media types):</t>
+      <t>
+        <list style='numbers'>
+          <t>SHOULD by default assume that all parameters they create have the potential to become standardized or widely used.<vspace blankLines='1'/></t> 
+          <t>SHOULD employ meaningful but currently unused names -- without the "X-" prefix -- when there is the potential for a parameter to become standardized or widely used (e.g., because an extension is public or awaiting wider validation).<vspace blankLines='1'/></t>
+          <t>SHOULD follow conventions specific to the relevant parameter name space when creating parameters for use in implementation-specific applications or on private networks. Especially if the parameter is intended to have meaning to implementers, the name could be a URI (e.g., "http://example.com/foo") or could incorporate the organization's name (e.g., "ExampleInc-foo" or, as consistent with <xref target="RFC4288"/>, "VND.ExampleInc.foo") or primary domain name (e.g., "com.example.foo").<vspace blankLines='1'/></t>
+          <t>SHOULD generate meaningless names for parameters that will not become standardized or widely used (e.g., because an extension is completely private or purely speculative).  For instance, the name could be the output of a hash function (e.g., "esuDj6Ssil8kDn4yfvvdwMTRhlU"), a UUID (e.g., "1AB9C36F-1618-4C1F-855D-96B5BAFC7FB3"), or even a nonsense word (e.g., "foobarbazqux") .<vspace blankLines='1'/></t>
+        </list>
+      </t>
+    </section>
+    
+    <section title="Recommendations for Protocol Designers" anchor="designers">
+      
+      <t>Designers of new application protocols that allow extensions using parameters:</t>
+
+      <t>
+        <list style='numbers'>
+          <t>SHOULD provide unlimited registries with well-defined registration procedures.<vspace blankLines='1'/></t>
+          <t>SHOULD mandate registration of all non-private parameters, independent of the form of the parameter names.<vspace blankLines='1'/></t>
+          <t>MUST NOT assume that a parameter with an "X-" prefix is non-standard.<vspace blankLines='1'/></t>
+          <t>MUST NOT assume that a parameter without an "X-" prefix is standard.<vspace blankLines='1'/></t>
+          <t>SHOULD identify a convention to allow local or implementation-specific extensions, and reserve delimeters for such uses as needed.<vspace blankLines='1'/></t>
+          <t>SHOULD NOT prohibit parameters with the "X-" prefix from being registered with IANA.</t>
+        </list>
+      </t>
+    </section>
+    
+    <section title="Security Considerations" anchor="security">
+      <t>Interoperability and migration issues with security-critical parameters can result in unnecessary vulnerabilities.</t>
+    </section>
+
+    <section title="IANA Considerations" anchor="iana">
+      <t>This document does not modify registration procedures currently in force for various application protocols.  However, such procedures might be updated in the future to incorporate the best practices defined in this document.</t>
+    </section>
+
+    <section title="Acknowledgements" anchor="acks">
+      <t>Thanks to Claudio Allocchio, Adam Barth, Nathaniel Borenstein, Eric Burger, Stuart Cheshire, Al Constanzo, Dave Cridland, Martin Duerst, Frank Ellermann, J.D. Falk, Ned Freed, Tony Finch, Randall Gellens, Tony Hansen, Ted Hardie, Joe Hildebrand, Alfred Hoenes, Paul Hoffman, Eric Johnson, John Klensin, Graham Klyne, Murray Kucherawy, Eliot Lear, John Levine, Bill McQuillan, Alexey Melnikov, Subramanian Moonesamy, Keith Moore, Ben Niven-Jenkins, Dirk Pranke, Randy Presuhn, Julian Reschke, Doug Royer, Andrew Sullivan, Martin Thomson, Matthew Wild, Nicolas Williams, Tim Williams, Mykyta Yevstifeyev, and Kurt Zeilenga for their feedback.</t>
+    </section>
+
+  </middle>
+
+  <back>
+
+    <references title="Normative References">
+
+<reference anchor='RFC2119'>
+<front>
+<title abbrev='RFC Key Words'>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='Scott Bradner'>
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<street>Cambridge</street>
+<street>MA 02138</street></postal>
+<phone>- +1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year='1997' month='March' />
+<area>General</area>
+<keyword>keyword</keyword>
+<abstract>
+<t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+<list>
+<t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+<t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t></abstract></front>
+<seriesInfo name='BCP' value='14' />
+<seriesInfo name='RFC' value='2119' />
+<format type='TXT' octets='4723' target='http://www.rfc-editor.org/rfc/rfc2119.txt' />
+<format type='HTML' octets='17491' target='http://xml.resource.org/public/rfc/html/rfc2119.html' />
+<format type='XML' octets='5777' target='http://xml.resource.org/public/rfc/xml/rfc2119.xml' />
+</reference>
+
+    </references>
+
+    <references title="Informative References">
+
+<reference anchor='BCP9'>
+<front>
+<title abbrev='Internet Standards Process'>The Internet Standards Process -- Revision 3</title>
+<author initials='S.' surname='Bradner' fullname='Scott O. Bradner'>
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02138</code>
+<country>US</country></postal>
+<phone>+1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year='1996' month='October' />
+<abstract>
+<t>This memo documents the process used by the Internet community for the standardization of protocols and procedures.  It defines the stages in the standardization process, the requirements for moving a document between stages and the types of documents used during this process.  It also addresses the intellectual property rights and copyright issues associated with the standards process.</t></abstract></front>
+<seriesInfo name='BCP' value='9' />
+<seriesInfo name='RFC' value='2026' />
+<format type='TXT' octets='86731' target='http://www.rfc-editor.org/rfc/rfc2026.txt' />
+</reference>
+
+<reference anchor='BCP26'>
+<front>
+<title>Guidelines for Writing an IANA Considerations Section in RFCs</title>
+<author initials='T.' surname='Narten' fullname='T. Narten'>
+<organization /></author>
+<author initials='H.' surname='Alvestrand' fullname='H. Alvestrand'>
+<organization /></author>
+<date year='2008' month='May' />
+<abstract>
+<t>Many protocols make use of identifiers consisting of constants and other well-known values. Even after a protocol has been defined and deployment has begun, new values may need to be assigned (e.g., for a new option type in DHCP, or a new encryption or authentication transform for IPsec). To ensure that such quantities have consistent values and interpretations across all implementations, their assignment must be administered by a central authority. For IETF protocols, that role is provided by the Internet Assigned Numbers Authority (IANA).&lt;/t>&lt;t> In order for IANA to manage a given namespace prudently, it needs guidelines describing the conditions under which new values can be assigned or when modifications to existing values can be made. If IANA is expected to play a role in the management of a namespace, IANA must be given clear and concise instructions describing that role. This document discusses issues that should be considered in formulating a policy for assigning values to a namespace and provides guidelines for authors on the specific text that must be included in documents that place demands on IANA.&lt;/t>&lt;t> This document obsoletes RFC 2434. This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+<seriesInfo name='BCP' value='26' />
+<seriesInfo name='RFC' value='5226' />
+<format type='TXT' octets='66160' target='http://www.rfc-editor.org/rfc/rfc5226.txt' />
+</reference>
+
+<reference anchor='BCP82'>
+<front>
+<title>Assigning Experimental and Testing Numbers Considered Useful</title>
+<author initials='T.' surname='Narten' fullname='T. Narten'>
+<organization /></author>
+<date year='2004' month='January' />
+<abstract>
+<t>When experimenting with or extending protocols, it is often necessary to use some sort of protocol number or constant in order to actually test or experiment with the new function, even when testing in a closed environment.  For example, to test a new DHCP option, one needs an option number to identify the new function.  This document recommends that when writing IANA Considerations sections, authors should consider assigning a small range of numbers for experimentation purposes that implementers can use when testing protocol extensions or other new features.  This document reserves some ranges of numbers for experimentation purposes in specific protocols where the need to support experimentation has been identified.</t></abstract></front>
+<seriesInfo name='BCP' value='82' />
+<seriesInfo name='RFC' value='3692' />
+<format type='TXT' octets='15054' target='http://www.rfc-editor.org/rfc/rfc3692.txt' />
+</reference>
+
+<reference anchor='RFC691'>
+<front>
+<title>One more try on the FTP</title>
+<author initials='B.' surname='Harvey' fullname='Brian Harvey'>
+<organization>Stanford University (SU), Artifical Intelligence (AI)</organization></author>
+<date year='1975' day='6' month='June' />
+<abstract>
+<t>This is a slight revision of RFC 686, mainly differing in the discussion of print files.  Reading several RFCs that I (sigh) never heard of before writing 686 has convinced me that although I was right all along it was for the wrong reasons.  The list of reply codes is also slightly different to reflect the four lists in RFCs 354, 454, 542, and 640 more completely.  Let me also suggest that if there are no objections before June 1, everyone take it as official that HELP should return 200, that SRVR should be used as discussed below, and that "permanent" 4xx errors be changed to 5xx.  And thanks to Jon Postel who just spent all evening helping me straighten this all out.</t>
+<t>Aside from a cry of anguish by the site responsible for the security hassle described below, I've only had one comment on this, which was unfavorable but, alas, unspecific.  Let me just say, in the hopes of avoiding more such, that I am not just trying to step on toes for the fun of it, and that I don't think the positive changes to FTP-1 proposed here are necessarily the best possible thing.  What they are, I think, is easily doable. The great-FTP-in-the-sky isn't showing any signs of universal acceptability, and it shouldn't stand in the way of solving immediate problems.</t>
+<t>Leaving Well Enough Alone</t>
+<t>I recently decided it was time for an overhaul of our FTP user and server programs.  This was my first venture into the world of network protocols, and I soon discovered that there was a lot we were doing wrong--and a few things that everyone seemed to be doing differently from each other.  When I enquired about this, the response from some quarters was "Oh, you're running Version 1!"</t></abstract></front>
+<seriesInfo name='RFC' value='691' />
+<format type='TXT' octets='32821' target='http://www.rfc-editor.org/rfc/rfc691.txt' />
+</reference>
+
+<reference anchor='RFC737'>
+<front>
+<title>FTP extension: XSEN</title>
+<author initials='K.' surname='Harrenstien' fullname='K. Harrenstien'>
+<organization>Stanford Research Institute (SRI) International, KL</organization></author>
+<date year='1977' day='31' month='October' />
+<abstract>
+<t>This note describes an extension to the File Transfer Protocol which provides for "sending" a message to a logged-in user, as well as variants for mailing it normally whether the user is logged in or not.</t></abstract></front>
+<seriesInfo name='RFC' value='737' />
+<format type='TXT' octets='2127' target='http://www.rfc-editor.org/rfc/rfc737.txt' />
+</reference>
+
+<reference anchor='RFC743'>
+<front>
+<title abbrev='An Extension to FTP'>FTP extension: XRSQ/XRCP</title>
+<author initials='K.' surname='Harrenstien' fullname='K. Harrenstien'>
+<organization>Stanford Research Institute (SRI), KL</organization></author>
+<date year='1977' day='30' month='December' /></front>
+<seriesInfo name='RFC' value='743' />
+<format type='TXT' octets='16249' target='http://www.rfc-editor.org/rfc/rfc743.txt' />
+</reference>
+
+<reference anchor='RFC775'>
+<front>
+<title>Directory oriented FTP commands</title>
+<author initials='D.' surname='Mankins' fullname='David Mankins'>
+<organization />
+<address>
+<email>dm@bbn-unix</email></address></author>
+<author initials='D.' surname='Franklin' fullname='Dan Franklin'>
+<organization />
+<address>
+<email>dan@bbn-unix</email></address></author>
+<author initials='A.' surname='Owen' fullname='A. D. Owen'>
+<organization />
+<address>
+<email>ADOwen@bbnd</email></address></author>
+<date year='1980' day='1' month='December' />
+<abstract>
+<t>As a part of the Remote Site Maintenance (RSM) project for  ARPA, BBN has installed and maintains the software of several DEC PDP-11s running the Unix operating system.  Since Unix has a tree-like directory structure, in which directories are as easy to manipulate as ordinary files, we  have  found  it  convenient  to expand  the FTP servers on these machines to include commands which deal with the creation of  directories.   Since  there are other hosts on the ARPA net which have tree-like directories, including Tops-20 and  Multics, we have tried to make these commands as general as possible.</t></abstract></front>
+<seriesInfo name='RFC' value='775' />
+<format type='TXT' octets='9511' target='http://www.rfc-editor.org/rfc/rfc775.txt' />
+</reference>
+
+<reference anchor='RFC822'>
+<front>
+<title abbrev='Standard for ARPA Internet Text Messages'>Standard for the format of ARPA Internet text messages</title>
+<author initials='D.H.' surname='Crocker' fullname='David H. Crocker'>
+<organization>University of Delaware, Dept. of Electrical Engineering</organization>
+<address>
+<postal>
+<street />
+<city>Newark</city>
+<region>DE</region>
+<code>19711</code>
+<country>US</country></postal>
+<email>DCrocker@UDel-Relay</email></address></author>
+<date year='1982' day='13' month='August' /></front>
+<seriesInfo name='STD' value='11' />
+<seriesInfo name='RFC' value='822' />
+<format type='TXT' octets='109200' target='http://www.rfc-editor.org/rfc/rfc822.txt' />
+</reference>
+
+<reference anchor='RFC1123'>
+<front>
+<title>Requirements for Internet Hosts - Application and Support</title>
+<author initials='R.' surname='Braden' fullname='Robert Braden'>
+<organization>University of Southern California (USC), Information Sciences Institute</organization>
+<address>
+<postal>
+<street>4676 Admiralty Way</street>
+<city>Marina del Rey</city>
+<region>CA</region>
+<code>90292-6695</code>
+<country>US</country></postal>
+<phone>+1 213 822 1511</phone>
+<email>Braden@ISI.EDU</email></address></author>
+<date year='1989' month='October' /></front>
+<seriesInfo name='STD' value='3' />
+<seriesInfo name='RFC' value='1123' />
+<format type='TXT' octets='245503' target='http://www.rfc-editor.org/rfc/rfc1123.txt' />
+</reference>
+
+<reference anchor='RFC1154'>
+<front>
+<title>Encoding header field for internet messages</title>
+<author initials='D.' surname='Robinson' fullname='David Robinson'>
+<organization>Prime Computer, Inc.</organization>
+<address>
+<postal>
+<street>500 Old Connecticut Path</street>
+<city>Framingham</city>
+<region>MA</region>
+<code>01701</code>
+<country>US</country></postal>
+<phone>+1 508 879 2960 x1774</phone>
+<email>DRB@Relay.Prime.COM</email></address></author>
+<author initials='R.' surname='Ullmann' fullname='Robert Ullmann'>
+<organization>Prime Computer, Inc.</organization>
+<address>
+<postal>
+<street>500 Old Connecticut Path</street>
+<city>Framingham</city>
+<region>MA</region>
+<code>01701</code>
+<country>US</country></postal>
+<phone>+1 508 879 2960 x1736</phone>
+<email>Ariel@Relay.Prime.COM</email></address></author>
+<date year='1990' day='1' month='April' /></front>
+<seriesInfo name='RFC' value='1154' />
+<format type='TXT' octets='12214' target='ftp://ftp.isi.edu/in-notes/rfc1154.txt' />
+</reference>
+
+<reference anchor='RFC2045'>
+<front>
+<title abbrev='Internet Message Bodies'>Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies</title>
+<author initials='N.' surname='Freed' fullname='Ned Freed'>
+<organization>Innosoft International, Inc.</organization>
+<address>
+<postal>
+<street>1050 East Garvey Avenue South</street>
+<city>West Covina</city>
+<region>CA</region>
+<code>91790</code>
+<country>US</country></postal>
+<phone>+1 818 919 3600</phone>
+<facsimile>+1 818 919 3614</facsimile>
+<email>ned@innosoft.com</email></address></author>
+<author initials='N.S.' surname='Borenstein' fullname='Nathaniel S. Borenstein'>
+<organization>First Virtual Holdings</organization>
+<address>
+<postal>
+<street>25 Washington Avenue</street>
+<city>Morristown</city>
+<region>NJ</region>
+<code>07960</code>
+<country>US</country></postal>
+<phone>+1 201 540 8967</phone>
+<facsimile>+1 201 993 3032</facsimile>
+<email>nsb@nsb.fv.com</email></address></author>
+<date year='1996' month='November' />
+<abstract>
+<t>STD 11, RFC 822, defines a message representation protocol specifying considerable detail about US-ASCII message headers, and leaves the message content, or message body, as flat US-ASCII text.  This set of documents, collectively called the Multipurpose Internet Mail Extensions, or MIME, redefines the format of messages to allow for</t>
+<t>(1)   textual message bodies in character sets other than US-ASCII,</t>
+<t>(2)   an extensible set of different formats for non-textual message bodies,</t>
+<t>(3)   multi-part message bodies, and</t>
+<t>(4)   textual header information in character sets other than US-ASCII.</t>
+<t>These documents are based on earlier work documented in RFC 934, STD 11, and RFC 1049, but extends and revises them.  Because RFC 822 said so little about message bodies, these documents are largely orthogonal to (rather than a revision of) RFC 822.</t>
+<t>This initial document specifies the various headers used to describe the structure of MIME messages. The second document, RFC 2046, defines the general structure of the MIME media typing system and defines an initial set of media types. The third document, RFC 2047, describes extensions to RFC 822 to allow non-US-ASCII text data in Internet mail header fields. The fourth document, RFC 2048, specifies various IANA registration procedures for MIME-related facilities. The fifth and final document, RFC 2049, describes MIME conformance
+  criteria as well as providing some illustrative examples of MIME message formats, acknowledgements, and the bibliography.</t>
+<t>These documents are revisions of RFCs 1521, 1522, and 1590, which themselves were revisions of RFCs 1341 and 1342.  An appendix in RFC 2049 describes differences and changes from previous versions.</t></abstract></front>
+<seriesInfo name='RFC' value='2045' />
+<format type='TXT' octets='72932' target='ftp://ftp.isi.edu/in-notes/rfc2045.txt' />
+</reference>
+
+<reference anchor='RFC2046'>
+<front>
+<title abbrev='Media Types'>Multipurpose Internet Mail Extensions (MIME) Part Two: Media Types</title>
+<author initials='N.' surname='Freed' fullname='Ned Freed'>
+<organization>Innosoft International, Inc.</organization>
+<address>
+<postal>
+<street>1050 East Garvey Avenue South</street>
+<city>West Covina</city>
+<region>CA</region>
+<code>91790</code>
+<country>US</country></postal>
+<phone>+1 818 919 3600</phone>
+<facsimile>+1 818 919 3614</facsimile>
+<email>ned@innosoft.com</email></address></author>
+<author initials='N.' surname='Borenstein' fullname='Nathaniel S. Borenstein'>
+<organization>First Virtual Holdings</organization>
+<address>
+<postal>
+<street>25 Washington Avenue</street>
+<city>Morristown</city>
+<region>NJ</region>
+<code>07960</code>
+<country>US</country></postal>
+<phone>+1 201 540 8967</phone>
+<facsimile>+1 201 993 3032</facsimile>
+<email>nsb@nsb.fv.com</email></address></author>
+<date year='1996' month='November' />
+<abstract>
+<t>STD 11, RFC 822 defines a message representation protocol specifying considerable detail about US-ASCII message headers, but which leaves the message content, or message body, as flat US-ASCII text.  This set of documents, collectively called the Multipurpose Internet Mail Extensions, or MIME, redefines the format of messages to allow for</t>
+<t>(1)   textual message bodies in character sets other than US-ASCII,</t>
+<t>(2)   an extensible set of different formats for non-textual message bodies,</t>
+<t>(3)   multi-part message bodies, and</t>
+<t>(4)   textual header information in character sets other than US-ASCII.</t>
+<t>These documents are based on earlier work documented in RFC 934, STD 11 and RFC 1049, but extends and revises them.  Because RFC 822 said so little about message bodies, these documents are largely orthogonal to (rather than a revision of) RFC 822.</t>
+<t>The initial document in this set, RFC 2045, specifies the various headers used to describe the structure of MIME messages. This second document defines the general structure of the MIME media typing sytem and defines an initial set of media types. The third document, RFC 2047, describes extensions to RFC 822 to allow non-US-ASCII text data in Internet mail header fields. The fourth document, RFC 2048, specifies various IANA registration procedures for MIME-related facilities.  The fifth and final document, RFC 2049, describes MIME
+   conformance criteria as well as providing some illustrative examples of MIME message formats, acknowledgements, and the bibliography.</t>
+<t>These documents are revisions of RFCs 1521 and 1522, which themselves were revisions of RFCs 1341 and 1342.  An appendix in RFC 2049 describes differences and changes from previous versions.</t></abstract></front>
+<seriesInfo name='RFC' value='2046' />
+<format type='TXT' octets='105854' target='ftp://ftp.isi.edu/in-notes/rfc2046.txt' />
+</reference>
+
+<reference anchor='RFC2047'>
+<front>
+<title abbrev='Message Header Extensions'>MIME (Multipurpose Internet Mail Extensions) Part Three: Message Header Extensions for Non-ASCII Text</title>
+<author initials='K.' surname='Moore' fullname='Keith Moore'>
+<organization>University of Tennessee</organization>
+<address>
+<postal>
+<street>107 Ayres Hall</street>
+<street>Knoxville TN 37996-1301</street></postal>
+<email>moore@cs.utk.edu</email></address></author>
+<date year='1996' month='November' />
+<area>Applications</area>
+<keyword>Amercian Standard Code for Information Interchange</keyword>
+<keyword>mail</keyword>
+<keyword>multipurpose internet mail extensions</keyword>
+<abstract>
+<t>
+   STD 11, RFC 822, defines a message representation protocol specifying
+   considerable detail about US-ASCII message headers, and leaves the
+   message content, or message body, as flat US-ASCII text.  This set of
+   documents, collectively called the Multipurpose Internet Mail
+   Extensions, or MIME, redefines the format of messages to allow for
+
+<list>
+<t>
+   (1) textual message bodies in character sets other than US-ASCII,
+</t>
+<t>
+   (2) an extensible set of different formats for non-textual message
+       bodies,
+</t>
+<t>
+   (3) multi-part message bodies, and
+</t>
+<t>
+   (4) textual header information in character sets other than US-ASCII.
+</t></list></t>
+<t>
+   These documents are based on earlier work documented in RFC 934, STD
+   11, and RFC 1049, but extends and revises them.  Because RFC 822 said
+   so little about message bodies, these documents are largely
+   orthogonal to (rather than a revision of) RFC 822.
+</t>
+<t>
+   This particular document is the third document in the series.  It
+   describes extensions to RFC 822 to allow non-US-ASCII text data in
+   Internet mail header fields.
+   Other documents in this series include:
+
+<list>
+<t>
+   + RFC 2045, which specifies the various headers used to describe
+     the structure of MIME messages.
+</t>
+<t>
+   + RFC 2046, which defines the general structure of the MIME media
+     typing system and defines an initial set of media types,
+</t>
+<t>
+   + RFC 2048, which specifies various IANA registration procedures
+     for MIME-related facilities, and
+</t>
+<t>
+   + RFC 2049, which describes MIME conformance criteria and
+     provides some illustrative examples of MIME message formats,
+     acknowledgements, and the bibliography.
+</t></list></t>
+<t>
+   These documents are revisions of RFCs 1521, 1522, and 1590, which
+   themselves were revisions of RFCs 1341 and 1342.  An appendix in RFC
+   2049 describes differences and changes from previous versions.
+</t></abstract></front>
+<seriesInfo name='RFC' value='2047' />
+<format type='TXT' octets='33262' target='ftp://ftp.isi.edu/in-notes/rfc2047.txt' />
+<format type='HTML' octets='52141' target='http://xml.resource.org/public/rfc/html/rfc2047.html' />
+<format type='XML' octets='39194' target='http://xml.resource.org/public/rfc/xml/rfc2047.xml' />
+</reference>
+
+<reference anchor='RFC2068'>
+<front>
+<title abbrev='HTTP/1.1'>Hypertext Transfer Protocol -- HTTP/1.1</title>
+<author initials='R.' surname='Fielding' fullname='Roy T. Fielding'>
+<organization>University of California, Irvine, Department of Information and Computer Science</organization>
+<address>
+<postal>
+<street />
+<city>Irvine</city>
+<region>CA</region>
+<code>92717-3425</code>
+<country>US</country></postal>
+<facsimile>+1 714 824 4056</facsimile>
+<email>fielding@ics.uci.edu</email></address></author>
+<author initials='J.' surname='Gettys' fullname='Jim Gettys'>
+<organization>MIT Laboratory for Computer Science</organization>
+<address>
+<postal>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>US</country></postal>
+<facsimile>+1 617 258 8682</facsimile>
+<email>jg@w3.org</email></address></author>
+<author initials='J.' surname='Mogul' fullname='Jeffrey C. Mogul'>
+<organization>Digital Equipment Corporation, Western Research Laboratory</organization>
+<address>
+<postal>
+<street>250 University Avenue</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94301</code>
+<country>US</country></postal>
+<email>mogul@wrl.dec.com</email></address></author>
+<author initials='H.' surname='Nielsen' fullname='Henrik Frystyk Nielsen'>
+<organization>MIT Laboratory for Computer Science</organization>
+<address>
+<postal>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>US</country></postal>
+<facsimile>+1 617 258 8682</facsimile>
+<email>frystyk@w3.org</email></address></author>
+<author initials='T.' surname='Berners-Lee' fullname='Tim Berners-Lee'>
+<organization>MIT Laboratory for Computer Science</organization>
+<address>
+<postal>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>US</country></postal>
+<facsimile>+1 617 258 8682</facsimile>
+<email>timbl@w3.org</email></address></author>
+<date year='1997' month='January' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is an application-level protocol for distributed, collaborative, hypermedia information systems. It is a generic, stateless, object-oriented protocol which can be used for many tasks, such as name servers and distributed object management systems, through extension of its request methods. A feature of HTTP is the typing and negotiation of data representation, allowing systems to be built independently of the data being transferred.</t>
+<t>HTTP has been in use by the World-Wide Web global information initiative since 1990. This specification defines the protocol referred to as "HTTP/1.1".</t></abstract></front>
+<seriesInfo name='RFC' value='2068' />
+<format type='TXT' octets='378114' target='ftp://ftp.isi.edu/in-notes/rfc2068.txt' />
+</reference>
+
+<reference anchor='RFC2426'>
+<front>
+<title>vCard MIME Directory Profile</title>
+<author initials='F.' surname='Dawson' fullname='Frank Dawson'>
+<organization>Lotus Development Corporation</organization>
+<address>
+<postal>
+<street>6544 Battleford Drive</street>
+<street>Raleigh</street>
+<street>NC 27613</street>
+<country>USA</country></postal>
+<phone>+1-919-676-9515</phone>
+<email>frank_dawson@lotus.com</email></address></author>
+<author initials='T.' surname='Howes' fullname='Tim Howes'>
+<organization>Netscape Communications Corp.</organization>
+<address>
+<postal>
+<street>501 East Middlefield Rd.</street>
+<street>Mountain View</street>
+<street>CA 94041</street>
+<country>USA</country></postal>
+<phone>+1.415.937.3419</phone>
+<email>howes@netscape.com</email></address></author>
+<date year='1998' month='September' />
+<area>Applications</area>
+<keyword>MIME</keyword>
+<keyword>audio</keyword>
+<keyword>content-type</keyword>
+<keyword>directory</keyword>
+<keyword>multipurpose internet mail extensions</keyword>
+<abstract>
+<t>
+   This memo defines the profile of the MIME Content-Type  for
+   directory information for a white-pages person object, based on a
+   vCard electronic business card. The profile definition is independent
+   of any particular directory service or protocol. The profile is
+   defined for representing and exchanging a variety of information
+   about an individual (e.g., formatted and structured name and delivery
+   addresses, email address, multiple telephone numbers, photograph,
+   logo, audio clips, etc.). The directory information used by this
+   profile is based on the attributes for the person object defined in
+   the X.520 and X.521 directory services recommendations. The profile
+   also provides the method for including a  representation of a
+   white-pages directory entry within the MIME Content-Type defined by
+   the  document.
+</t>
+<t>
+   The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;,
+   &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;MAY&quot; and &quot;OPTIONAL&quot; in this
+   document are to be interpreted as described in .
+</t></abstract></front>
+<seriesInfo name='RFC' value='2426' />
+<format type='TXT' octets='74646' target='http://www.rfc-editor.org/rfc/rfc2426.txt' />
+<format type='HTML' octets='96516' target='http://xml.resource.org/public/rfc/html/rfc2426.html' />
+<format type='XML' octets='77964' target='http://xml.resource.org/public/rfc/xml/rfc2426.xml' />
+</reference>
+
+<reference anchor='RFC2616'>
+<front>
+<title abbrev='HTTP/1.1'>Hypertext Transfer Protocol -- HTTP/1.1</title>
+<author initials='R.' surname='Fielding' fullname='Roy T. Fielding'>
+<organization abbrev='UC Irvine'>Department of Information and Computer Science</organization>
+<address>
+<postal>
+<street>University of California, Irvine</street>
+<city>Irvine</city>
+<region>CA</region>
+<code>92697-3425</code></postal>
+<facsimile>+1(949)824-1715</facsimile>
+<email>fielding@ics.uci.edu</email></address></author>
+<author initials='J.' surname='Gettys' fullname='James Gettys'>
+<organization abbrev='Compaq/W3C'>World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code></postal>
+<facsimile>+1(617)258-8682</facsimile>
+<email>jg@w3.org</email></address></author>
+<author initials='J.' surname='Mogul' fullname='Jeffrey C. Mogul'>
+<organization abbrev='Compaq'>Compaq Computer Corporation</organization>
+<address>
+<postal>
+<street>Western Research Laboratory</street>
+<street>250 University Avenue</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94305</code></postal>
+<email>mogul@wrl.dec.com</email></address></author>
+<author initials='H.' surname='Frystyk' fullname='Henrik Frystyk Nielsen'>
+<organization abbrev='W3C/MIT'>World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code></postal>
+<facsimile>+1(617)258-8682</facsimile>
+<email>frystyk@w3.org</email></address></author>
+<author initials='L.' surname='Masinter' fullname='Larry Masinter'>
+<organization abbrev='Xerox'>Xerox Corporation</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>3333 Coyote Hill Road</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94034</code></postal>
+<email>masinter@parc.xerox.com</email></address></author>
+<author initials='P.' surname='Leach' fullname='Paul J. Leach'>
+<organization abbrev='Microsoft'>Microsoft Corporation</organization>
+<address>
+<postal>
+<street>1 Microsoft Way</street>
+<city>Redmond</city>
+<region>WA</region>
+<code>98052</code></postal>
+<email>paulle@microsoft.com</email></address></author>
+<author initials='T.' surname='Berners-Lee' fullname='Tim Berners-Lee'>
+<organization abbrev='W3C/MIT'>World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code></postal>
+<facsimile>+1(617)258-8682</facsimile>
+<email>timbl@w3.org</email></address></author>
+<date year='1999' month='June' />
+<abstract>
+<t>
+   The Hypertext Transfer Protocol (HTTP) is an application-level
+   protocol for distributed, collaborative, hypermedia information
+   systems. It is a generic, stateless, protocol which can be used for
+   many tasks beyond its use for hypertext, such as name servers and
+   distributed object management systems, through extension of its
+   request methods, error codes and headers . A feature of HTTP is
+   the typing and negotiation of data representation, allowing systems
+   to be built independently of the data being transferred.
+</t>
+<t>
+   HTTP has been in use by the World-Wide Web global information
+   initiative since 1990. This specification defines the protocol
+   referred to as "HTTP/1.1", and is an update to RFC 2068 .
+</t></abstract></front>
+<seriesInfo name='RFC' value='2616' />
+<format type='TXT' octets='422317' target='ftp://ftp.isi.edu/in-notes/rfc2616.txt' />
+<format type='PS' octets='5529857' target='ftp://ftp.isi.edu/in-notes/rfc2616.ps' />
+<format type='PDF' octets='550558' target='ftp://ftp.isi.edu/in-notes/rfc2616.pdf' />
+<format type='HTML' octets='636125' target='http://xml.resource.org/public/rfc/html/rfc2616.html' />
+<format type='XML' octets='493420' target='http://xml.resource.org/public/rfc/xml/rfc2616.xml' />
+</reference>
+
+<reference anchor='RFC2822'>
+<front>
+<title>Internet Message Format</title>
+<author initials='P.' surname='Resnick' fullname='P. Resnick'>
+<organization /></author>
+<date year='2001' month='April' />
+<abstract>
+<t>This document specifies a syntax for text messages that are sent between computer users, within the framework of "electronic mail" messages. [STANDARDS-TRACK]</t></abstract></front>
+<seriesInfo name='RFC' value='2822' />
+<format type='TXT' octets='110695' target='http://www.rfc-editor.org/rfc/rfc2822.txt' />
+</reference>
+
+<reference anchor='RFC2939'>
+<front>
+<title>Procedures and IANA Guidelines for Definition of New DHCP Options and Message Types</title>
+<author initials='R.' surname='Droms' fullname='R. Droms'>
+<organization /></author>
+<date year='2000' month='September' />
+<abstract>
+<t>This document describes the procedure for defining new DHCP options and message types.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+<seriesInfo name='BCP' value='43' />
+<seriesInfo name='RFC' value='2939' />
+<format type='TXT' octets='13631' target='http://www.rfc-editor.org/rfc/rfc2939.txt' />
+</reference>
+
+<reference anchor='RFC3406'>
+<front>
+<title>Uniform Resource Names (URN) Namespace Definition Mechanisms</title>
+<author initials='L.' surname='Daigle' fullname='L. Daigle'>
+<organization /></author>
+<author initials='D.' surname='van Gulik' fullname='D. van Gulik'>
+<organization /></author>
+<author initials='R.' surname='Iannella' fullname='R. Iannella'>
+<organization /></author>
+<author initials='P.' surname='Faltstrom' fullname='P. Faltstrom'>
+<organization /></author>
+<date year='2002' month='October' />
+<abstract>
+<t>This document lays out general definitions of and mechanisms for establishing Uniform Resource Names (URN) "namespaces".  The URN WG has defined a syntax for URNs in RFC 2141, as well as some proposed mechanisms for their resolution and use in Internet applications in RFC 3401 and RFC 3405.  The whole rests on the concept of individual "namespaces" within the URN structure.  Apart from proof-of-concept namespaces, the use of existing identifiers in URNs has been discussed in RFC 2288.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+<seriesInfo name='BCP' value='66' />
+<seriesInfo name='RFC' value='3406' />
+<format type='TXT' octets='43707' target='http://www.rfc-editor.org/rfc/rfc3406.txt' />
+</reference>
+
+<reference anchor='RFC3427'>
+<front>
+<title>Change Process for the Session Initiation Protocol (SIP)</title>
+<author initials='A.' surname='Mankin' fullname='A. Mankin'>
+<organization /></author>
+<author initials='S.' surname='Bradner' fullname='S. Bradner'>
+<organization /></author>
+<author initials='R.' surname='Mahy' fullname='R. Mahy'>
+<organization /></author>
+<author initials='D.' surname='Willis' fullname='D. Willis'>
+<organization /></author>
+<author initials='J.' surname='Ott' fullname='J. Ott'>
+<organization /></author>
+<author initials='B.' surname='Rosen' fullname='B. Rosen'>
+<organization /></author>
+<date year='2002' month='December' />
+<abstract>
+<t>This memo documents a process intended to apply architectural discipline to the future development of the Session Initiation Protocol (SIP).  There have been concerns with regards to new SIP proposals.  Specifically, that the addition of new SIP features can be damaging towards security and/or greatly increase the complexity of the protocol.  The Transport Area directors, along with the SIP and Session Initiation Proposal Investigation (SIPPING) working group chairs, have provided suggestions for SIP modifications and extensions.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+<seriesInfo name='RFC' value='3427' />
+<format type='TXT' octets='26234' target='http://www.rfc-editor.org/rfc/rfc3427.txt' />
+</reference>
+
+<reference anchor='RFC3864'>
+<front>
+<title>Registration Procedures for Message Header Fields</title>
+<author initials='G.' surname='Klyne' fullname='G. Klyne'>
+<organization /></author>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'>
+<organization /></author>
+<author initials='J.' surname='Mogul' fullname='J. Mogul'>
+<organization /></author>
+<date year='2004' month='September' />
+<abstract>
+<t>This specification defines registration procedures for the message header fields used by Internet mail, HTTP, Netnews and other applications.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+<seriesInfo name='BCP' value='90' />
+<seriesInfo name='RFC' value='3864' />
+<format type='TXT' octets='36231' target='http://www.rfc-editor.org/rfc/rfc3864.txt' />
+</reference>
+
+<reference anchor='RFC3986'>
+<front>
+<title abbrev='URI Generic Syntax'>Uniform Resource Identifier (URI): Generic Syntax</title>
+<author initials='T.' surname='Berners-Lee' fullname='Tim Berners-Lee'>
+<organization abbrev='W3C/MIT'>World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>Massachusetts Institute of Technology</street>
+<street>77 Massachusetts Avenue</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>USA</country></postal>
+<phone>+1-617-253-5702</phone>
+<facsimile>+1-617-258-5999</facsimile>
+<email>timbl@w3.org</email>
+<uri>http://www.w3.org/People/Berners-Lee/</uri></address></author>
+<author initials='R.' surname='Fielding' fullname='Roy T. Fielding'>
+<organization abbrev='Day Software'>Day Software</organization>
+<address>
+<postal>
+<street>5251 California Ave., Suite 110</street>
+<city>Irvine</city>
+<region>CA</region>
+<code>92617</code>
+<country>USA</country></postal>
+<phone>+1-949-679-2960</phone>
+<facsimile>+1-949-679-2972</facsimile>
+<email>fielding@gbiv.com</email>
+<uri>http://roy.gbiv.com/</uri></address></author>
+<author initials='L.' surname='Masinter' fullname='Larry Masinter'>
+<organization abbrev='Adobe Systems'>Adobe Systems Incorporated</organization>
+<address>
+<postal>
+<street>345 Park Ave</street>
+<city>San Jose</city>
+<region>CA</region>
+<code>95110</code>
+<country>USA</country></postal>
+<phone>+1-408-536-3024</phone>
+<email>LMM@acm.org</email>
+<uri>http://larry.masinter.net/</uri></address></author>
+<date year='2005' month='January' />
+<area>Applications</area>
+<keyword>uniform resource identifier</keyword>
+<keyword>URI</keyword>
+<keyword>URL</keyword>
+<keyword>URN</keyword>
+<keyword>WWW</keyword>
+<keyword>resource</keyword>
+<abstract>
+<t>
+A Uniform Resource Identifier (URI) is a compact sequence of characters
+that identifies an abstract or physical resource.  This specification
+defines the generic URI syntax and a process for resolving URI references
+that might be in relative form, along with guidelines and security
+considerations for the use of URIs on the Internet.
+The URI syntax defines a grammar that is a superset of all valid URIs,
+allowing an implementation to parse the common components of a URI
+reference without knowing the scheme-specific requirements of every
+possible identifier.  This specification does not define a generative
+grammar for URIs; that task is performed by the individual
+specifications of each URI scheme.
+</t></abstract></front>
+<seriesInfo name='STD' value='66' />
+<seriesInfo name='RFC' value='3986' />
+<format type='TXT' octets='141811' target='http://www.rfc-editor.org/rfc/rfc3986.txt' />
+<format type='HTML' octets='213584' target='http://xml.resource.org/public/rfc/html/rfc3986.html' />
+<format type='XML' octets='163534' target='http://xml.resource.org/public/rfc/xml/rfc3986.xml' />
+</reference>
+
+<reference anchor='RFC4122'>
+<front>
+<title abbrev='UUID URN'>A Universally Unique IDentifier (UUID) URN Namespace</title>
+<author initials='P.' surname='Leach' fullname='Paul J. Leach'>
+<organization>Microsoft</organization>
+<address>
+<postal>
+<street>1 Microsoft Way</street>
+<city>Redmond</city>
+<region>WA</region>
+<code>98052</code>
+<country>US</country></postal>
+<phone>+1 425-882-8080</phone>
+<email>paulle@microsoft.com</email></address></author>
+<author initials='M.' surname='Mealling' fullname='Michael Mealling'>
+<organization>Refactored Networks, LLC</organization>
+<address>
+<postal>
+<street>1635 Old Hwy 41</street>
+<street>Suite 112, Box 138</street>
+<city>Kennesaw</city>
+<region>GA</region>
+<code>30152</code>
+<country>US</country></postal>
+<phone>+1-678-581-9656</phone>
+<email>michael@refactored-networks.com</email>
+<uri>http://www.refactored-networks.com</uri></address></author>
+<author initials='R.' surname='Salz' fullname='Rich Salz'>
+<organization>DataPower Technology, Inc.</organization>
+<address>
+<postal>
+<street>1 Alewife Center</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02142</code>
+<country>US</country></postal>
+<phone>+1 617-864-0455</phone>
+<email>rsalz@datapower.com</email>
+<uri>http://www.datapower.com</uri></address></author>
+<date year='2005' month='July' />
+<keyword>URN, UUID</keyword>
+<abstract>
+<t>This specification defines a Uniform Resource Name namespace for
+      UUIDs (Universally Unique IDentifier), also known as GUIDs (Globally
+      Unique IDentifier). A UUID is 128 bits long, and can
+      guarantee uniqueness across space and time. UUIDs were originally
+      used in the Apollo Network Computing System and later in the Open
+      Software Foundation's (OSF) Distributed Computing Environment (DCE),
+      and then in Microsoft Windows platforms.</t>
+<t>This specification is derived from the DCE specification with the
+      kind permission of the OSF (now known as The Open Group).  Information from earlier versions of the DCE specification have been  
+      incorporated into this document.</t></abstract></front>
+<seriesInfo name='RFC' value='4122' />
+<format type='TXT' octets='59319' target='http://www.rfc-editor.org/rfc/rfc4122.txt' />
+<format type='HTML' octets='82717' target='http://xml.resource.org/public/rfc/html/rfc4122.html' />
+<format type='XML' octets='62931' target='http://xml.resource.org/public/rfc/xml/rfc4122.xml' />
+</reference>
+
+<reference anchor='RFC4288'>
+<front>
+<title>Media Type Specifications and Registration Procedures</title>
+<author initials='N.' surname='Freed' fullname='N. Freed'>
+<organization /></author>
+<author initials='J.' surname='Klensin' fullname='J. Klensin'>
+<organization /></author>
+<date year='2005' month='December' />
+<abstract>
+<t>This document defines procedures for the specification and registration of media types for use in MIME and other Internet protocols.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+<seriesInfo name='BCP' value='13' />
+<seriesInfo name='RFC' value='4288' />
+<format type='TXT' octets='52667' target='http://www.rfc-editor.org/rfc/rfc4288.txt' />
+</reference>
+
+<reference anchor='RFC4512'>
+<front>
+<title>Lightweight Directory Access Protocol (LDAP): Directory Information Models</title>
+<author initials='K.' surname='Zeilenga' fullname='K. Zeilenga'>
+<organization /></author>
+<date year='2006' month='June' />
+<abstract>
+<t>The Lightweight Directory Access Protocol (LDAP) is an Internet protocol for accessing distributed directory services that act in accordance with X.500 data and service models.  This document describes the X.500 Directory Information Models, as used in LDAP. [STANDARDS-TRACK]</t></abstract></front>
+<seriesInfo name='RFC' value='4512' />
+<format type='TXT' octets='108377' target='http://www.rfc-editor.org/rfc/rfc4512.txt' />
+</reference>
+
+<reference anchor='RFC4566'>
+<front>
+<title>SDP: Session Description Protocol</title>
+<author initials='M.' surname='Handley' fullname='M. Handley'>
+<organization /></author>
+<author initials='V.' surname='Jacobson' fullname='V. Jacobson'>
+<organization /></author>
+<author initials='C.' surname='Perkins' fullname='C. Perkins'>
+<organization /></author>
+<date year='2006' month='July' />
+<abstract>
+<t>This memo defines the Session Description Protocol (SDP).  SDP is intended for describing multimedia sessions for the purposes of session announcement, session invitation, and other forms of multimedia session initiation. [STANDARDS-TRACK]</t></abstract></front>
+<seriesInfo name='RFC' value='4566' />
+<format type='TXT' octets='108820' target='http://www.rfc-editor.org/rfc/rfc4566.txt' />
+</reference>
+
+<reference anchor='RFC5064'>
+<front>
+<title>The Archived-At Message Header Field</title>
+<author initials='M.' surname='Duerst' fullname='M. Duerst'>
+<organization /></author>
+<date year='2007' month='December' />
+<abstract>
+<t>This memo defines a new email header field, Archived-At:, to provide a direct link to the archived form of an individual email message. [STANDARDS-TRACK]</t></abstract></front>
+<seriesInfo name='RFC' value='5064' />
+<format type='TXT' octets='20863' target='http://www.rfc-editor.org/rfc/rfc5064.txt' />
+</reference>
+
+<reference anchor='RFC5451'>
+<front>
+<title>Message Header Field for Indicating Message Authentication Status</title>
+<author initials='M.' surname='Kucherawy' fullname='M. Kucherawy'>
+<organization /></author>
+<date year='2009' month='April' />
+<abstract>
+<t>This memo defines a new header field for use with electronic mail messages to indicate the results of message authentication efforts.  Any receiver-side software, such as mail filters or Mail User Agents (MUAs), may use this message header field to relay that information in a convenient way to users or to make sorting and filtering decisions. [STANDARDS-TRACK]</t></abstract></front>
+<seriesInfo name='RFC' value='5451' />
+<format type='TXT' octets='97404' target='http://www.rfc-editor.org/rfc/rfc5451.txt' />
+</reference>
+
+<reference anchor='RFC5646'>
+<front>
+<title>Tags for Identifying Languages</title>
+<author initials='A.' surname='Phillips' fullname='A. Phillips'>
+<organization /></author>
+<author initials='M.' surname='Davis' fullname='M. Davis'>
+<organization /></author>
+<date year='2009' month='September' />
+<abstract>
+<t>This document describes the structure, content, construction, and semantics of language tags for use in cases where it is desirable to indicate the language used in an information object.  It also describes how to register values for use in language tags and the creation of user-defined extensions for private interchange.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+<seriesInfo name='BCP' value='47' />
+<seriesInfo name='RFC' value='5646' />
+<format type='TXT' octets='208592' target='http://www.rfc-editor.org/rfc/rfc5646.txt' />
+</reference>
+
+<reference anchor='RFC5727'>
+<front>
+<title>Change Process for the Session Initiation Protocol (SIP) and the Real-time Applications and Infrastructure Area</title>
+<author initials='J.' surname='Peterson' fullname='J. Peterson'>
+<organization /></author>
+<author initials='C.' surname='Jennings' fullname='C. Jennings'>
+<organization /></author>
+<author initials='R.' surname='Sparks' fullname='R. Sparks'>
+<organization /></author>
+<date year='2010' month='March' />
+<abstract>
+<t>This memo documents a process intended to organize the future development of the Session Initiation Protocol (SIP) and related work in the Real-time Applications and Infrastructure (RAI) Area.  As the environments in which SIP is deployed grow more numerous and diverse, modifying or extending SIP in certain ways may threaten the interoperability and security of the protocol; however, the IETF process must also cater to the realities of existing deployments and serve the needs of the implementers working with SIP.  This document therefore defines the functions of two long-lived working groups in the RAI Area that are, respectively, responsible for the maintenance of the core SIP specifications and the development of new efforts to extend and apply work in this space.  This document obsoletes RFC 3427.  This memo documents an Internet Best Current Practice.</t></abstract></front>
+<seriesInfo name='BCP' value='67' />
+<seriesInfo name='RFC' value='5727' />
+<format type='TXT' octets='35033' target='http://www.rfc-editor.org/rfc/rfc5727.txt' />
+</reference>
+
+    </references>
+
+    <section title="Background" anchor="background">
+      <t>The beginnings of the "X-" convention can be found in a suggestion made by Brian Harvey in 1975 with regard to FTP parameters <xref target='RFC691'/>:</t>
+      <t><list style='empty'><t>Thus, FTP servers which care about the distinction between Telnet print and non-print could implement SRVR N and SRVR T.  Ideally the SRVR parameters should be registered with Jon Postel to avoid conflicts, although it is not a disaster if two sites use the same parameter for different things.  I suggest that parameters be allowed to be more than one letter, and that an initial letter X be used for really local idiosyncracies.</t></list></t>
+      <t>This "X" prefix was subsequently used in <xref target='RFC737'/>, <xref target='RFC743'/>, and <xref target='RFC775'/>.  This usage was noted in <xref target='RFC1123'/>:</t>
+      <t><list style='empty'><t>FTP allows "experimental" commands, whose names begin with "X".  If these commands are subsequently adopted as standards, there may still be existing implementations using the "X" form....  All FTP implementations SHOULD recognize both forms of these commands, by simply equating them with extra entries in the command lookup table.</t></list></t>
+      <t>The "X-" convention has been used for email header fields since at least the publication of <xref target='RFC822'/> in 1982, which distinguished between "Extension-fields" and "user-defined-fields" as follows:</t>
+      <t><list style='empty'><t>The prefatory string "X-" will never be used in the names of Extension-fields.  This provides user-defined fields with a protected set of names.</t></list></t>
+      <t>That rule was restated by <xref target='RFC1154'/> as follows:</t>
+      <t><list style='empty'><t>Keywords beginning with "X-" are permanently reserved to implementation-specific use.  No standard registered encoding keyword will ever begin with "X-".</t></list></t>
+      <t>This convention continued with various specifications for media types (<xref target='RFC2045'/>, <xref target='RFC2046'/>, <xref target='RFC2047'/>), HTTP headers (<xref target='RFC2068'/>, <xref target='RFC2616'/>), vCard parameters and properties (<xref target='RFC2426'/>), Uniform Resource Names (<xref target='RFC3406'/>), LDAP field names (<xref target='RFC4512'/>), and other technologies.</t>
+      <t>However, use of the "X-" prefix in email headers was effectively deprecated between the publication of <xref target='RFC822'/> in 1982 and the publication of <xref target='RFC2822'/> in 2001 by removing the distinction between the "extension-field" construct and the "user-defined-field" construct (a similar change happened with regard to Session Initiation Protocol "P-" headers when <xref target='RFC3427'/> was obsoleted by <xref target='RFC5727'/>).</t>
+      <t>Despite the fact that parameters containing the "X-" string have been effectively deprecated in email headers, they continue to be used in a wide variety of application protocols.  The two primary situations motivating such use are:</t>
+      <t>
+        <list style='numbers'>
+          <t>Experiments that are intended to possibly be standardized in the future, if they are successful.<vspace blankLines='1'/></t>
+          <t>Extensions that are intended to never be standardized because they are intended only for use in implementation-specific applications or on private networks.</t>
+        </list>
+      </t>
+      <t>Use of this naming convention is not mandated by the Internet Standards Process <xref target='BCP9'/> or IANA registration rules <xref target='BCP26'/>.  Rather it is an individual choice by each specification that references the convention or each administrative process that chooses to use it.  In particular, some standards track RFCs have interpreted the convention in a normative way (e.g., <xref target='RFC822'/> and <xref target='RFC5451'/>).</t>
+    </section>
+
+    <section title="Analysis" anchor="analysis">
+      <t>The primary problem with the "X-" convention is that non-standard parameters have a tendency to advance into the protected space of standard parameters (whether de jure or de facto), thus introducing the need for migration from the "X-" name to the standard name.  Migration, in turn, introduces interoperability issues because older implementations will support only the "X-" name and newer implementations might support only the standard name.  To preserve interoperability, newer implementations simply support the "X-" name forever, which means that the non-standard name has become a de facto standard (thus obviating the need for segregation of the name space into "standard" and "non-standard" areas in the first place).</t>
+      <t>We have already seen this phenomenon at work with regard to FTP in the quote from <xref target='RFC1123'/> in the previous section.  The HTTP community had the same experience with the "x-gzip" and "x-compressed" media types, as noted in <xref target='RFC2068'/>:</t>
+      <t><list style='empty'><t>For compatibility with previous implementations of HTTP, applications should consider "x-gzip" and "x-compress" to be equivalent to "gzip" and "compress" respectively.</t></list></t>
+      <t>A similar example can be found in <xref target='RFC5064'/>, which defined the "Archived-At" message header field but also found it necessary to define and register the "X-Archived-At" field:</t>
+      <t><list style='empty'><t>For backwards compatibility, this document also describes the X-Archived-At header field, a precursor of the Archived-At header field.  The X-Archived-At header field MAY also be parsed, but SHOULD NOT be generated.</t></list></t>
+      <t>One of the original reasons for segregation of name spaces into standard and non-standard areas was the perceived difficulty of registering names.  However, the solution to that problem has been simpler registration rules, such as those provided by <xref target='RFC3864'/> and <xref target='RFC4288'/>, as well as separate registries for permanent and provisional names, as explained in <xref target='RFC4288'/>:</t>
+      <t><list style='empty'><t>[W]ith the simplified registration procedures described above for vendor and personal trees, it should rarely, if ever, be necessary to use unregistered experimental types.  Therefore, use of both "x-" and "x." forms is discouraged.</t></list></t>
+      <t>Furthermore, often standardization of a non-standard parameter or protocol element leads to subtly different behavior (e.g., the standard version might have different security properties as a result of security review provided during the standardization process).  If implementers treat the old, non-standard parameter and the new, standard parameter as equivalent, interoperability and security problems can ensue.</t>
+      <t>For similar considerations with regard to the "P-" convention in the Session Initiation Protocol, see <xref target='RFC5727'/>.</t>
+      <t>In some situations, segregating the parameters name space used in a given application protocol can be justified:</t>
+      <t>
+        <list style='numbers'>
+          <t>When it is extremely unlikely that some parameters will ever be standardized.  However, in this case implementation-specific and private-use parameters can be Uniform Resource Identifiers <xref target='RFC3986'/> (e.g., "http://example.com/foo") or can be prepended with a string that is derived from the name or primary domain name of the organization that has defined the parameter (e.g., "ExampleInc-foo", "VND.ExampleInc.foo", or "com.example.foo").  Similarly, truly experimental parameters can be given meaningless names such as nonsense words, the output of a hash function, or UUIDs <xref target='RFC4122'/>.<vspace blankLines='1'/></t>
+          <t>When parameter names might have significant meaning.  However, this case is rare, since implementers can almost always find a synonym for an existing term (e.g., "urgency" instead of "priority") or simply invent a more creative name (e.g., "get-it-there-fast").<vspace blankLines='1'/></t>
+          <t>When parameter names need to be very short (e.g., as in <xref target='RFC5646'/> for language tags).  However, in this case it can be more efficient to assign numbers instead of human-readable names (e.g., as in <xref target='RFC2939'/> for DCHP options) and to leave a certain numeric range for implementation-specific extensions or private use (e.g., as with the codec numbers used with the Session Description Protocol <xref target='RFC4566'/>).</t>
+        </list>
+      </t>
+      <t>There are three primary objections to deprecating the "X-" convention as a best practice for application protocols:</t>
+      <t>
+        <list style='numbers'>
+          <t>Implementers are easily confused and can't be expected to know that a parameter is non-standard unless it contains the "X-" prefix.  However, implementers already are quite flexible about using both prefixed and non-prefixed names based on what works in the field, so the distinction between de facto names (e.g., "X-foo") and de jure names (e.g., "foo") is effectively meaningless.<vspace blankLines='1'/></t>
+          <t>Collisions are undesirable and it would be bad for both a standard parameter "foo" and a non-standard parameter "foo" to exist simultaneously. However, names are almost always cheap, so an experimental, implementation-specific, or private-use name of "foo" does not prevent a standards development organization from issuing a similarly creative name such as "bar".<vspace blankLines='1'/></t>
+          <t><xref target='BCP82'/> is entitled "Assigning Experimental and Testing Numbers Considered Useful" and therefore implies that the "X-" prefix is also useful for experimental parameters.  However, BCP 82 addresses the need for protocol numbers when the pool of such numbers is strictly limited (e.g., DHCP options) or when a number is absolutely required even for purely experimental purposes (e.g., the Protocol field of the IP header).  In almost all application protocols that make use of protocol parameters (including email headers, media types, HTTP headers, vCard parameters and properties, URNs, and LDAP field names), the name space is not limited or constrained in any way, so there is no need to assign a block of names for private use or experimental purposes (see also <xref target='BCP26'/>).</t>
+        </list>
+      </t>
+      <t>Therefore it appears that segregating the parameter space into a standard area and a non-standard area has few if any benefits, and has at least one significant cost in terms of interoperability.</t>
+    </section>
+
+
+  </back>
+</rfc>
