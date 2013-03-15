@@ -3,18 +3,19 @@
 <!DOCTYPE rfc SYSTEM "http://xml.resource.org/authoring/rfc2629.dtd" [
    <!ENTITY rfc2119 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>
    <!ENTITY rfc3986 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml'>
-   <!ENTITY rfc4288 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4288.xml'>
    <!ENTITY rfc4627 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml'>
    <!ENTITY rfc5789 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5789.xml'>
    <!ENTITY rfc5988 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5988.xml'>
    <!ENTITY rfc6570 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6570.xml'>
+   <!ENTITY rfc6838 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6838.xml'>
+   <!ENTITY xml SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xml-20081126.xml'>  
    <!ENTITY httpbis-semenatics SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p2-semantics-19.xml'>
    <!ENTITY httpbis-conditional SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p4-conditional-19.xml'>
    <!ENTITY httpbis-range SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p5-range-19.xml'>
    <!ENTITY httpbis-cache SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p6-cache-19.xml'>
    <!ENTITY httpbis-auth SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-ietf-httpbis-p7-auth-19.xml'>
    <!ENTITY prefer SYSTEM 'http://xml.resource.org/public/rfc/bibxml3/reference.I-D.draft-snell-http-prefer-12.xml'>
-   <!ENTITY home-schema SYSTEM 'json-home-02.xsd'>
+   <!ENTITY home-schema SYSTEM 'json-home-03.xsd'>
 ]>
 
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
@@ -29,7 +30,7 @@
 <?rfc comments="yes" ?>
 <?rfc inline="yes" ?>
 
-<rfc ipr="trust200902" docName="draft-nottingham-json-home-02" category="info">
+<rfc ipr="trust200902" docName="draft-nottingham-json-home-03" category="info">
 
 	<front>
 		<title>Home Documents for HTTP APIs</title>
@@ -40,11 +41,30 @@
 				<uri>http://www.mnot.net/</uri>
 			</address>
 		</author>
-		<date year="2012"/>
+	   <author initials="E." surname="Wilde" fullname="Erik Wilde">
+	      <organization>EMC</organization>
+	      <address>
+            <postal>
+               <street>6801 Koll Center Parkway</street>
+               <city>Pleasanton, CA 94566</city>
+               <country>U.S.A.</country>
+            </postal>
+            <phone>+1-925-6006244</phone>
+            <email>erik.wilde@emc.com</email>
+            <uri>http://dret.net/netdret/</uri>
+         </address>
+	   </author>
+	   <date year="2013"/>
 		<abstract>
 
 			<t>This document proposes a "home document" format for non-browser
-         HTTP clients.</t>
+         HTTP clients. The format is defined in JSON and XML syntaxes. The goal
+			of home documents is to serve as a starting point for hypermedia APIs,
+			where clients need to have an entry point, and then can use the API by
+			following links. Home documents thus serve the same purpose as home
+			pages on web sites: They are stable entry points that provide starting
+			points for clients with some knowledge of the services linked from
+			them.</t>
 
 		</abstract>
 		
@@ -64,25 +84,28 @@
          interactions to assure loose coupling, thereby enabling extensibility
          and API evolution.</t>
 
-         <t>This is based upon experience with previous APIs that specified
-         static URI paths (such as
-         "http://api.example.com/v1.0/widgets/abc123/properties") have
-         resulted in brittle, tight coupling between clients and servers.</t>
+         <t>This is based upon experience with previous APIs where static URI
+         paths (such as "http://api.example.com/v1.0/widgets/abc123/properties")
+         have resulted in brittle, tight coupling between clients and servers.</t>
 
          <t>Sometimes, these APIs were documented by a document format like
          <eref target="http://www.w3.org/Submission/wadl/">WADL</eref> that is
          used as a design time description; i.e., the URIs and other
          information they describe are "baked into" client
-         implementations.</t>
+         implementations. WADL made it easier to implement these clients
+         because of the available WADL descriptions, but it did not help to
+         reduce the inherent brittleness of this tight coupling.</t>
 
          <t>In contrast, a "follow your nose" API advertises the resources
          available to clients using link relations <xref target="RFC5988"/>
          and the formats they support using internet media types <xref
-         target="RFC4288"/>. A client can then decide – at run time – which
+         target="RFC6838"/>. A client can then decide – at run time – which
          resources to interact with based upon its capabilities (as described
          by link relations), and the server can safely add new resources and
          formats without disturbing clients that are not yet aware of
-         them.</t>
+         them. This design decouples clients from the complete URI space of
+         an API, and only requires that clients can follow the same link-driven
+         paths, once they are at a URI's starting point.</t>
 
          <t>As such, the client needs to be able to discover this information
          quickly and efficiently use it to interact with the server. Just as
@@ -92,8 +115,9 @@
 
          <t>Of course, an HTTP API might use any format to do so; however,
          there are advantages to having a standard home document format. This
-         specification suggests one for consideration, using the JSON
-         format <xref target="RFC4627"/>.</t>
+         specification suggests one model for consideration, which is available
+         as a JSON format <xref target="RFC4627"/> as well as in an XML syntax
+         <xref target="W3C.REC-xml-20081126"/>.</t>
 
 		</section>
 
@@ -109,7 +133,7 @@
 
          <t>A JSON Home Document uses the format described in <xref
          target="RFC4627"/> and has the media type
-         "application/json-home".</t>
+         "application/home+json".</t>
 
          <t>Its content consists of a root object with a "resources" property,
          an object whose names are link relation types (as defined by <xref
@@ -121,10 +145,10 @@
 <figure><artwork><![CDATA[
 GET / HTTP/1.1
 Host: example.org
-Accept: application/json-home
+Accept: application/home+json
 
 HTTP/1.1 200 OK
-Content-Type: application/json-home
+Content-Type: application/home+json
 Cache-Control: max-age=3600
 Connection: close
 
@@ -141,7 +165,7 @@ Connection: close
       "hints": {
         "allow": ["GET", "PUT", "DELETE", "PATCH"],
         "representations": ["application/json"],
-        "accept-patch": ["application/json-patch"],
+        "accept-patch": ["application/patch+json"],
         "accept-post": ["application/xml"],
         "accept-ranges": ["bytes"]
       }
@@ -194,7 +218,7 @@ Connection: close
 
          <t>In both forms, the links that "href" and "href-template" refer to
          are URI-references <xref target="RFC3986"/> whose base URI is that
-         of the JSON Home Document itself.</t>
+         of the Home Document itself.</t>
 
          <t>Resource Objects MAY also have a "hints" property, whose value is
          an object that uses named Resource Hints as its properties.</t>
@@ -222,7 +246,7 @@ Connection: close
   "hints": {
     "allow": ["GET", "PUT", "DELETE", "PATCH"],
     "representations": ["application/json"],
-    "accept-patch": ["application/json-patch"],
+    "accept-patch": ["application/patch+json"],
     "accept-post": ["application/xml"],
     "accept-ranges": ["bytes"]
   }
@@ -254,8 +278,8 @@ Connection: close
          the ability to PUT to a particular resource, but a specific resource
          could reject a PUT based upon access control or other considerations.
          More fine-grained information might be gathered by interacting with
-         the resource (e.g., via a GET), or by another resource "containing"
-         it (such as a "widgets" collection).</t>
+         the resource (e.g., via a GET or OPTIONS), or by another resource
+         "containing" it (such as a "widgets" collection).</t>
 
          <t>This specification defines a set of common hints, based upon
          information that’s discoverable by directly interacting with
@@ -335,7 +359,7 @@ Connection: close
             supported by the resource. Note that, as per that specifications,
             a preference can be ignored by the server.</t>
 
-            <t>Content MUST be an array of strings, contain preferences.</t>
+            <t>Content MUST be an array of strings, containing preferences.</t>
 
          </section>
          <section anchor="docs" title="docs">
@@ -517,7 +541,31 @@ Connection: close
       </section>
       <section anchor="iana-considerations" title="IANA Considerations">
 
-         <t>TBD</t>
+         <t>This specification defines a new Internet media type
+            <xref target="RFC6838"/>:</t>
+
+         <figure><artwork><![CDATA[
+   Type name: application
+   Subtype name: home+json
+   Required parameters: None
+   Optional parameters: None; unrecognised parameters 
+                        should be ignored
+   Encoding considerations: Same as [RFC4627]
+   Security considerations: see [this document]
+   Interoperability considerations: None.
+   Published specification: [this document]
+   Applications that use this media type: HTTP
+   Additional information:
+     Magic number(s): n/a
+     File extension(s): n/a
+     Macintosh file type code(s): n/a
+   Person & email address to contact for further information:
+     Mark Nottingham <mnot@mnot.net>
+   Intended usage: COMMON
+   Restrictions on usage: None.
+   Author: Mark Nottingham <mnot@mnot.net>
+   Change controller: IESG
+]]></artwork></figure>
 
       </section>
 
@@ -534,8 +582,9 @@ Connection: close
 		</references>
 
 		<references title="Informative References">
-			&rfc4288;
-			&rfc5789;
+		   &xml;
+		   &rfc5789;
+			&rfc6838;
 			&httpbis-conditional;
 			&httpbis-range;
 			&httpbis-auth;
@@ -646,7 +695,11 @@ Connection: close
         <t>Hint to indicate an "action" POST</t>
         <t>Describe the extensibility model</t>
         <t>Allow resources to expose their links</t>
-        <t>Should the media types be ".../home+json" and ".../home+xml"?</t>
+        <t>Add human-readable documentation to home documents. Pretty easy to
+        do in XML, probably more challenging in JSON.</t>
+        <t>Since there is some overlap between the resource hints and what
+        HTTP OPTIONS is doing, it would be good to address this question in
+        some (possibly informative) section.</t>
       </list></t>
       </section>
 
@@ -656,7 +709,7 @@ Connection: close
 	         target="W3C.REC-xml-20081126"/> as their primary format convention. Such
 	         APIs MAY express Home Documents using the format defined in this
 	         appendix. An XML-based Home Document uses the format described has the
-	         media type "application/xml-home".</t>
+	         media type "application/home+xml".</t>
 	      
 	      <t>The OPTIONAL XML Schema <xref target="W3C.REC-xmlschema-0-20041028"/>
 	         for the XML format is:</t>
