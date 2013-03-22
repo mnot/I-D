@@ -113,7 +113,7 @@ When present in a request, the "safe" HTTP Client Hint indicates that the
 user prefers content which is not objectionable, according to the server's
 definition of the concept. 
 
-For example:
+For example a request that includes the "safe" hint:
 
 ~~~
 GET /foo.html HTTP/1.1
@@ -122,14 +122,36 @@ User-Agent: ExampleBrowser/1.0
 CH: safe
 ~~~
 
-When configured to do so, user agents SHOULD send "safe" on every request,
-to ensure that the preference is applied (where possible) to all resources.
+When configured to do so, user agents SHOULD include the "safe" hint in every
+request, to ensure that the preference is applied (where possible) to all
+resources.
+
+For example, a Web browser might have a "Request Safe Browsing" preference
+option. additionally, other clients MAY insert it; e.g., an operating system
+might choose to insert the hint in requests based upon system-wide
+preferences, or a proxy might do so based upon its configuration.
 
 Servers that utilise the "safe" hint SHOULD document that they do so, along
 with the criteria that they use to denote objectionable content. If a site
 has more fine-grained degrees of "safety", it SHOULD select a reasonable
 default to use, and document that; it MAY use additional mechanisms (e.g.,
 cookies) to fine-tune.
+
+A response corresponding to the request above might have headers that look
+like this:
+
+~~~
+HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Content-Type: text/html
+Server: ExampleServer/2.0
+Vary: CH
+~~~
+
+Note that the Vary response header needs to be sent if responses associated
+with the resource might change depending on the value of the "CH" header; 
+this is not only true for those responses that have changed, but also the
+"default" unchanged responses.
 
 
 Security Considerations
