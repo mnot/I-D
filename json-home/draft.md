@@ -108,35 +108,35 @@ are Resource Objects, defined below.
 For example:
 
 ~~~
-GET / HTTP/1.1
-Host: example.org
-Accept: application/json-home
+  GET / HTTP/1.1
+  Host: example.org
+  Accept: application/json-home
 
-HTTP/1.1 200 OK
-Content-Type: application/json-home
-Cache-Control: max-age=3600
-Connection: close
+  HTTP/1.1 200 OK
+  Content-Type: application/json-home
+  Cache-Control: max-age=3600
+  Connection: close
 
-{
-  "resources": {
-    "http://example.org/rel/widgets": {
-      "href": "/widgets/"
-    },
-    "http://example.org/rel/widget": {
-      "href-template": "/widgets/{widget_id}",
-      "href-vars": {
-        "widget_id": "http://example.org/param/widget"
+  {
+    "resources": {
+      "http://example.org/rel/widgets": {
+        "href": "/widgets/"
       },
-      "hints": {
-        "allow": ["GET", "PUT", "DELETE", "PATCH"],
-        "representations": ["application/json"],
-        "accept-patch": ["application/json-patch"],
-        "accept-post": ["application/xml"],
-        "accept-ranges": ["bytes"]
-      }
-    }      
+      "http://example.org/rel/widget": {
+        "href-template": "/widgets/{widget_id}",
+        "href-vars": {
+          "widget_id": "http://example.org/param/widget"
+        },
+        "hints": {
+          "allow": ["GET", "PUT", "DELETE", "PATCH"],
+          "representations": ["application/json"],
+          "accept-patch": ["application/json-patch"],
+          "accept-post": ["application/xml"],
+          "accept-ranges": ["bytes"]
+        }
+      }      
+    }
   }
-}
 ~~~
 
 Here, we have a home document that links to a resource, "/widgets/" with the
@@ -195,19 +195,19 @@ global identifiers for the semantics and syntax of those variables.
 For example, given the following Resource Object:
 
 ~~~
-"http://example.org/rel/widget": {
-  "href-template": "/widgets/{widget_id}",
-  "href-vars": {
-    "widget_id": "http://example.org/param/widget"
-  },
-  "hints": {
-    "allow": ["GET", "PUT", "DELETE", "PATCH"],
-    "representations": ["application/json"],
-    "accept-patch": ["application/json-patch"],
-    "accept-post": ["application/xml"],
-    "accept-ranges": ["bytes"]
-  }
-}      
+  "http://example.org/rel/widget": {
+    "href-template": "/widgets/{widget_id}",
+    "href-vars": {
+      "widget_id": "http://example.org/param/widget"
+    },
+    "hints": {
+      "allow": ["GET", "PUT", "DELETE", "PATCH"],
+      "representations": ["application/json"],
+      "accept-patch": ["application/json-patch"],
+      "accept-post": ["application/xml"],
+      "accept-ranges": ["bytes"]
+    }
+  }      
 ~~~
 
 If you understand that "http://example.org/param/widget" is an numeric
@@ -327,14 +327,14 @@ protection spaces that the resource is a member of.
 For example, a Resource Object might contain the following hint:
 
 ~~~            
-{
-  "auth-req": [
-    {
-      "scheme": "Basic",
-      "realms": ["private"]
-    }
-  ]
-}
+  {
+    "auth-req": [
+      {
+        "scheme": "Basic",
+        "realms": ["private"]
+      }
+    ]
+  }
 ~~~
 
 status

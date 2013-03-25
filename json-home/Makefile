@@ -52,3 +52,5 @@ kramdown: draft.md
 	mv tmp $(TARGET_XML)
 	sed -i '' -e"s/rfc2629\.xslt/$(rfc2629dir)rfc2629.xslt/" $(TARGET_XML)
 	sed -i '' -e"s/rfc2629\.dtd/$(rfc2629dir)rfc2629.dtd/" $(TARGET_XML)
+	cat $(TARGET_XML) | perl -pe "s/<figure anchor=\"[^\"]+\">/<figure>/g" > tmp
+	mv tmp $(TARGET_XML)
