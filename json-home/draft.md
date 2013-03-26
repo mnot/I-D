@@ -550,22 +550,24 @@ Open Issues
 
 The following is a list of placeholders for open issues.
 
-* Refining and extending representation formats - "application/xml", for
-  example, isn't enough. While a media type for every representation is one
-  answer, something like 'profile' might be good too.
-* Object for contact details - do we need an object that describes who's
-  running the API, API/software version, etc?
-* Defining new hints - guidance is needed on minting new hints. Possibly a
-  registry.
-* Defining new top-level properties - how new ones are minted, registry, etc.
-* Defining new Resource Object properties - how new ones are minted, registry,
-  etc.
-* Hint to indicate a POST to 201 Created pattern
-* Hint to indicate an "action" POST
-* Describe the extensibility model
-* Allow resources to expose their links
-* Negotiating for HTML Home vs. JSON Jome
-* Refining and extending representation formats
-* Further details on use of URI Templates 
-* Object for ToS, rate limiting?
-* Figure out API profiles
+* top-level object(s)
+  * contact details
+  * overall documentation
+  * release info
+  * ToS
+  * rate limiting (per-resource?)
+* Resource Hints
+  * indicate a POST to 201 Created pattern
+  * indicate an "action" POST
+  * outbound links
+* Representation Hints
+  * format profiles
+  * deprecation
+* Extensibility
+  * Defining new hints - guidance is needed on minting new hints. Possibly a
+    registry.
+  * Defining new top-level properties - how new ones are minted, registry, etc.
+  * Defining new Resource Object properties - how new ones are minted,
+    registry, etc.
+* Negotiating for HTML Home vs. JSON Home
+* Linking to other resource / format definitions?
