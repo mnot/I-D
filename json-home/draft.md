@@ -359,7 +359,6 @@ Hints the status of the resource.
 
 Content MUST be a string; possible values are:
 
-
 * "deprecated" - indicates that use of the resource is not recommended, but it
   is still available.
 * "gone" - indicates that the resource is no longer available; i.e., it will
