@@ -47,11 +47,21 @@ informative:
     title: Microformats
     author:
       - organization: microformats.org
+  apps-discuss:
+    target: https://www.ietf.org/mailman/listinfo/apps-discuss
+    title: IETF Apps-Discuss Mailing List
+    author:
+      - organization: IETF
 
 --- abstract
 
 This document proposes a "home document" format for non-browser HTTP clients.
 
+--- note_Note_to_Readers
+
+This draft should be discussed on the apps-discuss mailing list; see
+{{apps-discuss}}.
+         
 --- middle
 
 Introduction
@@ -129,7 +139,9 @@ For example:
         },
         "hints": {
           "allow": ["GET", "PUT", "DELETE", "PATCH"],
-          "representations": ["application/json"],
+          "formats": {
+            "application/json": {}
+          },
           "accept-patch": ["application/json-patch"],
           "accept-post": ["application/xml"],
           "accept-ranges": ["bytes"]
@@ -179,7 +191,7 @@ URI-references {{RFC3986}} whose base URI is that of the JSON Home Document
 itself.
 
 Resource Objects MAY also have a "hints" property, whose value is an object
-that uses named Resource Hints as its properties.
+that uses named Resource Hints (see {{resource_hints}}) as its properties.
 
 Resolving Templated Links
 -------------------------
@@ -202,7 +214,9 @@ For example, given the following Resource Object:
     },
     "hints": {
       "allow": ["GET", "PUT", "DELETE", "PATCH"],
-      "representations": ["application/json"],
+      "formats": {
+        "application/json": {}
+      },
       "accept-patch": ["application/json-patch"],
       "accept-post": ["application/xml"],
       "accept-ranges": ["bytes"]
@@ -217,7 +231,7 @@ documentation), you can then find the resource corresponding to widget number
 is located at "http://example.org/").
 
 
-Resource Hints
+Resource Hints {#resource_hints}
 ==============
 
 Resource hints allow clients to find relevant information about interacting
@@ -249,13 +263,14 @@ with the resource; equivalent to the Allow HTTP response header.
 
 Content MUST be an array of strings, containing HTTP methods.
 
-representations
----------------
+formats
+-------
 
 Hints the representation types that the resource produces and consumes, using
 the GET and PUT methods respectively, subject to the 'allow' hint.
 
-Content MUST be an array of strings, containing media types.
+Content MUST be an object, whose keys are media types, and values are objects
+containing Representation Hints (see {{representation_hints}}).
 
 accept-patch
 ------------
@@ -349,6 +364,12 @@ Content MUST be a string; possible values are:
   is still available.
 * "gone" - indicates that the resource is no longer available; i.e., it will
   return a 410 Gone HTTP status code if accessed.
+
+
+Representation Hints {#representation_hints}
+====================
+
+TBD
 
 
 Creating and Serving Home Documents
