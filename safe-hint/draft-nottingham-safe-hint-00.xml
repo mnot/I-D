@@ -38,7 +38,8 @@ setting.</t>
       <t>However, a user that wishes to have this preference honoured would need to go
 to each Web site in turn, navigate to the appropriate page, (possibly creating
 an account along the way) to get a cookie <xref target="RFC6265"/> set in the browser. They
-would need to do this for each browser on every device they use.</t>
+would need to do this for each browser on every device they use. As has been
+widely noted, this is difficult <xref target="age-privacy"/>.</t>
       <t>This can be onerous to nearly impossible to achieve effectively, because there
 are too many permutations of sites, user agents and devices.</t>
       <t>If instead this preference is proactively advertised by the user agent, things
@@ -68,13 +69,42 @@ document are to be interpreted as described in <xref target="RFC2119"/>.</t>
       <t>When present in a request, the “safe” HTTP Client Hint indicates that the
 user prefers content which is not objectionable, according to the server’s
 definition of the concept. </t>
-      <t>When configured to do so, user agents SHOULD send “safe” on every request,
-to ensure that the preference is applied (where possible) to all resources.</t>
+      <t>For example a request that includes the “safe” hint:</t>
+      <figure anchor="get-foohtml-http11host-wwwexampleorguser-agent-examplebrowser10ch-safe">
+        <artwork><![CDATA[
+GET /foo.html HTTP/1.1
+Host: www.example.org
+User-Agent: ExampleBrowser/1.0
+CH: safe
+]]></artwork>
+      </figure>
+      <t>When configured to do so, user agents SHOULD include the “safe” hint in every
+request, to ensure that the preference is applied (where possible) to all
+resources.</t>
+      <t>For example, a Web browser might have a “Request Safe Browsing” preference
+option. additionally, other clients MAY insert it; e.g., an operating system
+might choose to insert the hint in requests based upon system-wide
+preferences, or a proxy might do so based upon its configuration.</t>
       <t>Servers that utilise the “safe” hint SHOULD document that they do so, along
 with the criteria that they use to denote objectionable content. If a site
 has more fine-grained degrees of “safety”, it SHOULD select a reasonable
 default to use, and document that; it MAY use additional mechanisms (e.g.,
 cookies) to fine-tune.</t>
+      <t>A response corresponding to the request above might have headers that look
+like this:</t>
+      <figure anchor="http11-200-oktransfer-encoding-chunkedcontent-type-texthtmlserver-exampleserver20vary-ch">
+        <artwork><![CDATA[
+HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Content-Type: text/html
+Server: ExampleServer/2.0
+Vary: CH
+]]></artwork>
+      </figure>
+      <t>Note that the Vary response header needs to be sent if responses associated
+with the resource might change depending on the value of the “CH” header; 
+this is not only true for those responses that have changed, but also the
+“default” unchanged responses.</t>
     </section>
     <section anchor="security-considerations" title="Security Considerations">
       <t>The “safe” client hint is not a secure mechanism; it can be inserted or
@@ -83,8 +113,15 @@ information about the user, which may be of small assistance in
 “fingerprinting” the user (1 bit of information, to be precise).</t>
       <t>Due to its nature, including it in requests does not assure that all content
 will actually be safe; it is only when servers elect to honour it that it 
-might change content. Furthermore, the server and user may have differing
-ideas regarding the semantics of “safe.”</t>
+might change content. </t>
+      <t>Even then, a malicious server might adapt content so that it is even less
+“safe” (by some definition of the word). As such, this mechanism on its own is
+not enough to assure that only “safe” content is seen; users who wish to
+ensure that will need to combine its use with other techniques (e.g., content
+filtering).</t>
+      <t>Furthermore, the server and user may have differing ideas regarding the
+semantics of “safe.” As such, the “safety” of the user’s experience when 
+browsing from site to site might (and probably will) change. </t>
     </section>
     <section anchor="iana-considerations" title="IANA Considerations">
       <t>This specification registers the “safe” HTTP Client Hint
@@ -204,6 +241,17 @@ ideas regarding the semantics of “safe.”</t>
           </author>
         </front>
       </reference>
+      <reference anchor="age-privacy" target="http://www.theage.com.au/technology/technology-news/privacy-concern-as-apps-share-data-from-kids-left-to-their-own-devices-20121222-2bso6.html">
+        <front>
+          <title>Privacy concern as apps share data from kids left to their own devices</title>
+          <author initials="A." surname="Moses" fullname="Asher Moses">
+            <organization>Fairfax Media</organization>
+          </author>
+        </front>
+      </reference>
     </references>
+    <section anchor="acknowledgements" title="Acknowledgements">
+      <t>Thanks to Alissa Cooper, Ilya Grigorik and Emma Llanso for their comments.</t>
+    </section>
   </back>
 </rfc>

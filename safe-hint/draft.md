@@ -49,6 +49,13 @@ informative:
     title: How to access and turn on Safety Mode?
     author:
      - organization: Google
+  age-privacy:
+    target: http://www.theage.com.au/technology/technology-news/privacy-concern-as-apps-share-data-from-kids-left-to-their-own-devices-20121222-2bso6.html
+    title: Privacy concern as apps share data from kids left to their own devices
+    author:
+     - ins: A. Moses
+       name: Asher Moses
+       organization: Fairfax Media
 
 
 --- abstract
@@ -71,7 +78,8 @@ setting.
 However, a user that wishes to have this preference honoured would need to go
 to each Web site in turn, navigate to the appropriate page, (possibly creating
 an account along the way) to get a cookie {{RFC6265}} set in the browser. They
-would need to do this for each browser on every device they use.
+would need to do this for each browser on every device they use. As has been
+widely noted, this is difficult {{age-privacy}}.
 
 This can be onerous to nearly impossible to achieve effectively, because there
 are too many permutations of sites, user agents and devices.
