@@ -44,9 +44,23 @@ Introduction
 This memo explains how HTTP can be used as the basis of new protocols,
 colloquially known as "HTTP APIs."
 
+
+Applicability
+-------------
+
 The advice in this memo reflects Best Current Practice for IETF specifications
 that design protocols build upon HTTP. However, much of it is applicable to
 non-IETF efforts, whether they be in other organisations, or private.
+
+This document is applicable to application-specific, machine-to-machine
+communication using HTTP. It does not address human user concerns, nor those
+specific to generic extensions to HTTP.
+
+For example, a new HTTP method, status code or header field that is
+potentially usable by any HTTP resource is a generic extension; an API (or
+part thereof) designed to allow HTTP-based control of a particular function
+(whether it be a user record or a network configuration) is not.
+
 
 Notational Conventions
 ----------------------
