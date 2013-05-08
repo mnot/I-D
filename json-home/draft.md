@@ -583,6 +583,16 @@ Because of this, it's most practical to define a separate format, and JSON is
 easily machine-readable, precise, and has a better chance of being managed for
 stability.
 
+Why doesn't the format allow references or inheritance?
+-------------------------------------------------------
+
+Adding inheritance or references would allow more modularity in the format and
+make it more compact, at the cost of considerable complexity and the associated
+potential for errors (both in the specification and by its users).
+
+Since good tools and compression are effective ways to achieve the same ends,
+this specification doesn't attempt them.
+
 What about authentication?
 --------------------------
 
@@ -640,3 +650,4 @@ The following is a list of placeholders for open issues.
   * deprecation
 * Defining new top-level and resource object properties - how new ones are minted, registry, etc.
 * Discovery (e.g., conneg, .well-known, etc.)
+* LIMITED include function?
