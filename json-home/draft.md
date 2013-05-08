@@ -441,16 +441,14 @@ The URIs used in home documents MAY change over time. However, changing them
 can cause issues for clients that are relying on cached home documents
 containing old links.
 
-To mitigate these risks, servers changing links SHOULD consider:
+To mitigate the impact of such changes, servers SHOULD consider:
 
 * Reducing the freshness lifetime of home documents before a link change, so
   that clients are less likely to refer to an "old" document.
-* Assure that they handle requests for the "old" URIs appropriately; e.g.,
+* Regarding the "old" and "new" URIs as equally valid references for an
+  "overlap" period.
+* After that period, handling requests for the "old" URIs appropriately; e.g.,
   with a 404 Not Found, or by redirecting the client to the new URI.
-* Alternatively, considering the "old" and "new" URIs as equally valid
-  references for an "overlap" period.
-
-Generally, servers ought not to change URIs without good cause.
 
 
 Evolving and Mixing APIs with Home Documents
