@@ -595,9 +595,6 @@ could (and even may) allow enumeration of possible error conditions, there's a
 concern that this will encourage applications to define many such "faults",
 leading to tight coupling between the application and its clients.
 
-So, this is an area of possible future development; if any such mechanism
-appears here, it's likely to be quite restricted.
-
 How Do I find the schema for a format?
 --------------------------------------
 
@@ -612,9 +609,6 @@ Complex queries -- i.e., those that exceed the expressive power of Link
 Templates or would require ambiguous properties of a "resources" object --
 aren't intended to be defined by a home document. The appropriate way to do
 this is with a "form" language, much as HTML defines.
-
-Future revisions of this specification may define or accommodate the use of
-such a form in the home document.
 
 Note that it is possible to support multiple query syntaxes on the same base
 URL, using more than one link relation type; see the example at the start of
@@ -636,6 +630,7 @@ The following is a list of placeholders for open issues.
   * indicate a POST to 201 Created pattern
   * indicate an "action" POST
   * outbound links
+  * forms?
 * Representation Hints
   * format profiles
   * deprecation
