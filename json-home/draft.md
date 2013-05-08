@@ -627,7 +627,7 @@ The following is a list of placeholders for open issues.
 * top-level object(s)
   * contact details
   * overall documentation
-  * release info
+  * release info?
   * ToS
   * rate limiting (per-resource?)
 * Resource Hints
@@ -638,9 +638,5 @@ The following is a list of placeholders for open issues.
 * Representation Hints
   * format profiles
   * deprecation
-* Extensibility
-  * Defining new top-level properties - how new ones are minted, registry, etc.
-  * Defining new Resource Object properties - how new ones are minted,
-    registry, etc.
-* Discovery for home (e.g., conneg, .well-known, etc.)
-* Linking to other resource / format definitions?
+* Defining new top-level and resource object properties - how new ones are minted, registry, etc.
+* Discovery (e.g., conneg, .well-known, etc.)
