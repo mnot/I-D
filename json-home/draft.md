@@ -31,8 +31,8 @@ normative:
   I-D.ietf-httpbis-p6-cache:
   
 informative:
-  RFC4288:
   RFC5789:
+  RFC6838:
   I-D.ietf-httpbis-p4-conditional:
   I-D.ietf-httpbis-p5-range:
   I-D.ietf-httpbis-p7-auth:
@@ -83,7 +83,7 @@ they describe are "baked into" client implementations.
 
 In contrast, a "follow your nose" API advertises the resources available to
 clients using link relations {{RFC5988}} and the formats they support using
-internet media types {{RFC4288}}. A client can then decide -- at run time --
+internet media types {{RFC6838}}. A client can then decide -- at run time --
 which resources to interact with based upon its capabilities (as described by
 link relations), and the server can safely add new resources and formats
 without disturbing clients that are not yet aware of them.
