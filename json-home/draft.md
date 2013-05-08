@@ -528,6 +528,8 @@ be discoverable by interacting with the resource.
 Hint names MUST be composed of the lowercase letters (a-z), digits (0-9),
 underscores ("_") and hyphens ("-"), and MUST begin with a lowercase letter.
 
+Hint content SHOULD be described in terms of JSON {{RFC4627}} constructs.
+
 New hints are registered using the Expert Review process described in
 {{RFC5226}} to enforce the criteria above. Requests for registration of new
 resource hints are to use the following template:
