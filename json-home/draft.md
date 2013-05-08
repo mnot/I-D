@@ -167,6 +167,28 @@ it (for example) doesn't support any HTTP methods; it means that the client
 will need to discover this by interacting with the resource, and/or examining
 the documentation for its link relation type.
 
+Rffectively, this names a set of behaviors, as described by a resource object,
+with a link relation type. This means that several link relations might apply
+to a common base URL; e.g.:
+
+~~~
+{
+  "resources": {
+  	"http://example.org/rel/search-by-id": {
+    	"href-template": "/search?id={widget}",
+  		"href-vars": {
+  		  "widget_name": "http://example.org/param/widget"
+  		}
+  	},  
+    "http://example.org/rel/search-by-name": {
+      "href-template": "/search?name={widget_name}",
+      "href-vars": {
+        "widget_name": "http://example.org/param/widget_name"
+      }
+    }
+  }
+}
+~~~
 
 Resource Objects
 ================
