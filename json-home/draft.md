@@ -543,6 +543,12 @@ HTTP Representation Hint Registry {#representation_hint_registry}
 
 TBD
 
+Media Type Registration
+-----------------------
+
+TBD
+
+
 --- back
 
 Acknowledgements
@@ -636,5 +642,5 @@ The following is a list of placeholders for open issues.
   * Defining new top-level properties - how new ones are minted, registry, etc.
   * Defining new Resource Object properties - how new ones are minted,
     registry, etc.
-* Negotiating for HTML Home vs. JSON Home
+* Discovery for home (e.g., conneg, .well-known, etc.)
 * Linking to other resource / format definitions?
