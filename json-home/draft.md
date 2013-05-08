@@ -25,6 +25,7 @@ normative:
   RFC2119:
   RFC3986:
   RFC4627:
+  RFC5226:
   RFC5988:
   RFC6570:
   I-D.ietf-httpbis-p6-cache:
@@ -274,22 +275,27 @@ another resource "containing" it (such as a "widgets" collection) or
 describing it (e.g., one linked to it with a "describedby" link relation).
 
 This specification defines a set of common hints, based upon information
-that's discoverable by directly interacting with resources. A future draft
-will explain how to define new hints.
+that's discoverable by directly interacting with resources. See {{resource_hint_registry}} for information on defining new hints.
 
 allow
 -----
 
-Hints the HTTP methods that the current client will be able to use to interact
-with the resource; equivalent to the Allow HTTP response header.
+* Resource Hint Name: allow
+* Description: Hints the HTTP methods that the current client will be able to
+  use to interact with the resource; equivalent to the Allow HTTP response
+  header.
+* Specification: [this document]
 
 Content MUST be an array of strings, containing HTTP methods.
 
 formats
 -------
 
-Hints the representation types that the resource produces and consumes, using
-the GET and PUT methods respectively, subject to the 'allow' hint.
+* Resource Hint Name: formats
+* Description: Hints the representation types that the resource produces and
+  consumes, using the GET and PUT methods respectively, subject to the 'allow'
+  hint.
+* Specification: [this document]
 
 Content MUST be an object, whose keys are media types, and values are objects
 containing Representation Hints (see {{representation_hints}}).
@@ -297,8 +303,10 @@ containing Representation Hints (see {{representation_hints}}).
 accept-patch
 ------------
 
-Hints the PATCH {{RFC5789}} request formats accepted by the resource for this
-client; equivalent to the Accept-Patch HTTP response header.
+* Resource Hint Name: accept-patch
+* Description: Hints the PATCH {{RFC5789}} request formats accepted by the
+  resource for this client; equivalent to the Accept-Patch HTTP response header.
+* Specification: [this document]
 
 Content MUST be an array of strings, containing media types.
 
@@ -307,7 +315,10 @@ When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
 accept-post
 -----------
 
-Hints the POST request formats accepted by the resource for this client.
+* Resource Hint Name: accept-post
+* Description: Hints the POST request formats accepted by the resource for this
+  client.
+* Specification: [this document]
 
 Content MUST be an array of strings, containing media types.
 
@@ -316,26 +327,32 @@ When this hint is present, "POST" SHOULD be listed in the "allow" hint.
 accept-ranges
 -------------
 
-Hints the range-specifiers available to the client for this resource;
-equivalent to the Accept-Ranges HTTP response header
-{{I-D.ietf-httpbis-p5-range}}.
+* Resource Hint Name: accept-ranges
+* Description: Hints the range-specifiers available to the client for this
+  resource; equivalent to the Accept-Ranges HTTP response header
+  {{I-D.ietf-httpbis-p5-range}}.
+* Specification: [this document]
 
 Content MUST be an array of strings, containing HTTP range-specifiers. 
 
 accept-prefer
 -------------
 
-Hints the preferences {{I-D.snell-http-prefer}} supported by the
-resource. Note that, as per that specifications, a preference can be ignored
-by the server.
+* Resource Hint Name: accept-prefer
+* Description: Hints the preferences {{I-D.snell-http-prefer}} supported by the
+  resource. Note that, as per that specifications, a preference can be ignored
+  by the server.
+* Specification: [this document]
 
 Content MUST be an array of strings, contain preferences.
 
 docs
 ----
 
-Hints the location for human-readable documentation for the relation type of
-the resource.
+* Resource Hint Name: docs
+* Description: Hints the location for human-readable documentation for the
+  relation type of the resource.
+* Specification: [this document]
 
 Content MUST be a string containing an absolute-URI {{RFC3986}} referring to
 documentation that SHOULD be in HTML format.
@@ -343,9 +360,12 @@ documentation that SHOULD be in HTML format.
 precondition-req
 ----------------
 
-Hints that the resource requires state-changing requests (e.g., PUT, PATCH) to
-include a precondition, as per {{I-D.ietf-httpbis-p4-conditional}}, to avoid
-conflicts due to concurrent updates.
+* Resource Hint Name: precondition-req
+* Description: Hints that the resource requires state-changing requests (e.g.,
+  PUT, PATCH) to include a precondition, as per
+  {{I-D.ietf-httpbis-p4-conditional}}, to avoid conflicts due to concurrent
+  updates.
+* Specification: [this document]
 
 Content MUST be an array of strings, with possible values "etag" and
 "last-modified" indicating type of precondition expected.
@@ -353,8 +373,10 @@ Content MUST be an array of strings, with possible values "etag" and
 auth-req
 --------
 
-Hints that the resource requires authentication using the HTTP Authentication
-Framework {{I-D.ietf-httpbis-p7-auth}}.
+* Resource Hint Name: auth-req
+* Description: Hints that the resource requires authentication using the HTTP
+  Authentication Framework {{I-D.ietf-httpbis-p7-auth}}.
+* Specification: [this document]
 
 Content MUST be an array of objects, each with a "scheme" property containing
 a string that corresponds to a HTTP authentication scheme, and optionally a
@@ -377,7 +399,9 @@ For example, a Resource Object might contain the following hint:
 status
 ------
 
-Hints the status of the resource.
+* Resource Hint Name: status
+* Description: Hints the status of the resource.
+* Specification: [this document]
 
 Content MUST be a string; possible values are:
 
@@ -491,8 +515,35 @@ checking to see if those credentials are appropriate for that server.
 IANA Considerations
 ===================
 
-TBD
+HTTP Resource Hint Registry {#resource_hint_registry}
+---------------------------
 
+This specification defines the HTTP Resource Hint Registry. See
+{{resource_hints}} for a general description of the function of resource
+hints.
+
+In particular, resource hints are generic; that is, they are potentially
+applicable to any resource, not specific to one application of HTTP, nor to one
+particular format. Generally, they ought to be information that would otherwise
+be discoverable by interacting with the resource.
+
+Hint names MUST be composed of the lowercase letters (a-z), digits (0-9),
+underscores ("_") and hyphens ("-"), and MUST begin with a lowercase letter.
+
+New hints are registered using the Expert Review process described in
+{{RFC5226}} to enforce the criteria above. Requests for registration of new
+resource hints are to use the following template:
+
+* Resource Hint Name: [hint name]
+* Description: [a short description of the hint's semantics]
+* Specification: [reference to specification document]
+
+Initial registrations are enumerated in {{resource_hints}}.
+
+HTTP Representation Hint Registry {#representation_hint_registry}
+---------------------------------
+
+TBD
 
 --- back
 
@@ -565,6 +616,10 @@ this is with a "form" language, much as HTML defines.
 Future revisions of this specification may define or accommodate the use of
 such a form in the home document.
 
+Note that it is possible to support multiple query syntaxes on the same base
+URL, using more than one link relation type; see the example at the start of
+the document.
+
 
 Open Issues
 ===========
@@ -585,8 +640,6 @@ The following is a list of placeholders for open issues.
   * format profiles
   * deprecation
 * Extensibility
-  * Defining new hints - guidance is needed on minting new hints. Possibly a
-    registry.
   * Defining new top-level properties - how new ones are minted, registry, etc.
   * Defining new Resource Object properties - how new ones are minted,
     registry, etc.
