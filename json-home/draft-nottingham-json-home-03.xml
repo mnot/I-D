@@ -25,6 +25,10 @@
     <abstract>
       <t>This document proposes a “home document” format for non-browser HTTP clients.</t>
     </abstract>
+    <note title="Note to Readers">
+      <t>This draft should be discussed on the apps-discuss mailing list; see
+<xref target="apps-discuss"/>.</t>
+    </note>
   </front>
   <middle>
     <section anchor="introduction" title="Introduction">
@@ -87,7 +91,9 @@ are Resource Objects, defined below.</t>
         },
         "hints": {
           "allow": ["GET", "PUT", "DELETE", "PATCH"],
-          "representations": ["application/json"],
+          "formats": {
+            "application/json": {}
+          },
           "accept-patch": ["application/json-patch"],
           "accept-post": ["application/xml"],
           "accept-ranges": ["bytes"]
@@ -110,6 +116,29 @@ accept, and the fact that they support partial requests
 it (for example) doesn’t support any HTTP methods; it means that the client
 will need to discover this by interacting with the resource, and/or examining
 the documentation for its link relation type.</t>
+      <t>Effectively, this names a set of behaviors, as described by a resource object,
+with a link relation type. This means that several link relations might apply
+to a common base URL; e.g.:</t>
+      <figure>
+        <artwork><![CDATA[
+{
+  "resources": {
+  	"http://example.org/rel/search-by-id": {
+    	"href-template": "/search?id={widget}",
+  		"href-vars": {
+  		  "widget_name": "http://example.org/param/widget"
+  		}
+  	},  
+    "http://example.org/rel/search-by-name": {
+      "href-template": "/search?name={widget_name}",
+      "href-vars": {
+        "widget_name": "http://example.org/param/widget_name"
+      }
+    }
+  }
+}
+]]></artwork>
+      </figure>
     </section>
     <section anchor="resource-objects" title="Resource Objects">
       <t>A Resource Object links to resources of the defined type using one of two
@@ -127,7 +156,7 @@ properties.</t>
 URI-references <xref target="RFC3986"/> whose base URI is that of the JSON Home Document
 itself.</t>
       <t>Resource Objects MAY also have a “hints” property, whose value is an object
-that uses named Resource Hints as its properties.</t>
+that uses named Resource Hints (see <xref target="resource_hints"/>) as its properties.</t>
       <section anchor="resolving-templated-links" title="Resolving Templated Links">
         <t>A URI can be derived from a Templated Link by treating the “href-template”
 value as a Level 3 URI Template <xref target="RFC6570"/>, using the “href-vars” property to
@@ -145,7 +174,9 @@ global identifiers for the semantics and syntax of those variables.</t>
     },
     "hints": {
       "allow": ["GET", "PUT", "DELETE", "PATCH"],
-      "representations": ["application/json"],
+      "formats": {
+        "application/json": {}
+      },
       "accept-patch": ["application/json-patch"],
       "accept-post": ["application/xml"],
       "accept-ranges": ["bytes"]
@@ -160,7 +191,7 @@ documentation), you can then find the resource corresponding to widget number
 is located at “http://example.org/”).</t>
       </section>
     </section>
-    <section anchor="resource-hints" title="Resource Hints">
+    <section anchor="resource_hints" title="Resource Hints">
       <t>Resource hints allow clients to find relevant information about interacting
 with a resource beforehand, as a means of optimising communications, as well
 as advertising available behaviours (e.g., to aid in laying out a user
@@ -176,57 +207,115 @@ might be gathered by interacting with the resource (e.g., via a GET), or by
 another resource “containing” it (such as a “widgets” collection) or
 describing it (e.g., one linked to it with a “describedby” link relation).</t>
       <t>This specification defines a set of common hints, based upon information
-that’s discoverable by directly interacting with resources. A future draft
-will explain how to define new hints.</t>
+that’s discoverable by directly interacting with resources. See <xref target="resource_hint_registry"/> for information on defining new hints.</t>
       <section anchor="allow" title="allow">
-        <t>Hints the HTTP methods that the current client will be able to use to interact
-with the resource; equivalent to the Allow HTTP response header.</t>
+        <t>
+          <list style="symbols">
+            <t>Resource Hint Name: allow</t>
+            <t>Description: Hints the HTTP methods that the current client will be able to
+use to interact with the resource; equivalent to the Allow HTTP response
+header.</t>
+            <t>Specification: [this document]</t>
+          </list>
+        </t>
         <t>Content MUST be an array of strings, containing HTTP methods.</t>
       </section>
-      <section anchor="representations" title="representations">
-        <t>Hints the representation types that the resource produces and consumes, using
-the GET and PUT methods respectively, subject to the ‘allow’ hint.</t>
-        <t>Content MUST be an array of strings, containing media types.</t>
+      <section anchor="formats" title="formats">
+        <t>
+          <list style="symbols">
+            <t>Resource Hint Name: formats</t>
+            <t>Description: Hints the representation types that the resource produces and
+consumes, using the GET and PUT methods respectively, subject to the ‘allow’
+hint.</t>
+            <t>Specification: [this document]</t>
+          </list>
+        </t>
+        <t>Content MUST be an object, whose keys are media types, and values are objects
+containing Representation Hints (see <xref target="representation_hints"/>).</t>
       </section>
       <section anchor="accept-patch" title="accept-patch">
-        <t>Hints the PATCH <xref target="RFC5789"/> request formats accepted by the resource for this
-client; equivalent to the Accept-Patch HTTP response header.</t>
+        <t>
+          <list style="symbols">
+            <t>Resource Hint Name: accept-patch</t>
+            <t>Description: Hints the PATCH <xref target="RFC5789"/> request formats accepted by the
+resource for this client; equivalent to the Accept-Patch HTTP response header.</t>
+            <t>Specification: [this document]</t>
+          </list>
+        </t>
         <t>Content MUST be an array of strings, containing media types.</t>
         <t>When this hint is present, “PATCH” SHOULD be listed in the “allow” hint.</t>
       </section>
       <section anchor="accept-post" title="accept-post">
-        <t>Hints the POST request formats accepted by the resource for this client.</t>
+        <t>
+          <list style="symbols">
+            <t>Resource Hint Name: accept-post</t>
+            <t>Description: Hints the POST request formats accepted by the resource for this
+client.</t>
+            <t>Specification: [this document]</t>
+          </list>
+        </t>
         <t>Content MUST be an array of strings, containing media types.</t>
         <t>When this hint is present, “POST” SHOULD be listed in the “allow” hint.</t>
       </section>
       <section anchor="accept-ranges" title="accept-ranges">
-        <t>Hints the range-specifiers available to the client for this resource;
-equivalent to the Accept-Ranges HTTP response header
+        <t>
+          <list style="symbols">
+            <t>Resource Hint Name: accept-ranges</t>
+            <t>Description: Hints the range-specifiers available to the client for this
+resource; equivalent to the Accept-Ranges HTTP response header
 <xref target="I-D.ietf-httpbis-p5-range"/>.</t>
+            <t>Specification: [this document]</t>
+          </list>
+        </t>
         <t>Content MUST be an array of strings, containing HTTP range-specifiers. </t>
       </section>
       <section anchor="accept-prefer" title="accept-prefer">
-        <t>Hints the preferences <xref target="I-D.snell-http-prefer"/> supported by the
+        <t>
+          <list style="symbols">
+            <t>Resource Hint Name: accept-prefer</t>
+            <t>Description: Hints the preferences <xref target="I-D.snell-http-prefer"/> supported by the
 resource. Note that, as per that specifications, a preference can be ignored
 by the server.</t>
+            <t>Specification: [this document]</t>
+          </list>
+        </t>
         <t>Content MUST be an array of strings, contain preferences.</t>
       </section>
       <section anchor="docs" title="docs">
-        <t>Hints the location for human-readable documentation for the relation type of
-the resource.</t>
+        <t>
+          <list style="symbols">
+            <t>Resource Hint Name: docs</t>
+            <t>Description: Hints the location for human-readable documentation for the
+relation type of the resource.</t>
+            <t>Specification: [this document]</t>
+          </list>
+        </t>
         <t>Content MUST be a string containing an absolute-URI <xref target="RFC3986"/> referring to
 documentation that SHOULD be in HTML format.</t>
       </section>
       <section anchor="precondition-req" title="precondition-req">
-        <t>Hints that the resource requires state-changing requests (e.g., PUT, PATCH) to
-include a precondition, as per <xref target="I-D.ietf-httpbis-p4-conditional"/>, to avoid
-conflicts due to concurrent updates.</t>
+        <t>
+          <list style="symbols">
+            <t>Resource Hint Name: precondition-req</t>
+            <t>Description: Hints that the resource requires state-changing requests (e.g.,
+PUT, PATCH) to include a precondition, as per
+<xref target="I-D.ietf-httpbis-p4-conditional"/>, to avoid conflicts due to concurrent
+updates.</t>
+            <t>Specification: [this document]</t>
+          </list>
+        </t>
         <t>Content MUST be an array of strings, with possible values “etag” and
 “last-modified” indicating type of precondition expected.</t>
       </section>
       <section anchor="auth-req" title="auth-req">
-        <t>Hints that the resource requires authentication using the HTTP Authentication
-Framework <xref target="I-D.ietf-httpbis-p7-auth"/>.</t>
+        <t>
+          <list style="symbols">
+            <t>Resource Hint Name: auth-req</t>
+            <t>Description: Hints that the resource requires authentication using the HTTP
+Authentication Framework <xref target="I-D.ietf-httpbis-p7-auth"/>.</t>
+            <t>Specification: [this document]</t>
+          </list>
+        </t>
         <t>Content MUST be an array of objects, each with a “scheme” property containing
 a string that corresponds to a HTTP authentication scheme, and optionally a
 “realms” property containing an array of zero to many strings that identify
@@ -246,7 +335,13 @@ protection spaces that the resource is a member of.</t>
         </figure>
       </section>
       <section anchor="status" title="status">
-        <t>Hints the status of the resource.</t>
+        <t>
+          <list style="symbols">
+            <t>Resource Hint Name: status</t>
+            <t>Description: Hints the status of the resource.</t>
+            <t>Specification: [this document]</t>
+          </list>
+        </t>
         <t>Content MUST be a string; possible values are:</t>
         <t>
           <list style="symbols">
@@ -257,6 +352,9 @@ return a 410 Gone HTTP status code if accessed.</t>
           </list>
         </t>
       </section>
+    </section>
+    <section anchor="representation_hints" title="Representation Hints">
+      <t>TBD</t>
     </section>
     <section anchor="creating-and-serving-home-documents" title="Creating and Serving Home Documents">
       <t>When making a home document available, there are a few things to keep in mind:</t>
@@ -278,18 +376,17 @@ to documentation for those constructs.</t>
         <t>The URIs used in home documents MAY change over time. However, changing them
 can cause issues for clients that are relying on cached home documents
 containing old links.</t>
-        <t>To mitigate these risks, servers changing links SHOULD consider:</t>
+        <t>To mitigate the impact of such changes, servers SHOULD consider:</t>
         <t>
           <list style="symbols">
             <t>Reducing the freshness lifetime of home documents before a link change, so
 that clients are less likely to refer to an “old” document.</t>
-            <t>Assure that they handle requests for the “old” URIs appropriately; e.g.,
+            <t>Regarding the “old” and “new” URIs as equally valid references for an
+“overlap” period.</t>
+            <t>After that period, handling requests for the “old” URIs appropriately; e.g.,
 with a 404 Not Found, or by redirecting the client to the new URI.</t>
-            <t>Alternatively, considering the “old” and “new” URIs as equally valid
-references for an “overlap” period.</t>
           </list>
         </t>
-        <t>Generally, servers ought not to change URIs without good cause.</t>
       </section>
       <section anchor="evolving-and-mixing-apis-with-home-documents" title="Evolving and Mixing APIs with Home Documents">
         <t>Using home documents affords the opportunity to change the “shape” of the API
@@ -334,7 +431,34 @@ might send credentials to a server that uses the auth-req hint, without
 checking to see if those credentials are appropriate for that server.</t>
     </section>
     <section anchor="iana-considerations" title="IANA Considerations">
-      <t>TBD</t>
+      <section anchor="resource_hint_registry" title="HTTP Resource Hint Registry">
+        <t>This specification defines the HTTP Resource Hint Registry. See
+<xref target="resource_hints"/> for a general description of the function of resource
+hints.</t>
+        <t>In particular, resource hints are generic; that is, they are potentially
+applicable to any resource, not specific to one application of HTTP, nor to one
+particular format. Generally, they ought to be information that would otherwise
+be discoverable by interacting with the resource.</t>
+        <t>Hint names MUST be composed of the lowercase letters (a-z), digits (0-9),
+underscores (“_”) and hyphens (“-“), and MUST begin with a lowercase letter.</t>
+        <t>New hints are registered using the Expert Review process described in
+<xref target="RFC5226"/> to enforce the criteria above. Requests for registration of new
+resource hints are to use the following template:</t>
+        <t>
+          <list style="symbols">
+            <t>Resource Hint Name: [hint name]</t>
+            <t>Description: [a short description of the hint’s semantics]</t>
+            <t>Specification: [reference to specification document]</t>
+          </list>
+        </t>
+        <t>Initial registrations are enumerated in <xref target="resource_hints"/>.</t>
+      </section>
+      <section anchor="representation_hint_registry" title="HTTP Representation Hint Registry">
+        <t>TBD</t>
+      </section>
+      <section anchor="media-type-registration" title="Media Type Registration">
+        <t>TBD</t>
+      </section>
     </section>
   </middle>
   <back>
@@ -477,6 +601,24 @@ specifications of each URI scheme.
         </front>
         <seriesInfo name="RFC" value="4627"/>
         <format type="TXT" octets="16319" target="http://www.rfc-editor.org/rfc/rfc4627.txt"/>
+      </reference>
+      <reference anchor="RFC5226">
+        <front>
+          <title>Guidelines for Writing an IANA Considerations Section in RFCs</title>
+          <author initials="T." surname="Narten" fullname="T. Narten">
+            <organization/>
+          </author>
+          <author initials="H." surname="Alvestrand" fullname="H. Alvestrand">
+            <organization/>
+          </author>
+          <date year="2008" month="May"/>
+          <abstract>
+            <t>Many protocols make use of identifiers consisting of constants and other well-known values. Even after a protocol has been defined and deployment has begun, new values may need to be assigned (e.g., for a new option type in DHCP, or a new encryption or authentication transform for IPsec). To ensure that such quantities have consistent values and interpretations across all implementations, their assignment must be administered by a central authority. For IETF protocols, that role is provided by the Internet Assigned Numbers Authority (IANA).&lt;/t&gt;&lt;t&gt; In order for IANA to manage a given namespace prudently, it needs guidelines describing the conditions under which new values can be assigned or when modifications to existing values can be made. If IANA is expected to play a role in the management of a namespace, IANA must be given clear and concise instructions describing that role. This document discusses issues that should be considered in formulating a policy for assigning values to a namespace and provides guidelines for authors on the specific text that must be included in documents that place demands on IANA.&lt;/t&gt;&lt;t&gt; This document obsoletes RFC 2434. This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="BCP" value="26"/>
+        <seriesInfo name="RFC" value="5226"/>
+        <format type="TXT" octets="66160" target="http://www.rfc-editor.org/rfc/rfc5226.txt"/>
       </reference>
       <reference anchor="RFC5988">
         <front>
@@ -661,6 +803,14 @@ specifications of each URI scheme.
           </author>
         </front>
       </reference>
+      <reference anchor="apps-discuss" target="https://www.ietf.org/mailman/listinfo/apps-discuss">
+        <front>
+          <title>IETF Apps-Discuss Mailing List</title>
+          <author>
+            <organization>IETF</organization>
+          </author>
+        </front>
+      </reference>
     </references>
     <section anchor="acknowledgements" title="Acknowledgements">
       <t>Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Graham Klyne, Leif
@@ -700,8 +850,6 @@ done, to avoid possible security complications.</t>
 could (and even may) allow enumeration of possible error conditions, there’s a
 concern that this will encourage applications to define many such “faults”,
 leading to tight coupling between the application and its clients.</t>
-        <t>So, this is an area of possible future development; if any such mechanism
-appears here, it’s likely to be quite restricted.</t>
       </section>
       <section anchor="how-do-i-find-the-schema-for-a-format" title="How Do I find the schema for a format?">
         <t>That isn’t addressed by home documents. Ultimately, it’s up to the media type
@@ -713,33 +861,23 @@ syntax. </t>
 Templates or would require ambiguous properties of a “resources” object –
 aren’t intended to be defined by a home document. The appropriate way to do
 this is with a “form” language, much as HTML defines.</t>
-        <t>Future revisions of this specification may define or accommodate the use of
-such a form in the home document.</t>
+        <t>Note that it is possible to support multiple query syntaxes on the same base
+URL, using more than one link relation type; see the example at the start of
+the document.</t>
       </section>
     </section>
     <section anchor="open-issues" title="Open Issues">
       <t>The following is a list of placeholders for open issues.</t>
       <t>
         <list style="symbols">
-          <t>Refining and extending representation formats - “application/xml”, for
-example, isn’t enough. While a media type for every representation is one
-answer, something like ‘profile’ might be good too.</t>
-          <t>Object for contact details - do we need an object that describes who’s
-running the API, API/software version, etc?</t>
-          <t>Defining new hints - guidance is needed on minting new hints. Possibly a
-registry.</t>
-          <t>Defining new top-level properties - how new ones are minted, registry, etc.</t>
-          <t>Defining new Resource Object properties - how new ones are minted, registry,
-etc.</t>
-          <t>Hint to indicate a POST to 201 Created pattern</t>
-          <t>Hint to indicate an “action” POST</t>
-          <t>Describe the extensibility model</t>
-          <t>Allow resources to expose their links</t>
-          <t>Negotiating for HTML Home vs. JSON Jome</t>
-          <t>Refining and extending representation formats</t>
-          <t>Further details on use of URI Templates </t>
-          <t>Object for ToS, rate limiting?</t>
-          <t>Figure out API profiles</t>
+          <t>top-level object(s)
+  <list style="symbols"><t>contact details</t><t>overall documentation</t><t>release info?</t><t>ToS</t><t>rate limiting (per-resource?)</t></list></t>
+          <t>Resource Hints
+  <list style="symbols"><t>indicate a POST to 201 Created pattern</t><t>indicate an “action” POST</t><t>outbound links</t><t>forms?</t></list></t>
+          <t>Representation Hints
+  <list style="symbols"><t>format profiles</t><t>deprecation</t></list></t>
+          <t>Defining new top-level and resource object properties - how new ones are minted, registry, etc.</t>
+          <t>Discovery (e.g., conneg, .well-known, etc.)</t>
         </list>
       </t>
     </section>
