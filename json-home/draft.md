@@ -168,7 +168,7 @@ it (for example) doesn't support any HTTP methods; it means that the client
 will need to discover this by interacting with the resource, and/or examining
 the documentation for its link relation type.
 
-Rffectively, this names a set of behaviors, as described by a resource object,
+Effectively, this names a set of behaviors, as described by a resource object,
 with a link relation type. This means that several link relations might apply
 to a common base URL; e.g.:
 
