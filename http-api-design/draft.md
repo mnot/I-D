@@ -72,6 +72,9 @@ document are to be interpreted as described in {{RFC2119}}.
 The Benefits of Using HTTP
 ==========================
 
+Avoiding Coupling (concerns on server vs. client)
+evolution
+scaling
 Mindshare / familiarity
 Code reuse
 Browser compatibility
@@ -84,6 +87,8 @@ Kinds of HTTP APIs
 Single Instance
 
 Multiple Instance
+
+
 
 The HTTP Protocol
 =================
