@@ -80,6 +80,11 @@ metadata about HTTP resources to be attached to Web links {{RFC5988}}, thereby
 making it available before the link is followed. It also establishes a registry
 for future hints.
 
+It does not recommend a single serialisation format for link hints; rather, it
+is expected that this will be done by individual link serialisations that use
+hints (whether they be in a representation body, message headers or elsewhere). However, {{link_header}} does recommend how to include link hints in the
+existing Link HTTP header field.
+
 Hints are just that -- they are not a "contract", and are to only be taken as
 advisory. The runtime behaviour of the resource always overrides hinted
 information.
@@ -424,7 +429,7 @@ would be serialised as:
 ~~~
 Link: </>; rel="sample"; example="\"foo\", -1.23, true,
       [\"charlie\", \"bennet\"], {"cat": \"thor\"}, false"
-~~
+~~~
 
 
 
