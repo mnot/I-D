@@ -60,23 +60,25 @@ This draft should be discussed on the apps-discuss mailing list; see
 Introduction
 ============
 
-Clients can discover a variety of information about HTTP
-{{I-D.ietf-httpbis-p1-messaging}} resources by interacting with them. For
+Clients can discover a variety of information about a HTTP
+{{I-D.ietf-httpbis-p1-messaging}} resource by interacting with it. For
 example, the methods supported can be learned through the Allow response header
-field, whereas the need for authentication is conveyed with the 401
+field, whereas the need for authentication is conveyed with a 401
 Authentication Required status code.
 
 In some situations, it can be beneficial to know this information before
-interacting with a resource; not only can it save time (through reduced round
+interacting with the resource; not only can it save time (through reduced round
 trips), but it can also affect the choices given to the code or user driving
 the interaction.
 
 For example, a user interface that presents the data from an HTTP-based API
-could use link hints to determine which resources the user has write access to,
-and modify the interface appropriately.
+might need to know which resources the user has write access to, so that it can
+present the appropriate interface.
 
-HTTP link hints build upon Web links {{RFC5988}} to describe a vocabulary of
-such metadata about HTTP-based links.
+This specification defines a vocabulary of "HTTP link hints" that allow such
+metadata about HTTP resources to be attached to Web links {{RFC5988}}, thereby
+making it available before the link is followed. It also establishes a registry
+for future hints.
 
 Hints are just that -- they are not a "contract", and are to only be taken as
 advisory. The runtime behaviour of the resource always overrides hinted
@@ -85,14 +87,12 @@ information.
 For example, a client might receive a hint that the PUT method is allowed on
 all "widget" resources. This means that generally, the client can PUT to them,
 but a specific resource might reject a PUT based upon access control or other
-considerations. More fine-grained information might be gathered by interacting
-with the resource (e.g., via a GET), or by another resource "containing" it
-(such as a "widgets" collection) or describing it (e.g., one linked to it with
-a "describedby" link relation).
+considerations. 
 
-This specification defines a set of common hints for HTTP (and HTTPS) links,
-based upon information that's discoverable by directly interacting with
-resources. It also establishes a registry for future hints.
+More fine-grained information might be gathered by interacting with the
+resource (e.g., via a GET), or by another resource "containing" it (such as a
+"widgets" collection) or describing it (e.g., one linked to it with a
+"describedby" link relation).
 
 
 Notational Conventions
@@ -108,9 +108,13 @@ HTTP Link Hints {#link_hints}
 
 A HTTP link hint is a (key, value) tuple that describes the target resource of
 a Web link {{RFC5988}}, or the link itself. The value's canonical form is a
-JSON {{RFC4627}} data structure. Typically, they are serialised in links as target attributes.
+JSON {{RFC4627}} data structure, whose form is defined by the hint's
+definition. 
 
-In JSON formats, this can be achieved by simply serialising link hints as an object; for example:
+Typically, they are serialised in links as target attributes.
+
+In JSON-based formats, this can be achieved by simply serialising link hints as
+an object; for example:
 
 ~~~
 {
@@ -129,8 +133,6 @@ In JSON formats, this can be achieved by simply serialising link hints as an obj
 }
 ~~~
 
-(Note that this specification does not advocate any particular format for links in JSON.)
-
 In other link formats, this requires a mapping from the canonical JSON data
 model. One such mapping for the Link HTTP header is described in
 {{link_header}}.
@@ -140,6 +142,10 @@ the freshness lifetime ({{I-D.ietf-httpbis-p6-cache}}) of the representation
 that the link occurred within, and in some cases, it might be valid for a
 considerably shorter period.
 
+Likewise, the information in a link hint is specific to the link it is attached
+to. This means that if a representation is specific to a particular user, the
+hints on links in that representation are also specific to that user.
+
 
 Pre-Defined HTTP Link Hints {#hints}
 ===========================
@@ -148,9 +154,8 @@ allow
 -----
 
 * Hint Name: allow
-* Description: Hints the HTTP methods that the current client can use to
-  interact with the target resource; equivalent to the Allow HTTP response
-  header.
+* Description: Hints the HTTP methods that can be used to interact with the
+  target resource; equivalent to the Allow HTTP response header.
 * Content Model: array (of strings)
 * Specification: [this document]
 
@@ -242,8 +247,8 @@ accept-ranges
 -------------
 
 * Hint Name: accept-ranges
-* Description: Hints the range-specifier(s) available to the client for the
-  target resource; equivalent to the Accept-Ranges HTTP response header
+* Description: Hints the range-specifier(s) available for the target resource;
+  equivalent to the Accept-Ranges HTTP response header
   {{I-D.ietf-httpbis-p5-range}}.
 * Content Model: array (of strings)
 * Specification: [this document]
@@ -339,7 +344,7 @@ HTTP Link Hint Registry {#hint_registry}
 This specification defines the HTTP Link Hint Registry. See {{link_hints}}
 for a general description of the function of link hints.
 
-Link hints are generic; that is, they are potentially applicable to any
+Link hints are generic; that is, they are potentially applicable to any HTTP
 resource, not specific to one application of HTTP, nor to one particular
 format. Generally, they ought to be information that would otherwise be
 discoverable by interacting with the resource.
