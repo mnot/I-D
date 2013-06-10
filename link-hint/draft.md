@@ -173,9 +173,9 @@ formats
 Content MUST be an object, whose keys are media types, and values are objects.
 
 The object MAY have a "links" member, whose value is an object representing
-links whose context is any document that uses that format. Generally, this will
-be schema or profile ({{RFC6906}}) information. The "links" member has the same
-format as the "links" hint.
+links (in the sense of {{RFC5988}}) whose context is any document that uses
+that format. Generally, this will be schema or profile ({{RFC6906}})
+information. The "links" member has the same format as the "links" hint.
 
 Furthermore, the object MAY have a "deprecated" member, whose value is either
 true or false, indicating whether support for the format might be removed in
@@ -192,8 +192,8 @@ links
 * Content Model: object
 * Specification: [this document]
 
-The "links" hint contains links that are specific to the resource, and stable
-for the lifetime of the hint.
+The "links" hint contains links (in the sense of {{RFC5988}}) whose context is
+the hinted target resource, which are stable for the lifetime of the hint.
 
 Content MUST be an object, whose member names are link relations ({{RFC5988}})
 and values are objects that MUST have an "href" member whose value is a
