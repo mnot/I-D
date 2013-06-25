@@ -397,7 +397,7 @@ object or array is represented without the braces ("{}") or brackets ("[]")
 respectively, but this does not apply to inner objects or arrays.
 
 
-For example, the two JSON values below are those of the fictitious "example" and "exmaple1" hints, respectively:
+For example, the two JSON values below are those of the fictitious "example" and "example1" hints, respectively:
 
 ~~~
 "The Example Value"
