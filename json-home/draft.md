@@ -143,7 +143,7 @@ For example:
           "formats": {
             "application/json": {}
           },
-          "accept-patch": ["application/json-patch"],
+          "accept-patch": ["application/json-patch+json"],
           "accept-post": ["application/xml"],
           "accept-ranges": ["bytes"]
         }
@@ -240,7 +240,7 @@ For example, given the following Resource Object:
       "formats": {
         "application/json": {}
       },
-      "accept-patch": ["application/json-patch"],
+      "accept-patch": ["application/json-patch+json"],
       "accept-post": ["application/xml"],
       "accept-ranges": ["bytes"]
     }
