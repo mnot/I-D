@@ -76,7 +76,7 @@ Introduction
 ============
 
 URIs {{RFC3986}} very often include structure and application data. This might include
-artefacts from filesystems (often occuring in the path component), user information (often
+artifacts from filesystems (often occurring in the path component), user information (often
 in the query component) and application data throughout. In some cases, there can even be
 application-specific data in the authority component (e.g., some applications are spread
 across several hostnames to enable a form of partitioning or dispatch).
@@ -123,7 +123,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
 document are to be interpreted as described in {{RFC2119}}.
 
-Best Current Practices for Standarising Structured URIs
+Best Current Practices for Standardising Structured URIs
 =======================================================
 
 These guidelines target a few different types of specifications:
@@ -201,8 +201,8 @@ Alternatives to Specifying Static URIs {#alternatives}
 ======================================
 
 Given the issues above, the most successful strategy for applications and extensions that wish to use
-URIs is to use them in the fashion they were designed; as run-time artefacts that are exchanged as
-part of the protocol, rather than staticly specified syntax.
+URIs is to use them in the fashion they were designed; as run-time artifacts that are exchanged as
+part of the protocol, rather than statically specified syntax.
 
 For example, if a specific URI needs to be known to interact with an application, its "shape" can be
 determined by interacting with the application's more general interface (in Web terms, its "home
@@ -221,6 +221,6 @@ applications that need structured URIs; see that specification for more informat
 Security Considerations
 =======================
 
-This memo does not introduce new protocol artefacts with security considerations. 
+This memo does not introduce new protocol artifacts with security considerations. 
 
 --- back
