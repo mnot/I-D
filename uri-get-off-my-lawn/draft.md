@@ -87,8 +87,9 @@ Web servers use the filename extension of the last path segment to determine the
 response. Likewise, pre-packaged applications often have highly structured URIs that can only be
 changed in limited ways (often, just the hostname and port they are deployed upon).
 
-When such conventions are mandated by standards, however, it can have several potentially
-detrimental effects:
+Because the owner of the URI is choosing to use the server or the software, this can be seen as
+reasonable delegation of authority. When such conventions are mandated by standards, however, it
+can have several potentially detrimental effects:
 
 * Collisions - As more conventions for URI structure become standardised, it becomes more likely
   that there will be collisions between such conventions (especially considering that servers,
@@ -101,7 +102,9 @@ detrimental effects:
 
 * Operational Difficulty - Supporting some URI conventions can be difficult in some
   implementations. For example, specifying that a particular query parameter be used preclude the
-  use of Web servers that serve the response from a filesystem.
+  use of Web servers that serve the response from a filesystem. Likewise, an application that fixes
+  a base path for its operation (e.g., "/v1") makes it impossible to deploy other applications on
+  the same host.
 
 * Client Assumptions - When conventions are standardised, some clients will inevitably assume that
   the standards are in use when they are seen. This can lead to interoperability problems.
