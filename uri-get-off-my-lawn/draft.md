@@ -101,7 +101,7 @@ can have several potentially detrimental effects:
   (see {{webarch}} Section 2.3.1).
 
 * Operational Difficulty - Supporting some URI conventions can be difficult in some
-  implementations. For example, specifying that a particular query parameter be used preclude the
+  implementations. For example, specifying that a particular query parameter be used precludes the
   use of Web servers that serve the response from a filesystem. Likewise, an application that fixes
   a base path for its operation (e.g., "/v1") makes it impossible to deploy other applications on
   the same host.
