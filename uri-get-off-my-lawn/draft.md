@@ -67,7 +67,7 @@ informative:
 --- abstract
 
 It is sometimes attractive to specify a particular structure for URIs (or parts thereof) to add
-support for a new feature, application or facility. This memo provides guidelines for such
+support for a new feature, application or facility. This document provides guidelines for such
 situations in standards documents.
 
 
@@ -110,9 +110,9 @@ At a more philosophical level, the structure of a URI needs to be firmly under t
 single party; its owner. Standardising parts of a URI's structure usurps that control; see
 {{webarch}} Section 2.2.2.1 for more information.
 
-This memo explains best current practices for establishing URI structures, conventions and formats
-in specifications; in particular, IETF specifications, although they are more broadly applicable.
-It also offers strategies for specifications to avoid violating these guidelines in
+This document explains best current practices for establishing URI structures, conventions and
+formats in specifications; in particular, IETF specifications, although they are more broadly
+applicable. It also offers strategies for specifications to avoid violating these guidelines in
 {{alternatives}}.
 
 
@@ -236,6 +236,6 @@ valve" for applications that need structured URIs; see that specification for mo
 Security Considerations
 =======================
 
-This memo does not introduce new protocol artefacts with security considerations. 
+This document does not introduce new protocol artefacts with security considerations. 
 
 --- back
