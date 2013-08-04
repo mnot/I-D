@@ -67,8 +67,7 @@ informative:
 --- abstract
 
 It is sometimes attractive to specify a particular structure for URIs (or parts thereof) to add
-support for a new feature, application or facility. This document provides guidelines for such
-situations in standards documents.
+support for a new feature, application or facility. This document provides guidelines to avoid the usurpation of the URI owner's rights in standards (sometimes called "URI Squatting").
 
 
 --- middle
