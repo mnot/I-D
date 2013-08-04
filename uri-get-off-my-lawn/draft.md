@@ -191,7 +191,7 @@ URI Paths
 ---------
 
 Scheme definitions define the presence, format, and semantics of a path component in URIs; all
-other specifications MUST NOT constrain, define structure or semantics for them.
+other specifications MUST NOT constrain, define structure or semantics for any path component.
 
 The only exception to this requirement is registered "well-known" URIs, as specified by {{RFC5785}}.
 
