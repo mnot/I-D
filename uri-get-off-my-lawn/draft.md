@@ -249,3 +249,9 @@ Security Considerations
 This document does not introduce new protocol artefacts with security considerations. 
 
 --- back
+
+Acknowlegements
+===============
+
+Thanks to David Booth, Anne van Kesteren and Erik Wilde for their suggestions
+and feedback
