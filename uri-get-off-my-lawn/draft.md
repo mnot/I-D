@@ -140,8 +140,8 @@ In particular, these guidelines target a few different types of specifications:
   schemes, as per {{RFC4395}}.
 
 * Protocol Extensions ("extensions") - specifications that offer new capabilities to potentially
-  any identifier, or a large subset; e.g., a new signature mechanism for HTTP URIs, or metadata for
-  any URI.
+  any identifier, or a large subset; e.g., a new signature mechanism for 'http' URIs, or metadata
+  for any URI.
 
 * Applications Using URIs ("applications") - specifications that use URIs to meet specific needs;
   e.g., a HTTP interface to particular information on a host.
@@ -172,9 +172,9 @@ URI Schemes
 -----------
 
 Applications and extensions MAY require use of specific URI scheme(s); for example, it is perfectly
-acceptable to require that an application support HTTP and HTTPS URIs. However, applications SHOULD
-NOT preclude the use of other URI schemes in the future, to promote reuse, unless they are clearly
-specific to the nominated schemes.
+acceptable to require that an application support 'http' and 'https' URIs. However, applications
+SHOULD NOT preclude the use of other URI schemes in the future, to promote reuse, unless they are
+clearly specific to the nominated schemes.
 
 Specifications MUST NOT define substructure within URI schemes, unless they do so by modifying
 {{RFC4395}}, or they are the registration document for the URI scheme(s) in question.
@@ -236,7 +236,7 @@ dynamically insert application-specific variables into a URI to enable such appl
 avoiding impinging upon URI owners' control of them.
 
 {{RFC5785}} allows specific paths to be 'reserved' for standard use on URI schemes that opt into
-that mechanism (HTTP and HTTPS by default). Note, however, that this is not a general "escape
+that mechanism ('http' and 'https' by default). Note, however, that this is not a general "escape
 valve" for applications that need structured URIs; see that specification for more information.
 
 Specifying more elaborate structures in an attempt to avoid collisions is not adequate to conform
