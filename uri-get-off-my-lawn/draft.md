@@ -67,7 +67,8 @@ informative:
 --- abstract
 
 It is sometimes attractive to specify a particular structure for URIs (or parts thereof) to add
-support for a new feature, application or facility. This document provides guidelines to avoid the usurpation of the URI owner's rights in standards (sometimes called "URI Squatting").
+support for a new feature, application or facility. This document provides guidelines to avoid the
+usurpation of the URI owner's rights in standards (sometimes called "URI Squatting").
 
 
 --- middle
@@ -106,7 +107,9 @@ can have several potentially detrimental effects:
   the same host.
 
 * Client Assumptions - When conventions are standardised, some clients will inevitably assume that
-  the standards are in use when they are seen. This can lead to interoperability problems.
+  the standards are in use when those conventions are seen. This can lead to interoperability
+  problems; for example, if a specification documents that the "sig" URI query parameter indicates
+  that its payload is a cryptographic signature for the URI, it can lead to false positives.
 
 While it is not ideal when a server or a deployed application mandates uri structure (indeed, this
 is not recommended practice, but that discussion is out of scope for this document), recommending
