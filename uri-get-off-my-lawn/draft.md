@@ -1,7 +1,7 @@
 ---
 title: Standardising Structure in URIs
 abbrev: URI Structure Policies
-docname: draft-nottingham-uri-get-off-my-lawn-00
+docname: draft-nottingham-uri-get-off-my-lawn-01
 date: 2013
 category: bcp
 updates: 3986
@@ -116,15 +116,8 @@ specifications; in particular, IETF specifications, although they are more broad
 also offers strategies for specifications to avoid violating these guidelines in {{alternatives}}.
 
 
-Notational Conventions
-----------------------
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-document are to be interpreted as described in {{RFC2119}}.
-
-Best Current Practices for Standarising Structured URIs
-=======================================================
+Who This Document Is For
+------------------------
 
 These guidelines target a few different types of specifications:
 
@@ -145,6 +138,18 @@ by parties that legitimately own them, or have delegated that ownership; for exa
 might legitimately specify the semantics of a URI on the IANA.ORG Web site as part of the
 establishment of a registry.
 
+
+Notational Conventions
+----------------------
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in {{RFC2119}}.
+
+Best Current Practices for Standarising Structured URIs
+=======================================================
+
+Different components of a URI have differing practices recommended.
 
 URI Schemes
 -----------
