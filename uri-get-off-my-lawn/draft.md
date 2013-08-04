@@ -109,9 +109,11 @@ can have several potentially detrimental effects:
 * Client Assumptions - When conventions are standardised, some clients will inevitably assume that
   the standards are in use when they are seen. This can lead to interoperability problems.
 
-At a more philosophical level, the structure of a URI needs to be firmly under the control of a
-single party; its owner. Standardising parts of a URI's structure usurps that control; see
-{{webarch}} Section 2.2.2.1 for more information.
+While it is not ideal when a server or a deployed application mandates uri structure (indeed, this
+is not recommended practice, but that discussion is out of scope for this document), recommending
+standards that mandate URI structure is inappropriate because the structure of a URI needs to be
+firmly under the control of its owner, and the IETF (as well as other organisations) should not
+usurp this ownership; see {{webarch}} Section 2.2.2.1 for more information.
 
 This document explains best current practices for establishing URI structures, conventions and
 formats in specifications; in particular, IETF specifications, although they are more broadly
