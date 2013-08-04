@@ -119,7 +119,15 @@ It also offers strategies for specifications to avoid violating these guidelines
 Who This Document Is For
 ------------------------
 
-These guidelines target a few different types of specifications:
+These guidelines are IETF Best Current Practice, and are therefore binding upon IETF
+standards-track documents, as well as submissions to the RFC Editor on the Independent Submissions
+track. See {{RFC2026}} for more information. 
+
+They are also binding on other Open Standards organisations (in the sense of {{RFC2026}}) that
+choose to adopt them. Questions as to their applicability ought to be handled through the liaison
+relationship, if present.
+
+In particular, these guidelines target a few different types of specifications:
 
 * URI Scheme Definitions ("scheme definitions") - specifications that define and register URI
   schemes, as per {{RFC4395}}.
@@ -146,6 +154,7 @@ Notational Conventions
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
 {{RFC2119}}.
+
 
 Best Current Practices for Standarising Structured URIs
 =======================================================
