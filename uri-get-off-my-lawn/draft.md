@@ -239,6 +239,9 @@ avoiding impinging upon URI owners' control of them.
 that mechanism (HTTP and HTTPS by default). Note, however, that this is not a general "escape
 valve" for applications that need structured URIs; see that specification for more information.
 
+Specifying more elaborate structures in an attempt to avoid collisions is not adequate to conform
+to this docuement. For example, prefixing query parameters with "myapp_" does not help.
+
 
 Security Considerations
 =======================
