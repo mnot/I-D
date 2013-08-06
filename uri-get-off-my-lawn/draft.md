@@ -77,10 +77,10 @@ Introduction
 ============
 
 URIs {{RFC3986}} very often include structure and application data. This might include artefacts
-from filesystems (often occuring in the path component), user information (often in the query
-component) and application data throughout. In some cases, there can even be application-specific
-data in the authority component (e.g., some applications are spread across several hostnames to
-enable a form of partitioning or dispatch).
+from filesystems (often occuring in the path component), and user information (often in the query
+component). In some cases, there can even be application-specific data in the authority component
+(e.g., some applications are spread across several hostnames to enable a form of partitioning or
+dispatch).
 
 Such conventions for the structure of URIs can be imposed by an implementation; for example, many
 Web servers use the filename extension of the last path segment to determine the media type of the
