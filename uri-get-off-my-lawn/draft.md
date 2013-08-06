@@ -100,6 +100,10 @@ can have several potentially detrimental effects:
   {{webarch}} Section 3.5.1), or its inclusion causes several alternate forms of the URI to exist
   (see {{webarch}} Section 2.3.1).
 
+* Brittleness - A standard that specifies a static URI cannot change its form in future revisions.
+  If extensibility of the URI is allowed, it would need to be specified very carefully, and would
+  be a one-off, not generic.
+
 * Operational Difficulty - Supporting some URI conventions can be difficult in some
   implementations. For example, specifying that a particular query parameter be used precludes the
   use of Web servers that serve the response from a filesystem. Likewise, an application that fixes
