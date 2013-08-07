@@ -26,6 +26,7 @@ normative:
   RFC2119:
   RFC3986:
   RFC4395:
+  RFC4844:
   RFC5785:
   RFC6838:
 
@@ -66,9 +67,9 @@ informative:
 
 --- abstract
 
-It is sometimes attractive to specify a particular structure for URIs (or parts thereof) to add
-support for a new feature, application or facility. This document provides guidelines to avoid the
-usurpation of the URI owner's rights in standards (sometimes called "URI Squatting").
+Sometimes, it is attractive to add features to protocols or applications by specifying a particular
+structure for URIs (or parts thereof). This document cautions against this practice in standards
+(sometimes called "URI Squatting").
 
 
 --- middle
@@ -82,10 +83,10 @@ component). In some cases, there can even be application-specific data in the au
 (e.g., some applications are spread across several hostnames to enable a form of partitioning or
 dispatch).
 
-Such conventions for the structure of URIs can be imposed by an implementation; for example, many
-Web servers use the filename extension of the last path segment to determine the media type of the
-response. Likewise, pre-packaged applications often have highly structured URIs that can only be
-changed in limited ways (often, just the hostname and port they are deployed upon).
+Furthermore, constraints upon the structure of URIs can be imposed by an implementation; for
+example, many Web servers use the filename extension of the last path segment to determine the
+media type of the response. Likewise, pre-packaged applications often have highly structured URIs
+that can only be changed in limited ways (often, just the hostname and port they are deployed upon).
 
 Because the owner of the URI is choosing to use the server or the software, this can be seen as
 reasonable delegation of authority. When such conventions are mandated by standards, however, it
@@ -101,44 +102,42 @@ can have several potentially detrimental effects:
   (see {{webarch}} Section 2.3.1).
 
 * Brittleness - A standard that specifies a static URI cannot change its form in future revisions.
-  If extensibility of the URI is allowed, it would need to be specified very carefully, and would
-  be a one-off, not generic.
 
 * Operational Difficulty - Supporting some URI conventions can be difficult in some
   implementations. For example, specifying that a particular query parameter be used precludes the
   use of Web servers that serve the response from a filesystem. Likewise, an application that fixes
-  a base path for its operation (e.g., "/v1") makes it impossible to deploy other applications on
-  the same host.
+  a base path for its operation (e.g., "/v1") makes it impossible to deploy other applications with
+  the same prefix on the same host.
 
 * Client Assumptions - When conventions are standardised, some clients will inevitably assume that
   the standards are in use when those conventions are seen. This can lead to interoperability
   problems; for example, if a specification documents that the "sig" URI query parameter indicates
   that its payload is a cryptographic signature for the URI, it can lead to false positives.
 
-While it is not ideal when a server or a deployed application mandates uri structure (indeed, this
+While it is not ideal when a server or a deployed application constrains uri structure (indeed, this
 is not recommended practice, but that discussion is out of scope for this document), recommending
 standards that mandate URI structure is inappropriate because the structure of a URI needs to be
 firmly under the control of its owner, and the IETF (as well as other organisations) should not
-usurp this ownership; see {{webarch}} Section 2.2.2.1 for more information.
+usurp this ownership; see {{webarch}} Section 2.2.2.1.
 
 This document explains best current practices for establishing URI structures, conventions and
-formats in specifications; in particular, IETF specifications, although they are more broadly
-applicable. It also offers strategies for specifications to avoid violating these guidelines in
-{{alternatives}}.
+formats in standards. It also offers strategies for specifications to avoid violating these
+guidelines in {{alternatives}}.
 
 
 Who This Document Is For
 ------------------------
 
 These guidelines are IETF Best Current Practice, and are therefore binding upon IETF
-standards-track documents, as well as submissions to the RFC Editor on the Independent Submissions
-track. See {{RFC2026}} for more information. 
+standards-track documents, as well as submissions to the RFC Editor on the Independent and IRTF streams. See {{RFC2026}} and {{RFC4844}} for more information. 
 
-They are also binding on other Open Standards organisations (in the sense of {{RFC2026}}) that
-choose to adopt them. Questions as to their applicability ought to be handled through the liaison
-relationship, if present.
+Other Open Standards organisations (in the sense of {{RFC2026}}) are encouraged to adopt them.
+Questions as to their applicability ought to be handled through the liaison relationship, if
+present.
 
-In particular, these guidelines target a few different types of specifications:
+Ad hoc efforts are also encouraged to adopt them, as this RFC reflects Best Current Practice.
+
+This document's requirements specifically targets a few different types of specifications:
 
 * URI Scheme Definitions ("scheme definitions") - specifications that define and register URI
   schemes, as per {{RFC4395}}.
@@ -150,8 +149,8 @@ In particular, these guidelines target a few different types of specifications:
 * Applications Using URIs ("applications") - specifications that use URIs to meet specific needs;
   e.g., a HTTP interface to particular information on a host.
 
-Requirements that target the generic class "Specifications" apply to all standards, including both
-those enumerated above above and others. They are also applicable to non-standard RFC publications.
+Requirements that target the generic class "Specifications" apply to all specifications, including
+both those enumerated above above and others.
 
 Note that this specification ought not be interpreted as preventing the allocation of control of
 URIs by parties that legitimately own them, or have delegated that ownership; for example, a
@@ -198,6 +197,7 @@ Scheme definitions define the presence, format, and semantics of a path componen
 other specifications MUST NOT constrain, define structure or semantics for any path component.
 
 The only exception to this requirement is registered "well-known" URIs, as specified by {{RFC5785}}.
+See that document for a description of the applicability of that mechanism.
 
 
 URI Queries
