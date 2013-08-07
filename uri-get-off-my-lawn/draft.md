@@ -26,11 +26,12 @@ normative:
   RFC2119:
   RFC3986:
   RFC4395:
-  RFC4844:
-  RFC5785:
   RFC6838:
 
 informative:
+  RFC2026:
+  RFC4844:
+  RFC5785:
   RFC5988:
   RFC6570:
   webarch:
@@ -251,6 +252,15 @@ Security Considerations
 =======================
 
 This document does not introduce new protocol artefacts with security considerations. 
+
+
+IANA Considerations
+===================
+
+This document clarifies appropriate registry policy for new URI schemes, and potentially for the
+creation of new URI-related registries, if they attempt to mandate structure within URIs. There are
+no direct IANA actions specified in this document.
+
 
 --- back
 
