@@ -79,7 +79,7 @@ Introduction
 ============
 
 URIs {{RFC3986}} very often include structure and application data. This might include artifacts
-from filesystems (often occuring in the path component), and user information (often in the query
+from filesystems (often occurring in the path component), and user information (often in the query
 component). In some cases, there can even be application-specific data in the authority component
 (e.g., some applications are spread across several hostnames to enable a form of partitioning or
 dispatch).
@@ -245,7 +245,7 @@ that mechanism ('http' and 'https' by default). Note, however, that this is not 
 valve" for applications that need structured URIs; see that specification for more information.
 
 Specifying more elaborate structures in an attempt to avoid collisions is not adequate to conform
-to this docuement. For example, prefixing query parameters with "myapp_" does not help.
+to this document. For example, prefixing query parameters with "myapp_" does not help.
 
 
 Security Considerations
@@ -264,7 +264,7 @@ no direct IANA actions specified in this document.
 
 --- back
 
-Acknowlegements
+Acknowledgments
 ===============
 
 Thanks to David Booth, Anne van Kesteren and Erik Wilde for their suggestions
