@@ -268,4 +268,4 @@ Acknowlegements
 ===============
 
 Thanks to David Booth, Anne van Kesteren and Erik Wilde for their suggestions
-and feedback
+and feedback.
