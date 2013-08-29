@@ -1,7 +1,7 @@
 ---
 title: Standardising Structure in URIs
 abbrev: URI Structure Policies
-docname: draft-nottingham-uri-get-off-my-lawn-01
+docname: draft-nottingham-uri-get-off-my-lawn-02
 date: 2013
 category: bcp
 updates: 3986
