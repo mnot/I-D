@@ -78,7 +78,7 @@ structure for URIs (or parts thereof). This document cautions against this pract
 Introduction
 ============
 
-URIs {{RFC3986}} very often include structure and application data. This might include artifacts
+URIs {{RFC3986}} very often include structured application data. This might include artifacts
 from filesystems (often occurring in the path component), and user information (often in the query
 component). In some cases, there can even be application-specific data in the authority component
 (e.g., some applications are spread across several hostnames to enable a form of partitioning or
@@ -115,8 +115,8 @@ can have several potentially detrimental effects:
   problems; for example, if a specification documents that the "sig" URI query parameter indicates
   that its payload is a cryptographic signature for the URI, it can lead to false positives.
 
-While it is not ideal when a server or a deployed application constrains uri structure (indeed, this
-is not recommended practice, but that discussion is out of scope for this document), recommending
+While it is not ideal when a server or a deployed application constrains URI structure (indeed, this
+is not recommended practice, but that discussion is out of scope for this document), publishing
 standards that mandate URI structure is inappropriate because the structure of a URI needs to be
 firmly under the control of its owner, and the IETF (as well as other organisations) should not
 usurp this ownership; see {{webarch}} Section 2.2.2.1.
@@ -130,7 +130,7 @@ Who This Document Is For
 ------------------------
 
 These guidelines are IETF Best Current Practice, and are therefore binding upon IETF
-standards-track documents, as well as submissions to the RFC Editor on the Independent and IRTF streams. See {{RFC2026}} and {{RFC4844}} for more information. 
+standards-track documents, as well as submissions to the RFC Editor on the Independent and IRTF streams. See {{RFC2026}} and {{RFC4844}} for more information.
 
 Other Open Standards organisations (in the sense of {{RFC2026}}) are encouraged to adopt them.
 Questions as to their applicability ought to be handled through the liaison relationship, if
@@ -168,7 +168,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 
 Best Current Practices for Standardising Structured URIs
-=======================================================
+========================================================
 
 Different components of a URI have differing practices recommended.
 
