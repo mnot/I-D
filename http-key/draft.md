@@ -1,7 +1,7 @@
 ---
 title: The Key HTTP Response Header Field
 abbrev: 
-docname: draft-fielding-http-key-02
+docname: draft-fielding-http-key-03
 date: 2013
 category: info
 
@@ -244,6 +244,7 @@ then each of the following header fields is a match:
  Accept: text/html
  Accept: text/HTML; q=0.5
  Accept: text/html;q=0.1
+ Accept: text/html;q=0
  Accept: text/html; foo="bar"
 ~~~
 
