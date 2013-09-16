@@ -10,6 +10,7 @@ ipr: trust200902
 area: General
 workgroup: 
 keyword: URI structure
+keyword: URI squatting
 
 stand_alone: yes
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
