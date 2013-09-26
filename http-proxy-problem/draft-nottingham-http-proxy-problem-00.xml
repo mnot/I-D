@@ -242,9 +242,9 @@ the capabilities and rights of the various stakeholders.</t>
       <section anchor="proxies-have-a-legitimate-place" title="Proxies Have a Legitimate Place">
         <t>As illustrated above, there are many legitimate uses for proxies, and they are
 a necessary part of the architecture of the Web. While all uses of proxies are
-not legitimate – especially when they’re done without the knowledge or consent
-of the end user and the origin – this does not mean that ALL proxies are
-undesirable.</t>
+not legitimate – especially when they’re interposed without the knowledge or
+consent of the end user and the origin – this does not mean that ALL proxies
+are undesirable.</t>
       </section>
       <section anchor="users-need-to-be-informed-of-proxies" title="Users Need to be Informed of Proxies">
         <t>When a proxy is interposed, the user needs to be informed about it, so they
@@ -295,6 +295,15 @@ security is notoriously difficult, the “https://” URI in combination with th
 security.</t>
         <t>This MUST NOT change; in particular, the HTTP specifications ought not be
 rewritten to allow proxies visibility into HTTPS flows.</t>
+      </section>
+      <section anchor="choices-are-context-specific" title="Choices are Context-Specific">
+        <t>Getting consent from users, as well as informing them, can take a variety of
+forms. For example, if we require that users consent to using a proxy, that
+consent could be obtained through a modal dialog in the browser, or through a
+written agreement between an employer and their employee.</t>
+        <t>Likewise, a browser vendor may choose not to implement some optional portions
+of the specification, based upon how they want to position their product with
+their audience.</t>
       </section>
       <section anchor="rfc2119-doesnt-define-reality" title="RFC2119 Doesn’t Define Reality">
         <t>It’s very tempting for a committee to proclaim that proxies MUST do this and
@@ -356,6 +365,8 @@ verifiable.</t>
       <section anchor="tls-for-http-uris" title="TLS for HTTP URIs">
         <t>To allow users to tunnel any request through proxies without revealing its
 contents, it must be possible to use TLS for HTTP URIs.</t>
+        <t>Proxies can then choose whether to allow such tunneled traffic, and if not, the
+user can choose whether to trust the proxy.</t>
       </section>
       <section anchor="improving-trust" title="Improving Trust">
         <t>Currently, it is possible to exploit the mismatched incentives and other flaws
@@ -677,5 +688,105 @@ ought the UA do when encountering a bad signature?</t>
         </front>
       </reference>
     </references>
+    <section anchor="target-usage-scenarios-for-proxies" title="Target Usage Scenarios for Proxies">
+      <t>This section contains a number of target usage scenarios that attempt to
+illustrate possible outcomes of the principles and investigations, as an aid in
+understanding and discussing them.</t>
+      <t>As such, these are intended to serve as discussion aids, not formal proposals.</t>
+      <section anchor="virus-scanning-corporate-proxy" title="Virus-Scanning Corporate Proxy">
+        <t>The network administrators for FooCorp believe that an effective component of
+their anti-malware strategy is at the border. Therefore, they need to
+interpose a proxy that scans incoming response bodies for viruses, etc.</t>
+        <t>FooCorp users agree, as part of their employment, to grant FooCorp access to
+their communications from work.</t>
+        <t>Therefore, for “http://” URLs, FooCorp decides to block encrypted connections,
+and scan the remainder. If a user tries to configure their browser to
+optimistically encrypt “http://” URLs, they’ll be presented with an error page
+that’s clearly from FooCorp, describing their policy. Likewise, if they browse
+to a URL that returns a virus, they will see a page clearly stating that
+FooCorp is blocking access, and why.</t>
+        <t>FooCorp can make a separate decision as to whether they allow “https://” URLs;
+they can block all of them, whitelist some origins, blacklist some origins, or
+allow all of them. However, they cannot gain access to either the request
+stream (i.e., anything from the request other than the origin), nor any
+responses.</t>
+        <t>When FooCorp employees use the network, they don’t have to log in or otherwise
+accept the presence of the proxy; however information about the proxy is
+available in their browser (e.g., an “about this network” menu item, or an
+indicator in the user interface).</t>
+      </section>
+      <section anchor="coffee-shop-capture-proxy" title="Coffee Shop Capture Proxy">
+        <t>Hobba Cafe serves coffee that would make grown men weep, had they only been
+exposed to chain coffee stores before. While they are weeping, these men need
+emotional support resources, so the coffee shop offers free WiFi to browser the
+Internet.</t>
+        <t>However, Hobba needs to have users agree to Terms of Use for the network before
+surfing. So, they interpose an interception proxy that “captures” users that
+aren’t logged in, presenting them with a login screen that is clearly from
+Hobba.</t>
+        <t>From the users’ standpoint, there are many requirements here. They need to be
+sure that the proxy they log into is actually Hobba’s, and that no other proxy
+can masquerade as them. Furthermore, they’d like to make sure that their
+communications aren’t sniffed by other users in the coffee shop, so they are
+likely to want to optimistically encrypt “http://” URLs.</t>
+      </section>
+      <section anchor="content-filtering-school-proxy" title="Content Filtering School Proxy">
+        <t>The network administrators at the Academy of Basket Weaving want to make sure
+that their students aren’t accessing inappropriate content. Since they teach
+basket weaving to a range of age groups, they need to ascertain who the user is
+before applying this policy.</t>
+        <t>When a student access the ABW network, they’re presented with a login page
+that’s clearly from the Academy. Once their credentials are accepted, students
+can browse the Web freely.</t>
+        <t>However, upon accessing a “http://” URL that the Academy determines the student
+shouldn’t be exposed to, an error page that is clearly identified as from the
+Academy is shown.</t>
+        <t>Just as in the FooCorp example, the Academy can choose to block or limit
+origins of optimistically encrypted “http://” URLs, but cannot “see” anything
+other than the origin. Likewise for “https://” URLs.</t>
+      </section>
+      <section anchor="content-transforming-mobile-proxy" title="Content Transforming Mobile Proxy">
+        <t>The Stationary Mobile Telephone Company wants to improve their customers’
+experience by reformatting HTML to look better on their low-cost handsets. Some
+users, however, are upset by this, because the well-intentioned rewriting
+doesn’t always work. Furthermore, some origin servers are unhappy about a third
+party rewriting their content.</t>
+        <t>There are a few possible paths for those unhappy users and content providers to
+take. If they encrypt communication (using either a “https://” URL or a
+“http://” URL with optimistic encryption), the proxy cannot rewrite the
+content, of course. </t>
+        <t>However, for unencrypted content, HTTP signatures can be used to verify that
+the content has not changed. Presumably, this would be combined with
+“Cache-Control: no-transform” to give the proxy warning that modifications are
+not desired.</t>
+      </section>
+      <section anchor="shared-community-caching-proxy" title="Shared Community Caching Proxy">
+        <t>The primitive village of Wollongong has a very limited, shared Internet
+connection that is often overcome by the traffic of the children using the
+popular Club Quoll Web site.</t>
+        <t>It needs to be as easy as possible to use to be efficient, so they interpose an
+interception proxy. </t>
+        <t>Since the purpose of the proxy is caching, the village would like to see as
+many “http://” URLs unencrypted as possible; as a result, they block
+optimistically encrypted “http://” URLs at the proxy, and explain why in a page
+that’s explicitly from the proxy.</t>
+        <t>However, users should be assured that the “http://” content they see isn’t
+modified by the proxy. Likewise, some want to verify that the caching policy of
+the Web sites they access is honored by the proxy. Both of these goals can be
+achieved using HTTP signatures.</t>
+      </section>
+      <section anchor="evil-attacking-proxy" title="Evil Attacking Proxy">
+        <t>Finally, some proxies are used to attack end users and origin servers. There
+are a variety of possible attacks, but the main goals that need focus are:</t>
+        <t>
+          <list style="symbols">
+            <t>Preventing an attacker from interposing a proxy without user knowledge</t>
+            <t>Preventing an attacker from masquerading as a legitimate proxy</t>
+            <t>Preventing an attacker from observing communications to and from the proxy</t>
+            <t>Preventing an attacker from modifying communications to and from the proxy</t>
+          </list>
+        </t>
+      </section>
+    </section>
   </back>
 </rfc>
