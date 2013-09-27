@@ -480,6 +480,10 @@ likely to be extremely controversial, because it changes the already-understood
 security properties of the Web.
 
 
+## Proxies must function across a wide variety of applications
+
+HTTP is used in a wide variety of environments.  As such there can be no assumption that a user is sitting on the other end to interpret information or answer questions from proxies.
+
 ## Choices are Context-Specific
 
 Getting consent from users, as well as informing them, can take a variety of
