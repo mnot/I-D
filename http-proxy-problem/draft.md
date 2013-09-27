@@ -265,6 +265,7 @@ that limit its deployment:
 * There are DNS-based variants of WPAD, adding to to confusion.
 * DHCP options generally require tight integration with the operating system to pass the results to HTTP-based applications.  While this level of integration is found between O/Ses and their provided applications, the interface may or may not be available to third parties.
 
+There are other issues.  Between the combination of proxy.pac and WPAD a question arises about who should be responsible for configuring a proxy.  If it is not the local network, then the number of potential proxies can become unmanageable. 
 
 ## Interception
 
