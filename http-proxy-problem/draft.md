@@ -268,6 +268,7 @@ that limit its deployment:
   divergence and resulting interoperability problems.
   
 * There are DNS-based variants of WPAD, adding to to confusion.
+* DHCP options generally require tight integration with the operating system to pass the results to HTTP-based applications.  While this level of integration is found between O/Ses and their provided applications, the interface may or may not be available to third parties.
 
 
 ## Interception
