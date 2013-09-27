@@ -83,6 +83,11 @@ principles to base further discussion upon, along with suggestions for areas
 where further investigation may yield solutions (or at least mitigations) for
 some of these problems.
 
+Note that this document is explicitly about "proxies" in the sense that HTTP
+defines them. Intermediaries that are interposed by the server (e.g., gateways
+and so-called "Reverse Proxies", as used in Content Delivery Networks) are out
+of scope.
+
 
 ## Notational Conventions
 
