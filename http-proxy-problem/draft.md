@@ -367,6 +367,7 @@ buying a sub-root certificate), to gain access to the application message
 flows. This represents a serious degradation in the trust infrastructure of the
 Web.
 
+Worse is the situation where proxies provide a certificate where they inure the user to a certificate warning that they must then ignore in order to receive service. 
 
 
 # Principles for Consideration {#principles}
@@ -531,6 +532,10 @@ Unless another mechanism can be found or defined that offers equally attractive
 properties to network operators, we ought to consider that they'll continue to
 be deployed, and work to find ways to make their operation both more verifiable
 and unnecessary (or at least legitimate).
+
+## Improving Interception
+
+One solution may be to provide a means for interception proxies not only to identify themselves, but to provide optional explicit configuration for the http client.  The value of this is that it will solve problems relating to MPTCP.  On the other hand, the user must be in a position to make an intelligent decision.
 
 
 ## Improving Proxy.Pac and WPAD
