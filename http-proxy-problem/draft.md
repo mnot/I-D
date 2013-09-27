@@ -456,16 +456,28 @@ Equally as important, the communication needs to clearly come from the proxy,
 rather than the origin.
 
 
-## HTTPS URI Semantics Can't Change
+## Expectations Should be Low
 
-"https://" URIs are widely deployed and currently have the semantics of
-end-to-end encryption, albeit with known issues. While educating users about
-security is notoriously difficult, the "https://" URI in combination with the
-"lock symbol" has gained some amount of broad understanding as indicating
-security.
+While some users are sophisticated in their understanding of Web security, they
+are in a vanishingly small minority. The concepts and implications of many
+decisions regarding security are subtle, and require an understanding of how
+the Web works; describing these trade-offs in a modal dialogue box that gets in
+the way of the content the user wants has been proven not to work.
 
-This MUST NOT change; in particular, the HTTP specifications ought not be
-rewritten to allow proxies visibility into HTTPS flows.
+Similarly, while some Web publishers are sophisticated regarding security, the
+vast majority are not (as can be proven by the prevalence of cross-site
+scripting attacks).
+
+Therefore, any changes cannot rely upon perfect understanding by these parties,
+or even any great effort upon their part. This implies that user interface will
+be one of the biggest challenges faced, both in the browser and for any changes
+server-side.
+
+Notably, the most widely understood indicator of security today is the "lock
+icon" that shows when a connection is protected by TLS. Any erosion of the
+commonly-understood semantics of that indicator, as well as "https://" URIs, is
+likely to be extremely controversial, because it changes the already-understood
+security properties of the Web.
 
 
 ## Choices are Context-Specific
