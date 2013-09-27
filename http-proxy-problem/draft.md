@@ -120,17 +120,11 @@ network operator -- sometimes even against the interests of the end users.
 This section attempts to identify the different motivations networks have for
 deploying proxies.
 
-## Request Routing
+## Application Layer Gatewaying
 
 Some networks do not have direct Internet connectivity for Web browsing. These
 networks can deploy proxies that do have Internet connectivity and then
 configure clients to use them.
-
-Note that some proxies may divert requests to servers other than the intended
-origin. For example, there is anecdotal evidence that a small number of
-networks re-route requests for advertising servers to their own servers in an
-attempt to co-opt the associated revenue, or to replace ads with "blank"
-content. This is really a form of content modification, discussed below.
 
 ## Caching
 
