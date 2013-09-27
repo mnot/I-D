@@ -25,10 +25,12 @@ normative:
   RFC2119:
 
 informative:
+  RFC2145:
   RFC2616:
   RFC2818:
   RFC3040:
   RFC5246:
+  RFC6455:
   RFC6585:
   W3C.CR-ct-guidelines-20100617:
   I-D.mbelshe-httpbis-spdy:
@@ -107,9 +109,9 @@ is still sent to the origin server that the user agent intended.
 
 However, some proxies may divert requests to servers other than the intended
 origin. For example, there is anecdotal evidence that a small number of
-networks re-route requests to advertising servers to their own servers, in an
-attempt to co-opt the associated revenue. This is really a form of content
-modification, discussed below.
+networks re-route requests for advertising servers to their own servers in an
+attempt to co-opt the associated revenue, or to replace ads with "blank"
+content. This is really a form of content modification, discussed below.
 
 ## Caching
 
@@ -119,11 +121,12 @@ some combination of these purposes.
 
 HTTP defines a detailed model for caching; when it is adhered to, caching
 proxies are seen as legitimate (although some lesser-known aspects of the
-caching model can cause operational issues).
+caching model can cause operational issues; for example, it allows caches to go
+into an "offline" mode where most content can be served stale).
 
 However, proxy caches sometimes fail to honor the HTTP caching model, reusing
 content when it should not have been. This can cause interoperability issues,
-with the end user seeing "stale" content, or applications not operating
+with the end user seeing overly "stale" content, or applications not operating
 correctly.
 
 ## Network Policy Enforcement
@@ -131,11 +134,17 @@ correctly.
 Some proxies are deployed to aid in network policy enforcement; for example, to
 control access to the network, requiring a login (as allowed explicitly by
 HTTP's proxy authentication mechanism), bandwidth shaping of HTTP access,
-quotas, etc.
+quotas, etc. This includes so-called "Captive Portals" used for network login.
 
 These use cases are generally seen as legitimate; that is, a network operator
 can choose to disallow access to their network and place reasonable limits or
 conditions upon its use.
+
+However, some uses of proxies for policy enforcement do cause problems; e.g.,
+when a proxy uses URL rewriting to send a user a message (e.g., a "blocked"
+page), they can make it appear as if the origin server is sending that message
+-- especially when the user agent isn't a browser (e.g., a software update
+process).
 
 ## Content Filtering (a.k.a. Content Policy Enforcement)
 
@@ -144,10 +153,9 @@ upon a number of criteria. For example, they might wish to stop users from
 downloading content that contains malware, or that violates site policies on
 appropriate content, or that violates local law.
 
-Intermediary proxies are a notoriously poor mechanism for enforcing content
-policy, because they are often easy to circumvent. For example, a device might
-become infected by using a different network. Nevertheless, proxies are a
-common tool for content policy enforcement.
+Intermediary proxies as a mechanism for enforcing content are often easy to
+circumvent. For example, a device might become infected by using a different
+network. Nevertheless, they are commonly used.
 
 Some content policy enforcement is also done locally to the user agent; for
 example, several Operating Systems have machine-local proxies built in that
@@ -164,9 +172,9 @@ through proxies. This might include the message body, headers, request-target,
 method or status code.
 
 Motivation for content modification varies. For example, some mobile networks
-interpose proxies that modify content in an attempt to save bandwidth, or
-transcode content to formats that limited-resource devices can more easily
-consume.
+interpose proxies that modify content in an attempt to save bandwidth, improve
+perceived performance, or transcode content to formats that limited-resource
+devices can more easily consume.
 
 In other cases, content modification is performed to make more substantial
 modifications. This could include inserting advertisements, or changing the
@@ -228,20 +236,25 @@ to a function in the file that returns a string that denotes whether a proxy is
 to be used, and if so, which one to use.
 
 Discovery of the appropriate proxy.pac file for a given network can be made
-using a DHCP extension, {{wpad}}. WPAD is simple; it conveys a URL
-that locates the proxy.pac file for the network.
+using a DHCP extension, {{wpad}}. WPAD started as a simple protocol; it conveys
+a URL that locates the proxy.pac file for the network.
 
 Unfortunately, the proxy.pac/WPAD combination has several operational issues
 that limit its deployment:
 
-* The proxy.pac format does not define timeouts or failover behaviour
+* The proxy.pac format does not define timeouts or failover behavior
   precisely, leading to wide divergence between implementations. This makes
   supporting multiple user agents reliably difficult for the network.
 
-* WPAD is not widely implemented by user agents. 
+* WPAD is not widely implemented by user agents; some only implement proxy.pac.
 
 * In those user agents where it is implemented, WPAD is often not the default,
   meaning that users need to configure its use.
+  
+* Neither proxy.pac nor WPAD have been standardized, leading to implementation
+  divergence and resulting interoperability problems.
+  
+* There are DNS-based variants of WPAD, adding to to confusion.
 
 
 ## Interception
@@ -257,7 +270,9 @@ requires no client configuration (hence its advantages over other methods). See
 Interception is problematic, however, because it is often done without the
 consent of either the end user or the origin server. This means that a response
 that appears to be coming from the origin server is actually coming from the
-intercepting proxy.
+intercepting proxy. This makes it difficult to support features like
+authentication, as the unexpected status code breaks many clients (e.g.,
+non-interactive applications like software installers).
 
 
 ## Configuration As Side Effect
@@ -282,12 +297,19 @@ implementation impact the protocol's use.
 
 For example, HTTP has a defined mechanism for upgrading the protocol of a
 connection, to aid in the deployment of new versions of HTTP (such as HTTP/2.0)
-or completely different protocol. 
+or completely different protocol (e.g., {{RFC6455}}). 
 
 However, operational experience has shown that a significant number of proxy
 implementations do not correctly implement it, leading to dangerous situations
 where two ends of a HTTP connection think different protocols are being spoken.
 
+For example, the Expect/100-continue mechanism in HTTP/1.1 is often
+incorrectly implemented. Likewise, differences in support for trailers limits
+protocol extensions.
+
+Compounding these problems is a poor understanding of HTTP's versioning
+strategy {{RFC2145}}, with some implementations treating HTTP/1.1 as
+incompatible with 1.0.
 
 # Proxies and TLS
 
@@ -307,7 +329,9 @@ the latter parties.
 
 Secondly, it removes the opportunity for the proxy to inform the user agent of
 relevant information; for example, conditions of access, access denials, login
-interfaces, and so on. 
+interfaces, and so on. User Agents currently do not display any feedback from
+proxy, even in the CONNECT response (e.g., a 4xx or 5xx error), limiting their
+ability to have inform users of what's going on.
 
 Finally, it removes the opportunity for services provided by a proxy that the
 end user may wish to opt into. 
@@ -317,6 +341,11 @@ content, thereby helping to overcome the limitations of their Internet
 connection. TLS-protected HTTP traffic cannot be cached by intermediaries,
 removing much of the benefit of the Web to what is arguably one of its most
 important target audiences.
+
+It is now becoming more common for a proxy to man-in-the-middle TLS connections
+(through a variety of means; e.g., installing a trusted CA in browsers, or 
+buying a sub-root certificate), to gain access to the application message flows.
+
 
 
 # Principles for Consideration
@@ -339,8 +368,9 @@ the capabilities and rights of the various stakeholders.
 As illustrated above, there are many legitimate uses for proxies, and they are
 a necessary part of the architecture of the Web. While all uses of proxies are
 not legitimate -- especially when they're interposed without the knowledge or
-consent of the end user and the origin -- this does not mean that ALL proxies
-are undesirable.
+consent of the end user and the origin -- undesirable intermediaries (i.e.,
+those that break the reasonable expectations of other stakeholders) are a small
+portion of those deployed used.
 
 
 ## Users Need to be Informed of Proxies
@@ -458,7 +488,7 @@ the preferred method for interposing proxies in many networks.
 Unless another mechanism can be found or defined that offers equally attractive
 properties to network operators, we ought to consider that they'll continue to
 be deployed, and work to find ways to make their operation both more verifiable
-and legitimate.
+and unnecessary (or at least legitimate).
 
 
 ## TLS Errors for Proxies
@@ -543,6 +573,11 @@ ought the UA do when encountering a bad signature?
 Plenty of them, I suspect.
 
 
+# Acknowledgements
+
+Thanks to Amos Jeffries and Willy Tarreau for their comments and suggestions.
+
+
 --- back
 
 
@@ -587,7 +622,7 @@ indicator in the user interface).
 
 Hobba Cafe serves coffee that would make grown men weep, had they only been
 exposed to chain coffee stores before. While they are weeping, these men need
-emotional support resources, so the coffee shop offers free WiFi to browser the
+emotional support resources, so the coffee shop offers free WiFi to browse the
 Internet.
 
 However, Hobba needs to have users agree to Terms of Use for the network before
@@ -623,6 +658,10 @@ origins of optimistically encrypted "http://" URLs, but cannot "see" anything
 other than the origin. Likewise for "https://" URLs.
 
 
+## Content Anonymizing Proxy
+
+TBD
+
 ## Content Transforming Mobile Proxy
 
 The Stationary Mobile Telephone Company wants to improve their customers'
@@ -641,6 +680,10 @@ the content has not changed. Presumably, this would be combined with
 "Cache-Control: no-transform" to give the proxy warning that modifications are
 not desired.
 
+
+## Protocol Transforming Proxy
+
+TBD
 
 ## Shared Community Caching Proxy
 
@@ -671,3 +714,4 @@ are a variety of possible attacks, but the main goals that need focus are:
 * Preventing an attacker from masquerading as a legitimate proxy
 * Preventing an attacker from observing communications to and from the proxy
 * Preventing an attacker from modifying communications to and from the proxy
+* Preventing an attacker from downgrading to a less secure protocol
