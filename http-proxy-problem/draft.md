@@ -32,6 +32,7 @@ informative:
   RFC5246:
   RFC6455:
   RFC6585:
+  RFC6824:
   W3C.CR-ct-guidelines-20100617:
   I-D.mbelshe-httpbis-spdy:
   proxypac:
@@ -285,8 +286,10 @@ Interception is problematic, however, because it is often done without the
 consent of either the end user or the origin server. This means that a response
 that appears to be coming from the origin server is actually coming from the
 intercepting proxy. This makes it difficult to support features like
-authentication, as the unexpected status code breaks many clients (e.g.,
+proxy authentication, as the unexpected status code breaks many clients (e.g.,
 non-interactive applications like software installers).
+
+In addition, as adoption of multi-path TCP (MPTCP){{RFC6824}} increases, the ability of intercepting proxies to offer a consistent service degrades.
 
 
 ## Configuration As Side Effect
