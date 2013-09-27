@@ -452,7 +452,7 @@ Equally as important, the communication needs to clearly come from the proxy,
 rather than the origin.
 
 
-## Expectations Should be Low
+## Users require simple interfaces
 
 While some users are sophisticated in their understanding of Web security, they
 are in a vanishingly small minority. The concepts and implications of many
@@ -499,6 +499,11 @@ Therefore, it's not enough to say that (for example), "proxies have to honor
 no-transform" as HTTP/1.1 does. Instead, the protocol needs to be designed in
 a way so that either transformations aren't possible, or if they are, they 
 can be detected (with appropriate handling by User Agents defined).
+
+## Selection of proxies must scale both in size and performance
+It must be possible to authorize a large group of proxies at once.  When a user changes location it should not be necessary to re-authorize a proxy if one is already known and available.
+
+Similarly, in a mobile world, detection of changed proxies must not unduly inhibit browser performance.
 
 
 ## It Needs to be Deployable
