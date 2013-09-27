@@ -428,7 +428,11 @@ denied, and so on.
 Currently, HTTP has poor facilities for doing so. The proxy authentication
 mechanism is extremely limited, and while there are a few status codes that are
 define as being from a proxy rather than the origin, they do not cover all
-necessary situations.
+necessary situations. 
+
+The Warning header field was designed as a very limited form of communication
+between proxies and end users, but it has not been widely adopted, nor exposed
+by user agents.
 
 Importantly, proxies also need a limited communication channel when TLS is in
 use, for similar purposes.
