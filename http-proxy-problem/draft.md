@@ -368,17 +368,12 @@ Web.
 
 # Principles for Consideration {#principles}
 
-Every HTTP connection has (at least) three major stakeholders; the user
+Every HTTP connection has at least three major stakeholders; the user
 (through their agent), the origin server (possibly using gateways such as a
-CDN) and the network that the user uses to access the origin.
+CDN) and the networks that the user uses to access the origin.
 
-Currently, the rights of these stakeholders are defined by how the Web is
-deployed. Most notably, networks sometimes change content because they're able
-to. On the other hand, if they change it too much, origin servers will start
-using encryption. 
-
-Changing the way that HTTP operates therefore has the potential to re-balance
-the capabilities and rights of the various stakeholders.
+Currently, the capabilities of these stakeholders are defined by how the Web is
+deployed. Most notably, networks sometimes change content. If they change it too much, origin servers will start using encryption.   Changing the way that HTTP operates therefore has the potential to re-balance the capabilities of the various stakeholders.
 
 This section proposes several straw-man principles for consideration as the
 basis of those changes. Their sole purpose here is to provoke discussion.
