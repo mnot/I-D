@@ -280,11 +280,14 @@ traffic to a host other than the origin server for the URI in question. It
 requires no client configuration (hence its advantages over other methods). See
 {{RFC3040}} for an example of an interception-related protocol.
 
+Interception is also strongly motivated when it is necessary to assure that the
+proxy is always used, e.g., to enforce policy.
+
 Interception is problematic, however, because it is often done without the
-consent of either the end user or the origin server. This means that a response
-that appears to be coming from the origin server is actually coming from the
-intercepting proxy. This makes it difficult to support features like
-authentication, as the unexpected status code breaks many clients (e.g.,
+consent or knowledge of either the end user or the origin server. This means
+that a response that appears to be coming from the origin server is actually
+coming from the intercepting proxy. This makes it difficult to support features
+like authentication, as the unexpected status code breaks many clients (e.g.,
 non-interactive applications like software installers).
 
 
@@ -295,7 +298,8 @@ effect of another choice by the user.
 
 For example, the user might decide to add virus scanning -- either as installed
 software, or a service that they configure from their provider -- that is
-interposed as a proxy.
+interposed as a proxy. Indeed, almost all desktop virus scanners and content
+filters operate in this fashion.
 
 This approach has the merits of both being easy and obtaining explicit user
 consent. However, in some cases, the end user might not understand the
@@ -337,10 +341,9 @@ However, doing so engenders a few problems.
 
 Firstly, TLS as used on the Web is not a perfectly secure protocol, and using
 it to protect all traffic gives proxies a strong incentive to work around it,
-e.g., by deploying a certificate authority directly into browsers, or buying a
-sub-root certificate. Considering the current state of TLS on the Web,
-escalating the battle between intermediaries and endpoints may not end well for
-the latter parties.
+e.g., by deploying a certificate authority directly into browsers. Considering
+the current state of TLS on the Web, escalating the battle between
+intermediaries and endpoints may not end well for the latter parties.
 
 Secondly, it removes the opportunity for the proxy to inform the user agent of
 relevant information; for example, conditions of access, access denials, login
@@ -353,7 +356,7 @@ end user may wish to opt into.
 
 One example of many is when a remote village shares a proxy server to cache
 content, thereby helping to overcome the limitations of their Internet
-connection. TLS-protected HTTP traffic cannot be cached by intermediaries,
+connection. "https://" traffic cannot be cached by intermediaries,
 removing much of the benefit of the Web to what is arguably one of its most
 important target audiences.
 
@@ -620,7 +623,8 @@ Plenty of them, I suspect.
 
 # Acknowledgements
 
-Thanks to Amos Jeffries and Willy Tarreau for their comments and suggestions.
+Thanks to Amos Jeffries, Willy Tarreau and Patrick McManus for their comments
+and suggestions.
 
 
 --- back
