@@ -623,8 +623,8 @@ Plenty of them, I suspect.
 
 # Acknowledgements
 
-Thanks to Amos Jeffries, Willy Tarreau and Patrick McManus for their comments
-and suggestions.
+Thanks to Amos Jeffries, Willy Tarreau, Patrick McManus and Guy Podjarny for
+their comments and suggestions.
 
 
 --- back
