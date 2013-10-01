@@ -32,6 +32,7 @@ informative:
   RFC5246:
   RFC6455:
   RFC6585:
+  RFC6824:
   W3C.CR-ct-guidelines-20100617:
   I-D.mbelshe-httpbis-spdy:
   proxypac:
@@ -119,17 +120,11 @@ network operator -- sometimes even against the interests of the end users.
 This section attempts to identify the different motivations networks have for
 deploying proxies.
 
-## Request Routing
+## Application Layer Gatewaying
 
 Some networks do not have direct Internet connectivity for Web browsing. These
 networks can deploy proxies that do have Internet connectivity and then
 configure clients to use them.
-
-Note that some proxies may divert requests to servers other than the intended
-origin. For example, there is anecdotal evidence that a small number of
-networks re-route requests for advertising servers to their own servers in an
-attempt to co-opt the associated revenue, or to replace ads with "blank"
-content. This is really a form of content modification, discussed below.
 
 ## Caching
 
@@ -268,7 +263,9 @@ that limit its deployment:
   divergence and resulting interoperability problems.
   
 * There are DNS-based variants of WPAD, adding to to confusion.
+* DHCP options generally require tight integration with the operating system to pass the results to HTTP-based applications.  While this level of integration is found between O/Ses and their provided applications, the interface may or may not be available to third parties.
 
+There are other issues.  Between the combination of proxy.pac and WPAD a question arises about who should be responsible for configuring a proxy.  If it is not the local network, then the number of potential proxies can become unmanageable. 
 
 ## Interception
 
@@ -284,11 +281,13 @@ Interception is also strongly motivated when it is necessary to assure that the
 proxy is always used, e.g., to enforce policy.
 
 Interception is problematic, however, because it is often done without the
-consent or knowledge of either the end user or the origin server. This means
-that a response that appears to be coming from the origin server is actually
-coming from the intercepting proxy. This makes it difficult to support features
-like authentication, as the unexpected status code breaks many clients (e.g.,
+consent of either the end user or the origin server. This means that a response
+that appears to be coming from the origin server is actually coming from the
+intercepting proxy. This makes it difficult to support features like
+proxy authentication, as the unexpected status code breaks many clients (e.g.,
 non-interactive applications like software installers).
+
+In addition, as adoption of multi-path TCP (MPTCP){{RFC6824}} increases, the ability of intercepting proxies to offer a consistent service degrades.
 
 
 ## Configuration As Side Effect
@@ -298,7 +297,7 @@ effect of another choice by the user.
 
 For example, the user might decide to add virus scanning -- either as installed
 software, or a service that they configure from their provider -- that is
-interposed as a proxy. Indeed, almost all desktop virus scanners and content
+interposed as a proxy.  Indeed, almost all desktop virus scanners and content
 filters operate in this fashion.
 
 This approach has the merits of both being easy and obtaining explicit user
@@ -341,9 +340,8 @@ However, doing so engenders a few problems.
 
 Firstly, TLS as used on the Web is not a perfectly secure protocol, and using
 it to protect all traffic gives proxies a strong incentive to work around it,
-e.g., by deploying a certificate authority directly into browsers. Considering
-the current state of TLS on the Web, escalating the battle between
-intermediaries and endpoints may not end well for the latter parties.
+e.g., by deploying a certificate authority directly into browsers, or buying a
+sub-root certificate.
 
 Secondly, it removes the opportunity for the proxy to inform the user agent of
 relevant information; for example, conditions of access, access denials, login
@@ -356,7 +354,7 @@ end user may wish to opt into.
 
 One example of many is when a remote village shares a proxy server to cache
 content, thereby helping to overcome the limitations of their Internet
-connection. "https://" traffic cannot be cached by intermediaries,
+connection. TLS-protected HTTP traffic cannot be cached by intermediaries,
 removing much of the benefit of the Web to what is arguably one of its most
 important target audiences.
 
@@ -366,21 +364,17 @@ buying a sub-root certificate), to gain access to the application message
 flows. This represents a serious degradation in the trust infrastructure of the
 Web.
 
+Worse is the situation where proxies provide a certificate where they inure the user to a certificate warning that they must then ignore in order to receive service. 
 
 
 # Principles for Consideration {#principles}
 
-Every HTTP connection has (at least) three major stakeholders; the user
+Every HTTP connection has at least three major stakeholders; the user
 (through their agent), the origin server (possibly using gateways such as a
-CDN) and the network that the user uses to access the origin.
+CDN) and the networks that the user uses to access the origin.
 
-Currently, the rights of these stakeholders are defined by how the Web is
-deployed. Most notably, networks sometimes change content because they're able
-to. On the other hand, if they change it too much, origin servers will start
-using encryption. 
-
-Changing the way that HTTP operates therefore has the potential to re-balance
-the capabilities and rights of the various stakeholders.
+Currently, the capabilities of these stakeholders are defined by how the Web is
+deployed. Most notably, networks sometimes change content. If they change it too much, origin servers will start using encryption.   Changing the way that HTTP operates therefore has the potential to re-balance the capabilities of the various stakeholders.
 
 This section proposes several straw-man principles for consideration as the
 basis of those changes. Their sole purpose here is to provoke discussion.
@@ -459,7 +453,7 @@ Equally as important, the communication needs to clearly come from the proxy,
 rather than the origin.
 
 
-## Expectations Should be Low
+## Users require simple interfaces
 
 While some users are sophisticated in their understanding of Web security, they
 are in a vanishingly small minority. The concepts and implications of many
@@ -482,6 +476,10 @@ commonly-understood semantics of that indicator, as well as "https://" URIs, is
 likely to be extremely controversial, because it changes the already-understood
 security properties of the Web.
 
+
+## Proxies must function across a wide variety of applications
+
+HTTP is used in a wide variety of environments.  As such there can be no assumption that a user is sitting on the other end to interpret information or answer questions from proxies.
 
 ## Choices are Context-Specific
 
@@ -507,6 +505,11 @@ no-transform" as HTTP/1.1 does. Instead, the protocol needs to be designed in
 a way so that either transformations aren't possible, or if they are, they 
 can be detected (with appropriate handling by User Agents defined).
 
+## Selection of proxies must scale both in size and performance
+It must be possible to authorize a large group of proxies at once.  When a user changes location it should not be necessary to re-authorize a proxy if one is already known and available.
+
+Similarly, in a mobile world, detection of changed proxies must not unduly inhibit browser performance.
+
 
 ## It Needs to be Deployable
 
@@ -530,6 +533,10 @@ Unless another mechanism can be found or defined that offers equally attractive
 properties to network operators, we ought to consider that they'll continue to
 be deployed, and work to find ways to make their operation both more verifiable
 and unnecessary (or at least legitimate).
+
+## Improving Interception
+
+One solution may be to provide a means for interception proxies not only to identify themselves, but to provide optional explicit configuration for the http client.  The value of this is that it will solve problems relating to MPTCP.  On the other hand, the user must be in a position to make an intelligent decision.
 
 
 ## Improving Proxy.Pac and WPAD
