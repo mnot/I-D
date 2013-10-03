@@ -263,9 +263,16 @@ that limit its deployment:
   divergence and resulting interoperability problems.
   
 * There are DNS-based variants of WPAD, adding to to confusion.
-* DHCP options generally require tight integration with the operating system to pass the results to HTTP-based applications.  While this level of integration is found between O/Ses and their provided applications, the interface may or may not be available to third parties.
 
-There are other issues.  Between the combination of proxy.pac and WPAD a question arises about who should be responsible for configuring a proxy.  If it is not the local network, then the number of potential proxies can become unmanageable. 
+* DHCP options generally require tight integration with the operating system to
+  pass the results to HTTP-based applications. While this level of integration
+  is found between O/Ses and their provided applications, the interface may or
+  may not be available to third parties.
+
+There are other issues. Between the combination of proxy.pac and WPAD a
+question arises about who should be responsible for configuring a proxy. If it
+is not the local network, then the number of potential proxies can become
+unmanageable.
 
 ## Interception
 
@@ -287,7 +294,8 @@ intercepting proxy. This makes it difficult to support features like
 proxy authentication, as the unexpected status code breaks many clients (e.g.,
 non-interactive applications like software installers).
 
-In addition, as adoption of multi-path TCP (MPTCP){{RFC6824}} increases, the ability of intercepting proxies to offer a consistent service degrades.
+In addition, as adoption of multi-path TCP (MPTCP){{RFC6824}} increases, the
+ability of intercepting proxies to offer a consistent service degrades.
 
 
 ## Configuration As Side Effect
@@ -364,7 +372,9 @@ buying a sub-root certificate), to gain access to the application message
 flows. This represents a serious degradation in the trust infrastructure of the
 Web.
 
-Worse is the situation where proxies provide a certificate where they inure the user to a certificate warning that they must then ignore in order to receive service. 
+Worse is the situation where proxies provide a certificate where they inure the
+user to a certificate warning that they must then ignore in order to receive
+service.
 
 
 # Principles for Consideration {#principles}
@@ -374,7 +384,10 @@ Every HTTP connection has at least three major stakeholders; the user
 CDN) and the networks that the user uses to access the origin.
 
 Currently, the capabilities of these stakeholders are defined by how the Web is
-deployed. Most notably, networks sometimes change content. If they change it too much, origin servers will start using encryption.   Changing the way that HTTP operates therefore has the potential to re-balance the capabilities of the various stakeholders.
+deployed. Most notably, networks sometimes change content. If they change it
+too much, origin servers will start using encryption. Changing the way that
+HTTP operates therefore has the potential to re-balance the capabilities of the
+various stakeholders.
 
 This section proposes several straw-man principles for consideration as the
 basis of those changes. Their sole purpose here is to provoke discussion.
@@ -479,7 +492,9 @@ security properties of the Web.
 
 ## Proxies must function across a wide variety of applications
 
-HTTP is used in a wide variety of environments.  As such there can be no assumption that a user is sitting on the other end to interpret information or answer questions from proxies.
+HTTP is used in a wide variety of environments. As such there can be no
+assumption that a user is sitting on the other end to interpret information or
+answer questions from proxies.
 
 ## Choices are Context-Specific
 
@@ -506,9 +521,13 @@ a way so that either transformations aren't possible, or if they are, they
 can be detected (with appropriate handling by User Agents defined).
 
 ## Selection of proxies must scale both in size and performance
-It must be possible to authorize a large group of proxies at once.  When a user changes location it should not be necessary to re-authorize a proxy if one is already known and available.
 
-Similarly, in a mobile world, detection of changed proxies must not unduly inhibit browser performance.
+It must be possible to authorize a large group of proxies at once. When a user
+changes location it should not be necessary to re-authorize a proxy if one is
+already known and available.
+
+Similarly, in a mobile world, detection of changed proxies must not unduly
+inhibit browser performance.
 
 
 ## It Needs to be Deployable
@@ -536,7 +555,11 @@ and unnecessary (or at least legitimate).
 
 ## Improving Interception
 
-One solution may be to provide a means for interception proxies not only to identify themselves, but to provide optional explicit configuration for the http client.  The value of this is that it will solve problems relating to MPTCP.  On the other hand, the user must be in a position to make an intelligent decision.
+One solution may be to provide a means for interception proxies not only to
+identify themselves, but to provide optional explicit configuration for the
+http client. The value of this is that it will solve problems relating to
+MPTCP. On the other hand, the user must be in a position to make an intelligent
+decision.
 
 
 ## Improving Proxy.Pac and WPAD
