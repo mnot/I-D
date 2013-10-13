@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../Tools/rfc2629xslt/rfc2629.xslt" ?>
+<!DOCTYPE rfc SYSTEM "../Tools/rfc2629xslt/rfc2629.dtd">
+<rfc ipr="trust200902" docName="draft-nottingham-httpbis-alt-svc-00" category="std">
+  <?rfc toc="yes"?>
+  <?rfc tocindent="yes"?>
+  <?rfc sortrefs="yes"?>
+  <?rfc symrefs="yes"?>
+  <?rfc strict="yes"?>
+  <?rfc compact="yes"?>
+  <?rfc comments="yes"?>
+  <?rfc inline="yes"?>
+  <front>
+    <title abbrev="Alternate Services">HTTP Alternate Services</title>
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization/>
+      <address>
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net/</uri>
+      </address>
+    </author>
+    <date year="2013"/>
+    <area>General</area>
+    <workgroup>httpbis</workgroup>
+    <keyword>Internet-Draft</keyword>
+    <abstract>
+      <t>This document introduces “alternate services”, to allow an HTTP origin’s
+resources to be available at a seperate network location, possibly accessed
+with a different protocol configuration.</t>
+      <t>It also specifies one means of discovering alternate services, the “Alt-Svc”
+header field.</t>
+    </abstract>
+  </front>
+  <middle>
+    <section anchor="introduction" title="Introduction">
+      <t><xref target="I-D.ietf-httpbis-http2"/> specifies a few ways to negotiate the use of
+HTTP/2.0 without changing existing URIs. However, several deficiencies in using
+the “upgrade dance” for “http://” URIs have become apparent. While that
+mechanism is still being investigated, some have expressed interest in an
+alternate approach.</t>
+      <t>Furthermore, some implementers have expressed a strong desire to optimistically
+upgrade to TLS for “http://” URIs when using HTTP/2.0; see
+<xref target="I-D.nottingham-http2-encryption"/> for details.</t>
+      <t>Finally, HTTP/2.0 is designed to have longer-lived, fewer and more active TCP
+connections. While these properties are generally “friendlier” for the network,
+they can cause problems for servers that currently exploit the short-lived flow
+characteristics of HTTP/1.x for load balancing, session affinity and
+maintaining locality to the user.</t>
+      <t>This document specifies a new concept in HTTP, the “alternate service,” to
+address these use cases. An alternate service can be used to interact with the
+resources on an origin server at a separate location on the network, possibly
+using a different protocol configuration.</t>
+      <section anchor="notational-conventions" title="Notational Conventions">
+        <t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”,
+“SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be
+interpreted as described in <xref target="RFC2119"/>.</t>
+        <t>This document uses the Augmented BNF defined in <xref target="RFC5234"/> along with the
+“OWS”, “DIGIT”, “parameter”, “uri-host”, “port” and “delta-second” rules from
+<xref target="I-D.ietf-httpbis-p1-messaging"/>, and uses the “#rule” extension defined in
+Section 7 of that document.</t>
+      </section>
+    </section>
+    <section anchor="alternate-services" title="Alternate Services">
+      <t>On the Web, a resource is accessed through a scheme (e.g., “https” or “http”)
+on a nominated host / port combination.</t>
+      <t>These three pieces of information collectively can be used to establish the
+authority for ownership of the resource (its “origin”; see <xref target="RFC6454"/>), as
+well as providing enough information to bootstrap access to it.</t>
+      <t>This document introduces the notion of an “Alternate Service”; when an
+origin’s resources are accessible through a different protocol / host / port
+combination, it is said to have an alternate service.</t>
+      <t>For example, an origin:</t>
+      <figure>
+        <artwork><![CDATA[
+("http", "www.example.com", "80")
+]]></artwork>
+      </figure>
+      <t>might declare that its resources are also accessible at the alternate service:</t>
+      <figure>
+        <artwork><![CDATA[
+("http2", "new.example.com", "443")
+]]></artwork>
+      </figure>
+      <t>By their nature, alternate services are explicitly at the granularity of an
+origin; i.e., they cannot be selectively applied to resources within an origin.</t>
+      <t>Alternate services do not replace or change the origin for any given resource;
+in general, they are not visible to the software “above” the access mechanism.</t>
+      <t>Furthermore, it is important to note that the first member of an alternate
+service tuple is different from the “scheme” component of an origin; it is more
+specific, identifying not only the major version of the protocol being used,
+but potentially communication options for that protocol.</t>
+      <t>This means that clients using an alternate service will change the host, port
+and protocol that they are using to fetch resources, but these changes MUST NOT
+be propagated to the application that is using HTTP; from that standpoint, the
+URI being accessed and all information derived from it (scheme, host, port) are
+the same as before.</t>
+      <t>Importantly, this includes its security context; in particular, when TLS
+<xref target="RFC5246"/> is in use, the alternate server will need to present a certificate
+for the origin’s host name, not that of the alternate. Likewise, the Host
+header is still derived from the origin, not the alternate service.</t>
+      <t>The changes SHOULD, however, be made visible in debugging tools, consoles, etc.</t>
+      <t>Formally, an alternate service is identified by the combination of:</t>
+      <t>
+        <list style="symbols">
+          <t>An ALPN protocol, as per <xref target="I-D.ietf-tls-applayerprotoneg"/></t>
+          <t>A host, as per <xref target="RFC3986"/></t>
+          <t>A port, as per <xref target="RFC3986"/></t>
+        </list>
+      </t>
+      <t>Additionally, each alternate service can have:</t>
+      <t>
+        <list style="symbols">
+          <t>A numeric priority; see <xref target="priority"/></t>
+          <t>A freshness lifetime, expressed in seconds; see <xref target="caching"/></t>
+        </list>
+      </t>
+      <t>Potentially, there are many ways that a client could discover the alternate
+service(s) associated with an origin; this document currently defines one, the
+Alt-Svc HTTP Header Field (<xref target="alt-svc"/>).</t>
+      <section anchor="client-handling-for-alternate-services" title="Client Handling for Alternate Services">
+        <section anchor="host-authentication" title="Host Authentication">
+          <t>Clients MUST NOT use alternate services with a host other than the origin’s
+without strong server authentication; this mitigates the attack described in
+<xref target="host_security"/>. One way to achieve this is for the alternate to use TLS with
+a certificate that is valid for that origin.</t>
+          <t>For example, if the origin’s host is “www.example.com” and an alternate is
+offered on “other.example.com” with the “http2-tls” protocol, and the
+certificate offered is valid for “www.example.com”, the client can use the
+alternate. However, if “other.example.com” is offered with the “http2”
+protocol, the client cannot use it, because there is no mechanism in that
+protocol to establish strong server authentication.</t>
+        </section>
+        <section anchor="caching" title="Alternate Service Caching">
+          <t>Mechanisms for discovering alternate services can associate a freshness
+lifetime with them; for example, the Alt-Svc header field uses the “ma”
+parameter.</t>
+          <t>Clients MAY choose to use an alternate service instead of the origin at any
+time when it is considered fresh; see <xref target="switching"/> for specific
+reccommendations.</t>
+          <t>To mitigate risks associated with caching compromised values (see
+<xref target="host_security"/> for details), user agents SHOULD examine cached alternate
+services when they detect a change in network configuration, and remove any
+that could be compromised (for example, those whose association with the trust
+root is questionable). UAs that do not have a means of detecting network
+changes SHOULD place an upper bound on their lifetime.</t>
+        </section>
+        <section anchor="priority" title="Alternate Service Priorities">
+          <t>Mechanisms for discovering alternate services can associate a priority with
+them; for example, the Alt-Svc header field uses the “pr” parameter.</t>
+          <t>Priorities are numeric, with a range of 1-64, and are relative to the origin
+server, which has a static priority of 32. Higher values are preferable.</t>
+          <t>Therefore, an alternate with a priority of 48 will be used in preference to the
+origin server, whereas one with a priority of 10 will be used only when the
+origin server becomes unavailable.</t>
+          <t>Note that priorities are not specific to the mechanism that an alternate was
+discovered with; i.e., there is only one “pool” of priorities for an origin.</t>
+        </section>
+        <section anchor="switching" title="Switching to Alternate Services">
+          <t>By their nature, alternate services are optional; clients are not required to
+use them. However, it is advantageous for clients to behave in a predictable
+way when they are used.</t>
+          <t>Therefore, if a client becomes aware of an alternate service that has a higher
+priority than a connection currently in use, the client SHOULD use that
+alternate service as soon as it is available, provided that the security
+properties of the alternate service’s protocol are equal to the existing
+connection.</t>
+          <t>For example, if an origin advertises a “http2” alternate service using an
+“Alt-Svc” response header field, the client ought to immediately establish a
+connection to the alternate service, and use it in preference to the origin
+connection once available. The client is not required to block requests; the
+origin connection can be used until the alternate connection is established. </t>
+          <t>Furthermore, if the connection to the alternate service fails or is
+unresponsive, the client MAY fall back to using the origin, or a less
+preferable alternate service.</t>
+          <t>When the client becomes aware of an alternate service whose protocol is known
+to have improved security properties as compared to the existing connection, it
+SHOULD abstain from using the existing connection until the alternate service
+is available, or connection to it has failed. This will result in blocking
+requests, but avoids information leakage.</t>
+          <t>Clients SHOULD NOT fall back to a service (whether an alternate or the origin)
+that has inferior security properties without notifying the user.</t>
+        </section>
+      </section>
+    </section>
+    <section anchor="alt-svc" title="The Alt-Svc HTTP Header Field">
+      <t>A HTTP(S) server can advertise the availability of alternate services to
+HTTP/1.1 and HTTP/2.0 clients by adding an Alt-Svc header field to responses.</t>
+      <figure>
+        <artwork><![CDATA[
+Alt-Svc           = 1#( alternate-service *( OWS ";" OWS parameter ) )
+alternate-service = protocol-id "=" [ uri-host ] ":" port
+protocol-id       = <ALPN protocol identifier>
+]]></artwork>
+      </figure>
+      <t>For example:</t>
+      <figure>
+        <artwork><![CDATA[
+Alt-Svc: http2=:8000
+]]></artwork>
+      </figure>
+      <t>This indicates that the “http2” protocol on the same host using the
+indicated port (in this case, 8000).</t>
+      <t>Alt-Svc can also contain a host:</t>
+      <figure>
+        <artwork><![CDATA[
+Alt-Svc: http2-tls=other.example.com:443
+]]></artwork>
+      </figure>
+      <t>This indicates that all resources on the origin are available using the
+“http2-tls” profile on other.example.com port 443.</t>
+      <t>It can also have multiple values:</t>
+      <figure>
+        <artwork><![CDATA[
+Alt-Svc: http2=:8000, http2-tls=other.example.com:443
+]]></artwork>
+      </figure>
+      <t>The value(s) advertised by Alt-Svc can be used by clients to open a new
+connection to one or more alternate services immediately, or simultaneously
+with subsequent requests on the same connection.</t>
+      <t>Intermediaries MUST NOT change or append Alt-Svc values. </t>
+      <section anchor="caching-alt-svc-header-field-values" title="Caching Alt-Svc Header Field Values">
+        <t>When an alternate service is advertised using Alt-Svc, it is considered usable
+for 24 hours from generation of the message. This can be modified with the ‘ma’
+(max-age’) parameter;</t>
+        <figure>
+          <artwork><![CDATA[
+Alt-Svc: http2-tls=:443;ma=3600
+]]></artwork>
+        </figure>
+        <t>which indicates the number of seconds since the response was generated the
+alternate service is considered fresh for. </t>
+        <figure>
+          <artwork><![CDATA[
+ma = delta-seconds
+]]></artwork>
+        </figure>
+        <t>See <xref target="I-D.ietf-httpbis-p6-cache"/> Section 4.2.3 for details of determining
+response age. For example, a response:</t>
+        <figure>
+          <artwork><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: text/html
+Cache-Control: 600
+Age: 30
+Alt-Svc: http2=:8000; ma=60
+]]></artwork>
+        </figure>
+        <t>indicates that an alternate service is available and usable for the next 60
+seconds. However, the response has already been cached for 30 seconds (as per
+the Age header field value), so therefore the alternate service is only fresh
+for the 30 seconds from when this response was received, minus estimated
+transit time. </t>
+        <t>See <xref target="caching"/> for general requirements on cached alternate services.</t>
+        <t>Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
+affect caching of Alt-Svc values.</t>
+      </section>
+      <section anchor="indicating-alt-svc-header-field-priority" title="Indicating Alt-Svc Header Field Priority">
+        <t>Finally, an explicit priority can be associated with an Alt-Svc header field
+value by using the “pr” parameter:</t>
+        <figure>
+          <artwork><![CDATA[
+Alt-Svc: http2:8000 ;pr=64
+]]></artwork>
+        </figure>
+        <t>See <xref target="priority"/> for details of the priority mechanism. </t>
+        <figure>
+          <artwork><![CDATA[
+pr = 1*2DIGIT
+]]></artwork>
+        </figure>
+        <t>If the “pr” parameter is not present or is invalid, the default priority for
+alternate services discovered with the Alt-Svc header field is 48.</t>
+      </section>
+    </section>
+    <section anchor="security-considerations" title="Security Considerations">
+      <section anchor="changing-ports" title="Changing Ports">
+        <t>Using an alternate service implies accessing an origin’s resources on an
+alternate port, at a minimum. An attacker that can inject alternate services
+and listen at the advertised port is therefore able to hijack an origin.</t>
+        <t>For example, an attacker that can add HTTP response header fields can redirect
+traffic to a different port on the same host using the Alt-Svc header field; if
+it is under their control, they can thus masquerade as the HTTP server.</t>
+        <t>This risk can be mitigated by restricting the ability to set the Alt-Svc
+response header field on the origin, and restricting who can open a port for
+listening.</t>
+      </section>
+      <section anchor="host_security" title="Changing Hosts">
+        <t>When the host is changed due to the use of an alternate service, it presents an
+opportunity for attackers to hijack communication to an origin.</t>
+        <t>For example, if an attacker can convince a user agent to send all traffic for
+“innocent.example.org” to “evil.example.com” by successfully associating it as
+an alternate service, they can masquarade as that origin.</t>
+        <t>This is the reason for the requirement that any alternate service with a host
+different to the origin’s be strongly authenticated with the origin’s identity;
+i.e., presenting a certificate for the origin proves that the alternate service
+is authorized to serve traffic for the origin.</t>
+        <t>However, this authorization is only as strong as the method used to
+authenticate the alternate service. In particular, there are well-known
+exploits to make an attacker’s certificate appear as legitimate.</t>
+        <t>Alternate services could be used to persist such an attack; for example, an
+intermediary could man-in-the-middle TLS-protected communication to a target,
+and then direct all traffic to an alternate service with a large freshness
+lifetime, so that the user agent still directs traffic to the attacker even when
+not using the intermediary.</t>
+        <t>As a result, there is a requirement to examine cached alternate services when a
+network change is detected.</t>
+      </section>
+      <section anchor="changing-protocols" title="Changing Protocols">
+        <t>When the ALPN protocol is changed due to the use of an alternate service, the
+security properties of the new connection to the origin can be different from
+that of the “normal” connection to the origin, because the protocol identifier
+itself implies this.</t>
+        <t>For example, if a “https://” URI had a protocol advertised that does not use
+some form of end-to-end encryption (most likely, TLS), it violates the
+expectations for security that the URI scheme implies.</t>
+        <t>Therefore, clients cannot blindly use alternate services, but instead
+evaluate the option(s) presented to assure that requirements and expectations
+(of specifications, implementations and end users) are met.</t>
+      </section>
+    </section>
+  </middle>
+  <back>
+    <references title="Normative References">
+      <reference anchor="RFC2119">
+        <front>
+          <title abbrev="RFC Key Words">Key words for use in RFCs to Indicate Requirement Levels</title>
+          <author initials="S." surname="Bradner" fullname="Scott Bradner">
+            <organization>Harvard University</organization>
+            <address>
+              <postal>
+                <street>1350 Mass. Ave.</street>
+                <street>Cambridge</street>
+                <street>MA 02138</street>
+              </postal>
+              <phone>- +1 617 495 3864</phone>
+              <email>sob@harvard.edu</email>
+            </address>
+          </author>
+          <date year="1997" month="March"/>
+          <area>General</area>
+          <keyword>keyword</keyword>
+          <abstract>
+            <t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list><t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+            <t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t>
+          </abstract>
+        </front>
+        <seriesInfo name="BCP" value="14"/>
+        <seriesInfo name="RFC" value="2119"/>
+        <format type="TXT" octets="4723" target="http://www.rfc-editor.org/rfc/rfc2119.txt"/>
+        <format type="HTML" octets="17970" target="http://xml.resource.org/public/rfc/html/rfc2119.html"/>
+        <format type="XML" octets="5777" target="http://xml.resource.org/public/rfc/xml/rfc2119.xml"/>
+      </reference>
+      <reference anchor="RFC3986">
+        <front>
+          <title abbrev="URI Generic Syntax">Uniform Resource Identifier (URI): Generic Syntax</title>
+          <author initials="T." surname="Berners-Lee" fullname="Tim Berners-Lee">
+            <organization abbrev="W3C/MIT">World Wide Web Consortium</organization>
+            <address>
+              <postal>
+                <street>Massachusetts Institute of Technology</street>
+                <street>77 Massachusetts Avenue</street>
+                <city>Cambridge</city>
+                <region>MA</region>
+                <code>02139</code>
+                <country>USA</country>
+              </postal>
+              <phone>+1-617-253-5702</phone>
+              <facsimile>+1-617-258-5999</facsimile>
+              <email>timbl@w3.org</email>
+              <uri>http://www.w3.org/People/Berners-Lee/</uri>
+            </address>
+          </author>
+          <author initials="R." surname="Fielding" fullname="Roy T. Fielding">
+            <organization abbrev="Day Software">Day Software</organization>
+            <address>
+              <postal>
+                <street>5251 California Ave., Suite 110</street>
+                <city>Irvine</city>
+                <region>CA</region>
+                <code>92617</code>
+                <country>USA</country>
+              </postal>
+              <phone>+1-949-679-2960</phone>
+              <facsimile>+1-949-679-2972</facsimile>
+              <email>fielding@gbiv.com</email>
+              <uri>http://roy.gbiv.com/</uri>
+            </address>
+          </author>
+          <author initials="L." surname="Masinter" fullname="Larry Masinter">
+            <organization abbrev="Adobe Systems">Adobe Systems Incorporated</organization>
+            <address>
+              <postal>
+                <street>345 Park Ave</street>
+                <city>San Jose</city>
+                <region>CA</region>
+                <code>95110</code>
+                <country>USA</country>
+              </postal>
+              <phone>+1-408-536-3024</phone>
+              <email>LMM@acm.org</email>
+              <uri>http://larry.masinter.net/</uri>
+            </address>
+          </author>
+          <date year="2005" month="January"/>
+          <area>Applications</area>
+          <keyword>uniform resource identifier</keyword>
+          <keyword>URI</keyword>
+          <keyword>URL</keyword>
+          <keyword>URN</keyword>
+          <keyword>WWW</keyword>
+          <keyword>resource</keyword>
+          <abstract>
+            <t>
+A Uniform Resource Identifier (URI) is a compact sequence of characters
+that identifies an abstract or physical resource.  This specification
+defines the generic URI syntax and a process for resolving URI references
+that might be in relative form, along with guidelines and security
+considerations for the use of URIs on the Internet.
+The URI syntax defines a grammar that is a superset of all valid URIs,
+allowing an implementation to parse the common components of a URI
+reference without knowing the scheme-specific requirements of every
+possible identifier.  This specification does not define a generative
+grammar for URIs; that task is performed by the individual
+specifications of each URI scheme.
+</t>
+          </abstract>
+        </front>
+        <seriesInfo name="STD" value="66"/>
+        <seriesInfo name="RFC" value="3986"/>
+        <format type="TXT" octets="141811" target="http://www.rfc-editor.org/rfc/rfc3986.txt"/>
+        <format type="HTML" octets="214067" target="http://xml.resource.org/public/rfc/html/rfc3986.html"/>
+        <format type="XML" octets="163534" target="http://xml.resource.org/public/rfc/xml/rfc3986.xml"/>
+      </reference>
+      <reference anchor="RFC5234">
+        <front>
+          <title>Augmented BNF for Syntax Specifications: ABNF</title>
+          <author initials="D." surname="Crocker" fullname="D. Crocker">
+            <organization/>
+          </author>
+          <author initials="P." surname="Overell" fullname="P. Overell">
+            <organization/>
+          </author>
+          <date year="2008" month="January"/>
+          <abstract>
+            <t>Internet technical specifications often need to define a formal syntax.  Over the years, a modified version of Backus-Naur Form (BNF), called Augmented BNF (ABNF), has been popular among many Internet specifications.  The current specification documents ABNF.  It balances compactness and simplicity with reasonable representational power.  The differences between standard BNF and ABNF involve naming rules, repetition, alternatives, order-independence, and value ranges.  This specification also supplies additional rule definitions and encoding for a core lexical analyzer of the type common to several Internet specifications. [STANDARDS-TRACK]</t>
+          </abstract>
+        </front>
+        <seriesInfo name="STD" value="68"/>
+        <seriesInfo name="RFC" value="5234"/>
+        <format type="TXT" octets="26359" target="http://www.rfc-editor.org/rfc/rfc5234.txt"/>
+      </reference>
+      <reference anchor="RFC6454">
+        <front>
+          <title>The Web Origin Concept</title>
+          <author initials="A." surname="Barth" fullname="A. Barth">
+            <organization/>
+          </author>
+          <date year="2011" month="December"/>
+          <abstract>
+            <t>This document defines the concept of an "origin", which is often used as the scope of authority or privilege by user agents.  Typically, user agents isolate content retrieved from different origins to prevent malicious web site operators from interfering with the operation of benign web sites.  In addition to outlining the principles that underlie the concept of origin, this document details how to determine the origin of a URI and how to serialize an origin into a string.  It also defines an HTTP header field, named "Origin", that indicates which origins are associated with an HTTP request. [STANDARDS-TRACK]</t>
+          </abstract>
+        </front>
+        <seriesInfo name="RFC" value="6454"/>
+        <format type="TXT" octets="41363" target="http://www.rfc-editor.org/rfc/rfc6454.txt"/>
+      </reference>
+      <reference anchor="I-D.ietf-tls-applayerprotoneg">
+        <front>
+          <title>Transport Layer Security (TLS) Application Layer Protocol Negotiation Extension</title>
+          <author initials="S" surname="Friedl" fullname="Stephan Friedl">
+            <organization/>
+          </author>
+          <author initials="A" surname="Popov" fullname="Andrey Popov">
+            <organization/>
+          </author>
+          <author initials="A" surname="Langley" fullname="Adam Langley">
+            <organization/>
+          </author>
+          <author initials="S" surname="Emile" fullname="Stephan Emile">
+            <organization/>
+          </author>
+          <date month="September" day="30" year="2013"/>
+          <abstract>
+            <t>This document describes a Transport Layer Security (TLS) extension for application layer protocol negotiation within the TLS handshake. For instances in which the TLS connection is established over a well known TCP/IP port not associated with the desired application layer protocol, this extension allows the application layer to negotiate which protocol will be used within the TLS session.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-tls-applayerprotoneg-02"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-tls-applayerprotoneg-02.txt"/>
+      </reference>
+      <reference anchor="I-D.ietf-httpbis-p1-messaging">
+        <front>
+          <title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+          <author initials="R" surname="Fielding" fullname="Roy Fielding">
+            <organization/>
+          </author>
+          <author initials="J" surname="Reschke" fullname="Julian Reschke">
+            <organization/>
+          </author>
+          <date month="September" day="25" year="2013"/>
+          <abstract>
+            <t>The Hypertext Transfer Protocol (HTTP) is an application-level protocol for distributed, collaborative, hypertext information systems.  HTTP has been in use by the World Wide Web global information initiative since 1990.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes general security concerns for implementations.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-p1-messaging-24"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p1-messaging-24.txt"/>
+      </reference>
+      <reference anchor="I-D.ietf-httpbis-p6-cache">
+        <front>
+          <title>Hypertext Transfer Protocol (HTTP/1.1): Caching</title>
+          <author initials="R" surname="Fielding" fullname="Roy Fielding">
+            <organization/>
+          </author>
+          <author initials="M" surname="Nottingham" fullname="Mark Nottingham">
+            <organization/>
+          </author>
+          <author initials="J" surname="Reschke" fullname="Julian Reschke">
+            <organization/>
+          </author>
+          <date month="September" day="25" year="2013"/>
+          <abstract>
+            <t>The Hypertext Transfer Protocol (HTTP) is an application-level protocol for distributed, collaborative, hypertext information systems.  This document defines requirements on HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-p6-cache-24"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p6-cache-24.txt"/>
+      </reference>
+    </references>
+    <references title="Informative References">
+      <reference anchor="RFC5246">
+        <front>
+          <title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
+          <author initials="T." surname="Dierks" fullname="T. Dierks">
+            <organization/>
+          </author>
+          <author initials="E." surname="Rescorla" fullname="E. Rescorla">
+            <organization/>
+          </author>
+          <date year="2008" month="August"/>
+          <abstract>
+            <t>This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications security over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t>
+          </abstract>
+        </front>
+        <seriesInfo name="RFC" value="5246"/>
+        <format type="TXT" octets="222395" target="http://www.rfc-editor.org/rfc/rfc5246.txt"/>
+      </reference>
+      <reference anchor="RFC6555">
+        <front>
+          <title>Happy Eyeballs: Success with Dual-Stack Hosts</title>
+          <author initials="D." surname="Wing" fullname="D. Wing">
+            <organization/>
+          </author>
+          <author initials="A." surname="Yourtchenko" fullname="A. Yourtchenko">
+            <organization/>
+          </author>
+          <date year="2012" month="April"/>
+          <abstract>
+            <t>When a server's IPv4 path and protocol are working, but the server's IPv6 path and protocol are not working, a dual-stack client application experiences significant connection delay compared to an IPv4-only client.  This is undesirable because it causes the dual- stack client to have a worse user experience.  This document specifies requirements for algorithms that reduce this user-visible delay and provides an algorithm. [STANDARDS-TRACK]</t>
+          </abstract>
+        </front>
+        <seriesInfo name="RFC" value="6555"/>
+        <format type="TXT" octets="34048" target="http://www.rfc-editor.org/rfc/rfc6555.txt"/>
+      </reference>
+      <reference anchor="I-D.ietf-httpbis-http2">
+        <front>
+          <title>Hypertext Transfer Protocol version 2.0</title>
+          <author initials="M" surname="Belshe" fullname="Mike Belshe">
+            <organization/>
+          </author>
+          <author initials="R" surname="Peon" fullname="Roberto Peon">
+            <organization/>
+          </author>
+          <author initials="M" surname="Thomson" fullname="Martin Thomson">
+            <organization/>
+          </author>
+          <author initials="A" surname="Melnikov" fullname="Alexey Melnikov">
+            <organization/>
+          </author>
+          <date month="August" day="21" year="2013"/>
+          <abstract>
+            <t>This specification describes an optimized expression of the syntax of the Hypertext Transfer Protocol (HTTP).  The HTTP/2.0 encapsulation enables more efficient use of network resources and reduced perception of latency by allowing header field compression and multiple concurrent messages on the same connection.  It also introduces unsolicited push of representations from servers to clients.  This document is an alternative to, but does not obsolete the HTTP/1.1 message format or protocol.  HTTP's existing semantics remain unchanged.  This version of the draft has been marked for implementation. Interoperability testing will occur in the HTTP/2.0 interim in Seatle, US, starting 2013-10-09.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-http2-06"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-06.txt"/>
+      </reference>
+      <reference anchor="I-D.nottingham-http2-encryption">
+        <front>
+          <title>Encryption for HTTP URIs Using Alternate Services</title>
+          <author initials="M" surname="Nottingham" fullname="Mark Nottingham">
+            <organization/>
+          </author>
+          <date month="September" day="30" year="2013"/>
+          <abstract>
+            <t>This document proposes a way to optimistically encrypt HTTP/2.0 using TLS for HTTP URIs.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-nottingham-http2-encryption-00"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-nottingham-http2-encryption-00.txt"/>
+      </reference>
+    </references>
+    <section anchor="acknowledgements" title="Acknowledgements">
+      <t>Thanks to Patrick McManus, Eliot Lear, Stephen Farrell, Guy Podjarny, Stephen
+Ludin, Erik Nygren, Paul Hoffman, Adam Langley and Will Chan for their feedback
+and suggestions.</t>
+      <t>The Alt-Svc header field was influenced by the design of the Alternate-Protocol
+header in SPDY (but not its specification, since it didn’t have one).</t>
+    </section>
+    <section anchor="implementation-status" title="Implementation Status">
+      <t>No existing implementations. </t>
+      <t>To bootstrap interop, first round testing is proposed as:</t>
+      <t>
+        <list style="symbols">
+          <t>Alt-Svc header field in a random response on an HTTP/1 connection; might be first, might be later</t>
+          <t>Advertised service is http2 (draft) ALPN token on same host, different port</t>
+          <t>No TLS (yet)</t>
+        </list>
+      </t>
+    </section>
+    <section anchor="todo" title="TODO">
+      <t>
+        <list style="symbols">
+          <t>GOAWAY: A GOAWAY-like frame (or just a GOAWAY modification) that allows an
+alternate service to be switched to will be suggested in a future revision.</t>
+          <t>DNS: Alternate services are also amenable to DNS-based discovery. If there is
+sufficient interest, a future revision may include a proposal for that.</t>
+          <t>Indicating Chosen Service: It’s likely necessary for the server to know which
+protocol the user agent has chosen, and perhaps even the hostname (for load
+balancing). This could be conveyed as part of the “magic”, or as a request
+header.</t>
+          <t>IPV6: The intersection between Alternate Services and Happy Eyeballs
+<xref target="RFC6555"/> should be investigated.</t>
+          <t>ALPN strings: all of the ALPN strings in this document are fictional; they
+need to be updated based upon that specification’s progress (and the
+registry, eventually).</t>
+        </list>
+      </t>
+    </section>
+  </back>
+</rfc>
