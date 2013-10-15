@@ -21,7 +21,6 @@
     </author>
     <date year="2013"/>
     <area>General</area>
-    <workgroup>httpbis</workgroup>
     <keyword>Internet-Draft</keyword>
     <abstract>
       <t>This document introduces “alternate services”, to allow an HTTP origin’s
@@ -166,9 +165,10 @@ properties of the alternate service’s protocol are equal to the existing
 connection.</t>
           <t>For example, if an origin advertises a “http2” alternate service using an
 “Alt-Svc” response header field, the client ought to immediately establish a
-connection to the alternate service, and use it in preference to the origin
-connection once available. The client is not required to block requests; the
-origin connection can be used until the alternate connection is established. </t>
+connection to the most preferable alternate service, and use it in preference
+to the origin connection once available. The client is not required to block
+requests; the origin connection can be used until the alternate connection is
+established.</t>
           <t>Furthermore, if the connection to the alternate service fails or is
 unresponsive, the client MAY fall back to using the origin, or a less
 preferable alternate service.</t>
@@ -617,18 +617,21 @@ specifications of each URI scheme.
 Ludin, Erik Nygren, Paul Hoffman, Adam Langley and Will Chan for their feedback
 and suggestions.</t>
       <t>The Alt-Svc header field was influenced by the design of the Alternate-Protocol
-header in SPDY (but not its specification, since it didn’t have one).</t>
+header in SPDY.</t>
     </section>
     <section anchor="implementation-status" title="Implementation Status">
       <t>No existing implementations. </t>
       <t>To bootstrap interop, first round testing is proposed as:</t>
       <t>
-        <list style="symbols">
+        <list style="numbers">
           <t>Alt-Svc header field in a random response on an HTTP/1 connection; might be first, might be later</t>
           <t>Advertised service is http2 (draft) ALPN token on same host, different port</t>
-          <t>No TLS (yet)</t>
+          <t>No TLS (yet; see <xref target="I-D.nottingham-http2-encryption"/>)</t>
         </list>
       </t>
+      <t>Second round interop will focus on changing protocols (anticipating
+<xref target="I-D.nottingham-http2-encryption"/>), and third round will focus on changing
+hosts.</t>
     </section>
     <section anchor="todo" title="TODO">
       <t>

@@ -7,7 +7,7 @@ category: std
 
 ipr: trust200902
 area: General
-workgroup: httpbis
+workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
@@ -206,9 +206,10 @@ connection.
 
 For example, if an origin advertises a "http2" alternate service using an
 "Alt-Svc" response header field, the client ought to immediately establish a
-connection to the alternate service, and use it in preference to the origin
-connection once available. The client is not required to block requests; the
-origin connection can be used until the alternate connection is established. 
+connection to the most preferable alternate service, and use it in preference
+to the origin connection once available. The client is not required to block
+requests; the origin connection can be used until the alternate connection is
+established.
 
 Furthermore, if the connection to the alternate service fails or is
 unresponsive, the client MAY fall back to using the origin, or a less
@@ -375,7 +376,7 @@ Ludin, Erik Nygren, Paul Hoffman, Adam Langley and Will Chan for their feedback
 and suggestions.
 
 The Alt-Svc header field was influenced by the design of the Alternate-Protocol
-header in SPDY (but not its specification, since it didn't have one).
+header in SPDY.
 
 # Implementation Status
 
@@ -383,10 +384,13 @@ No existing implementations.
 
 To bootstrap interop, first round testing is proposed as:
 
-* Alt-Svc header field in a random response on an HTTP/1 connection; might be first, might be later
-* Advertised service is http2 (draft) ALPN token on same host, different port
-* No TLS (yet)
+1. Alt-Svc header field in a random response on an HTTP/1 connection; might be first, might be later
+2. Advertised service is http2 (draft) ALPN token on same host, different port
+3. No TLS (yet; see {{I-D.nottingham-http2-encryption}})
 
+Second round interop will focus on changing protocols (anticipating
+{{I-D.nottingham-http2-encryption}}), and third round will focus on changing
+hosts.
 
 # TODO
 
