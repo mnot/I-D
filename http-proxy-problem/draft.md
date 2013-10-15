@@ -164,7 +164,7 @@ appropriate content, or that violates local law.
 
 Intermediary proxies as a mechanism for enforcing content are often easy to
 circumvent. For example, a device might become infected by using a different
-network. Nevertheless, they are commonly used.
+network, or a VPN. Nevertheless, they are commonly used.
 
 Some content policy enforcement is also done locally to the user agent; for
 example, several Operating Systems have machine-local proxies built in that
@@ -185,6 +185,10 @@ interpose proxies that modify content in an attempt to save bandwidth, improve
 perceived performance, or transcode content to formats that limited-resource
 devices can more easily consume.
 
+Small modifications also include adding metadata in headers for accounting
+purposes, or removing metadata such as Accept-Encoding to make virus scanning
+easier.
+
 In other cases, content modification is performed to make more substantial
 modifications. This could include inserting advertisements, or changing the
 layout of content in an attempt to make it easier to use.
@@ -204,7 +208,6 @@ technically enforced.
 Practices Working Group that attempts to set guidelines for content
 modification proxies. Again, it is a policy document, without technical
 enforcement measures.
-
 
 
 # How Proxies are Interposed {#how}
@@ -406,8 +409,11 @@ portion of those deployed used.
 ## Users Need to be Informed of Proxies
 
 When a proxy is interposed, the user needs to be informed about it, so they
-have the opportunity to change their configuration (e.g., introduce
+have the opportunity to change their configuration (e.g., attempt to introduce
 encryption), or not use the network at all.
+
+Proxies also need to be strongly authenticated; i.e., users need to be able to
+verify who the proxy is.
 
 
 ## Users Need to be able to Tunnel through Proxies
@@ -463,7 +469,7 @@ Importantly, proxies also need a limited communication channel when TLS is in
 use, for similar purposes.
 
 Equally as important, the communication needs to clearly come from the proxy,
-rather than the origin.
+rather than the origin, and be strongly authenticated.
 
 
 ## Users require simple interfaces
@@ -520,6 +526,7 @@ no-transform" as HTTP/1.1 does. Instead, the protocol needs to be designed in
 a way so that either transformations aren't possible, or if they are, they 
 can be detected (with appropriate handling by User Agents defined).
 
+
 ## Selection of proxies must scale both in size and performance
 
 It must be possible to authorize a large group of proxies at once. When a user
@@ -545,21 +552,13 @@ bearing the principles suggested above in mind.
 ## Living with Interception
 
 The IETF has long fought against interception proxies, as they are
-indistinguishable from Man-In-The-Middle attacks. Nevertheless, it persists as
+indistinguishable from Man-In-The-Middle attacks. Nevertheless, they persist as
 the preferred method for interposing proxies in many networks.
 
 Unless another mechanism can be found or defined that offers equally attractive
 properties to network operators, we ought to consider that they'll continue to
 be deployed, and work to find ways to make their operation both more verifiable
 and unnecessary (or at least legitimate).
-
-## Improving Interception
-
-One solution may be to provide a means for interception proxies not only to
-identify themselves, but to provide optional explicit configuration for the
-http client. The value of this is that it will solve problems relating to
-MPTCP. On the other hand, the user must be in a position to make an intelligent
-decision.
 
 
 ## Improving Proxy.Pac and WPAD
@@ -620,7 +619,7 @@ user can choose whether to trust the proxy.
 
 Currently, it is possible to exploit the mismatched incentives and other flaws
 in the CA system to cause a browser to trust a proxy as authoritative for a
-"https://" URI without full user knowledge. This needs to be remedied.
+"https://" URI without full user knowledge. This needs to be remedied; otherwise, proxies will continue to man-in-the-middle TLS.
 
 
 ## HTTP Signatures
@@ -653,8 +652,8 @@ Plenty of them, I suspect.
 
 # Acknowledgements
 
-Thanks to Amos Jeffries, Willy Tarreau, Patrick McManus, Guy Podjarny and Eliot
-Lear for their comments and suggestions.
+Thanks to Amos Jeffries, Willy Tarreau, Patrick McManus, Guy Podjarny, Eliot
+Lear and Martin Nilsson for their comments and suggestions.
 
 
 --- back
@@ -692,9 +691,7 @@ stream (i.e., anything from the request other than the origin), nor any
 responses.
 
 When FooCorp employees use the network, they don't have to log in or otherwise
-accept the presence of the proxy; however information about the proxy is
-available in their browser (e.g., an "about this network" menu item, or an
-indicator in the user interface).
+accept the presence of the proxy.
 
 
 ## Coffee Shop Capture Proxy
@@ -762,7 +759,22 @@ not desired.
 
 ## Protocol Transforming Proxy
 
-TBD
+MobileCorp interposes proxies that re-encode images before they're transmitted
+across the 3G network. This saves MobileCorp significant amounts of bandwidth
+(up to half), thereby increasing the capacity of their overloaded, expensive
+network, and allowing them to offer competitive rates for service.
+
+MobileCorp therefore has a very strong incentive to continue to re-encode
+images. However, growing use of encrypted connections faces them with a problem.
+
+Most content providers don't mind these transformations, since they will speed
+up the page loads. However, because the transformations are out of their
+control, some may dislike it, since image quality may suffer. For example, a
+photographer or medical image service could have significant objections.
+
+Users, meanwhile, are mostly accepting of MobileCorp's transformations, as long
+as they do not reduce quality to the point where images are unusable.
+
 
 ## Shared Community Caching Proxy
 
