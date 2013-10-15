@@ -25,7 +25,6 @@ normative:
   RFC2119:
 
 informative:
-  RFC2145:
   RFC2616:
   RFC2818:
   RFC3040:
@@ -35,6 +34,7 @@ informative:
   RFC6824:
   W3C.CR-ct-guidelines-20100617:
   I-D.mbelshe-httpbis-spdy:
+  I-D.ietf-httpbis-p6-caching:
   proxypac:
     target: http://en.wikipedia.org/wiki/Proxy_auto-config
     title: Proxy Auto-Config
@@ -56,22 +56,29 @@ informative:
       ins: EFF
       name: Electronic Freedom Foundation
     date: 2013
+  tls-mitm:
+    target: https://www.grc.com/miscfiles/HTTPS_Interception_Proxies.pdf
+    title: SSL/TLS Interception Proxies and Transitive Trust
+    author:
+      ins: J. Jarmoc
+      name: Jeff Jarmoc
+    date: 2012
+    
 
 --- abstract
 
 This document discusses the use and configuration of proxies in HTTP, pointing
-out problems in the currently deployed infrastructure along the way. It then
-offers a few principles to base further discussion upon, and lists some
+out problems in the currently deployed Web infrastructure along the way. It
+then offers a few principles to base further discussion upon, and lists some
 potential avenues for further exploration.
 
 --- middle
 
 # Introduction
 
-HTTP/1.1 {{RFC2616}} was designed to accommodate proxies explicitly. It allows
-proxies (and other components) to cache content expansively, and allows for
-proxies to break "semantic transparency" by changing message content, within
-broad constraints.
+HTTP/1.1 {{RFC2616}} was designed to accommodate proxies. It allows them (and
+other components) to cache content expansively, and allows for proxies to break
+"semantic transparency" by changing message content, within broad constraints.
 
 As the Web has matured, more networks have taken advantage of this by deploying
 proxies for a variety of reasons, in a number of different ways. {{why}} is a
@@ -79,19 +86,18 @@ survey of the different ways that proxies are used, and {{how}} shows how they
 are interposed into communication.
 
 Some uses of proxies cause problems (or the perception of them) for origin
-servers and end users. While some uses for proxies are obviously undesirable
-from the perspective of an end users and/or origin server, other effects of
-their deployment are more subtle; these are examined in {{effects}}.
+servers and end users. While some uses are obviously undesirable from the
+perspective of an end users and/or origin server, other effects of their
+deployment are more subtle; these are examined in {{effects}}.
 
 These tensions between the interests of the stakeholders in every HTTP
 connection -- the end users, the origin servers and the networks they use --
 has led to decreased trust for proxies, then increasing deployment of
 encryption, then workarounds for encryption, and so forth.
 
-Left unchecked, this escalation can erode the value of the Web itself. This
-draft therefore attempts to examine the status of proxy use and deployment,
-along with their affects upon the Web itself. Therefore, {{principles}}
-proposes straw-man principals to base further discussion upon.
+Left unchecked, this escalation can erode the value of the Web itself.
+Therefore, {{principles}} proposes straw-man principals to base further
+discussion upon.
 
 Finally, {{further}} proposes some areas of technical investigation that may
 yield solutions (or at least mitigations) for some of these problems.
@@ -112,7 +118,7 @@ document are to be interpreted as described in {{RFC2119}}.
 
 # Why Proxy? {#why}
 
-HTTP proxies are interposed between the user and the origin server for a
+HTTP proxies are interposed between user agents and origin servers for a
 variety of purposes; some of them are with the full knowledge and consent of
 end users, to their benefit, and some are solely for the purposes of the
 network operator -- sometimes even against the interests of the end users.
@@ -126,15 +132,18 @@ Some networks do not have direct Internet connectivity for Web browsing. These
 networks can deploy proxies that do have Internet connectivity and then
 configure clients to use them.
 
+Such gatewaying between networks were some of the first uses for proxies.
+
 ## Caching
 
 An extremely common use of proxies is to interpose a HTTP cache, in order to
 save bandwidth, improve end-user perceived latency, increase reliability, or
 some combination of these purposes.
 
-HTTP defines a detailed model for caching; however, some lesser-known aspects
-of the caching model can cause operational issues. For example, it allows
-caches to go into an "offline" mode where most content can be served stale.
+HTTP defines a detailed model for caching (see
+{{I-D.ietf-httpbis-p6-caching}}); however, some lesser-known aspects of the
+caching model can cause operational issues. For example, it allows caches to go
+into an "offline" mode where most content can be served stale.
 
 Also, proxy caches sometimes fail to honor the HTTP caching model, reusing
 content when it should not have been. This can cause interoperability issues,
@@ -158,13 +167,14 @@ when the user agent isn't a browser (e.g., a software update process).
 ## Content Filtering (a.k.a. Content Policy Enforcement)
 
 Some networks attempt to filter HTTP messages (both request and response) based
-upon a number of criteria. For example, they might wish to stop users from
+upon network-specific criteria. For example, they might wish to stop users from
 downloading content that contains malware, or that violates site policies on
 appropriate content, or that violates local law.
 
-Intermediary proxies as a mechanism for enforcing content are often easy to
-circumvent. For example, a device might become infected by using a different
-network, or a VPN. Nevertheless, they are commonly used.
+Intermediary proxies as a mechanism for enforcing content restrictions are
+often easy to circumvent. For example, a device might become infected by using
+a different network, or a VPN. Nevertheless, they are commonly used for this
+purpose.
 
 Some content policy enforcement is also done locally to the user agent; for
 example, several Operating Systems have machine-local proxies built in that
@@ -185,9 +195,8 @@ interpose proxies that modify content in an attempt to save bandwidth, improve
 perceived performance, or transcode content to formats that limited-resource
 devices can more easily consume.
 
-Small modifications also include adding metadata in headers for accounting
-purposes, or removing metadata such as Accept-Encoding to make virus scanning
-easier.
+Modifications also include adding metadata in headers for accounting purposes,
+or removing metadata such as Accept-Encoding to make virus scanning easier.
 
 In other cases, content modification is performed to make more substantial
 modifications. This could include inserting advertisements, or changing the
@@ -272,10 +281,8 @@ that limit its deployment:
   is found between O/Ses and their provided applications, the interface may or
   may not be available to third parties.
 
-There are other issues. Between the combination of proxy.pac and WPAD a
-question arises about who should be responsible for configuring a proxy. If it
-is not the local network, then the number of potential proxies can become
-unmanageable.
+* WPAD can be spoofed, allowing attackers to interpose a proxy and intercept
+  traffic.
 
 ## Interception
 
@@ -284,7 +291,7 @@ deployment of a third style of interposition; interception proxies.
 
 Interception occurs when lower-layer protocols are configured to route HTTP
 traffic to a host other than the origin server for the URI in question. It
-requires no client configuration (hence its advantages over other methods). See
+requires no client configuration (hence its popularity over other methods). See
 {{RFC3040}} for an example of an interception-related protocol.
 
 Interception is also strongly motivated when it is necessary to assure that the
@@ -332,20 +339,17 @@ However, operational experience has shown that a significant number of proxy
 implementations do not correctly implement it, leading to dangerous situations
 where two ends of a HTTP connection think different protocols are being spoken.
 
-For example, the Expect/100-continue mechanism in HTTP/1.1 is often
+Anothr example is the Expect/100-continue mechanism in HTTP/1.1, which is often
 incorrectly implemented. Likewise, differences in support for trailers limits
 protocol extensions.
 
-Compounding these problems is a poor understanding of HTTP's versioning
-strategy {{RFC2145}}, with some implementations treating HTTP/1.1 as
-incompatible with 1.0.
 
 ## Proxies and TLS
 
 It has become more common for Web sites to use TLS {{RFC5246}} in an attempt to
-avoid many of the problems above. More recently, many have advocated use of TLS
-more broadly; for example, see the EFF's HTTPS Everywhere {{https-everywhere}}
-program, and SPDY's default use of TLS {{I-D.mbelshe-httpbis-spdy}}.
+avoid many of the problems above. Many have advocated use of TLS more broadly;
+for example, see the EFF's HTTPS Everywhere {{https-everywhere}} program, and
+SPDY's default use of TLS {{I-D.mbelshe-httpbis-spdy}}.
 
 However, doing so engenders a few problems.
 
@@ -361,17 +365,14 @@ proxy, even in the CONNECT response (e.g., a 4xx or 5xx error), limiting their
 ability to have inform users of what's going on.
 
 Finally, it removes the opportunity for services provided by a proxy that the
-end user may wish to opt into. 
-
-One example of many is when a remote village shares a proxy server to cache
-content, thereby helping to overcome the limitations of their Internet
-connection. TLS-protected HTTP traffic cannot be cached by intermediaries,
-removing much of the benefit of the Web to what is arguably one of its most
-important target audiences.
+end user may wish to opt into. For example, consider when a remote village
+shares a proxy server to cache content, thereby helping to overcome the
+limitations of their Internet connection. TLS-protected HTTP traffic cannot be
+cached by intermediaries, removing much of the benefit of the Web to what is
+arguably one of its most important target audiences.
 
 It is now becoming more common for a proxy to man-in-the-middle TLS connections
-(through a variety of means; e.g., installing a trusted CA in browsers, or
-buying a sub-root certificate), to gain access to the application message
+(see {{tls-mitm}} for an overview), to gain access to the application message
 flows. This represents a serious degradation in the trust infrastructure of the
 Web.
 
@@ -384,7 +385,7 @@ service.
 
 Every HTTP connection has at least three major stakeholders; the user
 (through their agent), the origin server (possibly using gateways such as a
-CDN) and the networks that the user uses to access the origin.
+CDN) and the networks between them.
 
 Currently, the capabilities of these stakeholders are defined by how the Web is
 deployed. Most notably, networks sometimes change content. If they change it
@@ -413,7 +414,8 @@ servers -- a strong incentive towards security.
 
 This has subtle implications. If networks are disempowered disproportionately,
 they might react by blocking secure connections, discouraging origin servers
-(who often have even stronger profit incentives) from deploying encryption.
+(who often have even stronger profit incentives) from deploying encryption,
+which would result in a net loss of security.
 
 
 ## Interoperability is Important Too
@@ -474,10 +476,9 @@ interception over proxy.pac/WPAD illustrates this very clearly.
 
 ## Proxies Need to Communicate to Users
 
-There are many situations where a proxy needs to communicate with the end user
-through the user agent; for example, to gather network authentication
-credentials, communicate network policy, report that access to content has been
-denied, and so on.
+There are many situations where a proxy needs to communicate with the end user;
+for example, to gather network authentication credentials, communicate network
+policy, report that access to content has been denied, and so on.
 
 Currently, HTTP has poor facilities for doing so. The proxy authentication
 mechanism is extremely limited, and while there are a few status codes that are
@@ -495,7 +496,7 @@ Equally as important, the communication needs to clearly come from the proxy,
 rather than the origin, and be strongly authenticated.
 
 
-## Users require simple interfaces
+## Users Require Simple Interfaces
 
 While some users are sophisticated in their understanding of Web security, they
 are in a vanishingly small minority. The concepts and implications of many
@@ -524,7 +525,7 @@ used to introduce higher requirements for the interposition of intermediaries,
 or even to prohibit their use without full encryption.
 
 
-## Proxies must function across a wide variety of applications
+## User Agents Are Diverse
 
 HTTP is used in a wide variety of environments. As such there can be no
 assumption that a user is sitting on the other end to interpret information or
@@ -553,16 +554,6 @@ Therefore, it's not enough to say that (for example), "proxies have to honor
 no-transform" as HTTP/1.1 does. Instead, the protocol needs to be designed in
 a way so that either transformations aren't possible, or if they are, they 
 can be detected (with appropriate handling by User Agents defined).
-
-
-## Selection of proxies must scale both in size and performance
-
-It must be possible to authorize a large group of proxies at once. When a user
-changes location it should not be necessary to re-authorize a proxy if one is
-already known and available.
-
-Similarly, in a mobile world, detection of changed proxies must not unduly
-inhibit browser performance.
 
 
 ## It Needs to be Deployable
