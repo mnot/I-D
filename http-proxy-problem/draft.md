@@ -34,7 +34,7 @@ informative:
   RFC6824:
   W3C.CR-ct-guidelines-20100617:
   I-D.mbelshe-httpbis-spdy:
-  I-D.ietf-httpbis-p6-caching:
+  I-D.ietf-httpbis-p6-cache:
   proxypac:
     target: http://en.wikipedia.org/wiki/Proxy_auto-config
     title: Proxy Auto-Config
@@ -141,7 +141,7 @@ save bandwidth, improve end-user perceived latency, increase reliability, or
 some combination of these purposes.
 
 HTTP defines a detailed model for caching (see
-{{I-D.ietf-httpbis-p6-caching}}); however, some lesser-known aspects of the
+{{I-D.ietf-httpbis-p6-cache}}); however, some lesser-known aspects of the
 caching model can cause operational issues. For example, it allows caches to go
 into an "offline" mode where most content can be served stale.
 
