@@ -23,7 +23,7 @@
     <area>General</area>
     <keyword>Internet-Draft</keyword>
     <abstract>
-      <t>This document introduces “alternate services”, to allow an HTTP origin’s
+      <t>This document introduces “alternate services” to allow an HTTP origin’s
 resources to be available at a seperate network location, possibly accessed
 with a different protocol configuration.</t>
       <t>It also specifies one means of discovering alternate services, the “Alt-Svc”
@@ -109,15 +109,15 @@ header is still derived from the origin, not the alternate service.</t>
       <t>Additionally, each alternate service can have:</t>
       <t>
         <list style="symbols">
-          <t>A numeric priority; see <xref target="priority"/></t>
           <t>A freshness lifetime, expressed in seconds; see <xref target="caching"/></t>
+          <t>A numeric priority; see <xref target="priority"/></t>
         </list>
       </t>
       <t>Potentially, there are many ways that a client could discover the alternate
 service(s) associated with an origin; this document currently defines one, the
 Alt-Svc HTTP Header Field (<xref target="alt-svc"/>).</t>
       <section anchor="client-handling-for-alternate-services" title="Client Handling for Alternate Services">
-        <section anchor="host-authentication" title="Host Authentication">
+        <section anchor="host_auth" title="Host Authentication">
           <t>Clients MUST NOT use alternate services with a host other than the origin’s
 without strong server authentication; this mitigates the attack described in
 <xref target="host_security"/>. One way to achieve this is for the alternate to use TLS with
@@ -135,7 +135,7 @@ lifetime with them; for example, the Alt-Svc header field uses the “ma”
 parameter.</t>
           <t>Clients MAY choose to use an alternate service instead of the origin at any
 time when it is considered fresh; see <xref target="switching"/> for specific
-reccommendations.</t>
+reccommendations. </t>
           <t>To mitigate risks associated with caching compromised values (see
 <xref target="host_security"/> for details), user agents SHOULD examine cached alternate
 services when they detect a change in network configuration, and remove any
@@ -154,20 +154,20 @@ origin server becomes unavailable.</t>
           <t>Note that priorities are not specific to the mechanism that an alternate was
 discovered with; i.e., there is only one “pool” of priorities for an origin.</t>
         </section>
-        <section anchor="switching" title="Switching to Alternate Services">
+        <section anchor="switching" title="Using Alternate Services">
           <t>By their nature, alternate services are optional; clients are not required to
 use them. However, it is advantageous for clients to behave in a predictable
 way when they are used.</t>
           <t>Therefore, if a client becomes aware of an alternate service that has a higher
 priority than a connection currently in use, the client SHOULD use that
 alternate service as soon as it is available, provided that the security
-properties of the alternate service’s protocol are equal to the existing
+properties of the alternate service’s protocol are equivalent to the existing
 connection.</t>
           <t>For example, if an origin advertises a “http2” alternate service using an
 “Alt-Svc” response header field, the client ought to immediately establish a
 connection to the most preferable alternate service, and use it in preference
 to the origin connection once available. The client is not required to block
-requests; the origin connection can be used until the alternate connection is
+requests; the origin’s connection can be used until the alternate connection is
 established.</t>
           <t>Furthermore, if the connection to the alternate service fails or is
 unresponsive, the client MAY fall back to using the origin, or a less
@@ -183,13 +183,13 @@ that has inferior security properties without notifying the user.</t>
       </section>
     </section>
     <section anchor="alt-svc" title="The Alt-Svc HTTP Header Field">
-      <t>A HTTP(S) server can advertise the availability of alternate services to
+      <t>A HTTP(S) origin server can advertise the availability of alternate services to
 HTTP/1.1 and HTTP/2.0 clients by adding an Alt-Svc header field to responses.</t>
       <figure>
         <artwork><![CDATA[
-Alt-Svc           = 1#( alternate-service *( OWS ";" OWS parameter ) )
-alternate-service = protocol-id "=" [ uri-host ] ":" port
-protocol-id       = <ALPN protocol identifier>
+Alt-Svc     = 1#( alternate *( OWS ";" OWS parameter ) )
+alternate   = protocol-id "=" [ uri-host ] ":" port
+protocol-id = <ALPN protocol identifier>
 ]]></artwork>
       </figure>
       <t>For example:</t>
@@ -219,7 +219,7 @@ connection to one or more alternate services immediately, or simultaneously
 with subsequent requests on the same connection.</t>
       <t>Intermediaries MUST NOT change or append Alt-Svc values. </t>
       <section anchor="caching-alt-svc-header-field-values" title="Caching Alt-Svc Header Field Values">
-        <t>When an alternate service is advertised using Alt-Svc, it is considered usable
+        <t>When an alternate service is advertised using Alt-Svc, it is considered fresh
 for 24 hours from generation of the message. This can be modified with the ‘ma’
 (max-age’) parameter;</t>
         <figure>
@@ -250,7 +250,7 @@ seconds. However, the response has already been cached for 30 seconds (as per
 the Age header field value), so therefore the alternate service is only fresh
 for the 30 seconds from when this response was received, minus estimated
 transit time. </t>
-        <t>See <xref target="caching"/> for general requirements on cached alternate services.</t>
+        <t>See <xref target="caching"/> for general requirements on caching alternate services.</t>
         <t>Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
 affect caching of Alt-Svc values.</t>
       </section>
@@ -279,21 +279,24 @@ alternate port, at a minimum. An attacker that can inject alternate services
 and listen at the advertised port is therefore able to hijack an origin.</t>
         <t>For example, an attacker that can add HTTP response header fields can redirect
 traffic to a different port on the same host using the Alt-Svc header field; if
-it is under their control, they can thus masquerade as the HTTP server.</t>
+that port is under the attacker’s control, they can thus masquerade as the HTTP
+server.</t>
         <t>This risk can be mitigated by restricting the ability to set the Alt-Svc
 response header field on the origin, and restricting who can open a port for
-listening.</t>
+listening on that host.</t>
       </section>
       <section anchor="host_security" title="Changing Hosts">
         <t>When the host is changed due to the use of an alternate service, it presents an
 opportunity for attackers to hijack communication to an origin.</t>
         <t>For example, if an attacker can convince a user agent to send all traffic for
 “innocent.example.org” to “evil.example.com” by successfully associating it as
-an alternate service, they can masquarade as that origin.</t>
-        <t>This is the reason for the requirement that any alternate service with a host
-different to the origin’s be strongly authenticated with the origin’s identity;
-i.e., presenting a certificate for the origin proves that the alternate service
-is authorized to serve traffic for the origin.</t>
+an alternate service, they can masquarade as that origin. This can be done
+locally (see mitigations above) or remotely (e.g., by an intermediary as a
+man-in-the-middle attack).</t>
+        <t>This is the reason for the requiremenet in <xref target="host_auth"/> that any alternate
+service with a host different to the origin’s be strongly authenticated with
+the origin’s identity; i.e., presenting a certificate for the origin proves
+that the alternate service is authorized to serve traffic for the origin.</t>
         <t>However, this authorization is only as strong as the method used to
 authenticate the alternate service. In particular, there are well-known
 exploits to make an attacker’s certificate appear as legitimate.</t>
@@ -302,8 +305,8 @@ intermediary could man-in-the-middle TLS-protected communication to a target,
 and then direct all traffic to an alternate service with a large freshness
 lifetime, so that the user agent still directs traffic to the attacker even when
 not using the intermediary.</t>
-        <t>As a result, there is a requirement to examine cached alternate services when a
-network change is detected.</t>
+        <t>As a result, there is a requirement in <xref target="caching"/> to examine cached alternate
+services when a network change is detected.</t>
       </section>
       <section anchor="changing-protocols" title="Changing Protocols">
         <t>When the ALPN protocol is changed due to the use of an alternate service, the
@@ -313,8 +316,8 @@ itself implies this.</t>
         <t>For example, if a “https://” URI had a protocol advertised that does not use
 some form of end-to-end encryption (most likely, TLS), it violates the
 expectations for security that the URI scheme implies.</t>
-        <t>Therefore, clients cannot blindly use alternate services, but instead
-evaluate the option(s) presented to assure that requirements and expectations
+        <t>Therefore, clients cannot blindly use alternate services, but instead evaluate
+the option(s) presented to assure that security requirements and expectations
 (of specifications, implementations and end users) are met.</t>
       </section>
     </section>
@@ -624,20 +627,37 @@ header in SPDY.</t>
       <t>To bootstrap interop, first round testing is proposed as:</t>
       <t>
         <list style="numbers">
-          <t>Alt-Svc header field in a random response on an HTTP/1 connection; might be first, might be later</t>
-          <t>Advertised service is http2 (draft) ALPN token on same host, different port</t>
-          <t>No TLS (yet; see <xref target="I-D.nottingham-http2-encryption"/>)</t>
+          <t>Alt-Svc header field in a random response on an HTTP/1 connection with a “http://” URL; might be first response, might be later</t>
+          <t>Advertised service is http2 (draft) ALPN token on same host, different port without TLS</t>
         </list>
       </t>
-      <t>Second round interop will focus on changing protocols (anticipating
-<xref target="I-D.nottingham-http2-encryption"/>), and third round will focus on changing
-hosts.</t>
+      <t>Expected behaviour is that the client will, upon learning about the alternate
+service, start a connection to it and use it once established.</t>
+      <t>Second round testing is proposed to focus on changing protocols:</t>
+      <t>
+        <list style="numbers">
+          <t>Alt-Svc header field in a random response on an HTTP/1 connection with a “http://” URL; might be first response, might be later</t>
+          <t>Advertised service is http2 (draft) ALPN token on same host, different port using TLS; see <xref target="I-D.nottingham-http2-encryption"/>)</t>
+        </list>
+      </t>
+      <t>Expected behaviour is that the client will, upon learning about the alternate
+service, start a connection to it and block requests until it is established.</t>
+      <t>Third round testing is proposed to focus on changing host:</t>
+      <t>
+        <list style="numbers">
+          <t>Alt-Svc header field in a random response on a HTTP/2 connection with a  “http://” URL; might be first response, might be later</t>
+          <t>Advertised service is http2 (draft) ALPN token on a different host, using TLS.</t>
+        </list>
+      </t>
+      <t>Expected behaviour is that the client will, upon learning about the alternate
+service, start a connection to it and use it once established.</t>
+      <t>Detailed test plans TBD.</t>
     </section>
     <section anchor="todo" title="TODO">
       <t>
         <list style="symbols">
           <t>GOAWAY: A GOAWAY-like frame (or just a GOAWAY modification) that allows an
-alternate service to be switched to will be suggested in a future revision.</t>
+alternate service to be switched to might be suggested in a future revision.</t>
           <t>DNS: Alternate services are also amenable to DNS-based discovery. If there is
 sufficient interest, a future revision may include a proposal for that.</t>
           <t>Indicating Chosen Service: It’s likely necessary for the server to know which
