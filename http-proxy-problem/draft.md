@@ -406,6 +406,29 @@ those that break the reasonable expectations of other stakeholders) are a small
 portion of those deployed used.
 
 
+## Security Should be Encouraged
+
+Any solution needs to give all stakeholders -- end users, networks and origin
+servers -- a strong incentive towards security.
+
+This has subtle implications. If networks are disempowered disproportionately,
+they might react by blocking secure connections, discouraging origin servers
+(who often have even stronger profit incentives) from deploying encryption.
+
+
+## Interoperability is Important Too
+
+Security at the expense of long-term interoperability is not a good trade. 
+
+For example, if networks decide to only allow secure connections to well-known,
+large origin servers, it creates a "walled garden" that favours big sites at
+the expense of less well-known ones.
+
+Likewise, if a jurisdiction cannot use standard-conformant browsers to impose
+their legal requirements upon network users, they might decide to create a
+separate Web based upon competing technology.
+
+
 ## Users Need to be Informed of Proxies
 
 When a proxy is interposed, the user needs to be informed about it, so they
@@ -494,6 +517,11 @@ icon" that shows when a connection is protected by TLS. Any erosion of the
 commonly-understood semantics of that indicator, as well as "https://" URIs, is
 likely to be extremely controversial, because it changes the already-understood
 security properties of the Web.
+
+Another useful emerging convention is that of "Incognito" or "private" mode,
+where the end user has requested enhanced privacy and security. This might be
+used to introduce higher requirements for the interposition of intermediaries,
+or even to prohibit their use without full encryption.
 
 
 ## Proxies must function across a wide variety of applications
@@ -652,8 +680,9 @@ Plenty of them, I suspect.
 
 # Acknowledgements
 
-Thanks to Amos Jeffries, Willy Tarreau, Patrick McManus, Guy Podjarny, Eliot
-Lear and Martin Nilsson for their comments and suggestions.
+This document benefits from conversations and feedback from many people,
+including Amos Jeffries, Willy Tarreau, Patrick McManus, Roberto Peon, Guy
+Podjarny, Eliot Lear, Brad Hill and Martin Nilsson.
 
 
 --- back
