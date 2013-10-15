@@ -431,3 +431,6 @@ Detailed test plans TBD.
 * ALPN strings: all of the ALPN strings in this document are fictional; they
   need to be updated based upon that specification's progress (and the
   registry, eventually).
+  
+* Advice for setting headers: guidelines for servers that use the Alt-Svc
+  header field.
