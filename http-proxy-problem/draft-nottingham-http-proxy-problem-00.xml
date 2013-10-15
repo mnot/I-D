@@ -21,7 +21,6 @@
     </author>
     <date year="2013"/>
     <area>General</area>
-    <workgroup>httpbis</workgroup>
     <keyword>Internet-Draft</keyword>
     <abstract>
       <t>This document discusses the use and configuration of proxies in HTTP, pointing
@@ -71,15 +70,10 @@ end users, to their benefit, and some are solely for the purposes of the
 network operator – sometimes even against the interests of the end users.</t>
       <t>This section attempts to identify the different motivations networks have for
 deploying proxies.</t>
-      <section anchor="request-routing" title="Request Routing">
+      <section anchor="application-layer-gatewaying" title="Application Layer Gatewaying">
         <t>Some networks do not have direct Internet connectivity for Web browsing. These
 networks can deploy proxies that do have Internet connectivity and then
 configure clients to use them.</t>
-        <t>Note that some proxies may divert requests to servers other than the intended
-origin. For example, there is anecdotal evidence that a small number of
-networks re-route requests for advertising servers to their own servers in an
-attempt to co-opt the associated revenue, or to replace ads with “blank”
-content. This is really a form of content modification, discussed below.</t>
       </section>
       <section anchor="caching" title="Caching">
         <t>An extremely common use of proxies is to interpose a HTTP cache, in order to
@@ -110,7 +104,7 @@ downloading content that contains malware, or that violates site policies on
 appropriate content, or that violates local law.</t>
         <t>Intermediary proxies as a mechanism for enforcing content are often easy to
 circumvent. For example, a device might become infected by using a different
-network. Nevertheless, they are commonly used.</t>
+network, or a VPN. Nevertheless, they are commonly used.</t>
         <t>Some content policy enforcement is also done locally to the user agent; for
 example, several Operating Systems have machine-local proxies built in that
 scan content. </t>
@@ -125,6 +119,9 @@ method or status code.</t>
 interpose proxies that modify content in an attempt to save bandwidth, improve
 perceived performance, or transcode content to formats that limited-resource
 devices can more easily consume.</t>
+        <t>Small modifications also include adding metadata in headers for accounting
+purposes, or removing metadata such as Accept-Encoding to make virus scanning
+easier.</t>
         <t>In other cases, content modification is performed to make more substantial
 modifications. This could include inserting advertisements, or changing the
 layout of content in an attempt to make it easier to use.</t>
@@ -187,8 +184,16 @@ meaning that users need to configure its use.</t>
             <t>Neither proxy.pac nor WPAD have been standardized, leading to implementation
 divergence and resulting interoperability problems.</t>
             <t>There are DNS-based variants of WPAD, adding to to confusion.</t>
+            <t>DHCP options generally require tight integration with the operating system to
+pass the results to HTTP-based applications. While this level of integration
+is found between O/Ses and their provided applications, the interface may or
+may not be available to third parties.</t>
           </list>
         </t>
+        <t>There are other issues. Between the combination of proxy.pac and WPAD a
+question arises about who should be responsible for configuring a proxy. If it
+is not the local network, then the number of potential proxies can become
+unmanageable.</t>
       </section>
       <section anchor="interception" title="Interception">
         <t>The problems with manual configuration and proxy.pac/WPAD have led to the wide
@@ -197,19 +202,24 @@ deployment of a third style of interposition; interception proxies.</t>
 traffic to a host other than the origin server for the URI in question. It
 requires no client configuration (hence its advantages over other methods). See
 <xref target="RFC3040"/> for an example of an interception-related protocol.</t>
+        <t>Interception is also strongly motivated when it is necessary to assure that the
+proxy is always used, e.g., to enforce policy.</t>
         <t>Interception is problematic, however, because it is often done without the
 consent of either the end user or the origin server. This means that a response
 that appears to be coming from the origin server is actually coming from the
 intercepting proxy. This makes it difficult to support features like
-authentication, as the unexpected status code breaks many clients (e.g.,
+proxy authentication, as the unexpected status code breaks many clients (e.g.,
 non-interactive applications like software installers).</t>
+        <t>In addition, as adoption of multi-path TCP (MPTCP)<xref target="RFC6824"/> increases, the
+ability of intercepting proxies to offer a consistent service degrades.</t>
       </section>
       <section anchor="configuration-as-side-effect" title="Configuration As Side Effect">
         <t>More recently, it’s become more common for a proxy to be interposed as a side
 effect of another choice by the user.</t>
         <t>For example, the user might decide to add virus scanning – either as installed
 software, or a service that they configure from their provider – that is
-interposed as a proxy.</t>
+interposed as a proxy.  Indeed, almost all desktop virus scanners and content
+filters operate in this fashion.</t>
         <t>This approach has the merits of both being easy and obtaining explicit user
 consent. However, in some cases, the end user might not understand the
 consequences of use of the proxy, especially upon security and interoperability.</t>
@@ -242,9 +252,7 @@ program, and SPDY’s default use of TLS <xref target="I-D.mbelshe-httpbis-spdy"
         <t>Firstly, TLS as used on the Web is not a perfectly secure protocol, and using
 it to protect all traffic gives proxies a strong incentive to work around it,
 e.g., by deploying a certificate authority directly into browsers, or buying a
-sub-root certificate. Considering the current state of TLS on the Web,
-escalating the battle between intermediaries and endpoints may not end well for
-the latter parties.</t>
+sub-root certificate.</t>
         <t>Secondly, it removes the opportunity for the proxy to inform the user agent of
 relevant information; for example, conditions of access, access denials, login
 interfaces, and so on. User Agents currently do not display any feedback from
@@ -262,18 +270,20 @@ important target audiences.</t>
 buying a sub-root certificate), to gain access to the application message
 flows. This represents a serious degradation in the trust infrastructure of the
 Web.</t>
+        <t>Worse is the situation where proxies provide a certificate where they inure the
+user to a certificate warning that they must then ignore in order to receive
+service.</t>
       </section>
     </section>
     <section anchor="principles" title="Principles for Consideration">
-      <t>Every HTTP connection has (at least) three major stakeholders; the user
+      <t>Every HTTP connection has at least three major stakeholders; the user
 (through their agent), the origin server (possibly using gateways such as a
-CDN) and the network that the user uses to access the origin.</t>
-      <t>Currently, the rights of these stakeholders are defined by how the Web is
-deployed. Most notably, networks sometimes change content because they’re able
-to. On the other hand, if they change it too much, origin servers will start
-using encryption. </t>
-      <t>Changing the way that HTTP operates therefore has the potential to re-balance
-the capabilities and rights of the various stakeholders.</t>
+CDN) and the networks that the user uses to access the origin.</t>
+      <t>Currently, the capabilities of these stakeholders are defined by how the Web is
+deployed. Most notably, networks sometimes change content. If they change it
+too much, origin servers will start using encryption. Changing the way that
+HTTP operates therefore has the potential to re-balance the capabilities of the
+various stakeholders.</t>
       <t>This section proposes several straw-man principles for consideration as the
 basis of those changes. Their sole purpose here is to provoke discussion.</t>
       <section anchor="proxies-have-a-legitimate-place" title="Proxies Have a Legitimate Place">
@@ -284,10 +294,28 @@ consent of the end user and the origin – undesirable intermediaries (i.e.,
 those that break the reasonable expectations of other stakeholders) are a small
 portion of those deployed used.</t>
       </section>
+      <section anchor="security-should-be-encouraged" title="Security Should be Encouraged">
+        <t>Any solution needs to give all stakeholders – end users, networks and origin
+servers – a strong incentive towards security.</t>
+        <t>This has subtle implications. If networks are disempowered disproportionately,
+they might react by blocking secure connections, discouraging origin servers
+(who often have even stronger profit incentives) from deploying encryption.</t>
+      </section>
+      <section anchor="interoperability-is-important-too" title="Interoperability is Important Too">
+        <t>Security at the expense of long-term interoperability is not a good trade. </t>
+        <t>For example, if networks decide to only allow secure connections to well-known,
+large origin servers, it creates a “walled garden” that favours big sites at
+the expense of less well-known ones.</t>
+        <t>Likewise, if a jurisdiction cannot use standard-conformant browsers to impose
+their legal requirements upon network users, they might decide to create a
+separate Web based upon competing technology.</t>
+      </section>
       <section anchor="users-need-to-be-informed-of-proxies" title="Users Need to be Informed of Proxies">
         <t>When a proxy is interposed, the user needs to be informed about it, so they
-have the opportunity to change their configuration (e.g., introduce
+have the opportunity to change their configuration (e.g., attempt to introduce
 encryption), or not use the network at all.</t>
+        <t>Proxies also need to be strongly authenticated; i.e., users need to be able to
+verify who the proxy is.</t>
       </section>
       <section anchor="users-need-to-be-able-to-tunnel-through-proxies" title="Users Need to be able to Tunnel through Proxies">
         <t>When a proxy is interposed, the user needs to be able to tunnel any request
@@ -326,9 +354,9 @@ by User Agents.</t>
         <t>Importantly, proxies also need a limited communication channel when TLS is in
 use, for similar purposes.</t>
         <t>Equally as important, the communication needs to clearly come from the proxy,
-rather than the origin.</t>
+rather than the origin, and be strongly authenticated.</t>
       </section>
-      <section anchor="expectations-should-be-low" title="Expectations Should be Low">
+      <section anchor="users-require-simple-interfaces" title="Users require simple interfaces">
         <t>While some users are sophisticated in their understanding of Web security, they
 are in a vanishingly small minority. The concepts and implications of many
 decisions regarding security are subtle, and require an understanding of how
@@ -346,6 +374,15 @@ icon” that shows when a connection is protected by TLS. Any erosion of the
 commonly-understood semantics of that indicator, as well as “https://” URIs, is
 likely to be extremely controversial, because it changes the already-understood
 security properties of the Web.</t>
+        <t>Another useful emerging convention is that of “Incognito” or “private” mode,
+where the end user has requested enhanced privacy and security. This might be
+used to introduce higher requirements for the interposition of intermediaries,
+or even to prohibit their use without full encryption.</t>
+      </section>
+      <section anchor="proxies-must-function-across-a-wide-variety-of-applications" title="Proxies must function across a wide variety of applications">
+        <t>HTTP is used in a wide variety of environments. As such there can be no
+assumption that a user is sitting on the other end to interpret information or
+answer questions from proxies.</t>
       </section>
       <section anchor="choices-are-context-specific" title="Choices are Context-Specific">
         <t>Getting consent from users, as well as informing them, can take a variety of
@@ -366,6 +403,13 @@ no-transform” as HTTP/1.1 does. Instead, the protocol needs to be designed in
 a way so that either transformations aren’t possible, or if they are, they 
 can be detected (with appropriate handling by User Agents defined).</t>
       </section>
+      <section anchor="selection-of-proxies-must-scale-both-in-size-and-performance" title="Selection of proxies must scale both in size and performance">
+        <t>It must be possible to authorize a large group of proxies at once. When a user
+changes location it should not be necessary to re-authorize a proxy if one is
+already known and available.</t>
+        <t>Similarly, in a mobile world, detection of changed proxies must not unduly
+inhibit browser performance.</t>
+      </section>
       <section anchor="it-needs-to-be-deployable" title="It Needs to be Deployable">
         <t>Any improvements to the proxy ecosystem MUST be incrementally deployable, so
 that existing clients can continue to function.</t>
@@ -376,7 +420,7 @@ that existing clients can continue to function.</t>
 bearing the principles suggested above in mind.</t>
       <section anchor="living-with-interception" title="Living with Interception">
         <t>The IETF has long fought against interception proxies, as they are
-indistinguishable from Man-In-The-Middle attacks. Nevertheless, it persists as
+indistinguishable from Man-In-The-Middle attacks. Nevertheless, they persist as
 the preferred method for interposing proxies in many networks.</t>
         <t>Unless another mechanism can be found or defined that offers equally attractive
 properties to network operators, we ought to consider that they’ll continue to
@@ -429,7 +473,7 @@ user can choose whether to trust the proxy.</t>
       <section anchor="improving-trust" title="Improving Trust">
         <t>Currently, it is possible to exploit the mismatched incentives and other flaws
 in the CA system to cause a browser to trust a proxy as authoritative for a
-“https://” URI without full user knowledge. This needs to be remedied.</t>
+“https://” URI without full user knowledge. This needs to be remedied; otherwise, proxies will continue to man-in-the-middle TLS.</t>
       </section>
       <section anchor="http-signatures" title="HTTP Signatures">
         <t>Signatures for HTTP content – both requests and responses – has been
@@ -452,7 +496,9 @@ ought the UA do when encountering a bad signature?</t>
       <t>Plenty of them, I suspect.</t>
     </section>
     <section anchor="acknowledgements" title="Acknowledgements">
-      <t>Thanks to Amos Jeffries and Willy Tarreau for their comments and suggestions.</t>
+      <t>This document benefits from conversations and feedback from many people,
+including Amos Jeffries, Willy Tarreau, Patrick McManus, Roberto Peon, Guy
+Podjarny, Eliot Lear, Brad Hill and Martin Nilsson.</t>
     </section>
   </middle>
   <back>
@@ -790,6 +836,29 @@ ought the UA do when encountering a bad signature?</t>
         <seriesInfo name="RFC" value="6585"/>
         <format type="TXT" octets="17164" target="http://www.rfc-editor.org/rfc/rfc6585.txt"/>
       </reference>
+      <reference anchor="RFC6824">
+        <front>
+          <title>TCP Extensions for Multipath Operation with Multiple Addresses</title>
+          <author initials="A." surname="Ford" fullname="A. Ford">
+            <organization/>
+          </author>
+          <author initials="C." surname="Raiciu" fullname="C. Raiciu">
+            <organization/>
+          </author>
+          <author initials="M." surname="Handley" fullname="M. Handley">
+            <organization/>
+          </author>
+          <author initials="O." surname="Bonaventure" fullname="O. Bonaventure">
+            <organization/>
+          </author>
+          <date year="2013" month="January"/>
+          <abstract>
+            <t>TCP/IP communication is currently restricted to a single path per connection, yet multiple paths often exist between peers. The simultaneous use of these multiple paths for a TCP/IP session would improve resource usage within the network and, thus, improve user experience through higher throughput and improved resilience to network failure.&lt;/t&gt;&lt;t&gt; Multipath TCP provides the ability to simultaneously use multiple paths between peers. This document presents a set of extensions to traditional TCP to support multipath operation. The protocol offers the same type of service to applications as TCP (i.e., reliable bytestream), and it provides the components necessary to establish and use multiple TCP flows across potentially disjoint paths. This document defines an Experimental Protocol for the Internet community.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="RFC" value="6824"/>
+        <format type="TXT" octets="164866" target="http://www.rfc-editor.org/rfc/rfc6824.txt"/>
+      </reference>
       <reference anchor="W3C.CR-ct-guidelines-20100617" target="http://www.w3.org/TR/2010/CR-ct-guidelines-20100617">
         <front>
           <title>Guidelines for Web Content Transformation Proxies 1.0</title>
@@ -846,112 +915,5 @@ ought the UA do when encountering a bad signature?</t>
         </front>
       </reference>
     </references>
-    <section anchor="target-usage-scenarios-for-proxies" title="Target Usage Scenarios for Proxies">
-      <t>This section contains a number of target usage scenarios that attempt to
-illustrate possible outcomes of the principles and investigations, as an aid in
-understanding and discussing them.</t>
-      <t>As such, these are intended to serve as discussion aids, not formal proposals.</t>
-      <section anchor="virus-scanning-corporate-proxy" title="Virus-Scanning Corporate Proxy">
-        <t>The network administrators for FooCorp believe that an effective component of
-their anti-malware strategy is at the border. Therefore, they need to
-interpose a proxy that scans incoming response bodies for viruses, etc.</t>
-        <t>FooCorp users agree, as part of their employment, to grant FooCorp access to
-their communications from work.</t>
-        <t>Therefore, for “http://” URLs, FooCorp decides to block encrypted connections,
-and scan the remainder. If a user tries to configure their browser to
-optimistically encrypt “http://” URLs, they’ll be presented with an error page
-that’s clearly from FooCorp, describing their policy. Likewise, if they browse
-to a URL that returns a virus, they will see a page clearly stating that
-FooCorp is blocking access, and why.</t>
-        <t>FooCorp can make a separate decision as to whether they allow “https://” URLs;
-they can block all of them, whitelist some origins, blacklist some origins, or
-allow all of them. However, they cannot gain access to either the request
-stream (i.e., anything from the request other than the origin), nor any
-responses.</t>
-        <t>When FooCorp employees use the network, they don’t have to log in or otherwise
-accept the presence of the proxy; however information about the proxy is
-available in their browser (e.g., an “about this network” menu item, or an
-indicator in the user interface).</t>
-      </section>
-      <section anchor="coffee-shop-capture-proxy" title="Coffee Shop Capture Proxy">
-        <t>Hobba Cafe serves coffee that would make grown men weep, had they only been
-exposed to chain coffee stores before. While they are weeping, these men need
-emotional support resources, so the coffee shop offers free WiFi to browse the
-Internet.</t>
-        <t>However, Hobba needs to have users agree to Terms of Use for the network before
-surfing. So, they interpose an interception proxy that “captures” users that
-aren’t logged in, presenting them with a login screen that is clearly from
-Hobba.</t>
-        <t>From the users’ standpoint, there are many requirements here. They need to be
-sure that the proxy they log into is actually Hobba’s, and that no other proxy
-can masquerade as them. Furthermore, they’d like to make sure that their
-communications aren’t sniffed by other users in the coffee shop, so they are
-likely to want to optimistically encrypt “http://” URLs.</t>
-      </section>
-      <section anchor="content-filtering-school-proxy" title="Content Filtering School Proxy">
-        <t>The network administrators at the Academy of Basket Weaving want to make sure
-that their students aren’t accessing inappropriate content. Since they teach
-basket weaving to a range of age groups, they need to ascertain who the user is
-before applying this policy.</t>
-        <t>When a student access the ABW network, they’re presented with a login page
-that’s clearly from the Academy. Once their credentials are accepted, students
-can browse the Web freely.</t>
-        <t>However, upon accessing a “http://” URL that the Academy determines the student
-shouldn’t be exposed to, an error page that is clearly identified as from the
-Academy is shown.</t>
-        <t>Just as in the FooCorp example, the Academy can choose to block or limit
-origins of optimistically encrypted “http://” URLs, but cannot “see” anything
-other than the origin. Likewise for “https://” URLs.</t>
-      </section>
-      <section anchor="content-anonymizing-proxy" title="Content Anonymizing Proxy">
-        <t>TBD</t>
-      </section>
-      <section anchor="content-transforming-mobile-proxy" title="Content Transforming Mobile Proxy">
-        <t>The Stationary Mobile Telephone Company wants to improve their customers’
-experience by reformatting HTML to look better on their low-cost handsets. Some
-users, however, are upset by this, because the well-intentioned rewriting
-doesn’t always work. Furthermore, some origin servers are unhappy about a third
-party rewriting their content.</t>
-        <t>There are a few possible paths for those unhappy users and content providers to
-take. If they encrypt communication (using either a “https://” URL or a
-“http://” URL with optimistic encryption), the proxy cannot rewrite the
-content, of course. </t>
-        <t>However, for unencrypted content, HTTP signatures can be used to verify that
-the content has not changed. Presumably, this would be combined with
-“Cache-Control: no-transform” to give the proxy warning that modifications are
-not desired.</t>
-      </section>
-      <section anchor="protocol-transforming-proxy" title="Protocol Transforming Proxy">
-        <t>TBD</t>
-      </section>
-      <section anchor="shared-community-caching-proxy" title="Shared Community Caching Proxy">
-        <t>The primitive village of Wollongong has a very limited, shared Internet
-connection that is often overcome by the traffic of the children using the
-popular Club Quoll Web site.</t>
-        <t>It needs to be as easy as possible to use to be efficient, so they interpose an
-interception proxy. </t>
-        <t>Since the purpose of the proxy is caching, the village would like to see as
-many “http://” URLs unencrypted as possible; as a result, they block
-optimistically encrypted “http://” URLs at the proxy, and explain why in a page
-that’s explicitly from the proxy.</t>
-        <t>However, users should be assured that the “http://” content they see isn’t
-modified by the proxy. Likewise, some want to verify that the caching policy of
-the Web sites they access is honored by the proxy. Both of these goals can be
-achieved using HTTP signatures.</t>
-      </section>
-      <section anchor="evil-attacking-proxy" title="Evil Attacking Proxy">
-        <t>Finally, some proxies are used to attack end users and origin servers. There
-are a variety of possible attacks, but the main goals that need focus are:</t>
-        <t>
-          <list style="symbols">
-            <t>Preventing an attacker from interposing a proxy without user knowledge</t>
-            <t>Preventing an attacker from masquerading as a legitimate proxy</t>
-            <t>Preventing an attacker from observing communications to and from the proxy</t>
-            <t>Preventing an attacker from modifying communications to and from the proxy</t>
-            <t>Preventing an attacker from downgrading to a less secure protocol</t>
-          </list>
-        </t>
-      </section>
-    </section>
   </back>
 </rfc>
