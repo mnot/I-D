@@ -7,7 +7,7 @@ category: info
 
 ipr: trust200902
 area: General
-workgroup: httpbis
+workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
