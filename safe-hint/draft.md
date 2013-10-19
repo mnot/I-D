@@ -26,6 +26,7 @@ normative:
     title: HTTP Client Hints
     author:
       - ins: I. Grigorik
+    date: 2013
   
 informative:
   RFC6265:
@@ -34,21 +35,25 @@ informative:
     title: Yahoo! Search Preferences
     author: 
       - organization: Yahoo! Inc.
+    date: 2013
   bing:
     target: http://onlinehelp.microsoft.com/en-AU/bing/ff808441.aspx
     title: "Bing Help: Block Explicit Web Sites"
     author:
       - organization: Microsoft
+    date: 2013
   google:
     target: "http://support.google.com/websearch/bin/answer.py?p=settings_safesearch&amp;answer=510"
     title: "SafeSearch: turn on or off"
     author:
      - organization: Google
+    date: 2013
   youtube:
     target: "http://support.google.com/youtube/bin/answer.py?answer=174084"
     title: How to access and turn on Safety Mode?
     author:
      - organization: Google
+    date: 2013
   age-privacy:
     target: http://www.theage.com.au/technology/technology-news/privacy-concern-as-apps-share-data-from-kids-left-to-their-own-devices-20121222-2bso6.html
     title: Privacy concern as apps share data from kids left to their own devices
@@ -56,7 +61,7 @@ informative:
      - ins: A. Moses
        name: Asher Moses
        organization: Fairfax Media
-
+    date: 2012
 
 --- abstract
 
