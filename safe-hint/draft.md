@@ -87,7 +87,7 @@ are too many permutations of sites, user agents and devices.
 If instead this preference is proactively advertised by the user agent, things
 become much simpler. A user agent that supports this (whether it be an
 individual browser, or through an Operating System HTTP library) need only be
-configured once to assure that the preference is honoured by all sites that
+configured once to assure that the preference is advertised to all sites that
 understand and choose to act upon it. It's no longer necessary to go to each
 site that has potentially "unsafe" content and configure a "safe" mode.
 
