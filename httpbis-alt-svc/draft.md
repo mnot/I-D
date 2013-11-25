@@ -41,7 +41,7 @@ informative:
 --- abstract
 
 This document introduces "alternate services" to allow an HTTP origin's
-resources to be available at a seperate network location, possibly accessed
+resources to be available at a separate network location, possibly accessed
 with a different protocol configuration.
 
 It also specifies one means of discovering alternate services, the "Alt-Svc"
@@ -173,7 +173,7 @@ parameter.
 
 Clients MAY choose to use an alternate service instead of the origin at any
 time when it is considered fresh; see {{switching}} for specific
-reccommendations. 
+recommendations. 
 
 To mitigate risks associated with caching compromised values (see
 {{host_security}} for details), user agents SHOULD examine cached alternate
@@ -343,11 +343,11 @@ opportunity for attackers to hijack communication to an origin.
 
 For example, if an attacker can convince a user agent to send all traffic for
 "innocent.example.org" to "evil.example.com" by successfully associating it as
-an alternate service, they can masquarade as that origin. This can be done
+an alternate service, they can masquerade as that origin. This can be done
 locally (see mitigations above) or remotely (e.g., by an intermediary as a
 man-in-the-middle attack).
 
-This is the reason for the requiremenet in {{host_auth}} that any alternate
+This is the reason for the requirement in {{host_auth}} that any alternate
 service with a host different to the origin's be strongly authenticated with
 the origin's identity; i.e., presenting a certificate for the origin proves
 that the alternate service is authorized to serve traffic for the origin.
