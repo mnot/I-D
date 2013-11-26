@@ -17,9 +17,15 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization: Akamai
     email: mnot@mnot.net
-    uri: http://www.mnot.net/
+    uri: http://www.mnot.net/ 
+ -
+    ins: P. McManus
+    name: Patrick McManus
+    organization: Mozilla
+    email: mcmanus@ducksong.com
+    uri: http://ducksong.com/
 
 normative:
   RFC2119:
