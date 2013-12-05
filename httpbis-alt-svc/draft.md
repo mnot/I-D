@@ -25,7 +25,7 @@ author:
     name: Patrick McManus
     organization: Mozilla
     email: mcmanus@ducksong.com
-    uri: http://ducksong.com/
+    uri: https://mozillians.org/u/pmcmanus/
 
 normative:
   RFC2119:
@@ -119,7 +119,7 @@ Alternate services do not replace or change the origin for any given resource;
 in general, they are not visible to the software "above" the access mechanism.
 The alternate service is essentially alternate routing information that can
 also be used to reach the origin in the same way that DNS CNAME or SRV records
-play in defining routing information at the name resolution level.
+define routing information at the name resolution level.
 
 Furthermore, it is important to note that the first member of an alternate
 service tuple is different from the "scheme" component of an origin; it is more
@@ -223,7 +223,7 @@ alternate service as soon as it is available, provided that the security
 properties of the alternate service protocol are desirable, as compared to the
 existing connection.
 
-For example, if an origin advertises a "http2" alternate service using an
+For example, if an origin advertises a "http2-tls" alternate service using an
 "Alt-Svc" response header field, the client ought to immediately establish a
 connection to the most preferable alternate service, and use it in preference
 to the origin connection once available. 
@@ -315,7 +315,7 @@ affect caching of Alt-Svc values.
 Finally, an explicit priority can be associated with an Alt-Svc header field
 value by using the "pr" parameter:
 
-    Alt-Svc: http2:8000 ;pr=64
+    Alt-Svc: http2-tls:8000 ;pr=64
 
 See {{priority}} for details of the priority mechanism. 
 
