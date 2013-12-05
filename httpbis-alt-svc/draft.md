@@ -215,7 +215,7 @@ conservation of IP addresses on the alternate service host.
 
 By their nature, alternate services are optional; clients are not required to
 use them. However, it is advantageous for clients to behave in a predictable
-way when they are used.
+way when they are used by servers (e.g., for load balancing).
 
 Therefore, if a client becomes aware of an alternate service that has a higher
 priority than a connection currently in use, the client SHOULD use that
