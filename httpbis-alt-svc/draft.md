@@ -393,7 +393,7 @@ the option(s) presented to assure that security requirements and expectations
 
 # Acknowledgements
 
-Thanks to Patrick McManus, Eliot Lear, Stephen Farrell, Guy Podjarny, Stephen
+Thanks to Eliot Lear, Stephen Farrell, Guy Podjarny, Stephen
 Ludin, Erik Nygren, Paul Hoffman, Adam Langley and Will Chan for their feedback
 and suggestions.
 
