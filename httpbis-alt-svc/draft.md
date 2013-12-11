@@ -424,3 +424,6 @@ header in SPDY.
   
 * Advice for setting headers: guidelines for servers that use the Alt-Svc
   header field.
+  
+* Alt-Svc for Proxies: it may be interesting to negotiate the equivalent of
+  alternate services for proxies (i.e., hop-by-hop).
