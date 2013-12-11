@@ -1,7 +1,7 @@
 ---
 title: HTTP Alternate Services
 abbrev: Alternate Services
-docname: draft-nottingham-httpbis-alt-svc-00
+docname: draft-nottingham-httpbis-alt-svc-02
 date: 2013
 category: std
 
