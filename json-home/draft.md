@@ -1,7 +1,7 @@
 ---
 title: Home Documents for HTTP APIs
 abbrev: 
-docname: draft-nottingham-json-home-03
+docname: draft-nottingham-json-home-04
 date: 2013
 category: info
 
@@ -258,12 +258,12 @@ Resource Hints {#resource_hints}
 ==============
 
 Resource hints allow clients to find relevant information about interacting
-with a resource beforehand, as a means of optimising communications, as well
-as advertising available behaviours (e.g., to aid in laying out a user
+with a resource beforehand, as a means of optimizing communications, as well
+as advertising available behaviors (e.g., to aid in laying out a user
 interface for consuming the API).
 
 Hints are just that -- they are not a "contract", and are to only be taken as
-advisory. The runtime behaviour of the resource always overrides hinted
+advisory. The runtime behavior of the resource always overrides hinted
 information.
 
 For example, a resource might hint that the PUT method is allowed on all
@@ -424,7 +424,7 @@ When making a home document available, there are a few things to keep in mind:
 
 * A home document is best located at a memorable URI, because its URI will
   effectively become the URI for the API itself to clients.
-* Home documents can be personalised, just as "normal" home pages can. For
+* Home documents can be personalized, just as "normal" home pages can. For
   example, you might advertise different URIs, and/or different kinds of link
   relations, depending on the client's identity.
 * Home documents SHOULD be assigned a freshness lifetime (e.g.,
@@ -486,7 +486,7 @@ Clients might use home documents in a variety of ways.
 In the most common case -- actually consuming the API -- the client will scan
 the Resources Object for the link relation(s) that it is interested in, and
 then to interact with the resource(s) referred to. Resource Hints can be used
-to optimise communication with the client, as well as to inform as to the
+to optimize communication with the client, as well as to inform as to the
 permissible actions (e.g., whether PUT is likely to be supported).
 
 Note that the home document is a "living" document; it does not represent a

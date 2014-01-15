@@ -1,7 +1,7 @@
 ---
 title: Opportunistic Encryption for HTTP URIs
 abbrev: Opportunistic HTTP Encryption
-docname: draft-nottingham-http2-encryption-01
+docname: draft-nottingham-http2-encryption-02
 date: 2013
 category: std
 
@@ -63,8 +63,10 @@ informative:
 
 --- abstract
 
-This document proposes a way to optimistically encrypt HTTP/2.0 using TLS for
-HTTP URIs.
+This document proposes two changes to HTTP/2.0; first, it suggests using ALPN
+Protocol Identifies to identify the specific stack of protocols in use,
+including TLS, and second, it proposes a way to opportunistically encrypt
+HTTP/2.0 using TLS for HTTP URIs.
 
 --- middle
 
@@ -75,10 +77,10 @@ bootstrapping encryption in HTTP {{I-D.ietf-httpbis-p1-messaging}} -- using the
 "HTTPS" URI scheme -- unintentionally gives the server disproportionate power
 in determining whether encryption (through use of TLS {{RFC6246}}) is used.
 
-This document uses the new "alternate services" layer described in
+This document proposes using the new "alternate services" layer described in
 {{I-D.nottingham-httpbis-alt-svc}} to decouple the URI scheme from the use and
 configuration of underlying encryption, allowing a "http://" URI to be upgraded
-to use TLS optimistically.
+to use TLS opportunistically.
 
 Additionally, because using TLS requires acquiring and configuring a valid
 certificate, some deployments may find supporting it difficult. Therefore, this
@@ -109,9 +111,9 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 document are to be interpreted as described in {{RFC2119}}.
 
 
-# Indicating Security Properties in Protocol Identifiers
+# Proposal: Indicating Security Properties in Protocol Identifiers
 
-In past dicussions, there has been general agreement to reusing the ALPN
+In past discussions, there has been general agreement to reusing the ALPN
 protocol identifier {{I-D.ietf-tls-applayerprotoneg}} for all negotiation
 mechanisms in HTTP/2.0, not just TLS.
 
@@ -120,45 +122,54 @@ use of encryption as well as configuration of that encryption, independent of
 the URI scheme in use.
 
 Thus, we won't have just one protocol identifier for HTTP/2.0, but two; one
-with and one without the use of TLS. For example, the following identifiers
-might be registered if this approach is adopted:
+with and one without the use of TLS. As such, the following identifiers
+are recommended if this approach is adopted:
 
-* http1 - http/1.x over TCP
-* http1-tls - http/1.x over TLS over TCP (as per {{RFC2818}})
-* http2 - http/2.x over TCP
-* http2-tls - http/2.x over TLS over TCP (as per {{RFC2818}})
-* http2-tls-relaxed - http/2.x over TLS over TCP (see {{relaxed}})
+* h1 - http/1.x over TCP
+* h1t - http/1.x over TLS over TCP (as per {{RFC2818}})
+* h2 - http/2.x over TCP
+* h2t - http/2.x over TLS over TCP (as per {{RFC2818}})
+* h2r - http/2.x over TLS over TCP (see {{relaxed}})
+
+Draft implementations could be indicated with a suffix; e.g., h2t-draft10.
 
 Most of these are already latently defined by HTTP/2.0, with the exception
-being http2-tls-relaxed, defined below. Note that the focus of this proposal is
+being h2r, defined below. Note that the focus of this proposal is
 on the semantics of the identifiers; an exact syntax for them is not part of it.
 
 By indicating the use of TLS in the protocol identifier allows a client and
 server to negotiate the use of TLS for "http://" URIs; if the server offers
-http2-tls, the client can select that protocol, start TLS and use it.
+h2t, the client can select that protocol, start TLS and use it.
 
 Note that, as discussed in {{downgrade}}, there may be situations (e.g,. ALPN)
 where advertising some of these profiles are inapplicable or inadvisable. For
 example, in an ALPN negotiation for a "https://" URI, it is only sensible to
-offer http1-tls and http2-tls.
+offer h1t and h2t.
+
+If adopted, this proposal would be effected by adjusting the text in Section 3
+of {{I-D.ietf-httpbis-http2}} ("Starting HTTP/2.0") along the lines described
+above. Note that the specific protocol identifiers above are suggestions only.
 
 
-## The "http2-tls-relaxed" Protocol {#relaxed}
+## Proposal: The "h2r" Protocol {#relaxed}
 
-Servers that support the "http2-tls-relaxed" protocol indicate that they
+If the proposal above is adopted, a separate proposal is to define a separate
+protocol identifier for "relaxed" TLS operation.
+
+Servers that support the "h2r" protocol indicate that they
 support TLS for access to URIs with the "http" URI scheme using HTTP/2.0 or
 greater.
 
-Servers MAY advertise the "http2-tls-relaxed" profile for resources with a
+Servers MAY advertise the "h2r" profile for resources with a
 "http" origin scheme; they MUST NOT advertise it for resources with a "https"
 origin.
 
-When a client connects to an "http2-tls-relaxed" alternate service, it MUST use
+When a client connects to an "h2r" alternate service, it MUST use
 TLS1.1 or greater, and MUST use HTTP/2.x. HTTP/2.0 SHOULD be used as
 soon as TLS negotiation is completed; i.e., the "Upgrade dance" SHOULD NOT be
 performed.
 
-When connecting to an "http2-tls-relaxed" service, the algorithm for
+When connecting to an "h2r" service, the algorithm for
 authenticating the server described in {{RFC2818}} Section 3.1 changes; the
 client does not necessarily validate its certificate for expiry, hostname match
 or relationship to a known certificate authority (as it would with "normal"
@@ -170,7 +181,7 @@ additional checks are out of scope for this specification.
 
 Upon initial adoption of this proposal, it is expected that no such additional
 checks will be performed. Therefore, the client MUST NOT use the
-"http2-tls-relaxed" profile to connect to alternate services whose host does
+"h2r" profile to connect to alternate services whose host does
 not match that of the origin (as per {{I-D.nottingham-httpbis-alt-svc}}), unless additional checks are performed.
 
 Servers SHOULD use the same certificate consistently over time, to aid future
@@ -178,16 +189,19 @@ extensions for building trust and adding other services.
 
 [TODO: define "same"; likely not the same actual certificate. ]
 
-When the http2-tls-relaxed protocol is in use, User Agents MUST NOT indicate
+When the h2r protocol is in use, User Agents MUST NOT indicate
 the connection has the same level of security as https:// (e.g. using a "lock
 device").
+
+If this proposal is adopted, the "h2r" protocol could be defined in
+{{I-D.ietf-httpbis-http2}} (most likely, Section 3), or in a separate document.
 
 
 # Security Considerations
 
 ## Downgrade Attacks {#downgrade}
 
-A downgrade attack against the negotation for TLS is possible, depending upon
+A downgrade attack against the negotiation for TLS is possible, depending upon
 the properties of the negotiation mechanism.
 
 For example, because the Alt-Svc header field {{I-D.nottingham-httpbis-alt-svc}}
@@ -274,12 +288,12 @@ HTTP/2.0 for HTTP URIs.
 
 ## No certificate checks? Really?
 
-http2-tls-relaxed has the effect of relaxing certificate checks on "http://" -
+h2r has the effect of relaxing certificate checks on "http://" -
 but not "https://" - URIs when TLS is in use. Since TLS isn't in use for any
 "http://" URIs today, there is no net loss of security, and we gain some
 privacy from passive attacks.
 
-This makes TLS signficantly simpler to deploy for servers; they are able to use
+This makes TLS significantly simpler to deploy for servers; they are able to use
 a self-signed certificate. 
 
 Additionally, it is possible to detect some attacks by remembering what
@@ -305,12 +319,4 @@ the certificate checks are "relaxed", it could be that there is no need for a
 separate protocol identifier. However, this needs to be discussed.
 
 
-# Implementation Status
-
-No current implementations.
-
-It is expected that if this proposal is adopted, first interop will be achieved by:
-
-1. Specifying a set of ALPN protocol identifiers with TLS variants (possibly including -relaxed), with an appropriate level of detail for each.
-2. Nominating a set of negotiation mechanisms targeted for interop (e.g., Alt-Svc).
 

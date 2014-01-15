@@ -12,6 +12,8 @@
    <!ENTITY rfc6694 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6694.xml'>
    <!ENTITY rfc6838 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6838.xml'>
    <!ENTITY xml SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xml-20081126.xml'>  
+   <!ENTITY html SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml'>
+   <!ENTITY rdfa SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-rdfa-core-20120607.xml'>
    <!ENTITY problem-schema SYSTEM 'http-problem-05.rnc'>
 ]>
 
@@ -82,8 +84,8 @@
       <t>HTTP <xref target="RFC2616"/> status codes are sometimes not
       sufficient to convey enough information about an error to be helpful.
       While humans behind Web browsers can be informed about the nature of the
-      problem with an HTML response body, non-human consumers of so-called
-      "HTTP APIs" are usually not.</t>
+      problem with an HTML <xref target="W3C.REC-html401-19991224"/> response
+      body, non-human consumers of so-called "HTTP APIs" are usually not.</t>
 
       <t>This specification defines simple JSON <xref target="RFC4627"/> and
       XML <xref target="W3C.REC-xml-20081126"/> document formats to suit this
@@ -119,9 +121,9 @@
       
       <t>The data model for problem details is a JSON <xref target="RFC4627"/>
       object; when formatted as a JSON document, it uses the
-      "application/api-problem+json" media type. <xref target="xml-syntax"/>
+      "application/problem+json" media type. <xref target="xml-syntax"/>
       defines how to express them in an equivalent XML format, which uses
-      the "application/api-problem+xml" media type.</t>
+      the "application/problem+xml" media type.</t>
       
       <t>Note that problem details are (naturally) not the only way to convey
       the details of a problem in HTTP; if the response is still a
@@ -145,39 +147,39 @@
 		</section>
 
 
-    <section title="The Problem Details JSON Object">
+    <section title="The Problem Details JSON Object" anchor="problem-json">
 
       <t>The canonical model for problem details is a JSON <xref
       target="RFC4627"/> object.</t>
 
       <t>When serialised as a JSON document, that format is identified with
-      the "application/api-problem+json" media type.</t>
+      the "application/problem+json" media type.</t>
       
       <t>For example, a HTTP response carrying JSON problem details:</t>
 
      <figure><artwork><![CDATA[
 HTTP/1.1 403 Forbidden
-Content-Type: application/api-problem+json
+Content-Type: application/problem+json
 Content-Language: en
 
 {
- "problemType": "http://example.com/probs/out-of-credit",
+ "type": "http://example.com/probs/out-of-credit",
  "title": "You do not have enough credit.",
  "detail": "Your current balance is 30, but that costs 50.",
- "problemInstance": "http://example.net/account/12345/msgs/abc",
+ "instance": "http://example.net/account/12345/msgs/abc",
  "balance": 30,
  "accounts": ["http://example.net/account/12345",
               "http://example.net/account/67890"]
 }]]></artwork></figure>
 
-      <t>Here, the out-of-credit problem (identified by its problemType URI)
+      <t>Here, the out-of-credit problem (identified by its type URI)
       indicates the reason for the 403 in "title", gives a reference for the
-      specific problem occurrence with "problemInstance", gives
+      specific problem occurrence with "instance", gives
       occurrence-specific details in "detail", and adds two extensions;
-      "balance" conveys the account's balance, and "account" gives a link
+      "balance" conveys the account's balance, and "accounts" gives a link
       where the account can be topped up.</t>
 
-      <t>Note that "problemType" is case-sensitive in the JSON object, as are
+      <t>Note that "type" is case-sensitive in the JSON object, as are
       all other member names.</t>
 
       <section title="Required Members">
@@ -186,10 +188,10 @@ Content-Language: en
        
         <t><list style='symbols'>
 
-          <t>"problemType" (string) - An absolute URI <xref
-          target="RFC3986"/> that identifies the problem type. When
-          dereferenced, it SHOULD provide human-readable documentation for
-          the problem type (e.g., using HTML).</t>
+          <t>"type" (string) - An absolute URI <xref target="RFC3986"/> that
+          identifies the problem type. When dereferenced, it SHOULD provide
+          human-readable documentation for the problem type (e.g., using HTML
+          <xref target="W3C.REC-html401-19991224"/>).</t>
 
           <t>"title" (string) - A short, human-readable summary of the
           problem type. It SHOULD NOT change from occurrence to occurrence of
@@ -197,12 +199,12 @@ Content-Language: en
 
         </list></t>
           
-        <t>Consumers MUST use the problemType string as the primary
+        <t>Consumers MUST use the type string as the primary
         identifier for the problem type; the title string is advisory, and
         included only for users who are not aware of the semantics of the
         URI, and don't have the ability to discover them (e.g., offline log
         analysis). Consumers SHOULD NOT automatically dereference the
-        problemType URI.</t>
+        type URI.</t>
       
       </section>
       <section title="Optional Members">
@@ -212,20 +214,20 @@ Content-Language: en
 
         <t><list style='symbols'>
         
-          <t>"httpStatus" (number) - The HTTP status code (<xref
+          <t>"status" (number) - The HTTP status code (<xref
           target="RFC2616"/>, Section 6) generated by the origin server for this
           occurrence of the problem.</t>
           
            <t>"detail" (string) - An human readable explanation specific to
           this occurrence of the problem.</t>
           
-           <t>"problemInstance" (string) - An absolute URI that identifies the
+           <t>"instance" (string) - An absolute URI that identifies the
           specific occurrence of the problem. It may or may not yield
           further information if dereferenced.</t>
         
          </list></t>
 
-        <t>The httpStatus member, if present, is only advisory; it conveys the
+        <t>The status member, if present, is only advisory; it conveys the
         HTTP status code used for the convenience of the consumer. Generators
         MUST use the same status code in the actual HTTP response, to assure
         that generic HTTP software that does not understand this format still
@@ -288,7 +290,7 @@ Content-Language: en
       <t>New problem type definitions MUST document:
 
       <list style="numbers">
-        <t>A problemType URI (typically, with the "http" scheme),</t>
+        <t>A type URI (typically, with the "http" scheme),</t>
         <t>A title that appropriately describes it (think short), and</t>
         <t>The HTTP status code for it to be used with.</t>
       </list></t>
@@ -296,8 +298,9 @@ Content-Language: en
       <t>Problem types MAY specify the use of the Retry-After response
       header in appropriate circumstances.</t>
 
-      <t>A problem's problemType URI SHOULD resolve to HTML documentation
-      that explains how to resolve the problem.</t>
+      <t>A problem's type URI SHOULD resolve to HTML <xref
+      target="W3C.REC-html401-19991224"/> documentation that explains how to
+      resolve the problem.</t>
 
       <t>A problem type definition MAY specify additional members on the
       Problem Details object. For example, an extension might use
@@ -306,12 +309,12 @@ Content-Language: en
 
       <t>If such additional members are defined, their names SHOULD start with
       a letter (ALPHA, as per <xref target="RFC5234"/>) and SHOULD consist of
-      characters from ALPHA, DIGIT and "_" (so that it can be serialized in
+      characters from ALPHA, DIGIT, and "_" (so that it can be serialized in
       formats other than JSON), and SHOULD be three characters or longer.</t>
 
       <section title="Example">
 
-        <t>For example, if your are publishing an HTTP API to your online
+        <t>For example, if you are publishing an HTTP API to your online
         shopping cart, you might need to indicate that the user is out of
         credit (our example from above), and therefore cannot make the
         purchase.</t>
@@ -322,16 +325,16 @@ Content-Language: en
         formats; JSON if your API is JSON-based, or XML if it uses that
         convention.</t>
           
-        <t>To do so, you might look for an already-defined problemType URI that
+        <t>To do so, you might look for an already-defined type URI that
         suits your purposes. If one is available, you can reuse that URI.</t>
         
         <t>If one isn't available, you could mint and document a new
-        problemType URI (which ought to be under your control and stable over
+        type URI (which ought to be under your control and stable over
         time), an appropriate title and the HTTP status code that it will be
         used with, along with what it means and how it should be handled.</t>
 
-        <t>In summary: a problemInstance URI will always identify a specific
-        occurrence of a problem. On the other hand, problemType URIs can be
+        <t>In summary: an instance URI will always identify a specific
+        occurrence of a problem. On the other hand, type URIs can be
         reused if an appropriate description of a problem type is already
         available someplace else, or they can be created for new problem
         types.</t>
@@ -341,7 +344,7 @@ Content-Language: en
       <section title="Pre-Defined Problem Types">
         <t>This specification reserves the use of one URI as a problem type.</t>
         
-        <t> The "about:blank" URI <xref target="RFC6694"/>, when used as a
+        <t>The "about:blank" URI <xref target="RFC6694"/>, when used as a
         problem type, indicates that the problem has no additional semantics
         beyond that of the HTTP status code.</t>
         
@@ -351,6 +354,45 @@ Content-Language: en
         preferences (expressed with the Accept-Language request header).</t>
       </section>
 
+    </section>
+      
+    <section title="Using Problem Details with Other Formats">
+      
+      <t>In some situations, it can be advantageous to embed Problem Details in
+      formats other than those described here. For example, an API that uses
+      HTML <xref target="W3C.REC-html401-19991224"/> might want to also use
+      HTML for expressing its problem details.</t>
+
+      <t>Problem details can be embedded in other formats by either
+      encapsulating one of the existing serializations (JSON or XML) into that
+      format, or by translating the model of a Problem Detail (as specified in
+      <xref target="problem-json"/>) into the format's conventions.</t>
+
+      <t>For example, in HTML, a problem could be embedded by encapsulating
+      JSON in a script tag:</t>
+
+      <figure><artwork><![CDATA[
+        <script type="application/problem+json">
+          {
+           "type": "http://example.com/probs/out-of-credit",
+           "title": "You do not have enough credit.",
+           "detail": "Your current balance is 30, but that costs 50.",
+           "instance": "http://example.net/account/12345/msgs/abc",
+           "balance": 30,
+           "accounts": ["http://example.net/account/12345",
+                        "http://example.net/account/67890"]
+          }
+        </script>
+ }]]></artwork></figure>
+
+      <t>or by inventing a mapping into RDFa <xref
+      target="W3C.REC-rdfa-core-20120607"/>.</t>
+
+      <t>This specification does not make specific recommendations regarding
+      embedding Problem Details in other formats; the appropriate way to embed
+      them depends both upon the format in use and application of that
+      format.</t>
+      
     </section>
       
             
@@ -370,7 +412,7 @@ Content-Language: en
         through the HTTP interface, since this can expose sensitive details of
         the server implementation, its data, and so on.</t>
             
-        <t>The "httpStatus" member duplicates the information available in the
+        <t>The "status" member duplicates the information available in the
         HTTP status code itself, thereby bringing the possibility of
         disagreement between the two. Their relative precedence is not clear,
         since a disagreement might indicate that (for example) an intermediary
@@ -389,7 +431,7 @@ Content-Language: en
 
       <figure><artwork><![CDATA[
    Type name: application
-   Subtype name: api-problem+json
+   Subtype name: problem+json
    Required parameters: None
    Optional parameters: None; unrecognised parameters 
                         should be ignored
@@ -412,7 +454,7 @@ Content-Language: en
 
       <figure><artwork><![CDATA[
    Type name: application
-   Subtype name: api-problem+xml
+   Subtype name: problem+xml
    Required parameters: None
    Optional parameters: None; unrecognized parameters 
                         should be ignored
@@ -477,6 +519,8 @@ Content-Language: en
         &rfc5988;
         &rfc6694;
         &rfc6838;
+        &html;
+        &rdfa;
       </references>
 
 <section anchor="xml-syntax" title="HTTP Problems and XML">
@@ -491,7 +535,7 @@ Content-Language: en
       
 <figure><artwork>&problem-schema;</artwork></figure>
 
-   <t>The media type for this format is "application/api-problem+xml".</t>
+   <t>The media type for this format is "application/problem+xml".</t>
    
    <t>Extension arrays and objects can be serialized into the XML format by
    considering an element containing a child or children to represent an
@@ -501,17 +545,17 @@ Content-Language: en
       
      <figure><artwork><![CDATA[
 HTTP/1.1 403 Forbidden
-Content-Type: application/api-problem+xml
+Content-Type: application/problem+xml
 Content-Language: en
 
 <?xml version="1.0" encoding="UTF-8"?>
 <problem xmlns="urn:ietf:rfc:XXXX">
-  <problemType>http://example.com/probs/out-of-credit</problemType>
+  <type>http://example.com/probs/out-of-credit</type>
   <title>You do not have enough credit.</title>
   <detail>Your current balance is 30, but that costs 50.</detail>
-  <problemInstance>
+  <instance>
     http://example.net/account/12345/msgs/abc
-  </problemInstance>
+  </instance>
   <balance>30</balance>
   <accounts>
     <i>http://example.net/account/12345</i>
@@ -523,7 +567,8 @@ Content-Language: en
     embedding it into other formats; it does not imply that it can be extended
     with content from other namespaces. The RELAX NG schema explicitly only
     allows elements from the one namespace used in the XML format. Any
-    extension arrays and objects MUST be serialized using that namespace.</t>
+    extension arrays and objects MUST be serialized into XML markup using that
+    namespace.</t>
 
 </section>
 	  
