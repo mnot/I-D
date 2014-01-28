@@ -1,5 +1,5 @@
 ---
-title: URI Design: Ownership and Delegation
+title: URI Design and Ownership
 abbrev: URI Design Ownership
 docname: draft-nottingham-uri-get-off-my-lawn-02
 date: 2014
