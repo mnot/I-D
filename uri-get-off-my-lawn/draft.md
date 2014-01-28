@@ -1,6 +1,6 @@
 ---
-title: Standardising Structure in URIs
-abbrev: URI Structure Policies
+title: URI Design: Ownership and Delegation
+abbrev: URI Design Ownership
 docname: draft-nottingham-uri-get-off-my-lawn-02
 date: 2014
 category: bcp
@@ -70,8 +70,11 @@ informative:
 --- abstract
 
 Sometimes, it is attractive to add features to protocols or applications by specifying a particular
-structure for URIs (or parts thereof). This document cautions against this practice in standards
-(sometimes called "URI Squatting").
+structure for URIs (or parts thereof). However, publishing standards that mandate URI structure is
+inappropriate because the structure of a URI needs to be firmly under the control of its owner, and
+the IETF (as well as other organisations) should not usurp this ownership.
+
+This document is intended to prevent this practice (sometimes called "URI Squatting") in standards.
 
 
 --- middle
@@ -98,10 +101,9 @@ can have several potentially detrimental effects:
   that there will be collisions between such conventions (especially considering that servers,
   applications and individual deployments will have their own conventions).
 
-* Dilution - Adorning URIs with extra information to support new standard features dilutes their
-  usefulness as identifiers when that information is ephemeral (as URIs ought to be stable; see
-  {{webarch}} Section 3.5.1), or its inclusion causes several alternate forms of the URI to exist
-  (see {{webarch}} Section 2.3.1).
+* Dilution - When the information added to a URI is ephemeral, this dilutes its utility by reducing
+  its stability (see {{webarch}} Section 3.5.1), and can cause several alternate forms of the URI
+  to exist (see {{webarch}} Section 2.3.1).
 
 * Brittleness - A standard that specifies a static URI cannot change its form in future revisions.
 
@@ -171,7 +173,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 Best Current Practices for Standardising Structured URIs
 ========================================================
 
-Different components of a URI have differing practices recommended.
+Best practices differ depending on the URI component:
 
 URI Schemes
 -----------
@@ -229,12 +231,8 @@ Alternatives to Specifying Static URIs {#alternatives}
 ======================================
 
 Given the issues above, the most successful strategy for applications and extensions that wish to
-use URIs is to use them in the fashion they were designed; as run-time artifacts that are exchanged
+use URIs is to use them in the fashion they were designed; as links that are exchanged
 as part of the protocol, rather than statically specified syntax.
-
-For example, if a specific URI needs to be known to interact with an application, its "shape" can
-be determined by interacting with the application's more general interface (in Web terms, its "home
-page") to learn about that URI.
 
 {{RFC5988}} describes a framework for identifying the semantics of a link in a "link relation type"
 to aid this. {{RFC6570}} provides a standard syntax for "link templates" that can be used to
@@ -268,5 +266,5 @@ no direct IANA actions specified in this document.
 Acknowledgments
 ===============
 
-Thanks to David Booth, Anne van Kesteren and Erik Wilde for their suggestions
+Thanks to David Booth, Tim Bray, Anne van Kesteren and Erik Wilde for their suggestions
 and feedback.
