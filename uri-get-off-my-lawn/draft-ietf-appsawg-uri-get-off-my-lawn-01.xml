@@ -106,17 +106,24 @@ the establishment of a registry.</t>
 acceptable to require that an application support ‘http’ and ‘https’ URIs. However, applications
 SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly specific to
 the nominated schemes.</t>
-        <t>A specification that defines substructure within a URI scheme MUST do so in a registration document for the URI scheme in question, or by modifying <xref target="RFC4395"/>.</t>
+        <t>A specification that defines substructure within a URI scheme MUST do so in a registration document
+for the URI scheme in question, or by modifying <xref target="RFC4395"/>.</t>
       </section>
       <section anchor="uri-authorities" title="URI Authorities">
         <t>Scheme definitions define the presence, format and semantics of an authority component in URIs; all
 other specifications MUST NOT constrain, define structure or semantics for URI authorities.</t>
+        <t>For example, an extension or application cannot say that the “foo” prefix in “foo_app.example.com”
+is meaningful or triggers special handling.</t>
       </section>
       <section anchor="uri-paths" title="URI Paths">
         <t>Scheme definitions define the presence, format, and semantics of a path component in URIs; all
 other specifications MUST NOT constrain, define structure or semantics for any path component.</t>
         <t>The only exception to this requirement is registered “well-known” URIs, as specified by <xref target="RFC5785"/>.
 See that document for a description of the applicability of that mechanism.</t>
+        <t>For example, an application cannot specify a fixed URI path “/myapp”, since this usurps the host’s
+control of that space. Specifying a fixed path relative to another (e.g., {whatever}/myapp) is also
+bad practice, since it “locks” the URIs in use; while doing so might prevent collisions, it does
+not avoid the other issues discussed.</t>
       </section>
       <section anchor="uri-queries" title="URI Queries">
         <t>The presence, format and semantics of the query component of URIs is dependent upon many factors,
@@ -125,26 +132,14 @@ a resource itself.</t>
         <t>Applications SHOULD NOT directly specify the syntax of queries, as this can cause operational
 difficulties for deployments that do not support a particular form of a query.</t>
         <t>Extensions MUST NOT specify the format or semantics of queries.</t>
+        <t>For example, an extension cannot be minted that indicates that all query parameters with the name
+“sig” indicate a cryptographic signature.</t>
       </section>
       <section anchor="uri-fragment-identifiers" title="URI Fragment Identifiers">
         <t>Media type definitions (as per <xref target="RFC6838"/> SHOULD specify the fragment identifier syntax(es) to be
 used with them; other specifications MUST NOT define structure within the fragment identifier,
 unless they are explicitly defining one for reuse by media type definitions.</t>
       </section>
-    </section>
-    <section anchor="alternatives" title="Alternatives to Specifying Structure in URIs">
-      <t>Given the issues above, the most successful strategy for applications and extensions that wish to
-use URIs is to use them in the fashion they were designed; as links that are exchanged
-as part of the protocol, rather than statically specified syntax.</t>
-      <t>To aid this, <xref target="RFC5988"/> specifies relation types for Web links. <xref target="RFC6570"/> provides a standard
-syntax for URI Templates that can be used to dynamically insert application-specific variables into
-a URI to enable such applications while avoiding impinging upon URI owners’ control of them.</t>
-      <t><xref target="RFC5785"/> allows specific paths to be ‘reserved’ for standard use on URI schemes that opt into
-that mechanism (‘http’ and ‘https’ by default). Note, however, that this is not a general “escape
-valve” for applications that need structured URIs; see that specification for more information.</t>
-      <t>Specifying more elaborate structures in an attempt to avoid collisions is not adequate to conform
-to this document. For example, prefixing query parameters with “myapp_” does not help, because the
-prefix itself is subject to the risk of collision (since it is not “reserved”).</t>
     </section>
     <section anchor="security-considerations" title="Security Considerations">
       <t>This document does not introduce new protocol artifacts with security considerations. It prohibits
@@ -402,6 +397,20 @@ specifications of each URI scheme.
     <section anchor="acknowledgments" title="Acknowledgments">
       <t>Thanks to David Booth, Dave Crocker, Tim Bray, Anne van Kesteren, Martin Thomson and Erik Wilde for
 their suggestions and feedback.</t>
+    </section>
+    <section anchor="alternatives" title="Alternatives to Specifying Structure in URIs">
+      <t>Given the issues above, the most successful strategy for applications and extensions that wish to
+use URIs is to use them in the fashion they were designed; as links that are exchanged
+as part of the protocol, rather than statically specified syntax.</t>
+      <t>To aid this, <xref target="RFC5988"/> specifies relation types for Web links. <xref target="RFC6570"/> provides a standard
+syntax for URI Templates that can be used to dynamically insert application-specific variables into
+a URI to enable such applications while avoiding impinging upon URI owners’ control of them.</t>
+      <t><xref target="RFC5785"/> allows specific paths to be ‘reserved’ for standard use on URI schemes that opt into
+that mechanism (‘http’ and ‘https’ by default). Note, however, that this is not a general “escape
+valve” for applications that need structured URIs; see that specification for more information.</t>
+      <t>Specifying more elaborate structures in an attempt to avoid collisions is not adequate to conform
+to this document. For example, prefixing query parameters with “myapp_” does not help, because the
+prefix itself is subject to the risk of collision (since it is not “reserved”).</t>
     </section>
   </back>
 </rfc>
