@@ -86,6 +86,10 @@ can have several potentially detrimental effects:
   its stability (see {{webarch}} Section 3.5.1), and can cause several alternate forms of the URI
   to exist (see {{webarch}} Section 2.3.1).
 
+* Rigidity - Fixed URI syntax often interferes with desired deployment patterns. For example, if an
+  authority wishes to offer several applications on a single hostname, it becomes difficult to
+  impossible to do if their URIs do not allow the required flexibility.
+
 * Operational Difficulty - Supporting some URI conventions can be difficult in some
   implementations. For example, specifying that a particular query parameter be used precludes the
   use of Web servers that serve the response from a filesystem. Likewise, an application that fixes
