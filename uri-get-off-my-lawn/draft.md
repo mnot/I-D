@@ -186,25 +186,6 @@ used with them; other specifications MUST NOT define structure within the fragme
 unless they are explicitly defining one for reuse by media type definitions.
 
 
-# Alternatives to Specifying Structure in URIs {#alternatives}
-
-Given the issues above, the most successful strategy for applications and extensions that wish to
-use URIs is to use them in the fashion they were designed; as links that are exchanged
-as part of the protocol, rather than statically specified syntax.
-
-To aid this, {{RFC5988}} specifies relation types for Web links. {{RFC6570}} provides a standard
-syntax for URI Templates that can be used to dynamically insert application-specific variables into
-a URI to enable such applications while avoiding impinging upon URI owners' control of them.
-
-{{RFC5785}} allows specific paths to be 'reserved' for standard use on URI schemes that opt into
-that mechanism ('http' and 'https' by default). Note, however, that this is not a general "escape
-valve" for applications that need structured URIs; see that specification for more information.
-
-Specifying more elaborate structures in an attempt to avoid collisions is not adequate to conform
-to this document. For example, prefixing query parameters with "myapp_" does not help, because the
-prefix itself is subject to the risk of collision (since it is not "reserved").
-
-
 # Security Considerations
 
 This document does not introduce new protocol artifacts with security considerations. It prohibits
@@ -226,3 +207,22 @@ no direct IANA actions specified in this document.
 
 Thanks to David Booth, Dave Crocker, Tim Bray, Anne van Kesteren, Martin Thomson and Erik Wilde for
 their suggestions and feedback.
+
+# Alternatives to Specifying Structure in URIs {#alternatives}
+
+Given the issues above, the most successful strategy for applications and extensions that wish to
+use URIs is to use them in the fashion they were designed; as links that are exchanged
+as part of the protocol, rather than statically specified syntax.
+
+To aid this, {{RFC5988}} specifies relation types for Web links. {{RFC6570}} provides a standard
+syntax for URI Templates that can be used to dynamically insert application-specific variables into
+a URI to enable such applications while avoiding impinging upon URI owners' control of them.
+
+{{RFC5785}} allows specific paths to be 'reserved' for standard use on URI schemes that opt into
+that mechanism ('http' and 'https' by default). Note, however, that this is not a general "escape
+valve" for applications that need structured URIs; see that specification for more information.
+
+Specifying more elaborate structures in an attempt to avoid collisions is not adequate to conform
+to this document. For example, prefixing query parameters with "myapp_" does not help, because the
+prefix itself is subject to the risk of collision (since it is not "reserved").
+
