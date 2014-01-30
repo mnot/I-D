@@ -8,7 +8,7 @@ updates: 3986
 
 ipr: trust200902
 area: General
-workgroup: 
+workgroup: appsawg
 keyword: URI structure
 keyword: URI squatting
 
