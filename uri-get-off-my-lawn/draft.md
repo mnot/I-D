@@ -1,7 +1,7 @@
 ---
 title: URI Design and Ownership
 abbrev: URI Design Ownership
-docname: draft-nottingham-uri-get-off-my-lawn-02
+docname: draft-ietf-appsawg-uri-get-off-my-lawn-02
 date: 2014
 category: bcp
 updates: 3986
@@ -30,8 +30,6 @@ normative:
   RFC6838:
 
 informative:
-  RFC2026:
-  RFC4844:
   RFC5785:
   RFC5988:
   RFC6570:
@@ -48,23 +46,6 @@ informative:
         name: Norman Walsh
         org:
     date: 2004-12-15
-  HTML4:
-    target: http://www.w3.org/TR/REC-html40/
-    title: HTML 4.01 Specification
-    author:
-     -
-       ins: I. Jacobs
-       name: Ian Jacobs
-       org: W3C
-     -
-       ins: A. Le Hors
-       name: Arnaud Le Hors
-       org: W3C
-     - 
-       ins: D. Raggett
-       name: Dave Raggett
-       org:
-    date: 1999-12-24
 
 
 --- abstract
@@ -74,7 +55,8 @@ structure for URIs (or parts thereof). However, publishing standards that mandat
 inappropriate because the structure of a URI needs to be firmly under the control of its owner, and
 the IETF (as well as other organisations) should not usurp this ownership.
 
-This document is intended to prevent this practice (sometimes called "URI Squatting") in standards.
+This document is intended to prevent this practice (sometimes called "URI Squatting") in standards,
+but updating RFC3986 to indicate where it is acceptable.
 
 
 --- middle
@@ -105,8 +87,6 @@ can have several potentially detrimental effects:
   its stability (see {{webarch}} Section 3.5.1), and can cause several alternate forms of the URI
   to exist (see {{webarch}} Section 2.3.1).
 
-* Brittleness - A standard that specifies a static URI cannot change its form in future revisions.
-
 * Operational Difficulty - Supporting some URI conventions can be difficult in some
   implementations. For example, specifying that a particular query parameter be used precludes the
   use of Web servers that serve the response from a filesystem. Likewise, an application that fixes
@@ -116,13 +96,14 @@ can have several potentially detrimental effects:
 * Client Assumptions - When conventions are standardised, some clients will inevitably assume that
   the standards are in use when those conventions are seen. This can lead to interoperability
   problems; for example, if a specification documents that the "sig" URI query parameter indicates
-  that its payload is a cryptographic signature for the URI, it can lead to false positives.
+  that its payload is a cryptographic signature for the URI, it can lead to undesirable behaviour.
 
-While it is not ideal when a server or a deployed application constrains URI structure (indeed, this
-is not recommended practice, but that discussion is out of scope for this document), publishing
-standards that mandate URI structure is inappropriate because the structure of a URI needs to be
-firmly under the control of its owner, and the IETF (as well as other organisations) should not
-usurp this ownership; see {{webarch}} Section 2.2.2.1.
+While it is not ideal when a server or a deployed application constrains URI structure (indeed,
+this is not recommended practice, but that discussion is out of scope for this document),
+publishing standards that mandate URI structure (beyond those allowed by {{RFC3986}}) is
+inappropriate because the structure of a URI needs to be firmly under the control of its owner, and
+the IETF (as well as other organisations) should not usurp this ownership; see {{webarch}} Section
+2.2.2.1.
 
 This document explains best current practices for establishing URI structures, conventions and
 formats in standards. It also offers strategies for specifications to avoid violating these
@@ -132,16 +113,7 @@ guidelines in {{alternatives}}.
 Who This Document Is For
 ------------------------
 
-These guidelines are IETF Best Current Practice, and are therefore binding upon IETF
-standards-track documents, as well as submissions to the RFC Editor on the Independent and IRTF streams. See {{RFC2026}} and {{RFC4844}} for more information.
-
-Other Open Standards organisations (in the sense of {{RFC2026}}) are encouraged to adopt them.
-Questions as to their applicability ought to be handled through the liaison relationship, if
-present.
-
-Ad hoc efforts are also encouraged to adopt them, as this RFC reflects Best Current Practice.
-
-This document's requirements specifically targets a few different types of specifications:
+This document's requirements specifically target a few different types of specifications:
 
 * URI Scheme Definitions ("scheme definitions") - specifications that define and register URI
   schemes, as per {{RFC4395}}.
@@ -180,18 +152,17 @@ URI Schemes
 
 Applications and extensions MAY require use of specific URI scheme(s); for example, it is perfectly
 acceptable to require that an application support 'http' and 'https' URIs. However, applications
-SHOULD NOT preclude the use of other URI schemes in the future, to promote reuse, unless they are
-clearly specific to the nominated schemes.
+SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly specific to
+the nominated schemes.
 
-Specifications MUST NOT define substructure within URI schemes, unless they do so by modifying
-{{RFC4395}}, or they are the registration document for the URI scheme(s) in question.
+A specification that defines substructure within a URI scheme MUST do so in a registration document for the URI scheme in question, or by modifying {{RFC4395}}.
 
 
 URI Authorities
 ---------------
 
 Scheme definitions define the presence, format and semantics of an authority component in URIs; all
-other specifications MUST NOT constrain, define structure or semantics for them.
+other specifications MUST NOT constrain, define structure or semantics for URI authorities.
 
 
 URI Paths
@@ -214,10 +185,7 @@ a resource itself.
 Applications SHOULD NOT directly specify the syntax of queries, as this can cause operational
 difficulties for deployments that do not support a particular form of a query.
 
-Extensions MUST NOT specify the format or semantics of queries. In particular, extensions MUST NOT
-assume that all HTTP(S) resources are capable of accepting queries in the format defined by
-{{HTML4}}, Section 17.13.4.
-
+Extensions MUST NOT specify the format or semantics of queries.
 
 URI Fragment Identifiers
 ------------------------
@@ -227,30 +195,33 @@ used with them; other specifications MUST NOT define structure within the fragme
 unless they are explicitly defining one for reuse by media type definitions.
 
 
-Alternatives to Specifying Static URIs {#alternatives}
-======================================
+Alternatives to Specifying Structure in URIs {#alternatives}
+============================================
 
 Given the issues above, the most successful strategy for applications and extensions that wish to
 use URIs is to use them in the fashion they were designed; as links that are exchanged
 as part of the protocol, rather than statically specified syntax.
 
-{{RFC5988}} describes a framework for identifying the semantics of a link in a "link relation type"
-to aid this. {{RFC6570}} provides a standard syntax for "link templates" that can be used to
-dynamically insert application-specific variables into a URI to enable such applications while
-avoiding impinging upon URI owners' control of them.
+To aid this, {{RFC5988}} specifies relation types for Web links. {{RFC6570}} provides a standard
+syntax for URI Templates that can be used to dynamically insert application-specific variables into
+a URI to enable such applications while avoiding impinging upon URI owners' control of them.
 
 {{RFC5785}} allows specific paths to be 'reserved' for standard use on URI schemes that opt into
 that mechanism ('http' and 'https' by default). Note, however, that this is not a general "escape
 valve" for applications that need structured URIs; see that specification for more information.
 
 Specifying more elaborate structures in an attempt to avoid collisions is not adequate to conform
-to this document. For example, prefixing query parameters with "myapp_" does not help.
+to this document. For example, prefixing query parameters with "myapp_" does not help, because the
+prefix itself is subject to the risk of collision (since it is not "reserved").
 
 
 Security Considerations
 =======================
 
-This document does not introduce new protocol artifacts with security considerations. 
+This document does not introduce new protocol artifacts with security considerations. It prohibits
+some practices that might lead to vulnerabilities; for example, if a security-sensitive mechanism
+is introduced by assuming that a URI path component or query string has a particular meaning, false
+positives might be encountered (due to sites that already use the chosen string).
 
 
 IANA Considerations
@@ -266,5 +237,5 @@ no direct IANA actions specified in this document.
 Acknowledgments
 ===============
 
-Thanks to David Booth, Tim Bray, Anne van Kesteren and Erik Wilde for their suggestions
-and feedback.
+Thanks to David Booth, Dave Crocker, Tim Bray, Anne van Kesteren, Martin Thomson and Erik Wilde for
+their suggestions and feedback.
