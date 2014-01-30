@@ -61,8 +61,7 @@ but updating RFC3986 to indicate where it is acceptable.
 
 --- middle
 
-Introduction
-============
+# Introduction
 
 URIs {{RFC3986}} very often include structured application data. This might include artifacts
 from filesystems (often occurring in the path component), and user information (often in the query
@@ -110,8 +109,7 @@ formats in standards. It also offers strategies for specifications to avoid viol
 guidelines in {{alternatives}}.
 
 
-Who This Document Is For
-------------------------
+## Who This Document Is For
 
 This document's requirements specifically target a few different types of specifications:
 
@@ -134,21 +132,18 @@ specification might legitimately specify the semantics of a URI on the IANA.ORG 
 the establishment of a registry.
 
 
-Notational Conventions
-----------------------
+## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
 {{RFC2119}}.
 
 
-Best Current Practices for Standardising Structured URIs
-========================================================
+# Best Current Practices for Standardising Structured URIs
 
 Best practices differ depending on the URI component:
 
-URI Schemes
------------
+## URI Schemes
 
 Applications and extensions MAY require use of specific URI scheme(s); for example, it is perfectly
 acceptable to require that an application support 'http' and 'https' URIs. However, applications
@@ -158,15 +153,13 @@ the nominated schemes.
 A specification that defines substructure within a URI scheme MUST do so in a registration document for the URI scheme in question, or by modifying {{RFC4395}}.
 
 
-URI Authorities
----------------
+## URI Authorities
 
 Scheme definitions define the presence, format and semantics of an authority component in URIs; all
 other specifications MUST NOT constrain, define structure or semantics for URI authorities.
 
 
-URI Paths
----------
+## URI Paths
 
 Scheme definitions define the presence, format, and semantics of a path component in URIs; all
 other specifications MUST NOT constrain, define structure or semantics for any path component.
@@ -175,8 +168,7 @@ The only exception to this requirement is registered "well-known" URIs, as speci
 See that document for a description of the applicability of that mechanism.
 
 
-URI Queries
------------
+## URI Queries
 
 The presence, format and semantics of the query component of URIs is dependent upon many factors,
 and MAY be constrained by a scheme definition. Often, they are determined by the implementation of
@@ -187,16 +179,14 @@ difficulties for deployments that do not support a particular form of a query.
 
 Extensions MUST NOT specify the format or semantics of queries.
 
-URI Fragment Identifiers
-------------------------
+## URI Fragment Identifiers
 
 Media type definitions (as per {{RFC6838}} SHOULD specify the fragment identifier syntax(es) to be
 used with them; other specifications MUST NOT define structure within the fragment identifier,
 unless they are explicitly defining one for reuse by media type definitions.
 
 
-Alternatives to Specifying Structure in URIs {#alternatives}
-============================================
+# Alternatives to Specifying Structure in URIs {#alternatives}
 
 Given the issues above, the most successful strategy for applications and extensions that wish to
 use URIs is to use them in the fashion they were designed; as links that are exchanged
@@ -215,8 +205,7 @@ to this document. For example, prefixing query parameters with "myapp_" does not
 prefix itself is subject to the risk of collision (since it is not "reserved").
 
 
-Security Considerations
-=======================
+# Security Considerations
 
 This document does not introduce new protocol artifacts with security considerations. It prohibits
 some practices that might lead to vulnerabilities; for example, if a security-sensitive mechanism
@@ -224,8 +213,7 @@ is introduced by assuming that a URI path component or query string has a partic
 positives might be encountered (due to sites that already use the chosen string).
 
 
-IANA Considerations
-===================
+# IANA Considerations
 
 This document clarifies appropriate registry policy for new URI schemes, and potentially for the
 creation of new URI-related registries, if they attempt to mandate structure within URIs. There are
@@ -234,8 +222,7 @@ no direct IANA actions specified in this document.
 
 --- back
 
-Acknowledgments
-===============
+# Acknowledgments
 
 Thanks to David Booth, Dave Crocker, Tim Bray, Anne van Kesteren, Martin Thomson and Erik Wilde for
 their suggestions and feedback.
