@@ -150,13 +150,17 @@ acceptable to require that an application support 'http' and 'https' URIs. Howev
 SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly specific to
 the nominated schemes.
 
-A specification that defines substructure within a URI scheme MUST do so in a registration document for the URI scheme in question, or by modifying {{RFC4395}}.
+A specification that defines substructure within a URI scheme MUST do so in a registration document
+for the URI scheme in question, or by modifying {{RFC4395}}.
 
 
 ## URI Authorities
 
 Scheme definitions define the presence, format and semantics of an authority component in URIs; all
 other specifications MUST NOT constrain, define structure or semantics for URI authorities.
+
+For example, an extension or application cannot say that the "foo" prefix in "foo_app.example.com"
+is meaningful or triggers special handling.
 
 
 ## URI Paths
@@ -166,6 +170,11 @@ other specifications MUST NOT constrain, define structure or semantics for any p
 
 The only exception to this requirement is registered "well-known" URIs, as specified by {{RFC5785}}.
 See that document for a description of the applicability of that mechanism.
+
+For example, an application cannot specify a fixed URI path "/myapp", since this usurps the host's
+control of that space. Specifying a fixed path relative to another (e.g., {whatever}/myapp) is also
+bad practice, since it "locks" the URIs in use; while doing so might prevent collisions, it does
+not avoid the other issues discussed.
 
 
 ## URI Queries
@@ -178,6 +187,10 @@ Applications SHOULD NOT directly specify the syntax of queries, as this can caus
 difficulties for deployments that do not support a particular form of a query.
 
 Extensions MUST NOT specify the format or semantics of queries.
+
+For example, an extension cannot be minted that indicates that all query parameters with the name
+"sig" indicate a cryptographic signature.
+
 
 ## URI Fragment Identifiers
 
