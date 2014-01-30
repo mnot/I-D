@@ -128,7 +128,7 @@ both those enumerated above above and others.
 
 Note that this specification ought not be interpreted as preventing the allocation of control of
 URIs by parties that legitimately own them, or have delegated that ownership; for example, a
-specification might legitimately specify the semantics of a URI on the IANA.ORG Web site as part of
+specification might legitimately define the semantics of a URI on the IANA.ORG Web site as part of
 the establishment of a registry.
 
 
@@ -141,7 +141,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # Best Current Practices for Standardising Structured URIs
 
-Best practices differ depending on the URI component:
+Best practices differ depending on the URI component.
 
 ## URI Schemes
 
@@ -224,12 +224,17 @@ their suggestions and feedback.
 # Alternatives to Specifying Structure in URIs {#alternatives}
 
 Given the issues above, the most successful strategy for applications and extensions that wish to
-use URIs is to use them in the fashion they were designed; as links that are exchanged
-as part of the protocol, rather than statically specified syntax.
+use URIs is to use them in the fashion they were designed; as links that are exchanged as part of
+the protocol, rather than statically specified syntax. Several existing specifications can aid in
+this.
 
-To aid this, {{RFC5988}} specifies relation types for Web links. {{RFC6570}} provides a standard
-syntax for URI Templates that can be used to dynamically insert application-specific variables into
-a URI to enable such applications while avoiding impinging upon URI owners' control of them.
+{{RFC5988}} specifies relation types for Web links. By providing a framework for linking on the
+Web, where every link has a relation type, context and target, it allows applications to define a
+link's semantics and connectivity.
+
+{{RFC6570}} provides a standard syntax for URI Templates that can be used to dynamically insert
+application-specific variables into a URI to enable such applications while avoiding impinging upon
+URI owners' control of them.
 
 {{RFC5785}} allows specific paths to be 'reserved' for standard use on URI schemes that opt into
 that mechanism ('http' and 'https' by default). Note, however, that this is not a general "escape
