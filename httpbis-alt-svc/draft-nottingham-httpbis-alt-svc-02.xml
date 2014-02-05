@@ -26,21 +26,19 @@
         <uri>https://mozillians.org/u/pmcmanus/</uri>
       </address>
     </author>
-    <date year="2013"/>
+    <date year="2014"/>
     <area>General</area>
     <keyword>Internet-Draft</keyword>
     <abstract>
-      <t>This document introduces “alternate services” to allow an HTTP origin’s
-resources to be available at a separate network location, possibly accessed
-with a different protocol configuration.</t>
-      <t>It also specifies one means of discovering alternate services, the “Alt-Svc”
-header field.</t>
+      <t>This document proposes a number of changes to HTTP, centered around “alternate
+services”, which allow an origin’s resources to be available at a separate
+network location, possibly accessed with a different protocol configuration.</t>
     </abstract>
   </front>
   <middle>
     <section anchor="introduction" title="Introduction">
       <t><xref target="I-D.ietf-httpbis-http2"/> specifies a few ways to negotiate the use of
-HTTP/2.0 without changing existing URIs. However, several deficiencies in using
+HTTP/2 without changing existing URIs. However, several deficiencies in using
 the “upgrade dance” for “http://” URIs have become apparent. While that
 mechanism is still being investigated, some have expressed interest in an
 alternate approach.</t>
@@ -48,15 +46,13 @@ alternate approach.</t>
 only in conjunction with TLS. Alternate-Services provides a potential mechanism
 for achieving that for “http://” URIs; see <xref target="I-D.nottingham-http2-encryption"/>
 for details.</t>
-      <t>Finally, HTTP/2.0 is designed to have longer-lived, fewer and more active TCP
+      <t>Finally, HTTP/2 is designed to have longer-lived, fewer and more active TCP
 connections. While these properties are generally “friendlier” for the network,
 they can cause problems for servers that currently exploit the short-lived flow
 characteristics of HTTP/1.x for load balancing, session affinity and
 maintaining locality to the user.</t>
-      <t>This document specifies a new concept in HTTP, the “alternate service,” to
-address these use cases. An alternate service can be used to interact with the
-resources on an origin server at a separate location on the network, possibly
-using a different protocol configuration.</t>
+      <t>This document explores these use cases in <xref target="use-cases"/>, and makes proposals to
+address them in <xref target="proposals"/>.</t>
       <section anchor="notational-conventions" title="Notational Conventions">
         <t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”,
 “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be
@@ -67,79 +63,142 @@ interpreted as described in <xref target="RFC2119"/>.</t>
 Section 7 of that document.</t>
       </section>
     </section>
-    <section anchor="alternate-services" title="Alternate Services">
-      <t>On the Web, a resource is accessed through a scheme (e.g., “https” or “http”)
-on a nominated host / port combination.</t>
-      <t>These three pieces of information collectively can be used to establish the
-authority for ownership of the resource (its “origin”; see <xref target="RFC6454"/>), as
-well as providing enough information to bootstrap access to it.</t>
-      <t>This document introduces the notion of an “Alternate Service”; when an
-origin’s resources are accessible through a different protocol / host / port
-combination, it is said to have an alternate service.</t>
-      <t>For example, an origin:</t>
-      <figure>
-        <artwork><![CDATA[
+    <section anchor="use-cases" title="Use Cases for Alternate Services">
+      <t>This section details the use cases for Alternate Services, identifying the
+proposals that would need to be adopted to meet each one.</t>
+      <section anchor="upgrading-http1" title="Upgrading  HTTP/1">
+        <t>The first use case for Alternate Services is upgrading a client from HTTP/1 to
+HTTP/2 for http:// URIs (i.e., without the use of SSL or TLS).</t>
+        <t>While HTTP/2 defines how to use the Upgrade header “dance” to do this, it might
+not always be suitable, since it involves blocking the connection until the
+upgrade succeeds. Since HTTP/2 is focused on improving performance, this is not
+desirable.</t>
+        <t>Furthermore, using Upgrade requires the server that supports HTTP/2 to be on
+the same ip:port tuple as the server supporting HTTP/1; this can cause
+deployment issues, as well as operational issues with devices that assume that
+all traffic on port 80 will be HTTP/1.</t>
+        <t>Therefore, a means of indicating that a different, new connection can be used
+for HTTP/2 is desirable; this would allow the client to continue using the
+HTTP/1 connection until the new connection is established. It also simplifies
+deployment considerations by not requiring HTTP/1 and HTTP/2 to be “spoken” on
+the same port, and allows issues on port 80 to be avoided.</t>
+        <t>This use case can be met if <xref target="alternate"/> and <xref target="alt-svc"/> are accepted. It can
+also be met if <xref target="alternate"/> is used with a different discovery mechanism
+(e.g., DNS-based).</t>
+      </section>
+      <section anchor="using-tls-with-http-uris" title="Using TLS with http:// URIs">
+        <t>As discussed in <xref target="I-D.nottingham-http2-encryption"/>, it might be desirable to
+“opportunistically” use TLS when accessing a HTTP URI. </t>
+        <t>This case can also be met by <xref target="alternate"/> with <xref target="alt-svc"/> for HTTP/1, and
+<xref target="alternate"/> with <xref target="alt-svc"/> or <xref target="alt-frame"/> for HTTP/2.</t>
+      </section>
+      <section anchor="mitigating-load-asymmetry" title="Mitigating Load Asymmetry">
+        <t>HTTP/2 fundamentally changes how TCP is used. While this has many benefits, it
+also disrupts many server-side practices that take advantage of HTTP/1’s
+shorter flows.</t>
+        <t>In particular, load balancing among a pool of servers is often used, either
+with DNS (“global” load balancing), or a device (hardware or software) that
+dispatches requests locally.</t>
+        <t>HTTP/1’s short flows aid in this, because it is easy to shift traffic among
+servers when one becomes overloaded or unavailable. However, in HTTP/2, this is
+more difficult, due to the protocol’s longer flows.</t>
+        <t>As a result, a mechanism for re-directing requests for an origin or set of
+origins without making this apparent to the application is desirable.</t>
+        <t>This use case can be met if <xref target="alternate"/> and <xref target="alt-frame"/> are accepted; servers can redirect clients to alternate services as appropriate.</t>
+      </section>
+      <section anchor="segmenting-clients-that-support-tls-sni" title="Segmenting Clients that Support TLS SNI">
+        <t>TLS Server Name Indication (SNI) <xref target="RFC6066"/> was introduced to avoid a
+requirement for a 1:1 mapping between origin hostnames and IP addresses (in
+light of IP address exhaustion), in a manner similar to the Host header in
+HTTP/1.</t>
+        <t>However, there are still clients in common use that do not send SNI. As a
+result, servers have no way to take practical advantage of the extension,
+because there is no way to segment those clients that support SNI from those
+that do not.</t>
+        <t>As a result, they need to build their infrastructure as if SNI did not exist.</t>
+        <t>This use case can be met if <xref target="alternate"/> and <xref target="alt-frame"/> are accepted;
+servers can advertise an alternate service and direct clients that support SNI
+to the optimal server, while still maintaining a smaller set of legacy servers
+for those clients that do not support SNI.</t>
+      </section>
+    </section>
+    <section anchor="proposals" title="Proposals">
+      <t>This section enumerates proposals made to meet the use cases in <xref target="use-cases"/>.
+Note that they all need not be accepted together, depending on the use cases
+that are determined as in-scope.</t>
+      <section anchor="alternate" title="Proposal: Alternate Services">
+        <t>NOTE: This proposal can be incorporated into HTTP/2 directly, or it can be
+published as a standalone specification. However, if <xref target="alt-frame"/> is accepted,
+it will need to be included or referenced from the spec, since frame type
+extensibility has been ruled out.</t>
+        <t>This specification defines a new concept in HTTP, the “alternate service.” When
+an origin (see <xref target="RFC6454"/> has resources are accessible through a different
+protocol / host / port combination, it is said to have an alternate service.</t>
+        <t>An alternate service can be used to interact with the resources on an origin
+server at a separate location on the network, possibly using a different
+protocol configuration.</t>
+        <t>For example, an origin:</t>
+        <figure>
+          <artwork><![CDATA[
 ("http", "www.example.com", "80")
 ]]></artwork>
-      </figure>
-      <t>might declare that its resources are also accessible at the alternate service:</t>
-      <figure>
-        <artwork><![CDATA[
-("http2-tls", "new.example.com", "443")
+        </figure>
+        <t>might declare that its resources are also accessible at the alternate service:</t>
+        <figure>
+          <artwork><![CDATA[
+("h2", "new.example.com", "81")
 ]]></artwork>
-      </figure>
-      <t>By their nature, alternate services are explicitly at the granularity of an
+        </figure>
+        <t>By their nature, alternate services are explicitly at the granularity of an
 origin; i.e., they cannot be selectively applied to resources within an origin.</t>
-      <t>Alternate services do not replace or change the origin for any given resource;
+        <t>Alternate services do not replace or change the origin for any given resource;
 in general, they are not visible to the software “above” the access mechanism.
 The alternate service is essentially alternate routing information that can
 also be used to reach the origin in the same way that DNS CNAME or SRV records
 define routing information at the name resolution level.</t>
-      <t>Furthermore, it is important to note that the first member of an alternate
+        <t>Furthermore, it is important to note that the first member of an alternate
 service tuple is different from the “scheme” component of an origin; it is more
 specific, identifying not only the major version of the protocol being used,
 but potentially communication options for that protocol.</t>
-      <t>This means that clients using an alternate service will change the host, port
+        <t>This means that clients using an alternate service will change the host, port
 and protocol that they are using to fetch resources, but these changes MUST NOT
 be propagated to the application that is using HTTP; from that standpoint, the
 URI being accessed and all information derived from it (scheme, host, port) are
 the same as before.</t>
-      <t>Importantly, this includes its security context; in particular, when TLS
+        <t>Importantly, this includes its security context; in particular, when TLS
 <xref target="RFC5246"/> is in use, the alternate server will need to present a certificate
 for the origin’s host name, not that of the alternate. Likewise, the Host
 header is still derived from the origin, not the alternate service (just as it
 would if a CNAME were being used).</t>
-      <t>The changes MAY, however, be made visible in debugging tools, consoles, etc.</t>
-      <t>Formally, an alternate service is identified by the combination of:</t>
-      <t>
-        <list style="symbols">
-          <t>An ALPN protocol, as per <xref target="I-D.ietf-tls-applayerprotoneg"/></t>
-          <t>A host, as per <xref target="RFC3986"/></t>
-          <t>A port, as per <xref target="RFC3986"/></t>
-        </list>
-      </t>
-      <t>Additionally, each alternate service MUST have:</t>
-      <t>
-        <list style="symbols">
-          <t>A freshness lifetime, expressed in seconds; see <xref target="caching"/></t>
-          <t>A numeric priority; see <xref target="priority"/></t>
-        </list>
-      </t>
-      <t>Potentially, there are many ways that a client could discover the alternate
-service(s) associated with an origin; this document currently defines one, the
-Alt-Svc HTTP Header Field (<xref target="alt-svc"/>).</t>
-      <section anchor="client-handling-for-alternate-services" title="Client Handling for Alternate Services">
+        <t>The changes MAY, however, be made visible in debugging tools, consoles, etc.</t>
+        <t>Formally, an alternate service is identified by the combination of:</t>
+        <t>
+          <list style="symbols">
+            <t>An ALPN protocol, as per <xref target="I-D.ietf-tls-applayerprotoneg"/></t>
+            <t>A host, as per <xref target="RFC3986"/></t>
+            <t>A port, as per <xref target="RFC3986"/></t>
+          </list>
+        </t>
+        <t>Additionally, each alternate service MUST have:</t>
+        <t>
+          <list style="symbols">
+            <t>A freshness lifetime, expressed in seconds; see <xref target="caching"/></t>
+            <t>A numeric priority; see <xref target="priority"/></t>
+          </list>
+        </t>
+        <t>There are many ways that a client could discover the alternate service(s)
+associated with an origin.</t>
         <section anchor="host_auth" title="Host Authentication">
           <t>Clients MUST NOT use alternate services with a host other than the origin’s
 without strong server authentication; this mitigates the attack described in
 <xref target="host_security"/>. One way to achieve this is for the alternate to use TLS with
 a certificate that is valid for that origin.</t>
           <t>For example, if the origin’s host is “www.example.com” and an alternate is
-offered on “other.example.com” with the “http2-tls” protocol, and the
-certificate offered is valid for “www.example.com”, the client can use the
-alternate. However, if “other.example.com” is offered with the “http2”
-protocol, the client cannot use it, because there is no mechanism in that
-protocol to establish strong server authentication.</t>
+offered on “other.example.com” with the “h2t” protocol, and the certificate
+offered is valid for “www.example.com”, the client can use the alternate.
+However, if “other.example.com” is offered with the “h2” protocol, the client
+cannot use it, because there is no mechanism in that protocol to establish
+strong server authentication.</t>
         </section>
         <section anchor="caching" title="Alternate Service Caching">
           <t>Mechanisms for discovering alternate services can associate a freshness
@@ -158,16 +217,16 @@ changes SHOULD place an upper bound on their lifetime.</t>
         <section anchor="priority" title="Alternate Service Priorities">
           <t>Mechanisms for discovering alternate services can associate a priority with
 them; for example, the Alt-Svc header field uses the “pr” parameter.</t>
-          <t>Priorities are numeric, with a range of 1-64, and are relative to the origin
-server, which has a static priority of 32. Higher values are preferable.</t>
-          <t>Therefore, an alternate with a priority of 48 will be used in preference to the
-origin server, whereas one with a priority of 10 will be used only when the
+          <t>Priorities are numeric, with a range of 0-255, and are relative to the origin
+server, which has a static priority of 128. Higher values are preferable.</t>
+          <t>Therefore, an alternate with a priority of 160 will be used in preference to
+the origin server, whereas one with a priority of 10 will be used only when the
 origin server becomes unavailable.</t>
           <t>Note that priorities are not specific to the mechanism that an alternate was
 discovered with; i.e., there is only one “pool” of priorities for an origin.</t>
         </section>
         <section anchor="requiring-server-name-indication" title="Requiring Server Name Indication">
-          <t>A client must only use a TLS based alternate service if the client also
+          <t>A client must only use a TLS-based alternate service if the client also
 supports TLS Server Name Indication (SNI) <xref target="RFC6066"/>. This supports the
 conservation of IP addresses on the alternate service host.</t>
         </section>
@@ -180,10 +239,10 @@ priority than a connection currently in use, the client SHOULD use that
 alternate service as soon as it is available, provided that the security
 properties of the alternate service protocol are desirable, as compared to the
 existing connection.</t>
-          <t>For example, if an origin advertises a “http2-tls” alternate service using an
-“Alt-Svc” response header field, the client ought to immediately establish a
-connection to the most preferable alternate service, and use it in preference
-to the origin connection once available. </t>
+          <t>In other words, if a client becomes aware of a alternate service, the client
+ought to immediately recalculate which service (of those it is aware of) is
+most preferable, establish a connection to it, and then use it in preference to
+the origin connection once available.</t>
           <t>The client is not required to block requests; the origin’s connection can be
 used until the alternate connection is established. However, if the security
 properties of the existing connection are weak (e.g. cleartext HTTP/1.1) then
@@ -191,105 +250,153 @@ it might make sense to block until the new connection is fully available in
 order to avoid information leakage.</t>
           <t>Furthermore, if the connection to the alternate service fails or is
 unresponsive, the client MAY fall back to using the origin, or a less
-preferable alternate service.</t>
+preferable alternate service. Note, however, that this could be the basis of a
+downgrade attack, thus losing any enhanced security properties of the alternate
+service.</t>
         </section>
       </section>
-    </section>
-    <section anchor="alt-svc" title="The Alt-Svc HTTP Header Field">
-      <t>A HTTP(S) origin server can advertise the availability of alternate services to
-clients by adding an Alt-Svc header field to responses.</t>
-      <figure>
-        <artwork><![CDATA[
+      <section anchor="alt-svc" title="Proposal: The Alt-Svc HTTP Header Field">
+        <t>NOTE: Because this header is mostly defined for use in HTTP/1, it is most likely most appropriate to put it in a separate specification. However, it will need to reference <xref target="alternate"/>, wherever that is specified.</t>
+        <t>A HTTP(S) origin server can advertise the availability of alternate services
+(see <xref target="alternate"/>) to clients by adding an Alt-Svc header field to responses.</t>
+        <figure>
+          <artwork><![CDATA[
 Alt-Svc     = 1#( alternate *( OWS ";" OWS parameter ) )
-alternate   = protocol-id "=" [ uri-host ] ":" port
+alternate   = <"> protocol-id <"> "=" port
 protocol-id = <ALPN protocol identifier>
 ]]></artwork>
-      </figure>
-      <t>For example:</t>
-      <figure>
-        <artwork><![CDATA[
-Alt-Svc: http2=:8000
+        </figure>
+        <t>For example:</t>
+        <figure>
+          <artwork><![CDATA[
+Alt-Svc: http2=8000
 ]]></artwork>
-      </figure>
-      <t>This indicates that the “http2” protocol on the same host using the
+        </figure>
+        <t>This indicates that the “http2” protocol on the same host using the
 indicated port (in this case, 8000).</t>
-      <t>Alt-Svc can also contain a host:</t>
-      <figure>
-        <artwork><![CDATA[
-Alt-Svc: http2-tls=other.example.com:443
+        <t>Alt-Svc does not allow advertisement of alternate services on other hosts, to protect against various header-based attacks.</t>
+        <t>It can, however, have multiple values:</t>
+        <figure>
+          <artwork><![CDATA[
+Alt-Svc: "h2"=8000, "h2t"=443
 ]]></artwork>
-      </figure>
-      <t>This indicates that all resources on the origin are available using the
-“http2-tls” profile on other.example.com port 443.</t>
-      <t>It can also have multiple values:</t>
-      <figure>
-        <artwork><![CDATA[
-Alt-Svc: http2=:8000, http2-tls=other.example.com:443
-]]></artwork>
-      </figure>
-      <t>The value(s) advertised by Alt-Svc can be used by clients to open a new
+        </figure>
+        <t>The value(s) advertised by Alt-Svc can be used by clients to open a new
 connection to one or more alternate services immediately, or simultaneously
 with subsequent requests on the same connection.</t>
-      <t>Intermediaries MUST NOT change or append Alt-Svc values. </t>
-      <section anchor="caching-alt-svc-header-field-values" title="Caching Alt-Svc Header Field Values">
-        <t>When an alternate service is advertised using Alt-Svc, it is considered fresh
+        <t>Intermediaries MUST NOT change or append Alt-Svc values.</t>
+        <section anchor="caching-alt-svc-header-field-values" title="Caching Alt-Svc Header Field Values">
+          <t>When an alternate service is advertised using Alt-Svc, it is considered fresh
 for 24 hours from generation of the message. This can be modified with the ‘ma’
-(max-age’) parameter;</t>
-        <figure>
-          <artwork><![CDATA[
-Alt-Svc: http2-tls=:443;ma=3600
+(max-age) parameter;</t>
+          <figure>
+            <artwork><![CDATA[
+Alt-Svc: "h2t"=443;ma=3600
 ]]></artwork>
-        </figure>
-        <t>which indicates the number of seconds since the response was generated the
+          </figure>
+          <t>which indicates the number of seconds since the response was generated the
 alternate service is considered fresh for. </t>
-        <figure>
-          <artwork><![CDATA[
+          <figure>
+            <artwork><![CDATA[
 ma = delta-seconds
 ]]></artwork>
-        </figure>
-        <t>See <xref target="I-D.ietf-httpbis-p6-cache"/> Section 4.2.3 for details of determining
+          </figure>
+          <t>See <xref target="I-D.ietf-httpbis-p6-cache"/> Section 4.2.3 for details of determining
 response age. For example, a response:</t>
-        <figure>
-          <artwork><![CDATA[
+          <figure>
+            <artwork><![CDATA[
 HTTP/1.1 200 OK
 Content-Type: text/html
 Cache-Control: 600
 Age: 30
-Alt-Svc: http2=:8000; ma=60
+Alt-Svc: "h2"=8000; ma=60
 ]]></artwork>
-        </figure>
-        <t>indicates that an alternate service is available and usable for the next 60
+          </figure>
+          <t>indicates that an alternate service is available and usable for the next 60
 seconds. However, the response has already been cached for 30 seconds (as per
 the Age header field value), so therefore the alternate service is only fresh
 for the 30 seconds from when this response was received, minus estimated
 transit time. </t>
-        <t>When an Alt-Svc response header is received from an origin, its value
+          <t>When an Alt-Svc response header is received from an origin, its value
 invalidates and replaces all cached alternate services for that origin. This
 includes the empty Alt-Svc header, which clears all cached alternate services
 for an origin.</t>
-        <t>See <xref target="caching"/> for general requirements on caching alternate services.</t>
-        <t>Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
+          <t>See <xref target="caching"/> for general requirements on caching alternate services.</t>
+          <t>Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
 affect caching of Alt-Svc values.</t>
-      </section>
-      <section anchor="indicating-alt-svc-header-field-priority" title="Indicating Alt-Svc Header Field Priority">
-        <t>Finally, an explicit priority can be associated with an Alt-Svc header field
-value by using the “pr” parameter:</t>
-        <figure>
-          <artwork><![CDATA[
-Alt-Svc: http2-tls:8000 ;pr=64
+        </section>
+        <section anchor="indicating-alt-svc-header-field-priority" title="Indicating Alt-Svc Header Field Priority">
+          <t>Finally, an explicit priority can be associated with an Alt-Svc header field
+value by using the “pr” (priority) parameter:</t>
+          <figure>
+            <artwork><![CDATA[
+Alt-Svc: "h2t"=8000 ;pr=64
 ]]></artwork>
-        </figure>
-        <t>See <xref target="priority"/> for details of the priority mechanism. </t>
-        <figure>
-          <artwork><![CDATA[
+          </figure>
+          <t>See <xref target="priority"/> for details of the priority mechanism. </t>
+          <figure>
+            <artwork><![CDATA[
 pr = 1*2DIGIT
 ]]></artwork>
+          </figure>
+          <t>If the “pr” parameter is not present or is invalid, the default priority for
+alternate services discovered with the Alt-Svc header field is 128.</t>
+        </section>
+      </section>
+      <section anchor="alt-frame" title="Proposal: ALTSVC Frame">
+        <t>NOTE: Because of the current approach to HTTP/2 extensibility, this proposal
+will need to be incorporated to that specification direction if accepted.</t>
+        <t>The ALTSVC frame (type=0xa) advertises the availability of an alternate service
+to the client. It can be sent at any time for an existing client-initiated
+stream or stream 0, and is intended to allow servers to load balance traffic;
+see <xref target="alternate"/> for details.</t>
+        <t>An ALTSVC frame on a client-initiated stream indicates that the conveyed
+alternate service is associated with the origin of that stream.</t>
+        <t>An ALTSVC frame on stream 0 indicates that the conveyed alternate service is
+associated with all origins that map to the server’s address (i.e., host and
+port).</t>
+        <t>The ALTSVC frame is intended for receipt by clients; a server that receives an
+ALTSVC frame MUST treat it as a connection error of type PROTOCOL_ERROR.</t>
+        <figure>
+          <artwork><![CDATA[
+0                   1                   2                   3
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|  PID_LEN (8)  |    ASP (8)    |            Port (16)          |
++---------------------------------------------------------------+
+|                          Max-Age (32)                         |
++---------------------------------------------------------------+
+|                        Protocol-ID (*)                        |
++---------------------------------------------------------------+
+|                           Host (*)                            |
++---------------------------------------------------------------+
+]]></artwork>
         </figure>
-        <t>If the “pr” parameter is not present or is invalid, the default priority for
-alternate services discovered with the Alt-Svc header field is 48.</t>
+        <t>The ALTSVC frame contains the following fields:</t>
+        <t>
+          <list style="symbols">
+            <t>PID_LEN: An unsigned, 8-bit integer indicating the length, in bytes, of the
+PROTOCOL-ID field.</t>
+            <t>ASP: An unsigned, 8-bit integer indicating the priority of the alternate
+service association, as per <xref target="priority"/>.</t>
+            <t>Port: An unsigned, 16-bit integer indicating the port that the alternate
+service is available upon.</t>
+            <t>Max-Age: An unsigned, 32-bit integer indicating the freshness lifetime of the
+alternate service association, as per <xref target="caching"/>.</t>
+            <t>Protocol-ID: A sequence of bytes (length determined by PID_LEN) containing
+the ALPN protocol identifier of the alternate service.</t>
+            <t>Host: A sequence of bytes containing an ascii string indicating the host that
+the alternate service is available upon.</t>
+          </list>
+        </t>
+        <t>The ALTSVC frame does not define any flags.</t>
       </section>
     </section>
     <section anchor="security-considerations" title="Security Considerations">
+      <t>Identified security considerations should be enumerated in the appropriate
+documents depending on which proposals are accepted. Those listed below are
+generic to all uses of alternate services; more specific ones might be
+necessary.</t>
       <section anchor="changing-ports" title="Changing Ports">
         <t>Using an alternate service implies accessing an origin’s resources on an
 alternate port, at a minimum. An attacker that can inject alternate services
@@ -298,9 +405,8 @@ and listen at the advertised port is therefore able to hijack an origin.</t>
 traffic to a different port on the same host using the Alt-Svc header field; if
 that port is under the attacker’s control, they can thus masquerade as the HTTP
 server.</t>
-        <t>This risk can be mitigated by restricting the ability to set the Alt-Svc
-response header field on the origin, and restricting who can open a port for
-listening on that host.</t>
+        <t>This risk can be mitigated by restricting the ability to advertise alternate
+services, and restricting who can open a port for listening on that host.</t>
       </section>
       <section anchor="host_security" title="Changing Hosts">
         <t>When the host is changed due to the use of an alternate service, it presents an
@@ -527,13 +633,13 @@ specifications of each URI scheme.
           <author initials="S" surname="Emile" fullname="Stephan Emile">
             <organization/>
           </author>
-          <date month="October" day="15" year="2013"/>
+          <date month="January" day="24" year="2014"/>
           <abstract>
-            <t>This document describes a Transport Layer Security (TLS) extension for application layer protocol negotiation within the TLS handshake. For instances in which the TLS connection is established over a well known TCP/IP port not associated with the desired application layer protocol, this extension allows the application layer to negotiate which protocol will be used within the TLS session.</t>
+            <t>This document describes a Transport Layer Security (TLS) extension for application layer protocol negotiation within the TLS handshake. For instances in which the TLS connection is established over a well known TCP/IP port not associated with the desired application layer protocol, this extension allows the application layer to negotiate which protocol will be used within the TLS connection.</t>
           </abstract>
         </front>
-        <seriesInfo name="Internet-Draft" value="draft-ietf-tls-applayerprotoneg-03"/>
-        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-tls-applayerprotoneg-03.txt"/>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-tls-applayerprotoneg-04"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-tls-applayerprotoneg-04.txt"/>
       </reference>
       <reference anchor="I-D.ietf-httpbis-p1-messaging">
         <front>
@@ -623,13 +729,13 @@ specifications of each URI scheme.
           <author initials="A" surname="Melnikov" fullname="Alexey Melnikov">
             <organization/>
           </author>
-          <date month="November" day="11" year="2013"/>
+          <date month="December" day="4" year="2013"/>
           <abstract>
-            <t>This specification describes an optimized expression of the syntax of the Hypertext Transfer Protocol (HTTP).  HTTP/2.0 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent messages on the same connection.  It also introduces unsolicited push of representations from servers to clients.  This document is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.  This version of the draft has been marked for implementation. Interoperability testing will occur in the HTTP/2.0 interim in Zurich, CH, starting 2014-01-22.</t>
+            <t>This specification describes an optimized expression of the syntax of the Hypertext Transfer Protocol (HTTP).  HTTP/2.0 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent messages on the same connection.  It also introduces unsolicited push of representations from servers to clients.  This document is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.  This version of the draft has been marked for implementation. Interoperability testing will occur in the HTTP/2.0 interim in Zurich, CH, starting 2014-01-22.  This replaces -08, which was originally identified as an implementation draft.</t>
           </abstract>
         </front>
-        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-http2-08"/>
-        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-08.txt"/>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-http2-09"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-09.txt"/>
       </reference>
       <reference anchor="I-D.nottingham-http2-encryption">
         <front>
@@ -637,42 +743,14 @@ specifications of each URI scheme.
           <author initials="M" surname="Nottingham" fullname="Mark Nottingham">
             <organization/>
           </author>
-          <date month="October" day="15" year="2013"/>
+          <date month="December" day="10" year="2013"/>
           <abstract>
-            <t>This document proposes a way to optimistically encrypt HTTP/2.0 using TLS for HTTP URIs.</t>
+            <t>This document proposes two changes to HTTP/2.0; first, it suggests using ALPN Protocol Identifies to identify the specific stack of protocols in use, including TLS, and second, it proposes a way to opportunistically encrypt HTTP/2.0 using TLS for HTTP URIs.</t>
           </abstract>
         </front>
-        <seriesInfo name="Internet-Draft" value="draft-nottingham-http2-encryption-01"/>
-        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-nottingham-http2-encryption-01.txt"/>
+        <seriesInfo name="Internet-Draft" value="draft-nottingham-http2-encryption-02"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-nottingham-http2-encryption-02.txt"/>
       </reference>
     </references>
-    <section anchor="acknowledgements" title="Acknowledgements">
-      <t>Thanks to Eliot Lear, Stephen Farrell, Guy Podjarny, Stephen
-Ludin, Erik Nygren, Paul Hoffman, Adam Langley and Will Chan for their feedback
-and suggestions.</t>
-      <t>The Alt-Svc header field was influenced by the design of the Alternate-Protocol
-header in SPDY.</t>
-    </section>
-    <section anchor="todo" title="TODO">
-      <t>
-        <list style="symbols">
-          <t>GOAWAY: A GOAWAY-like frame (or just a GOAWAY modification) that allows an
-alternate service to be switched to might be suggested in a future revision.</t>
-          <t>DNS: Alternate services are also amenable to DNS-based discovery. If there is
-sufficient interest, a future revision may include a proposal for that.</t>
-          <t>Indicating Chosen Service: It’s likely necessary for the server to know which
-protocol the user agent has chosen, and perhaps even the hostname (for load
-balancing). This could be conveyed as part of the “magic”, or as a request
-header.</t>
-          <t>IPV6: The intersection between Alternate Services and Happy Eyeballs
-<xref target="RFC6555"/> should be investigated.</t>
-          <t>ALPN strings: all of the ALPN strings in this document are fictional; they
-need to be updated based upon that specification’s progress (and the
-registry, eventually).</t>
-          <t>Advice for setting headers: guidelines for servers that use the Alt-Svc
-header field.</t>
-        </list>
-      </t>
-    </section>
   </back>
 </rfc>
