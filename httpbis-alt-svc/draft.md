@@ -116,13 +116,17 @@ This use case can be met if {{alternate}} and {{alt-svc}} are accepted. It can
 also be met if {{alternate}} is used with a different discovery mechanism
 (e.g., DNS-based).
 
+
 ## Using TLS with http:// URIs
 
 As discussed in {{I-D.nottingham-http2-encryption}}, it might be desirable to
 "opportunistically" use TLS when accessing a HTTP URI. 
 
-This case can also be met by {{alternate}} with {{alt-svc}} for HTTP/1, and
-{{alternate}} with {{alt-svc}} or {{alt-frame}} for HTTP/2.
+This case can also be met by {{alternate}} and {{opportunistic}} with
+{{alt-svc}} for HTTP/1, and {{alternate}} and {{opportunistic}} with
+{{alt-svc}} or {{alt-frame}} for HTTP/2, with the possible addition of
+{{setting}}. {{error}} might also be useful for handling errors in this use
+case.
 
 
 ## Mitigating Load Asymmetry
@@ -142,7 +146,9 @@ more difficult, due to the protocol's longer flows.
 As a result, a mechanism for re-directing requests for an origin or set of
 origins without making this apparent to the application is desirable.
 
-This use case can be met if {{alternate}} and {{alt-frame}} are accepted; servers can redirect clients to alternate services as appropriate.
+This use case can be met if {{alternate}} and {{alt-frame}} are accepted;
+servers can redirect clients to alternate services as appropriate. {{error}}
+might also be useful for handling errors in this use case.
 
 
 ## Segmenting Clients that Support TLS SNI
@@ -162,7 +168,7 @@ As a result, they need to build their infrastructure as if SNI did not exist.
 This use case can be met if {{alternate}} and {{alt-frame}} are accepted;
 servers can advertise an alternate service and direct clients that support SNI
 to the optimal server, while still maintaining a smaller set of legacy servers
-for those clients that do not support SNI.
+for those clients that do not support SNI. {{error}} might also be useful for handling errors in this use case.
 
 
 # Proposals {#proposals}
@@ -173,7 +179,7 @@ that are determined as in-scope.
 
 ## Proposal: Alternate Services {#alternate}
 
-NOTE: This proposal can be incorporated into HTTP/2 directly, or it can be
+NOTE: This section can be incorporated into HTTP/2 directly, or it can be
 published as a standalone specification. However, if {{alt-frame}} is accepted,
 it will need to be included or referenced from the spec, since frame type
 extensibility has been ruled out.
@@ -408,8 +414,8 @@ alternate services discovered with the Alt-Svc header field is 128.
 
 ## Proposal: ALTSVC Frame {#alt-frame}
 
-NOTE: Because of the current approach to HTTP/2 extensibility, this proposal
-will need to be incorporated to that specification direction if accepted.
+NOTE: Because of the current approach to HTTP/2 extensibility, this section
+will need to be incorporated to the frame type listing in HTTP/2 if accepted.
 
 The ALTSVC frame (type=0xa) advertises the availability of an alternate service
 to the client. It can be sent at any time for an existing client-initiated
@@ -459,6 +465,77 @@ The ALTSVC frame contains the following fields:
   the alternate service is available upon.
 
 The ALTSVC frame does not define any flags.
+
+
+# Proposal: SETTINGS_UNIVERSAL_SCHEMES (4) {#setting}
+
+NOTE: This is a proposal for a new SETTINGS value, to be incorporated in that
+list if accepted.
+
+A non-zero value indicates the sender MAY accept requests with schemes that do
+not match the default port for the server. A non-zero value is a pre-requisite
+for sending http:// over TLS via the previous https connection method described
+in {{opportunistic}}.
+
+
+
+# Proposal: NOT_AUTHORITATIVE (13)  {#error}
+
+NOTE: This is a proposal for a new error code, which should be incorporated
+into the appropriate section if accepted.
+
+The endpoint refuses the stream prior to performing any application processing.
+This server is not configured to provide a definitive response for the
+requested resource. Clients receiving this error code SHOULD remove the
+endpoint from their cache of alternate services, if present.
+
+
+
+# Proposal: Discovery of TLS Support for http:// URIs {#opportunistic}
+
+NOTE: This section, if accepted, ought to be added as a new subsection of
+"Starting HTTP/2".
+
+A server wishing to advertise support for HTTP/2 over TLS for http:// URIs MAY
+do so by including an Alt-Svc ({{alt-svc}} response header with the "h2t"
+protocol identifier.
+
+For example, a HTTP/1 connection could indicate support for HTTP/2 on
+port 443 for use with future http:// URI requests with this Alt-Svc header:
+  
+	HTTP/1.1 200 OK
+	Alt-Svc: h2t=443
+
+The process for starting HTTP/2 over TLS for an http:// URI is the same as the
+connection process for an https:// URI, except that authentication of the TLS
+channel is not required. The client MAY use either anonymous or authenticated
+ciphersuites. If an authenticated ciphersuite is used, the client MAY ignore
+authentication failures. This enables servers that only serve http:// URIs to
+use credentials that are not tied to a global PKI, such as self-signed
+certificates. Clients MAY reserve the use of certain security sensitive
+optimizations, such as caching the existence of this successful connection, for
+authenticated connections.
+
+Additionally, if a client has previously successfully connected to
+a given server over TLS, for example as part of an https:// request, then it
+MAY attempt to use TLS for requests certain http:// URIs. To use this mechanism
+the server MUST have sent a non-zero SETTINGS_UNIVERSAL_SCHEMES setting to
+indicate support for this mechanism.
+
+Eligible http:// URIs:
+
+1. Contain the same host name as the URI accessed over TLS, and 
+2. Do not contain an explicit port number. 
+
+For example, if the client has successfully made a request for the URI
+"https://example.com/foo", then it may attempt to use TLS to make a request for
+the URI "http://example.com/bar", but not for the URI "http://example.com:80/".
+In particular, if a client has a TLS connection open to a server (for example,
+due to a past "https" request), then it may re-use that connection for "http"
+requests, subject to the constraints above.
+
+
+
 
   
 # Security Considerations
