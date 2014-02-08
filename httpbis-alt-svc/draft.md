@@ -240,7 +240,6 @@ Formally, an alternate service is identified by the combination of:
 Additionally, each alternate service MUST have:
 
 * A freshness lifetime, expressed in seconds; see {{caching}}
-* A numeric priority; see {{priority}}
 
 There are many ways that a client could discover the alternate service(s)
 associated with an origin.
@@ -277,21 +276,6 @@ that could be compromised (for example, those whose association with the trust
 root is questionable). UAs that do not have a means of detecting network
 changes SHOULD place an upper bound on their lifetime.
 
-### Alternate Service Priorities {#priority}
-
-Mechanisms for discovering alternate services can associate a priority with
-them; for example, the Alt-Svc header field uses the "pr" parameter.
-
-Priorities are numeric, with a range of 0-255, and are relative to the origin
-server, which has a static priority of 128. Higher values are preferable.
-
-Therefore, an alternate with a priority of 160 will be used in preference to
-the origin server, whereas one with a priority of 10 will be used only when the
-origin server becomes unavailable.
-
-Note that priorities are not specific to the mechanism that an alternate was
-discovered with; i.e., there is only one "pool" of priorities for an origin.
-
 
 ### Requiring Server Name Indication
 
@@ -306,16 +290,10 @@ By their nature, alternate services are optional; clients are not required to
 use them. However, it is advantageous for clients to behave in a predictable
 way when they are used by servers (e.g., for load balancing).
 
-Therefore, if a client becomes aware of an alternate service that has a higher
-priority than a connection currently in use, the client SHOULD use that
-alternate service as soon as it is available, provided that the security
-properties of the alternate service protocol are desirable, as compared to the
-existing connection.
-
-In other words, if a client becomes aware of a alternate service, the client
-ought to immediately recalculate which service (of those it is aware of) is
-most preferable, establish a connection to it, and then use it in preference to
-the origin connection once available.
+Therefore, if a client becomes aware of an alternate service, the client SHOULD
+use that alternate service as soon as it is available, provided that the
+security properties of the alternate service protocol are desirable, as
+compared to the existing connection.
 
 The client is not required to block requests; the origin's connection can be
 used until the alternate connection is established. However, if the security
@@ -324,10 +302,9 @@ it might make sense to block until the new connection is fully available in
 order to avoid information leakage.
 
 Furthermore, if the connection to the alternate service fails or is
-unresponsive, the client MAY fall back to using the origin, or a less
-preferable alternate service. Note, however, that this could be the basis of a
-downgrade attack, thus losing any enhanced security properties of the alternate
-service.
+unresponsive, the client MAY fall back to using the origin. Note, however, that
+this could be the basis of a downgrade attack, thus losing any enhanced
+security properties of the alternate service.
 
 
 ## Proposal: The Alt-Svc HTTP Header Field {#alt-svc}
@@ -409,20 +386,6 @@ Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
 affect caching of Alt-Svc values.
 
 
-### Indicating Alt-Svc Header Field Priority
-
-Finally, an explicit priority can be associated with an Alt-Svc header field
-value by using the "pr" (priority) parameter:
-
-    Alt-Svc: "h2t"=8000 ;pr=64
-
-See {{priority}} for details of the priority mechanism. 
-
-    pr = 1*2DIGIT
-
-If the "pr" parameter is not present or is invalid, the default priority for
-alternate services discovered with the Alt-Svc header field is 128.
-
 
 ## Proposal: ALTSVC Frame {#alt-frame}
 
@@ -447,7 +410,7 @@ ALTSVC frame MUST treat it as a connection error of type PROTOCOL_ERROR.
 	0                   1                   2                   3
 	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|  PID_LEN (8)  |    ASP (8)    |            Port (16)          |
+	|  PID_LEN (8)  | Reserved (8)  |            Port (16)          |
 	+---------------------------------------------------------------+
 	|                          Max-Age (32)                         |
 	+---------------------------------------------------------------+
@@ -460,9 +423,8 @@ The ALTSVC frame contains the following fields:
 
 * PID_LEN: An unsigned, 8-bit integer indicating the length, in bytes, of the
   PROTOCOL-ID field.
-
-* ASP: An unsigned, 8-bit integer indicating the priority of the alternate
-  service association, as per {{priority}}.
+  
+* Reserved: for future use.
 
 * Port: An unsigned, 16-bit integer indicating the port that the alternate
   service is available upon.
