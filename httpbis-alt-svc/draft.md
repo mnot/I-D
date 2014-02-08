@@ -622,9 +622,9 @@ the option(s) presented to assure that security requirements and expectations
 
 # Acknowledgements
 
-Thanks to Eliot Lear, Stephen Farrell, Guy Podjarny, Stephen
-Ludin, Erik Nygren, Paul Hoffman, Adam Langley and Will Chan for their feedback
-and suggestions.
+Thanks to Eliot Lear, Stephen Farrell, Guy Podjarny, Stephen Ludin, Erik
+Nygren, Paul Hoffman, Adam Langley, Will Chan and Richard Barnes for their
+feedback and suggestions.
 
 The Alt-Svc header field was influenced by the design of the Alternate-Protocol
 header in SPDY.
