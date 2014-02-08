@@ -131,8 +131,8 @@ case.
 
 ## Mitigating Load Asymmetry
 
-HTTP/2 fundamentally changes how TCP is used. While this has many benefits, it
-also disrupts many server-side practices that take advantage of HTTP/1's
+HTTP/2 fundamentally changes how HTTP uses TCP. While this has many benefits,
+it also disrupts many server-side practices that take advantage of HTTP/1's
 shorter flows.
 
 In particular, load balancing among a pool of servers is often used, either
@@ -168,7 +168,8 @@ As a result, they need to build their infrastructure as if SNI did not exist.
 This use case can be met if {{alternate}} and {{alt-frame}} are accepted;
 servers can advertise an alternate service and direct clients that support SNI
 to the optimal server, while still maintaining a smaller set of legacy servers
-for those clients that do not support SNI. {{error}} might also be useful for handling errors in this use case.
+for those clients that do not support SNI. {{error}} might also be useful for
+handling errors in this use case.
 
 
 # Proposals {#proposals}
@@ -207,7 +208,9 @@ Alternate services do not replace or change the origin for any given resource;
 in general, they are not visible to the software "above" the access mechanism.
 The alternate service is essentially alternate routing information that can
 also be used to reach the origin in the same way that DNS CNAME or SRV records
-define routing information at the name resolution level.
+define routing information at the name resolution level. Each origin maps to a
+set of these routes - the default route is derived from origin itself and the
+other routes are introduced based on alternate-protocol information.
 
 Furthermore, it is important to note that the first member of an alternate
 service tuple is different from the "scheme" component of an origin; it is more
@@ -329,7 +332,9 @@ service.
 
 ## Proposal: The Alt-Svc HTTP Header Field {#alt-svc}
 
-NOTE: Because this header is mostly defined for use in HTTP/1, it is most likely most appropriate to put it in a separate specification. However, it will need to reference {{alternate}}, wherever that is specified.
+NOTE: Because this header is mostly defined for use in HTTP/1, it is most
+likely most appropriate to put it in a separate specification. However, it will
+need to reference {{alternate}}, wherever that is specified.
 
 A HTTP(S) origin server can advertise the availability of alternate services
 (see {{alternate}}) to clients by adding an Alt-Svc header field to responses.
@@ -345,7 +350,8 @@ For example:
 This indicates that the "http2" protocol on the same host using the
 indicated port (in this case, 8000).
 
-Alt-Svc does not allow advertisement of alternate services on other hosts, to protect against various header-based attacks.
+Alt-Svc does not allow advertisement of alternate services on other hosts, to
+protect against various header-based attacks.
 
 It can, however, have multiple values:
 
@@ -356,6 +362,12 @@ connection to one or more alternate services immediately, or simultaneously
 with subsequent requests on the same connection.
 
 Intermediaries MUST NOT change or append Alt-Svc values.
+
+Finally, note that while it may be technically possible to put content other than
+printable ASCII in a HTTP header, some implementations only support
+ASCII (or a superset of it) in header field values. Therefore, this field SHOULD NOT
+be used to convey protocol identifiers that are not printable ASCII, or those that
+contain quote characters. 
 
 
 ### Caching Alt-Svc Header Field Values
