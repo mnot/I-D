@@ -96,8 +96,8 @@ also be met if <xref target="alternate"/> is used with a different discovery mec
 case.</t>
       </section>
       <section anchor="mitigating-load-asymmetry" title="Mitigating Load Asymmetry">
-        <t>HTTP/2 fundamentally changes how TCP is used. While this has many benefits, it
-also disrupts many server-side practices that take advantage of HTTP/1’s
+        <t>HTTP/2 fundamentally changes how HTTP uses TCP. While this has many benefits,
+it also disrupts many server-side practices that take advantage of HTTP/1’s
 shorter flows.</t>
         <t>In particular, load balancing among a pool of servers is often used, either
 with DNS (“global” load balancing), or a device (hardware or software) that
@@ -124,7 +124,8 @@ that do not.</t>
         <t>This use case can be met if <xref target="alternate"/> and <xref target="alt-frame"/> are accepted;
 servers can advertise an alternate service and direct clients that support SNI
 to the optimal server, while still maintaining a smaller set of legacy servers
-for those clients that do not support SNI. <xref target="error"/> might also be useful for handling errors in this use case.</t>
+for those clients that do not support SNI. <xref target="error"/> might also be useful for
+handling errors in this use case.</t>
       </section>
     </section>
     <section anchor="proposals" title="Proposals">
@@ -160,7 +161,9 @@ origin; i.e., they cannot be selectively applied to resources within an origin.<
 in general, they are not visible to the software “above” the access mechanism.
 The alternate service is essentially alternate routing information that can
 also be used to reach the origin in the same way that DNS CNAME or SRV records
-define routing information at the name resolution level.</t>
+define routing information at the name resolution level. Each origin maps to a
+set of these routes - the default route is derived from origin itself and the
+other routes are introduced based on alternate-protocol information.</t>
         <t>Furthermore, it is important to note that the first member of an alternate
 service tuple is different from the “scheme” component of an origin; it is more
 specific, identifying not only the major version of the protocol being used,
@@ -188,7 +191,6 @@ would if a CNAME were being used).</t>
         <t>
           <list style="symbols">
             <t>A freshness lifetime, expressed in seconds; see <xref target="caching"/></t>
-            <t>A numeric priority; see <xref target="priority"/></t>
           </list>
         </t>
         <t>There are many ways that a client could discover the alternate service(s)
@@ -219,17 +221,6 @@ that could be compromised (for example, those whose association with the trust
 root is questionable). UAs that do not have a means of detecting network
 changes SHOULD place an upper bound on their lifetime.</t>
         </section>
-        <section anchor="priority" title="Alternate Service Priorities">
-          <t>Mechanisms for discovering alternate services can associate a priority with
-them; for example, the Alt-Svc header field uses the “pr” parameter.</t>
-          <t>Priorities are numeric, with a range of 0-255, and are relative to the origin
-server, which has a static priority of 128. Higher values are preferable.</t>
-          <t>Therefore, an alternate with a priority of 160 will be used in preference to
-the origin server, whereas one with a priority of 10 will be used only when the
-origin server becomes unavailable.</t>
-          <t>Note that priorities are not specific to the mechanism that an alternate was
-discovered with; i.e., there is only one “pool” of priorities for an origin.</t>
-        </section>
         <section anchor="requiring-server-name-indication" title="Requiring Server Name Indication">
           <t>A client must only use a TLS-based alternate service if the client also
 supports TLS Server Name Indication (SNI) <xref target="RFC6066"/>. This supports the
@@ -239,29 +230,25 @@ conservation of IP addresses on the alternate service host.</t>
           <t>By their nature, alternate services are optional; clients are not required to
 use them. However, it is advantageous for clients to behave in a predictable
 way when they are used by servers (e.g., for load balancing).</t>
-          <t>Therefore, if a client becomes aware of an alternate service that has a higher
-priority than a connection currently in use, the client SHOULD use that
-alternate service as soon as it is available, provided that the security
-properties of the alternate service protocol are desirable, as compared to the
-existing connection.</t>
-          <t>In other words, if a client becomes aware of a alternate service, the client
-ought to immediately recalculate which service (of those it is aware of) is
-most preferable, establish a connection to it, and then use it in preference to
-the origin connection once available.</t>
+          <t>Therefore, if a client becomes aware of an alternate service, the client SHOULD
+use that alternate service as soon as it is available, provided that the
+security properties of the alternate service protocol are desirable, as
+compared to the existing connection.</t>
           <t>The client is not required to block requests; the origin’s connection can be
 used until the alternate connection is established. However, if the security
 properties of the existing connection are weak (e.g. cleartext HTTP/1.1) then
 it might make sense to block until the new connection is fully available in
 order to avoid information leakage.</t>
           <t>Furthermore, if the connection to the alternate service fails or is
-unresponsive, the client MAY fall back to using the origin, or a less
-preferable alternate service. Note, however, that this could be the basis of a
-downgrade attack, thus losing any enhanced security properties of the alternate
-service.</t>
+unresponsive, the client MAY fall back to using the origin. Note, however, that
+this could be the basis of a downgrade attack, thus losing any enhanced
+security properties of the alternate service.</t>
         </section>
       </section>
       <section anchor="alt-svc" title="Proposal: The Alt-Svc HTTP Header Field">
-        <t>NOTE: Because this header is mostly defined for use in HTTP/1, it is most likely most appropriate to put it in a separate specification. However, it will need to reference <xref target="alternate"/>, wherever that is specified.</t>
+        <t>NOTE: Because this header is mostly defined for use in HTTP/1, it is most
+likely most appropriate to put it in a separate specification. However, it will
+need to reference <xref target="alternate"/>, wherever that is specified.</t>
         <t>A HTTP(S) origin server can advertise the availability of alternate services
 (see <xref target="alternate"/>) to clients by adding an Alt-Svc header field to responses.</t>
         <figure>
@@ -279,7 +266,8 @@ Alt-Svc: http2=8000
         </figure>
         <t>This indicates that the “http2” protocol on the same host using the
 indicated port (in this case, 8000).</t>
-        <t>Alt-Svc does not allow advertisement of alternate services on other hosts, to protect against various header-based attacks.</t>
+        <t>Alt-Svc does not allow advertisement of alternate services on other hosts, to
+protect against various header-based attacks.</t>
         <t>It can, however, have multiple values:</t>
         <figure>
           <artwork><![CDATA[
@@ -290,6 +278,11 @@ Alt-Svc: "h2"=8000, "h2t"=443
 connection to one or more alternate services immediately, or simultaneously
 with subsequent requests on the same connection.</t>
         <t>Intermediaries MUST NOT change or append Alt-Svc values.</t>
+        <t>Finally, note that while it may be technically possible to put content other than
+printable ASCII in a HTTP header, some implementations only support
+ASCII (or a superset of it) in header field values. Therefore, this field SHOULD NOT
+be used to convey protocol identifiers that are not printable ASCII, or those that
+contain quote characters. </t>
         <section anchor="caching-alt-svc-header-field-values" title="Caching Alt-Svc Header Field Values">
           <t>When an alternate service is advertised using Alt-Svc, it is considered fresh
 for 24 hours from generation of the message. This can be modified with the ‘ma’
@@ -330,23 +323,6 @@ for an origin.</t>
           <t>Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
 affect caching of Alt-Svc values.</t>
         </section>
-        <section anchor="indicating-alt-svc-header-field-priority" title="Indicating Alt-Svc Header Field Priority">
-          <t>Finally, an explicit priority can be associated with an Alt-Svc header field
-value by using the “pr” (priority) parameter:</t>
-          <figure>
-            <artwork><![CDATA[
-Alt-Svc: "h2t"=8000 ;pr=64
-]]></artwork>
-          </figure>
-          <t>See <xref target="priority"/> for details of the priority mechanism. </t>
-          <figure>
-            <artwork><![CDATA[
-pr = 1*2DIGIT
-]]></artwork>
-          </figure>
-          <t>If the “pr” parameter is not present or is invalid, the default priority for
-alternate services discovered with the Alt-Svc header field is 128.</t>
-        </section>
       </section>
       <section anchor="alt-frame" title="Proposal: ALTSVC Frame">
         <t>NOTE: Because of the current approach to HTTP/2 extensibility, this section
@@ -367,7 +343,7 @@ ALTSVC frame MUST treat it as a connection error of type PROTOCOL_ERROR.</t>
 0                   1                   2                   3
 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|  PID_LEN (8)  |    ASP (8)    |            Port (16)          |
+|  PID_LEN (8)  | Reserved (8)  |            Port (16)          |
 +---------------------------------------------------------------+
 |                          Max-Age (32)                         |
 +---------------------------------------------------------------+
@@ -382,8 +358,7 @@ ALTSVC frame MUST treat it as a connection error of type PROTOCOL_ERROR.</t>
           <list style="symbols">
             <t>PID_LEN: An unsigned, 8-bit integer indicating the length, in bytes, of the
 PROTOCOL-ID field.</t>
-            <t>ASP: An unsigned, 8-bit integer indicating the priority of the alternate
-service association, as per <xref target="priority"/>.</t>
+            <t>Reserved: for future use.</t>
             <t>Port: An unsigned, 16-bit integer indicating the port that the alternate
 service is available upon.</t>
             <t>Max-Age: An unsigned, 32-bit integer indicating the freshness lifetime of the
