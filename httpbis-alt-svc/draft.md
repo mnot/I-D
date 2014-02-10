@@ -477,7 +477,7 @@ For example, a HTTP/1 connection could indicate support for HTTP/2 on
 port 443 for use with future http:// URI requests with this Alt-Svc header:
   
 	HTTP/1.1 200 OK
-	Alt-Svc: h2t=443
+	Alt-Svc: "h2t"=443
 
 The process for starting HTTP/2 over TLS for an http:// URI is the same as the
 connection process for an https:// URI, except that authentication of the TLS
