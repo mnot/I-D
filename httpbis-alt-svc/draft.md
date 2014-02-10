@@ -258,6 +258,10 @@ However, if "other.example.com" is offered with the "h2" protocol, the client
 cannot use it, because there is no mechanism in that protocol to establish
 strong server authentication.
 
+Furthermore, this means that the HTTP Host header and the SNI information
+provided in TLS by the client will be that of the origin, not the alternate.
+
+
 ### Alternate Service Caching {#caching}
 
 Mechanisms for discovering alternate services can associate a freshness
