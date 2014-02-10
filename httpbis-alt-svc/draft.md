@@ -441,7 +441,7 @@ The ALTSVC frame contains the following fields:
 The ALTSVC frame does not define any flags.
 
 
-# Proposal: SETTINGS_UNIVERSAL_SCHEMES (4) {#setting}
+# Proposal: SETTINGS_UNIVERSAL_SCHEMES (5) {#setting}
 
 NOTE: This is a proposal for a new SETTINGS value, to be incorporated in that
 list if accepted.
