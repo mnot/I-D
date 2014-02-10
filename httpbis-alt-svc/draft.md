@@ -339,11 +339,12 @@ with subsequent requests on the same connection.
 
 Intermediaries MUST NOT change or append Alt-Svc values.
 
-Finally, note that while it may be technically possible to put content other than
-printable ASCII in a HTTP header, some implementations only support
-ASCII (or a superset of it) in header field values. Therefore, this field SHOULD NOT
-be used to convey protocol identifiers that are not printable ASCII, or those that
-contain quote characters. 
+Finally, note that while it may be technically possible to put content other
+than printable ASCII in a HTTP header, some implementations only support ASCII
+(or a superset of it) in header field values. Therefore, this field SHOULD NOT
+be used to convey protocol identifiers that are not printable ASCII, or those
+that contain quote characters.
+
 
 
 ### Caching Alt-Svc Header Field Values
