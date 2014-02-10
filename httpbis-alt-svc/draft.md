@@ -154,7 +154,7 @@ might also be useful for handling errors in this use case.
 
 TLS Server Name Indication (SNI) {{RFC6066}} was introduced to avoid a
 requirement for a 1:1 mapping between origin hostnames and IP addresses (in
-light of IP address exhaustion), in a manner similar to the Host header in
+light of IPv4 address exhaustion), in a manner similar to the Host header in
 HTTP/1.
 
 However, there are still clients in common use that do not send SNI. As a
