@@ -165,10 +165,11 @@ that do not.
 
 As a result, they need to build their infrastructure as if SNI did not exist.
 
-This use case can be met if {{alternate}} and {{alt-svc}} are accepted;
+This use case can be met if {{alternate}} and {{alt-frame}} are accepted;
 servers can advertise an alternate service and direct clients that support SNI
 and HTTP/2 to the optimal server, while still maintaining a smaller set of
-legacy servers for those HTTP/1.1 clients that do not support SNI. 
+legacy servers for those clients that do not support SNI (since HTTP/2 requires
+SNI support when TLS is in use).
 
 
 # Proposals {#proposals}
@@ -393,8 +394,8 @@ will need to be incorporated to the frame type listing in HTTP/2 if accepted.
 
 The ALTSVC frame (type=0xa) advertises the availability of an alternate service
 to the client. It can be sent at any time for an existing client-initiated
-stream or stream 0, and is intended to allow servers to load balance traffic;
-see {{alternate}} for details.
+stream or stream 0, and is intended to allow servers to load balance or
+otherwise segment traffic; see {{alternate}} for details.
 
 An ALTSVC frame on a client-initiated stream indicates that the conveyed
 alternate service is associated with the origin of that stream.
