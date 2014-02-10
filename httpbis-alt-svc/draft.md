@@ -291,9 +291,9 @@ use them. However, it is advantageous for clients to behave in a predictable
 way when they are used by servers (e.g., for load balancing).
 
 Therefore, if a client becomes aware of an alternate service, the client SHOULD
-use that alternate service as soon as it is available, provided that the
-security properties of the alternate service protocol are desirable, as
-compared to the existing connection.
+use that alternate service for all requests to the associated origin as soon as
+it is available, provided that the security properties of the alternate service
+protocol are desirable, as compared to the existing connection.
 
 The client is not required to block requests; the origin's connection can be
 used until the alternate connection is established. However, if the security
