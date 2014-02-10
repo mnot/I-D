@@ -123,9 +123,9 @@ that do not.</t>
         <t>As a result, they need to build their infrastructure as if SNI did not exist.</t>
         <t>This use case can be met if <xref target="alternate"/> and <xref target="alt-frame"/> are accepted;
 servers can advertise an alternate service and direct clients that support SNI
-to the optimal server, while still maintaining a smaller set of legacy servers
-for those clients that do not support SNI. <xref target="error"/> might also be useful for
-handling errors in this use case.</t>
+and HTTP/2 to the optimal server, while still maintaining a smaller set of
+legacy servers for those clients that do not support SNI (since HTTP/2 requires
+SNI support when TLS is in use).</t>
       </section>
     </section>
     <section anchor="proposals" title="Proposals">
@@ -231,9 +231,9 @@ conservation of IP addresses on the alternate service host.</t>
 use them. However, it is advantageous for clients to behave in a predictable
 way when they are used by servers (e.g., for load balancing).</t>
           <t>Therefore, if a client becomes aware of an alternate service, the client SHOULD
-use that alternate service as soon as it is available, provided that the
-security properties of the alternate service protocol are desirable, as
-compared to the existing connection.</t>
+use that alternate service for all requests to the associated origin as soon as
+it is available, provided that the security properties of the alternate service
+protocol are desirable, as compared to the existing connection.</t>
           <t>The client is not required to block requests; the origin’s connection can be
 used until the alternate connection is established. However, if the security
 properties of the existing connection are weak (e.g. cleartext HTTP/1.1) then
@@ -329,8 +329,8 @@ affect caching of Alt-Svc values.</t>
 will need to be incorporated to the frame type listing in HTTP/2 if accepted.</t>
         <t>The ALTSVC frame (type=0xa) advertises the availability of an alternate service
 to the client. It can be sent at any time for an existing client-initiated
-stream or stream 0, and is intended to allow servers to load balance traffic;
-see <xref target="alternate"/> for details.</t>
+stream or stream 0, and is intended to allow servers to load balance or
+otherwise segment traffic; see <xref target="alternate"/> for details.</t>
         <t>An ALTSVC frame on a client-initiated stream indicates that the conveyed
 alternate service is associated with the origin of that stream.</t>
         <t>An ALTSVC frame on stream 0 indicates that the conveyed alternate service is
@@ -372,7 +372,7 @@ the alternate service is available upon.</t>
         <t>The ALTSVC frame does not define any flags.</t>
       </section>
     </section>
-    <section anchor="setting" title="Proposal: SETTINGS_UNIVERSAL_SCHEMES (4)">
+    <section anchor="setting" title="Proposal: SETTINGS_UNIVERSAL_SCHEMES (5)">
       <t>NOTE: This is a proposal for a new SETTINGS value, to be incorporated in that
 list if accepted.</t>
       <t>A non-zero value indicates the sender MAY accept requests with schemes that do
@@ -734,23 +734,6 @@ specifications of each URI scheme.
         </front>
         <seriesInfo name="RFC" value="5246"/>
         <format type="TXT" octets="222395" target="http://www.rfc-editor.org/rfc/rfc5246.txt"/>
-      </reference>
-      <reference anchor="RFC6555">
-        <front>
-          <title>Happy Eyeballs: Success with Dual-Stack Hosts</title>
-          <author initials="D." surname="Wing" fullname="D. Wing">
-            <organization/>
-          </author>
-          <author initials="A." surname="Yourtchenko" fullname="A. Yourtchenko">
-            <organization/>
-          </author>
-          <date year="2012" month="April"/>
-          <abstract>
-            <t>When a server's IPv4 path and protocol are working, but the server's IPv6 path and protocol are not working, a dual-stack client application experiences significant connection delay compared to an IPv4-only client.  This is undesirable because it causes the dual- stack client to have a worse user experience.  This document specifies requirements for algorithms that reduce this user-visible delay and provides an algorithm. [STANDARDS-TRACK]</t>
-          </abstract>
-        </front>
-        <seriesInfo name="RFC" value="6555"/>
-        <format type="TXT" octets="34048" target="http://www.rfc-editor.org/rfc/rfc6555.txt"/>
       </reference>
       <reference anchor="I-D.ietf-httpbis-http2">
         <front>
