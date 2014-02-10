@@ -39,7 +39,6 @@ normative:
 
 informative:
   RFC5246:
-  RFC6555:
   I-D.ietf-httpbis-http2:
   I-D.nottingham-http2-encryption:
     
