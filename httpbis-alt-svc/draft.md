@@ -375,9 +375,7 @@ for the 30 seconds from when this response was received, minus estimated
 transit time. 
 
 When an Alt-Svc response header is received from an origin, its value
-invalidates and replaces all cached alternate services for that origin. This
-includes the empty Alt-Svc header, which clears all cached alternate services
-for an origin.
+invalidates and replaces all cached alternate services for that origin.
    
 See {{caching}} for general requirements on caching alternate services.
 
