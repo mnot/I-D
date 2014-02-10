@@ -167,9 +167,9 @@ As a result, they need to build their infrastructure as if SNI did not exist.
 
 This use case can be met if {{alternate}} and {{alt-frame}} are accepted;
 servers can advertise an alternate service and direct clients that support SNI
-to the optimal server, while still maintaining a smaller set of legacy servers
-for those clients that do not support SNI. {{error}} might also be useful for
-handling errors in this use case.
+and HTTP/2 to the optimal server, while still maintaining a smaller set of
+legacy servers for those HTTP/1.1 clients that do not support SNI. {{error}}
+might also be useful for handling errors in this use case.
 
 
 # Proposals {#proposals}
