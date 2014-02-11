@@ -1,7 +1,7 @@
 ---
 title: HTTP Alternate Services
 abbrev: Alternate Services
-docname: draft-nottingham-httpbis-alt-svc-02
+docname: draft-nottingham-httpbis-alt-svc-03
 date: 2014
 category: std
 
@@ -448,7 +448,7 @@ The ALTSVC frame contains the following fields:
 The ALTSVC frame does not define any flags.
 
 
-# Proposal: SETTINGS_UNIVERSAL_SCHEMES (5) {#setting}
+## Proposal: SETTINGS_UNIVERSAL_SCHEMES (4) {#setting}
 
 NOTE: This is a proposal for a new SETTINGS value, to be incorporated in that
 list if accepted.
@@ -460,7 +460,7 @@ in {{opportunistic}}.
 
 
 
-# Proposal: NOT_AUTHORITATIVE (13)  {#error}
+## Proposal: NOT_AUTHORITATIVE (13)  {#error}
 
 NOTE: This is a proposal for a new error code, which should be incorporated
 into the appropriate section if accepted.
@@ -472,7 +472,7 @@ endpoint from their cache of alternate services, if present.
 
 
 
-# Proposal: Discovery of TLS Support for http:// URIs {#opportunistic}
+## Proposal: Discovery of TLS Support for http:// URIs {#opportunistic}
 
 NOTE: This section, if accepted, ought to be added as a new subsection of
 "Starting HTTP/2".
