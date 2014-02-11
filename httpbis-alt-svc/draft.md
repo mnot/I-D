@@ -612,3 +612,8 @@ header in SPDY.
 
 * Advice for setting headers: guidelines for servers that use the Alt-Svc
   header field.
+  
+* For the load balancing use case, it's necessary for clients to always flush
+  altsvc cache upon a network change, but right now they're only required to
+  examine the cache for suspicious entries. We should discuss whether this
+  should be upgraded to always flush.
