@@ -272,6 +272,11 @@ Clients MAY choose to use an alternate service instead of the origin at any
 time when it is considered fresh; see {{switching}} for specific
 recommendations. 
 
+Clients with existing connections to alternate services are not required to
+fall back to the origin when its freshness lifetime ends; i.e., the caching
+mechanism is intended for limiting how long an alternate service can be used
+for establishing new requests, not limiting the use of existing ones.
+
 To mitigate risks associated with caching compromised values (see
 {{host_security}} for details), user agents SHOULD examine cached alternate
 services when they detect a change in network configuration, and remove any
