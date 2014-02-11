@@ -114,7 +114,7 @@ might also be useful for handling errors in this use case.</t>
       <section anchor="segmenting-clients-that-support-tls-sni" title="Segmenting Clients that Support TLS SNI">
         <t>TLS Server Name Indication (SNI) <xref target="RFC6066"/> was introduced to avoid a
 requirement for a 1:1 mapping between origin hostnames and IP addresses (in
-light of IP address exhaustion), in a manner similar to the Host header in
+light of IPv4 address exhaustion), in a manner similar to the Host header in
 HTTP/1.</t>
         <t>However, there are still clients in common use that do not send SNI. As a
 result, servers have no way to take practical advantage of the extension,
@@ -206,6 +206,8 @@ offered is valid for “www.example.com”, the client can use the alternate.
 However, if “other.example.com” is offered with the “h2” protocol, the client
 cannot use it, because there is no mechanism in that protocol to establish
 strong server authentication.</t>
+          <t>Furthermore, this means that the HTTP Host header and the SNI information
+provided in TLS by the client will be that of the origin, not the alternate.</t>
         </section>
         <section anchor="caching" title="Alternate Service Caching">
           <t>Mechanisms for discovering alternate services can associate a freshness
@@ -214,6 +216,10 @@ parameter.</t>
           <t>Clients MAY choose to use an alternate service instead of the origin at any
 time when it is considered fresh; see <xref target="switching"/> for specific
 recommendations. </t>
+          <t>Clients with existing connections to alternate services are not required to
+fall back to the origin when its freshness lifetime ends; i.e., the caching
+mechanism is intended for limiting how long an alternate service can be used
+for establishing new requests, not limiting the use of existing ones.</t>
           <t>To mitigate risks associated with caching compromised values (see
 <xref target="host_security"/> for details), user agents SHOULD examine cached alternate
 services when they detect a change in network configuration, and remove any
@@ -278,11 +284,11 @@ Alt-Svc: "h2"=8000, "h2t"=443
 connection to one or more alternate services immediately, or simultaneously
 with subsequent requests on the same connection.</t>
         <t>Intermediaries MUST NOT change or append Alt-Svc values.</t>
-        <t>Finally, note that while it may be technically possible to put content other than
-printable ASCII in a HTTP header, some implementations only support
-ASCII (or a superset of it) in header field values. Therefore, this field SHOULD NOT
-be used to convey protocol identifiers that are not printable ASCII, or those that
-contain quote characters. </t>
+        <t>Finally, note that while it may be technically possible to put content other
+than printable ASCII in a HTTP header, some implementations only support ASCII
+(or a superset of it) in header field values. Therefore, this field SHOULD NOT
+be used to convey protocol identifiers that are not printable ASCII, or those
+that contain quote characters.</t>
         <section anchor="caching-alt-svc-header-field-values" title="Caching Alt-Svc Header Field Values">
           <t>When an alternate service is advertised using Alt-Svc, it is considered fresh
 for 24 hours from generation of the message. This can be modified with the ‘ma’
@@ -316,9 +322,7 @@ the Age header field value), so therefore the alternate service is only fresh
 for the 30 seconds from when this response was received, minus estimated
 transit time. </t>
           <t>When an Alt-Svc response header is received from an origin, its value
-invalidates and replaces all cached alternate services for that origin. This
-includes the empty Alt-Svc header, which clears all cached alternate services
-for an origin.</t>
+invalidates and replaces all cached alternate services for that origin.</t>
           <t>See <xref target="caching"/> for general requirements on caching alternate services.</t>
           <t>Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
 affect caching of Alt-Svc values.</t>
@@ -399,7 +403,7 @@ port 443 for use with future http:// URI requests with this Alt-Svc header:</t>
       <figure>
         <artwork><![CDATA[
 HTTP/1.1 200 OK
-Alt-Svc: h2t=443
+Alt-Svc: "h2t"=443
 ]]></artwork>
       </figure>
       <t>The process for starting HTTP/2 over TLS for an http:// URI is the same as the
@@ -773,5 +777,30 @@ specifications of each URI scheme.
         <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-nottingham-http2-encryption-02.txt"/>
       </reference>
     </references>
+    <section anchor="acknowledgements" title="Acknowledgements">
+      <t>Thanks to Eliot Lear, Stephen Farrell, Guy Podjarny, Stephen Ludin, Erik
+Nygren, Paul Hoffman, Adam Langley, Will Chan and Richard Barnes for their
+feedback and suggestions.</t>
+      <t>The Alt-Svc header field was influenced by the design of the Alternate-Protocol
+header in SPDY.</t>
+    </section>
+    <section anchor="todo" title="TODO">
+      <t>
+        <list style="symbols">
+          <t>DNS: Alternate services are also amenable to DNS-based discovery. If there is
+sufficient interest, a future revision may include a proposal for that.</t>
+          <t>Indicating Chosen Service: It’s likely necessary for the server to know which
+protocol the user agent has chosen, and perhaps even the hostname (for load
+balancing). This could be conveyed as part of the “magic”, or as a request
+header.</t>
+          <t>Advice for setting headers: guidelines for servers that use the Alt-Svc
+header field.</t>
+          <t>For the load balancing use case, it’s necessary for clients to always flush
+altsvc cache upon a network change, but right now they’re only required to
+examine the cache for suspicious entries. We should discuss whether this
+should be upgraded to always flush.</t>
+        </list>
+      </t>
+    </section>
   </back>
 </rfc>
