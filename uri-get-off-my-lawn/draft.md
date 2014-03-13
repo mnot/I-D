@@ -33,6 +33,7 @@ informative:
   RFC5785:
   RFC5988:
   RFC6570:
+  RFC6943:
   webarch:
     target: http://www.w3.org/TR/2004/REC-webarch-20041215
     title: Architecture of the World Wide Web, Volume One
@@ -74,9 +75,10 @@ example, many Web servers use the filename extension of the last path segment to
 media type of the response. Likewise, pre-packaged applications often have highly structured URIs
 that can only be changed in limited ways (often, just the hostname and port they are deployed upon).
 
-Because the owner of the URI is choosing to use the server or the software, this can be seen as
-reasonable delegation of authority. When such conventions are mandated by standards, however, it
-can have several potentially detrimental effects:
+Because the owner of the URI (as defined in {{webarch}} Section 2.2.2.1) is choosing to use the
+server or the software, this can be seen as reasonable delegation of authority. When such
+conventions are mandated by a party other than the owner, however, it can have several potentially
+detrimental effects:
 
 * Collisions - As more conventions for URI structure become standardised, it becomes more likely
   that there will be collisions between such conventions (especially considering that servers,
@@ -103,10 +105,9 @@ can have several potentially detrimental effects:
 
 While it is not ideal when a server or a deployed application constrains URI structure (indeed,
 this is not recommended practice, but that discussion is out of scope for this document),
-publishing standards that mandate URI structure (beyond those allowed by {{RFC3986}}) is
-inappropriate because the structure of a URI needs to be firmly under the control of its owner, and
-the IETF (as well as other organisations) should not usurp this ownership; see {{webarch}} Section
-2.2.2.1.
+publishing standards that mandate URI structure beyond those allowed by {{RFC3986}} is
+inappropriate, because the structure of a URI needs to be firmly under the control of its owner, and
+the IETF (as well as other organisations) should not usurp it.
 
 This document explains best current practices for establishing URI structures, conventions and
 formats in standards. It also offers strategies for specifications to avoid violating these
@@ -115,10 +116,7 @@ guidelines in {{alternatives}}.
 
 ## Who This Document Is For
 
-This document's requirements specifically target a few different types of specifications:
-
-* URI Scheme Definitions ("scheme definitions") - specifications that define and register URI
-  schemes, as per {{RFC4395}}.
+This document's requirements primarily target a few different types of specifications:
 
 * Protocol Extensions ("extensions") - specifications that offer new capabilities to potentially
   any identifier, or a large subset; e.g., a new signature mechanism for 'http' URIs, or metadata
@@ -128,7 +126,7 @@ This document's requirements specifically target a few different types of specif
   e.g., a HTTP interface to particular information on a host.
 
 Requirements that target the generic class "Specifications" apply to all specifications, including
-both those enumerated above above and others.
+both those enumerated above and others.
 
 Note that this specification ought not be interpreted as preventing the allocation of control of
 URIs by parties that legitimately own them, or have delegated that ownership; for example, a
@@ -154,14 +152,14 @@ acceptable to require that an application support 'http' and 'https' URIs. Howev
 SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly specific to
 the nominated schemes.
 
-A specification that defines substructure within a URI scheme MUST do so in a registration document
+A specification that defines substructure within a URI scheme MUST do so in the defining document
 for the URI scheme in question, or by modifying {{RFC4395}}.
 
 
 ## URI Authorities
 
 Scheme definitions define the presence, format and semantics of an authority component in URIs; all
-other specifications MUST NOT constrain, define structure or semantics for URI authorities.
+other specifications MUST NOT constrain, define structure or semantics for URI authorities, unless they update the scheme registration itself.
 
 For example, an extension or application cannot say that the "foo" prefix in "foo_app.example.com"
 is meaningful or triggers special handling.
@@ -198,7 +196,7 @@ For example, an extension cannot be minted that indicates that all query paramet
 
 ## URI Fragment Identifiers
 
-Media type definitions (as per {{RFC6838}} SHOULD specify the fragment identifier syntax(es) to be
+Media type definitions (as per {{RFC6838}}) SHOULD specify the fragment identifier syntax(es) to be
 used with them; other specifications MUST NOT define structure within the fragment identifier,
 unless they are explicitly defining one for reuse by media type definitions.
 
@@ -208,22 +206,21 @@ unless they are explicitly defining one for reuse by media type definitions.
 This document does not introduce new protocol artifacts with security considerations. It prohibits
 some practices that might lead to vulnerabilities; for example, if a security-sensitive mechanism
 is introduced by assuming that a URI path component or query string has a particular meaning, false
-positives might be encountered (due to sites that already use the chosen string).
+positives might be encountered (due to sites that already use the chosen string). See also
+{{RFC6943}}.
 
 
 # IANA Considerations
 
-This document clarifies appropriate registry policy for new URI schemes, and potentially for the
-creation of new URI-related registries, if they attempt to mandate structure within URIs. There are
-no direct IANA actions specified in this document.
+There are no direct IANA actions specified in this document.
 
 
 --- back
 
 # Acknowledgments
 
-Thanks to David Booth, Dave Crocker, Tim Bray, Anne van Kesteren, Martin Thomson and Erik Wilde for
-their suggestions and feedback.
+Thanks to David Booth, Dave Crocker, Tim Bray, Anne van Kesteren, Martin Thomson, Erik Wilde and
+Dave Thaler for their suggestions and feedback.
 
 # Alternatives to Specifying Structure in URIs {#alternatives}
 
