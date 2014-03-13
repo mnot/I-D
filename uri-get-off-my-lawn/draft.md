@@ -159,7 +159,8 @@ for the URI scheme in question, or by modifying {{RFC4395}}.
 ## URI Authorities
 
 Scheme definitions define the presence, format and semantics of an authority component in URIs; all
-other specifications MUST NOT constrain, define structure or semantics for URI authorities, unless they update the scheme registration itself.
+other specifications MUST NOT constrain, define structure or semantics for URI authorities, unless
+they update the scheme registration itself.
 
 For example, an extension or application cannot say that the "foo" prefix in "foo_app.example.com"
 is meaningful or triggers special handling.
