@@ -1,9 +1,10 @@
 ---
 title: The 2xx Patch HTTP Status Code
 abbrev: 2xx Patch
-docname: draft-nottingham--00
+docname: draft-nottingham-http-patch-status-00
 date: 2014
 category: info
+updates: 5789
 
 ipr: trust200902
 area: General
@@ -23,8 +24,14 @@ author:
 
 normative:
   RFC2119:
+  RFC5246:
+  RFC5789:
+  I-D.ietf-httpbis-p4-conditional:
 
 informative:
+  I-D.ietf-httpbis-p2-semantics:
+  I-D.ietf-httpbis-p6-cache:
+  RFC3864:
 
 
 --- abstract
@@ -36,16 +43,24 @@ perform partial updates of stored responses in client caches.
 
 # Introduction
 
+{{RFC5246}} defines the HTTP PATCH method as a means of selectively updating
+the state of a resource on a server. This document complements that
+specification by specifying a means for a server to selectively update a stored
+response on a client -- usually, in a cache {{I-D.ietf-httpbis-p6-cache}}.
+
 ## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
 document are to be interpreted as described in {{RFC2119}}.
 
-# The 2xx Patch Status Code
+This document uses the Augmented BNF defined by {{RFC5246}}, and additionally
+uses the entity-tag rule defined in {{I-D.ietf-httpbis-p4-conditional}}.
+
+# The 2xx Patch Status Code {#status}
 
 The 2xx (Patch) status code allows a response to patch a stored response in a
-cache, by reusing some mechanisms from {{}}. In some sense, it is the
+cache, by reusing some mechanisms from {{RFC5789}}. In some sense, it is the
 complement of the HTTP PATCH request method.
 
 TODO: is this a 2xx or 3xx?
@@ -59,8 +74,6 @@ example:
     Accept-Patch: application/patch+json
     If-None-Match: "abcdef", "ghijkl"
     User-Agent: Example/1.0
-
-TODO: check to see if that's kosher for A-P
 
 If the server can generate a patch for either of the entity tags provided in
 If-None-Match in one of the accepted patch formats, it can generate a 2xx
@@ -76,6 +89,8 @@ representation - i.e., the stored response after the patch is applied.
 
 The Patched header field identifies the representation to apply the patch to,
 as indicated by the entity-tag provided in If-None-Match request header field.
+
+    Patched = entity-tag
 
 Therefore, in the example above, the stored response "ghijkl" is being patched,
 with the resulting stored response having the entity tag "mnopqrs".
@@ -100,6 +115,41 @@ The 2xx status code is not cacheable by default, and is not a representation of
 any identified resource.
 
 
+## The Patched-ETag Header Field
+
+The Patched-ETag header field identifies the stored representation that a patch
+is to be applied to in a 2xx (Patch) response. 
+
+    Patched-ETag = entity-tag
+
+
+# IANA Considerations
+
+## 2xx Patch HTTP Status Code
+
+This document defines the 2xx (Patch) HTTP status code, as per
+{{I-D.ietf-httpbis-p2-semantics}}.
+
+*  Status Code (3 digits): TBD
+*  Short Description: Patch
+*  Pointer to specification text: {{status}}
+
+## Accept-Patch Header Field
+
+This document updates {{RFC5789}} to allow the Accept-Patch HTTP header field
+to be used in requests, which ought to be reflected in the registry.
+
+## Patched Header Field
+
+This document defines a new HTTP header, field, "Patched", to be registered
+in the Permanent Message Header Registry, as per {{RFC3864}}.
+
+* Header field name: Patched
+* Applicable protocol: http
+* Status: standard
+* Author/Change controller: IETF
+* Specification document(s): [this document]
+* Related information:
 
 # Security Considerations
 
