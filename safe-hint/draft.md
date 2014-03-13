@@ -1,8 +1,8 @@
 ---
-title: The "safe" HTTP Client Hint
-abbrev: The safe Hint
-docname: draft-nottingham-safe-hint-00
-date: 2013
+title: The "safe" HTTP Preference
+abbrev: safe browsing preference
+docname: draft-nottingham-safe-hint-01
+date: 2014
 category: info
 
 ipr: trust200902
@@ -22,11 +22,7 @@ author:
 
 normative:
   RFC2119:
-  grigorik-http-client-hints:
-    title: HTTP Client Hints
-    author:
-      - ins: I. Grigorik
-    date: 2013
+  I-D.snell-http-prefer:
   
 informative:
   RFC6265:
@@ -65,14 +61,13 @@ informative:
 
 --- abstract
 
-This specification defines a "safe" HTTP Client Hint, expressing a user
+This specification defines a "safe" preference for HTTP, expressing a user
 preference to avoid "objectionable" content.
 
 
 --- middle
 
-Introduction
-============
+# Introduction
 
 Many Web sites have a "safe" mode, to assist those who don't want to be
 exposed to "objectionable" content, or who don't want their children to be
@@ -102,7 +97,7 @@ helping to assure that clients behind it are not exposed to "objectionable"
 content.
 
 This specification defines how to associate this preference with a request,
-as a HTTP Client Hint {{grigorik-http-client-hints}}.
+as a HTTP Preference {{I-D.snell-http-prefer}}.
 
 Note that this approach does not define what "safe" is; rather, it is
 interpreted within the scope of each Web site that chooses to act upon this
@@ -111,42 +106,40 @@ is, nor does it require application of policy in the user agent or an
 intermediary (which can be problematic for many reasons).
 
 
-Notational Conventions
-----------------------
+## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
 document are to be interpreted as described in {{RFC2119}}.
 
 
-The "safe" HTTP Client Hint
-===========================
+# The "safe" Preference
 
-When present in a request, the "safe" HTTP Client Hint indicates that the
+When present in a request, the "safe" preference indicates that the
 user prefers content which is not objectionable, according to the server's
 definition of the concept. 
 
-For example a request that includes the "safe" hint:
+For example a request that includes the "safe" preference:
 
 ~~~
 GET /foo.html HTTP/1.1
 Host: www.example.org
 User-Agent: ExampleBrowser/1.0
-CH: safe
+Prefer: safe
 ~~~
 
-When configured to do so, user agents SHOULD include the "safe" hint in every
-request, to ensure that the preference is applied (where possible) to all
+When configured to do so, user agents SHOULD include the "safe" preference in
+every request, to ensure that the preference is applied (where possible) to all
 resources.
 
-For example, a Web browser might have a "Request Safe Browsing" preference
+For example, a Web browser might have a "Request Safe Browsing"
 option. additionally, other clients MAY insert it; e.g., an operating system
-might choose to insert the hint in requests based upon system-wide
-preferences, or a proxy might do so based upon its configuration.
+might choose to insert the preference in requests based upon system-wide
+configuration, or a proxy might do so based upon its configuration.
 
-Servers that utilise the "safe" hint SHOULD document that they do so, along
-with the criteria that they use to denote objectionable content. If a site
-has more fine-grained degrees of "safety", it SHOULD select a reasonable
+Servers that utilise the "safe" preference SHOULD document that they do so,
+along with the criteria that they use to denote objectionable content. If a
+site has more fine-grained degrees of "safety", it SHOULD select a reasonable
 default to use, and document that; it MAY use additional mechanisms (e.g.,
 cookies) to fine-tune.
 
@@ -158,19 +151,18 @@ HTTP/1.1 200 OK
 Transfer-Encoding: chunked
 Content-Type: text/html
 Server: ExampleServer/2.0
-Vary: CH
+Vary: Prefer
 ~~~
 
 Note that the Vary response header needs to be sent if responses associated
-with the resource might change depending on the value of the "CH" header; 
+with the resource might change depending on the value of the "Prefer" header;
 this is not only true for those responses that have changed, but also the
 "default" unchanged responses.
 
 
-Security Considerations
-=======================
+# Security Considerations
 
-The "safe" client hint is not a secure mechanism; it can be inserted or
+The "safe" preference is not a secure mechanism; it can be inserted or
 removed by intermediaries with access to the data stream. Its presence reveals
 information about the user, which may be of small assistance in
 "fingerprinting" the user (1 bit of information, to be precise).
@@ -193,15 +185,14 @@ browsing from site to site might (and probably will) change.
 IANA Considerations
 ===================
 
-This specification registers the "safe" HTTP Client Hint
-{{grigorik-http-client-hints}}:
+This specification registers the "safe" preference
+{{I-D.snell-http-prefer}}:
 
-* Hint Name: safe
-* Hint Value: boolean
+* Preference: safe
+* Value: (no value)
 * Description: Indicates that the user (or one responsible for them) prefers
-  "safe" / "unobjectionable" content.
-* Contact: mnot@mnot.net
-* Specification: (this document)
+  "safe" or "unobjectionable" content.
+* Reference: (this document)
 * Notes: 
 
 
@@ -210,4 +201,5 @@ This specification registers the "safe" HTTP Client Hint
 Acknowledgements
 ================
 
-Thanks to Alissa Cooper, Ilya Grigorik and Emma Llanso for their comments.
+Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso and Jeff Hughes for their
+comments.
