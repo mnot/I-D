@@ -187,8 +187,7 @@ semantics of "safe." As such, the "safety" of the user's experience when
 browsing from site to site might (and probably will) change. 
 
 
-IANA Considerations
-===================
+# IANA Considerations
 
 This specification registers the "safe" preference
 {{I-D.snell-http-prefer}}:
@@ -203,8 +202,7 @@ This specification registers the "safe" preference
 
 --- back
 
-Acknowledgements
-================
+# Acknowledgements
 
 Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso and Jeff Hughes for their
 comments.
