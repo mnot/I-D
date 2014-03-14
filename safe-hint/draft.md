@@ -159,6 +159,11 @@ with the resource might change depending on the value of the "Prefer" header;
 this is not only true for those responses that have changed, but also the
 "default" unchanged responses.
 
+NOTE: currently, the safe preference doesn't have a payload, but one could be
+used to indicate a "level" of safety desired; e.g., "safe=hi" or "safe=lo".
+Feedback appreciated.
+
+
 
 # Security Considerations
 
