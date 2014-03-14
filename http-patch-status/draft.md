@@ -8,7 +8,7 @@ updates: 5789
 
 ipr: trust200902
 area: General
-workgroup: 
+workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
@@ -18,7 +18,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: http://www.mnot.net/
 
@@ -27,11 +27,12 @@ normative:
   RFC5246:
   RFC5789:
   I-D.ietf-httpbis-p4-conditional:
+  I-D.ietf-httpbis-p6-cache:
 
 informative:
   I-D.ietf-httpbis-p2-semantics:
-  I-D.ietf-httpbis-p6-cache:
   RFC3864:
+  I-D.ietf-httpbis-http2:
 
 
 --- abstract
@@ -69,38 +70,41 @@ Clients can advertise support for 2NN (Patch), along with the patch formats
 supported in it, by using the Accept-Patch header field in requests. For
 example:
 
-    GET /foo HTTP/1.1
-    Host: api.example.com
-    Accept-Patch: application/patch+json
-    If-None-Match: "abcdef", "ghijkl"
-    User-Agent: Example/1.0
+	    GET /foo HTTP/1.1
+	    Host: api.example.com
+	    Accept-Patch: application/patch+json
+	    If-None-Match: "abcdef", "ghijkl"
+	    User-Agent: Example/1.0
 
-If the server can generate a patch for either of the entity tags provided in
-If-None-Match in one of the accepted patch formats, it can generate a 2NN
+If the server can generate a patch for one of the entity tags provided in
+If-None-Match, in one of the accepted patch formats, it can generate a 2NN
 (Patch) response:
 
-    HTTP/1.1 2NN Patch
-    Content-Type: application/patch+json
-    Patched: "ghijkl"
-    ETag: "mnopqrs"
-    
+	    HTTP/1.1 2NN Patch
+	    Content-Type: application/patch+json
+	    Patched: "ghijkl"
+	    ETag: "mnopqrs"
+
 The entity tag carried by the ETag header field is associated with the selected
-representation - i.e., the stored response after the patch is applied. 
+representation - i.e., the stored response after the patch is applied.
 
 The Patched header field identifies the representation to apply the patch to,
 as indicated by the entity-tag provided in If-None-Match request header field.
 
-    Patched = entity-tag
-
 Therefore, in the example above, the stored response "ghijkl" is being patched,
 with the resulting stored response having the entity tag "mnopqrs".
 
-When applying a patch response, clients MUST adjust the value of the
-Content-Length header, if it exists. Other headers MUST be updated in the same
-manner that a 304 (Not Modified) response updates a stored response; see {{}}.
+After successfully applying a patch response, clients MUST update the stored response in the following manner:
 
-TODO: needs a lot more granularity / detail; exceptions for ETag, Patched,
-Content-Type.
+* The value of the Content-Length header field MUST be adjusted to reflect the
+  length of the patched response body.
+
+* The ETag header field MUST be replaced (or inserted, if not present) with the
+  value of the Patched header field in the 2NN response (if present).
+
+* Other header fields in the 2NN response MUST update the stored response, in
+  the same manner as described in {{I-D.ietf-httpbis-p6-cache}}, Section 4.3.4.
+  However, the following fields MUST be omitted: Content-Type, Patched.
 
 The 2NN (Patch) status code SHOULD NOT be generated if the request did not
 include If-None-Match, unless conflicts are handled by the patch format itself
@@ -118,9 +122,9 @@ any identified resource.
 ## The Patched-ETag Header Field
 
 The Patched-ETag header field identifies the stored representation that a patch
-is to be applied to in a 2NN (Patch) response. 
+is to be applied to in a 2NN (Patch) response.
 
-    Patched-ETag = entity-tag
+	    Patched-ETag = entity-tag
 
 
 # IANA Considerations
@@ -166,62 +170,68 @@ Some patch formats might have additional security considerations.
 
 # 2NN Patch and HTTP/2 Server Push
 
-In HTTP/2 {{}}, it is possible to "push" a request/response pair into a
-client's cache. 2NN (Patch) can be used with this mechanism to perform partial
-updates on stored responses.
+In HTTP/2 {{I-D.ietf-httpbis-http2}}, it is possible to "push" a
+request/response pair into a client's cache. 2NN (Patch) can be used with this
+mechanism to perform partial updates on stored responses.
 
 For example, if a cache has this response stored for "http://example.com/list":
 
-    200 OK
-    Content-Type: application/json
-    Cache-Control: max-age=3600
-    ETag: "aaa"
-    
-    { "items": ["a"]}
+	    200 OK
+	    Content-Type: application/json
+	    Cache-Control: max-age=3600
+	    ETag: "aaa"
+
+	    { "items": ["a"]}
 
 A HTTP/2 server could partially update it by sending the request/response pair
 (using pseudo-HTTP/1 syntax for purposes of illustration):
 
-    GET /list
-    Host: example.com
-    If-None-Match: "aaa"
-    Accept-Patch: application/patch+json
-    
-    2NN Patch
-    Content-Type: application/patch+json
-    ETag: "aab"
-    Patched: "aaa"
-    
-    { TODO }
+	    GET /list
+	    Host: example.com
+	    If-None-Match: "aaa"
+	    Accept-Patch: application/patch+json
+
+	    2NN Patch
+	    Content-Type: application/patch+json
+	    ETag: "aab"
+	    Patched: "aaa"
+
+	    [
+	        { "op": "add", "path": "/items/1", "value": "b" }
+	    ]
 
 Once the patch is applied, the stored response is now:
 
-    200 OK
-    Content-Type: application/json
-    Cache-Control: max-age=3600
-    ETag: "aab"
-    
-    { "items": ["a", "b"]}
+	    200 OK
+	    Content-Type: application/json
+	    Cache-Control: max-age=3600
+	    ETag: "aab"
+
+	    { "items": ["a", "b"]}
 
 Note that this approach requires a server pushing partial responses to know the
 stored response's ETag, since the client cache will silently ignore the push if
 it does not match that provided in "Patched". Likewise, clients that are not
-conformant to this specification will silently drop such pushes, since the status
-code is not recognised (as per {{p6-caching}}).
+conformant to this specification will silently drop such pushes, since the
+status code is not recognised (as per {{I-D.ietf-httpbis-p6-cache}}).
 
-However, it is possible to do some partial updates without strong consistency. For
-example, if the stored response is as above, and the server simply wishes to append
-an value to an array, without regard for the current content of the array (because,
-presumably, ordering of its content is not important), it can push:
 
-    GET /list
-    Host: example.com
-    Accept-Patch: application/patch+json
-    
-    2NN Patch
-    Content-Type: application/patch+json
-    
-    { TODO }
+However, it is possible to do some partial updates without strong consistency.
+For example, if the stored response is as above, and the server simply wishes
+to append an value to an array, without regard for the current content of the
+array (because, presumably, ordering of its content is not important), it can
+push:
 
-Here, the resulting document would be as above, but since ETags are not provided, the
-operation will succeed as long as the patch application succeeds.
+	    GET /list
+	    Host: example.com
+	    Accept-Patch: application/patch+json
+
+	    2NN Patch
+	    Content-Type: application/patch+json
+
+	    [
+	        { "op": "add", "path": "/items/-", "value": "b" }
+	    ]
+
+Here, the resulting document would be as above, but since ETags are not
+provided, the operation will succeed as long as the patch application succeeds.
