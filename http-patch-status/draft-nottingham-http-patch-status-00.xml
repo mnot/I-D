@@ -72,10 +72,18 @@ If-None-Match, in one of the accepted patch formats, it can generate a 2NN
       <t>The entity tag carried by the ETag header field is associated with the selected
 representation - i.e., the stored response after the patch is applied.</t>
       <t>The Patched header field identifies the representation to apply the patch to,
-as indicated by the entity-tag provided in If-None-Match request header field.</t>
+as indicated by the entity-tag provided in If-None-Match request header field;
+see <xref target="patched"/>.</t>
       <t>Therefore, in the example above, the stored response “ghijkl” is being patched,
 with the resulting stored response having the entity tag “mnopqrs”.</t>
-      <t>After successfully applying a patch response, clients MUST update the stored response in the following manner:</t>
+      <t>Application of a 2NN (Patch) response happens in a manner very similar to the
+process for freshening a stored response by applying a 304 (Not Modified), as
+described in <xref target="I-D.ietf-httpbis-p6-cache"/>, Section 4.3.4.</t>
+      <t>In particular, the stored response to apply a 2NN (Patch) response to is the
+same; if none is selected, the patch fails, and the client MAY resubmit the
+request without an Accept-Patch header field, in order to get a full response.</t>
+      <t>If a stored response is selected, clients MUST update it in the following
+manner:</t>
       <t>
         <list style="symbols">
           <t>The value of the Content-Length header field MUST be adjusted to reflect the
@@ -84,7 +92,7 @@ length of the patched response body.</t>
 value of the Patched header field in the 2NN response (if present).</t>
           <t>Other header fields in the 2NN response MUST update the stored response, in
 the same manner as described in <xref target="I-D.ietf-httpbis-p6-cache"/>, Section 4.3.4.
-However, the following fields MUST be omitted: Content-Type, Patched.</t>
+However, the following fields MUST not be updated: Content-Type, Patched.</t>
         </list>
       </t>
       <t>The 2NN (Patch) status code SHOULD NOT be generated if the request did not
@@ -96,12 +104,12 @@ they add. Likewise, intermediaries MAY generate 2NN (Patch) responses under the
 conditions specified here.</t>
       <t>The 2NN status code is not cacheable by default, and is not a representation of
 any identified resource.</t>
-      <section anchor="the-patched-etag-header-field" title="The Patched-ETag Header Field">
-        <t>The Patched-ETag header field identifies the stored representation that a patch
+      <section anchor="patched" title="The Patched Header Field">
+        <t>The Patched header field identifies the stored representation that a patch
 is to be applied to in a 2NN (Patch) response.</t>
         <figure>
           <artwork><![CDATA[
-    Patched-ETag = entity-tag
+    Patched = entity-tag
 ]]></artwork>
         </figure>
       </section>
@@ -392,7 +400,7 @@ push:</t>
     ]
 ]]></artwork>
       </figure>
-      <t>Here, the resulting document would be as above, but since ETags are not
+      <t>Here, the resulting document would be as above, but since entity tags are not
 provided, the operation will succeed as long as the patch application succeeds.</t>
     </section>
   </back>
