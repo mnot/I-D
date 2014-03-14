@@ -1,6 +1,6 @@
 ---
-title: The 2xx Patch HTTP Status Code
-abbrev: 2xx Patch
+title: The 2NN Patch HTTP Status Code
+abbrev: 2NN Patch
 docname: draft-nottingham-http-patch-status-00
 date: 2014
 category: info
@@ -36,7 +36,7 @@ informative:
 
 --- abstract
 
-This document specifies the 2xx Patch HTTP status code to allow servers to
+This document specifies the 2NN Patch HTTP status code to allow servers to
 perform partial updates of stored responses in client caches.
 
 --- middle
@@ -57,15 +57,15 @@ document are to be interpreted as described in {{RFC2119}}.
 This document uses the Augmented BNF defined by {{RFC5246}}, and additionally
 uses the entity-tag rule defined in {{I-D.ietf-httpbis-p4-conditional}}.
 
-# The 2xx Patch Status Code {#status}
+# The 2NN Patch Status Code {#status}
 
-The 2xx (Patch) status code allows a response to patch a stored response in a
-cache, by reusing some mechanisms from {{RFC5789}}. In some sense, it is the
+The 2NN (Patch) status code allows a response to patch a stored response in a
+cache, by reusing the patch formats of {{RFC5789}}. In some sense, it is the
 complement of the HTTP PATCH request method.
 
-TODO: is this a 2xx or 3xx?
+TODO: is this a 2NN or 3xx?
 
-Clients can advertise support for 2xx (Patch), along with the patch formats
+Clients can advertise support for 2NN (Patch), along with the patch formats
 supported in it, by using the Accept-Patch header field in requests. For
 example:
 
@@ -76,10 +76,10 @@ example:
     User-Agent: Example/1.0
 
 If the server can generate a patch for either of the entity tags provided in
-If-None-Match in one of the accepted patch formats, it can generate a 2xx
+If-None-Match in one of the accepted patch formats, it can generate a 2NN
 (Patch) response:
 
-    HTTP/1.1 2xx Patch
+    HTTP/1.1 2NN Patch
     Content-Type: application/patch+json
     Patched: "ghijkl"
     ETag: "mnopqrs"
@@ -102,32 +102,32 @@ manner that a 304 (Not Modified) response updates a stored response; see {{}}.
 TODO: needs a lot more granularity / detail; exceptions for ETag, Patched,
 Content-Type.
 
-The 2xx (Patch) status code SHOULD NOT be generated if the request did not
+The 2NN (Patch) status code SHOULD NOT be generated if the request did not
 include If-None-Match, unless conflicts are handled by the patch format itself
 (e.g., allowing a patch to append to an array), or externally.
 
 Intermediaries MAY append the Accept-Patch header field to requests, or append
-new values to it, if they will process 2xx responses for the patch format(s)
-they add. Likewise, intermediaries MAY generate 2xx (Patch) responses under the
+new values to it, if they will process 2NN responses for the patch format(s)
+they add. Likewise, intermediaries MAY generate 2NN (Patch) responses under the
 conditions specified here.
 
-The 2xx status code is not cacheable by default, and is not a representation of
+The 2NN status code is not cacheable by default, and is not a representation of
 any identified resource.
 
 
 ## The Patched-ETag Header Field
 
 The Patched-ETag header field identifies the stored representation that a patch
-is to be applied to in a 2xx (Patch) response. 
+is to be applied to in a 2NN (Patch) response. 
 
     Patched-ETag = entity-tag
 
 
 # IANA Considerations
 
-## 2xx Patch HTTP Status Code
+## 2NN Patch HTTP Status Code
 
-This document defines the 2xx (Patch) HTTP status code, as per
+This document defines the 2NN (Patch) HTTP status code, as per
 {{I-D.ietf-httpbis-p2-semantics}}.
 
 *  Status Code (3 digits): TBD
@@ -153,7 +153,7 @@ in the Permanent Message Header Registry, as per {{RFC3864}}.
 
 # Security Considerations
 
-2xx (Patch) can be brittle when the application of a patch fails, because the
+2NN (Patch) can be brittle when the application of a patch fails, because the
 client has no way to report the failure of a patch to the server. This
 assymetry might be exploited by an attacker, but can be mitigated by judicious
 use of strong ETags.
@@ -164,10 +164,10 @@ Some patch formats might have additional security considerations.
 
 --- back
 
-# 2xx Patch and HTTP/2 Server Push
+# 2NN Patch and HTTP/2 Server Push
 
 In HTTP/2 {{}}, it is possible to "push" a request/response pair into a
-client's cache. 2xx (Patch) can be used with this mechanism to perform partial
+client's cache. 2NN (Patch) can be used with this mechanism to perform partial
 updates on stored responses.
 
 For example, if a cache has this response stored for "http://example.com/list":
@@ -187,7 +187,7 @@ A HTTP/2 server could partially update it by sending the request/response pair
     If-None-Match: "aaa"
     Accept-Patch: application/patch+json
     
-    2xx Patch
+    2NN Patch
     Content-Type: application/patch+json
     ETag: "aab"
     Patched: "aaa"
@@ -218,7 +218,7 @@ presumably, ordering of its content is not important), it can push:
     Host: example.com
     Accept-Patch: application/patch+json
     
-    2xx Patch
+    2NN Patch
     Content-Type: application/patch+json
     
     { TODO }
