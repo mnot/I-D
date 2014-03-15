@@ -1,7 +1,7 @@
 ---
 title: The 2NN Patch HTTP Status Code
 abbrev: 2NN Patch
-docname: draft-nottingham-http-patch-status-00
+docname: draft-nottingham-http-patch-status-01
 date: 2014
 category: info
 updates: 5789
@@ -38,7 +38,7 @@ informative:
 --- abstract
 
 This document specifies the 2NN Patch HTTP status code to allow servers to
-perform partial updates of stored responses in client caches.
+perform partial updates of stored responses, e.g. in client caches.
 
 --- middle
 
@@ -47,7 +47,8 @@ perform partial updates of stored responses in client caches.
 {{RFC5246}} defines the HTTP PATCH method as a means of selectively updating
 the state of a resource on a server. This document complements that
 specification by specifying a means for a server to selectively update a stored
-response on a client -- usually, in a cache {{I-D.ietf-httpbis-p6-cache}}.
+response on a client -- usually, but not always, in a cache
+{{I-D.ietf-httpbis-p6-cache}}.
 
 ## Notational Conventions
 
@@ -60,9 +61,9 @@ uses the entity-tag rule defined in {{I-D.ietf-httpbis-p4-conditional}}.
 
 # The 2NN Patch Status Code {#status}
 
-The 2NN (Patch) status code allows a response to patch a stored response in a
-cache, by reusing the patch formats of {{RFC5789}}. In some sense, it is the
-complement of the HTTP PATCH request method.
+The 2NN (Patch) status code allows a response to patch a stored response, by
+reusing the patch formats of {{RFC5789}}. In some sense, it is the complement
+of the HTTP PATCH request method.
 
 TODO: is this a 2NN or 3xx?
 
@@ -82,29 +83,34 @@ If-None-Match, in one of the accepted patch formats, it can generate a 2NN
 
 	    HTTP/1.1 2NN Patch
 	    Content-Type: application/patch+json
-	    Patched: "ghijkl"
+	    Patches: "ghijkl"
 	    ETag: "mnopqrs"
+
+When determining whether a patch can be generated, the server MUST use the
+strong comparison function; see Section 2.3.2 of
+{{I-D.ietf-httpbis-p4-conditional}}.
 
 The entity tag carried by the ETag header field is associated with the selected
 representation - i.e., the stored response after the patch is applied.
 
-The Patched header field identifies the representation to apply the patch to,
+The Patches header field identifies the representation to apply the patch to,
 as indicated by the entity-tag provided in If-None-Match request header field.
 
 Therefore, in the example above, the stored response "ghijkl" is being patched,
 with the resulting stored response having the entity tag "mnopqrs".
 
-After successfully applying a patch response, clients MUST update the stored response in the following manner:
+After successfully applying a patch response, clients MUST update the stored
+response in the following manner:
 
 * The value of the Content-Length header field MUST be adjusted to reflect the
   length of the patched response body.
 
 * The ETag header field MUST be replaced (or inserted, if not present) with the
-  value of the Patched header field in the 2NN response (if present).
+  value of the Patches header field in the 2NN response (if present).
 
 * Other header fields in the 2NN response MUST update the stored response, in
   the same manner as described in {{I-D.ietf-httpbis-p6-cache}}, Section 4.3.4.
-  However, the following fields MUST be omitted: Content-Type, Patched.
+  However, the following fields MUST be omitted: Content-Type, Patches.
 
 The 2NN (Patch) status code SHOULD NOT be generated if the request did not
 include If-None-Match, unless conflicts are handled by the patch format itself
@@ -119,12 +125,12 @@ The 2NN status code is not cacheable by default, and is not a representation of
 any identified resource.
 
 
-## The Patched-ETag Header Field
+## The Patches Header Field
 
-The Patched-ETag header field identifies the stored representation that a patch
+The Patches header field identifies the stored representation that a patch
 is to be applied to in a 2NN (Patch) response.
 
-	    Patched-ETag = entity-tag
+	    Patches = entity-tag
 
 
 # IANA Considerations
@@ -141,14 +147,14 @@ This document defines the 2NN (Patch) HTTP status code, as per
 ## Accept-Patch Header Field
 
 This document updates {{RFC5789}} to allow the Accept-Patch HTTP header field
-to be used in requests, which ought to be reflected in the registry.
+to be used in requests; please update the registry to reflect this.
 
-## Patched Header Field
+## Patches Header Field
 
-This document defines a new HTTP header, field, "Patched", to be registered
+This document defines a new HTTP header, field, "Patches", to be registered
 in the Permanent Message Header Registry, as per {{RFC3864}}.
 
-* Header field name: Patched
+* Header field name: Patches
 * Applicable protocol: http
 * Status: standard
 * Author/Change controller: IETF
@@ -164,6 +170,9 @@ use of strong ETags.
 
 Some patch formats might have additional security considerations.
 
+# Acknowledgements
+
+Thanks to Martin Duerst for his input.
 
 
 --- back
@@ -194,7 +203,7 @@ A HTTP/2 server could partially update it by sending the request/response pair
 	    2NN Patch
 	    Content-Type: application/patch+json
 	    ETag: "aab"
-	    Patched: "aaa"
+	    Patches: "aaa"
 
 	    [
 	        { "op": "add", "path": "/items/1", "value": "b" }
@@ -211,10 +220,9 @@ Once the patch is applied, the stored response is now:
 
 Note that this approach requires a server pushing partial responses to know the
 stored response's ETag, since the client cache will silently ignore the push if
-it does not match that provided in "Patched". Likewise, clients that are not
+it does not match that provided in "Patches". Likewise, clients that are not
 conformant to this specification will silently drop such pushes, since the
 status code is not recognised (as per {{I-D.ietf-httpbis-p6-cache}}).
-
 
 However, it is possible to do some partial updates without strong consistency.
 For example, if the stored response is as above, and the server simply wishes

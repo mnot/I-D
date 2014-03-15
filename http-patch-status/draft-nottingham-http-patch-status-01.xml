@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../Tools/rfc2629xslt/rfc2629.xslt" ?>
+<!DOCTYPE rfc SYSTEM "../Tools/rfc2629xslt/rfc2629.dtd">
+<rfc ipr="trust200902" docName="draft-nottingham-http-patch-status-00" category="info" updates="5789">
+  <?rfc toc="yes"?>
+  <?rfc tocindent="yes"?>
+  <?rfc sortrefs="yes"?>
+  <?rfc symrefs="yes"?>
+  <?rfc strict="yes"?>
+  <?rfc compact="yes"?>
+  <?rfc comments="yes"?>
+  <?rfc inline="yes"?>
+  <front>
+    <title abbrev="2NN Patch">The 2NN Patch HTTP Status Code</title>
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization/>
+      <address>
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net/</uri>
+      </address>
+    </author>
+    <date year="2014"/>
+    <area>General</area>
+    <keyword>Internet-Draft</keyword>
+    <abstract>
+      <t>This document specifies the 2NN Patch HTTP status code to allow servers to
+perform partial updates of stored responses in client caches.</t>
+    </abstract>
+  </front>
+  <middle>
+    <section anchor="introduction" title="Introduction">
+      <t><xref target="RFC5246"/> defines the HTTP PATCH method as a means of selectively updating
+the state of a resource on a server. This document complements that
+specification by specifying a means for a server to selectively update a stored
+response on a client – usually, in a cache <xref target="I-D.ietf-httpbis-p6-cache"/>.</t>
+      <section anchor="notational-conventions" title="Notational Conventions">
+        <t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”,
+“SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this
+document are to be interpreted as described in <xref target="RFC2119"/>.</t>
+        <t>This document uses the Augmented BNF defined by <xref target="RFC5246"/>, and additionally
+uses the entity-tag rule defined in <xref target="I-D.ietf-httpbis-p4-conditional"/>.</t>
+      </section>
+    </section>
+    <section anchor="status" title="The 2NN Patch Status Code">
+      <t>The 2NN (Patch) status code allows a response to patch a stored response in a
+cache, by reusing the patch formats of <xref target="RFC5789"/>. In some sense, it is the
+complement of the HTTP PATCH request method.</t>
+      <t>TODO: is this a 2NN or 3xx?</t>
+      <t>Clients can advertise support for 2NN (Patch), along with the patch formats
+supported in it, by using the Accept-Patch header field in requests. For
+example:</t>
+      <figure>
+        <artwork><![CDATA[
+    GET /foo HTTP/1.1
+    Host: api.example.com
+    Accept-Patch: application/patch+json
+    If-None-Match: "abcdef", "ghijkl"
+    User-Agent: Example/1.0
+]]></artwork>
+      </figure>
+      <t>If the server can generate a patch for one of the entity tags provided in
+If-None-Match, in one of the accepted patch formats, it can generate a 2NN
+(Patch) response:</t>
+      <figure>
+        <artwork><![CDATA[
+    HTTP/1.1 2NN Patch
+    Content-Type: application/patch+json
+    Patched: "ghijkl"
+    ETag: "mnopqrs"
+]]></artwork>
+      </figure>
+      <t>The entity tag carried by the ETag header field is associated with the selected
+representation - i.e., the stored response after the patch is applied.</t>
+      <t>The Patched header field identifies the representation to apply the patch to,
+as indicated by the entity-tag provided in If-None-Match request header field.</t>
+      <t>Therefore, in the example above, the stored response “ghijkl” is being patched,
+with the resulting stored response having the entity tag “mnopqrs”.</t>
+      <t>After successfully applying a patch response, clients MUST update the stored response in the following manner:</t>
+      <t>
+        <list style="symbols">
+          <t>The value of the Content-Length header field MUST be adjusted to reflect the
+length of the patched response body.</t>
+          <t>The ETag header field MUST be replaced (or inserted, if not present) with the
+value of the Patched header field in the 2NN response (if present).</t>
+          <t>Other header fields in the 2NN response MUST update the stored response, in
+the same manner as described in <xref target="I-D.ietf-httpbis-p6-cache"/>, Section 4.3.4.
+However, the following fields MUST be omitted: Content-Type, Patched.</t>
+        </list>
+      </t>
+      <t>The 2NN (Patch) status code SHOULD NOT be generated if the request did not
+include If-None-Match, unless conflicts are handled by the patch format itself
+(e.g., allowing a patch to append to an array), or externally.</t>
+      <t>Intermediaries MAY append the Accept-Patch header field to requests, or append
+new values to it, if they will process 2NN responses for the patch format(s)
+they add. Likewise, intermediaries MAY generate 2NN (Patch) responses under the
+conditions specified here.</t>
+      <t>The 2NN status code is not cacheable by default, and is not a representation of
+any identified resource.</t>
+      <section anchor="the-patched-etag-header-field" title="The Patched-ETag Header Field">
+        <t>The Patched-ETag header field identifies the stored representation that a patch
+is to be applied to in a 2NN (Patch) response.</t>
+        <figure>
+          <artwork><![CDATA[
+    Patched-ETag = entity-tag
+]]></artwork>
+        </figure>
+      </section>
+    </section>
+    <section anchor="iana-considerations" title="IANA Considerations">
+      <section anchor="nn-patch-http-status-code" title="2NN Patch HTTP Status Code">
+        <t>This document defines the 2NN (Patch) HTTP status code, as per
+<xref target="I-D.ietf-httpbis-p2-semantics"/>.</t>
+        <t>
+          <list style="symbols">
+            <t>Status Code (3 digits): TBD</t>
+            <t>Short Description: Patch</t>
+            <t>Pointer to specification text: <xref target="status"/></t>
+          </list>
+        </t>
+      </section>
+      <section anchor="accept-patch-header-field" title="Accept-Patch Header Field">
+        <t>This document updates <xref target="RFC5789"/> to allow the Accept-Patch HTTP header field
+to be used in requests, which ought to be reflected in the registry.</t>
+      </section>
+      <section anchor="patched-header-field" title="Patched Header Field">
+        <t>This document defines a new HTTP header, field, “Patched”, to be registered
+in the Permanent Message Header Registry, as per <xref target="RFC3864"/>.</t>
+        <t>
+          <list style="symbols">
+            <t>Header field name: Patched</t>
+            <t>Applicable protocol: http</t>
+            <t>Status: standard</t>
+            <t>Author/Change controller: IETF</t>
+            <t>Specification document(s): [this document]</t>
+            <t>Related information:</t>
+          </list>
+        </t>
+      </section>
+    </section>
+    <section anchor="security-considerations" title="Security Considerations">
+      <t>2NN (Patch) can be brittle when the application of a patch fails, because the
+client has no way to report the failure of a patch to the server. This
+assymetry might be exploited by an attacker, but can be mitigated by judicious
+use of strong ETags.</t>
+      <t>Some patch formats might have additional security considerations.</t>
+    </section>
+  </middle>
+  <back>
+    <references title="Normative References">
+      <reference anchor="RFC2119">
+        <front>
+          <title abbrev="RFC Key Words">Key words for use in RFCs to Indicate Requirement Levels</title>
+          <author initials="S." surname="Bradner" fullname="Scott Bradner">
+            <organization>Harvard University</organization>
+            <address>
+              <postal>
+                <street>1350 Mass. Ave.</street>
+                <street>Cambridge</street>
+                <street>MA 02138</street>
+              </postal>
+              <phone>- +1 617 495 3864</phone>
+              <email>sob@harvard.edu</email>
+            </address>
+          </author>
+          <date year="1997" month="March"/>
+          <area>General</area>
+          <keyword>keyword</keyword>
+          <abstract>
+            <t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list><t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+            <t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t>
+          </abstract>
+        </front>
+        <seriesInfo name="BCP" value="14"/>
+        <seriesInfo name="RFC" value="2119"/>
+        <format type="TXT" octets="4723" target="http://www.rfc-editor.org/rfc/rfc2119.txt"/>
+        <format type="HTML" octets="17970" target="http://xml.resource.org/public/rfc/html/rfc2119.html"/>
+        <format type="XML" octets="5777" target="http://xml.resource.org/public/rfc/xml/rfc2119.xml"/>
+      </reference>
+      <reference anchor="RFC5246">
+        <front>
+          <title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
+          <author initials="T." surname="Dierks" fullname="T. Dierks">
+            <organization/>
+          </author>
+          <author initials="E." surname="Rescorla" fullname="E. Rescorla">
+            <organization/>
+          </author>
+          <date year="2008" month="August"/>
+          <abstract>
+            <t>This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications security over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t>
+          </abstract>
+        </front>
+        <seriesInfo name="RFC" value="5246"/>
+        <format type="TXT" octets="222395" target="http://www.rfc-editor.org/rfc/rfc5246.txt"/>
+      </reference>
+      <reference anchor="RFC5789">
+        <front>
+          <title>PATCH Method for HTTP</title>
+          <author initials="L." surname="Dusseault" fullname="L. Dusseault">
+            <organization/>
+          </author>
+          <author initials="J." surname="Snell" fullname="J. Snell">
+            <organization/>
+          </author>
+          <date year="2010" month="March"/>
+          <abstract>
+            <t>Several applications extending the Hypertext Transfer Protocol (HTTP) require a feature to do partial resource modification.  The existing HTTP PUT method only allows a complete replacement of a document.  This proposal adds a new HTTP method, PATCH, to modify an existing HTTP resource. [STANDARDS-TRACK]</t>
+          </abstract>
+        </front>
+        <seriesInfo name="RFC" value="5789"/>
+        <format type="TXT" octets="21706" target="http://www.rfc-editor.org/rfc/rfc5789.txt"/>
+      </reference>
+      <reference anchor="I-D.ietf-httpbis-p4-conditional">
+        <front>
+          <title>Hypertext Transfer Protocol (HTTP/1.1): Conditional Requests</title>
+          <author initials="R" surname="Fielding" fullname="Roy Fielding">
+            <organization/>
+          </author>
+          <author initials="J" surname="Reschke" fullname="Julian Reschke">
+            <organization/>
+          </author>
+          <date month="February" day="6" year="2014"/>
+          <abstract>
+            <t>The Hypertext Transfer Protocol (HTTP) is a stateless application- level protocol for distributed, collaborative, hypertext information systems.  This document defines HTTP/1.1 conditional requests, including metadata header fields for indicating state changes, request header fields for making preconditions on such state, and rules for constructing the responses to a conditional request when one or more preconditions evaluate to false.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-p4-conditional-26"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p4-conditional-26.txt"/>
+      </reference>
+      <reference anchor="I-D.ietf-httpbis-p6-cache">
+        <front>
+          <title>Hypertext Transfer Protocol (HTTP/1.1): Caching</title>
+          <author initials="R" surname="Fielding" fullname="Roy Fielding">
+            <organization/>
+          </author>
+          <author initials="M" surname="Nottingham" fullname="Mark Nottingham">
+            <organization/>
+          </author>
+          <author initials="J" surname="Reschke" fullname="Julian Reschke">
+            <organization/>
+          </author>
+          <date month="February" day="6" year="2014"/>
+          <abstract>
+            <t>The Hypertext Transfer Protocol (HTTP) is a stateless application- level protocol for distributed, collaborative, hypertext information systems.  This document defines HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-p6-cache-26"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p6-cache-26.txt"/>
+      </reference>
+    </references>
+    <references title="Informative References">
+      <reference anchor="I-D.ietf-httpbis-p2-semantics">
+        <front>
+          <title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+          <author initials="R" surname="Fielding" fullname="Roy Fielding">
+            <organization/>
+          </author>
+          <author initials="J" surname="Reschke" fullname="Julian Reschke">
+            <organization/>
+          </author>
+          <date month="February" day="6" year="2014"/>
+          <abstract>
+            <t>The Hypertext Transfer Protocol (HTTP) is a stateless application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-p2-semantics-26"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p2-semantics-26.txt"/>
+      </reference>
+      <reference anchor="RFC3864">
+        <front>
+          <title>Registration Procedures for Message Header Fields</title>
+          <author initials="G." surname="Klyne" fullname="G. Klyne">
+            <organization/>
+          </author>
+          <author initials="M." surname="Nottingham" fullname="M. Nottingham">
+            <organization/>
+          </author>
+          <author initials="J." surname="Mogul" fullname="J. Mogul">
+            <organization/>
+          </author>
+          <date year="2004" month="September"/>
+          <abstract>
+            <t>This specification defines registration procedures for the message header fields used by Internet mail, HTTP, Netnews and other applications.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="BCP" value="90"/>
+        <seriesInfo name="RFC" value="3864"/>
+        <format type="TXT" octets="36231" target="http://www.rfc-editor.org/rfc/rfc3864.txt"/>
+      </reference>
+      <reference anchor="I-D.ietf-httpbis-http2">
+        <front>
+          <title>Hypertext Transfer Protocol version 2</title>
+          <author initials="M" surname="Belshe" fullname="Mike Belshe">
+            <organization/>
+          </author>
+          <author initials="R" surname="Peon" fullname="Roberto Peon">
+            <organization/>
+          </author>
+          <author initials="M" surname="Thomson" fullname="Martin Thomson">
+            <organization/>
+          </author>
+          <date month="February" day="13" year="2014"/>
+          <abstract>
+            <t>This specification describes an optimized expression of the syntax of the Hypertext Transfer Protocol (HTTP).  HTTP/2 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent messages on the same connection.  It also introduces unsolicited push of representations from servers to clients.  This document is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-http2-10"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-10.txt"/>
+      </reference>
+    </references>
+    <section anchor="nn-patch-and-http2-server-push" title="2NN Patch and HTTP/2 Server Push">
+      <t>In HTTP/2 <xref target="I-D.ietf-httpbis-http2"/>, it is possible to “push” a
+request/response pair into a client’s cache. 2NN (Patch) can be used with this
+mechanism to perform partial updates on stored responses.</t>
+      <t>For example, if a cache has this response stored for “http://example.com/list”:</t>
+      <figure>
+        <artwork><![CDATA[
+    200 OK
+    Content-Type: application/json
+    Cache-Control: max-age=3600
+    ETag: "aaa"
+
+    { "items": ["a"]}
+]]></artwork>
+      </figure>
+      <t>A HTTP/2 server could partially update it by sending the request/response pair
+(using pseudo-HTTP/1 syntax for purposes of illustration):</t>
+      <figure>
+        <artwork><![CDATA[
+    GET /list
+    Host: example.com
+    If-None-Match: "aaa"
+    Accept-Patch: application/patch+json
+
+    2NN Patch
+    Content-Type: application/patch+json
+    ETag: "aab"
+    Patched: "aaa"
+
+    [
+        { "op": "add", "path": "/items/1", "value": "b" }
+    ]
+]]></artwork>
+      </figure>
+      <t>Once the patch is applied, the stored response is now:</t>
+      <figure>
+        <artwork><![CDATA[
+    200 OK
+    Content-Type: application/json
+    Cache-Control: max-age=3600
+    ETag: "aab"
+
+    { "items": ["a", "b"]}
+]]></artwork>
+      </figure>
+      <t>Note that this approach requires a server pushing partial responses to know the
+stored response’s ETag, since the client cache will silently ignore the push if
+it does not match that provided in “Patched”. Likewise, clients that are not
+conformant to this specification will silently drop such pushes, since the
+status code is not recognised (as per <xref target="I-D.ietf-httpbis-p6-cache"/>).</t>
+      <t>However, it is possible to do some partial updates without strong consistency.
+For example, if the stored response is as above, and the server simply wishes
+to append an value to an array, without regard for the current content of the
+array (because, presumably, ordering of its content is not important), it can
+push:</t>
+      <figure>
+        <artwork><![CDATA[
+    GET /list
+    Host: example.com
+    Accept-Patch: application/patch+json
+
+    2NN Patch
+    Content-Type: application/patch+json
+
+    [
+        { "op": "add", "path": "/items/-", "value": "b" }
+    ]
+]]></artwork>
+      </figure>
+      <t>Here, the resulting document would be as above, but since ETags are not
+provided, the operation will succeed as long as the patch application succeeds.</t>
+    </section>
+  </back>
+</rfc>
