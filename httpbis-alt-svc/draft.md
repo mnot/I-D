@@ -457,22 +457,3 @@ This server is not configured to provide a definitive response for the
 requested resource. Clients receiving this error code SHOULD remove the
 endpoint from their cache of alternative services, if present.
 
-
-
-# TODO
-
-* DNS: Alternative services are also amenable to DNS-based discovery. If there
-  is sufficient interest, a future revision may include a proposal for that.
-
-* Indicating Chosen Service: It's likely necessary for the server to know which
-  protocol the user agent has chosen, and perhaps even the hostname (for load
-  balancing). This could be conveyed as part of the "magic", or as a request
-  header.
-
-* Advice for setting headers: guidelines for servers that use the Alt-Svc
-  header field.
-  
-* For the load balancing use case, it's necessary for clients to always flush
-  altsvc cache upon a network change, but right now they're only required to
-  examine the cache for suspicious entries. We should discuss whether this
-  should be upgraded to always flush.
