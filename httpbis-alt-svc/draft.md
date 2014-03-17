@@ -69,9 +69,10 @@ Section 7 of that document.
 
 # Alternative Services {#alternative}
 
-This specification defines a new concept in HTTP, the "alternative service." When
-an origin (see {{RFC6454}}) has resources are accessible through a different
-protocol / host / port combination, it is said to have an alternative service.
+This specification defines a new concept in HTTP, the "alternative service."
+When an origin (see {{RFC6454}}) has resources are accessible through a
+different protocol / host / port combination, it is said to have an alternative
+service.
 
 An alternative service can be used to interact with the resources on an origin
 server at a separate location on the network, possibly using a different
@@ -133,8 +134,8 @@ associated with an origin.
 
 Clients MUST NOT use alternative services with a host other than the origin's
 without strong server authentication; this mitigates the attack described in
-{{host_security}}. One way to achieve this is for the alternative to use TLS with
-a certificate that is valid for that origin.
+{{host_security}}. One way to achieve this is for the alternative to use TLS
+with a certificate that is valid for that origin.
 
 For example, if the origin's host is "www.example.com" and an alternative is
 offered on "other.example.com" with the "h2t" protocol, and the certificate
@@ -183,10 +184,11 @@ By their nature, alternative services are optional; clients are not required to
 use them. However, it is advantageous for clients to behave in a predictable
 way when they are used by servers (e.g., for load balancing).
 
-Therefore, if a client becomes aware of an alternative service, the client SHOULD
-use that alternative service for all requests to the associated origin as soon as
-it is available, provided that the security properties of the alternative service
-protocol are desirable, as compared to the existing connection.
+Therefore, if a client becomes aware of an alternative service, the client
+SHOULD use that alternative service for all requests to the associated origin
+as soon as it is available, provided that the security properties of the
+alternative service protocol are desirable, as compared to the existing
+connection.
 
 The client is not required to block requests; the origin's connection can be
 used until the alternative connection is established. However, if the security
@@ -297,8 +299,8 @@ services, and restricting who can open a port for listening on that host.
 
 ## Changing Hosts {#host_security}
 
-When the host is changed due to the use of an alternative service, it presents an
-opportunity for attackers to hijack communication to an origin.
+When the host is changed due to the use of an alternative service, it presents
+an opportunity for attackers to hijack communication to an origin.
 
 For example, if an attacker can convince a user agent to send all traffic for
 "innocent.example.org" to "evil.example.com" by successfully associating it as
@@ -350,8 +352,8 @@ Thanks to Eliot Lear, Stephen Farrell, Guy Podjarny, Stephen Ludin, Erik
 Nygren, Paul Hoffman, Adam Langley, Will Chan and Richard Barnes for their
 feedback and suggestions.
 
-The Alt-Svc header field was influenced by the design of the Alternative-Protocol
-header in SPDY.
+The Alt-Svc header field was influenced by the design of the
+Alternative-Protocol header in SPDY.
 
 
 
@@ -402,10 +404,10 @@ requests, subject to the constraints above.
 
 # For HTTP/2: ALTSVC Frame {#alt-frame}
 
-The ALTSVC frame (type=0xa) advertises the availability of an alternative service
-to the client. It can be sent at any time for an existing client-initiated
-stream or stream 0, and is intended to allow servers to load balance or
-otherwise segment traffic; see {{alternative}} for details.
+The ALTSVC frame (type=0xa) advertises the availability of an alternative
+service to the client. It can be sent at any time for an existing
+client-initiated stream or stream 0, and is intended to allow servers to load
+balance or otherwise segment traffic; see {{alternative}} for details.
 
 An ALTSVC frame on a client-initiated stream indicates that the conveyed
 alternative service is associated with the origin of that stream.
@@ -465,8 +467,8 @@ endpoint from their cache of alternative services, if present.
 
 # TODO
 
-* DNS: Alternative services are also amenable to DNS-based discovery. If there is
-  sufficient interest, a future revision may include a proposal for that.
+* DNS: Alternative services are also amenable to DNS-based discovery. If there
+  is sufficient interest, a future revision may include a proposal for that.
 
 * Indicating Chosen Service: It's likely necessary for the server to know which
   protocol the user agent has chosen, and perhaps even the hostname (for load
