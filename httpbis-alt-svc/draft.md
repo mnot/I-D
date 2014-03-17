@@ -360,9 +360,6 @@ Alternative-Protocol header in SPDY.
 
 # For HTTP/2: Discovery of TLS Support for http:// URIs {#opportunistic}
 
-NOTE: This section, if accepted, ought to be added as a new subsection of
-"Starting HTTP/2".
-
 A server wishing to advertise support for HTTP/2 over TLS for http:// URIs MAY
 do so by including an Alt-Svc ({{alt-svc}} response header with the "h2t"
 protocol identifier.
@@ -454,9 +451,6 @@ The ALTSVC frame does not define any flags.
 
 
 # For HTTP/2: NOT_AUTHORITATIVE (13)  {#error}
-
-NOTE: This is a proposal for a new error code, which should be incorporated
-into the appropriate section if accepted.
 
 The endpoint refuses the stream prior to performing any application processing.
 This server is not configured to provide a definitive response for the
