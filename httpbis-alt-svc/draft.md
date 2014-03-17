@@ -343,18 +343,6 @@ The ALTSVC frame contains the following fields:
 The ALTSVC frame does not define any flags.
 
 
-# Proposal: SETTINGS_UNIVERSAL_SCHEMES (4) {#setting}
-
-NOTE: This is a proposal for a new SETTINGS value, to be incorporated in that
-list if accepted.
-
-A non-zero value indicates the sender MAY accept requests with schemes that do
-not match the default port for the server. A non-zero value is a pre-requisite
-for sending http:// over TLS via the previous https connection method described
-in {{opportunistic}}.
-
-
-
 # For HTTP/2: NOT_AUTHORITATIVE (13)  {#error}
 
 NOTE: This is a proposal for a new error code, which should be incorporated
