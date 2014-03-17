@@ -399,56 +399,6 @@ due to a past "https" request), then it may re-use that connection for "http"
 requests, subject to the constraints above.
 
 
-# For HTTP/2: ALTSVC Frame {#alt-frame}
-
-The ALTSVC frame (type=0xa) advertises the availability of an alternative
-service to the client. It can be sent at any time for an existing
-client-initiated stream or stream 0, and is intended to allow servers to load
-balance or otherwise segment traffic; see {{alternative}} for details.
-
-An ALTSVC frame on a client-initiated stream indicates that the conveyed
-alternative service is associated with the origin of that stream.
-
-An ALTSVC frame on stream 0 indicates that the conveyed alternative service is
-associated with all origins that map to the server's address (i.e., host and
-port).
-
-The ALTSVC frame is intended for receipt by clients; a server that receives an
-ALTSVC frame MUST treat it as a connection error of type PROTOCOL_ERROR.
-
-	0                   1                   2                   3
-	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|  PID_LEN (8)  | Reserved (8)  |            Port (16)          |
-	+---------------------------------------------------------------+
-	|                          Max-Age (32)                         |
-	+---------------------------------------------------------------+
-	|                        Protocol-ID (*)                        |
-	+---------------------------------------------------------------+
-	|                           Host (*)                            |
-	+---------------------------------------------------------------+
-
-The ALTSVC frame contains the following fields:
-
-* PID_LEN: An unsigned, 8-bit integer indicating the length, in bytes, of the
-  PROTOCOL-ID field.
-  
-* Reserved: for future use.
-
-* Port: An unsigned, 16-bit integer indicating the port that the alternative
-  service is available upon.
-
-* Max-Age: An unsigned, 32-bit integer indicating the freshness lifetime of the
-  alternative service association, as per {{caching}}.
-
-* Protocol-ID: A sequence of bytes (length determined by PID_LEN) containing
-  the ALPN protocol identifier of the alternative service.
-
-* Host: A sequence of bytes containing an ascii string indicating the host that
-  the alternative service is available upon.
-
-The ALTSVC frame does not define any flags.
-
 
 # For HTTP/2: NOT_AUTHORITATIVE (13)  {#error}
 
