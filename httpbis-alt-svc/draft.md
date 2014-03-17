@@ -40,7 +40,6 @@ normative:
 informative:
   RFC5246:
   I-D.ietf-httpbis-http2:
-  I-D.nottingham-http2-encryption:
     
 
 --- abstract
@@ -354,49 +353,6 @@ feedback and suggestions.
 
 The Alt-Svc header field was influenced by the design of the
 Alternative-Protocol header in SPDY.
-
-
-
-
-# For HTTP/2: Discovery of TLS Support for http:// URIs {#opportunistic}
-
-A server wishing to advertise support for HTTP/2 over TLS for http:// URIs MAY
-do so by including an Alt-Svc ({{alt-svc}} response header with the "h2"
-protocol identifier.
-
-For example, a HTTP/1 connection could indicate support for HTTP/2 on
-port 443 for use with future http:// URI requests with this Alt-Svc header:
-  
-	HTTP/1.1 200 OK
-	Alt-Svc: "h2"=443
-
-The process for starting HTTP/2 over TLS for an http:// URI is the same as the
-connection process for an https:// URI, except that authentication of the TLS
-channel is not required. The client MAY use either anonymous or authenticated
-ciphersuites. If an authenticated ciphersuite is used, the client MAY ignore
-authentication failures. This enables servers that only serve http:// URIs to
-use credentials that are not tied to a global PKI, such as self-signed
-certificates. Clients MAY reserve the use of certain security sensitive
-optimizations, such as caching the existence of this successful connection, for
-authenticated connections.
-
-Additionally, if a client has previously successfully connected to
-a given server over TLS, for example as part of an https:// request, then it
-MAY attempt to use TLS for requests certain http:// URIs. To use this mechanism
-the server MUST have sent a non-zero SETTINGS_UNIVERSAL_SCHEMES setting to
-indicate support for this mechanism.
-
-Eligible http:// URIs:
-
-1. Contain the same host name as the URI accessed over TLS, and 
-2. Do not contain an explicit port number. 
-
-For example, if the client has successfully made a request for the URI
-"https://example.com/foo", then it may attempt to use TLS to make a request for
-the URI "http://example.com/bar", but not for the URI "http://example.com:80/".
-In particular, if a client has a TLS connection open to a server (for example,
-due to a past "https" request), then it may re-use that connection for "http"
-requests, subject to the constraints above.
 
 
 
