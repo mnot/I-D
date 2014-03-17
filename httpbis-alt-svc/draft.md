@@ -85,18 +85,7 @@ This document uses the Augmented BNF defined in {{RFC5234}} along with the
 Section 7 of that document.
 
 
-# Proposals {#proposals}
-
-This section enumerates proposals made to meet the use cases in {{use-cases}}.
-Note that they all need not be accepted together, depending on the use cases
-that are determined as in-scope.
-
-## Proposal: Alternate Services {#alternate}
-
-NOTE: This section can be incorporated into HTTP/2 directly, or it can be
-published as a standalone specification. However, if {{alt-frame}} is accepted,
-it will need to be included or referenced from the spec, since frame type
-extensibility has been ruled out.
+# Alternate Services {#alternate}
 
 This specification defines a new concept in HTTP, the "alternate service." When
 an origin (see {{RFC6454}} has resources are accessible through a different
@@ -158,7 +147,7 @@ There are many ways that a client could discover the alternate service(s)
 associated with an origin.
 
 
-### Host Authentication {#host_auth}
+## Host Authentication {#host_auth}
 
 Clients MUST NOT use alternate services with a host other than the origin's
 without strong server authentication; this mitigates the attack described in
@@ -176,7 +165,7 @@ Furthermore, this means that the HTTP Host header and the SNI information
 provided in TLS by the client will be that of the origin, not the alternate.
 
 
-### Alternate Service Caching {#caching}
+## Alternate Service Caching {#caching}
 
 Mechanisms for discovering alternate services can associate a freshness
 lifetime with them; for example, the Alt-Svc header field uses the "ma"
@@ -199,14 +188,14 @@ root is questionable). UAs that do not have a means of detecting network
 changes SHOULD place an upper bound on their lifetime.
 
 
-### Requiring Server Name Indication
+## Requiring Server Name Indication
 
 A client must only use a TLS-based alternate service if the client also
 supports TLS Server Name Indication (SNI) {{RFC6066}}. This supports the
 conservation of IP addresses on the alternate service host.
 
 
-### Using Alternate Services {#switching}
+## Using Alternate Services {#switching}
 
 By their nature, alternate services are optional; clients are not required to
 use them. However, it is advantageous for clients to behave in a predictable
@@ -229,11 +218,7 @@ this could be the basis of a downgrade attack, thus losing any enhanced
 security properties of the alternate service.
 
 
-## Proposal: The Alt-Svc HTTP Header Field {#alt-svc}
-
-NOTE: Because this header is mostly defined for use in HTTP/1, it is most
-likely most appropriate to put it in a separate specification. However, it will
-need to reference {{alternate}}, wherever that is specified.
+# The Alt-Svc HTTP Header Field {#alt-svc}
 
 A HTTP(S) origin server can advertise the availability of alternate services
 (see {{alternate}}) to clients by adding an Alt-Svc header field to responses.
@@ -269,8 +254,7 @@ be used to convey protocol identifiers that are not printable ASCII, or those
 that contain quote characters.
 
 
-
-### Caching Alt-Svc Header Field Values
+## Caching Alt-Svc Header Field Values
 
 When an alternate service is advertised using Alt-Svc, it is considered fresh
 for 24 hours from generation of the message. This can be modified with the 'ma'
@@ -308,10 +292,7 @@ affect caching of Alt-Svc values.
 
 
 
-## Proposal: ALTSVC Frame {#alt-frame}
-
-NOTE: Because of the current approach to HTTP/2 extensibility, this section
-will need to be incorporated to the frame type listing in HTTP/2 if accepted.
+# For HTTP/2: ALTSVC Frame {#alt-frame}
 
 The ALTSVC frame (type=0xa) advertises the availability of an alternate service
 to the client. It can be sent at any time for an existing client-initiated
@@ -362,7 +343,7 @@ The ALTSVC frame contains the following fields:
 The ALTSVC frame does not define any flags.
 
 
-## Proposal: SETTINGS_UNIVERSAL_SCHEMES (4) {#setting}
+# Proposal: SETTINGS_UNIVERSAL_SCHEMES (4) {#setting}
 
 NOTE: This is a proposal for a new SETTINGS value, to be incorporated in that
 list if accepted.
@@ -374,7 +355,7 @@ in {{opportunistic}}.
 
 
 
-## Proposal: NOT_AUTHORITATIVE (13)  {#error}
+# For HTTP/2: NOT_AUTHORITATIVE (13)  {#error}
 
 NOTE: This is a proposal for a new error code, which should be incorporated
 into the appropriate section if accepted.
@@ -386,7 +367,7 @@ endpoint from their cache of alternate services, if present.
 
 
 
-## Proposal: Discovery of TLS Support for http:// URIs {#opportunistic}
+# For HTTP/2: Discovery of TLS Support for http:// URIs {#opportunistic}
 
 NOTE: This section, if accepted, ought to be added as a new subsection of
 "Starting HTTP/2".
