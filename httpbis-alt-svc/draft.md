@@ -53,25 +53,7 @@ with a different protocol configuration.
 
 # Introduction
 
-{{I-D.ietf-httpbis-http2}} specifies a few ways to negotiate the use of
-HTTP/2 without changing existing URIs. However, several deficiencies in using
-the "upgrade dance" for "http://" URIs have become apparent. While that
-mechanism is still being investigated, some have expressed interest in an
-alternate approach.
-
-Furthermore, some implementers have expressed a strong desire utilize HTTP/2
-only in conjunction with TLS. Alternate-Services provides a potential mechanism
-for achieving that for "http://" URIs; see {{I-D.nottingham-http2-encryption}}
-for details.
-
-Finally, HTTP/2 is designed to have longer-lived, fewer and more active TCP
-connections. While these properties are generally "friendlier" for the network,
-they can cause problems for servers that currently exploit the short-lived flow
-characteristics of HTTP/1.x for load balancing, session affinity and
-maintaining locality to the user.
-
-This document explores these use cases in {{use-cases}}, and makes proposals to
-address them in {{proposals}}.
+TBD
 
 ## Notational Conventions
 
