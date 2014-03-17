@@ -38,6 +38,7 @@ normative:
   I-D.ietf-httpbis-p6-cache:
 
 informative:
+  RFC3864:
   RFC5246:
   I-D.ietf-httpbis-http2:
     
@@ -273,6 +274,20 @@ See {{caching}} for general requirements on caching alternative services.
 Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
 affect caching of Alt-Svc values.
 
+
+# IANA Considerations
+
+## The Alt-Svc Message Header Field
+
+This document registers Alt-Svc in the Permanent Message Header Registry
+{{RFC3864}}.
+
+* Header Field Name: Alt-Svc
+* Application Protocol: http
+* Status: standard
+* Author/Change Controller: IETF
+* Specification Document: [this document]
+* Related Information: 
 
   
 # Security Considerations
