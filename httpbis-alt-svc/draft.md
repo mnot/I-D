@@ -138,9 +138,9 @@ without strong server authentication; this mitigates the attack described in
 with a certificate that is valid for that origin.
 
 For example, if the origin's host is "www.example.com" and an alternative is
-offered on "other.example.com" with the "h2t" protocol, and the certificate
+offered on "other.example.com" with the "h2" protocol, and the certificate
 offered is valid for "www.example.com", the client can use the alternative.
-However, if "other.example.com" is offered with the "h2" protocol, the client
+However, if "other.example.com" is offered with the "h2c" protocol, the client
 cannot use it, because there is no mechanism in that protocol to establish
 strong server authentication.
 
@@ -223,7 +223,7 @@ protect against various header-based attacks.
 
 It can, however, have multiple values:
 
-    Alt-Svc: "h2"=8000, "h2t"=443
+    Alt-Svc: "h2c"=8000, "h2"=443
 
 The value(s) advertised by Alt-Svc can be used by clients to open a new
 connection to one or more alternative services immediately, or simultaneously
@@ -244,7 +244,7 @@ When an alternative service is advertised using Alt-Svc, it is considered fresh
 for 24 hours from generation of the message. This can be modified with the 'ma'
 (max-age) parameter;
 
-    Alt-Svc: "h2t"=443;ma=3600
+    Alt-Svc: "h2"=443;ma=3600
     
 which indicates the number of seconds since the response was generated the
 alternative service is considered fresh for. 
@@ -258,7 +258,7 @@ response age. For example, a response:
     Content-Type: text/html
     Cache-Control: 600
     Age: 30
-    Alt-Svc: "h2"=8000; ma=60
+    Alt-Svc: "h2c"=8000; ma=60
 
 indicates that an alternative service is available and usable for the next 60
 seconds. However, the response has already been cached for 30 seconds (as per
@@ -361,14 +361,14 @@ Alternative-Protocol header in SPDY.
 # For HTTP/2: Discovery of TLS Support for http:// URIs {#opportunistic}
 
 A server wishing to advertise support for HTTP/2 over TLS for http:// URIs MAY
-do so by including an Alt-Svc ({{alt-svc}} response header with the "h2t"
+do so by including an Alt-Svc ({{alt-svc}} response header with the "h2"
 protocol identifier.
 
 For example, a HTTP/1 connection could indicate support for HTTP/2 on
 port 443 for use with future http:// URI requests with this Alt-Svc header:
   
 	HTTP/1.1 200 OK
-	Alt-Svc: "h2t"=443
+	Alt-Svc: "h2"=443
 
 The process for starting HTTP/2 over TLS for an http:// URI is the same as the
 connection process for an https:// URI, except that authentication of the TLS
