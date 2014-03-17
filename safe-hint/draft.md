@@ -159,6 +159,11 @@ with the resource might change depending on the value of the "Prefer" header;
 this is not only true for those responses that have changed, but also the
 "default" unchanged responses.
 
+NOTE: currently, the safe preference doesn't have a payload, but one could be
+used to indicate a "level" of safety desired; e.g., "safe=hi" or "safe=lo".
+Feedback appreciated.
+
+
 
 # Security Considerations
 
@@ -182,8 +187,7 @@ semantics of "safe." As such, the "safety" of the user's experience when
 browsing from site to site might (and probably will) change. 
 
 
-IANA Considerations
-===================
+# IANA Considerations
 
 This specification registers the "safe" preference
 {{I-D.snell-http-prefer}}:
@@ -198,8 +202,27 @@ This specification registers the "safe" preference
 
 --- back
 
-Acknowledgements
-================
+# Acknowledgements
 
 Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso and Jeff Hughes for their
 comments.
+
+# Using "safe" on Your Web Site
+
+Web sites that allow configuration of a "safe" mode can add support for the
+"safe" preference incrementally; since it will not be supported by all clients
+immediately, it is necessary to still have a "manual" safety configuration
+option.
+
+When honouring the safe preference, it is important that it not be possible to
+disable it through the Web UI, since "safe" may be inserted by an intermediary
+(e.g., at a school) or configured and locked down by an administrator (e.g., a
+parent).
+
+The safe preference is designed to make as much of the Web a "safe" experience
+as possible; it is not intended to be configured site-by-site. Therefore, if
+the user expresses a wish to disable "safe" mode, the site should remind them
+that the safe preference is being sent, and ask them to consult their
+administrator.
+
+
