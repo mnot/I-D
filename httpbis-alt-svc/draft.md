@@ -85,90 +85,6 @@ This document uses the Augmented BNF defined in {{RFC5234}} along with the
 Section 7 of that document.
 
 
-# Use Cases for Alternate Services {#use-cases}
-
-This section details the use cases for Alternate Services, identifying the
-proposals that would need to be adopted to meet each one.
-
-## Upgrading  HTTP/1
-
-The first use case for Alternate Services is upgrading a client from HTTP/1 to
-HTTP/2 for http:// URIs (i.e., without the use of SSL or TLS).
-
-While HTTP/2 defines how to use the Upgrade header "dance" to do this, it might
-not always be suitable, since it involves blocking the connection until the
-upgrade succeeds. Since HTTP/2 is focused on improving performance, this is not
-desirable.
-
-Furthermore, using Upgrade requires the server that supports HTTP/2 to be on
-the same ip:port tuple as the server supporting HTTP/1; this can cause
-deployment issues, as well as operational issues with devices that assume that
-all traffic on port 80 will be HTTP/1.
-
-Therefore, a means of indicating that a different, new connection can be used
-for HTTP/2 is desirable; this would allow the client to continue using the
-HTTP/1 connection until the new connection is established. It also simplifies
-deployment considerations by not requiring HTTP/1 and HTTP/2 to be "spoken" on
-the same port, and allows issues on port 80 to be avoided.
-
-This use case can be met if {{alternate}} and {{alt-svc}} are accepted. It can
-also be met if {{alternate}} is used with a different discovery mechanism
-(e.g., DNS-based).
-
-
-## Using TLS with http:// URIs
-
-As discussed in {{I-D.nottingham-http2-encryption}}, it might be desirable to
-"opportunistically" use TLS when accessing a HTTP URI. 
-
-This case can also be met by {{alternate}} and {{opportunistic}} with
-{{alt-svc}} for HTTP/1, and {{alternate}} and {{opportunistic}} with
-{{alt-svc}} or {{alt-frame}} for HTTP/2, with the possible addition of
-{{setting}}. {{error}} might also be useful for handling errors in this use
-case.
-
-
-## Mitigating Load Asymmetry
-
-HTTP/2 fundamentally changes how HTTP uses TCP. While this has many benefits,
-it also disrupts many server-side practices that take advantage of HTTP/1's
-shorter flows.
-
-In particular, load balancing among a pool of servers is often used, either
-with DNS ("global" load balancing), or a device (hardware or software) that
-dispatches requests locally.
-
-HTTP/1's short flows aid in this, because it is easy to shift traffic among
-servers when one becomes overloaded or unavailable. However, in HTTP/2, this is
-more difficult, due to the protocol's longer flows.
-
-As a result, a mechanism for re-directing requests for an origin or set of
-origins without making this apparent to the application is desirable.
-
-This use case can be met if {{alternate}} and {{alt-frame}} are accepted;
-servers can redirect clients to alternate services as appropriate. {{error}}
-might also be useful for handling errors in this use case.
-
-
-## Segmenting Clients that Support TLS SNI
-
-TLS Server Name Indication (SNI) {{RFC6066}} was introduced to avoid a
-requirement for a 1:1 mapping between origin hostnames and IP addresses (in
-light of IPv4 address exhaustion), in a manner similar to the Host header in
-HTTP/1.
-
-However, there are still clients in common use that do not send SNI. As a
-result, servers have no way to take practical advantage of the extension,
-because there is no way to segment those clients that support SNI from those
-that do not.
-
-As a result, they need to build their infrastructure as if SNI did not exist.
-
-This use case can be met if {{alternate}} and {{alt-frame}} are accepted;
-servers can advertise an alternate service and direct clients that support SNI
-and HTTP/2 to the optimal server, while still maintaining a smaller set of
-legacy servers for those clients that do not support SNI (since HTTP/2 requires
-SNI support when TLS is in use).
 
 
 # Proposals {#proposals}
@@ -598,6 +514,91 @@ feedback and suggestions.
 The Alt-Svc header field was influenced by the design of the Alternate-Protocol
 header in SPDY.
 
+
+# Use Cases for Alternate Services {#use-cases}
+
+This section details the use cases for Alternate Services, identifying the
+proposals that would need to be adopted to meet each one.
+
+## Upgrading  HTTP/1
+
+The first use case for Alternate Services is upgrading a client from HTTP/1 to
+HTTP/2 for http:// URIs (i.e., without the use of SSL or TLS).
+
+While HTTP/2 defines how to use the Upgrade header "dance" to do this, it might
+not always be suitable, since it involves blocking the connection until the
+upgrade succeeds. Since HTTP/2 is focused on improving performance, this is not
+desirable.
+
+Furthermore, using Upgrade requires the server that supports HTTP/2 to be on
+the same ip:port tuple as the server supporting HTTP/1; this can cause
+deployment issues, as well as operational issues with devices that assume that
+all traffic on port 80 will be HTTP/1.
+
+Therefore, a means of indicating that a different, new connection can be used
+for HTTP/2 is desirable; this would allow the client to continue using the
+HTTP/1 connection until the new connection is established. It also simplifies
+deployment considerations by not requiring HTTP/1 and HTTP/2 to be "spoken" on
+the same port, and allows issues on port 80 to be avoided.
+
+This use case can be met if {{alternate}} and {{alt-svc}} are accepted. It can
+also be met if {{alternate}} is used with a different discovery mechanism
+(e.g., DNS-based).
+
+
+## Using TLS with http:// URIs
+
+As discussed in {{I-D.nottingham-http2-encryption}}, it might be desirable to
+"opportunistically" use TLS when accessing a HTTP URI. 
+
+This case can also be met by {{alternate}} and {{opportunistic}} with
+{{alt-svc}} for HTTP/1, and {{alternate}} and {{opportunistic}} with
+{{alt-svc}} or {{alt-frame}} for HTTP/2, with the possible addition of
+{{setting}}. {{error}} might also be useful for handling errors in this use
+case.
+
+
+## Mitigating Load Asymmetry
+
+HTTP/2 fundamentally changes how HTTP uses TCP. While this has many benefits,
+it also disrupts many server-side practices that take advantage of HTTP/1's
+shorter flows.
+
+In particular, load balancing among a pool of servers is often used, either
+with DNS ("global" load balancing), or a device (hardware or software) that
+dispatches requests locally.
+
+HTTP/1's short flows aid in this, because it is easy to shift traffic among
+servers when one becomes overloaded or unavailable. However, in HTTP/2, this is
+more difficult, due to the protocol's longer flows.
+
+As a result, a mechanism for re-directing requests for an origin or set of
+origins without making this apparent to the application is desirable.
+
+This use case can be met if {{alternate}} and {{alt-frame}} are accepted;
+servers can redirect clients to alternate services as appropriate. {{error}}
+might also be useful for handling errors in this use case.
+
+
+## Segmenting Clients that Support TLS SNI
+
+TLS Server Name Indication (SNI) {{RFC6066}} was introduced to avoid a
+requirement for a 1:1 mapping between origin hostnames and IP addresses (in
+light of IPv4 address exhaustion), in a manner similar to the Host header in
+HTTP/1.
+
+However, there are still clients in common use that do not send SNI. As a
+result, servers have no way to take practical advantage of the extension,
+because there is no way to segment those clients that support SNI from those
+that do not.
+
+As a result, they need to build their infrastructure as if SNI did not exist.
+
+This use case can be met if {{alternate}} and {{alt-frame}} are accepted;
+servers can advertise an alternate service and direct clients that support SNI
+and HTTP/2 to the optimal server, while still maintaining a smaller set of
+legacy servers for those clients that do not support SNI (since HTTP/2 requires
+SNI support when TLS is in use).
 
 
 # TODO
