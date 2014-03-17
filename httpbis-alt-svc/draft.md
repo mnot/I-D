@@ -70,7 +70,7 @@ Section 7 of that document.
 # Alternate Services {#alternate}
 
 This specification defines a new concept in HTTP, the "alternate service." When
-an origin (see {{RFC6454}} has resources are accessible through a different
+an origin (see {{RFC6454}}) has resources are accessible through a different
 protocol / host / port combination, it is said to have an alternate service.
 
 An alternate service can be used to interact with the resources on an origin
