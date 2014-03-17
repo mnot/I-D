@@ -291,116 +291,6 @@ Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
 affect caching of Alt-Svc values.
 
 
-
-# For HTTP/2: ALTSVC Frame {#alt-frame}
-
-The ALTSVC frame (type=0xa) advertises the availability of an alternate service
-to the client. It can be sent at any time for an existing client-initiated
-stream or stream 0, and is intended to allow servers to load balance or
-otherwise segment traffic; see {{alternate}} for details.
-
-An ALTSVC frame on a client-initiated stream indicates that the conveyed
-alternate service is associated with the origin of that stream.
-
-An ALTSVC frame on stream 0 indicates that the conveyed alternate service is
-associated with all origins that map to the server's address (i.e., host and
-port).
-
-The ALTSVC frame is intended for receipt by clients; a server that receives an
-ALTSVC frame MUST treat it as a connection error of type PROTOCOL_ERROR.
-
-	0                   1                   2                   3
-	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-	|  PID_LEN (8)  | Reserved (8)  |            Port (16)          |
-	+---------------------------------------------------------------+
-	|                          Max-Age (32)                         |
-	+---------------------------------------------------------------+
-	|                        Protocol-ID (*)                        |
-	+---------------------------------------------------------------+
-	|                           Host (*)                            |
-	+---------------------------------------------------------------+
-
-The ALTSVC frame contains the following fields:
-
-* PID_LEN: An unsigned, 8-bit integer indicating the length, in bytes, of the
-  PROTOCOL-ID field.
-  
-* Reserved: for future use.
-
-* Port: An unsigned, 16-bit integer indicating the port that the alternate
-  service is available upon.
-
-* Max-Age: An unsigned, 32-bit integer indicating the freshness lifetime of the
-  alternate service association, as per {{caching}}.
-
-* Protocol-ID: A sequence of bytes (length determined by PID_LEN) containing
-  the ALPN protocol identifier of the alternate service.
-
-* Host: A sequence of bytes containing an ascii string indicating the host that
-  the alternate service is available upon.
-
-The ALTSVC frame does not define any flags.
-
-
-# For HTTP/2: NOT_AUTHORITATIVE (13)  {#error}
-
-NOTE: This is a proposal for a new error code, which should be incorporated
-into the appropriate section if accepted.
-
-The endpoint refuses the stream prior to performing any application processing.
-This server is not configured to provide a definitive response for the
-requested resource. Clients receiving this error code SHOULD remove the
-endpoint from their cache of alternate services, if present.
-
-
-
-# For HTTP/2: Discovery of TLS Support for http:// URIs {#opportunistic}
-
-NOTE: This section, if accepted, ought to be added as a new subsection of
-"Starting HTTP/2".
-
-A server wishing to advertise support for HTTP/2 over TLS for http:// URIs MAY
-do so by including an Alt-Svc ({{alt-svc}} response header with the "h2t"
-protocol identifier.
-
-For example, a HTTP/1 connection could indicate support for HTTP/2 on
-port 443 for use with future http:// URI requests with this Alt-Svc header:
-  
-	HTTP/1.1 200 OK
-	Alt-Svc: "h2t"=443
-
-The process for starting HTTP/2 over TLS for an http:// URI is the same as the
-connection process for an https:// URI, except that authentication of the TLS
-channel is not required. The client MAY use either anonymous or authenticated
-ciphersuites. If an authenticated ciphersuite is used, the client MAY ignore
-authentication failures. This enables servers that only serve http:// URIs to
-use credentials that are not tied to a global PKI, such as self-signed
-certificates. Clients MAY reserve the use of certain security sensitive
-optimizations, such as caching the existence of this successful connection, for
-authenticated connections.
-
-Additionally, if a client has previously successfully connected to
-a given server over TLS, for example as part of an https:// request, then it
-MAY attempt to use TLS for requests certain http:// URIs. To use this mechanism
-the server MUST have sent a non-zero SETTINGS_UNIVERSAL_SCHEMES setting to
-indicate support for this mechanism.
-
-Eligible http:// URIs:
-
-1. Contain the same host name as the URI accessed over TLS, and 
-2. Do not contain an explicit port number. 
-
-For example, if the client has successfully made a request for the URI
-"https://example.com/foo", then it may attempt to use TLS to make a request for
-the URI "http://example.com/bar", but not for the URI "http://example.com:80/".
-In particular, if a client has a TLS connection open to a server (for example,
-due to a past "https" request), then it may re-use that connection for "http"
-requests, subject to the constraints above.
-
-
-
-
   
 # Security Considerations
 
@@ -566,6 +456,114 @@ servers can advertise an alternate service and direct clients that support SNI
 and HTTP/2 to the optimal server, while still maintaining a smaller set of
 legacy servers for those clients that do not support SNI (since HTTP/2 requires
 SNI support when TLS is in use).
+
+
+
+# For HTTP/2: Discovery of TLS Support for http:// URIs {#opportunistic}
+
+NOTE: This section, if accepted, ought to be added as a new subsection of
+"Starting HTTP/2".
+
+A server wishing to advertise support for HTTP/2 over TLS for http:// URIs MAY
+do so by including an Alt-Svc ({{alt-svc}} response header with the "h2t"
+protocol identifier.
+
+For example, a HTTP/1 connection could indicate support for HTTP/2 on
+port 443 for use with future http:// URI requests with this Alt-Svc header:
+  
+	HTTP/1.1 200 OK
+	Alt-Svc: "h2t"=443
+
+The process for starting HTTP/2 over TLS for an http:// URI is the same as the
+connection process for an https:// URI, except that authentication of the TLS
+channel is not required. The client MAY use either anonymous or authenticated
+ciphersuites. If an authenticated ciphersuite is used, the client MAY ignore
+authentication failures. This enables servers that only serve http:// URIs to
+use credentials that are not tied to a global PKI, such as self-signed
+certificates. Clients MAY reserve the use of certain security sensitive
+optimizations, such as caching the existence of this successful connection, for
+authenticated connections.
+
+Additionally, if a client has previously successfully connected to
+a given server over TLS, for example as part of an https:// request, then it
+MAY attempt to use TLS for requests certain http:// URIs. To use this mechanism
+the server MUST have sent a non-zero SETTINGS_UNIVERSAL_SCHEMES setting to
+indicate support for this mechanism.
+
+Eligible http:// URIs:
+
+1. Contain the same host name as the URI accessed over TLS, and 
+2. Do not contain an explicit port number. 
+
+For example, if the client has successfully made a request for the URI
+"https://example.com/foo", then it may attempt to use TLS to make a request for
+the URI "http://example.com/bar", but not for the URI "http://example.com:80/".
+In particular, if a client has a TLS connection open to a server (for example,
+due to a past "https" request), then it may re-use that connection for "http"
+requests, subject to the constraints above.
+
+
+# For HTTP/2: ALTSVC Frame {#alt-frame}
+
+The ALTSVC frame (type=0xa) advertises the availability of an alternate service
+to the client. It can be sent at any time for an existing client-initiated
+stream or stream 0, and is intended to allow servers to load balance or
+otherwise segment traffic; see {{alternate}} for details.
+
+An ALTSVC frame on a client-initiated stream indicates that the conveyed
+alternate service is associated with the origin of that stream.
+
+An ALTSVC frame on stream 0 indicates that the conveyed alternate service is
+associated with all origins that map to the server's address (i.e., host and
+port).
+
+The ALTSVC frame is intended for receipt by clients; a server that receives an
+ALTSVC frame MUST treat it as a connection error of type PROTOCOL_ERROR.
+
+	0                   1                   2                   3
+	0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+	+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+	|  PID_LEN (8)  | Reserved (8)  |            Port (16)          |
+	+---------------------------------------------------------------+
+	|                          Max-Age (32)                         |
+	+---------------------------------------------------------------+
+	|                        Protocol-ID (*)                        |
+	+---------------------------------------------------------------+
+	|                           Host (*)                            |
+	+---------------------------------------------------------------+
+
+The ALTSVC frame contains the following fields:
+
+* PID_LEN: An unsigned, 8-bit integer indicating the length, in bytes, of the
+  PROTOCOL-ID field.
+  
+* Reserved: for future use.
+
+* Port: An unsigned, 16-bit integer indicating the port that the alternate
+  service is available upon.
+
+* Max-Age: An unsigned, 32-bit integer indicating the freshness lifetime of the
+  alternate service association, as per {{caching}}.
+
+* Protocol-ID: A sequence of bytes (length determined by PID_LEN) containing
+  the ALPN protocol identifier of the alternate service.
+
+* Host: A sequence of bytes containing an ascii string indicating the host that
+  the alternate service is available upon.
+
+The ALTSVC frame does not define any flags.
+
+
+# For HTTP/2: NOT_AUTHORITATIVE (13)  {#error}
+
+NOTE: This is a proposal for a new error code, which should be incorporated
+into the appropriate section if accepted.
+
+The endpoint refuses the stream prior to performing any application processing.
+This server is not configured to provide a definitive response for the
+requested resource. Clients receiving this error code SHOULD remove the
+endpoint from their cache of alternate services, if present.
+
 
 
 # TODO
