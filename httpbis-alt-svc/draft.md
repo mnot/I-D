@@ -45,9 +45,9 @@ informative:
 
 --- abstract
 
-This document proposes a number of changes to HTTP, centered around "alternate
-services", which allow an origin's resources to be available at a separate
-network location, possibly accessed with a different protocol configuration.
+This document specifies "alternate services" for HTTP, which allow an origin's
+resources to be available at a separate network location, possibly accessed
+with a different protocol configuration.
 
 --- middle
 
@@ -83,8 +83,6 @@ This document uses the Augmented BNF defined in {{RFC5234}} along with the
 "OWS", "DIGIT", "parameter", "uri-host", "port" and "delta-second" rules from
 {{I-D.ietf-httpbis-p1-messaging}}, and uses the "#rule" extension defined in
 Section 7 of that document.
-
-
 
 
 # Proposals {#proposals}
