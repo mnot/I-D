@@ -430,11 +430,3 @@ The Alt-Svc header field was influenced by the design of the
 Alternative-Protocol header in SPDY.
 
 
-
-# For HTTP/2: NOT_AUTHORITATIVE (13)  {#error}
-
-The endpoint refuses the stream prior to performing any application processing.
-This server is not configured to provide a definitive response for the
-requested resource. Clients receiving this error code SHOULD remove the
-endpoint from their cache of alternative services, if present.
-
