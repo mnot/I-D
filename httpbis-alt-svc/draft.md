@@ -40,6 +40,7 @@ normative:
 informative:
   RFC3864:
   RFC5246:
+  I-D.ietf-httpbis-p2-semantics:
   I-D.ietf-httpbis-http2:
     
 
@@ -275,6 +276,18 @@ Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
 affect caching of Alt-Svc values.
 
 
+# The 4NN Not Authoritative HTTP Status Code {#status}
+
+The 4NN (Not Authoritative) status code indicates that the origin server
+(often, but not necessarily, an alternate service; see {{alternate}} is not
+authoritative for the requested resource, in the sense of
+{{I-D.ietf-httpbis-p1-messaging}}, Section 9.1.
+
+A 4NN response is cacheable by default; i.e., unless otherwise indicated by the
+method definition or explicit cache controls (see Section 4.2.2 of
+{{I-D.ietf-httpbis-p6-cache}}).
+
+
 # IANA Considerations
 
 ## The Alt-Svc Message Header Field
@@ -288,6 +301,15 @@ This document registers Alt-Svc in the Permanent Message Header Registry
 * Author/Change Controller: IETF
 * Specification Document: [this document]
 * Related Information: 
+
+## The 4NN Not Authoritative HTTP Status Code
+
+This document registers the 4NN (Not Authoritative) HTTP Status code
+{{I-D.ietf-httpbis-p2-semantics}}.
+
+* Status Code: 4NN
+* Short Description: Not Authoritative
+* Specification: [this document], {{status}}
 
   
 # Security Considerations
