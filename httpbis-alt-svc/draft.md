@@ -107,7 +107,9 @@ service.
 
 An alternative service can be used to interact with the resources on an origin
 server at a separate location on the network, possibly using a different
-protocol configuration.
+protocol configuration. Alternative services are considered authoritative for
+an origin's resources, in the sense of {{I-D.ietf-httpbis-p1-messaging}}
+Section 9.1.
 
 For example, an origin:
 
