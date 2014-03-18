@@ -213,7 +213,7 @@ A HTTP(S) origin server can advertise the availability of alternative services
 
 For example:
 
-    Alt-Svc: http2=8000
+    Alt-Svc: "http2"=8000
 
 This indicates that the "http2" protocol on the same host using the
 indicated port (in this case, 8000).
