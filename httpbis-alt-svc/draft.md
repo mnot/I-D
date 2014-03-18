@@ -40,16 +40,15 @@ normative:
 informative:
   RFC3864:
   RFC5246:
-  RFC6066:
   I-D.ietf-httpbis-p2-semantics:
   I-D.ietf-httpbis-http2:
     
 
 --- abstract
 
-This document specifies "alternative services" for HTTP, which allow an origin's
-resources to be available at a separate network location, possibly accessed
-with a different protocol configuration.
+This document specifies "alternative services" for HTTP, which allow an
+origin's resources to be authoritatively available at a separate network
+location, possibly accessed with a different protocol configuration.
 
 --- middle
 
