@@ -93,7 +93,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 interpreted as described in {{RFC2119}}.
 
 This document uses the Augmented BNF defined in {{RFC5234}} along with the
-"OWS", "DIGIT", "parameter", "uri-host", "port" and "delta-second" rules from
+"OWS", "DIGIT", "parameter", "port" and "delta-second" rules from
 {{I-D.ietf-httpbis-p1-messaging}}, and uses the "#rule" extension defined in
 Section 7 of that document.
 
