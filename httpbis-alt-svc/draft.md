@@ -68,7 +68,7 @@ This document uses the Augmented BNF defined in {{RFC5234}} along with the
 Section 7 of that document.
 
 
-# Alternative Services {#alternative}
+# Alternative Services Concepts {#alternative}
 
 This specification defines a new concept in HTTP, the "alternative service."
 When an origin (see {{RFC6454}}) has resources are accessible through a
