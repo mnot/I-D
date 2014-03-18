@@ -40,6 +40,7 @@ normative:
 informative:
   RFC3864:
   RFC5246:
+  RFC6066:
   I-D.ietf-httpbis-p2-semantics:
   I-D.ietf-httpbis-http2:
     
@@ -54,7 +55,36 @@ with a different protocol configuration.
 
 # Introduction
 
-TBD
+HTTP {{I-D.ietf-httpbis-p1-messaging}} conflates the identification of
+resources with their location. In other words, http:// (and https://) URLs are
+used to both name and find things to interact with.
+
+In some cases, it is desirable to separate these aspects; to be able to keep
+the same identifier for a resource, but interact with it using a different
+location on the network.
+
+For example:
+
+* An origin server might wish to redirect a client to an alternative when it
+  needs to go down for maintenance, or it has found an alternative in a
+  location that is more local to the client.
+  
+* An origin server might wish to offer access to its resources using a new
+  protocol (such as HTTP/2 {{I-D.ietf-httpbis-http2}}) or one using improved
+  security (such as TLS {{RFC5246}).
+  
+* An origin server might wish to segment its clients into groups of
+  capabilities, such as those supporting SNI (see {{RFC6066}}) and those not
+  supporting it, for operational purposes.
+
+This specification defines a new concept in HTTP, "Alternative Services", that
+allows a resource to nominate additional means of interacting with it on the
+network. It defines a general framework for this in {{alternative}}, along with
+a specific mechanism for discovering them using HTTP headers in {{alt-svc}}.
+
+It also introduces a new status code in {{status}}, so that origin servers (or
+their nominated alternatives) can indicate that they are not authoritative for
+a given origin, in cases where the wrong location is used.
 
 ## Notational Conventions
 
