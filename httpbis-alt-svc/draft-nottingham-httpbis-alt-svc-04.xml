@@ -30,32 +30,60 @@
     <area>General</area>
     <keyword>Internet-Draft</keyword>
     <abstract>
-      <t>This document specifies “alternative services” for HTTP, which allow an origin’s
-resources to be available at a separate network location, possibly accessed
-with a different protocol configuration.</t>
+      <t>This document specifies “alternative services” for HTTP, which allow an
+origin’s resources to be authoritatively available at a separate network
+location, possibly accessed with a different protocol configuration.</t>
     </abstract>
   </front>
   <middle>
     <section anchor="introduction" title="Introduction">
-      <t>TBD</t>
+      <t>HTTP <xref target="I-D.ietf-httpbis-p1-messaging"/> conflates the identification of
+resources with their location. In other words, http:// (and https://) URLs are
+used to both name and find things to interact with.</t>
+      <t>In some cases, it is desirable to separate these aspects; to be able to keep
+the same identifier for a resource, but interact with it using a different
+location on the network.</t>
+      <t>For example:</t>
+      <t>
+        <list style="symbols">
+          <t>An origin server might wish to redirect a client to an alternative when it
+needs to go down for maintenance, or it has found an alternative in a
+location that is more local to the client.</t>
+          <t>An origin server might wish to offer access to its resources using a new
+protocol (such as HTTP/2 <xref target="I-D.ietf-httpbis-http2"/>) or one using improved
+security (such as TLS {{RFC5246}).</t>
+          <t>An origin server might wish to segment its clients into groups of
+capabilities, such as those supporting SNI (see <xref target="RFC6066"/>) and those not
+supporting it, for operational purposes.</t>
+        </list>
+      </t>
+      <t>This specification defines a new concept in HTTP, “Alternative Services”, that
+allows a resource to nominate additional means of interacting with it on the
+network. It defines a general framework for this in <xref target="alternative"/>, along with
+a specific mechanism for discovering them using HTTP headers in <xref target="alt-svc"/>.</t>
+      <t>It also introduces a new status code in <xref target="status"/>, so that origin servers (or
+their nominated alternatives) can indicate that they are not authoritative for
+a given origin, in cases where the wrong location is used.</t>
       <section anchor="notational-conventions" title="Notational Conventions">
         <t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”,
 “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be
 interpreted as described in <xref target="RFC2119"/>.</t>
         <t>This document uses the Augmented BNF defined in <xref target="RFC5234"/> along with the
-“OWS”, “DIGIT”, “parameter”, “uri-host”, “port” and “delta-second” rules from
+“OWS”, “DIGIT”, “parameter”, “port” and “delta-second” rules from
 <xref target="I-D.ietf-httpbis-p1-messaging"/>, and uses the “#rule” extension defined in
 Section 7 of that document.</t>
       </section>
     </section>
-    <section anchor="alternative" title="Alternative Services">
+    <section anchor="alternative" title="Alternative Services Concepts">
       <t>This specification defines a new concept in HTTP, the “alternative service.”
 When an origin (see <xref target="RFC6454"/>) has resources are accessible through a
 different protocol / host / port combination, it is said to have an alternative
 service.</t>
       <t>An alternative service can be used to interact with the resources on an origin
 server at a separate location on the network, possibly using a different
-protocol configuration.</t>
+protocol configuration. Alternative services are considered authoritative for
+an origin’s resources, in the sense of <xref target="I-D.ietf-httpbis-p1-messaging"/>
+Section 9.1.</t>
       <t>For example, an origin:</t>
       <figure>
         <artwork><![CDATA[
@@ -178,7 +206,7 @@ protocol-id = <ALPN protocol identifier>
       <t>For example:</t>
       <figure>
         <artwork><![CDATA[
-Alt-Svc: http2=8000
+Alt-Svc: "http2"=8000
 ]]></artwork>
       </figure>
       <t>This indicates that the “http2” protocol on the same host using the
@@ -237,6 +265,48 @@ invalidates and replaces all cached alternative services for that origin.</t>
         <t>See <xref target="caching"/> for general requirements on caching alternative services.</t>
         <t>Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
 affect caching of Alt-Svc values.</t>
+      </section>
+    </section>
+    <section anchor="status" title="The 4NN Not Authoritative HTTP Status Code">
+      <t>The 4NN (Not Authoritative) status code indicates that the current origin
+server (usually, but not always an alternative service; see <xref target="alternative"/>) is
+not authoritative for the requested resource, in the sense of
+<xref target="I-D.ietf-httpbis-p1-messaging"/>, Section 9.1.</t>
+      <t>Clients receiving 4NN (Not Authoritative) from an alternative service MUST
+remove the corresponding entry from its alternative service cache (see
+<xref target="caching"/>) for that origin. Regardless of the idempotency of the request
+method, they MAY retry the request, either at another alternative server, or at
+the origin.</t>
+      <t>This status code MUST NOT be generated by proxies.</t>
+      <t>A 4NN response is cacheable by default; i.e., unless otherwise indicated by the
+method definition or explicit cache controls (see Section 4.2.2 of
+<xref target="I-D.ietf-httpbis-p6-cache"/>).</t>
+    </section>
+    <section anchor="iana-considerations" title="IANA Considerations">
+      <section anchor="the-alt-svc-message-header-field" title="The Alt-Svc Message Header Field">
+        <t>This document registers Alt-Svc in the Permanent Message Header Registry
+<xref target="RFC3864"/>.</t>
+        <t>
+          <list style="symbols">
+            <t>Header Field Name: Alt-Svc</t>
+            <t>Application Protocol: http</t>
+            <t>Status: standard</t>
+            <t>Author/Change Controller: IETF</t>
+            <t>Specification Document: [this document]</t>
+            <t>Related Information: </t>
+          </list>
+        </t>
+      </section>
+      <section anchor="the-4nn-not-authoritative-http-status-code" title="The 4NN Not Authoritative HTTP Status Code">
+        <t>This document registers the 4NN (Not Authoritative) HTTP Status code
+<xref target="I-D.ietf-httpbis-p2-semantics"/>.</t>
+        <t>
+          <list style="symbols">
+            <t>Status Code: 4NN</t>
+            <t>Short Description: Not Authoritative</t>
+            <t>Specification: [this document], <xref target="status"/></t>
+          </list>
+        </t>
       </section>
     </section>
     <section anchor="security-considerations" title="Security Considerations">
@@ -527,6 +597,27 @@ specifications of each URI scheme.
       </reference>
     </references>
     <references title="Informative References">
+      <reference anchor="RFC3864">
+        <front>
+          <title>Registration Procedures for Message Header Fields</title>
+          <author initials="G." surname="Klyne" fullname="G. Klyne">
+            <organization/>
+          </author>
+          <author initials="M." surname="Nottingham" fullname="M. Nottingham">
+            <organization/>
+          </author>
+          <author initials="J." surname="Mogul" fullname="J. Mogul">
+            <organization/>
+          </author>
+          <date year="2004" month="September"/>
+          <abstract>
+            <t>This specification defines registration procedures for the message header fields used by Internet mail, HTTP, Netnews and other applications.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="BCP" value="90"/>
+        <seriesInfo name="RFC" value="3864"/>
+        <format type="TXT" octets="36231" target="http://www.rfc-editor.org/rfc/rfc3864.txt"/>
+      </reference>
       <reference anchor="RFC5246">
         <front>
           <title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
@@ -543,6 +634,23 @@ specifications of each URI scheme.
         </front>
         <seriesInfo name="RFC" value="5246"/>
         <format type="TXT" octets="222395" target="http://www.rfc-editor.org/rfc/rfc5246.txt"/>
+      </reference>
+      <reference anchor="I-D.ietf-httpbis-p2-semantics">
+        <front>
+          <title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+          <author initials="R" surname="Fielding" fullname="Roy Fielding">
+            <organization/>
+          </author>
+          <author initials="J" surname="Reschke" fullname="Julian Reschke">
+            <organization/>
+          </author>
+          <date month="February" day="6" year="2014"/>
+          <abstract>
+            <t>The Hypertext Transfer Protocol (HTTP) is a stateless application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-p2-semantics-26"/>
+        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p2-semantics-26.txt"/>
       </reference>
       <reference anchor="I-D.ietf-httpbis-http2">
         <front>
@@ -564,20 +672,6 @@ specifications of each URI scheme.
         <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-http2-10"/>
         <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-10.txt"/>
       </reference>
-      <reference anchor="I-D.nottingham-http2-encryption">
-        <front>
-          <title>Opportunistic Encryption for HTTP URIs</title>
-          <author initials="M" surname="Nottingham" fullname="Mark Nottingham">
-            <organization/>
-          </author>
-          <date month="December" day="10" year="2013"/>
-          <abstract>
-            <t>This document proposes two changes to HTTP/2.0; first, it suggests using ALPN Protocol Identifies to identify the specific stack of protocols in use, including TLS, and second, it proposes a way to opportunistically encrypt HTTP/2.0 using TLS for HTTP URIs.</t>
-          </abstract>
-        </front>
-        <seriesInfo name="Internet-Draft" value="draft-nottingham-http2-encryption-02"/>
-        <format type="TXT" target="http://www.ietf.org/internet-drafts/draft-nottingham-http2-encryption-02.txt"/>
-      </reference>
     </references>
     <section anchor="acknowledgements" title="Acknowledgements">
       <t>Thanks to Eliot Lear, Stephen Farrell, Guy Podjarny, Stephen Ludin, Erik
@@ -585,51 +679,6 @@ Nygren, Paul Hoffman, Adam Langley, Will Chan and Richard Barnes for their
 feedback and suggestions.</t>
       <t>The Alt-Svc header field was influenced by the design of the
 Alternative-Protocol header in SPDY.</t>
-    </section>
-    <section anchor="opportunistic" title="For HTTP/2: Discovery of TLS Support for http:// URIs">
-      <t>A server wishing to advertise support for HTTP/2 over TLS for http:// URIs MAY
-do so by including an Alt-Svc (<xref target="alt-svc"/> response header with the “h2”
-protocol identifier.</t>
-      <t>For example, a HTTP/1 connection could indicate support for HTTP/2 on
-port 443 for use with future http:// URI requests with this Alt-Svc header:</t>
-      <figure>
-        <artwork><![CDATA[
-HTTP/1.1 200 OK
-Alt-Svc: "h2"=443
-]]></artwork>
-      </figure>
-      <t>The process for starting HTTP/2 over TLS for an http:// URI is the same as the
-connection process for an https:// URI, except that authentication of the TLS
-channel is not required; the client MAY ignore authentication failures. This
-enables servers that only serve http:// URIs to use credentials that are not
-tied to a global PKI, such as self-signed certificates. </t>
-      <t>Clients MAY reserve the use of certain security sensitive optimizations, such
-as caching the existence of this successful connection, for authenticated
-connections.</t>
-      <t>Additionally, if a client has previously successfully connected to
-a given server over TLS, for example as part of an https:// request, then it
-MAY attempt to use TLS for requests certain http:// URIs. To use this mechanism
-the server MUST have sent a non-zero SETTINGS_UNIVERSAL_SCHEMES setting to
-indicate support for this mechanism.</t>
-      <t>Eligible http:// URIs:</t>
-      <t>
-        <list style="numbers">
-          <t>Contain the same host name as the URI accessed over TLS, and </t>
-          <t>Do not contain an explicit port number. </t>
-        </list>
-      </t>
-      <t>For example, if the client has successfully made a request for the URI
-“https://example.com/foo”, then it may attempt to use TLS to make a request for
-the URI “http://example.com/bar”, but not for the URI “http://example.com:80/”.
-In particular, if a client has a TLS connection open to a server (for example,
-due to a past “https” request), then it may re-use that connection for “http”
-requests, subject to the constraints above.</t>
-    </section>
-    <section anchor="error" title="For HTTP/2: NOT_AUTHORITATIVE (13)">
-      <t>The endpoint refuses the stream prior to performing any application processing.
-This server is not configured to provide a definitive response for the
-requested resource. Clients receiving this error code SHOULD remove the
-endpoint from their cache of alternative services, if present.</t>
     </section>
   </back>
 </rfc>
