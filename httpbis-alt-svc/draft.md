@@ -92,7 +92,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 interpreted as described in {{RFC2119}}.
 
 This document uses the Augmented BNF defined in {{RFC5234}} along with the
-"OWS", "DIGIT", "parameter", "port" and "delta-second" rules from
+"OWS", "DIGIT", "parameter", "uri-host", "port" and "delta-second" rules from
 {{I-D.ietf-httpbis-p1-messaging}}, and uses the "#rule" extension defined in
 Section 7 of that document.
 
@@ -222,6 +222,9 @@ as soon as it is available, provided that the security properties of the
 alternative service protocol are desirable, as compared to the existing
 connection.
 
+When a client uses an alternate service, it MUST emit the Service header field
+{{service}} on every request using that alternate service.
+
 The client is not required to block requests; the origin's connection can be
 used until the alternative connection is established. However, if the security
 properties of the existing connection are weak (e.g. cleartext HTTP/1.1) then
@@ -309,6 +312,29 @@ Note that the freshness lifetime for HTTP caching (here, 600 seconds) does not
 affect caching of Alt-Svc values.
 
 
+# The Service HTTP Header Field {#service}
+
+The Service HTTP header field is used in requests to indicate the identity of the 
+alternate service in use, just as the Host header identifies the host and port
+of the origin.
+
+    Service = uri-host [ ":" port ]
+
+Service is intended to allow alternate services to detect loops, differentiate
+traffic for purposes of load balancing, and generally to ensure that it is
+possible to identify the intended destination of traffic, since introducing
+this information after a protocol is in use has proven to be problematic.
+
+When using an Alternate Service, clients MUST include a Service header in all 
+requests. For example:
+
+    GET /thing
+    Host: origin.example.com
+    Service: alternate.example.net
+    User-Agent: Example/1.0
+
+
+
 # The 4NN Not Authoritative HTTP Status Code {#status}
 
 The 4NN (Not Authoritative) status code indicates that the current origin
@@ -344,6 +370,21 @@ This document registers Alt-Svc in the Permanent Message Header Registry
 * Author/Change Controller: IETF
 * Specification Document: [this document]
 * Related Information: 
+
+
+## The Service Message Header Field
+
+This document registers Alt-Svc in the Permanent Message Header Registry
+{{RFC3864}}.
+
+* Header Field Name: Service
+* Application Protocol: http
+* Status: standard
+* Author/Change Controller: IETF
+* Specification Document: [this document]
+* Related Information: 
+
+
 
 ## The 4NN Not Authoritative HTTP Status Code
 
