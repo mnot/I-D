@@ -69,7 +69,7 @@ a given origin, in cases where the wrong location is used.</t>
 “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be
 interpreted as described in <xref target="RFC2119"/>.</t>
         <t>This document uses the Augmented BNF defined in <xref target="RFC5234"/> along with the
-“OWS”, “DIGIT”, “parameter”, “port” and “delta-second” rules from
+“OWS”, “DIGIT”, “parameter”, “uri-host”, “port” and “delta-second” rules from
 <xref target="I-D.ietf-httpbis-p1-messaging"/>, and uses the “#rule” extension defined in
 Section 7 of that document.</t>
       </section>
@@ -182,6 +182,8 @@ SHOULD use that alternative service for all requests to the associated origin
 as soon as it is available, provided that the security properties of the
 alternative service protocol are desirable, as compared to the existing
 connection.</t>
+        <t>When a client uses an alternate service, it MUST emit the Service header field
+<xref target="service"/> on every request using that alternate service.</t>
         <t>The client is not required to block requests; the origin’s connection can be
 used until the alternative connection is established. However, if the security
 properties of the existing connection are weak (e.g. cleartext HTTP/1.1) then
@@ -268,6 +270,30 @@ invalidates and replaces all cached alternative services for that origin.</t>
 affect caching of Alt-Svc values.</t>
       </section>
     </section>
+    <section anchor="service" title="The Service HTTP Header Field">
+      <t>The Service HTTP header field is used in requests to indicate the identity of the 
+alternate service in use, just as the Host header identifies the host and port
+of the origin.</t>
+      <figure>
+        <artwork><![CDATA[
+Service = uri-host [ ":" port ]
+]]></artwork>
+      </figure>
+      <t>Service is intended to allow alternate services to detect loops, differentiate
+traffic for purposes of load balancing, and generally to ensure that it is
+possible to identify the intended destination of traffic, since introducing
+this information after a protocol is in use has proven to be problematic.</t>
+      <t>When using an Alternate Service, clients MUST include a Service header in all 
+requests. For example:</t>
+      <figure>
+        <artwork><![CDATA[
+GET /thing
+Host: origin.example.com
+Service: alternate.example.net
+User-Agent: Example/1.0
+]]></artwork>
+      </figure>
+    </section>
     <section anchor="status" title="The 4NN Not Authoritative HTTP Status Code">
       <t>The 4NN (Not Authoritative) status code indicates that the current origin
 server (usually, but not always an alternative service; see <xref target="alternative"/>) is
@@ -291,6 +317,20 @@ method definition or explicit cache controls (see Section 4.2.2 of
         <t>
           <list style="symbols">
             <t>Header Field Name: Alt-Svc</t>
+            <t>Application Protocol: http</t>
+            <t>Status: standard</t>
+            <t>Author/Change Controller: IETF</t>
+            <t>Specification Document: [this document]</t>
+            <t>Related Information: </t>
+          </list>
+        </t>
+      </section>
+      <section anchor="the-service-message-header-field" title="The Service Message Header Field">
+        <t>This document registers Alt-Svc in the Permanent Message Header Registry
+<xref target="RFC3864"/>.</t>
+        <t>
+          <list style="symbols">
+            <t>Header Field Name: Service</t>
             <t>Application Protocol: http</t>
             <t>Status: standard</t>
             <t>Author/Change Controller: IETF</t>
