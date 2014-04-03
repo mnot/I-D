@@ -54,7 +54,7 @@ informative:
 Sometimes, it is attractive to add features to protocols or applications by specifying a particular
 structure for URIs (or parts thereof). However, publishing standards that mandate URI structure is
 inappropriate because the structure of a URI needs to be firmly under the control of its owner, and
-the IETF (as well as other organisations) should not usurp this ownership.
+the IETF (as well as other organizations) should not usurp this ownership.
 
 This document is intended to prevent this practice (sometimes called "URI Squatting") in standards,
 but updating RFC3986 to indicate where it is acceptable.
@@ -80,7 +80,7 @@ server or the software, this can be seen as reasonable delegation of authority. 
 conventions are mandated by a party other than the owner, however, it can have several potentially
 detrimental effects:
 
-* Collisions - As more conventions for URI structure become standardised, it becomes more likely
+* Collisions - As more conventions for URI structure become standardized, it becomes more likely
   that there will be collisions between such conventions (especially considering that servers,
   applications and individual deployments will have their own conventions).
 
@@ -98,16 +98,16 @@ detrimental effects:
   a base path for its operation (e.g., "/v1") makes it impossible to deploy other applications with
   the same prefix on the same host.
 
-* Client Assumptions - When conventions are standardised, some clients will inevitably assume that
+* Client Assumptions - When conventions are standardized, some clients will inevitably assume that
   the standards are in use when those conventions are seen. This can lead to interoperability
   problems; for example, if a specification documents that the "sig" URI query parameter indicates
-  that its payload is a cryptographic signature for the URI, it can lead to undesirable behaviour.
+  that its payload is a cryptographic signature for the URI, it can lead to undesirable behavior.
 
 While it is not ideal when a server or a deployed application constrains URI structure (indeed,
 this is not recommended practice, but that discussion is out of scope for this document),
 publishing standards that mandate URI structure beyond those allowed by {{RFC3986}} is
 inappropriate, because the structure of a URI needs to be firmly under the control of its owner, and
-the IETF (as well as other organisations) should not usurp it.
+the IETF (as well as other organizations) should not usurp it.
 
 This document explains best current practices for establishing URI structures, conventions and
 formats in standards. It also offers strategies for specifications to avoid violating these
@@ -141,7 +141,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# Best Current Practices for Standardising Structured URIs
+# Best Current Practices for Standardizing Structured URIs
 
 Best practices differ depending on the URI component.
 
