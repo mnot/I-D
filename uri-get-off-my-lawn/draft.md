@@ -105,9 +105,11 @@ detrimental effects:
 
 While it is not ideal when a server or a deployed application constrains URI structure (indeed,
 this is not recommended practice, but that discussion is out of scope for this document),
-publishing standards that mandate URI structure beyond those allowed by {{RFC3986}} is
-inappropriate, because the structure of a URI needs to be firmly under the control of its owner, and
-the IETF (as well as other organizations) should not usurp it.
+
+publishing standards that constrain URI structure in ways which aren't explicitly allowed by
+{{RFC3986}} (e.g., by defining it in the URI scheme) is usually inappropriate, because the
+structure of a URI needs to be firmly under the control of its owner, and the IETF (as well as
+other organizations) should not usurp it.
 
 This document explains best current practices for establishing URI structures, conventions and
 formats in standards. It also offers strategies for specifications to avoid violating these
