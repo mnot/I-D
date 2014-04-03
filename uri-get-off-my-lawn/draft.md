@@ -51,10 +51,11 @@ informative:
 
 --- abstract
 
-Sometimes, it is attractive to add features to protocols or applications by specifying a particular
-structure for URIs (or parts thereof). However, publishing standards that mandate URI structure is
-inappropriate because the structure of a URI needs to be firmly under the control of its owner, and
-the IETF (as well as other organizations) should not usurp this ownership.
+RFC3986 Section 3.1 defines URI syntax as "a federated and extensible naming system my further
+restrict the syntax and semantics of identifiers using that scheme." In other words, the structure
+of a URI is defined by its scheme. While it is common for schemes to further delegate their
+substructure to the URI's owner, publishing standards that mandate particular forms of URI
+substructure is inappropriate, because the effectively usurps ownership.
 
 This document is intended to prevent this practice (sometimes called "URI Squatting") in standards,
 but updating RFC3986 to indicate where it is acceptable.
