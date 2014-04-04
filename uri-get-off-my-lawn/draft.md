@@ -51,11 +51,12 @@ informative:
 
 --- abstract
 
-RFC3986 Section 3.1 defines URI syntax as "a federated and extensible naming system my further
-restrict the syntax and semantics of identifiers using that scheme." In other words, the structure
-of a URI is defined by its scheme. While it is common for schemes to further delegate their
-substructure to the URI's owner, publishing standards that mandate particular forms of URI
-substructure is inappropriate, because the effectively usurps ownership.
+RFC3986 Section 1.1.1 defines URI syntax as "is a federated and extensible naming system wherein
+each scheme's specification may further restrict the syntax and semantics of identifiers using that
+scheme." In other words, the structure of a URI is defined by its scheme. While it is common for
+schemes to further delegate their substructure to the URI's owner, publishing standards that
+mandate particular forms of URI substructure is inappropriate, because the effectively usurps
+ownership.
 
 This document is intended to prevent this practice (sometimes called "URI Squatting") in standards,
 but updating RFC3986 to indicate where it is acceptable.
