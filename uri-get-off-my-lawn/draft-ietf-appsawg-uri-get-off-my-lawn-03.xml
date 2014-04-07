@@ -24,13 +24,13 @@
     <workgroup>appsawg</workgroup>
     <keyword>URI squatting</keyword>
     <abstract>
-      <t>RFC3986 Section 3.1 defines URI syntax as “a federated and extensible naming system my further
-restrict the syntax and semantics of identifiers using that scheme.” In other words, the structure
-of a URI is defined by its scheme. While it is common for schemes to further delegate their
-substructure to the URI’s owner, publishing standards that mandate particular forms of URI
-substructure is inappropriate, because the effectively usurps ownership.</t>
-      <t>This document is intended to prevent this practice (sometimes called “URI Squatting”) in standards,
-but updating RFC3986 to indicate where it is acceptable.</t>
+      <t>RFC3986 Section 1.1.1 defines URI syntax as “a federated and extensible naming system wherein each
+scheme’s specification may further restrict the syntax and semantics of identifiers using that
+scheme.” In other words, the structure of a URI is defined by its scheme. While it is common for
+schemes to further delegate their substructure to the URI’s owner, publishing independent standards
+that mandate particular forms of URI substructure is inappropriate, because the essentially usurps
+ownership. This document clarifies both this problematic practice and some acceptable alternatives
+in standards.</t>
     </abstract>
   </front>
   <middle>
@@ -50,8 +50,8 @@ conventions are mandated by a party other than the owner, however, it can have s
 detrimental effects:</t>
       <t>
         <list style="symbols">
-          <t>Collisions - As more conventions for URI structure become standardized, it becomes more likely
-that there will be collisions between such conventions (especially considering that servers,
+          <t>Collisions - As more ad hoc conventions for URI structure become standardized, it becomes more
+likely that there will be collisions between them (especially considering that servers,
 applications and individual deployments will have their own conventions).</t>
           <t>Dilution - When the information added to a URI is ephemeral, this dilutes its utility by reducing
 its stability (see <xref target="webarch"/> Section 3.5.1), and can cause several alternate forms of the URI
@@ -70,10 +70,10 @@ problems; for example, if a specification documents that the “sig” URI query
 that its payload is a cryptographic signature for the URI, it can lead to undesirable behavior.</t>
         </list>
       </t>
-      <t>Publishing standards that constrain URI structure in ways which aren’t explicitly allowed by
-<xref target="RFC3986"/> (e.g., by defining it in the URI scheme) is usually inappropriate, because the
-structure of a URI needs to be firmly under the control of its owner, and the IETF (as well as
-other organizations) should not usurp it.</t>
+      <t>Publishing an independent standard that constrains an existing URI structure in ways which aren’t
+explicitly allowed by <xref target="RFC3986"/> (e.g., by defining it in the URI scheme) is usually
+inappropriate, because the structure of a URI needs to be firmly under the control of its owner,
+and the IETF (as well as other organizations) should not usurp it.</t>
       <t>This document explains best current practices for establishing URI structures, conventions and
 formats in standards. It also offers strategies for specifications to avoid violating these
 guidelines in <xref target="alternatives"/>.</t>
@@ -102,25 +102,26 @@ the establishment of a registry.</t>
       </section>
     </section>
     <section anchor="best-current-practices-for-standardizing-structured-uris" title="Best Current Practices for Standardizing Structured URIs">
-      <t>Best practices differ depending on the URI component.</t>
+      <t>Best practices differ depending on the URI component, as described in this section.</t>
       <section anchor="uri-schemes" title="URI Schemes">
         <t>Applications and extensions MAY require use of specific URI scheme(s); for example, it is perfectly
 acceptable to require that an application support ‘http’ and ‘https’ URIs. However, applications
 SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly specific to
 the nominated schemes.</t>
         <t>A specification that defines substructure within a URI scheme MUST do so in the defining document
-for the URI scheme in question, or by modifying <xref target="RFC4395"/>.</t>
+for that URI scheme, or by modifying <xref target="RFC4395"/>.</t>
       </section>
       <section anchor="uri-authorities" title="URI Authorities">
         <t>Scheme definitions define the presence, format and semantics of an authority component in URIs; all
-other specifications MUST NOT constrain, define structure or semantics for URI authorities, unless
-they update the scheme registration itself.</t>
+other specifications MUST NOT constrain, or define the structure or the semantics for URI
+authorities, unless they update the scheme registration itself.</t>
         <t>For example, an extension or application cannot say that the “foo” prefix in “foo_app.example.com”
-is meaningful or triggers special handling.</t>
+is meaningful or triggers special handling in URIs.</t>
       </section>
       <section anchor="uri-paths" title="URI Paths">
         <t>Scheme definitions define the presence, format, and semantics of a path component in URIs; all
-other specifications MUST NOT constrain, define structure or semantics for any path component.</t>
+other specifications MUST NOT constrain, or define the structure or the semantics for any path
+component.</t>
         <t>The only exception to this requirement is registered “well-known” URIs, as specified by <xref target="RFC5785"/>.
 See that document for a description of the applicability of that mechanism.</t>
         <t>For example, an application cannot specify a fixed URI path “/myapp”, since this usurps the host’s
