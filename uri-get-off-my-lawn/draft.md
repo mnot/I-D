@@ -51,16 +51,13 @@ informative:
 
 --- abstract
 
-RFC3986 Section 1.1.1 defines URI syntax as "is a federated and extensible naming system wherein
-each scheme's specification may further restrict the syntax and semantics of identifiers using that
+RFC3986 Section 1.1.1 defines URI syntax as "a federated and extensible naming system wherein each
+scheme's specification may further restrict the syntax and semantics of identifiers using that
 scheme." In other words, the structure of a URI is defined by its scheme. While it is common for
-schemes to further delegate their substructure to the URI's owner, publishing standards that
-mandate particular forms of URI substructure is inappropriate, because the effectively usurps
-ownership.
-
-This document is intended to prevent this practice (sometimes called "URI Squatting") in standards,
-but updating RFC3986 to indicate where it is acceptable.
-
+schemes to further delegate their substructure to the URI's owner, publishing independent standards
+that mandate particular forms of URI substructure is inappropriate, because the essentially usurps
+ownership. This document clarifies both this problematic practice and some acceptable alternatives
+in standards.
 
 --- middle
 
@@ -82,8 +79,8 @@ server or the software, this can be seen as reasonable delegation of authority. 
 conventions are mandated by a party other than the owner, however, it can have several potentially
 detrimental effects:
 
-* Collisions - As more conventions for URI structure become standardized, it becomes more likely
-  that there will be collisions between such conventions (especially considering that servers,
+* Collisions - As more ad hoc conventions for URI structure become standardized, it becomes more
+  likely that there will be collisions between them (especially considering that servers,
   applications and individual deployments will have their own conventions).
 
 * Dilution - When the information added to a URI is ephemeral, this dilutes its utility by reducing
@@ -105,10 +102,10 @@ detrimental effects:
   problems; for example, if a specification documents that the "sig" URI query parameter indicates
   that its payload is a cryptographic signature for the URI, it can lead to undesirable behavior.
 
-Publishing standards that constrain URI structure in ways which aren't explicitly allowed by
-{{RFC3986}} (e.g., by defining it in the URI scheme) is usually inappropriate, because the
-structure of a URI needs to be firmly under the control of its owner, and the IETF (as well as
-other organizations) should not usurp it.
+Publishing an independent standard that constrains an existing URI structure in ways which aren't
+explicitly allowed by {{RFC3986}} (e.g., by defining it in the URI scheme) is usually
+inappropriate, because the structure of a URI needs to be firmly under the control of its owner,
+and the IETF (as well as other organizations) should not usurp it.
 
 This document explains best current practices for establishing URI structures, conventions and
 formats in standards. It also offers strategies for specifications to avoid violating these
@@ -144,7 +141,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # Best Current Practices for Standardizing Structured URIs
 
-Best practices differ depending on the URI component.
+Best practices differ depending on the URI component, as described in this section.
 
 ## URI Schemes
 
@@ -154,23 +151,24 @@ SHOULD NOT preclude the use of other URI schemes in the future, unless they are 
 the nominated schemes.
 
 A specification that defines substructure within a URI scheme MUST do so in the defining document
-for the URI scheme in question, or by modifying {{RFC4395}}.
+for that URI scheme, or by modifying {{RFC4395}}.
 
 
 ## URI Authorities
 
 Scheme definitions define the presence, format and semantics of an authority component in URIs; all
-other specifications MUST NOT constrain, define structure or semantics for URI authorities, unless
-they update the scheme registration itself.
+other specifications MUST NOT constrain, or define the structure or the semantics for URI
+authorities, unless they update the scheme registration itself.
 
 For example, an extension or application cannot say that the "foo" prefix in "foo_app.example.com"
-is meaningful or triggers special handling.
+is meaningful or triggers special handling in URIs.
 
 
 ## URI Paths
 
 Scheme definitions define the presence, format, and semantics of a path component in URIs; all
-other specifications MUST NOT constrain, define structure or semantics for any path component.
+other specifications MUST NOT constrain, or define the structure or the semantics for any path
+component.
 
 The only exception to this requirement is registered "well-known" URIs, as specified by {{RFC5785}}.
 See that document for a description of the applicability of that mechanism.
