@@ -65,8 +65,7 @@ This draft should be discussed on the apps-discuss mailing list; see
          
 --- middle
 
-Introduction
-============
+# Introduction
 
 There is an emerging preference for non-browser Web applications
 (colloquially, "HTTP APIs") to use a link-driven approach to their
@@ -98,16 +97,14 @@ advantages to having a standard home document format. This specification
 suggests one for consideration, using the JSON format {{RFC4627}}.
 
 
-Notational Conventions
-----------------------
+## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in {{RFC2119}}.
 
 
-JSON Home Documents
-===================
+# JSON Home Documents
 
 A JSON Home Document uses the format described in {{RFC4627}} and has the
 media type "application/json-home".
@@ -191,8 +188,7 @@ to a common base URL; e.g.:
 }
 ~~~
 
-Resource Objects
-================
+# Resource Objects
 
 A Resource Object links to resources of the defined type using one of two
 mechanisms; either a direct link (in which case there is exactly one resource
@@ -216,8 +212,7 @@ itself.
 Resource Objects MAY also have a "hints" property, whose value is an object
 that uses named Resource Hints (see {{resource_hints}}) as its properties.
 
-Resolving Templated Links
--------------------------
+## Resolving Templated Links
 
 A URI can be derived from a Templated Link by treating the "href-template"
 value as a Level 3 URI Template {{RFC6570}}, using the "href-vars" property to
@@ -254,8 +249,7 @@ documentation), you can then find the resource corresponding to widget number
 is located at "http://example.org/").
 
 
-Resource Hints {#resource_hints}
-==============
+# Resource Hints {#resource_hints}
 
 Resource hints allow clients to find relevant information about interacting
 with a resource beforehand, as a means of optimizing communications, as well
@@ -277,8 +271,7 @@ describing it (e.g., one linked to it with a "describedby" link relation).
 This specification defines a set of common hints, based upon information
 that's discoverable by directly interacting with resources. See {{resource_hint_registry}} for information on defining new hints.
 
-allow
------
+## allow
 
 * Resource Hint Name: allow
 * Description: Hints the HTTP methods that the current client will be able to
@@ -288,8 +281,7 @@ allow
 
 Content MUST be an array of strings, containing HTTP methods.
 
-formats
--------
+## formats
 
 * Resource Hint Name: formats
 * Description: Hints the representation types that the resource produces and
@@ -300,8 +292,7 @@ formats
 Content MUST be an object, whose keys are media types, and values are objects
 containing Representation Hints (see {{representation_hints}}).
 
-accept-patch
-------------
+## accept-patch
 
 * Resource Hint Name: accept-patch
 * Description: Hints the PATCH {{RFC5789}} request formats accepted by the
@@ -312,8 +303,7 @@ Content MUST be an array of strings, containing media types.
 
 When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
 
-accept-post
------------
+## accept-post
 
 * Resource Hint Name: accept-post
 * Description: Hints the POST request formats accepted by the resource for this
@@ -324,8 +314,7 @@ Content MUST be an array of strings, containing media types.
 
 When this hint is present, "POST" SHOULD be listed in the "allow" hint.
 
-accept-ranges
--------------
+## accept-ranges
 
 * Resource Hint Name: accept-ranges
 * Description: Hints the range-specifiers available to the client for this
@@ -335,8 +324,7 @@ accept-ranges
 
 Content MUST be an array of strings, containing HTTP range-specifiers. 
 
-accept-prefer
--------------
+## accept-prefer
 
 * Resource Hint Name: accept-prefer
 * Description: Hints the preferences {{I-D.snell-http-prefer}} supported by the
@@ -346,8 +334,7 @@ accept-prefer
 
 Content MUST be an array of strings, contain preferences.
 
-docs
-----
+## docs
 
 * Resource Hint Name: docs
 * Description: Hints the location for human-readable documentation for the
@@ -357,8 +344,7 @@ docs
 Content MUST be a string containing an absolute-URI {{RFC3986}} referring to
 documentation that SHOULD be in HTML format.
             
-precondition-req
-----------------
+## precondition-req
 
 * Resource Hint Name: precondition-req
 * Description: Hints that the resource requires state-changing requests (e.g.,
@@ -370,8 +356,7 @@ precondition-req
 Content MUST be an array of strings, with possible values "etag" and
 "last-modified" indicating type of precondition expected.
             
-auth-req
---------
+## auth-req
 
 * Resource Hint Name: auth-req
 * Description: Hints that the resource requires authentication using the HTTP
@@ -396,8 +381,7 @@ For example, a Resource Object might contain the following hint:
   }
 ~~~
 
-status
-------
+## status
 
 * Resource Hint Name: status
 * Description: Hints the status of the resource.
@@ -411,14 +395,12 @@ Content MUST be a string; possible values are:
   return a 410 Gone HTTP status code if accessed.
 
 
-Representation Hints {#representation_hints}
-====================
+# Representation Hints {#representation_hints}
 
 TBD
 
 
-Creating and Serving Home Documents
-===================================
+# Creating and Serving Home Documents
 
 When making a home document available, there are a few things to keep in mind:
 
@@ -434,8 +416,7 @@ When making a home document available, there are a few things to keep in mind:
   to documentation for those constructs.
 
 
-Managing Change in Home Documents
----------------------------------
+## Managing Change in Home Documents
 
 The URIs used in home documents MAY change over time. However, changing them
 can cause issues for clients that are relying on cached home documents
@@ -451,8 +432,7 @@ To mitigate the impact of such changes, servers SHOULD consider:
   with a 404 Not Found, or by redirecting the client to the new URI.
 
 
-Evolving and Mixing APIs with Home Documents
---------------------------------------------
+## Evolving and Mixing APIs with Home Documents
 
 Using home documents affords the opportunity to change the "shape" of the API
 over time, without breaking old clients. 
@@ -467,8 +447,7 @@ different APIs, allowing clients to work with different resources as they see
 fit.
 
 
-Documenting APIs that use Home Documents
-----------------------------------------
+## Documenting APIs that use Home Documents
 
 Another use case for "static" API description formats like WSDL and WADL is to
 generate documentation for the API from them.
@@ -478,8 +457,7 @@ so, provided that the link relation types and media types it uses are
 well-documented already.
 
 
-Consuming Home Documents
-========================
+# Consuming Home Documents
 
 Clients might use home documents in a variety of ways. 
 
@@ -503,18 +481,15 @@ Likewise, a client encountering a 404 Not Found on a link SHOULD obtain a
 fresh copy of the home document, to assure that it is up-to-date.
 
 
-Security Considerations
-=======================
+# Security Considerations
 
 Clients need to exercise care when using hints. For example, a naive client
 might send credentials to a server that uses the auth-req hint, without
 checking to see if those credentials are appropriate for that server.
 
-IANA Considerations
-===================
+# IANA Considerations
 
-HTTP Resource Hint Registry {#resource_hint_registry}
----------------------------
+## HTTP Resource Hint Registry {#resource_hint_registry}
 
 This specification defines the HTTP Resource Hint Registry. See
 {{resource_hints}} for a general description of the function of resource
@@ -540,32 +515,27 @@ resource hints are to use the following template:
 
 Initial registrations are enumerated in {{resource_hints}}.
 
-HTTP Representation Hint Registry {#representation_hint_registry}
----------------------------------
+## HTTP Representation Hint Registry {#representation_hint_registry}
 
 TBD
 
-Media Type Registration
------------------------
+## Media Type Registration
 
 TBD
 
 
 --- back
 
-Acknowledgements
-================
+# Acknowledgements
 
 Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Sven Dietze, Graham
 Klyne, Leif Hedstrom, Jeni Tennison, Erik Wilde and Jorge Williams for their
 suggestions and feedback.
 
 
-Frequently Asked Questions
-==========================
+# Frequently Asked Questions
 
-Why not Microformats?
----------------------
+## Why not Microformats?
 
 Browser-centric Web applications use HTML as their representation format of
 choice. While it is possible to augment HTML for non-browser clients (using
@@ -585,8 +555,7 @@ Because of this, it's most practical to define a separate format, and JSON is
 easily machine-readable, precise, and has a better chance of being managed for
 stability.
 
-Why doesn't the format allow references or inheritance?
--------------------------------------------------------
+## Why doesn't the format allow references or inheritance?
 
 Adding inheritance or references would allow more modularity in the format and
 make it more compact, at the cost of considerable complexity and the associated
@@ -595,31 +564,27 @@ potential for errors (both in the specification and by its users).
 Since good tools and compression are effective ways to achieve the same ends,
 this specification doesn't attempt them.
 
-What about authentication?
---------------------------
+## What about authentication?
 
 In HTTP, authentication is discoverable by interacting with the resource
 (usually, by getting a 401 Unauthorized response status code, along with one
 or more challenges). While the home document could hint it, this isn't yet
 done, to avoid possible security complications.
 
-What about "Faults" (i.e., errors)?
------------------------------------
+## What about "Faults" (i.e., errors)?
 
 In HTTP, errors are conveyed by HTTP status codes. While this specification
 could (and even may) allow enumeration of possible error conditions, there's a
 concern that this will encourage applications to define many such "faults",
 leading to tight coupling between the application and its clients.
 
-How Do I find the schema for a format?
---------------------------------------
+## How Do I find the schema for a format?
 
 That isn't addressed by home documents. Ultimately, it's up to the media type
 accepted and generated by resources to define and constrain (or not) their
 syntax. 
 
-How do I express complex query arguments?
------------------------------------------
+## How do I express complex query arguments?
 
 Complex queries -- i.e., those that exceed the expressive power of Link
 Templates or would require ambiguous properties of a "resources" object --
@@ -631,8 +596,7 @@ URL, using more than one link relation type; see the example at the start of
 the document.
 
 
-Open Issues
-===========
+# Open Issues
 
 The following is a list of placeholders for open issues.
 
