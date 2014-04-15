@@ -176,9 +176,9 @@ to a common base URL; e.g.:
 {
   "resources": {
   	"http://example.org/rel/search-by-id": {
-    	"href-template": "/search?id={widget}",
+    	"href-template": "/search?id={widget_id}",
   		"href-vars": {
-  		  "widget_name": "http://example.org/param/widget"
+  		  "widget_id": "http://example.org/param/widget"
   		}
   	},  
     "http://example.org/rel/search-by-name": {
@@ -556,9 +556,9 @@ TBD
 Acknowledgements
 ================
 
-Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Graham Klyne, Leif
-Hedstrom, Jeni Tennison, Erik Wilde and Jorge Williams for their suggestions
-and feedback.
+Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Sven Dietze, Graham
+Klyne, Leif Hedstrom, Jeni Tennison, Erik Wilde and Jorge Williams for their
+suggestions and feedback.
 
 
 Frequently Asked Questions
