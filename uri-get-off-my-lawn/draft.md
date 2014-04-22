@@ -140,7 +140,9 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # Best Current Practices for Standardizing Structured URIs
 
-Best practices differ depending on the URI component, as described in this section.
+This section updates {{RFC3986}} by setting limitations on how other specifications may define
+structure and semantics within URIs. Best practices differ depending on the URI component, as
+described below.
 
 ## URI Schemes
 
