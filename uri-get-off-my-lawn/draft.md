@@ -1,7 +1,7 @@
 ---
 title: URI Design and Ownership
 abbrev: URI Design Ownership
-docname: draft-ietf-appsawg-uri-get-off-my-lawn-03
+docname: draft-ietf-appsawg-uri-get-off-my-lawn-04
 date: 2014
 category: bcp
 updates: 3986
