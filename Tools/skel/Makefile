@@ -21,6 +21,7 @@ clean:
 
 next: 
 	cp $(target).xml $(next).xml
+	sed -i '' -e"s/$(target)/$(next)/" draft.md
 
 diff: 
 	rfcdiff $(prev).txt $(target).txt
