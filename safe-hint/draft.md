@@ -194,9 +194,26 @@ This specification registers the "safe" preference
 
 # Acknowledgements
 
-Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso and Jeff Hughes for their
-comments.
+Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso, Jeff Hughes and Loorie
+Cranor for their comments.
 
+# Setting "safe" from Web Browsers
+
+As discussed in {{safe}}, there are many possible ways for the "safe"
+preference to be generated. One possibility is for a Web browser to allow its
+users to configure the preference to be sent.
+
+When doing so, it is important not to misrepresent the preference as binding to Web sites. For example, an appropriate setting might be a checkbox with wording such as:
+
+~~~
+  [] Request "safe" content from Web sites
+~~~
+
+... along with further information available upon request (e.g., from a "help"
+system).
+
+Browsers might also allow the "safe" preference to be "locked" -- that is,
+prevent modification without administrative access, or a passcode.
 
 
 # Using "safe" on Your Web Site
