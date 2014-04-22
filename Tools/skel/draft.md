@@ -2,7 +2,7 @@
 title: 
 abbrev: 
 docname: draft-nottingham--00
-date: 2012
+date: 2014
 category: info
 
 ipr: trust200902
@@ -32,18 +32,15 @@ informative:
 
 --- middle
 
-Introduction
-============
+# Introduction
 
-Notational Conventions
-----------------------
+## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
 document are to be interpreted as described in {{RFC2119}}.
 
-Security Considerations
-=======================
+# Security Considerations
 
 
 --- back
