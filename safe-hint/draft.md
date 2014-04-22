@@ -50,14 +50,6 @@ informative:
     author:
      - organization: Google
     date: 2013
-  age-privacy:
-    target: http://www.theage.com.au/technology/technology-news/privacy-concern-as-apps-share-data-from-kids-left-to-their-own-devices-20121222-2bso6.html
-    title: Privacy concern as apps share data from kids left to their own devices
-    author:
-     - ins: A. Moses
-       name: Asher Moses
-       organization: Fairfax Media
-    date: 2012
 
 --- abstract
 
@@ -69,27 +61,25 @@ preference to avoid "objectionable" content.
 
 # Introduction
 
-Many Web sites have a "safe" mode, to assist those who don't want to be
-exposed to "objectionable" content, or who don't want their children to be
-exposed to such content. YouTube {{youtube}}, Yahoo! Search {{yahoo}}, Google
-Search {{google}}, Bing Search {{bing}}, and many other services have such a
-setting.
+Many Web sites have a "safe" mode, to assist those who don't want to be exposed
+(or have their children exposed) to "objectionable" content. YouTube
+{{youtube}}, Yahoo! Search {{yahoo}}, Google Search {{google}}, Bing Search
+{{bing}}, and many other services have such a setting.
 
-However, a user that wishes to have this preference honoured would need to go
-to each Web site in turn, navigate to the appropriate page, (possibly creating
-an account along the way) to get a cookie {{RFC6265}} set in the browser. They
-would need to do this for each browser on every device they use. As has been
-widely noted, this is difficult {{age-privacy}}.
+However, those who wish to have this preference honoured need to go to each Web
+site in turn, navigate to the appropriate page, (possibly creating an account
+along the way) to get a cookie {{RFC6265}} set in the browser. They would need
+to do this for each browser on every device they use. 
 
-This can be onerous to nearly impossible to achieve effectively, because there
-are too many permutations of sites, user agents and devices.
+This is onerous to achieve effectively, because there are so many permutations
+of sites, user agents and devices.
 
-If instead this preference is proactively advertised by the user agent, things
-become much simpler. A user agent that supports this (whether it be an
-individual browser, or through an Operating System HTTP library) need only be
-configured once to assure that the preference is advertised to all sites that
-understand and choose to act upon it. It's no longer necessary to go to each
-site that has potentially "unsafe" content and configure a "safe" mode.
+If this preference is proactively advertised by the user agent, things become
+much simpler. A user agent that supports doing so (whether it be an individual
+browser, or through an Operating System HTTP library) need only be configured
+once to assure that the preference is advertised to all sites that understand
+and choose to act upon it. It's no longer necessary to go to each site that has
+potentially "unsafe" content and configure a "safe" mode.
 
 Furthermore, a proxy (for example, at a school) can be used to ensure that the
 preference is associated with all (unencrypted) requests flowing through it,
