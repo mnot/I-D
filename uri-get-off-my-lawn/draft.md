@@ -25,7 +25,6 @@ author:
 normative:
   RFC2119:
   RFC3986:
-  RFC4395:
   RFC6838:
   webarch:
     target: http://www.w3.org/TR/2004/REC-webarch-20041215
@@ -42,6 +41,7 @@ normative:
     date: 2004-12-15
 
 informative:
+  RFC4395:
   RFC5785:
   RFC5988:
   RFC6570:
