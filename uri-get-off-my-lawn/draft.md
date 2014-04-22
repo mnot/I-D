@@ -245,8 +245,8 @@ There are no direct IANA actions specified in this document.
 
 # Acknowledgments
 
-Thanks to David Booth, Dave Crocker, Tim Bray, Anne van Kesteren, Martin Thomson, Erik Wilde and
-Dave Thaler for their suggestions and feedback.
+Thanks to David Booth, Dave Crocker, Tim Bray, Anne van Kesteren, Martin Thomson, Erik Wilde,
+Dave Thaler and Barry Leiba for their suggestions and feedback.
 
 
 
