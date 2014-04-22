@@ -200,27 +200,6 @@ used with them; other specifications MUST NOT define structure within the fragme
 unless they are explicitly defining one for reuse by media type definitions.
 
 
-# Security Considerations
-
-This document does not introduce new protocol artifacts with security considerations. It prohibits
-some practices that might lead to vulnerabilities; for example, if a security-sensitive mechanism
-is introduced by assuming that a URI path component or query string has a particular meaning, false
-positives might be encountered (due to sites that already use the chosen string). See also
-{{RFC6943}}.
-
-
-# IANA Considerations
-
-There are no direct IANA actions specified in this document.
-
-
---- back
-
-# Acknowledgments
-
-Thanks to David Booth, Dave Crocker, Tim Bray, Anne van Kesteren, Martin Thomson, Erik Wilde and
-Dave Thaler for their suggestions and feedback.
-
 # Alternatives to Specifying Structure in URIs {#alternatives}
 
 Given the issues above, the most successful strategy for applications and extensions that wish to
@@ -243,4 +222,28 @@ valve" for applications that need structured URIs; see that specification for mo
 Specifying more elaborate structures in an attempt to avoid collisions is not adequate to conform
 to this document. For example, prefixing query parameters with "myapp_" does not help, because the
 prefix itself is subject to the risk of collision (since it is not "reserved").
+
+
+# Security Considerations
+
+This document does not introduce new protocol artifacts with security considerations. It prohibits
+some practices that might lead to vulnerabilities; for example, if a security-sensitive mechanism
+is introduced by assuming that a URI path component or query string has a particular meaning, false
+positives might be encountered (due to sites that already use the chosen string). See also
+{{RFC6943}}.
+
+
+# IANA Considerations
+
+There are no direct IANA actions specified in this document.
+
+
+--- back
+
+# Acknowledgments
+
+Thanks to David Booth, Dave Crocker, Tim Bray, Anne van Kesteren, Martin Thomson, Erik Wilde and
+Dave Thaler for their suggestions and feedback.
+
+
 
