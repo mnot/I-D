@@ -26,6 +26,7 @@ normative:
   
 informative:
   RFC6265:
+  I-D.ietf-httpbis-p6-cache:
   yahoo: 
     target: http://search.yahoo.com/preferences/preferences
     title: Yahoo! Search Preferences
@@ -103,7 +104,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 document are to be interpreted as described in {{RFC2119}}.
 
 
-# The "safe" Preference
+# The "safe" Preference {#safe}
 
 When present in a request, the "safe" preference indicates that the
 user prefers content which is not objectionable, according to the server's
@@ -146,11 +147,12 @@ Server: ExampleServer/2.0
 Vary: Prefer
 ~~~
 
-Note that the Vary response header needs to be sent if responses associated
-with the resource might change depending on the value of the "Prefer" header;
-this is not only true for those responses that have changed, but also the
-"default" unchanged responses.
+Note that the Vary response header needs to be sent if cacheable responses
+associated with the resource might change depending on the value of the
+"Prefer" header. This is not only true for those responses that are "safe",
+but also the default "unsafe" response.
 
+See {{I-D.ietf-httpbis-p6-cache}} for more information.
 
 
 # Security Considerations
@@ -195,22 +197,29 @@ This specification registers the "safe" preference
 Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso and Jeff Hughes for their
 comments.
 
+
+
 # Using "safe" on Your Web Site
 
-Web sites that allow configuration of a "safe" mode can add support for the
-"safe" preference incrementally; since it will not be supported by all clients
-immediately, it is necessary to still have a "manual" safety configuration
-option.
+Web sites that allow configuration of a "safe" mode (for example, using a
+cookie) can add support for the "safe" preference incrementally; since the
+preference will not be supported by all clients immediately, it is necessary to
+still have a fallback configuration option.
 
 When honouring the safe preference, it is important that it not be possible to
-disable it through the Web UI, since "safe" may be inserted by an intermediary
-(e.g., at a school) or configured and locked down by an administrator (e.g., a
-parent).
+disable it through the Web interface, since "safe" may be inserted by an
+intermediary (e.g., at a school) or configured and locked down by an
+administrator (e.g., a parent). 
 
 The safe preference is designed to make as much of the Web a "safe" experience
 as possible; it is not intended to be configured site-by-site. Therefore, if
 the user expresses a wish to disable "safe" mode, the site should remind them
 that the safe preference is being sent, and ask them to consult their
-administrator.
+administrator (since "safe" might be set by an intermediary or locked-down
+Operating System configuration).
 
-
+As explained in {{safe}}, responses that change based upon the presence of the
+"safe" preference need to either carry the "Vary: Prefer" response header
+field, or be uncacheable by shared caches (e.g., with a "Cache-Control:
+private" response header field). This is to avoid an unsafe cached response
+being served to a client that prefers safe content (or vice versa).
