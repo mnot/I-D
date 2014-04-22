@@ -1,56 +1,42 @@
-# Base directory for I-D
-ID_BASE = ..
 
-saxpath = "/usr/local/share/saxon-b/saxon9.jar"
-saxon = java -classpath $(saxpath) net.sf.saxon.Transform -novw -l
-stylesheet = "$(ID_BASE)/Tools/rfc2629xslt/rfc2629.xslt"
-xml2rfc = "$(ID_BASE)/Tools/xml2rfc/xml2rfc.tcl"
-rfc2629dir = "..\\/Tools\\/rfc2629xslt\\/"
+id_base = ..
+xml2rfc ?= xml2rfc
+kramdown-rfc2629 ?= kramdown-rfc2629
+idnits ?= idnits
 
-TITLE = nottingham-$(shell basename ${CURDIR})
-LATEST = $(shell (ls draft-${TITLE}-*.xml || echo "draft-${TITLE}-00.xml") | sort | tail -1)
-VERSION = $(shell basename ${LATEST} .xml | awk -F- '{print $$NF}')
+title = nottingham-$(shell basename ${CURDIR})
+latest = $(shell (ls draft-${title}-*.xml || echo "draft-${title}-00.xml") | sort | tail -1)
+version = $(shell basename ${latest} .xml | awk -F- '{print $$NF}')
 
-TARGET_XML = draft-$(TITLE)-$(VERSION).xml
-PREV_TXT = draft-$(TITLE)-$(shell printf "%.2d" `echo ${VERSION}-1 | bc`).txt
-NEXT_XML = draft-$(TITLE)-$(shell printf "%.2d" `echo ${VERSION}+1 | bc`).xml
+target = draft-$(title)-$(version)
+prev = draft-$(title)-$(shell printf "%.2d" `echo ${version}-1 | bc`)
+next = draft-$(title)-$(shell printf "%.2d" `echo ${version}+1 | bc`)
 
-TARGET_HTML = $(TARGET_XML:.xml=.html)
-TARGET_TXT = $(TARGET_XML:.xml=.txt)
-TARGETS = $(TARGET_HTML) \
-          $(TARGET_TXT)
+.PHONY: latest clean next diff idnits update
 
-.PHONY: all
-all: $(TARGETS)
+latest: $(target).html $(target).txt
 
-.PHONY: clean
 clean:
-	rm -f $(TARGETS)
+	rm -f $(target).html $(target).txt
 
-.PHONY: next
 next: 
-	cp $(TARGET_XML) $(NEXT_XML)
+	cp $(target).xml $(next).xml
+	sed -i '' -e"s/$(target)/$(next)/" draft.md
 
-.PHONY: diff
 diff: 
-	rfcdiff $(PREV_TXT) $(TARGET_TXT)
+	rfcdiff $(prev).txt $(target).txt
 
-.PHONY: idnits
-idnits: $(TARGET_TXT)
-	idnits $<
+idnits: $(target).txt
+	$(idnits) $<
 
+%.xml: draft.md
+	$(kramdown-rfc2629) $< > $@
+	
 %.html: %.xml
-	$(saxon) $< $(stylesheet) > $@
+	$(xml2rfc) --html $< $@
 
 %.txt: %.xml
 	$(xml2rfc) $< $@
 
-.PHONY: kramdown
-kramdown: draft.md
-	kramdown-rfc2629 draft.md > $(TARGET_XML)
-	xmllint --format $(TARGET_XML) > tmp
-	mv tmp $(TARGET_XML)
-	sed -i '' -e"s/rfc2629\.xslt/$(rfc2629dir)rfc2629.xslt/" $(TARGET_XML)
-	sed -i '' -e"s/rfc2629\.dtd/$(rfc2629dir)rfc2629.dtd/" $(TARGET_XML)
-	cat $(TARGET_XML) | perl -pe "s/<figure anchor=\"[^\"]+\">/<figure>/g" > tmp
-	mv tmp $(TARGET_XML)
+update:
+	cp $(id_base)/Tools/skel/Makefile .
