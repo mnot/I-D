@@ -54,13 +54,13 @@ RFC3986 Section 1.1.1 defines URI syntax as "a federated and extensible naming s
 scheme's specification may further restrict the syntax and semantics of identifiers using that
 scheme." In other words, the structure of a URI is defined by its scheme. While it is common for
 schemes to further delegate their substructure to the URI's owner, publishing independent standards
-that mandate particular forms of URI substructure is inappropriate, because the essentially usurps
-ownership. This document clarifies both this problematic practice and some acceptable alternatives
-in standards.
+that mandate particular forms of URI substructure is inappropriate, because that essentially usurps
+ownership. This document further describes this problematic practice and provides some acceptable
+alternatives for use in standards.
 
 --- middle
 
-# Introduction
+# Introduction {#intro}
 
 URIs {{RFC3986}} very often include structured application data. This might include artifacts
 from filesystems (often occurring in the path component), and user information (often in the query
@@ -204,10 +204,10 @@ unless they are explicitly defining one for reuse by media type definitions.
 
 # Alternatives to Specifying Structure in URIs {#alternatives}
 
-Given the issues above, the most successful strategy for applications and extensions that wish to
-use URIs is to use them in the fashion they were designed; as links that are exchanged as part of
-the protocol, rather than statically specified syntax. Several existing specifications can aid in
-this.
+Given the issues described in {{intro}}, the most successful strategy for applications and
+extensions that wish to use URIs is to use them in the fashion they were designed: as links that
+are exchanged as part of the protocol, rather than statically specified syntax. Several existing
+specifications can aid in this.
 
 {{RFC5988}} specifies relation types for Web links. By providing a framework for linking on the
 Web, where every link has a relation type, context and target, it allows applications to define a
@@ -221,9 +221,10 @@ URI owners' control of them.
 that mechanism ('http' and 'https' by default). Note, however, that this is not a general "escape
 valve" for applications that need structured URIs; see that specification for more information.
 
-Specifying more elaborate structures in an attempt to avoid collisions is not adequate to conform
-to this document. For example, prefixing query parameters with "myapp_" does not help, because the
-prefix itself is subject to the risk of collision (since it is not "reserved").
+Specifying more elaborate structures in an attempt to avoid collisions is not an acceptable
+solution, and does not address the issues in {{intro}}. For example, prefixing query parameters
+with "myapp_" does not help, because the prefix itself is subject to the risk of collision (since
+it is not "reserved").
 
 
 # Security Considerations
