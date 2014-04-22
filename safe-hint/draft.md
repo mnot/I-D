@@ -109,7 +109,7 @@ When present in a request, the "safe" preference indicates that the
 user prefers content which is not objectionable, according to the server's
 definition of the concept. 
 
-For example a request that includes the "safe" preference:
+For example, a request that includes the "safe" preference:
 
 ~~~
 GET /foo.html HTTP/1.1
@@ -123,13 +123,15 @@ every request, to ensure that the preference is applied (where possible) to all
 resources.
 
 For example, a Web browser might have a "Request Safe Browsing"
-option. additionally, other clients MAY insert it; e.g., an operating system
-might choose to insert the preference in requests based upon system-wide
+option. 
+
+Additionally, other clients MAY insert it; e.g., an operating system might
+choose to insert the preference in requests based upon system-wide
 configuration, or a proxy might do so based upon its configuration.
 
-Servers that utilise the "safe" preference SHOULD document that they do so,
-along with the criteria that they use to denote objectionable content. If a
-site has more fine-grained degrees of "safety", it SHOULD select a reasonable
+Origin servers that utilize the "safe" preference SHOULD document that they do
+so, along with the criteria that they use to denote objectionable content. If a
+server has more fine-grained degrees of "safety", it SHOULD select a reasonable
 default to use, and document that; it MAY use additional mechanisms (e.g.,
 cookies) to fine-tune.
 
@@ -149,10 +151,6 @@ with the resource might change depending on the value of the "Prefer" header;
 this is not only true for those responses that have changed, but also the
 "default" unchanged responses.
 
-NOTE: currently, the safe preference doesn't have a payload, but one could be
-used to indicate a "level" of safety desired; e.g., "safe=hi" or "safe=lo".
-Feedback appreciated.
-
 
 
 # Security Considerations
@@ -162,9 +160,9 @@ removed by intermediaries with access to the data stream. Its presence reveals
 information about the user, which may be of small assistance in
 "fingerprinting" the user (1 bit of information, to be precise).
 
-Due to its nature, including it in requests does not assure that all content
-will actually be safe; it is only when servers elect to honour it that it 
-might change content. 
+Due to its nature, including "safe" in requests does not assure that all
+content will actually be safe; it is only when servers elect to honour it that
+content might be "safe".
 
 Even then, a malicious server might adapt content so that it is even less
 "safe" (by some definition of the word). As such, this mechanism on its own is
