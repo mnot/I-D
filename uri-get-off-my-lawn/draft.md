@@ -178,7 +178,7 @@ For example, an application cannot specify a fixed URI path "/myapp", since this
 control of that space. Specifying a fixed path relative to another (e.g., {whatever}/myapp) is also
 bad practice (even if "whatever" is discovered as suggested in {{alternatives}}), since it "locks"
 the URIs in use; while doing so might prevent collisions, it does not avoid the other issues
-discussed.
+discussed in {{intro}}.
 
 
 ## URI Queries
