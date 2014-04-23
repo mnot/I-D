@@ -176,9 +176,9 @@ See that document for a description of the applicability of that mechanism.
 
 For example, an application cannot specify a fixed URI path "/myapp", since this usurps the host's
 control of that space. Specifying a fixed path relative to another (e.g., {whatever}/myapp) is also
-bad practice (even if "whatever" is discovered as suggested in {{alternatives}}), since it "locks"
-the URIs in use; while doing so might prevent collisions, it does not avoid the other issues
-discussed in {{intro}}.
+bad practice (even if "whatever" is discovered as suggested in {{alternatives}}); while doing so
+might prevent collisions, it does not avoid the potential for operational difficulties discussed in
+{{intro}}.
 
 
 ## URI Queries
@@ -192,8 +192,10 @@ difficulties for deployments that do not support a particular form of a query.
 
 Extensions MUST NOT specify the format or semantics of queries.
 
-For example, an extension cannot be minted that indicates that all query parameters with the name
-"sig" indicate a cryptographic signature.
+For example, an extension that indicates that all query parameters with the name "sig" indicate a
+cryptographic signature is not conforming; doing so would collide with potentially pre-existing
+query parameters on sites, and lead clients to assume that any matching query parameter is a
+signature.
 
 
 ## URI Fragment Identifiers
@@ -201,6 +203,10 @@ For example, an extension cannot be minted that indicates that all query paramet
 Media type definitions (as per {{RFC6838}}) SHOULD specify the fragment identifier syntax(es) to be
 used with them; other specifications MUST NOT define structure within the fragment identifier,
 unless they are explicitly defining one for reuse by media type definitions.
+
+For example, an application that defines common fragment identifiers across media types not
+controlled by it is not conforming, and would engender interoperability problems with handlers for
+those media types (because the new, non-standard syntax is not expected).
 
 
 # Alternatives to Specifying Structure in URIs {#alternatives}
