@@ -1,7 +1,7 @@
 ---
 title: URI Design and Ownership
 abbrev: URI Design Ownership
-docname: draft-ietf-appsawg-uri-get-off-my-lawn-04
+docname: draft-ietf-appsawg-uri-get-off-my-lawn-05
 date: 2014
 category: bcp
 updates: 3986
@@ -41,7 +41,26 @@ normative:
     date: 2004-12-15
 
 informative:
-  RFC4395:
+  BCP115:
+    target: https://tools.ietf.org/html/bcp115
+    title: Guidelines and Registration Procedurs for New URI Schemes
+    author: 
+     -
+        ins: T. Hansen
+        name: Tony Hansen
+        org: AT&T Laboratories
+     -
+        ins: T. Hardie
+        name: Ted Hardie
+        org: Qualcomm, Inc.
+     -
+        ins: L. Masinter
+        name: Larry Masinter
+        org: Adobe Systems
+    date: 2006-02
+    seriesinfo:
+      RFC: 4395
+      BCP: 115
   RFC5785:
   RFC5988:
   RFC6570:
@@ -91,10 +110,10 @@ detrimental effects:
   impossible to do if their URIs do not allow the required flexibility.
 
 * Operational Difficulty - Supporting some URI conventions can be difficult in some
-  implementations. For example, specifying that a particular query parameter be used precludes the
-  use of Web servers that serve the response from a filesystem. Likewise, an application that fixes
-  a base path for its operation (e.g., "/v1") makes it impossible to deploy other applications with
-  the same prefix on the same host.
+  implementations. For example, specifying that a particular query parameter be used with "HTTP"
+  URIs precludes the use of Web servers that serve the response from a filesystem. Likewise, an
+  application that fixes a base path for its operation (e.g., "/v1") makes it impossible to deploy
+  other applications with the same prefix on the same host.
 
 * Client Assumptions - When conventions are standardized, some clients will inevitably assume that
   the standards are in use when those conventions are seen. This can lead to interoperability
@@ -152,7 +171,7 @@ SHOULD NOT preclude the use of other URI schemes in the future, unless they are 
 the nominated schemes.
 
 A specification that defines substructure within a URI scheme MUST do so in the defining document
-for that URI scheme, or by modifying {{RFC4395}}.
+for that URI scheme, or by modifying {{BCP115}}.
 
 
 ## URI Authorities
