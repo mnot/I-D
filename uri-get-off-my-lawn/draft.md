@@ -93,7 +93,7 @@ media type of the response. Likewise, pre-packaged applications often have highl
 that can only be changed in limited ways (often, just the hostname and port they are deployed upon).
 
 Because the owner of the URI (as defined in {{webarch}} Section 2.2.2.1) is choosing to use the
-server or the software, this can be seen as reasonable delegation of authority. When such
+server or the application, this can be seen as reasonable delegation of authority. When such
 conventions are mandated by a party other than the owner, however, it can have several potentially
 detrimental effects:
 
