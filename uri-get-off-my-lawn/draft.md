@@ -134,9 +134,9 @@ guidelines in {{alternatives}}.
 
 This document's requirements primarily target a few different types of specifications:
 
-* Protocol Extensions ("extensions") - specifications that offer new capabilities to potentially
-  any identifier, or a large subset; e.g., a new signature mechanism for 'http' URIs, or metadata
-  for any URI.
+* Protocol Extensions ("extensions") - specifications that offer new capabilities that could apply
+  to any identifier, or to a large subset of possible identifiers; e.g., a new signature mechanism
+  for 'http' URIs, or metadata for any URI.
 
 * Applications Using URIs ("applications") - specifications that use URIs to meet specific needs;
   e.g., a HTTP interface to particular information on a host.
@@ -172,7 +172,7 @@ the nominated schemes.
 
 A specification that defines substructure within a URI scheme MUST do so in the defining document
 for that URI scheme, or by modifying {{BCP115}}. The latter approach is not preferred and ought
-only be used in exceptional circumstances
+only be used in exceptional circumstances.
 
 
 
