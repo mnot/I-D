@@ -215,9 +215,8 @@ difficulties for deployments that do not support a particular form of a query.
 Extensions MUST NOT specify the format or semantics of queries.
 
 For example, an extension that indicates that all query parameters with the name "sig" indicate a
-cryptographic signature is not conforming; doing so would collide with potentially pre-existing
-query parameters on sites, and lead clients to assume that any matching query parameter is a
-signature.
+cryptographic signature would collide with potentially pre-existing query parameters on sites, and
+lead clients to assume that any matching query parameter is a signature.
 
 
 ## URI Fragment Identifiers
@@ -227,8 +226,8 @@ used with them; other specifications MUST NOT define structure within the fragme
 unless they are explicitly defining one for reuse by media type definitions.
 
 For example, an application that defines common fragment identifiers across media types not
-controlled by it is not conforming, and would engender interoperability problems with handlers for
-those media types (because the new, non-standard syntax is not expected).
+controlled by it would engender interoperability problems with handlers for those media types
+(because the new, non-standard syntax is not expected).
 
 
 # Alternatives to Specifying Structure in URIs {#alternatives}
