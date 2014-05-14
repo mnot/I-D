@@ -168,8 +168,8 @@ described below.
 
 Applications and extensions MAY require use of specific URI scheme(s); for example, it is perfectly
 acceptable to require that an application support 'http' and 'https' URIs. However, applications
-SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly specific to
-the nominated schemes.
+SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly only usable
+with the nominated schemes.
 
 A specification that defines substructure within a URI scheme MUST do so in the defining document
 for that URI scheme, or by modifying {{BCP115}}. The latter approach is not preferred and ought
