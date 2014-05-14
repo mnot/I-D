@@ -197,10 +197,11 @@ The only exception to this requirement is registered "well-known" URIs, as speci
 See that document for a description of the applicability of that mechanism.
 
 For example, an application ought not specify a fixed URI path "/myapp", since this usurps the
-host's control of that space. Specifying a fixed path relative to another (e.g., {whatever}/myapp)
-is also bad practice (even if "whatever" is discovered as suggested in {{alternatives}}); while
-doing so might prevent collisions, it does not avoid the potential for operational difficulties
-discussed in {{intro}}.
+host's control of that space.
+
+Specifying a fixed path relative to another (e.g., {whatever}/myapp) is also bad practice (even if
+"whatever" is discovered as suggested in {{alternatives}}); while doing so might prevent
+collisions, it does not avoid the potential for operational difficulties.
 
 
 ## URI Queries
@@ -210,7 +211,7 @@ and MAY be constrained by a scheme definition. Often, they are determined by the
 a resource itself.
 
 Applications MUST NOT directly specify the syntax of queries, as this can cause operational
-difficulties for deployments that do not support a particular form of a query.
+difficulties for deployments that do not support a particular form of a query. For example, a site may wish to support an application using "static" files that do not support query parameters.
 
 Extensions MUST NOT specify the format or semantics of queries.
 
