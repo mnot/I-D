@@ -94,10 +94,10 @@ problems; for example, if a specification documents that the “sig” URI query
 that its payload is a cryptographic signature for the URI, it can lead to undesirable behavior.</t>
 </list></t>
 
-<t>Publishing an independent standard that constrains an existing URI structure in ways which aren’t
-explicitly allowed by <xref target="RFC3986"/> (e.g., by defining it in the URI scheme) is usually
-inappropriate, because the structure of a URI needs to be firmly under the control of its owner,
-and the IETF (as well as other organizations) should not usurp it.</t>
+<t>Publishing a standard that constrains an existing URI structure in ways which aren’t explicitly
+allowed by <xref target="RFC3986"/> (usually, by updating the URI scheme definition) is inappropriate, because
+the structure of a URI needs to be firmly under the control of its owner, and the IETF (as well as
+other organizations) should not usurp it.</t>
 
 <t>This document explains some best current practices for establishing URI structures, conventions and
 formats in standards. It also offers strategies for specifications to avoid violating these
@@ -105,8 +105,7 @@ guidelines in <xref target="alternatives"/>.</t>
 
 <section anchor="who-this-document-is-for" title="Who This Document Is For">
 
-<t>This document’s requirements primarily target the authors of a few different types of
-specifications:</t>
+<t>This document’s requirements target the authors of specifications that constrain the syntax or structure of URIs or parts of them. Two classes of such specifications are called out specifically:</t>
 
 <t><list style='symbols'>
   <t>Protocol Extensions (“extensions”) - specifications that offer new capabilities that could apply
@@ -143,8 +142,8 @@ described below.</t>
 
 <t>Applications and extensions MAY require use of specific URI scheme(s); for example, it is perfectly
 acceptable to require that an application support ‘http’ and ‘https’ URIs. However, applications
-SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly specific to
-the nominated schemes.</t>
+SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly only usable
+with the nominated schemes.</t>
 
 <t>A specification that defines substructure within a URI scheme MUST do so in the defining document
 for that URI scheme, or by modifying <xref target="BCP115"/>. The latter approach is not preferred and ought
@@ -159,6 +158,9 @@ authorities, unless they update the scheme registration itself.</t>
 
 <t>For example, an extension or application ought not say that the “foo” prefix in
 “foo_app.example.com” is meaningful or triggers special handling in URIs.</t>
+
+<t>However, applications MAY nominate or constrain the port they use, when applicable. For example, 
+BarApp could run over port nnnn (provided that it is properly registred).</t>
 
 </section>
 <section anchor="uri-paths" title="URI Paths">
@@ -188,11 +190,15 @@ a resource itself.</t>
 <t>Applications MUST NOT directly specify the syntax of queries, as this can cause operational
 difficulties for deployments that do not support a particular form of a query. For example, a site may wish to support an application using “static” files that do not support query parameters.</t>
 
-<t>Extensions MUST NOT specify the format or semantics of queries.</t>
+<t>Extensions MUST NOT constrain the format or semantics of queries.</t>
 
 <t>For example, an extension that indicates that all query parameters with the name “sig” indicate a
 cryptographic signature would collide with potentially pre-existing query parameters on sites, and
 lead clients to assume that any matching query parameter is a signature.</t>
+
+<t>HTML <xref target="W3C.REC-html401-19991224"/> constrains the syntax of query strings used in form submission.
+New form languages SHOULD NOT emulate it, but instead allow creation of a broader variety of URIs
+(e.g., by allowing the form to create new path components, and so forth).</t>
 
 <t>Note that “well-known” URIs (see <xref target="RFC5785"/>) MAY constrain their own query syntax, since these
 name spaces are effectively delegated to the registering party.</t>
@@ -510,6 +516,32 @@ specifications of each URI scheme.
 
 <seriesInfo name='RFC' value='6943' />
 <format type='TXT' octets='62676' target='http://www.rfc-editor.org/rfc/rfc6943.txt' />
+</reference>
+
+
+
+<reference anchor='W3C.REC-html401-19991224'
+           target='http://www.w3.org/TR/1999/REC-html401-19991224'>
+<front>
+<title>HTML 4.01 Specification</title>
+
+<author initials='D.' surname='Raggett' fullname='Dave Raggett'>
+    <organization />
+</author>
+
+<author initials='A.' surname='Hors' fullname='Arnaud Le Hors'>
+    <organization />
+</author>
+
+<author initials='I.' surname='Jacobs' fullname='Ian Jacobs'>
+    <organization />
+</author>
+
+<date month='December' day='24' year='1999' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-html401-19991224' />
+<format type='HTML' target='http://www.w3.org/TR/1999/REC-html401-19991224' />
 </reference>
 
 
