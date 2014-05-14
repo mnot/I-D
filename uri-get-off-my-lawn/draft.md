@@ -201,7 +201,8 @@ host's control of that space.
 
 Specifying a fixed path relative to another (e.g., {whatever}/myapp) is also bad practice (even if
 "whatever" is discovered as suggested in {{alternatives}}); while doing so might prevent
-collisions, it does not avoid the potential for operational difficulties.
+collisions, it does not avoid the potential for operational difficulties (for example, an
+implementation that prefers to use query processing instead, because of implementation constraints).
 
 
 ## URI Queries
@@ -218,6 +219,9 @@ Extensions MUST NOT specify the format or semantics of queries.
 For example, an extension that indicates that all query parameters with the name "sig" indicate a
 cryptographic signature would collide with potentially pre-existing query parameters on sites, and
 lead clients to assume that any matching query parameter is a signature.
+
+Note that "well-known" URIs (see {{RFC5785}}) MAY constrain their own query syntax, since these
+name spaces are effectively delegated to the registering party.
 
 
 ## URI Fragment Identifiers
