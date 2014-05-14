@@ -120,10 +120,10 @@ detrimental effects:
   problems; for example, if a specification documents that the "sig" URI query parameter indicates
   that its payload is a cryptographic signature for the URI, it can lead to undesirable behavior.
 
-Publishing an independent standard that constrains an existing URI structure in ways which aren't
-explicitly allowed by {{RFC3986}} (e.g., by defining it in the URI scheme) is usually
-inappropriate, because the structure of a URI needs to be firmly under the control of its owner,
-and the IETF (as well as other organizations) should not usurp it.
+Publishing a standard that constrains an existing URI structure in ways which aren't explicitly
+allowed by {{RFC3986}} (usually, by updating the URI scheme definition) is inappropriate, because
+the structure of a URI needs to be firmly under the control of its owner, and the IETF (as well as
+other organizations) should not usurp it.
 
 This document explains some best current practices for establishing URI structures, conventions and
 formats in standards. It also offers strategies for specifications to avoid violating these
@@ -132,8 +132,7 @@ guidelines in {{alternatives}}.
 
 ## Who This Document Is For
 
-This document's requirements primarily target the authors of a few different types of
-specifications:
+This document's requirements target the authors of specifications that constrain the syntax or structure of URIs or parts of them. Two classes of such specifications are called out specifically:
 
 * Protocol Extensions ("extensions") - specifications that offer new capabilities that could apply
   to any identifier, or to a large subset of possible identifiers; e.g., a new signature mechanism
@@ -186,6 +185,10 @@ authorities, unless they update the scheme registration itself.
 For example, an extension or application ought not say that the "foo" prefix in
 "foo_app.example.com" is meaningful or triggers special handling in URIs.
 
+However, applications MAY nominate or constrain the port they use, when applicable. For example, 
+BarApp could run over port nnnn (provided that it is properly registred).
+
+
 
 ## URI Paths
 
@@ -214,7 +217,7 @@ a resource itself.
 Applications MUST NOT directly specify the syntax of queries, as this can cause operational
 difficulties for deployments that do not support a particular form of a query. For example, a site may wish to support an application using "static" files that do not support query parameters.
 
-Extensions MUST NOT specify the format or semantics of queries.
+Extensions MUST NOT constrain the format or semantics of queries.
 
 For example, an extension that indicates that all query parameters with the name "sig" indicate a
 cryptographic signature would collide with potentially pre-existing query parameters on sites, and
@@ -222,6 +225,8 @@ lead clients to assume that any matching query parameter is a signature.
 
 Note that "well-known" URIs (see {{RFC5785}}) MAY constrain their own query syntax, since these
 name spaces are effectively delegated to the registering party.
+
+
 
 
 ## URI Fragment Identifiers
