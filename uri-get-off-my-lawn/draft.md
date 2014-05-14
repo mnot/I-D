@@ -132,7 +132,8 @@ guidelines in {{alternatives}}.
 
 ## Who This Document Is For
 
-This document's requirements primarily target a few different types of specifications:
+This document's requirements primarily target the authors of a few different types of
+specifications:
 
 * Protocol Extensions ("extensions") - specifications that offer new capabilities that could apply
   to any identifier, or to a large subset of possible identifiers; e.g., a new signature mechanism
@@ -182,8 +183,8 @@ Scheme definitions define the presence, format and semantics of an authority com
 other specifications MUST NOT constrain, or define the structure or the semantics for URI
 authorities, unless they update the scheme registration itself.
 
-For example, an extension or application cannot say that the "foo" prefix in "foo_app.example.com"
-is meaningful or triggers special handling in URIs.
+For example, an extension or application ought not say that the "foo" prefix in
+"foo_app.example.com" is meaningful or triggers special handling in URIs.
 
 
 ## URI Paths
@@ -195,11 +196,11 @@ component.
 The only exception to this requirement is registered "well-known" URIs, as specified by {{RFC5785}}.
 See that document for a description of the applicability of that mechanism.
 
-For example, an application cannot specify a fixed URI path "/myapp", since this usurps the host's
-control of that space. Specifying a fixed path relative to another (e.g., {whatever}/myapp) is also
-bad practice (even if "whatever" is discovered as suggested in {{alternatives}}); while doing so
-might prevent collisions, it does not avoid the potential for operational difficulties discussed in
-{{intro}}.
+For example, an application ought not specify a fixed URI path "/myapp", since this usurps the
+host's control of that space. Specifying a fixed path relative to another (e.g., {whatever}/myapp)
+is also bad practice (even if "whatever" is discovered as suggested in {{alternatives}}); while
+doing so might prevent collisions, it does not avoid the potential for operational difficulties
+discussed in {{intro}}.
 
 
 ## URI Queries
