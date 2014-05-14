@@ -171,10 +171,12 @@ component.</t>
 See that document for a description of the applicability of that mechanism.</t>
 
 <t>For example, an application ought not specify a fixed URI path “/myapp”, since this usurps the
-host’s control of that space. Specifying a fixed path relative to another (e.g., {whatever}/myapp)
-is also bad practice (even if “whatever” is discovered as suggested in <xref target="alternatives"/>); while
-doing so might prevent collisions, it does not avoid the potential for operational difficulties
-discussed in <xref target="intro"/>.</t>
+host’s control of that space.</t>
+
+<t>Specifying a fixed path relative to another (e.g., {whatever}/myapp) is also bad practice (even if
+“whatever” is discovered as suggested in <xref target="alternatives"/>); while doing so might prevent
+collisions, it does not avoid the potential for operational difficulties (for example, an
+implementation that prefers to use query processing instead, because of implementation constraints).</t>
 
 </section>
 <section anchor="uri-queries" title="URI Queries">
@@ -183,14 +185,17 @@ discussed in <xref target="intro"/>.</t>
 and MAY be constrained by a scheme definition. Often, they are determined by the implementation of
 a resource itself.</t>
 
-<t>Applications SHOULD NOT directly specify the syntax of queries, as this can cause operational
-difficulties for deployments that do not support a particular form of a query.</t>
+<t>Applications MUST NOT directly specify the syntax of queries, as this can cause operational
+difficulties for deployments that do not support a particular form of a query. For example, a site may wish to support an application using “static” files that do not support query parameters.</t>
 
 <t>Extensions MUST NOT specify the format or semantics of queries.</t>
 
 <t>For example, an extension that indicates that all query parameters with the name “sig” indicate a
 cryptographic signature would collide with potentially pre-existing query parameters on sites, and
 lead clients to assume that any matching query parameter is a signature.</t>
+
+<t>Note that “well-known” URIs (see <xref target="RFC5785"/>) MAY constrain their own query syntax, since these
+name spaces are effectively delegated to the registering party.</t>
 
 </section>
 <section anchor="uri-fragment-identifiers" title="URI Fragment Identifiers">
