@@ -125,7 +125,7 @@ explicitly allowed by {{RFC3986}} (e.g., by defining it in the URI scheme) is us
 inappropriate, because the structure of a URI needs to be firmly under the control of its owner,
 and the IETF (as well as other organizations) should not usurp it.
 
-This document explains best current practices for establishing URI structures, conventions and
+This document explains some best current practices for establishing URI structures, conventions and
 formats in standards. It also offers strategies for specifications to avoid violating these
 guidelines in {{alternatives}}.
 
