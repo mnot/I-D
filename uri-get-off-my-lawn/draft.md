@@ -209,7 +209,7 @@ The presence, format and semantics of the query component of URIs is dependent u
 and MAY be constrained by a scheme definition. Often, they are determined by the implementation of
 a resource itself.
 
-Applications SHOULD NOT directly specify the syntax of queries, as this can cause operational
+Applications MUST NOT directly specify the syntax of queries, as this can cause operational
 difficulties for deployments that do not support a particular form of a query.
 
 Extensions MUST NOT specify the format or semantics of queries.
