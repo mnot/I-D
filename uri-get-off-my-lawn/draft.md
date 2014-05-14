@@ -171,7 +171,9 @@ SHOULD NOT preclude the use of other URI schemes in the future, unless they are 
 the nominated schemes.
 
 A specification that defines substructure within a URI scheme MUST do so in the defining document
-for that URI scheme, or by modifying {{BCP115}}.
+for that URI scheme, or by modifying {{BCP115}}. The latter approach is not preferred and ought
+only be used in exceptional circumstances
+
 
 
 ## URI Authorities
