@@ -65,6 +65,7 @@ informative:
   RFC5988:
   RFC6570:
   RFC6943:
+  W3C.REC-html401-19991224: 
 
 
 --- abstract
@@ -223,9 +224,12 @@ For example, an extension that indicates that all query parameters with the name
 cryptographic signature would collide with potentially pre-existing query parameters on sites, and
 lead clients to assume that any matching query parameter is a signature.
 
+HTML {{W3C.REC-html401-19991224}} constrains the syntax of query strings used in form submission.
+New form languages SHOULD NOT emulate it, but instead allow creation of a broader variety of URIs
+(e.g., by allowing the form to create new path components, and so forth).
+
 Note that "well-known" URIs (see {{RFC5785}}) MAY constrain their own query syntax, since these
 name spaces are effectively delegated to the registering party.
-
 
 
 
