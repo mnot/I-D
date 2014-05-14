@@ -43,7 +43,7 @@ normative:
 informative:
   BCP115:
     target: https://tools.ietf.org/html/bcp115
-    title: Guidelines and Registration Procedurs for New URI Schemes
+    title: Guidelines and Registration Procedures for New URI Schemes
     author: 
      -
         ins: T. Hansen
