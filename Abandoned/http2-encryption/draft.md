@@ -1,13 +1,13 @@
 ---
 title: Opportunistic Encryption for HTTP URIs
 abbrev: Opportunistic HTTP Encryption
-docname: draft-nottingham-http2-encryption-02
+docname: draft-nottingham-http2-encryption-03
 date: 2013
 category: std
 
 ipr: trust200902
 area: General
-workgroup: 
+workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
@@ -17,17 +17,24 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: http://www.mnot.net/
+ -
+    ins: M. Thomson
+    name: Martin Thomson
+    organization: Mozilla
+    email: martin.thomson@gmail.com
 
 normative:
   RFC2119:
   RFC2818:
   RFC5246:
   I-D.ietf-httpbis-http2:
-  I-D.nottingham-httpbis-alt-svc:
+  I-D.ietf-httpbis-alt-svc:
   I-D.ietf-tls-applayerprotoneg:
+  I-D.ietf-httpbis-p6-cache:
+  I-D.ietf-websec-key-pinning:
 
 informative:
   I-D.ietf-httpbis-p1-messaging:
@@ -58,39 +65,38 @@ informative:
   RFC2804:
   RFC3365:
   RFC6246:
+  RFC6454:
   RFC6973:
 
 
 --- abstract
 
-This document proposes two changes to HTTP/2.0; first, it suggests using ALPN
-Protocol Identifies to identify the specific stack of protocols in use,
-including TLS, and second, it proposes a way to opportunistically encrypt
-HTTP/2.0 using TLS for HTTP URIs.
+This describes how "http" URIs can be resolved using Transport Layer Security
+(TLS).
 
 --- middle
 
 # Introduction
 
-In discussion at IETF87, it was proposed that the current means of
-bootstrapping encryption in HTTP {{I-D.ietf-httpbis-p1-messaging}} -- using the
-"HTTPS" URI scheme -- unintentionally gives the server disproportionate power
-in determining whether encryption (through use of TLS {{RFC6246}}) is used.
+This document describes a use of the "alternate services" layer described in
+{{I-D.ietf-httpbis-alt-svc}} to decouple the URI scheme from the use and
+configuration of underlying encryption, allowing a "http" URI to be upgraded to
+use TLS opportunistically.
 
-This document proposes using the new "alternate services" layer described in
-{{I-D.nottingham-httpbis-alt-svc}} to decouple the URI scheme from the use and
-configuration of underlying encryption, allowing a "http://" URI to be upgraded
-to use TLS opportunistically.
+Using TLS requires acquiring and configuring a valid certificate, which means
+that some deployments find supporting TLS difficult. Therefore, this document
+describes a usage model whereby sites that serve "http" URIs over TLS are not
+required to support strong server authentication.
 
-Additionally, because using TLS requires acquiring and configuring a valid
-certificate, some deployments may find supporting it difficult. Therefore, this
-document also proposes a "relaxed" profile of HTTP/2.0 over TLS that does not
-require strong server authentication, specifically for use with "http://" URIs.
-
+A mechanism for limiting the potential for active attack is described in {{#http-tls}}. This
+provides clients with additional protection against active attack for a period
+after successfully connecting to a server using TLS.  This does not offer the
+same level of protection as afforded to "https" URIs, but increases the
+likelihood that an active attack be detected.
 
 ## Goals and Non-Goals
 
-The immediate goal is to make HTTP URIs more robust in the face of passive
+The immediate goal is to make the use of HTTP more robust in the face of passive
 monitoring.
 
 Such passive attacks are often opportunistic; they rely on sensitive
@@ -98,11 +104,15 @@ information being available in the clear. Furthermore, they are often broad,
 where all available data is collected en masse, being analyzed separately for
 relevant information.
 
-It is not a goal of this document to address active or targeted attacks,
-although future solutions may be complementary.
+A mechanism for limiting the potential for active attack is described. This
+provides clients with additional protection against active attack for a period
+after successfully connecting to a server using TLS.  This does not offer the
+same level of protection as afforded to "https" URIs, but increases the
+likelihood that an active attack be detected.
 
-Other goals include ease of implementation and deployment, with minimal impact
-upon performance (in keeping with the goals of HTTP/2.0).
+A secondary, but significant, goal is to provide for ease of implementation,
+deployment and operation.  This mechanism should have a minimal impact upon
+performance.
 
 ## Notational Conventions
 
@@ -110,111 +120,183 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
 document are to be interpreted as described in {{RFC2119}}.
 
+# Using HTTP over TLS
 
-# Proposal: Indicating Security Properties in Protocol Identifiers
+A server that supports the resolution of HTTP URIs can provide an alternative
+service advertisement {{I-D.ietf-httpbis-alt-svc}} for a protocol that uses TLS,
+such as "h2" {{I-D.ietf-httpbis-http2}}, or "http/1.1" {{RFC2818}}.
 
-In past discussions, there has been general agreement to reusing the ALPN
-protocol identifier {{I-D.ietf-tls-applayerprotoneg}} for all negotiation
-mechanisms in HTTP/2.0, not just TLS.
+A client that sees this alternative service advertisement can direct future
+requests for the associated origin to the identified service.
 
-This document proposes putting additional information into them to identify the
-use of encryption as well as configuration of that encryption, independent of
-the URI scheme in use.
+A client that places the importance of passive protections over performance
+might choose to send no further requests over cleartext connections if it
+detects the alternative service advertisement.  If the alternative service
+cannot be successfully connected, the client might resume its use of the
+cleartext connection.
 
-Thus, we won't have just one protocol identifier for HTTP/2.0, but two; one
-with and one without the use of TLS. As such, the following identifiers
-are recommended if this approach is adopted:
+A client can also explicitly probe for an alternative service advertisement by
+sending a request that bears little or no sensitive information, such as one
+with the OPTIONS method.  Clients with expired alternative services information
+could make a similar request in parallel to an attempt to contact an alternative
+service, to minimize the delays that might be incurred by failing to contact the
+alternative service.
 
-* h1 - http/1.x over TCP
-* h1t - http/1.x over TLS over TCP (as per {{RFC2818}})
-* h2 - http/2.x over TCP
-* h2t - http/2.x over TLS over TCP (as per {{RFC2818}})
-* h2r - http/2.x over TLS over TCP (see {{relaxed}})
+# Server Authentication
 
-Draft implementations could be indicated with a suffix; e.g., h2t-draft10.
+There are no expectations with respect to security when it comes to resolving
+HTTP URIs.  Server authentication, as described in {{RFC2818}}, creates a number
+of operational challenges.  For these reasons, server authentication is not
+mandatory for HTTP URIs.
 
-Most of these are already latently defined by HTTP/2.0, with the exception
-being h2r, defined below. Note that the focus of this proposal is
-on the semantics of the identifiers; an exact syntax for them is not part of it.
+When connecting to a service, clients do not perform the server authentication
+procedure described in Section 3.1 of {{RFC2818}}.  The server certificate, if
+one is proffered, is not checked for validity, expiration, issuance by a trusted
+certificate authority or matched against the name in the URI.  A server is
+therefore able to provide any certificate, or even select TLS cipher suites that
+do not include authentication.
 
-By indicating the use of TLS in the protocol identifier allows a client and
-server to negotiate the use of TLS for "http://" URIs; if the server offers
-h2t, the client can select that protocol, start TLS and use it.
+A client MAY perform additional checks on the certificate that it is offered (if
+the server does not select an unauthenticated TLS cipher suite).  For instance,
+a client could examine the certificate to see if it has changed over time.
 
-Note that, as discussed in {{downgrade}}, there may be situations (e.g,. ALPN)
-where advertising some of these profiles are inapplicable or inadvisable. For
-example, in an ALPN negotiation for a "https://" URI, it is only sensible to
-offer h1t and h2t.
+In order to retain the authority properties of "http" URIs, and as stipulated by
+{{I-D.ietf-httpbis-alt-svc}}, clients MUST NOT use alternative services that
+identify a different host, unless the alternative service indication is
+authenticated.  This is not currently possible for "http" URIs on cleartext
+transports.
 
-If adopted, this proposal would be effected by adjusting the text in Section 3
-of {{I-D.ietf-httpbis-http2}} ("Starting HTTP/2.0") along the lines described
-above. Note that the specific protocol identifiers above are suggestions only.
+# Interaction with "https" URIs
 
+A service that is discovered to support "http" URIs might concurrently support
+"https" URIs.  HTTP/2 permits the sending of requests for multiple origins (see
+{{RFC6454}}) on the one connection.  When using alternative services, both HTTP
+and HTTPS URIs might be sent on the same connection.
 
-## Proposal: The "h2r" Protocol {#relaxed}
+HTTPS URIs rely on server authentication.  Therefore, if a connection is
+initially created without authenticating the server, requests for HTTPS
+resources cannot be sent over that connection until the server certificate is
+successfully authenticated.  Section 3.1 of {{RFC2818}} describes the basic
+mechanism, though the authentication considerations in
+{{I-D.ietf-httpbis-alt-svc}} could also apply.
 
-If the proposal above is adopted, a separate proposal is to define a separate
-protocol identifier for "relaxed" TLS operation.
+Connections that are established without any means of server authentication (for
+instance, the purely anonymous TLS cipher suites), cannot be used for "https"
+URIs.
 
-Servers that support the "h2r" protocol indicate that they
-support TLS for access to URIs with the "http" URI scheme using HTTP/2.0 or
-greater.
+# Persisting use of TLS {#http-tls}
 
-Servers MAY advertise the "h2r" profile for resources with a
-"http" origin scheme; they MUST NOT advertise it for resources with a "https"
-origin.
+Note: this is a very rough take on an approach that would provide a limited form
+of protection against downgrade attack.  It's unclear at this point whether the
+additional effort (and modest operational cost), is worthwhile.
 
-When a client connects to an "h2r" alternate service, it MUST use
-TLS1.1 or greater, and MUST use HTTP/2.x. HTTP/2.0 SHOULD be used as
-soon as TLS negotiation is completed; i.e., the "Upgrade dance" SHOULD NOT be
-performed.
+Two factors ensure that active attacks are trivial to mount:
 
-When connecting to an "h2r" service, the algorithm for
-authenticating the server described in {{RFC2818}} Section 3.1 changes; the
-client does not necessarily validate its certificate for expiry, hostname match
-or relationship to a known certificate authority (as it would with "normal"
-HTTPS).
+- A client that doesn't perform authentication an easy victim of server
+  impersonation, through man-in-the-middle attacks.
 
-However, the client MAY perform additional checks on the certificate and make a
-decision as to its validity before using the server. Definition of such
-additional checks are out of scope for this specification.
+- A client that is willing to use cleartext to resolve the resource will do so
+  if access to any TLS-enabled alternative services is blocked at the network
+  layer.
 
-Upon initial adoption of this proposal, it is expected that no such additional
-checks will be performed. Therefore, the client MUST NOT use the
-"h2r" profile to connect to alternate services whose host does
-not match that of the origin (as per {{I-D.nottingham-httpbis-alt-svc}}), unless additional checks are performed.
+Given that the primary goal of this work is to prevent passive attacks, these
+are of less concern than they might otherwise be, but a modest form of
+protection against these attacks can be provided for clients on return visits to
+a server.
 
-Servers SHOULD use the same certificate consistently over time, to aid future
-extensions for building trust and adding other services.
+A server can make a commitment to providing service over TLS in future requests.
+This allows clients to detect an active attack and fail requests when the server
+cannot be contacted using TLS.
 
-[TODO: define "same"; likely not the same actual certificate. ]
+The drawback with this approach is that servers can only make this commitment if
+they are strong authenticated. Otherwise, server impersonation could be used to
+create a persistent denial of service.
 
-When the h2r protocol is in use, User Agents MUST NOT indicate
-the connection has the same level of security as https:// (e.g. using a "lock
-device").
+## The HTTP-TLS Header Field
 
-If this proposal is adopted, the "h2r" protocol could be defined in
-{{I-D.ietf-httpbis-http2}} (most likely, Section 3), or in a separate document.
+A server makes this commitment by sending a `HTTP-TLS` header field:
+
+    HTTP-TLS     = 1#parameter
+
+For example:
+
+    HTTP/1.1 200 OK
+    Content-Type: text/html
+    Cache-Control: 600
+    Age: 30
+    Date: Thu, 1 May 2014 16:20:09 GMT
+    HTTP-TLS: ma=3600
+
+A client that has has not authenticated the server MAY do so when it sees a
+`HTTP-TLS` header field.  The server is authenticated as described in Section
+3.1 of {{RFC2818}}, noting the additional requirements in
+{{I-D.ietf-httpbis-alt-svc}}.  If server authentication is successful, the
+client can persistently store a record that the requested origin {{RFC6454}} can
+be retrieved over TLS.
+
+Persisted information expires after a period determined by the value of the "ma"
+parameter.  See Section 4.2.3 of {{I-D.ietf-httpbis-p6-cache}} for details of
+determining response age.
+
+    ma-parameter     = delta-seconds
+
+Requests for an origin that has a persisted, unexpired value for `HTTP-TLS` MUST
+fail if they cannot be made over an authenticated TLS connection.
+
+## Operational Considerations
+
+To avoid situations where a persisted value of `HTTP-TLS` causes a client to be
+unable to contact a site, clients SHOULD limit the time that a value is
+persisted for a given origin.  A hard limit might be set to a month.  A lower
+limit might be appropriate for initial observations of `HTTP-TLS`; the certainty
+that a site has set a correct value - and the corresponding limit on persistence
+- can increase as the value is seen more over time.
+
+Once a server has indicated that it will support authenticated TLS, a client MAY
+use key pinning {{I-D.ietf-websec-key-pinning}} or any other mechanism that
+would otherwise be restricted to use with HTTPS URIs, provided that the
+mechanism can be restricted to a single HTTP origin.
 
 
 # Security Considerations
 
+## Indicators
+
+User Agents MUST NOT provide any special security indicia when an "http"
+resource is acquired using TLS.  In particular, indicators that might suggest
+the same level of security as "https" MUST NOT be used (e.g., using a "lock
+device").
+
+
 ## Downgrade Attacks {#downgrade}
 
-A downgrade attack against the negotiation for TLS is possible, depending upon
-the properties of the negotiation mechanism.
+A downgrade attack against the negotiation for TLS is possible.  With the
+`HTTP-TLS` header field, this is limited to occasions where clients have no
+prior information (see {{#privacy}}), or when persisted commitments have
+expired.
 
-For example, because the Alt-Svc header field {{I-D.nottingham-httpbis-alt-svc}}
-appears in the clear for "http://" URIs, it is subject to downgrade by
-attackers that are able to Man-in-the-Middle the network connection; in its
-simplest form, an attacker that wants the connection to remain in the clear
-need only strip the Alt-Svc header from responses.
+For example, because the `Alt-Svc` header field {{I-D.ietf-httpbis-alt-svc}}
+likely appears in an unauthenticated and unencrypted channel, it is subject to
+downgrade by network attackers.  In its simplest form, an attacker that wants
+the connection to remain in the clear need only strip the `Alt-Svc` header field
+from responses.
 
-This proposal does not offer a remedy for this risk. However, it's important to
-note that it is no worse than current use of unencrypted HTTP in the face of
-such active attacks. 
+As long as a client is willing to use cleartext TCP to contact a server, these
+attacks are possible.  The `HTTP-TLS` header field provides an imperfect
+mechanism for establishing a commitment.  The advantage is that this only works
+if a previous connection is established where an active attacker was not
+present.  A continuously present active attacker can either prevent the client
+from ever using TLS, or offer a self-signed certificate.  This would prevent the
+client from ever seeing the `HTTP-TLS` header field, or if the header field is
+seen, from successfully validating and persisting it.
 
-Future proposals might attempt to address this risk.
+## Privacy Considerations {#privacy}
+
+Clients that persist state for origins can be tracked over time based on their
+use of this information.  Persisted information can be cleared to reduce the
+ability of servers to track clients.  A browser client MUST clear persisted all
+alternative service information when clearing other origin-based state (i.e.,
+cookies).
 
 
 --- back
@@ -222,8 +304,8 @@ Future proposals might attempt to address this risk.
 # Acknowledgements
 
 Thanks to Patrick McManus, Eliot Lear, Stephen Farrell, Guy Podjarny, Stephen
-Ludin, Erik Nygren, Paul Hoffman and Adam Langley for their feedback and
-suggestions.
+Ludin, Erik Nygren, Paul Hoffman, Adam Langley, Eric Rescorla and Richard Barnes
+for their feedback and suggestions.
 
 
 # Recent History and Background
@@ -235,7 +317,7 @@ a connection protected by TLS {{RFC5246}}.
 This was done, in part, because sensitive information -- including not only
 login credentials, but also personally identifying information (PII) and even
 patterns of access -- are increasingly prevalent on the Web, being evident in
-potentially every HTTP request made. 
+potentially every HTTP request made.
 
 Attacks such as FireSheep {{firesheep}} showed how easy it is to gather such
 information when it is sent in the clear, and incidents such as Google's
@@ -260,63 +342,44 @@ products will not use HTTP/2 over unencrypted connections. If this eventuates,
 it will prevent wide deployment of the new protocol (i.e., it couldn't be used
 with those products for HTTP URIs; only HTTPS URIs).
 
-2. It has been reported that surveillance of HTTP traffic takes place on a
-broad scale {{xkeyscore}}. While the IETF does not take a formal, moral
-position on wiretapping, we do have a strongly held belief "that both
-commercial development of the Internet and adequate privacy for its users
-against illegal intrusion requires the wide availability of strong
-cryptographic technology" {{RFC2804}}. This requirement for privacy is further
-reinforced by {{RFC6973}}.
+2. It has been reported that surveillance of HTTP traffic takes place on a broad
+scale {{xkeyscore}}. While the IETF does not take a formal, moral position on
+wiretapping, we do have a strongly held belief "that both commercial development
+of the Internet and adequate privacy for its users against illegal intrusion
+requires the wide availability of strong cryptographic technology"
+{{RFC2804}}. This requirement for privacy is further reinforced by {{RFC6973}}.
 
-As a result, we decided to revisit the issue of how encryption is used in
-HTTP/2.0 at IETF87.
-  
-  
+As a result, we decided to revisit the issue of how encryption is used in HTTP/2
+at IETF87.
+
+
 # Frequently Asked Questions
 
-## Will this make encryption mandatory in HTTP/2.0?
+## Will this make encryption mandatory in HTTP/2?
 
 Not in the sense that this proposal would have it required (with a MUST) in the
 specification.
 
 What might happen, however, is that some browser implementers will take the
-flexibility that this approach grants and decide to not negotiate for HTTP/2.0
+flexibility that this approach grants and decide to not negotiate for HTTP/2
 without one of the encryption profiles. That means that servers would need to
-implement one of the encryption-enabling profiles to interoperate using
-HTTP/2.0 for HTTP URIs.
-
+implement one of the encryption-enabling profiles to interoperate using HTTP/2
+for HTTP URIs.
 
 ## No certificate checks? Really?
 
-h2r has the effect of relaxing certificate checks on "http://" -
-but not "https://" - URIs when TLS is in use. Since TLS isn't in use for any
-"http://" URIs today, there is no net loss of security, and we gain some
-privacy from passive attacks.
+Since TLS isn't in use for any "http" URIs today, there is no net loss of
+security, and we gain some privacy from passive attacks.
 
 This makes TLS significantly simpler to deploy for servers; they are able to use
-a self-signed certificate. 
+a self-signed certificate.
 
-Additionally, it is possible to detect some attacks by remembering what
-certificate is used in the past "pinning" or third-party verification of the
-certificate in use. This may offer a way to gain stronger authentication of the
-origin server's identity, and mitigate downgrade attacks (although doing so is
-out of the scope of this document).
-
+With the `HTTP-TLS` header field, we are able to gain a measure of protection.
 
 ## Why do this if a downgrade attack is so easy?
 
 There are many attack scenarios (e.g., third parties in coffee shops) where
-active attacks are not feasible, or much more difficult. 
+active attacks are not feasible, or much more difficult.
 
 Additionally, active attacks can often be detected, because they change
 protocol interactions; as such, they bring a risk of discovery.
-
-
-## Why Have separate relaxed protocol identifiers?
-
-If all implementations agree that using TLS for "http://" URIs always means that
-the certificate checks are "relaxed", it could be that there is no need for a 
-separate protocol identifier. However, this needs to be discussed.
-
-
-
