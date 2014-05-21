@@ -150,6 +150,11 @@ URIs by parties that legitimately own them, or have delegated that ownership; fo
 specification might legitimately define the semantics of a URI on the IANA.ORG Web site as part of
 the establishment of a registry.
 
+There may be existing IETF specifications that already deviate from the guidance in this document.
+In these cases, it is up to the relevant communities (i.e. those of the URI scheme as well as that
+which produced the specification in question) to determine an appropriate outcome; e.g., updating
+the scheme definition, or changing the specification.
+
 
 ## Notational Conventions
 
