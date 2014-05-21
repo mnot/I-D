@@ -176,10 +176,9 @@ acceptable to require that an application support 'http' and 'https' URIs. Howev
 SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly only usable
 with the nominated schemes.
 
-A specification that defines substructure within a URI scheme MUST do so in the defining document
-for that URI scheme, or by modifying {{BCP115}}. The latter approach is not preferred and ought
-only be used in exceptional circumstances.
-
+A specification that defines substructure within a specific URI scheme MUST do so in the defining
+document for that URI scheme. A specification that defines substructure for URI schemes overall
+MUST do so by modifying {{BCP115}} (an exceptional circumstance).
 
 
 ## URI Authorities
