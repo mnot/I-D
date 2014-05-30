@@ -8,7 +8,10 @@ category: info
 ipr: trust200902
 area: General
 workgroup: 
-keyword: Internet-Draft
+keyword: 
+ - safe
+ - preference
+ - child-protection
 
 stand_alone: yes
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline, rfcedstyle]
