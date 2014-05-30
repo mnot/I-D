@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+]>
+
+<rfc ipr="trust200902" docName="draft-nottingham-http2-ops-00" category="info">
+
+<?rfc toc="yes"?>
+<?rfc tocindent="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc strict="yes"?>
+<?rfc compact="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+
+  <front>
+    <title abbrev="HTTP/2 Server Ops">HTTP/2: Operational Considerations for Servers</title>
+
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization>Akamai Technologies</organization>
+      <address>
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net/</uri>
+      </address>
+    </author>
+
+    <date year="2014"/>
+
+    <area>General</area>
+    
+    <keyword>Internet-Draft</keyword>
+
+    <abstract>
+
+
+<t>This document gives advice regarding performance and operability to servers deploying HTTP/2.</t>
+
+
+
+    </abstract>
+
+
+  </front>
+
+  <middle>
+
+
+<section anchor="introduction" title="Introduction">
+
+<t>HTTP/2 <xref target="I-D.ietf-httpbis-http2"/> does not change the semantics of HTTP
+<xref target="I-D.ietf-httpbis-p2-semantics"/>, but it does substantially change how they are mapped to the
+underlying protocols.</t>
+
+<t>While some of these changes can enhance performance and/or operability on their own, getting the full benefit of the new protocol requires changes beyond the scope of just the Web server.</t>
+
+<t>Likewise, HTTP/2 offers new in-protocol mechanisms like header compression, flow control,
+prioritisation and server push. Used effectively, they can improve the performance characteristics
+of the protocol, but they can also cause operability issues if used incorrectly.</t>
+
+<t>This document gives advice about both cases; how to configure lower-layer protocols, as well as how
+to use HTTP/2’s in-built mechanisms effectively. </t>
+
+<t>It is primarily focused on the needs of origin servers, since there are generally many more
+instances of origin servers than there are unique client deployments. It is also primarily focused
+on the Web browsing use case; however, much of the advice here is applicable to non-browsing uses
+as well.</t>
+
+<t>Note that the advice here is specific to when it was written; changes in underlying protocols, deployment practices, and HTTP itself may obsolete it at any time. As such, it is not intended to be
+long-lived, but instead to aid initial deployment of the new protocol.</t>
+
+<section anchor="notational-conventions" title="Notational Conventions">
+
+<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”,
+“RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in
+<xref target="RFC2119"/>.</t>
+
+</section>
+</section>
+<section anchor="tcp-configuration" title="TCP Configuration">
+
+<t>HTTP/2 has been designed to use a single TCP connection, whereas current practice for HTTP/1 is to
+use multiple connections to achieve parallelism (generally, between four and eight).</t>
+
+<t>The change has a number of benefits. Using fewer TCP connections to load a Web page consumes less
+server-side resources, and it also reduces the chance of a congestion event caused by a large
+number of connections simultaneously starting (overcoming TCP Slow Start), and returns HTTP to
+being a “fair” protocol. Using a single connection also enables better efficiency with header
+compression.</t>
+
+<t>However, using a single connection can also lead to unfavorable performance, as compared with
+HTTP/1’s use of multiple connections, primarily due to side effects of TCP congestion control.</t>
+
+<t>In particular, a single HTTP/2 connection with an initcwnd of 3 can only have three unacknowledged
+packets during the startup phase of the connection, whereas (for example) six HTTP/1 connections
+would have as many as 18 packets outstanding. This places HTTP/2 at a significant disadvantage
+compared to HTTP/1, but can be mitigated by adopting an initcwnd of 10 for HTTP/2 connections, as
+outlined in <xref target="RFC6928"/>.</t>
+
+<t>Similarly, a congestion event on a HTTP/2 connection can cause disproportionate havoc, as compared
+to HTTP/1, in those cases where the event only affects a subset of open connections (such as random
+packet loss). TBD: mitigation</t>
+
+<t>Key recommendations:
+ * HTTP/2 servers SHOULD adopt an initcwnd of 10, as per <xref target="RFC6928"/>.</t>
+
+</section>
+<section anchor="tls-configuration" title="TLS Configuration">
+
+<t>Beyond the typical performance and operational considerations of deploying TLS <xref target="RFC5246"/>, a
+concern specific to HTTP/2 is the TLS record size; because HTTP/2 is a multiplexed protocol, a
+large record size can cause packet loss to affect a disproportionate number of streams, due to an
+individual record not being available until it is complete.</t>
+
+<t>Therefore, small record sizes are preferred for HTTP/2; if a record is sent within a single packet,
+the chances of blocking are minimized. That said, records ought not be much smaller, since this
+will increase processing overhead, and in some circumstances (e.g., non-interactive applications,
+downloads), it may be reasonable to have larger record sizes.</t>
+
+<t>Key recommendations:
+ * HTTP/2 servers SHOULD use a small TLS record size; ideally, small enough that a record fits completely in a single packet.</t>
+
+</section>
+<section anchor="load-balancing-and-failover" title="Load Balancing and Failover">
+
+<t>It’s common to use multiple servers to server a single HTTP origin, in order to provide a scalable
+and reliable service. DNS is also commonly used to direct clients to the best (by some metric)
+server available.</t>
+
+<t>In HTTP/1, the transition from one server to another in these scenarios is often done between
+connections; because HTTP/1 connections are generally short-lived, it’s possible to load balance
+clients as they re-connect.</t>
+
+<t>HTTP/2, however, is designed to have fewer, longer-lived connections, and it’s anticipated that
+clients will be keeping them open much more aggressively. This provides fewer opportunities for
+servers to shift traffic. If a server breaks connections pre-emtively in order to load balance or
+failover, it can also have a greater negative effect, since more than one request can be “in
+flight” simultaneously.</t>
+
+<t>The new protocol accommodates these situations in a few ways, improving operability along the way.</t>
+
+<t>Firstly, the GOAWAY frame allows servers to announce that they will not serve additional requests on
+a connection, while still completing those that preceed the GOAWAY. This allows a connection to be
+shut down in an orderly fashion, and its use is required in HTTP/2.</t>
+
+<t>Additionally, the ALTSVC frame allows a server to redirect traffic to another location, without
+changing the resource’s URL. This can be used for load balancing (both local and global), as well
+as controlled failover of services.</t>
+
+</section>
+<section anchor="use-of-hpack" title="Use of HPACK">
+
+<t>TBD</t>
+
+</section>
+<section anchor="use-of-flow-control" title="Use of Flow Control">
+
+<t>TBD</t>
+
+</section>
+<section anchor="use-of-prioritisation" title="Use of Prioritisation">
+
+<t>TBD</t>
+
+</section>
+<section anchor="use-of-server-push" title="Use of Server Push">
+
+<t>TBD</t>
+
+</section>
+<section anchor="security-considerations" title="Security Considerations">
+
+<t>This document introduces no unique security considerations beyond those discussed in HTTP/2 itself.</t>
+
+</section>
+<section anchor="acknowledgements" title="Acknowledgements">
+
+<t>TBD</t>
+
+</section>
+
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+
+
+
+
+
+<reference anchor='I-D.ietf-httpbis-http2'>
+<front>
+<title>Hypertext Transfer Protocol version 2</title>
+
+<author initials='M' surname='Belshe' fullname='Mike Belshe'>
+    <organization />
+</author>
+
+<author initials='R' surname='Peon' fullname='Roberto Peon'>
+    <organization />
+</author>
+
+<author initials='M' surname='Thomson' fullname='Martin Thomson'>
+    <organization />
+</author>
+
+<date month='April' day='23' year='2014' />
+
+<abstract><t>This specification describes an optimized expression of the syntax of the Hypertext Transfer Protocol (HTTP).  HTTP/2 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent messages on the same connection.  It also introduces unsolicited push of representations from servers to clients.  This document is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-http2-12' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-12.txt' />
+</reference>
+
+
+
+<reference anchor='RFC2119'>
+
+<front>
+<title abbrev='RFC Key Words'>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='Scott Bradner'>
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<street>Cambridge</street>
+<street>MA 02138</street></postal>
+<phone>- +1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year='1997' month='March' />
+<area>General</area>
+<keyword>keyword</keyword>
+<abstract>
+<t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list>
+<t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+<t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t></abstract></front>
+
+<seriesInfo name='BCP' value='14' />
+<seriesInfo name='RFC' value='2119' />
+<format type='TXT' octets='4723' target='http://www.rfc-editor.org/rfc/rfc2119.txt' />
+<format type='HTML' octets='17970' target='http://xml.resource.org/public/rfc/html/rfc2119.html' />
+<format type='XML' octets='5777' target='http://xml.resource.org/public/rfc/xml/rfc2119.xml' />
+</reference>
+
+
+
+<reference anchor='RFC5246'>
+
+<front>
+<title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
+<author initials='T.' surname='Dierks' fullname='T. Dierks'>
+<organization /></author>
+<author initials='E.' surname='Rescorla' fullname='E. Rescorla'>
+<organization /></author>
+<date year='2008' month='August' />
+<abstract>
+<t>This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications security over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='5246' />
+<format type='TXT' octets='222395' target='http://www.rfc-editor.org/rfc/rfc5246.txt' />
+</reference>
+
+
+
+<reference anchor='RFC6928'>
+
+<front>
+<title>Increasing TCP's Initial Window</title>
+<author initials='J.' surname='Chu' fullname='J. Chu'>
+<organization /></author>
+<author initials='N.' surname='Dukkipati' fullname='N. Dukkipati'>
+<organization /></author>
+<author initials='Y.' surname='Cheng' fullname='Y. Cheng'>
+<organization /></author>
+<author initials='M.' surname='Mathis' fullname='M. Mathis'>
+<organization /></author>
+<date year='2013' month='April' />
+<abstract>
+<t>This document proposes an experiment to increase the permitted TCP initial window (IW) from between 2 and 4 segments, as specified in RFC 3390, to 10 segments with a fallback to the existing recommendation when performance issues are detected.  It discusses the motivation behind the increase, the advantages and disadvantages of the higher initial window, and presents results from several large-scale experiments showing that the higher initial window improves the overall performance of many web services without resulting in a congestion collapse.  The document closes with a discussion of usage and deployment for further experimental purposes recommended by the IETF TCP Maintenance and Minor Extensions (TCPM) working group.</t></abstract></front>
+
+<seriesInfo name='RFC' value='6928' />
+<format type='TXT' octets='56523' target='http://www.rfc-editor.org/rfc/rfc6928.txt' />
+</reference>
+
+
+
+
+    </references>
+
+    <references title='Informative References'>
+
+
+
+
+
+<reference anchor='I-D.ietf-httpbis-p2-semantics'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+
+<author initials='R' surname='Fielding' fullname='Roy Fielding'>
+    <organization />
+</author>
+
+<author initials='J' surname='Reschke' fullname='Julian Reschke'>
+    <organization />
+</author>
+
+<date month='February' day='6' year='2014' />
+
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-p2-semantics-26' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p2-semantics-26.txt' />
+</reference>
+
+
+
+
+    </references>
+
+
+
+  </back>
+</rfc>
+
