@@ -22,9 +22,13 @@ author:
     uri: http://www.mnot.net/
 
 normative:
+  I-D.ietf-httpbis-http2:
   RFC2119:
+  RFC5246:
+  RFC6928:
 
 informative:
+  I-D.ietf-httpbis-p2-semantics:
 
 
 --- abstract
@@ -35,8 +39,9 @@ This document gives advice regarding performance and operability to servers depl
 
 # Introduction
 
-HTTP/2 {{I-D.httbis-http2}} does not change the semantics of HTTP {{}}, but it does substantially
-change how they are mapped to the underlying protocols.
+HTTP/2 {{I-D.ietf-httpbis-http2}} does not change the semantics of HTTP
+{{I-D.ietf-httpbis-p2-semantics}}, but it does substantially change how they are mapped to the
+underlying protocols.
 
 While some of these changes can enhance performance and/or operability on their own, getting the full benefit of the new protocol requires changes beyond the scope of just the Web server.
 
@@ -66,15 +71,15 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 # TCP Configuration
 
 HTTP/2 has been designed to use a single TCP connection, whereas current practice for HTTP/1 is to
-use multiple connections to acheive parallelism (generally, between four and eight).
+use multiple connections to achieve parallelism (generally, between four and eight).
 
 The change has a number of benefits. Using fewer TCP connections to load a Web page consumes less
 server-side resources, and it also reduces the chance of a congestion event caused by a large
-number of connections simulataneously starting (overcoming TCP Slow Start), and returns HTTP to
+number of connections simultaneously starting (overcoming TCP Slow Start), and returns HTTP to
 being a "fair" protocol. Using a single connection also enables better efficiency with header
 compression.
 
-However, using a single connection can also lead to unfavourable performance, as compared with
+However, using a single connection can also lead to unfavorable performance, as compared with
 HTTP/1's use of multiple connections, primarily due to side effects of TCP congestion control.
 
 In particular, a single HTTP/2 connection with an initcwnd of 3 can only have three unacknowledged
@@ -83,7 +88,7 @@ would have as many as 18 packets outstanding. This places HTTP/2 at a significan
 compared to HTTP/1, but can be mitigated by adopting an initcwnd of 10 for HTTP/2 connections, as
 outlined in {{RFC6928}}.
 
-Similarly, a congestion event on a HTTP/2 connection can cause disproprortionate havoc, as compared
+Similarly, a congestion event on a HTTP/2 connection can cause disproportionate havoc, as compared
 to HTTP/1, in those cases where the event only affects a subset of open connections (such as random
 packet loss). TBD: mitigation
 
@@ -99,7 +104,7 @@ large record size can cause packet loss to affect a disproportionate number of s
 individual record not being available until it is complete.
 
 Therefore, small record sizes are preferred for HTTP/2; if a record is sent within a single packet,
-the chances of blocking are minimised. That said, records ought not be much smaller, since this
+the chances of blocking are minimized. That said, records ought not be much smaller, since this
 will increase processing overhead, and in some circumstances (e.g., non-interactive applications,
 downloads), it may be reasonable to have larger record sizes.
 
