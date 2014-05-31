@@ -70,7 +70,7 @@ Many Web sites have a "safe" mode, to assist those who don't want to be exposed
 {{youtube}}, Yahoo! Search {{yahoo}}, Google Search {{google}}, Bing Search
 {{bing}}, and many other services have such a setting.
 
-However, those who wish to have this preference honoured need to go to each Web
+However, those who wish to have this preference honored need to go to each Web
 site in turn, navigate to the appropriate page, (possibly creating an account
 along the way) to get a cookie {{RFC6265}} set in the browser. They would need
 to do this for each browser on every device they use. 
@@ -166,7 +166,7 @@ information about the user, which may be of small assistance in
 "fingerprinting" the user (1 bit of information, to be precise).
 
 Due to its nature, including "safe" in requests does not assure that all
-content will actually be safe; it is only when servers elect to honour it that
+content will actually be safe; it is only when servers elect to honor it that
 content might be "safe".
 
 Even then, a malicious server might adapt content so that it is even less
