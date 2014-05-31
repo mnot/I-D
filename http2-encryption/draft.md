@@ -125,7 +125,7 @@ certificate to see if it has changed over time.
 In order to retain the authority properties of "http" URIs, and as stipulated by
 {{I-D.ietf-httpbis-alt-svc}}, clients MUST NOT use alternative services that identify a host other
 than that of the origin, unless the alternative service itself is strongly authenticated (as the
-origin's host). This is not currently possible for "http" URIs on cleartext transports.
+origin's host).
 
 
 # Interaction with "https" URIs
