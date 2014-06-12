@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+]>
+
+<rfc ipr="trust200902" docName="draft-nottingham-http-version-target-00" category="info">
+
+<?rfc toc="yes"?>
+<?rfc tocindent="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc strict="yes"?>
+<?rfc compact="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+
+  <front>
+    <title abbrev="Version-Target">The Version-Target HTTP Response Header Field</title>
+
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization></organization>
+      <address>
+        
+        
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net/</uri>
+      </address>
+    </author>
+
+    <date year="2014"/>
+
+    <area>General</area>
+    
+    <keyword>Internet-Draft</keyword>
+
+    <abstract>
+
+
+<t>The 505 (HTTP Version Not Supported) status code does not clearly indicate, on its own, the scope
+of the assertion that the HTTP version in use isn’t supported. This document introduces a new
+header field, “Version-Target” to indicate what it applies to, as well as what protocol version(s)
+to use.</t>
+
+
+
+    </abstract>
+
+
+  </front>
+
+  <middle>
+
+
+<section anchor="introduction" title="Introduction">
+
+<t>The semantics of the 505 (Version Not Supported) status code are defined by <xref target="RFC7231"/> as:</t>
+
+<figure><artwork><![CDATA[
+The 505 (HTTP Version Not Supported) status code indicates that the 
+server does not support, or refuses to support, the major version of 
+HTTP that was used in the request message. The server is indicating 
+that it is unable or unwilling to complete the request using the same 
+major version as the client, as described in Section 2.6 of 
+[RFC7230], other than with this error message. The server should 
+generate a representation for the 505 response that describes why 
+that version is not supported and what other protocols are supported 
+by that server.
+]]></artwork></figure>
+
+<t>This document defines a new HTTP response header, “Version-Target”, to be used in 505 responses
+to specify the protocol version(s) that can be used, what resource(s) that assertion applies to, and how long it is valid for (leveraging Cache-Control).</t>
+
+<section anchor="use-case-tls-client-authentication" title="Use Case: TLS Client Authentication">
+
+<t>While Version-Target might have a variety of applications, the primary use case for them is the
+signalling that a resource (or set of resources) requires TLS Client Authentication in HTTP/2
+<xref target="I-D.ietf-httpbis-http2"/>. Since TLS renegotiation has been forbidden in that protocol, a means of
+signalling that a particular request should be made on a HTTP/1.1 connection is needed, so that a
+client can use that protocol, allowing the server to perform renegotiation to initiate client
+authentication.</t>
+
+</section>
+<section anchor="notational-conventions" title="Notational Conventions">
+
+<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”,
+“RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in
+<xref target="RFC2119"/>.</t>
+
+<t>Furthermore, this document uses the Augmented BNF defined in <xref target="RFC5234"/>, along with the #rule
+list extension defined in <xref target="RFC7230"/>, Section 7.</t>
+
+</section>
+</section>
+<section anchor="the-version-target-http-header-field" title="The Version-Target HTTP Header Field">
+
+<t>The Version-Target HTTP Header field, when occurring in 505 (Version Not Supported) responses,
+asserts the version or versions of HTTP that are supported, and what resource(s) the assertion
+applies to, and optionally how long it lasts.</t>
+
+<figure><artwork><![CDATA[
+Version-Target = 1*( OWS ";" OWS parameter )
+]]></artwork></figure>
+
+<t>This document specifies the following version-target parameters:</t>
+
+<t><list style='symbols'>
+  <t>“scope” - one of “origin”, “resource” or “prefix” (see below)</t>
+  <t>“version-id” - a space-separated list of ALPN protocol identifiers <xref target="I-D.ietf-tls-applayerprotoneg"/>.</t>
+</list></t>
+
+<t>Additionally, when Version-Target is in use, it indicates that the Cache-Control header conveys a
+cache policy that is applicable to this information (as well as the response itself).</t>
+
+<t>For example:</t>
+
+<figure><artwork><![CDATA[
+HTTP/1.1 505 Version Not Supported
+Version-Target: scope="prefix", version-id="h2"
+Cache-Control: max=age=60
+]]></artwork></figure>
+
+<t>This response indicates that the requested resource and its children (i.e., resources sharing a
+common origin that have the requested resources’s path as a prefix) cannot be reached over the
+current protocol version, and that for the next 60 seconds, the client can successfully request
+them using the “h2” protocol (in this case, HTTP/2).</t>
+
+<section anchor="version-target-scopes" title="Version-Target Scopes">
+
+<t>This document defines the following values for the “scope” parameter;</t>
+
+<t><list style='symbols'>
+  <t>“origin” - indicates that the version-target applies to all resources on the origin of the request</t>
+  <t>“resource” - indicates that the version-target applies to the requested resource only (i.e., matching origin, path, and query)</t>
+  <t>“prefix” - indicates that the version-target applies to resources when the origin matches and the requested resource’s path segments are a prefix. For example, if the requested resource’s path is “/foo” then “/foo”, “/foo?bar”, “/foo/bar”, “/foo/bar/baz” would share the version-target, while “/bar”,  “/foobar” and “/bar/foo” would not.</t>
+</list></t>
+
+</section>
+</section>
+<section anchor="security-considerations" title="Security Considerations">
+
+<t>Version-Target can be used to effect a downgrade attack by a man-in-the-middle. When recieved over an insecure channel, it SHOULD be ignored.</t>
+
+<t>Version-Target can also be used to effect a downgrade attack by a party that has the ability to inject response headers on the same origin. The “origin” scope in particular is able to be misused, and SHOULD be ignored unless the security properties of the new protocol are equal to or better than the existing one.</t>
+
+</section>
+
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+
+
+
+
+
+<reference anchor='RFC2119'>
+
+<front>
+<title abbrev='RFC Key Words'>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='Scott Bradner'>
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<street>Cambridge</street>
+<street>MA 02138</street></postal>
+<phone>- +1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year='1997' month='March' />
+<area>General</area>
+<keyword>keyword</keyword>
+<abstract>
+<t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list>
+<t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+<t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t></abstract></front>
+
+<seriesInfo name='BCP' value='14' />
+<seriesInfo name='RFC' value='2119' />
+<format type='TXT' octets='4723' target='http://www.rfc-editor.org/rfc/rfc2119.txt' />
+<format type='HTML' octets='17970' target='http://xml.resource.org/public/rfc/html/rfc2119.html' />
+<format type='XML' octets='5777' target='http://xml.resource.org/public/rfc/xml/rfc2119.xml' />
+</reference>
+
+
+
+<reference anchor='RFC5234'>
+
+<front>
+<title>Augmented BNF for Syntax Specifications: ABNF</title>
+<author initials='D.' surname='Crocker' fullname='D. Crocker'>
+<organization /></author>
+<author initials='P.' surname='Overell' fullname='P. Overell'>
+<organization /></author>
+<date year='2008' month='January' />
+<abstract>
+<t>Internet technical specifications often need to define a formal syntax.  Over the years, a modified version of Backus-Naur Form (BNF), called Augmented BNF (ABNF), has been popular among many Internet specifications.  The current specification documents ABNF.  It balances compactness and simplicity with reasonable representational power.  The differences between standard BNF and ABNF involve naming rules, repetition, alternatives, order-independence, and value ranges.  This specification also supplies additional rule definitions and encoding for a core lexical analyzer of the type common to several Internet specifications. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='STD' value='68' />
+<seriesInfo name='RFC' value='5234' />
+<format type='TXT' octets='26359' target='http://www.rfc-editor.org/rfc/rfc5234.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7230'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7230' />
+<format type='TXT' octets='205947' target='http://www.rfc-editor.org/rfc/rfc7230.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7231'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7231' />
+<format type='TXT' octets='235053' target='http://www.rfc-editor.org/rfc/rfc7231.txt' />
+</reference>
+
+
+
+<reference anchor='I-D.ietf-tls-applayerprotoneg'>
+<front>
+<title>Transport Layer Security (TLS) Application Layer Protocol Negotiation Extension</title>
+
+<author initials='S' surname='Friedl' fullname='Stephan Friedl'>
+    <organization />
+</author>
+
+<author initials='A' surname='Popov' fullname='Andrey Popov'>
+    <organization />
+</author>
+
+<author initials='A' surname='Langley' fullname='Adam Langley'>
+    <organization />
+</author>
+
+<author initials='S' surname='Emile' fullname='Stephan Emile'>
+    <organization />
+</author>
+
+<date month='March' day='3' year='2014' />
+
+<abstract><t>This document describes a Transport Layer Security (TLS) extension for application layer protocol negotiation within the TLS handshake. For instances in which the TLS connection is established over a well known TCP or UDP port not associated with the desired application layer protocol, this extension allows the application layer to negotiate which protocol will be used within the TLS connection.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-ietf-tls-applayerprotoneg-05' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-ietf-tls-applayerprotoneg-05.txt' />
+</reference>
+
+
+
+
+    </references>
+
+    <references title='Informative References'>
+
+
+
+
+
+<reference anchor='I-D.ietf-httpbis-http2'>
+<front>
+<title>Hypertext Transfer Protocol version 2</title>
+
+<author initials='M' surname='Belshe' fullname='Mike Belshe'>
+    <organization />
+</author>
+
+<author initials='R' surname='Peon' fullname='Roberto Peon'>
+    <organization />
+</author>
+
+<author initials='M' surname='Thomson' fullname='Martin Thomson'>
+    <organization />
+</author>
+
+<date month='April' day='23' year='2014' />
+
+<abstract><t>This specification describes an optimized expression of the syntax of the Hypertext Transfer Protocol (HTTP).  HTTP/2 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent messages on the same connection.  It also introduces unsolicited push of representations from servers to clients.  This document is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-http2-12' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-12.txt' />
+</reference>
+
+
+
+
+    </references>
+
+
+
+  </back>
+</rfc>
+
