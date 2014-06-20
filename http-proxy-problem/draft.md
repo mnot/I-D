@@ -100,7 +100,7 @@ Left unchecked, this escalation can erode the value of the Web itself.
 Therefore, {{principles}} proposes straw-man principals to base further
 discussion upon.
 
-Finally, {{further}} proposes some areas of technical investigation that may
+Finally, {{further}} proposes some areas of technical investigation that might
 yield solutions (or at least mitigations) for some of these problems.
 
 Note that this document is explicitly about "proxies" in the sense that HTTP
@@ -208,11 +208,11 @@ is used within and how it is performed. Many feel that, without the explicit
 consent of either the end user or the origin server, a proxy that modifies
 content violates their relationship, thereby degrading trust in the Web overall.
 
-However, it should be noted that {{RFC7230}} explicitly allows
+However, it should be noted that Section 5.7.2 of {{RFC7230}} explicitly allows
 "non-transparent" proxies that modify content in certain ways. Such proxies are
 required to honor the "no-transform" directive, giving both user agents and
-origin servers a mechanism to "opt out" of modifications; however, it is not
-technically enforced.
+origin servers a mechanism to "opt out" of modifications ({{RFC7234}}, Section
+5.2.1.6); however, it is not technically enforced.
 
 {{W3C.NOTE-ct-guidelines-20101026}} is a product of the W3C Mobile Web Best
 Practices Working Group that attempts to set guidelines for content
@@ -305,7 +305,7 @@ intercepting proxy. This makes it difficult to support features like
 proxy authentication, as the unexpected status code breaks many clients (e.g.,
 non-interactive applications like software installers).
 
-In addition, as adoption of multi-path TCP (MPTCP){{RFC6824}} increases, the
+In addition, as adoption of multi-path TCP (MPTCP) {{RFC6824}} increases, the
 ability of intercepting proxies to offer a consistent service degrades.
 
 
@@ -333,14 +333,14 @@ proxy implements both a server and a client, any limitations or bugs in their
 implementation impact the protocol's use.
 
 For example, HTTP has a defined mechanism for upgrading the protocol of a
-connection, to aid in the deployment of new versions of HTTP (such as HTTP/2.0)
+connection, to aid in the deployment of new versions of HTTP (such as HTTP/2)
 or completely different protocol (e.g., {{RFC6455}}). 
 
 However, operational experience has shown that a significant number of proxy
 implementations do not correctly implement it, leading to dangerous situations
 where two ends of a HTTP connection think different protocols are being spoken.
 
-Anothr example is the Expect/100-continue mechanism in HTTP/1.1, which is often
+Another example is the Expect/100-continue mechanism in HTTP/1.1, which is often
 incorrectly implemented. Likewise, differences in support for trailers limits
 protocol extensions.
 
@@ -363,10 +363,10 @@ Secondly, it removes the opportunity for the proxy to inform the user agent of
 relevant information; for example, conditions of access, access denials, login
 interfaces, and so on. User Agents currently do not display any feedback from
 proxy, even in the CONNECT response (e.g., a 4xx or 5xx error), limiting their
-ability to have inform users of what's going on.
+ability to have informed users of what's going on.
 
 Finally, it removes the opportunity for services provided by a proxy that the
-end user may wish to opt into. For example, consider when a remote village
+end user might wish to opt into. For example, consider when a remote village
 shares a proxy server to cache content, thereby helping to overcome the
 limitations of their Internet connection. TLS-protected HTTP traffic cannot be
 cached by intermediaries, removing much of the benefit of the Web to what is
@@ -378,7 +378,7 @@ flows. This represents a serious degradation in the trust infrastructure of the
 Web.
 
 Worse is the situation where proxies provide a certificate where they inure the
-user to a certificate warning that they must then ignore in order to receive
+user to a certificate warning that they then need to ignore in order to receive
 service.
 
 
@@ -463,7 +463,7 @@ The "no", however, needs to be explicit, and explicitly from the proxy.
 ## Changes Need to be Detectable
 
 Any changes to the message body, request URI, method, status code, or
-representation header fields of an HTTP message needs to be detectable by the
+representation header fields of an HTTP message need to be detectable by the
 origin server or user agent, as appropriate, if they desire it.
 
 This allows a proxy to be trusted, but its integrity to be verified.
@@ -483,12 +483,12 @@ policy, report that access to content has been denied, and so on.
 
 Currently, HTTP has poor facilities for doing so. The proxy authentication
 mechanism is extremely limited, and while there are a few status codes that are
-define as being from a proxy rather than the origin, they do not cover all
+defined as being from a proxy rather than the origin, they do not cover all
 necessary situations. 
 
-The Warning header field was designed as a very limited form of communication
-between proxies and end users, but it has not been widely adopted, nor exposed
-by User Agents.
+The Warning header field ({{RFC7234}}, Section 5.5) was designed as a very
+limited form of communication between proxies and end users, but it has not
+been widely adopted, nor exposed by User Agents.
 
 Importantly, proxies also need a limited communication channel when TLS is in
 use, for similar purposes.
@@ -546,8 +546,8 @@ their audience.
 
 ## RFC2119 Doesn't Define Reality
 
-It's very tempting for a committee to proclaim that proxies MUST do this and
-SHOULD NOT do that, but the reality is that the proxies, like any other actor
+It's very tempting for a committee to proclaim that proxies "MUST" do this and
+"SHOULD NOT" do that, but the reality is that the proxies, like any other actor
 in a networked system, will do what they can, not what they're told to do, if
 they have an incentive to do it.
 
@@ -606,11 +606,11 @@ carefully considered.
 HTTP currently defines two status codes that are explicitly generated by a
 proxy:
 
-* 504 Gateway Timeout {{RFC7231}} - when a proxy (or gateway) times out going
-  forward
+* 504 Gateway Timeout ({{RFC7231}}, Section 6.6.5) - when a proxy (or gateway)
+  times out going forward
 
-* 511 Network Authentication Required {{RFC6585}} - when authentication
-  information is necessary to access the network
+* 511 Network Authentication Required ({{RFC6585}}, Section 6) - when
+  authentication information is necessary to access the network
 
 It might be interesting to discuss whether a separate user experience can be
 formed around proxy-specific status codes, along with the definition of new
@@ -639,12 +639,13 @@ user can choose whether to trust the proxy.
 
 Currently, it is possible to exploit the mismatched incentives and other flaws
 in the CA system to cause a browser to trust a proxy as authoritative for a
-"https://" URI without full user knowledge. This needs to be remedied; otherwise, proxies will continue to man-in-the-middle TLS.
+"https://" URI without full user knowledge. This needs to be remedied;
+otherwise, proxies will continue to man-in-the-middle TLS.
 
 
 ## HTTP Signatures
 
-Signatures for HTTP content -- both requests and responses -- has been
+Signatures for HTTP content -- both requests and responses -- have been
 discussed on and off for some time.
 
 Of particular interest here, signed responses would allow a user-agent to
