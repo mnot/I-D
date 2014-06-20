@@ -113,6 +113,17 @@ This document defines the following values for the "scope" parameter;
 
 * "prefix" - indicates that the over-version applies to resources when the origin matches and the requested resource's path segments are a prefix. For example, if the requested resource's path is "/foo" then "/foo", "/foo?bar", "/foo/bar", "/foo/bar/baz" would share the over-version, while "/bar",  "/foobar" and "/bar/foo" would not.
 
+
+# IANA Considerations
+
+This document registers a new HTTP header field, "Over-Version", into the Permanent Message Header Field Name Registry.
+
+* Header Field Name: Over-Version
+* Protocol: HTTP
+* Status: standard
+* Reference: [this document]
+
+
 # Security Considerations
 
 Over-Version can be used to effect a downgrade attack by a man-in-the-middle. When received over an insecure channel, it SHOULD be ignored.
