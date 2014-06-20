@@ -35,9 +35,8 @@ informative:
 --- abstract
 
 The 505 (HTTP Version Not Supported) status code does not clearly indicate, on its own, the scope
-of the assertion that the HTTP version in use isn't supported. This document introduces a new
-header field, "Over-Version" to indicate what it applies to, as well as what protocol version(s)
-to use.
+of the assertion, nor the version(s) supported. This document introduces a new header field,
+"Over-Version", to indicate this information.
 
 --- middle
 
@@ -99,8 +98,7 @@ For example:
     Over-Version: scope="prefix", version-id="h2"
     Cache-Control: max=age=60
     
-This response indicates that the requested resource and its children (i.e., resources sharing a
-common origin that have the requested resources's path as a prefix) cannot be reached over the
+This response indicates that the requested resource and its children cannot be reached over the
 current protocol version, and that for the next 60 seconds, the client can successfully request
 them using the "h2" protocol (in this case, HTTP/2).
 
@@ -120,8 +118,6 @@ This document defines the following values for the "scope" parameter;
 Over-Version can be used to effect a downgrade attack by a man-in-the-middle. When received over an insecure channel, it SHOULD be ignored.
 
 Over-Version can also be used to effect a downgrade attack by a party that has the ability to inject response headers on the same origin. The "origin" scope in particular is able to be misused, and SHOULD be ignored unless the security properties of the new protocol are equal to or better than the existing one.
-
-
 
 
 --- back
