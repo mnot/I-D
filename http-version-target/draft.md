@@ -1,7 +1,7 @@
 ---
-title: The Version-Target HTTP Response Header Field
-abbrev: Version-Target
-docname: draft-nottingham-http-version-target-00
+title: The Over-Version HTTP Response Header Field
+abbrev: Over-Version
+docname: draft-nottingham-http-over-version-00
 date: 2014
 category: info
 
@@ -36,7 +36,7 @@ informative:
 
 The 505 (HTTP Version Not Supported) status code does not clearly indicate, on its own, the scope
 of the assertion that the HTTP version in use isn't supported. This document introduces a new
-header field, "Version-Target" to indicate what it applies to, as well as what protocol version(s)
+header field, "Over-Version" to indicate what it applies to, as well as what protocol version(s)
 to use.
 
 --- middle
@@ -55,15 +55,15 @@ The semantics of the 505 (Version Not Supported) status code are defined by {{RF
     that version is not supported and what other protocols are supported 
     by that server.
 
-This document defines a new HTTP response header, "Version-Target", to be used in 505 responses
+This document defines a new HTTP response header, "Over-Version", to be used in 505 responses
 to specify the protocol version(s) that can be used, what resource(s) that assertion applies to, and how long it is valid for (leveraging Cache-Control).
 
 ## Use Case: TLS Client Authentication
 
-While Version-Target might have a variety of applications, the primary use case for them is the
-signalling that a resource (or set of resources) requires TLS Client Authentication in HTTP/2
+While Over-Version might have a variety of applications, the primary use case for them is the
+signaling that a resource (or set of resources) requires TLS Client Authentication in HTTP/2
 {{I-D.ietf-httpbis-http2}}. Since TLS renegotiation has been forbidden in that protocol, a means of
-signalling that a particular request should be made on a HTTP/1.1 connection is needed, so that a
+signaling that a particular request should be made on a HTTP/1.1 connection is needed, so that a
 client can use that protocol, allowing the server to perform renegotiation to initiate client
 authentication.
 
@@ -76,27 +76,27 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 Furthermore, this document uses the Augmented BNF defined in {{RFC5234}}, along with the #rule
 list extension defined in {{RFC7230}}, Section 7.
 
-# The Version-Target HTTP Header Field
+# The Over-Version HTTP Header Field
 
-The Version-Target HTTP Header field, when occurring in 505 (Version Not Supported) responses,
+The Over-Version HTTP Header field, when occurring in 505 (Version Not Supported) responses,
 asserts the version or versions of HTTP that are supported, and what resource(s) the assertion
 applies to, and optionally how long it lasts.
 
-    Version-Target = 1*( OWS ";" OWS parameter )
+    Over-Version = 1*( OWS ";" OWS parameter )
 
-This document specifies the following version-target parameters:
+This document specifies the following over-version parameters:
 
 * "scope" - one of "origin", "resource" or "prefix" (see below)
 
 * "version-id" - a space-separated list of ALPN protocol identifiers {{I-D.ietf-tls-applayerprotoneg}}.
 
-Additionally, when Version-Target is in use, it indicates that the Cache-Control header conveys a
+Additionally, when Over-Version is in use, it indicates that the Cache-Control header conveys a
 cache policy that is applicable to this information (as well as the response itself).
     
 For example:
 
     HTTP/1.1 505 Version Not Supported
-    Version-Target: scope="prefix", version-id="h2"
+    Over-Version: scope="prefix", version-id="h2"
     Cache-Control: max=age=60
     
 This response indicates that the requested resource and its children (i.e., resources sharing a
@@ -105,21 +105,21 @@ current protocol version, and that for the next 60 seconds, the client can succe
 them using the "h2" protocol (in this case, HTTP/2).
 
 
-## Version-Target Scopes
+## Over-Version Scopes
 
 This document defines the following values for the "scope" parameter;
 
-* "origin" - indicates that the version-target applies to all resources on the origin of the request
+* "origin" - indicates that the over-version applies to all resources on the origin of the request
 
-* "resource" - indicates that the version-target applies to the requested resource only (i.e., matching origin, path, and query)
+* "resource" - indicates that the over-version applies to the requested resource only (i.e., matching origin, path, and query)
 
-* "prefix" - indicates that the version-target applies to resources when the origin matches and the requested resource's path segments are a prefix. For example, if the requested resource's path is "/foo" then "/foo", "/foo?bar", "/foo/bar", "/foo/bar/baz" would share the version-target, while "/bar",  "/foobar" and "/bar/foo" would not.
+* "prefix" - indicates that the over-version applies to resources when the origin matches and the requested resource's path segments are a prefix. For example, if the requested resource's path is "/foo" then "/foo", "/foo?bar", "/foo/bar", "/foo/bar/baz" would share the over-version, while "/bar",  "/foobar" and "/bar/foo" would not.
 
 # Security Considerations
 
-Version-Target can be used to effect a downgrade attack by a man-in-the-middle. When recieved over an insecure channel, it SHOULD be ignored.
+Over-Version can be used to effect a downgrade attack by a man-in-the-middle. When received over an insecure channel, it SHOULD be ignored.
 
-Version-Target can also be used to effect a downgrade attack by a party that has the ability to inject response headers on the same origin. The "origin" scope in particular is able to be misused, and SHOULD be ignored unless the security properties of the new protocol are equal to or better than the existing one.
+Over-Version can also be used to effect a downgrade attack by a party that has the ability to inject response headers on the same origin. The "origin" scope in particular is able to be misused, and SHOULD be ignored unless the security properties of the new protocol are equal to or better than the existing one.
 
 
 
