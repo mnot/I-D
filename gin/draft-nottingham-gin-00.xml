@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+]>
+
+<rfc ipr="trust200902" docName="draft-nottingham-gin-00" category="info">
+
+<?rfc toc="yes"?>
+<?rfc tocindent="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc strict="yes"?>
+<?rfc compact="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+
+  <front>
+    <title abbrev="GIN">Granular Information about Networks</title>
+
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization></organization>
+      <address>
+        
+        
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net/</uri>
+      </address>
+    </author>
+
+    <date year="2014"/>
+
+    <area>General</area>
+    
+    <keyword>Internet-Draft</keyword>
+
+    <abstract>
+
+
+<t>Protocol endpoints often want to adapt their behavior based upon the current
+properties of the network path, but have limited information available to aid
+these decisions. This document motivates and proposes a protocol that makes
+this information available.</t>
+
+
+
+    </abstract>
+
+
+  </front>
+
+  <middle>
+
+
+<section anchor="introduction" title="Introduction">
+
+<t>Protocol endpoints often want to adapt their behavior based upon the current properties of the
+network path.</t>
+
+<t>For example, it has become common practice for HTTP <xref target="RFC7230"/> servers to adapt the responses they
+give based upon the IP address of the client, client “fingerprinting” (e.g., using the User-Agent
+request header field), and other properties.</t>
+
+<t>Likewise, client using HTTP sometimes adapt their behavior in a similar fashion; for example, a
+mobile client on a 3G network might download a different video file then if it were on a wifi
+network. Often, the goal of these adaptations is to improve user experience by making content more
+suitable for the properties of the network it is traversing, whilst utilizing the network resources
+more optimally.</t>
+
+<t>There are currently a number of sources of information to inform these decisions, but they share a
+few limitations. For example, it is possible to measure delay to a given server using ICMP, but the
+results are ephemeral, and may change if a different server has changed.</t>
+
+<t>There have also been attempts to provide relevant information in APIs; for example, <xref target="netinfo"/>.
+Doing so has proven to be difficult, because of the limited information available to the client.</t>
+
+<t>To address these issues, network operators have been deploying infrastructure that uses the
+information available to them to modify content; e.g., <xref target="bytemobile"/>, <xref target="verizon"/>, <xref target="syniverse"/>,
+<xref target="flashnet"/>.</t>
+
+<t>However, at the same time, encryption has become more prevalent on the Internet, with many
+prominent (and heavily traffic’d) Web sites going HTTPS-only. This frustrates attempts to adapt
+content in the network.</t>
+
+<t>This document proposes an alternative approach. By making the information that the network
+operators have available to the endpoints, it allows them to make more informed choices about
+content, thereby allowing the user experience to be improved and the network to be used more
+optimally without requiring that the end-to-end nature of encryption (e.g., in HTTPS) to be
+compromised.</t>
+
+<section anchor="notational-conventions" title="Notational Conventions">
+
+<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”,
+“RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in
+<xref target="RFC2119"/>.</t>
+
+</section>
+</section>
+<section anchor="requirements" title="Requirements">
+
+<t>To be useful to endpoints, the information a network exposes needs to be:</t>
+
+<t><list style='symbols'>
+  <t>Specific to the client - General information about network properties is often an improvement over current practice, but to be truly useful, it should be able to be tailored to a specific client IP address.</t>
+  <t>Reasonably current - Information from ten minutes ago is often useless; when necessary, an endpoint ought to be able to get information that is fresh (on the granularity of a few seconds).</t>
+  <t>Scalable - The overhead of conveying information to clients ought to be minimal, and it needs to be usable on the scale of a large Web site.</t>
+  <t>Private - The protocol ought not expose details of private networks, or any personally identifying information beyond that already available.</t>
+</list></t>
+
+<t>A protocol for exposing this information necessarily must choose the scope of its applicability.
+Due to the nature of the Internet, it is not practical to meet the goals above for any given pair
+of IP addresses; the permutations are impractical, and discovering meaningful information on this
+scale is likewise unlikely.</t>
+
+<t>However, it is comparatively easy for a network operator to expose what it considers to be the
+“last mile” properties of an IP address. For example, an ISP providing ADSL access to its
+subscribers could advertise the properties of those end links, whereas a mobile operator could use
+the information available to advertise the properties of individual subscriber handset IP addresses
+(whether they be globally routable, or behind NAT).</t>
+
+<t>Furthermore, a protocol for such information should expose a minimum of:</t>
+
+<t><list style='symbols'>
+  <t>Bandwidth - an approximation of the bandwidth currently unused on the “last mile” connection, in bits per second.</t>
+  <t>Delay - an approximation of delay seen on the “last mile” connection, in milliseconds.</t>
+  <t>Packet Loss - the current packet loss seen on “last mile” connections from the client, expressed as a percentage.</t>
+</list></t>
+
+<t>Additional metrics (including some that are operator-specific) might also be useful, and ought to
+be accommodated.</t>
+
+<t>This information, in turn, could be used by Web servers, browsers and other tools to optimize both
+the responses and requests made. For example, MPEG-DASH clients could use the information about
+their own address to better choose an encoding; servers could re-encode images and HTML to account
+for slow networks, based upon the requesting client’s IP address.</t>
+
+</section>
+<section anchor="granular-information-about-networks-straw-men" title="Granular Information about Networks: Straw-Men">
+
+<t>NOTE: the technical mechanisms discussed are straw-men, and might not be the “real” approach.
+Readers are encouraged to consider and discuss the overall viability of the idea expressed above
+before focusing too much upon the details below.</t>
+
+<section anchor="dns" title="DNS">
+
+<t>One approach would be to using DNS <xref target="RFC1035"/> to convey this information. This has
+several advantages:</t>
+
+<t><list style='symbols'>
+  <t>DNS works at the granularity of an IP address</t>
+  <t>Reverse DNS for a public IP address is often administered by the access network that provisions it</t>
+  <t>DNS is lightweight and has a built-in caching mechanism</t>
+</list></t>
+
+<t>This would require a new RRTYPE to be defined to carry the information outlined above.</t>
+
+</section>
+<section anchor="http" title="HTTP">
+
+<t>It might be possible to provide such information with a lightweight HTTP <xref target="RFC7230"/> service
+exposed by the network operator. However, discovery of that service would still need to be
+established; this might be possible through DNS.</t>
+
+<t>HTTP offers built-in caching, and is familiar to many developers. However, it has a higher
+overhead, as compared to DNS.</t>
+
+</section>
+<section anchor="tls" title="TLS">
+
+<t>Another approach would be to add another channel in TLS <xref target="RFC5246"/> that does not form part of teh encrypted
+session, to allow the network to annotate connections directly.</t>
+
+<t>However, this is likely to be both technically invasive, and seen as a layer violation / security
+heresy.</t>
+
+</section>
+<section anchor="tcp" title="TCP">
+
+<t>Yet another approach would be to allow simliar mechanisms in TCP <xref target="RFC0793"/>. However, it’s even
+less likely that this would be technically feasible or politically possible.</t>
+
+</section>
+</section>
+<section anchor="security-considerations" title="Security Considerations">
+
+<t>This proposal is only exploratory now, but there are already clearly evident security and privacy implications, including:</t>
+
+<t><list style='symbols'>
+  <t>Whether the information exposed can be used to identify a user</t>
+  <t>Whether denial of service attacks are possible using this mechanism</t>
+</list></t>
+
+</section>
+
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+
+
+
+
+
+<reference anchor='RFC2119'>
+
+<front>
+<title abbrev='RFC Key Words'>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='Scott Bradner'>
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<street>Cambridge</street>
+<street>MA 02138</street></postal>
+<phone>- +1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year='1997' month='March' />
+<area>General</area>
+<keyword>keyword</keyword>
+<abstract>
+<t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list>
+<t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+<t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t></abstract></front>
+
+<seriesInfo name='BCP' value='14' />
+<seriesInfo name='RFC' value='2119' />
+<format type='TXT' octets='4723' target='http://www.rfc-editor.org/rfc/rfc2119.txt' />
+<format type='HTML' octets='17491' target='http://xml.resource.org/public/rfc/html/rfc2119.html' />
+<format type='XML' octets='5777' target='http://xml.resource.org/public/rfc/xml/rfc2119.xml' />
+</reference>
+
+
+
+<reference anchor='RFC1035'>
+
+<front>
+<title abbrev='Domain Implementation and Specification'>Domain names - implementation and specification</title>
+<author initials='P.' surname='Mockapetris' fullname='P. Mockapetris'>
+<organization>USC/ISI</organization>
+<address>
+<postal>
+<street>4676 Admiralty Way</street>
+<city>Marina del Rey</city>
+<region>CA</region>
+<code>90291</code>
+<country>US</country></postal>
+<phone>+1 213 822 1511</phone></address></author>
+<date year='1987' day='1' month='November' /></front>
+
+<seriesInfo name='STD' value='13' />
+<seriesInfo name='RFC' value='1035' />
+<format type='TXT' octets='125626' target='http://www.rfc-editor.org/rfc/rfc1035.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7230'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7230' />
+<format type='TXT' octets='205947' target='http://www.rfc-editor.org/rfc/rfc7230.txt' />
+</reference>
+
+
+
+
+    </references>
+
+    <references title='Informative References'>
+
+
+
+
+
+<reference anchor='RFC0793'>
+
+<front>
+<title abbrev='Transmission Control Protocol'>Transmission Control Protocol</title>
+<author initials='J.' surname='Postel' fullname='Jon Postel'>
+<organization>University of Southern California (USC)/Information Sciences Institute</organization>
+<address>
+<postal>
+<street>4676 Admiralty Way</street>
+<city>Marina del Rey</city>
+<region>CA</region>
+<code>90291</code>
+<country>US</country></postal></address></author>
+<date year='1981' day='1' month='September' /></front>
+
+<seriesInfo name='STD' value='7' />
+<seriesInfo name='RFC' value='793' />
+<format type='TXT' octets='172710' target='http://www.rfc-editor.org/rfc/rfc793.txt' />
+</reference>
+
+
+
+<reference anchor='RFC5246'>
+
+<front>
+<title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
+<author initials='T.' surname='Dierks' fullname='T. Dierks'>
+<organization /></author>
+<author initials='E.' surname='Rescorla' fullname='E. Rescorla'>
+<organization /></author>
+<date year='2008' month='August' />
+<abstract>
+<t>This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications security over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='5246' />
+<format type='TXT' octets='222395' target='http://www.rfc-editor.org/rfc/rfc5246.txt' />
+</reference>
+
+
+<reference anchor="netinfo" target="http://www.w3.org/TR/netinfo-api/">
+  <front>
+    <title>The Network Information API</title>
+    <author >
+      <organization>W3C</organization>
+    </author>
+    <date year="2014"/>
+  </front>
+</reference>
+<reference anchor="bytemobile" target="http://www.citrix.com/products/bytemobile-adaptive-traffic-management/overview.html">
+  <front>
+    <title>ByteMobile Adaptive Traffic Management</title>
+    <author >
+      <organization>Citrix</organization>
+    </author>
+    <date year="2014"/>
+  </front>
+</reference>
+<reference anchor="verizon" target="http://www.vzwdevelopers.com/aims/downloads/wapoptout/Optimized_View_for_Mobile_Website_Developers_Guide.pdf">
+  <front>
+    <title>VERIZON WIRELESS OPTIMIZED VIEW FOR MOBILE WEB</title>
+    <author >
+      <organization>Verizon</organization>
+    </author>
+    <date year="2014"/>
+  </front>
+</reference>
+<reference anchor="syniverse" target="http://www.syniverse.com/products-services/product/Hosted-Data-Optimization">
+  <front>
+    <title>Hosted Data Optimization</title>
+    <author >
+      <organization>Syniverse</organization>
+    </author>
+    <date year="2014"/>
+  </front>
+</reference>
+<reference anchor="flashnet" target="http://www.flashnetworks.com/Optimization-Overview">
+  <front>
+    <title>Optimization Overview</title>
+    <author >
+      <organization>Flash Networks</organization>
+    </author>
+    <date year="2014"/>
+  </front>
+</reference>
+
+
+    </references>
+
+
+
+  </back>
+</rfc>
+
