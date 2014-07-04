@@ -581,11 +581,11 @@ be deployed, and work to find ways to make their operation both more verifiable
 and unnecessary (or at least legitimate).
 
 
-## Improving Proxy.Pac and WPAD
+## Improving Proxy.Pac
 
-Many of the flaws in proxy.pac and WPAD can be fixed by careful specification
+Many of the flaws in proxy.pac can be fixed by careful specification
 and standardization, with active participation by both implementers and those
-that deploy them.
+that deploy it.
 
 
 ## TLS Errors for Proxies
