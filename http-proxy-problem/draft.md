@@ -569,18 +569,6 @@ Finally, this section lists some areas of potential future investigation,
 bearing the principles suggested above in mind.
 
 
-## Living with Interception
-
-The IETF has long fought against interception proxies, as they are
-indistinguishable from Man-In-The-Middle attacks. Nevertheless, they persist as
-the preferred method for interposing proxies in many networks.
-
-Unless another mechanism can be found or defined that offers equally attractive
-properties to network operators, we ought to consider that they'll continue to
-be deployed, and work to find ways to make their operation both more verifiable
-and unnecessary (or at least legitimate).
-
-
 ## Improving Proxy.Pac
 
 Many of the flaws in proxy.pac can be fixed by careful specification
