@@ -305,6 +305,9 @@ intercepting proxy. This makes it difficult to support features like
 proxy authentication, as the unexpected status code breaks many clients (e.g.,
 non-interactive applications like software installers).
 
+Furthermore, interception is a "layer violation"; i.e., misusing lower-layer
+protocols to enforce a higher-layer (often expressed as "layer 8") requirement.
+
 In addition, as adoption of multi-path TCP (MPTCP) {{RFC6824}} increases, the
 ability of intercepting proxies to offer a consistent service degrades.
 
