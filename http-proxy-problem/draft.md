@@ -626,15 +626,6 @@ can legitimately insert itself into communication, its identity needs to be
 verifiable.
 
 
-## TLS for HTTP URIs
-
-To allow users to tunnel any request through proxies without revealing its
-contents, it must be possible to use TLS for HTTP URIs.
-
-Proxies can then choose whether to allow such tunneled traffic, and if not, the
-user can choose whether to trust the proxy.
-
-
 ## Improving Trust
 
 Currently, it is possible to exploit the mismatched incentives and other flaws
