@@ -649,7 +649,7 @@ Plenty of them, I suspect.
 
 This document benefits from conversations and feedback from many people,
 including Amos Jeffries, Willy Tarreau, Patrick McManus, Roberto Peon, Guy
-Podjarny, Eliot Lear, Brad Hill and Martin Nilsson.
+Podjarny, Eliot Lear, Brad Hill, Martin Nilsson and Julian Reschke.
 
 
 --- back
