@@ -37,10 +37,9 @@
     <abstract>
 
 
-<t>Protocol endpoints often want to adapt their behavior based upon the current
-properties of the network path, but have limited information available to aid
-these decisions. This document motivates and proposes a protocol that makes
-this information available.</t>
+<t>Protocol endpoints often want to adapt their behavior based upon the current properties of the
+network path, but have limited information available to aid these decisions. This document
+motivates discussion of protocol work to make this information available.</t>
 
 
 
@@ -102,15 +101,15 @@ compromised.</t>
 
 <t><list style='symbols'>
   <t>Specific to the client - General information about network properties is often an improvement over current practice, but to be truly useful, it should be able to be tailored to a specific client IP address.</t>
-  <t>Reasonably current - Information from ten minutes ago is often useless; when necessary, an endpoint ought to be able to get information that is fresh (on the granularity of a few seconds).</t>
+  <t>Reasonably current - Information from fifteen minutes ago is often useless; when necessary, an endpoint ought to be able to get information that is fresh (on the granularity of a few seconds).</t>
   <t>Scalable - The overhead of conveying information to clients ought to be minimal, and it needs to be usable on the scale of a large Web site.</t>
   <t>Private - The protocol ought not expose details of private networks, or any personally identifying information beyond that already available.</t>
 </list></t>
 
 <t>A protocol for exposing this information necessarily must choose the scope of its applicability.
-Due to the nature of the Internet, it is not practical to meet the goals above for any given pair
-of IP addresses; the permutations are impractical, and discovering meaningful information on this
-scale is likewise unlikely.</t>
+Due to the nature of the Internet, it is not practical to meet the goals above for the end-to-end
+path(s) between any given pair of IP addresses; the permutations are impractical, and discovering
+meaningful information on this scale is likewise unlikely.</t>
 
 <t>However, it is comparatively easy for a network operator to expose what it considers to be the
 “last mile” properties of an IP address. For example, an ISP providing ADSL access to its
@@ -118,7 +117,9 @@ subscribers could advertise the properties of those end links, whereas a mobile 
 the information available to advertise the properties of individual subscriber handset IP addresses
 (whether they be globally routable, or behind NAT).</t>
 
-<t>Furthermore, a protocol for such information should expose a minimum of:</t>
+<t>This partial information is not a complete picture, of course, but it is information that’s difficul to aquire now, and often has a disproprionate impact upon the delivery of content. </t>
+
+<t>A protocol for such information ought to expose a minimum of:</t>
 
 <t><list style='symbols'>
   <t>Bandwidth - an approximation of the bandwidth currently unused on the “last mile” connection, in bits per second.</t>
@@ -152,6 +153,13 @@ several advantages:</t>
   <t>DNS is lightweight and has a built-in caching mechanism</t>
 </list></t>
 
+<t>Potential disadvantages include:</t>
+
+<t><list style='symbols'>
+  <t>Servers receiving requests from clients that are unknown (or where there is only stale information available) will need to either wait for the lookup, or act without information for such requests</t>
+  <t>Additional load on DNS infrastructure may be considerable</t>
+</list></t>
+
 <t>This would require a new RRTYPE to be defined to carry the information outlined above.</t>
 
 </section>
@@ -161,29 +169,55 @@ several advantages:</t>
 exposed by the network operator. However, discovery of that service would still need to be
 established; this might be possible through DNS.</t>
 
-<t>HTTP offers built-in caching, and is familiar to many developers. However, it has a higher
-overhead, as compared to DNS.</t>
+<t>This approach’s advantages include:</t>
+
+<t><list style='symbols'>
+  <t>Built-in caching and scaling mechanisms</t>
+  <t>Rich extensibility</t>
+  <t>Familiarity for developers and ops</t>
+</list></t>
+
+<t>Potential disadvantages include:</t>
+
+<t><list style='symbols'>
+  <t>Servers receiving requests from clients that are unknown (or where there is only stale information available) will need to either wait for the lookup, or act without information for such requests</t>
+  <t>Comparatively high overhead</t>
+</list></t>
 
 </section>
 <section anchor="tls" title="TLS">
 
-<t>Another approach would be to add another channel in TLS <xref target="RFC5246"/> that does not form part of teh encrypted
-session, to allow the network to annotate connections directly.</t>
+<t>Another approach would be to add another channel in TLS <xref target="RFC5246"/> that does not form part of teh
+encrypted session, to allow the network to annotate connections directly.</t>
 
-<t>However, this is likely to be both technically invasive, and seen as a layer violation / security
-heresy.</t>
+<t>This has a few advantages:</t>
+
+<t><list style='symbols'>
+  <t>Immediate availability of network information in-channel</t>
+  <t>Direct binding to a single connection</t>
+  <t>Annotations could be added on subsequent hops</t>
+</list></t>
+
+<t>However:</t>
+
+<t><list style='symbols'>
+  <t>Doing so is likely to be technically invasive, my have interop problems with deployed infrastructure</t>
+  <t>May be seen as a layering violation / security issue</t>
+</list></t>
 
 </section>
 <section anchor="tcp" title="TCP">
 
-<t>Yet another approach would be to allow simliar mechanisms in TCP <xref target="RFC0793"/>. However, it’s even
-less likely that this would be technically feasible or politically possible.</t>
+<t>Yet another approach would be to define simliar side-channel mechanisms in TCP <xref target="RFC0793"/>.</t>
+
+<t>The advantages and disadvantages of this approach are similar to those around TLS; however, there
+is an additional disadvantage, in that TCP extensibility is even more constrained than TLS’.</t>
 
 </section>
 </section>
 <section anchor="security-considerations" title="Security Considerations">
 
-<t>This proposal is only exploratory now, but there are already clearly evident security and privacy implications, including:</t>
+<t>This document is only exploratory now, but there are already clearly evident security and privacy implications, including:</t>
 
 <t><list style='symbols'>
   <t>Whether the information exposed can be used to identify a user</t>

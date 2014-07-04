@@ -62,10 +62,9 @@ informative:
 
 --- abstract
 
-Protocol endpoints often want to adapt their behavior based upon the current
-properties of the network path, but have limited information available to aid
-these decisions. This document motivates and proposes a protocol that makes
-this information available.
+Protocol endpoints often want to adapt their behavior based upon the current properties of the
+network path, but have limited information available to aid these decisions. This document
+motivates discussion of protocol work to make this information available.
 
 
 --- middle
@@ -119,14 +118,14 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 To be useful to endpoints, the information a network exposes needs to be:
 
 * Specific to the client - General information about network properties is often an improvement over current practice, but to be truly useful, it should be able to be tailored to a specific client IP address.
-* Reasonably current - Information from ten minutes ago is often useless; when necessary, an endpoint ought to be able to get information that is fresh (on the granularity of a few seconds).
+* Reasonably current - Information from fifteen minutes ago is often useless; when necessary, an endpoint ought to be able to get information that is fresh (on the granularity of a few seconds).
 * Scalable - The overhead of conveying information to clients ought to be minimal, and it needs to be usable on the scale of a large Web site.
 * Private - The protocol ought not expose details of private networks, or any personally identifying information beyond that already available.
 
 A protocol for exposing this information necessarily must choose the scope of its applicability.
-Due to the nature of the Internet, it is not practical to meet the goals above for any given pair
-of IP addresses; the permutations are impractical, and discovering meaningful information on this
-scale is likewise unlikely.
+Due to the nature of the Internet, it is not practical to meet the goals above for the end-to-end
+path(s) between any given pair of IP addresses; the permutations are impractical, and discovering
+meaningful information on this scale is likewise unlikely.
 
 However, it is comparatively easy for a network operator to expose what it considers to be the
 "last mile" properties of an IP address. For example, an ISP providing ADSL access to its
@@ -134,7 +133,9 @@ subscribers could advertise the properties of those end links, whereas a mobile 
 the information available to advertise the properties of individual subscriber handset IP addresses
 (whether they be globally routable, or behind NAT).
 
-Furthermore, a protocol for such information should expose a minimum of:
+This partial information is not a complete picture, of course, but it is information that's difficul to aquire now, and often has a disproprionate impact upon the delivery of content. 
+
+A protocol for such information ought to expose a minimum of:
 
 * Bandwidth - an approximation of the bandwidth currently unused on the "last mile" connection, in bits per second.
 * Delay - an approximation of delay seen on the "last mile" connection, in milliseconds.
@@ -164,6 +165,11 @@ several advantages:
 * Reverse DNS for a public IP address is often administered by the access network that provisions it
 * DNS is lightweight and has a built-in caching mechanism
 
+Potential disadvantages include:
+
+* Servers receiving requests from clients that are unknown (or where there is only stale information available) will need to either wait for the lookup, or act without information for such requests
+* Additional load on DNS infrastructure may be considerable
+
 This would require a new RRTYPE to be defined to carry the information outlined above.
 
 
@@ -173,27 +179,47 @@ It might be possible to provide such information with a lightweight HTTP {{RFC72
 exposed by the network operator. However, discovery of that service would still need to be
 established; this might be possible through DNS.
 
-HTTP offers built-in caching, and is familiar to many developers. However, it has a higher
-overhead, as compared to DNS.
+This approach's advantages include:
 
+* Built-in caching and scaling mechanisms
+* Rich extensibility
+* Familiarity for developers and ops
+
+Potential disadvantages include:
+
+* Servers receiving requests from clients that are unknown (or where there is only stale information available) will need to either wait for the lookup, or act without information for such requests
+* Comparatively high overhead
 
 ## TLS
 
-Another approach would be to add another channel in TLS {{RFC5246}} that does not form part of teh encrypted
-session, to allow the network to annotate connections directly.
+Another approach would be to add another channel in TLS {{RFC5246}} that does not form part of teh
+encrypted session, to allow the network to annotate connections directly.
 
-However, this is likely to be both technically invasive, and seen as a layer violation / security
-heresy.
+This has a few advantages:
+
+* Immediate availability of network information in-channel
+* Direct binding to a single connection
+* Annotations could be added on subsequent hops
+
+However:
+
+* Doing so is likely to be technically invasive, my have interop problems with deployed infrastructure
+* May be seen as a layering violation / security issue
 
 ## TCP
 
-Yet another approach would be to allow simliar mechanisms in TCP {{RFC0793}}. However, it's even
-less likely that this would be technically feasible or politically possible.
+Yet another approach would be to define simliar side-channel mechanisms in TCP {{RFC0793}}.
+
+The advantages and disadvantages of this approach are similar to those around TLS; however, there
+is an additional disadvantage, in that TCP extensibility is even more constrained than TLS'.
+
+
+
 
 
 # Security Considerations
 
-This proposal is only exploratory now, but there are already clearly evident security and privacy implications, including:
+This document is only exploratory now, but there are already clearly evident security and privacy implications, including:
 
 * Whether the information exposed can be used to identify a user
 * Whether denial of service attacks are possible using this mechanism
