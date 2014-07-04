@@ -563,7 +563,7 @@ Any improvements to the proxy ecosystem MUST be incrementally deployable, so
 that existing clients can continue to function.
 
 
-# Areas to Investigate {#further}
+# Potential Areas to Investigate {#further}
 
 Finally, this section lists some areas of potential future investigation,
 bearing the principles suggested above in mind.
