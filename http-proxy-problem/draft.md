@@ -337,7 +337,7 @@ implementation impact the protocol's use.
 
 For example, HTTP has a defined mechanism for upgrading the protocol of a
 connection, to aid in the deployment of new versions of HTTP (such as HTTP/2)
-or completely different protocol (e.g., {{RFC6455}}). 
+or completely different protocol (e.g., {{RFC6455}}).
 
 However, operational experience has shown that a significant number of proxy
 implementations do not correctly implement it, leading to dangerous situations
@@ -424,6 +424,11 @@ This has subtle implications. If networks are disempowered disproportionately,
 they might react by blocking secure connections, discouraging origin servers
 (who often have even stronger profit incentives) from deploying encryption,
 which would result in a net loss of security.
+
+On the other hand, if networks are given carte blanche, it can destroy trust
+in the Web altogether. In particular, making it too easy to interpose a proxy
+(even if the user is "informed" by clicking through a dialogue) degrades the
+infrastructure in an unacceptable way.
 
 
 ## Interoperability is Important Too
