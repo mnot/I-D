@@ -407,6 +407,10 @@ consent of the end user and the origin -- undesirable intermediaries (i.e.,
 those that break the reasonable expectations of other stakeholders) are a small
 portion of those deployed used.
 
+Note that while proxies have a legitimate place, it does not imply that they are
+an equal stakeholder to other parties in all ways; e.g., they do not have
+a natural right to access encrypted content, for example.
+
 
 ## Security Should be Encouraged
 
