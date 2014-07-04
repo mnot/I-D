@@ -529,17 +529,6 @@ HTTP is used in a wide variety of environments. As such there can be no
 assumption that a user is sitting on the other end to interpret information or
 answer questions from proxies.
 
-## Choices are Context-Specific
-
-Getting consent from users, as well as informing them, can take a variety of
-forms. For example, if we require that users consent to using a proxy, that
-consent could be obtained through a modal dialog in the browser, or through a
-written agreement between an employer and their employee.
-
-Likewise, a browser vendor may choose not to implement some optional portions
-of the specification, based upon how they want to position their product with
-their audience.
-
 
 ## RFC2119 Doesn't Define Reality
 
