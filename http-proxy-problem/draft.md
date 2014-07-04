@@ -283,7 +283,7 @@ that limit its deployment:
   may not be available to third parties.
 
 * WPAD can be spoofed, allowing attackers to interpose a proxy and intercept
-  traffic.
+  traffic. This is a blocking issue for implementation.
 
 ## Interception
 
