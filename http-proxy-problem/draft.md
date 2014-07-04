@@ -431,19 +431,6 @@ in the Web altogether. In particular, making it too easy to interpose a proxy
 infrastructure in an unacceptable way.
 
 
-## Interoperability is Important Too
-
-Security at the expense of long-term interoperability is not a good trade. 
-
-For example, if networks decide to only allow secure connections to well-known,
-large origin servers, it creates a "walled garden" that favours big sites at
-the expense of less well-known ones.
-
-Likewise, if a jurisdiction cannot use standard-conformant browsers to impose
-their legal requirements upon network users, they might decide to create a
-separate Web based upon competing technology.
-
-
 ## Users Need to be Informed of Proxies
 
 When a proxy is interposed, the user needs to be informed about it, so they
