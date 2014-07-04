@@ -452,11 +452,9 @@ This includes both "https://" and "http://" URIs.
 
 ## Proxies Can say "No"
 
-A proxy can refuse to forward any request. This includes a request to a
-specific URI, or from a specific user, and includes refusing to allow tunnels
-as described above.
-
-The "no", however, needs to be explicit, and explicitly from the proxy.
+A proxy can refuse to forward any request. Currently, the granularity of that
+"no" is per-URI for unencrypted requests, and per-IP (perhaps per-SNI) for encrypted
+requests.
 
 
 ## Changes Need to be Detectable
