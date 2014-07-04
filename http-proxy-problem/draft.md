@@ -599,6 +599,15 @@ without strong proof of its identity introduces security issues, and if a proxy
 can legitimately insert itself into communication, its identity needs to be
 verifiable.
 
+## Improved Network Information
+
+Many of the use cases for proxies that modify content is transcoding or otherwise
+adapting that which is too "heavy" for the network it is transiting through.
+
+If network operators made better, more fine-grained and timely information about
+their operational characteristics freely available, endpoints (server and client)
+could adapt requests and responses to reflect it, thereby removing the need for
+intermediation.
 
 ## Improving Trust
 
