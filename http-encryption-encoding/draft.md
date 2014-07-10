@@ -190,6 +190,7 @@ As with any encryption scheme, this mechanism is only as secure as the key. Beca
 identified by (and potentially available at) a URI, care needs to be taken that it will not be
 unduly exposed.
 
+
 ## Leaking Information in Headers
 
 Because "encrypted" only operates upon the message payload, any information exposed in headers is
@@ -220,6 +221,7 @@ authorization, which still needs to be performed (e.g., by HTTP authentication {
 
 This is especially relevant when a HTTP PUT request is accepted by a server; if the request is
 unauthenticated, it becomes possible for a third party to deny service and/or poison the store.
+
 
 ## Sizing and Timing Attacks
 
