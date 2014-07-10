@@ -23,10 +23,12 @@ author:
 
 normative:
   RFC2119:
+  RFC3986:
+  RFC7230:
+  RFC7231:
 
 informative:
   RFC5246:
-  RFC7230:
   RFC7235:
   I-D.ietf-httpbis-http2:
 
@@ -55,8 +57,8 @@ without exposing its contents.
 These uses are not met by the use of TLS {{RFC5246}}, since it only encrypts the channel between
 the client and server.
 
-This document specifies an "encryption" content-coding (along with associated machinery) for HTTP
-to serve these use cases.
+This document specifies an "encryption" content-coding ({RFC7231}}) for HTTP to serve these use
+cases.
 
 The most common uses for such an encoding would be in the successful response to a GET request, or
 in a PUT request.
@@ -90,8 +92,11 @@ payload.
   cipher = token *( ";" param )
 ~~~
 
-Each cipher is identified by a token; see {{cipher-registry}}. Individual tokens define the
-parameters that are appropriate for them.
+Each cipher is identified by a token; see {{cipher-registry}}. 
+
+One parameter, "key", is defined for all ciphers; it carries a URI {{RFC3986}} that identifies the
+key used to encrypt the payload. Individual tokens MAY define the parameters that are appropriate
+for them.
 
 If the payload is encrypted more than once (as reflected by having multiple 'encrypted'
 content-codings), each cipher MUST be reflected in "Encryption", in the order in which they were
