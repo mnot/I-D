@@ -25,7 +25,10 @@ normative:
   RFC2119:
 
 informative:
-
+  RFC5246:
+  RFC7230:
+  RFC7235:
+  I-D.ietf-httpbis-http2:
 
 --- abstract
 
@@ -49,7 +52,7 @@ that server. Furthermore, that same file could be replicated to other servers (t
 resistant to server or network failure), downloaded by clients (to make it available offline), etc.
 without exposing its contents.
 
-These uses are not met by the use of TLS {{RFCxxxx}}, since it encrypts the channel between the
+These uses are not met by the use of TLS {{RFC5246}}, since it encrypts the channel between the
 client and server.
 
 This memo introduces an "encryption" content-coding (along with associated machinery) for HTTP to
@@ -163,7 +166,6 @@ detailed in {{encryption}}.
 
 ## The HTTP Encryption Registry
 
-
 ### Initial Contents
 
 * "rsa256" - 
@@ -195,14 +197,14 @@ normalize them. In the case of Content-Type, this could be accomplished by alway
 Content-Type: application/octet-stream (the most generic media type).
 
 3. If it is considered sensitive information and it is not possible to convey it elsewhere,
-encapsulate the HTTP message using the application/http media type {{xxxx}}, encrypting that as the
-payload of the "outer" message.
+encapsulate the HTTP message using the application/http media type {{RFC7230}}, encrypting that as
+the payload of the "outer" message.
 
 
 ## Poisoning Storage
 
 This mechanism only offers encryption of content; it does not perform authentication or
-authorization, which still needs to be performed (e.g., by HTTP authentication {{xxxxx}}).
+authorization, which still needs to be performed (e.g., by HTTP authentication {{RFC7235}}).
 
 This is especially relevant when a HTTP PUT request is accepted by a server; if the request is
 unauthenticated, it becomes possible for a third party to deny service and/or poison the store.
@@ -213,7 +215,8 @@ Applications using this mechanism need to be aware that the size of encrypted me
 their timing, HTTP methods, URIs and so on, may leak sensitive information.
 
 This risk can be partially mitigated by splitting up files into segments and storing the
-separately. It can also be mitigated by using HTTP/2 {{xxxx}} combined with TLS {{xxxx}}.
+separately. It can also be mitigated by using HTTP/2 {{I-D.ietf-httpbis-http2}} combined with 
+TLS {{RFC5246}}.
 
 ## Compression and CRIME
 
