@@ -1,85 +1,509 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
+  <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
 
-<!DOCTYPE rfc SYSTEM "http://xml.resource.org/authoring/rfc2629.dtd" [
-   <!ENTITY rfc2119 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>  
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
 ]>
-
-<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
-<?rfc toc="yes" ?>
-<?rfc tocdepth="3" ?>
-<?rfc tocindent="yes" ?>
-<?rfc symrefs="yes" ?>
-<?rfc sortrefs="yes"?>
-<?rfc iprnotified="no" ?>
-<?rfc strict="yes" ?>
-<?rfc compact="yes" ?>
-<?rfc comments="yes" ?>
-<?rfc inline="yes" ?>
 
 <rfc ipr="trust200902" docName="draft-nottingham-http-encryption-encoding-00" category="info">
 
-	<front>
-		<title></title>
-		<author initials="M." surname="Nottingham" fullname="Mark Nottingham">
-			<organization></organization>
-			<address>       
-				<email>mnot@mnot.net</email> 
-				<uri>http://www.mnot.net/</uri>
-			</address>
-		</author>
-		<date year="2012"/>
-		<abstract>
+<?rfc toc="yes"?>
+<?rfc tocindent="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc strict="yes"?>
+<?rfc compact="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
 
-			<t></t>
+  <front>
+    <title abbrev="HTTP encryption coding">Encryption Content-Encoding for HTTP</title>
 
-		</abstract>
-	</front>
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization></organization>
+      <address>
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net/</uri>
+      </address>
+    </author>
 
-	<middle>
+    <date year="2014"/>
 
-		<section title="Introduction">
+    <area>General</area>
+    
+    <keyword>Internet-Draft</keyword>
 
-		</section>
-
-		<section title="Requirements">
-		   <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
-		   NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in
-		   this document are to be interpreted as described in <xref
-		   target="RFC2119"/>.</t>
-		</section>
+    <abstract>
 
 
-            
-		<section title="Security Considerations">
+<t>This memo introduces an “encryption” content-coding for HTTP, to allow message payloads to be
+encrypted, and for that encryption to be persisted on the server.</t>
 
-			<t>TBD</t>
+<t>Such a capability would allow, for example, storing content on a HTTP server without exposing its
+contents to that server.</t>
 
-		</section>
 
-		<section title="IANA Considerations">
 
-			<t>TBD</t>
+    </abstract>
 
-		</section>
-      
-	</middle>
 
-	<back>
-		<references title="Normative References">
-			&rfc2119;
-		</references>
+  </front>
 
-		<references title="Informative References">
+  <middle>
 
-		</references>
 
-		<section title="Acknowledgements">
-			<t>Thanks to 
+<section anchor="introduction" title="Introduction">
 
-			  for their suggestions and feedback.           
-			 </t>
-			<t>The author takes all responsibility for errors and
-			omissions.</t>
-		</section>      
-	</back>
+<t>It is sometimes desirable to encrypt the contents of a HTTP message (request or response) in a
+persistent manner, so that when their payload is stored (e.g., with a HTTP PUT), only someone with
+the appropriate key can read it.</t>
+
+<t>For example, it might be necessary to store a file on a server without exposing its contents to
+that server. Furthermore, that same file could be replicated to other servers (to make it more
+resistant to server or network failure), downloaded by clients (to make it available offline), etc.
+without exposing its contents.</t>
+
+<t>These uses are not met by the use of TLS <xref target="RFC5246"/>, since it only encrypts the channel between
+the client and server.</t>
+
+<t>This document specifies an “encryption” content-coding ({RFC7231}}) for HTTP to serve these use
+cases.</t>
+
+<t>The most common uses for such an encoding would be in the successful response to a GET request, or
+in a PUT request.</t>
+
+<t>Using this content coding in a PATCH or POST request is less likely to be useful, since the server
+needs to process the request body to perform the method. Likewise, using this content-coding in an
+unsuccessful response to a GET request is likely to be counterproductive.</t>
+
+<section anchor="notational-conventions" title="Notational Conventions">
+
+<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”,
+“RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in
+<xref target="RFC2119"/>.</t>
+
+</section>
+</section>
+<section anchor="encrypted" title="The “encrypted” HTTP content-coding">
+
+<t>The “encrypted” HTTP content-coding indicates that a payload has been encrypted using the cipher
+described in the Encryption HTTP header field.</t>
+
+<t>When it appears, the Encryption HTTP header field MUST be present in the message.</t>
+
+</section>
+<section anchor="encryption" title="The “Encryption” HTTP header field">
+
+<t>The “Encryption” HTTP header field describes the cipher(s) that have been applied to a message
+payload.</t>
+
+<figure><artwork><![CDATA[
+  Encryption-val = #cipher
+  cipher = token *( ";" param )
+]]></artwork></figure>
+
+<t>Each cipher is identified by a token; see <xref target="cipher-registry"/>. </t>
+
+<t>One parameter, “key”, is defined for all ciphers; it carries a URI <xref target="RFC3986"/> that identifies the
+key used to encrypt the payload. Individual tokens MAY define the parameters that are appropriate
+for them.</t>
+
+<t>If the payload is encrypted more than once (as reflected by having multiple ‘encrypted’
+content-codings), each cipher MUST be reflected in “Encryption”, in the order in which they were
+applied.</t>
+
+<t>Servers processing PUT requests MUST persist the value of the Encryption header field.</t>
+
+</section>
+<section anchor="examples" title="Examples">
+
+<section anchor="successful-get-response" title="Successful GET response">
+
+<figure><artwork><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: application/octet-stream
+Content-Encoding: encrypted
+Connection: close
+Encryption: rsa256; key="http://example.org/bob/keys/123"
+
+[encrypted payload]
+]]></artwork></figure>
+
+<t>Here, a successful HTTP GET response has been encrypted using rsa256 and a key identified with the
+HTTP URI scheme.</t>
+
+<t>Note that the media type has been normalized to “application/octet-stream” to avoid exposing
+information about the content.</t>
+
+</section>
+<section anchor="encryption-and-compression" title="Encryption and Compression">
+
+<figure><artwork><![CDATA[
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Encoding: encrypted, gzip
+Transfer-Encoding: chunked
+Encryption: rsa256; key="mailto:me@example.com"
+
+[encrypted payload]
+]]></artwork></figure>
+
+</section>
+<section anchor="encryption-with-more-than-one-key" title="Encryption with More Than One Key">
+
+<figure><artwork><![CDATA[
+PUT /thing HTTP/1.1
+Host: storage.example.com
+Content-Type: application/http
+Content-Encoding: encrypted, encrypted
+Content-Length: 1234
+Encryption: rsa256; key="mailto:me@example.com",
+            rsa256; key="http://example.org/bob/keys/123"
+
+[encrypted payload]
+]]></artwork></figure>
+
+<t>Here, a PUT request has been encrypted with two keys; both will be necessary to read the content.</t>
+
+</section>
+</section>
+<section anchor="iana-considerations" title="IANA Considerations">
+
+<section anchor="the-encrypted-http-content-coding" title="The “encrypted” HTTP content-coding">
+
+<t>This memo registers the “encrypted” HTTP content-coding in the HTTP Content Codings Registry, as
+detailed in <xref target="encrypted"/>.</t>
+
+<t><list style="symbols">
+  <t>Name: encrypted</t>
+  <t>Description: encrypted data</t>
+  <t>Reference [this specification]</t>
+</list></t>
+
+</section>
+<section anchor="the-encryption-http-header-field" title="The “Encryption” HTTP header field">
+
+<t>This memo registers the “Encryption” HTTP header field in the Permanent Message Header Registry, as
+detailed in <xref target="encryption"/>.</t>
+
+<t><list style="symbols">
+  <t>Field name: Encrypted</t>
+  <t>Protocol: HTTP</t>
+  <t>Status: Standard</t>
+  <t>Reference: [this specification]</t>
+  <t>Notes: </t>
+</list></t>
+
+</section>
+<section anchor="cipher-registry" title="The HTTP Encryption Registry">
+
+<section anchor="initial-contents" title="Initial Contents">
+
+<t><list style="symbols">
+  <t>“rsa256” - </t>
+</list></t>
+
+</section>
+</section>
+</section>
+<section anchor="security-considerations" title="Security Considerations">
+
+<section anchor="key-exposure" title="Key Exposure">
+
+<t>As with any encryption scheme, this mechanism is only as secure as the key. Because the key is
+identified by (and potentially available at) a URI, care needs to be taken that it will not be
+unduly exposed.</t>
+
+</section>
+<section anchor="leaking-information-in-headers" title="Leaking Information in Headers">
+
+<t>Because “encrypted” only operates upon the message payload, any information exposed in headers is
+visible to anyone who can read the message.</t>
+
+<t>For example, the Content-Type header can lead information about the message payload.</t>
+
+<t>There are a number of strategies available to mitigate this threat, depending upon the
+application’s threat model and the users’ tolerance for leaked information:</t>
+
+<t><list style="numbers">
+  <t>Determine that it is not an issue. For example, if it is expected that all content stored will
+be HTML (a very common media type), exposing the Content-Type header may be an acceptable risk.</t>
+  <t>If it is considered sensitive information and it is possible to determine it through other means
+(e.g., out of band, using hints in other representations, etc.), omit the relevant headers, and/or
+normalize them. In the case of Content-Type, this could be accomplished by always sending
+Content-Type: application/octet-stream (the most generic media type).</t>
+  <t>If it is considered sensitive information and it is not possible to convey it elsewhere,
+encapsulate the HTTP message using the application/http media type <xref target="RFC7230"/>, encrypting that as
+the payload of the “outer” message.</t>
+</list></t>
+
+</section>
+<section anchor="poisoning-storage" title="Poisoning Storage">
+
+<t>This mechanism only offers encryption of content; it does not perform authentication or
+authorization, which still needs to be performed (e.g., by HTTP authentication <xref target="RFC7235"/>).</t>
+
+<t>This is especially relevant when a HTTP PUT request is accepted by a server; if the request is
+unauthenticated, it becomes possible for a third party to deny service and/or poison the store.</t>
+
+</section>
+<section anchor="sizing-and-timing-attacks" title="Sizing and Timing Attacks">
+
+<t>Applications using this mechanism need to be aware that the size of encrypted messages, as well as
+their timing, HTTP methods, URIs and so on, may leak sensitive information.</t>
+
+<t>This risk can be partially mitigated by splitting up files into segments and storing the
+separately. It can also be mitigated by using HTTP/2 <xref target="I-D.ietf-httpbis-http2"/> combined with 
+TLS <xref target="RFC5246"/>.</t>
+
+</section>
+</section>
+
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+
+
+
+
+
+<reference anchor='RFC2119'>
+
+<front>
+<title abbrev='RFC Key Words'>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='Scott Bradner'>
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<street>Cambridge</street>
+<street>MA 02138</street></postal>
+<phone>- +1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year='1997' month='March' />
+<area>General</area>
+<keyword>keyword</keyword>
+<abstract>
+<t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list>
+<t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+<t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t></abstract></front>
+
+<seriesInfo name='BCP' value='14' />
+<seriesInfo name='RFC' value='2119' />
+<format type='TXT' octets='4723' target='http://www.rfc-editor.org/rfc/rfc2119.txt' />
+<format type='HTML' octets='17970' target='http://xml.resource.org/public/rfc/html/rfc2119.html' />
+<format type='XML' octets='5777' target='http://xml.resource.org/public/rfc/xml/rfc2119.xml' />
+</reference>
+
+
+
+<reference anchor='RFC3986'>
+
+<front>
+<title abbrev='URI Generic Syntax'>Uniform Resource Identifier (URI): Generic Syntax</title>
+<author initials='T.' surname='Berners-Lee' fullname='Tim Berners-Lee'>
+<organization abbrev='W3C/MIT'>World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>Massachusetts Institute of Technology</street>
+<street>77 Massachusetts Avenue</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>USA</country></postal>
+<phone>+1-617-253-5702</phone>
+<facsimile>+1-617-258-5999</facsimile>
+<email>timbl@w3.org</email>
+<uri>http://www.w3.org/People/Berners-Lee/</uri></address></author>
+<author initials='R.' surname='Fielding' fullname='Roy T. Fielding'>
+<organization abbrev='Day Software'>Day Software</organization>
+<address>
+<postal>
+<street>5251 California Ave., Suite 110</street>
+<city>Irvine</city>
+<region>CA</region>
+<code>92617</code>
+<country>USA</country></postal>
+<phone>+1-949-679-2960</phone>
+<facsimile>+1-949-679-2972</facsimile>
+<email>fielding@gbiv.com</email>
+<uri>http://roy.gbiv.com/</uri></address></author>
+<author initials='L.' surname='Masinter' fullname='Larry Masinter'>
+<organization abbrev='Adobe Systems'>Adobe Systems Incorporated</organization>
+<address>
+<postal>
+<street>345 Park Ave</street>
+<city>San Jose</city>
+<region>CA</region>
+<code>95110</code>
+<country>USA</country></postal>
+<phone>+1-408-536-3024</phone>
+<email>LMM@acm.org</email>
+<uri>http://larry.masinter.net/</uri></address></author>
+<date year='2005' month='January' />
+<area>Applications</area>
+<keyword>uniform resource identifier</keyword>
+<keyword>URI</keyword>
+<keyword>URL</keyword>
+<keyword>URN</keyword>
+<keyword>WWW</keyword>
+<keyword>resource</keyword>
+<abstract>
+<t>
+A Uniform Resource Identifier (URI) is a compact sequence of characters
+that identifies an abstract or physical resource.  This specification
+defines the generic URI syntax and a process for resolving URI references
+that might be in relative form, along with guidelines and security
+considerations for the use of URIs on the Internet.
+The URI syntax defines a grammar that is a superset of all valid URIs,
+allowing an implementation to parse the common components of a URI
+reference without knowing the scheme-specific requirements of every
+possible identifier.  This specification does not define a generative
+grammar for URIs; that task is performed by the individual
+specifications of each URI scheme.
+</t></abstract></front>
+
+<seriesInfo name='STD' value='66' />
+<seriesInfo name='RFC' value='3986' />
+<format type='TXT' octets='141811' target='http://www.rfc-editor.org/rfc/rfc3986.txt' />
+<format type='HTML' octets='214067' target='http://xml.resource.org/public/rfc/html/rfc3986.html' />
+<format type='XML' octets='163534' target='http://xml.resource.org/public/rfc/xml/rfc3986.xml' />
+</reference>
+
+
+
+<reference anchor='RFC7230'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7230' />
+<format type='TXT' octets='205947' target='http://www.rfc-editor.org/rfc/rfc7230.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7231'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7231' />
+<format type='TXT' octets='235053' target='http://www.rfc-editor.org/rfc/rfc7231.txt' />
+</reference>
+
+
+
+
+    </references>
+
+    <references title='Informative References'>
+
+
+
+
+
+<reference anchor='RFC5246'>
+
+<front>
+<title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
+<author initials='T.' surname='Dierks' fullname='T. Dierks'>
+<organization /></author>
+<author initials='E.' surname='Rescorla' fullname='E. Rescorla'>
+<organization /></author>
+<date year='2008' month='August' />
+<abstract>
+<t>This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications security over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='5246' />
+<format type='TXT' octets='222395' target='http://www.rfc-editor.org/rfc/rfc5246.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7235'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Authentication</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless application- level protocol for distributed, collaborative, hypermedia information systems.  This document defines the HTTP Authentication framework.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7235' />
+<format type='TXT' octets='38142' target='http://www.rfc-editor.org/rfc/rfc7235.txt' />
+</reference>
+
+
+
+<reference anchor='I-D.ietf-httpbis-http2'>
+<front>
+<title>Hypertext Transfer Protocol version 2</title>
+
+<author initials='M' surname='Belshe' fullname='Mike Belshe'>
+    <organization />
+</author>
+
+<author initials='R' surname='Peon' fullname='Roberto Peon'>
+    <organization />
+</author>
+
+<author initials='M' surname='Thomson' fullname='Martin Thomson'>
+    <organization />
+</author>
+
+<date month='June' day='17' year='2014' />
+
+<abstract><t>This specification describes an optimized expression of the syntax of the Hypertext Transfer Protocol (HTTP).  HTTP/2 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent messages on the same connection.  It also introduces unsolicited push of representations from servers to clients.  This specification is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-http2-13' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-13.txt' />
+</reference>
+
+
+
+
+    </references>
+
+
+
+  </back>
 </rfc>
+
