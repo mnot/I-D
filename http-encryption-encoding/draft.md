@@ -40,12 +40,12 @@ without exposing its contents to the server.
 
 # Introduction
 
-It is sometimes desireable to encrypt the contents of a HTTP message (request
+It is sometimes desirable to encrypt the contents of a HTTP message (request
 or response) in a persistent manner, so that when their payload is stored
 (e.g., with a HTTP PUT), only someone with the appropriate key can read it.
 
 For example, it might be necessary to store a file on a server without exposing
-its contents to that server. Furthermore, that same file could be replicted to
+its contents to that server. Furthermore, that same file could be replicated to
 other servers (to make it more resistant to server or network failure),
 downloaded by clients (to make it available offline), etc. without exposing its
 contents.
@@ -60,7 +60,7 @@ The most common uses for such an encoding would be in the successful response
 to a GET request, or in a PUT request. 
 
 Using this content coding in a PATCH or POST request is less likely to be
-useful, since the server needs to process the reuqest body to perform the
+useful, since the server needs to process the request body to perform the
 method. Likewise, using this content-coding in an unsuccessful response to a
 GET request is likely to be counterproductive.
 
@@ -110,7 +110,7 @@ Encryption: rsa256; key="http://example.org/bob/keys/123"
 Here, a successful HTTP GET response has been encrypted using rsa256 and a key
 identified with the HTTP URI scheme.
 
-Note that the media type has been normalised to "application/octet-stream" to
+Note that the media type has been normalized to "application/octet-stream" to
 avoid exposing information about the content.
 
 ## Encryption and Compression
@@ -198,8 +198,8 @@ Content-Type header may be an acceptable risk.
 
 2. If it is considered sensitive information and it is possible to determine it
 through other means (e.g., out of band, using hints in other representations,
-etc.), omit the relevant headers, and/or normalise them. In the case of
-Content-Type, this could be accomplished by always sending Content-TYpe:
+etc.), omit the relevant headers, and/or normalize them. In the case of
+Content-Type, this could be accomplished by always sending Content-Type:
 application/octet-stream (the most generic media type).
 
 3. If it is considered sensitive information and it is not possible to convey
@@ -215,7 +215,7 @@ HTTP authentication {{xxxxx}}).
 
 This is especially relevant when a HTTP PUT request is accepted by a server; if
 the request is unauthenticated, it becomes possible for a third party to deny
-service and/or poision the store.
+service and/or poison the store.
 
 ## Sizing and Timing Attacks
 
