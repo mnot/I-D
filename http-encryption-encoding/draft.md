@@ -36,7 +36,7 @@ This memo introduces an "encryption" content-coding for HTTP, to allow message p
 encrypted, and for that encryption to be persisted on the server.
 
 Such a capability would allow, for example, storing content on a HTTP server without exposing its
-contents to the server.
+contents to that server.
 
 
 --- middle
