@@ -52,11 +52,11 @@ that server. Furthermore, that same file could be replicated to other servers (t
 resistant to server or network failure), downloaded by clients (to make it available offline), etc.
 without exposing its contents.
 
-These uses are not met by the use of TLS {{RFC5246}}, since it encrypts the channel between the
-client and server.
+These uses are not met by the use of TLS {{RFC5246}}, since it only encrypts the channel between
+the client and server.
 
-This memo introduces an "encryption" content-coding (along with associated machinery) for HTTP to
-serve these use cases.
+This document specifies an "encryption" content-coding (along with associated machinery) for HTTP
+to serve these use cases.
 
 The most common uses for such an encoding would be in the successful response to a GET request, or
 in a PUT request.
@@ -82,7 +82,7 @@ When it appears, the Encryption HTTP header field MUST be present in the message
 
 # The "Encryption" HTTP header field  {#encryption}
 
-The "Encryption" HTTP header field describes the ciphers that have been applied to a message
+The "Encryption" HTTP header field describes the cipher(s) that have been applied to a message
 payload.
 
 ~~~
@@ -90,6 +90,12 @@ payload.
   cipher = token *( ";" param )
 ~~~
 
+Each cipher is identified by a token; see {{cipher-registry}}. Individual tokens define the
+parameters that are appropriate for them.
+
+If the payload is encrypted more than once (as reflected by having multiple 'encrypted'
+content-codings), each cipher MUST be reflected in "Encryption", in the order in which they were
+applied.
 
 Servers processing PUT requests MUST persist the value of the Encryption header field.
 
@@ -97,6 +103,7 @@ Servers processing PUT requests MUST persist the value of the Encryption header 
 # Examples
 
 ## Successful GET response
+
 ~~~
 HTTP/1.1 200 OK
 Content-Type: application/octet-stream
@@ -164,7 +171,7 @@ detailed in {{encryption}}.
 * Reference: [this specification]
 * Notes: 
 
-## The HTTP Encryption Registry
+## The HTTP Encryption Registry {#cipher-registry}
 
 ### Initial Contents
 
@@ -218,6 +225,5 @@ This risk can be partially mitigated by splitting up files into segments and sto
 separately. It can also be mitigated by using HTTP/2 {{I-D.ietf-httpbis-http2}} combined with 
 TLS {{RFC5246}}.
 
-## Compression and CRIME
 
 --- back
