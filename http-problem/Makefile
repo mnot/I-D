@@ -4,7 +4,7 @@ ID_BASE = ..
 saxpath = "/usr/local/share/saxon-b/saxon9.jar"
 saxon = java -classpath $(saxpath) net.sf.saxon.Transform -novw -l
 stylesheet = "$(ID_BASE)/Tools/rfc2629xslt/rfc2629.xslt"
-xml2rfc = "$(ID_BASE)/Tools/xml2rfc/xml2rfc.tcl"
+xml2rfc ?= xml2rfc
 rfc2629dir = "..\\/Tools\\/rfc2629xslt\\/"
 
 TITLE = nottingham-$(shell basename ${CURDIR})
