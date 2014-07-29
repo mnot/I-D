@@ -27,6 +27,7 @@ normative:
 informative:
   RFC2818:
   RFC3040:
+  RFC3143:
   RFC5246:
   RFC6455:
   RFC6585:
@@ -103,6 +104,8 @@ Note that this document is explicitly about "proxies" in the sense that HTTP
 defines them. Intermediaries that are interposed by the server (e.g., gateways
 and so-called "Reverse Proxies", as used in Content Delivery Networks) are out
 of scope.
+
+Note that {{RFC3143}} catalogues additional issues regarding Web proxies.
 
 
 ## Notational Conventions
