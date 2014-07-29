@@ -35,8 +35,8 @@ informative:
 --- abstract
 
 The 505 (HTTP Version Not Supported) status code does not clearly indicate, on its own, the scope
-of the assertion, nor the version(s) supported. This document introduces a new header field,
-"Over-Version", to indicate this information.
+of the assertion, nor the version(s) that are supported. This document introduces a new header
+field, "Over-Version", to contain this information.
 
 --- middle
 
@@ -81,7 +81,7 @@ The Over-Version HTTP Header field, when occurring in 505 (Version Not Supported
 asserts the version or versions of HTTP that are supported, and what resource(s) the assertion
 applies to, and optionally how long it lasts.
 
-    Over-Version = 1*( OWS ";" OWS parameter )
+    Over-Version = parameter *( OWS ";" OWS parameter )
 
 This document specifies the following over-version parameters:
 
@@ -99,8 +99,8 @@ For example:
     Cache-Control: max=age=60
     
 This response indicates that the requested resource and its children cannot be reached over the
-current protocol version, and that for the next 60 seconds, the client can successfully request
-them using the "h2" protocol (in this case, HTTP/2).
+current protocol version, and that for the next 60 seconds, the client can likely successfully
+request them using the "h2" protocol (in this case, HTTP/2).
 
 
 ## Over-Version Scopes
@@ -111,7 +111,7 @@ This document defines the following values for the "scope" parameter;
 
 * "resource" - indicates that the over-version applies to the requested resource only (i.e., matching origin, path, and query)
 
-* "prefix" - indicates that the over-version applies to resources when the origin matches and the requested resource's path segments are a prefix. For example, if the requested resource's path is "/foo" then "/foo", "/foo?bar", "/foo/bar", "/foo/bar/baz" would share the over-version, while "/bar",  "/foobar" and "/bar/foo" would not.
+* "prefix" - indicates that the over-version applies to resources when the origin matches and the requested resource's path segments are a prefix. For example, if the requested resource's path is "/foo?a" then "/foo", "/foo?bar", "/foo/bar", "/foo/bar/baz" would share the over-version, while "/bar",  "/foobar" and "/bar/foo" would not.
 
 
 # IANA Considerations
@@ -126,9 +126,13 @@ This document registers a new HTTP header field, "Over-Version", into the Perman
 
 # Security Considerations
 
-Over-Version can be used to effect a downgrade attack by a man-in-the-middle. When received over an insecure channel, it SHOULD be ignored.
+Over-Version can be used to effect a downgrade attack by a man-in-the-middle. When received over an
+insecure channel, it SHOULD be ignored.
 
-Over-Version can also be used to effect a downgrade attack by a party that has the ability to inject response headers on the same origin. The "origin" scope in particular is able to be misused, and SHOULD be ignored unless the security properties of the new protocol are equal to or better than the existing one.
+Over-Version can also be used to effect a downgrade attack by a party that has the ability to
+inject response headers on the same origin. The "origin" scope in particular is able to be misused,
+and SHOULD be ignored unless the security properties of the new protocol are equal to or better
+than the existing one.
 
 
 --- back
