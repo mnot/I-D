@@ -1,7 +1,7 @@
 ---
 title: Problems with Proxies in HTTP
 abbrev: HTTP Proxy Problems
-docname: draft-nottingham-http-proxy-problem-01
+docname: draft-nottingham-http-proxy-problem-02
 date: 2014
 category: info
 

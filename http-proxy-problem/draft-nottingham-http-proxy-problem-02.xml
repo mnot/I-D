@@ -1,0 +1,954 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+]>
+
+<rfc ipr="trust200902" docName="draft-nottingham-http-proxy-problem-01" category="info">
+
+<?rfc toc="yes"?>
+<?rfc tocindent="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc strict="yes"?>
+<?rfc compact="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+
+  <front>
+    <title abbrev="HTTP Proxy Problems">Problems with Proxies in HTTP</title>
+
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization></organization>
+      <address>
+        
+        
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net/</uri>
+      </address>
+    </author>
+
+    <date year="2014"/>
+
+    <area>General</area>
+    
+    <keyword>Internet-Draft</keyword>
+
+    <abstract>
+
+
+<t>This document discusses the use and configuration of proxies in HTTP, pointing
+out problems in the currently deployed Web infrastructure along the way. It
+then offers a few principles to base further discussion upon, and lists some
+potential avenues for further exploration.</t>
+
+
+
+    </abstract>
+
+
+  </front>
+
+  <middle>
+
+
+<section anchor="introduction" title="Introduction">
+
+<t>HTTP/1.1 <xref target="RFC7230"/> was designed to accommodate proxies. It allows them (and
+other components) to cache content expansively, and allows for proxies to break
+“semantic transparency” by changing message content, within broad constraints.</t>
+
+<t>As the Web has matured, more networks have taken advantage of this by deploying
+proxies for a variety of reasons, in a number of different ways. <xref target="why"/> is a
+survey of the different ways that proxies are used, and <xref target="how"/> shows how they
+are interposed into communication.</t>
+
+<t>Some uses of proxies cause problems (or the perception of them) for origin
+servers and end users. While some uses are obviously undesirable from the
+perspective of an end users and/or origin server, other effects of their
+deployment are more subtle; these are examined in <xref target="effects"/>.</t>
+
+<t>These tensions between the interests of the stakeholders in every HTTP
+connection – the end users, the origin servers and the networks they use –
+has led to decreased trust for proxies, then increasing deployment of
+encryption, then workarounds for encryption, and so forth.</t>
+
+<t>Left unchecked, this escalation can erode the value of the Web itself.
+Therefore, <xref target="principles"/> proposes straw-man principals to base further
+discussion upon.</t>
+
+<t>Finally, <xref target="further"/> proposes some areas of technical investigation that might
+yield solutions (or at least mitigations) for some of these problems.</t>
+
+<t>Note that this document is explicitly about “proxies” in the sense that HTTP
+defines them. Intermediaries that are interposed by the server (e.g., gateways
+and so-called “Reverse Proxies”, as used in Content Delivery Networks) are out
+of scope.</t>
+
+<section anchor="notational-conventions" title="Notational Conventions">
+
+<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”,
+“SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this
+document are to be interpreted as described in <xref target="RFC2119"/>.</t>
+
+</section>
+</section>
+<section anchor="why" title="Why Proxy?">
+
+<t>HTTP proxies are interposed between user agents and origin servers for a
+variety of purposes; some of them are with the full knowledge and consent of
+end users, to their benefit, and some are solely for the purposes of the
+network operator – sometimes even against the interests of the end users.</t>
+
+<t>This section attempts to identify the different motivations networks have for
+deploying proxies.</t>
+
+<section anchor="application-layer-gatewaying" title="Application Layer Gatewaying">
+
+<t>Some networks do not have direct Internet connectivity for Web browsing. These
+networks can deploy proxies that do have Internet connectivity and then
+configure clients to use them.</t>
+
+<t>Such gatewaying between networks were some of the first uses for proxies.</t>
+
+</section>
+<section anchor="caching" title="Caching">
+
+<t>An extremely common use of proxies is to interpose a HTTP cache, in order to
+save bandwidth, improve end-user perceived latency, increase reliability, or
+some combination of these purposes.</t>
+
+<t>HTTP defines a detailed model for caching (see
+<xref target="RFC7234"/>); however, some lesser-known aspects of the
+caching model can cause operational issues. For example, it allows caches to go
+into an “offline” mode where most content can be served stale.</t>
+
+<t>Also, proxy caches sometimes fail to honor the HTTP caching model, reusing
+content when it should not have been. This can cause interoperability issues,
+with the end user seeing overly “stale” content, or applications not operating
+correctly.</t>
+
+</section>
+<section anchor="network-policy-enforcement" title="Network Policy Enforcement">
+
+<t>Some proxies are deployed to aid in network policy enforcement; for example, to
+control access to the network, requiring a login (as allowed explicitly by
+HTTP’s proxy authentication mechanism), bandwidth shaping of HTTP access,
+quotas, etc. This includes so-called “Captive Portals” used for network login.</t>
+
+<t>Some uses of proxies for policy enforcement cause problems; e.g., when a proxy
+uses URL rewriting to send a user a message (e.g., a “blocked” page), they can
+make it appear as if the origin server is sending that message – especially
+when the user agent isn’t a browser (e.g., a software update process).</t>
+
+</section>
+<section anchor="content-filtering-aka-content-policy-enforcement" title="Content Filtering (a.k.a. Content Policy Enforcement)">
+
+<t>Some networks attempt to filter HTTP messages (both request and response) based
+upon network-specific criteria. For example, they might wish to stop users from
+downloading content that contains malware, or that violates site policies on
+appropriate content, or that violates local law.</t>
+
+<t>Intermediary proxies as a mechanism for enforcing content restrictions are
+often easy to circumvent. For example, a device might become infected by using
+a different network, or a VPN. Nevertheless, they are commonly used for this
+purpose.</t>
+
+<t>Some content policy enforcement is also done locally to the user agent; for
+example, several Operating Systems have machine-local proxies built in that
+scan content. </t>
+
+<t>Content filtering is often seen as controversial, often depending on the
+context it is used within and how it is performed.</t>
+
+</section>
+<section anchor="content-modification" title="Content Modification">
+
+<t>Some networks modify HTTP messages (both request and response) as they pass
+through proxies. This might include the message body, headers, request-target,
+method or status code.</t>
+
+<t>Motivation for content modification varies. For example, some mobile networks
+interpose proxies that modify content in an attempt to save bandwidth, improve
+perceived performance, or transcode content to formats that limited-resource
+devices can more easily consume.</t>
+
+<t>Modifications also include adding metadata in headers for accounting purposes,
+or removing metadata such as Accept-Encoding to make virus scanning easier.</t>
+
+<t>In other cases, content modification is performed to make more substantial
+modifications. This could include inserting advertisements, or changing the
+layout of content in an attempt to make it easier to use.</t>
+
+<t>Content modification is very controversial, often depending on the context it
+is used within and how it is performed. Many feel that, without the explicit
+consent of either the end user or the origin server, a proxy that modifies
+content violates their relationship, thereby degrading trust in the Web overall.</t>
+
+<t>However, it should be noted that Section 5.7.2 of <xref target="RFC7230"/> explicitly allows
+“non-transparent” proxies that modify content in certain ways. Such proxies are
+required to honor the “no-transform” directive, giving both user agents and
+origin servers a mechanism to “opt out” of modifications (<xref target="RFC7234"/>, Section
+5.2.1.6); however, it is not technically enforced.</t>
+
+<t><xref target="W3C.NOTE-ct-guidelines-20101026"/> is a product of the W3C Mobile Web Best
+Practices Working Group that attempts to set guidelines for content
+modification proxies. Again, it is a policy document, without technical
+enforcement measures.</t>
+
+</section>
+</section>
+<section anchor="how" title="How Proxies are Interposed">
+
+<t>How a proxy is interposed into a network flow often has great affect on
+perceptions of its operation by end users and origin servers. This section
+catalogues the ways that this happens, and potential problems with each.</t>
+
+<section anchor="manual-configuration" title="Manual Configuration">
+
+<t>The original way to interpose a proxy was to manually configure it into the
+user agent. For example, most browsers still have the ability to have a proxy
+hostname and port configured for HTTP; many Operating Systems have system-wide
+proxy settings.</t>
+
+<t>Unfortunately, manual configuration suffers from several problems:</t>
+
+<t><list style='symbols'>
+  <t>Users often lack the expertise to manually configure proxies.</t>
+  <t>When the user changes networks, they must manually change proxy settings, a
+laborious task. This makes manual configuration impractical in a modern,
+mobile-driven world.</t>
+  <t>Not all HTTP stacks support manual proxy configuration. Therefore, a proxy
+administrator cannot rely upon this method.</t>
+</list></t>
+
+</section>
+<section anchor="proxypac-and-wpad" title="proxy.pac and WPAD">
+
+<t>The limitations of manual configuration were recognized long ago. The solution
+that evolved was a format called “proxy.pac” <xref target="proxypac"/> that allowed the
+proxy configuration to be automated, once the user agent had loaded it.</t>
+
+<t>Proxy.pac is a JavaScript format; before each request is made, it is dispatched
+to a function in the file that returns a string that denotes whether a proxy is
+to be used, and if so, which one to use.</t>
+
+<t>Discovery of the appropriate proxy.pac file for a given network can be made
+using a DHCP extension, <xref target="wpad"/>. WPAD started as a simple protocol; it conveys
+a URL that locates the proxy.pac file for the network.</t>
+
+<t>Unfortunately, the proxy.pac/WPAD combination has several operational issues
+that limit its deployment:</t>
+
+<t><list style='symbols'>
+  <t>The proxy.pac format does not define timeouts or failover behavior
+precisely, leading to wide divergence between implementations. This makes
+supporting multiple user agents reliably difficult for the network.</t>
+  <t>WPAD is not widely implemented by user agents; some only implement proxy.pac.</t>
+  <t>In those user agents where it is implemented, WPAD is often not the default,
+meaning that users need to configure its use.</t>
+  <t>Neither proxy.pac nor WPAD have been standardized, leading to implementation
+divergence and resulting interoperability problems.</t>
+  <t>There are DNS-based variants of WPAD, adding to to confusion.</t>
+  <t>DHCP options generally require tight integration with the operating system to
+pass the results to HTTP-based applications. While this level of integration
+is found between O/Ses and their provided applications, the interface may or
+may not be available to third parties.</t>
+  <t>WPAD can be spoofed, allowing attackers to interpose a proxy and intercept
+traffic. This is a blocking issue for implementation.</t>
+</list></t>
+
+</section>
+<section anchor="interception" title="Interception">
+
+<t>The problems with manual configuration and proxy.pac/WPAD have led to the wide
+deployment of a third style of interposition; interception proxies.</t>
+
+<t>Interception occurs when lower-layer protocols are configured to route HTTP
+traffic to a host other than the origin server for the URI in question. It
+requires no client configuration (hence its popularity over other methods). See
+<xref target="RFC3040"/> for an example of an interception-related protocol.</t>
+
+<t>Interception is also strongly motivated when it is necessary to assure that the
+proxy is always used, e.g., to enforce policy.</t>
+
+<t>Interception is problematic, however, because it is often done without the
+consent of either the end user or the origin server. This means that a response
+that appears to be coming from the origin server is actually coming from the
+intercepting proxy. This makes it difficult to support features like
+proxy authentication, as the unexpected status code breaks many clients (e.g.,
+non-interactive applications like software installers).</t>
+
+<t>Furthermore, interception is a “layer violation”; i.e., misusing lower-layer
+protocols to enforce a higher-layer (often expressed as “layer 8”) requirement.</t>
+
+<t>In addition, as adoption of multi-path TCP (MPTCP) <xref target="RFC6824"/> increases, the
+ability of intercepting proxies to offer a consistent service degrades.</t>
+
+</section>
+<section anchor="configuration-as-side-effect" title="Configuration As Side Effect">
+
+<t>More recently, it’s become more common for a proxy to be interposed as a side
+effect of another choice by the user.</t>
+
+<t>For example, the user might decide to add virus scanning – either as installed
+software, or a service that they configure from their provider – that is
+interposed as a proxy.  Indeed, almost all desktop virus scanners and content
+filters operate in this fashion.</t>
+
+<t>This approach has the merits of both being easy and obtaining explicit user
+consent. However, in some cases, the end user might not understand the
+consequences of use of the proxy, especially upon security and interoperability.</t>
+
+</section>
+</section>
+<section anchor="effects" title="Second-Order Effects of Proxy Deployment">
+
+<section anchor="proxies-and-http" title="Proxies and HTTP">
+
+<t>Deployment of proxies has an effect on the HTTP protocol itself. Because a
+proxy implements both a server and a client, any limitations or bugs in their
+implementation impact the protocol’s use.</t>
+
+<t>For example, HTTP has a defined mechanism for upgrading the protocol of a
+connection, to aid in the deployment of new versions of HTTP (such as HTTP/2)
+or completely different protocol (e.g., <xref target="RFC6455"/>).</t>
+
+<t>However, operational experience has shown that a significant number of proxy
+implementations do not correctly implement it, leading to dangerous situations
+where two ends of a HTTP connection think different protocols are being spoken.</t>
+
+<t>Another example is the Expect/100-continue mechanism in HTTP/1.1, which is often
+incorrectly implemented. Likewise, differences in support for trailers limits
+protocol extensions.</t>
+
+</section>
+<section anchor="proxies-and-tls" title="Proxies and TLS">
+
+<t>It has become more common for Web sites to use TLS <xref target="RFC5246"/> in an attempt to
+avoid many of the problems above. Many have advocated use of TLS more broadly;
+for example, see the EFF’s HTTPS Everywhere <xref target="https-everywhere"/> program, and
+SPDY’s default use of TLS <xref target="I-D.mbelshe-httpbis-spdy"/>.</t>
+
+<t>However, doing so engenders a few problems.</t>
+
+<t>Firstly, TLS as used on the Web is not a perfectly secure protocol, and using
+it to protect all traffic gives proxies a strong incentive to work around it,
+e.g., by deploying a certificate authority directly into browsers, or buying a
+sub-root certificate.</t>
+
+<t>Secondly, it removes the opportunity for the proxy to inform the user agent of
+relevant information; for example, conditions of access, access denials, login
+interfaces, and so on. User Agents currently do not display any feedback from
+proxy, even in the CONNECT response (e.g., a 4xx or 5xx error), limiting their
+ability to have informed users of what’s going on.</t>
+
+<t>Finally, it removes the opportunity for services provided by a proxy that the
+end user might wish to opt into. For example, consider when a remote village
+shares a proxy server to cache content, thereby helping to overcome the
+limitations of their Internet connection. TLS-protected HTTP traffic cannot be
+cached by intermediaries, removing much of the benefit of the Web to what is
+arguably one of its most important target audiences.</t>
+
+<t>It is now becoming more common for a proxy to man-in-the-middle TLS connections
+(see <xref target="tls-mitm"/> for an overview), to gain access to the application message
+flows. This represents a serious degradation in the trust infrastructure of the
+Web.</t>
+
+<t>Worse is the situation where proxies provide a certificate where they inure the
+user to a certificate warning that they then need to ignore in order to receive
+service.</t>
+
+</section>
+</section>
+<section anchor="principles" title="Principles for Consideration">
+
+<t>Every HTTP connection has at least three major stakeholders; the user
+(through their agent), the origin server (possibly using gateways such as a
+CDN) and the networks between them.</t>
+
+<t>Currently, the capabilities of these stakeholders are defined by how the Web is
+deployed. Most notably, networks sometimes change content. If they change it
+too much, origin servers will start using encryption. Changing the way that
+HTTP operates therefore has the potential to re-balance the capabilities of the
+various stakeholders.</t>
+
+<t>This section proposes several straw-man principles for consideration as the
+basis of those changes. Their sole purpose here is to provoke discussion.</t>
+
+<section anchor="proxies-have-a-legitimate-place" title="Proxies Have a Legitimate Place">
+
+<t>As illustrated above, there are many legitimate uses for proxies, and they are
+a necessary part of the architecture of the Web. While all uses of proxies are
+not legitimate – especially when they’re interposed without the knowledge or
+consent of the end user and the origin – undesirable intermediaries (i.e.,
+those that break the reasonable expectations of other stakeholders) are a small
+portion of those deployed used.</t>
+
+<t>Note that while proxies have a legitimate place, it does not imply that they are
+an equal stakeholder to other parties in all ways; e.g., they do not have
+a natural right to access encrypted content, for example.</t>
+
+</section>
+<section anchor="security-should-be-encouraged" title="Security Should be Encouraged">
+
+<t>Any solution needs to give all stakeholders – end users, networks and origin
+servers – a strong incentive towards security.</t>
+
+<t>This has subtle implications. If networks are disempowered disproportionately,
+they might react by blocking secure connections, discouraging origin servers
+(who often have even stronger profit incentives) from deploying encryption,
+which would result in a net loss of security.</t>
+
+<t>On the other hand, if networks are given carte blanche, it can destroy trust
+in the Web altogether. In particular, making it too easy to interpose a proxy
+(even if the user is “informed” by clicking through a dialogue) degrades the
+infrastructure in an unacceptable way.</t>
+
+</section>
+<section anchor="users-need-to-be-informed-of-proxies" title="Users Need to be Informed of Proxies">
+
+<t>When a proxy is interposed, the user needs to be informed about it, so they
+have the opportunity to change their configuration (e.g., attempt to introduce
+encryption), or not use the network at all.</t>
+
+<t>Proxies also need to be strongly authenticated; i.e., users need to be able to
+verify who the proxy is.</t>
+
+</section>
+<section anchor="users-need-to-be-able-to-tunnel-through-proxies" title="Users Need to be able to Tunnel through Proxies">
+
+<t>When a proxy is interposed, the user needs to be able to tunnel any request
+through it without its content (or that of the response) being exposed to the
+proxy. </t>
+
+<t>This includes both “https://” and “http://” URIs. </t>
+
+</section>
+<section anchor="proxies-can-say-no" title="Proxies Can say “No”">
+
+<t>A proxy can refuse to forward any request. Currently, the granularity of that
+“no” is per-URI for unencrypted requests, and per-IP (perhaps per-SNI) for encrypted
+requests.</t>
+
+</section>
+<section anchor="changes-need-to-be-detectable" title="Changes Need to be Detectable">
+
+<t>Any changes to the message body, request URI, method, status code, or
+representation header fields of an HTTP message need to be detectable by the
+origin server or user agent, as appropriate, if they desire it.</t>
+
+<t>This allows a proxy to be trusted, but its integrity to be verified.</t>
+
+</section>
+<section anchor="proxies-need-to-be-easy" title="Proxies Need to be Easy">
+
+<t>It must be possible to configure a proxy extremely easily; the adoption of
+interception over proxy.pac/WPAD illustrates this very clearly.</t>
+
+</section>
+<section anchor="proxies-need-to-communicate-to-users" title="Proxies Need to Communicate to Users">
+
+<t>There are many situations where a proxy needs to communicate with the end user;
+for example, to gather network authentication credentials, communicate network
+policy, report that access to content has been denied, and so on.</t>
+
+<t>Currently, HTTP has poor facilities for doing so. The proxy authentication
+mechanism is extremely limited, and while there are a few status codes that are
+defined as being from a proxy rather than the origin, they do not cover all
+necessary situations. </t>
+
+<t>The Warning header field (<xref target="RFC7234"/>, Section 5.5) was designed as a very
+limited form of communication between proxies and end users, but it has not
+been widely adopted, nor exposed by User Agents.</t>
+
+<t>Importantly, proxies also need a limited communication channel when TLS is in
+use, for similar purposes.</t>
+
+<t>Equally as important, the communication needs to clearly come from the proxy,
+rather than the origin, and be strongly authenticated.</t>
+
+</section>
+<section anchor="users-require-simple-interfaces" title="Users Require Simple Interfaces">
+
+<t>While some users are sophisticated in their understanding of Web security, they
+are in a vanishingly small minority. The concepts and implications of many
+decisions regarding security are subtle, and require an understanding of how
+the Web works; describing these trade-offs in a modal dialogue box that gets in
+the way of the content the user wants has been proven not to work.</t>
+
+<t>Similarly, while some Web publishers are sophisticated regarding security, the
+vast majority are not (as can be proven by the prevalence of cross-site
+scripting attacks).</t>
+
+<t>Therefore, any changes cannot rely upon perfect understanding by these parties,
+or even any great effort upon their part. This implies that user interface will
+be one of the biggest challenges faced, both in the browser and for any changes
+server-side.</t>
+
+<t>Notably, the most widely understood indicator of security today is the “lock
+icon” that shows when a connection is protected by TLS. Any erosion of the
+commonly-understood semantics of that indicator, as well as “https://” URIs, is
+likely to be extremely controversial, because it changes the already-understood
+security properties of the Web.</t>
+
+<t>Another useful emerging convention is that of “Incognito” or “private” mode,
+where the end user has requested enhanced privacy and security. This might be
+used to introduce higher requirements for the interposition of intermediaries,
+or even to prohibit their use without full encryption.</t>
+
+</section>
+<section anchor="user-agents-are-diverse" title="User Agents Are Diverse">
+
+<t>HTTP is used in a wide variety of environments. As such there can be no
+assumption that a user is sitting on the other end to interpret information or
+answer questions from proxies.</t>
+
+</section>
+<section anchor="rfc2119-doesnt-define-reality" title="RFC2119 Doesn’t Define Reality">
+
+<t>It’s very tempting for a committee to proclaim that proxies “MUST” do this and
+“SHOULD NOT” do that, but the reality is that the proxies, like any other actor
+in a networked system, will do what they can, not what they’re told to do, if
+they have an incentive to do it.</t>
+
+<t>Therefore, it’s not enough to say that (for example), “proxies have to honor
+no-transform” as HTTP/1.1 does. Instead, the protocol needs to be designed in
+a way so that either transformations aren’t possible, or if they are, they 
+can be detected (with appropriate handling by User Agents defined).</t>
+
+</section>
+<section anchor="it-needs-to-be-deployable" title="It Needs to be Deployable">
+
+<t>Any improvements to the proxy ecosystem MUST be incrementally deployable, so
+that existing clients can continue to function.</t>
+
+</section>
+</section>
+<section anchor="further" title="Potential Areas to Investigate">
+
+<t>Finally, this section lists some areas of potential future investigation,
+bearing the principles suggested above in mind.</t>
+
+<section anchor="improving-proxypac" title="Improving Proxy.Pac">
+
+<t>Many of the flaws in proxy.pac can be fixed by careful specification
+and standardization, with active participation by both implementers and those
+that deploy it.</t>
+
+</section>
+<section anchor="tls-errors-for-proxies" title="TLS Errors for Proxies">
+
+<t>HTTP’s use of TLS <xref target="RFC2818"/> currently offers no way for an interception proxy
+to communicate with the user agent on its own behalf. This might be necessary
+for network authentication, notification of filtering by hostname, etc.</t>
+
+<t>The challenge in defining such a mechanism is avoiding the opening of new
+attack vectors; if unauthenticated content can be served as if it were from the
+origin server, or the user can be encouraged to “click through” a dialog, it
+has severe security implications. As such, the user experience would need to be
+carefully considered.</t>
+
+</section>
+<section anchor="http-errors-for-proxies" title="HTTP Errors for Proxies">
+
+<t>HTTP currently defines two status codes that are explicitly generated by a
+proxy:</t>
+
+<t><list style='symbols'>
+  <t>504 Gateway Timeout (<xref target="RFC7231"/>, Section 6.6.5) - when a proxy (or gateway)
+times out going forward</t>
+  <t>511 Network Authentication Required (<xref target="RFC6585"/>, Section 6) - when
+authentication information is necessary to access the network</t>
+</list></t>
+
+<t>It might be interesting to discuss whether a separate user experience can be
+formed around proxy-specific status codes, along with the definition of new
+ones as necessary.</t>
+
+</section>
+<section anchor="tls-for-proxy-connections" title="TLS for Proxy Connections">
+
+<t>While TLS can be used end-to-end for “https://” URIs, support for connecting to
+a proxy itself using TLS (e.g., for “http://” URIs) is spotty. Using a proxy
+without strong proof of its identity introduces security issues, and if a proxy
+can legitimately insert itself into communication, its identity needs to be
+verifiable.</t>
+
+</section>
+<section anchor="improved-network-information" title="Improved Network Information">
+
+<t>Many of the use cases for proxies that modify content is transcoding or otherwise
+adapting that which is too “heavy” for the network it is transiting through.</t>
+
+<t>If network operators made better, more fine-grained and timely information about
+their operational characteristics freely available, endpoints (server and client)
+could adapt requests and responses to reflect it, thereby removing the need for
+intermediation.</t>
+
+</section>
+<section anchor="improving-trust" title="Improving Trust">
+
+<t>Currently, it is possible to exploit the mismatched incentives and other flaws
+in the CA system to cause a browser to trust a proxy as authoritative for a
+“https://” URI without full user knowledge. This needs to be remedied;
+otherwise, proxies will continue to man-in-the-middle TLS.</t>
+
+</section>
+<section anchor="http-signatures" title="HTTP Signatures">
+
+<t>Signatures for HTTP content – both requests and responses – have been
+discussed on and off for some time.</t>
+
+<t>Of particular interest here, signed responses would allow a user-agent to
+verify that the origin’s content has not been modified in transit, whilst still
+allowing it to be cached by intermediaries.</t>
+
+<t>Likewise, if header values can be signed, the caching policy (as expressed by
+Cache-Control, Date, Last-Modified, Age, etc.) can be signed, meaning it can be
+verified as being adhered to.</t>
+
+<t>Note that properly designed, a signature mechanism could work over TLS,
+separating the trust relationship between the UA and the origin server and that
+of the UA and its proxy (with appropriate consent).</t>
+
+<t>There are significant challenges in designing a robust, widely-deployable HTTP
+signature mechanism. One of the largest is an issue of user interface - what
+ought the UA do when encountering a bad signature?</t>
+
+</section>
+</section>
+<section anchor="security-considerations" title="Security Considerations">
+
+<t>Plenty of them, I suspect.</t>
+
+</section>
+<section anchor="acknowledgements" title="Acknowledgements">
+
+<t>This document benefits from conversations and feedback from many people,
+including Amos Jeffries, Willy Tarreau, Patrick McManus, Roberto Peon, Guy
+Podjarny, Eliot Lear, Brad Hill, Martin Nilsson and Julian Reschke.</t>
+
+</section>
+
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+
+
+
+
+
+<reference anchor='RFC2119'>
+
+<front>
+<title abbrev='RFC Key Words'>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='Scott Bradner'>
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<street>Cambridge</street>
+<street>MA 02138</street></postal>
+<phone>- +1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year='1997' month='March' />
+<area>General</area>
+<keyword>keyword</keyword>
+<abstract>
+<t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list>
+<t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+<t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t></abstract></front>
+
+<seriesInfo name='BCP' value='14' />
+<seriesInfo name='RFC' value='2119' />
+<format type='TXT' octets='4723' target='http://www.rfc-editor.org/rfc/rfc2119.txt' />
+<format type='HTML' octets='17970' target='http://xml.resource.org/public/rfc/html/rfc2119.html' />
+<format type='XML' octets='5777' target='http://xml.resource.org/public/rfc/xml/rfc2119.xml' />
+</reference>
+
+
+
+
+    </references>
+
+    <references title='Informative References'>
+
+
+
+
+
+<reference anchor='RFC2818'>
+
+<front>
+<title>HTTP Over TLS</title>
+<author initials='E.' surname='Rescorla' fullname='E. Rescorla'>
+<organization /></author>
+<date year='2000' month='May' />
+<abstract>
+<t>This memo describes how to use Transport Layer Security (TLS) to secure Hypertext Transfer Protocol (HTTP) connections over the Internet.  This memo provides information for the Internet community.</t></abstract></front>
+
+<seriesInfo name='RFC' value='2818' />
+<format type='TXT' octets='15170' target='http://www.rfc-editor.org/rfc/rfc2818.txt' />
+</reference>
+
+
+
+<reference anchor='RFC3040'>
+
+<front>
+<title>Internet Web Replication and Caching Taxonomy</title>
+<author initials='I.' surname='Cooper' fullname='I. Cooper'>
+<organization /></author>
+<author initials='I.' surname='Melve' fullname='I. Melve'>
+<organization /></author>
+<author initials='G.' surname='Tomlinson' fullname='G. Tomlinson'>
+<organization /></author>
+<date year='2001' month='January' />
+<abstract>
+<t>This memo specifies standard terminology and the taxonomy of web replication and caching infrastructure as deployed today.  It introduces standard concepts, and protocols used today within this application domain.  This memo provides information for the Internet community.</t></abstract></front>
+
+<seriesInfo name='RFC' value='3040' />
+<format type='TXT' octets='63257' target='http://www.rfc-editor.org/rfc/rfc3040.txt' />
+</reference>
+
+
+
+<reference anchor='RFC5246'>
+
+<front>
+<title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
+<author initials='T.' surname='Dierks' fullname='T. Dierks'>
+<organization /></author>
+<author initials='E.' surname='Rescorla' fullname='E. Rescorla'>
+<organization /></author>
+<date year='2008' month='August' />
+<abstract>
+<t>This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications security over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='5246' />
+<format type='TXT' octets='222395' target='http://www.rfc-editor.org/rfc/rfc5246.txt' />
+</reference>
+
+
+
+<reference anchor='RFC6455'>
+
+<front>
+<title>The WebSocket Protocol</title>
+<author initials='I.' surname='Fette' fullname='I. Fette'>
+<organization /></author>
+<author initials='A.' surname='Melnikov' fullname='A. Melnikov'>
+<organization /></author>
+<date year='2011' month='December' />
+<abstract>
+<t>The WebSocket Protocol enables two-way communication between a client running untrusted code in a controlled environment to a remote host that has opted-in to communications from that code.  The security model used for this is the origin-based security model commonly used by web browsers.  The protocol consists of an opening handshake followed by basic message framing, layered over TCP.  The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers that does not rely on opening multiple HTTP connections (e.g., using XMLHttpRequest or &amp;lt;iframe&amp;gt;s and long polling). [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='6455' />
+<format type='TXT' octets='162067' target='http://www.rfc-editor.org/rfc/rfc6455.txt' />
+</reference>
+
+
+
+<reference anchor='RFC6585'>
+
+<front>
+<title>Additional HTTP Status Codes</title>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'>
+<organization /></author>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<date year='2012' month='April' />
+<abstract>
+<t>This document specifies additional HyperText Transfer Protocol (HTTP) status codes for a variety of common situations. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='6585' />
+<format type='TXT' octets='17164' target='http://www.rfc-editor.org/rfc/rfc6585.txt' />
+</reference>
+
+
+
+<reference anchor='RFC6824'>
+
+<front>
+<title>TCP Extensions for Multipath Operation with Multiple Addresses</title>
+<author initials='A.' surname='Ford' fullname='A. Ford'>
+<organization /></author>
+<author initials='C.' surname='Raiciu' fullname='C. Raiciu'>
+<organization /></author>
+<author initials='M.' surname='Handley' fullname='M. Handley'>
+<organization /></author>
+<author initials='O.' surname='Bonaventure' fullname='O. Bonaventure'>
+<organization /></author>
+<date year='2013' month='January' />
+<abstract>
+<t>TCP/IP communication is currently restricted to a single path per connection, yet multiple paths often exist between peers. The simultaneous use of these multiple paths for a TCP/IP session would improve resource usage within the network and, thus, improve user experience through higher throughput and improved resilience to network failure.&lt;/t>&lt;t> Multipath TCP provides the ability to simultaneously use multiple paths between peers. This document presents a set of extensions to traditional TCP to support multipath operation. The protocol offers the same type of service to applications as TCP (i.e., reliable bytestream), and it provides the components necessary to establish and use multiple TCP flows across potentially disjoint paths. This document defines an Experimental Protocol for the Internet community.</t></abstract></front>
+
+<seriesInfo name='RFC' value='6824' />
+<format type='TXT' octets='164866' target='http://www.rfc-editor.org/rfc/rfc6824.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7230'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7230' />
+<format type='TXT' octets='205947' target='http://www.rfc-editor.org/rfc/rfc7230.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7231'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7231' />
+<format type='TXT' octets='235053' target='http://www.rfc-editor.org/rfc/rfc7231.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7234'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Caching</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7234' />
+<format type='TXT' octets='90647' target='http://www.rfc-editor.org/rfc/rfc7234.txt' />
+</reference>
+
+
+
+<reference anchor='W3C.NOTE-ct-guidelines-20101026'
+           target='http://www.w3.org/TR/2010/NOTE-ct-guidelines-20101026'>
+<front>
+<title>Guidelines for Web Content Transformation Proxies 1.0</title>
+
+<author initials='J.' surname='Rabin' fullname='Jo Rabin'>
+    <organization />
+</author>
+
+<date month='October' day='26' year='2010' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium NOTE' value='NOTE-ct-guidelines-20101026' />
+<format type='HTML' target='http://www.w3.org/TR/2010/NOTE-ct-guidelines-20101026' />
+</reference>
+
+
+
+<reference anchor='I-D.mbelshe-httpbis-spdy'>
+<front>
+<title>SPDY Protocol</title>
+
+<author initials='M' surname='Belshe' fullname='Mike Belshe'>
+    <organization />
+</author>
+
+<author initials='R' surname='Peon' fullname='Roberto Peon'>
+    <organization />
+</author>
+
+<date month='February' day='23' year='2012' />
+
+<abstract><t>This document describes SPDY, a protocol designed for low-latency transport of content over the World Wide Web. SPDY introduces two layers of protocol.  The lower layer is a general purpose framing layer which can be used atop a reliable transport (likely TCP) for multiplexed, prioritized, and compressed data communication of many concurrent streams.  The upper layer of the protocol provides HTTP- like RFC2616 [RFC2616] semantics for compatibility with existing HTTP application servers.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-mbelshe-httpbis-spdy-00' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-mbelshe-httpbis-spdy-00.txt' />
+</reference>
+
+
+<reference anchor="proxypac" target="http://en.wikipedia.org/wiki/Proxy_auto-config">
+  <front>
+    <title>Proxy Auto-Config</title>
+    <author initials="." surname="various" fullname="various">
+      <organization></organization>
+    </author>
+    <date year="2013"/>
+  </front>
+</reference>
+<reference anchor="wpad" target="http://tools.ietf.org/html/draft-ietf-wrec-wpad-01">
+  <front>
+    <title>Web Proxy Auto-Discovery Protocol</title>
+    <author initials="J." surname="Cohen" fullname="Josh Cohen et al">
+      <organization></organization>
+    </author>
+    <date year="1999"/>
+  </front>
+</reference>
+<reference anchor="https-everywhere" target="https://www.eff.org/https-everywhere">
+  <front>
+    <title>HTTPS Everywhere</title>
+    <author initials="." surname="EFF" fullname="Electronic Freedom Foundation">
+      <organization></organization>
+    </author>
+    <date year="2013"/>
+  </front>
+</reference>
+<reference anchor="tls-mitm" target="https://www.grc.com/miscfiles/HTTPS_Interception_Proxies.pdf">
+  <front>
+    <title>SSL/TLS Interception Proxies and Transitive Trust</title>
+    <author initials="J." surname="Jarmoc" fullname="Jeff Jarmoc">
+      <organization></organization>
+    </author>
+    <date year="2012"/>
+  </front>
+</reference>
+
+
+    </references>
+
+
+
+
+  </back>
+</rfc>
+
