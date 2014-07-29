@@ -70,8 +70,7 @@ informative:
 
 This document discusses the use and configuration of proxies in HTTP, pointing
 out problems in the currently deployed Web infrastructure along the way. It
-then offers a few principles to base further discussion upon, and lists some
-potential avenues for further exploration.
+then asks a few questions to base further discussion upon.
 
 --- middle
 
@@ -97,11 +96,8 @@ has led to decreased trust for proxies, then increasing deployment of
 encryption, then workarounds for encryption, and so forth.
 
 Left unchecked, this escalation can erode the value of the Web itself.
-Therefore, {{principles}} proposes straw-man principals to base further
-discussion upon.
-
-Finally, {{further}} proposes some areas of technical investigation that might
-yield solutions (or at least mitigations) for some of these problems.
+Therefore, {{questions}} proposes several questions to focus further
+discussion.
 
 Note that this document is explicitly about "proxies" in the sense that HTTP
 defines them. Intermediaries that are interposed by the server (e.g., gateways
@@ -111,9 +107,9 @@ of scope.
 
 ## Notational Conventions
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-document are to be interpreted as described in {{RFC2119}}.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+interpreted as described in {{RFC2119}}.
 
 
 
@@ -312,7 +308,7 @@ In addition, as adoption of multi-path TCP (MPTCP) {{RFC6824}} increases, the
 ability of intercepting proxies to offer a consistent service degrades.
 
 
-## Configuration As Side Effect
+## Pre-Configuration
 
 More recently, it's become more common for a proxy to be interposed as a side
 effect of another choice by the user.
@@ -351,24 +347,18 @@ protocol extensions.
 ## Proxies and TLS
 
 It has become more common for Web sites to use TLS {{RFC5246}} in an attempt to
-avoid many of the problems above. Many have advocated use of TLS more broadly;
-for example, see the EFF's HTTPS Everywhere {{https-everywhere}} program, and
-SPDY's default use of TLS {{I-D.mbelshe-httpbis-spdy}}.
+avoid many of the problems above, as well as increase Web security. Many have
+advocated use of TLS more broadly; for example, see the EFF's HTTPS Everywhere
+{{https-everywhere}} program, and SPDY's default use of TLS
+{{I-D.mbelshe-httpbis-spdy}}.
 
 However, doing so engenders a few problems.
 
-Firstly, TLS as used on the Web is not a perfectly secure protocol, and using
-it to protect all traffic gives proxies a strong incentive to work around it,
-e.g., by deploying a certificate authority directly into browsers, or buying a
-sub-root certificate.
+Firstly, using TLS to protect all traffic gives proxies a strong incentive to
+work around it, e.g., by deploying a certificate authority directly into
+browsers, or buying a sub-root certificate.
 
-Secondly, it removes the opportunity for the proxy to inform the user agent of
-relevant information; for example, conditions of access, access denials, login
-interfaces, and so on. User Agents currently do not display any feedback from
-proxy, even in the CONNECT response (e.g., a 4xx or 5xx error), limiting their
-ability to have informed users of what's going on.
-
-Finally, it removes the opportunity for services provided by a proxy that the
+Second, it removes the opportunity for services provided by a proxy that the
 end user might wish to opt into. For example, consider when a remote village
 shares a proxy server to cache content, thereby helping to overcome the
 limitations of their Internet connection. TLS-protected HTTP traffic cannot be
@@ -380,28 +370,11 @@ It is now becoming more common for a proxy to man-in-the-middle TLS connections
 flows. This represents a serious degradation in the trust infrastructure of the
 Web.
 
-Worse is the situation where proxies provide a certificate where they inure the
-user to a certificate warning that they then need to ignore in order to receive
-service.
+
+# Questions for Consideration {#questions}
 
 
-# Principles for Consideration {#principles}
-
-Every HTTP connection has at least three major stakeholders; the user
-(through their agent), the origin server (possibly using gateways such as a
-CDN) and the networks between them.
-
-Currently, the capabilities of these stakeholders are defined by how the Web is
-deployed. Most notably, networks sometimes change content. If they change it
-too much, origin servers will start using encryption. Changing the way that
-HTTP operates therefore has the potential to re-balance the capabilities of the
-various stakeholders.
-
-This section proposes several straw-man principles for consideration as the
-basis of those changes. Their sole purpose here is to provoke discussion.
-
-
-## Proxies Have a Legitimate Place
+## What is the role of the Proxy?
 
 As illustrated above, there are many legitimate uses for proxies, and they are
 a necessary part of the architecture of the Web. While all uses of proxies are
@@ -415,7 +388,7 @@ an equal stakeholder to other parties in all ways; e.g., they do not have
 a natural right to access encrypted content, for example.
 
 
-## Security Should be Encouraged
+## How can Security be Encouraged?
 
 Any solution needs to give all stakeholders -- end users, networks and origin
 servers -- a strong incentive towards security.
@@ -431,7 +404,7 @@ in the Web altogether. In particular, making it too easy to interpose a proxy
 infrastructure in an unacceptable way.
 
 
-## Users Need to be Informed of Proxies
+## How are users informed of proxies?
 
 When a proxy is interposed, the user needs to be informed about it, so they
 have the opportunity to change their configuration (e.g., attempt to introduce
@@ -441,7 +414,7 @@ Proxies also need to be strongly authenticated; i.e., users need to be able to
 verify who the proxy is.
 
 
-## Users Need to be able to Tunnel through Proxies
+## When and how do users tunnel through proxies?
 
 When a proxy is interposed, the user needs to be able to tunnel any request
 through it without its content (or that of the response) being exposed to the
@@ -450,14 +423,14 @@ proxy.
 This includes both "https://" and "http://" URIs. 
 
 
-## Proxies Can say "No"
+## Can proxies say "no"? How?
 
 A proxy can refuse to forward any request. Currently, the granularity of that
 "no" is per-URI for unencrypted requests, and per-IP (perhaps per-SNI) for encrypted
 requests.
 
 
-## Changes Need to be Detectable
+## Can users detect changes by proxies?
 
 Any changes to the message body, request URI, method, status code, or
 representation header fields of an HTTP message need to be detectable by the
@@ -466,13 +439,7 @@ origin server or user agent, as appropriate, if they desire it.
 This allows a proxy to be trusted, but its integrity to be verified.
 
 
-## Proxies Need to be Easy
-
-It must be possible to configure a proxy extremely easily; the adoption of
-interception over proxy.pac/WPAD illustrates this very clearly.
-
-
-## Proxies Need to Communicate to Users
+## How do proxies communicate to users?
 
 There are many situations where a proxy needs to communicate with the end user;
 for example, to gather network authentication credentials, communicate network
@@ -494,7 +461,7 @@ Equally as important, the communication needs to clearly come from the proxy,
 rather than the origin, and be strongly authenticated.
 
 
-## Users Require Simple Interfaces
+## What is the UI for configuring proxies?
 
 While some users are sophisticated in their understanding of Web security, they
 are in a vanishingly small minority. The concepts and implications of many
@@ -523,120 +490,11 @@ used to introduce higher requirements for the interposition of intermediaries,
 or even to prohibit their use without full encryption.
 
 
-## User Agents Are Diverse
+## How Do Proxies work for non-Browser UAs?
 
 HTTP is used in a wide variety of environments. As such there can be no
 assumption that a user is sitting on the other end to interpret information or
 answer questions from proxies.
-
-
-## RFC2119 Doesn't Define Reality
-
-It's very tempting for a committee to proclaim that proxies "MUST" do this and
-"SHOULD NOT" do that, but the reality is that the proxies, like any other actor
-in a networked system, will do what they can, not what they're told to do, if
-they have an incentive to do it.
-
-Therefore, it's not enough to say that (for example), "proxies have to honor
-no-transform" as HTTP/1.1 does. Instead, the protocol needs to be designed in
-a way so that either transformations aren't possible, or if they are, they 
-can be detected (with appropriate handling by User Agents defined).
-
-
-## It Needs to be Deployable
-
-Any improvements to the proxy ecosystem MUST be incrementally deployable, so
-that existing clients can continue to function.
-
-
-# Potential Areas to Investigate {#further}
-
-Finally, this section lists some areas of potential future investigation,
-bearing the principles suggested above in mind.
-
-
-## Improving Proxy.Pac
-
-Many of the flaws in proxy.pac can be fixed by careful specification
-and standardization, with active participation by both implementers and those
-that deploy it.
-
-
-## TLS Errors for Proxies
-
-HTTP's use of TLS {{RFC2818}} currently offers no way for an interception proxy
-to communicate with the user agent on its own behalf. This might be necessary
-for network authentication, notification of filtering by hostname, etc.
-
-The challenge in defining such a mechanism is avoiding the opening of new
-attack vectors; if unauthenticated content can be served as if it were from the
-origin server, or the user can be encouraged to "click through" a dialog, it
-has severe security implications. As such, the user experience would need to be
-carefully considered.
-
-
-## HTTP Errors for Proxies
-
-HTTP currently defines two status codes that are explicitly generated by a
-proxy:
-
-* 504 Gateway Timeout ({{RFC7231}}, Section 6.6.5) - when a proxy (or gateway)
-  times out going forward
-
-* 511 Network Authentication Required ({{RFC6585}}, Section 6) - when
-  authentication information is necessary to access the network
-
-It might be interesting to discuss whether a separate user experience can be
-formed around proxy-specific status codes, along with the definition of new
-ones as necessary.
-
-
-## TLS for Proxy Connections
-
-While TLS can be used end-to-end for "https://" URIs, support for connecting to
-a proxy itself using TLS (e.g., for "http://" URIs) is spotty. Using a proxy
-without strong proof of its identity introduces security issues, and if a proxy
-can legitimately insert itself into communication, its identity needs to be
-verifiable.
-
-## Improved Network Information
-
-Many of the use cases for proxies that modify content is transcoding or otherwise
-adapting that which is too "heavy" for the network it is transiting through.
-
-If network operators made better, more fine-grained and timely information about
-their operational characteristics freely available, endpoints (server and client)
-could adapt requests and responses to reflect it, thereby removing the need for
-intermediation.
-
-## Improving Trust
-
-Currently, it is possible to exploit the mismatched incentives and other flaws
-in the CA system to cause a browser to trust a proxy as authoritative for a
-"https://" URI without full user knowledge. This needs to be remedied;
-otherwise, proxies will continue to man-in-the-middle TLS.
-
-
-## HTTP Signatures
-
-Signatures for HTTP content -- both requests and responses -- have been
-discussed on and off for some time.
-
-Of particular interest here, signed responses would allow a user-agent to
-verify that the origin's content has not been modified in transit, whilst still
-allowing it to be cached by intermediaries.
-
-Likewise, if header values can be signed, the caching policy (as expressed by
-Cache-Control, Date, Last-Modified, Age, etc.) can be signed, meaning it can be
-verified as being adhered to.
-
-Note that properly designed, a signature mechanism could work over TLS,
-separating the trust relationship between the UA and the origin server and that
-of the UA and its proxy (with appropriate consent).
-
-There are significant challenges in designing a robust, widely-deployable HTTP
-signature mechanism. One of the largest is an issue of user interface - what
-ought the UA do when encountering a bad signature?
 
 
 
