@@ -29,7 +29,7 @@ normative:
   
 informative:
   RFC6265:
-  I-D.ietf-httpbis-p6-cache:
+  RFC7234:
 
 
 --- abstract
@@ -130,7 +130,7 @@ associated with the resource might change depending on the value of the
 "Prefer" header. This is not only true for those responses that are "safe",
 but also the default "unsafe" response.
 
-See {{I-D.ietf-httpbis-p6-cache}} for more information.
+See {{RFC7234}} Section 4.1 for more information.
 
 
 # Security Considerations
