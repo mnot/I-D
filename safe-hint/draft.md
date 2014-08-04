@@ -25,7 +25,7 @@ author:
 
 normative:
   RFC2119:
-  I-D.snell-http-prefer:
+  RFC7240:
   
 informative:
   RFC6265:
@@ -66,7 +66,7 @@ helping to assure that clients behind it are not exposed to "objectionable"
 content.
 
 This specification defines how to associate this preference with a request,
-as a HTTP Preference {{I-D.snell-http-prefer}}.
+as a HTTP Preference {{RFC72340}}.
 
 Note that this approach does not define what "safe" is; rather, it is
 interpreted within the scope of each Web site that chooses to act upon this
@@ -157,8 +157,7 @@ browsing from site to site might (and probably will) change.
 
 # IANA Considerations
 
-This specification registers the "safe" preference
-{{I-D.snell-http-prefer}}:
+This specification registers the "safe" preference {{RFC7240}}:
 
 * Preference: safe
 * Value: (no value)
