@@ -30,30 +30,7 @@ normative:
 informative:
   RFC6265:
   I-D.ietf-httpbis-p6-cache:
-  yahoo: 
-    target: http://search.yahoo.com/preferences/preferences
-    title: Yahoo! Search Preferences
-    author: 
-      - organization: Yahoo! Inc.
-    date: 2013
-  bing:
-    target: http://onlinehelp.microsoft.com/en-AU/bing/ff808441.aspx
-    title: "Bing Help: Block Explicit Web Sites"
-    author:
-      - organization: Microsoft
-    date: 2013
-  google:
-    target: "http://support.google.com/websearch/bin/answer.py?p=settings_safesearch&amp;answer=510"
-    title: "SafeSearch: turn on or off"
-    author:
-     - organization: Google
-    date: 2013
-  youtube:
-    target: "http://support.google.com/youtube/bin/answer.py?answer=174084"
-    title: How to access and turn on Safety Mode?
-    author:
-     - organization: Google
-    date: 2013
+
 
 --- abstract
 
@@ -66,9 +43,7 @@ preference to avoid "objectionable" content.
 # Introduction
 
 Many Web sites have a "safe" mode, to assist those who don't want to be exposed
-(or have their children exposed) to "objectionable" content. YouTube
-{{youtube}}, Yahoo! Search {{yahoo}}, Google Search {{google}}, Bing Search
-{{bing}}, and many other services have such a setting.
+(or have their children exposed) to "objectionable" content.
 
 However, those who wish to have this preference honored need to go to each Web
 site in turn, navigate to the appropriate page, (possibly creating an account
