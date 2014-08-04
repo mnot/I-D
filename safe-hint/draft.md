@@ -200,7 +200,7 @@ cookie) can add support for the "safe" preference incrementally; since the
 preference will not be supported by all clients immediately, it is necessary to
 still have a fallback configuration option.
 
-When honouring the safe preference, it is important that it not be possible to
+When honoring the safe preference, it is important that it not be possible to
 disable it through the Web interface, since "safe" may be inserted by an
 intermediary (e.g., at a school) or configured and locked down by an
 administrator (e.g., a parent). When both the "safe" preference and per-site
