@@ -142,6 +142,25 @@ and Web caching.
 See {{servers}} for additional advice specific to Web servers wishing to use
 "safe".
 
+# Implementation Status
+
+*Note to RFC Editor: Please remove this section before publication.*
+
+This section records the status of known implementations of the protocol
+defined by this specification at the time of posting of this Internet-Draft.
+The description of implementations in this section is intended to assist the
+IETF in its decision processes in progressing drafts to RFCs. Please note that
+the listing of any individual implementation here does not imply endorsement by
+the IETF. Furthermore, no effort has been spent to verify the information
+presented here that was supplied by IETF contributors. This is not intended as,
+and must not be construed to be, a catalog of available implementations or
+their features. Readers are advised to note that other implementations may
+exist.
+
+* Microsoft Internet Explorer - see http://support.microsoft.com/kb/2980016
+* Microsoft Bing
+* Mozilla Firefox - see https://bugzilla.mozilla.org/show_bug.cgi?id=995070
+
 
 # Security Considerations
 
