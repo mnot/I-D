@@ -68,11 +68,21 @@ content.
 This specification defines how to associate this preference with a request,
 as a HTTP Preference {{RFC72340}}.
 
-Note that this approach does not define what "safe" is; rather, it is
-interpreted within the scope of each Web site that chooses to act upon this
-information (or not). As such, it does not require agreement upon what "safe"
-is, nor does it require application of policy in the user agent or an 
-intermediary (which can be problematic for many reasons).
+Note that this specification does not precisely define what "safe" is; rather,
+it is interpreted within the scope of each Web site that chooses to act upon
+this information (or not). 
+
+That said, the intent of "safe" is to allow end users (or those acting on their
+behalf) to express a preference to opt out of content that is commonly
+considered "objectionable" within the cultural context of the users of that
+site; usually (but not always) content that is unsuitable for minors. The
+"safe" preference ought not be used for other purposes; rather, a new
+preference ought to be minted.
+
+It is also important to note that the "safe" preference is not a reliable
+indicator that the end user is a child; other users might have a preference for
+unobjectionable content, and some children might browse without the preference
+being set.
 
 
 ## Notational Conventions
