@@ -14,7 +14,14 @@ keyword:
  - child-protection
 
 stand_alone: yes
-pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline, rfcedstyle]
+pi:
+  toc: yes
+  sortrefs: yes
+  strict: yes
+  comments: yes
+  inline: yes
+  rfcedstyle: yes
+  tocdepth: 1
 
 author:
  -  ins: M. Nottingham
