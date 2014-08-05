@@ -105,7 +105,7 @@ Prefer: safe
 ~~~
 
 When configured to do so, user agents SHOULD include the "safe" preference in
-every request, to ensure that the preference is applied (where possible) to all
+every request, to ensure that the preference is available to all requested
 resources.
 
 For example, a Web browser might have a "Request Safe Browsing" option.
