@@ -108,7 +108,7 @@ When configured to do so, user agents SHOULD include the "safe" preference in
 every request, to ensure that the preference is available to all requested
 resources.
 
-For example, a Web browser might have a "Request Safe Browsing" option.
+See {{browsers}} for advice specific to Web browsers wishing to support "safe".
 
 Additionally, other clients MAY insert it; e.g., an operating system might
 choose to insert the preference in requests based upon system-wide
@@ -136,7 +136,11 @@ associated with the resource might change depending on the value of the
 "Prefer" header. This is not only true for those responses that are "safe",
 but also the default "unsafe" response.
 
-See {{RFC7234}} Section 4.1 for more information.
+See {{RFC7234}} Section 4.1 for more information the interaction between Vary
+and Web caching.
+
+See {{servers}} for additional advice specific to Web servers wishing to use
+"safe".
 
 
 # Security Considerations
@@ -179,7 +183,7 @@ This specification registers the "safe" preference {{RFC7240}}:
 Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso, Jeff Hughes, Lorrie
 Cranor, Doug Turner and Dave Crocker for their comments.
 
-# Setting "safe" from Web Browsers
+# Setting "safe" from Web Browsers {#browsers}
 
 As discussed in {{safe}}, there are many possible ways for the "safe"
 preference to be generated. One possibility is for a Web browser to allow its
@@ -200,7 +204,7 @@ Browsers might also allow the "safe" preference to be "locked" -- that is,
 prevent modification without administrative access, or a passcode.
 
 
-# Supporting "safe" on Web Sites
+# Supporting "safe" on Web Sites {#servers}
 
 Web sites that allow configuration of a "safe" mode (for example, using a
 cookie) can add support for the "safe" preference incrementally; since the
