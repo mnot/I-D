@@ -34,7 +34,7 @@ informative:
 
 --- abstract
 
-This specification defines a "safe" preference for HTTP, expressing a user
+This specification defines a "safe" preference for HTTP, expressing a
 preference to avoid "objectionable" content.
 
 
