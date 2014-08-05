@@ -78,8 +78,8 @@ unobjectionable content, and some children might browse without the preference
 being set.
 
 Simply put, it is a statement by (or on behalf of) the end user to the effect
-"you have a 'safe' setting that you offer to users. This user is hereby opting
-into that, according to your definition of the term."
+"If your site has a 'safe' setting, this user is hereby opting into that,
+according to your definition of the term."
 
 
 ## Notational Conventions
