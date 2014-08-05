@@ -48,9 +48,9 @@ Many Web sites have a "safe" mode, to assist those who don't want to be exposed
 However, those who wish to have this preference honored need to go to each Web
 site in turn, navigate to the appropriate page, (possibly creating an account
 along the way) to get a cookie {{RFC6265}} set in the browser. They would need
-to do this for each browser on every device they use. 
+to do this for each browser on every device used. 
 
-This is onerous to achieve effectively, because there are so many permutations
+This is onerous to achieve effectively because there are so many permutations
 of sites, user agents and devices.
 
 If this preference is proactively advertised by the user agent, things become
@@ -85,7 +85,7 @@ document are to be interpreted as described in {{RFC2119}}.
 # The "safe" Preference {#safe}
 
 When present in a request, the "safe" preference indicates that the
-user prefers content which is not objectionable, according to the server's
+content which is not objectionable is preferred, according to the server's
 definition of the concept. 
 
 For example, a request that includes the "safe" preference:
@@ -101,8 +101,7 @@ When configured to do so, user agents SHOULD include the "safe" preference in
 every request, to ensure that the preference is applied (where possible) to all
 resources.
 
-For example, a Web browser might have a "Request Safe Browsing"
-option. 
+For example, a Web browser might have a "Request Safe Browsing" option.
 
 Additionally, other clients MAY insert it; e.g., an operating system might
 choose to insert the preference in requests based upon system-wide
@@ -112,7 +111,7 @@ Origin servers that utilize the "safe" preference SHOULD document that they do
 so, along with the criteria that they use to denote objectionable content. If a
 server has more fine-grained degrees of "safety", it SHOULD select a reasonable
 default to use, and document that; it MAY use additional mechanisms (e.g.,
-cookies) to fine-tune.
+cookies {{RFC6265}}) to fine-tune.
 
 A response corresponding to the request above might have headers that look
 like this:
@@ -135,18 +134,18 @@ See {{RFC7234}} Section 4.1 for more information.
 
 # Security Considerations
 
-The "safe" preference is not a secure mechanism; it can be inserted or
-removed by intermediaries with access to the data stream. Its presence reveals
-information about the user, which may be of small assistance in
-"fingerprinting" the user (1 bit of information, to be precise).
+The "safe" preference is not a secure mechanism; it can be inserted or removed
+by intermediaries with access to the request stream. Its presence reveals
+limited information about the user, which may be of small assistance in
+"fingerprinting" the user.
 
-Due to its nature, including "safe" in requests does not assure that all
+By its nature, including "safe" in requests does not assure that all
 content will actually be safe; it is only when servers elect to honor it that
 content might be "safe".
 
 Even then, a malicious server might adapt content so that it is even less
 "safe" (by some definition of the word). As such, this mechanism on its own is
-not enough to assure that only "safe" content is seen; users who wish to
+not enough to assure that only "safe" content is seen; those who wish to
 ensure that will need to combine its use with other techniques (e.g., content
 filtering).
 
@@ -161,8 +160,7 @@ This specification registers the "safe" preference {{RFC7240}}:
 
 * Preference: safe
 * Value: (no value)
-* Description: Indicates that the user (or one responsible for them) prefers
-  "safe" or "unobjectionable" content.
+* Description: Indicates that "safe" / "unobjectionable" content is preferred.
 * Reference: (this document)
 * Notes: 
 
@@ -180,7 +178,9 @@ As discussed in {{safe}}, there are many possible ways for the "safe"
 preference to be generated. One possibility is for a Web browser to allow its
 users to configure the preference to be sent.
 
-When doing so, it is important not to misrepresent the preference as binding to Web sites. For example, an appropriate setting might be a checkbox with wording such as:
+When doing so, it is important not to misrepresent the preference as binding to
+Web sites. For example, an appropriate setting might be a checkbox with wording
+such as:
 
 ~~~
   [] Request "safe" content from Web sites
@@ -193,12 +193,12 @@ Browsers might also allow the "safe" preference to be "locked" -- that is,
 prevent modification without administrative access, or a passcode.
 
 
-# Using "safe" on Your Web Site
+# Supporting "safe" on Web Sites
 
 Web sites that allow configuration of a "safe" mode (for example, using a
 cookie) can add support for the "safe" preference incrementally; since the
 preference will not be supported by all clients immediately, it is necessary to
-still have a fallback configuration option.
+have another way to configure it.
 
 When honoring the safe preference, it is important that it not be possible to
 disable it through the Web interface, since "safe" may be inserted by an
