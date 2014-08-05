@@ -171,7 +171,7 @@ This specification registers the "safe" preference {{RFC7240}}:
 
 # Acknowledgements
 
-Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso, Jeff Hughes and Loorie
+Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso, Jeff Hughes and Lorrie
 Cranor for their comments.
 
 # Setting "safe" from Web Browsers
