@@ -66,7 +66,7 @@ helping to assure that clients behind it are not exposed to "objectionable"
 content.
 
 This specification defines how to declare this preference in requests,
-as a HTTP Preference {{RFC72340}}.
+as a HTTP Preference {{RFC7240}}.
 
 Note that this specification does not precisely define what "safe" is; rather,
 it is interpreted within the scope of each Web site that chooses to act upon
