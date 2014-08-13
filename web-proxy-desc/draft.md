@@ -231,6 +231,11 @@ If the WPD is not retrievable (e.g., a 404 response status), invalid (as per JSO
 the requirements in {{wpd}}), or its certificate is not valid for the host (as per {{RFC2818}}
 Section 3.1), the client MUST NOT use the WPD, and if a user agent, SHOULD inform the end user.
 
+The well-known URI MAY use proactive content negotiation ({{RFC7231}} Section 3.4.1) to select an
+appropriate language for the response representation. Therefore, clients SHOULD send an
+Accept-Language request header field ({{RFC7231}} Section 5.3.5) when they wish to advertise their
+configured language.
+
 The registration template is:
 
 * URI suffix: web-proxy-desc
