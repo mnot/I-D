@@ -1,0 +1,635 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+]>
+
+<rfc ipr="trust200902" docName="draft-nottingham-web-proxy-desc-00" category="std">
+
+<?rfc toc="yes"?>
+<?rfc tocindent="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc strict="yes"?>
+<?rfc compact="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+
+  <front>
+    <title abbrev="Web Proxy Description">The Web Proxy Description Format</title>
+
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization></organization>
+      <address>
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net/</uri>
+      </address>
+    </author>
+
+    <date year="2014"/>
+
+    <area>General</area>
+    
+    <keyword>Internet-Draft</keyword>
+
+    <abstract>
+
+
+<t>This specification defines a simple means of configuring Web proxies, and places additional
+requirements upon them in order to promote improved interoperability, security, and error handling.</t>
+
+
+
+    </abstract>
+
+
+  </front>
+
+  <middle>
+
+
+<section anchor="introduction" title="Introduction">
+
+<t>Web proxies are configured in a variety of ways today, but existing approaches suffer from
+security, usability and interoperability issues.</t>
+
+<t>This specification defines:</t>
+
+<t><list style="symbols">
+  <t>A simple format for describing a Web proxy (“WPD”; see <xref target="wpd"/>) to facilitate configuration, and
+so that it can be represented to users in a consistent way, and</t>
+  <t>A way to discover the proxy description using a well-known URL <xref target="discover"/>, so that direct
+configuration of a proxy is as simple as entering a hostname, and</t>
+  <t>A set of additional requirements for proxies described in this fashion, as well as requirements
+for User Agents connecting to them, designed to improve security, usability and interoperability.</t>
+</list></t>
+
+<t>It can be used in a variety of ways, but is designed to meet the following goals:</t>
+
+<t><list style="symbols">
+  <t>Users should always be aware of a configured proxy and be able to confidently identify it, and</t>
+  <t>Configuring a proxy should be a deliberate act, but simple to do for non-technical users, and</t>
+  <t>Proxies should always respect the wishes of the end user and Web site, and</t>
+  <t>Proxies should never reduce or compromise the security of connections, and improve it where
+possible, and</t>
+  <t>The proxy should be able to reliably communicate with the end user regarding its policies and
+problems that are encountered.</t>
+</list></t>
+
+<t>Furthermore, it is designed to be useful in the following cases:</t>
+
+<t><list style="symbols">
+  <t>An end user wants to use a proxy network that provides improved performance, by re-compressing
+responses to http:// resources.</t>
+  <t>An end user wants to use a proxy network that provides improved privacy, by routing requests
+through any number of intermediaries.</t>
+  <t>An end user is required to use a proxy to access Internet resources by their network (e.g., a
+school, workplace or prison).</t>
+</list></t>
+
+<t>Importantly, this specification does not address the automatic discovery of proxy configuration for
+a given network.</t>
+
+<t>It is expected that the mechanisms described could be implemented by a single program (e.g., a Web
+browser), or through an Operating System facility.</t>
+
+<section anchor="notational-conventions" title="Notational Conventions">
+
+<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”,
+“RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in
+<xref target="RFC2119"/>.</t>
+
+</section>
+</section>
+<section anchor="wpd" title="The Web Proxy Description (WPD) Format">
+
+<t>WPD is a JSON <xref target="RFC7159"/> format that describes a Web proxy to its clients. Its root is an object
+containing WPD-specific object members. For example:</t>
+
+<figure><artwork><![CDATA[
+{
+    "name": "ExampleCorp Web Proxy",
+    "desc": "ExampleCorp's Proxy Gateway for Web access. Note that
+             all traffic through this proxy is logged, and may be
+             filtered for content."
+    "moreInfo": "https://inside.example.com/proxy/",
+    "proxies": [
+        {
+            "host": "proxy.example.com",
+            "port": 8080,
+            "validNetworks": ["192.0.2.0/24"]
+            },
+        {
+            "host": "proxy1.example.com",
+            "port": 8080,
+            "validNetworks": ["192.0.2.0/24"]
+        }
+    ],
+    "bypassDomains": ["example.com", "192.0.2.0/24"],
+}
+]]></artwork></figure>
+
+<t>When configuring a proxy through WPD, the User agent SHOULD present the relevant information
+contained within (i.e., the ‘name’, ‘desc’ and ‘moreInfo’ members, the latter as a link) to the end
+user. User agents SHOULD also make this information available to the end user whenever the WPD is
+in use.</t>
+
+<t>The remainder of this section defines the content of these members. Unrecognized members SHOULD
+be ignored.</t>
+
+<section anchor="name" title="name">
+
+<t>A string containing a short, memorable name for the proxy; typically 64 characters or less. This
+member MUST be present.</t>
+
+</section>
+<section anchor="desc" title="desc">
+
+<t>A string containing a textual description of the proxy’s function(s); typically 256 characters or
+less. This member MUST be present.</t>
+
+</section>
+<section anchor="moreinfo" title="moreInfo">
+
+<t>A string containing a URI <xref target="RFC3986"/> that leads to more information about the proxy, its
+operation, who operates it, etc. The URI MUST have a scheme of “https” <xref target="RFC7230"/>, and MUST be
+able to respond with an HTML <xref target="W3C.CR-html5-20140731"/> representation. This member MUST be present.</t>
+
+</section>
+<section anchor="proxies" title="proxies">
+
+<t>An array containing one or more proxy objects; each proxy object represents a proxy endpoint that
+can be used when this proxy is configured.</t>
+
+<t>Proxy objects’ members are defined by the following subsections; unrecognized members SHOULD be
+ignored.</t>
+
+<t>The ordering of proxy objects within the proxies array is not significant; clients MAY choose any
+proxy they wish (keeping in mind the requirements of validNetworks), and MAY use more than one at a
+time.</t>
+
+<t>When connecting to a WPD proxy, clients MUST use TLS and MUST validate the hostname as per
+<xref target="RFC2818"/> Section 3.1. If the proxy presents an invalid certificate, that proxy MUST be
+considered “failed” and not used (until a valid certificate is presented).</t>
+
+<t>WPD Proxies MUST support HTTP/2 <xref target="I-D.ietf-httpbis-http2"/> connections from clients. Clients
+that cannot establish a HTTP/2 connection to a WPD proxy MUST consider that proxy “failed.”</t>
+
+<t>WPD Proxies MUST support forwarding requests with the “http” scheme <xref target="RFC7230"/>, and SHOULD support
+the CONNECT method, as specified in <xref target="I-D.ietf-httpbis-http2"/> Section 8.3.</t>
+
+<t>When user agents encounter 5xx responses to a CONNECT request from a WPD proxy, they MUST present
+the response to the end user, but MUST NOT present or process it as a response to the eventual
+request to be made through the tunnel (i.e., it has an identified payload, as per <xref target="RFC7231"/>
+Section 3.1.4.1).</t>
+
+<t>If a proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another proxy
+(if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
+re-establish contact with failed proxies (e.g., every minute).</t>
+
+<t>NOTE: the array of proxy objects is functionally similar to, but not as expressive as, the
+commonly-used “proxy.pac” format. While it would be expedient for WPD to just reference a
+proxy.pac, feedback so far is that proxy.pac has a number of deficiencies, and interoperability
+over it is poor. Therefore, this document specifies the proxy object instead, in order to gather
+feedback on an alternative approach.</t>
+
+<section anchor="host" title="host">
+
+<t>A string containing the host (as per <xref target="RFC3986"/>, section 3.2.2) of the proxy. This member MUST be
+present.</t>
+
+</section>
+<section anchor="port" title="port">
+
+<t>A number representing the port that the proxy is listening on. This member MUST be present, and
+MUST be an integer.</t>
+
+</section>
+<section anchor="validnetworks" title="validNetworks">
+
+<t>An array containing strings; each string contains a classless prefix <xref target="RFC4632"/> which the proxy
+can be used within. Clients SHOULD NOT attempt to use the proxy if their IP address is within one
+of the stated ranges.</t>
+
+<t>This member is optional.</t>
+
+</section>
+</section>
+<section anchor="bypassdomains" title="bypassDomains">
+
+<t>An array containing strings; each string is either a host (as per <xref target="RFC3986"/> Section 3.2.2) or a classless prefix <xref target="RFC4632"/>. Clients SHOULD NOT use the WPD’s proxies to access these domains.</t>
+
+<t>Note that when a “bare” IP address or classless prefix is used in bypassDomains, clients are not
+required to perform a reverse lookup on hostnames; these forms are only intended for accessing URLs
+that use the IP-literal or IPv4address forms.</t>
+
+<t>This member is optional.</t>
+
+</section>
+</section>
+<section anchor="discover" title="Discovering WPD Files">
+
+<t>To facilitate easy configuration of Web proxies, this specification defines a well-known URI
+<xref target="RFC5785"/>. Doing so allows a proxy’s description to be found with a simple hostname; e.g.,
+“proxy.example.net” or even just “example.net”.</t>
+
+<section anchor="well-known" title="The web-proxy-desc well-known URI">
+
+<t>The “web-proxy-desc” well-known URI allows discovery of a Web Proxy Description (<xref target="wpd"/>).</t>
+
+<t>This well-known URI is only valid when used with the “https” URI Scheme <xref target="RFC7230"/>; it MUST NOT be
+used with “http” URIs. In other words, WPD discovery is always protected by TLS <xref target="RFC5246"/>.</t>
+
+<t>The description found at this location is considered valid for its freshness lifetime, as defined
+in <xref target="RFC7234"/> Section 4.2. Once stale, clients SHOULD refresh it and apply any changes.</t>
+
+<t>If the WPD is not retrievable (e.g., a 404 response status), invalid (as per JSON <xref target="RFC7159"/> or
+the requirements in <xref target="wpd"/>), or its certificate is not valid for the host (as per <xref target="RFC2818"/>
+Section 3.1), the client MUST NOT use the WPD, and if a user agent, SHOULD inform the end user.</t>
+
+<t>The registration template is:</t>
+
+<t><list style="symbols">
+  <t>URI suffix: web-proxy-desc</t>
+  <t>Change controller: IETF</t>
+  <t>Specification document(s): [this document]</t>
+  <t>Related information: only to be used with ‘https’ scheme</t>
+</list></t>
+
+</section>
+</section>
+<section anchor="iana-considerations" title="IANA Considerations">
+
+<t>This specification registers a new well-known URI, as per <xref target="RFC5785"/>. See <xref target="well-known"/> for the
+template.</t>
+
+</section>
+<section anchor="security-considerations" title="Security Considerations">
+
+<t>If a user can be convinced to configure a WPD hostname as their proxy, that host can observe all
+unencrypted traffic by the client. As such, WPD configuration interfaces ought only allow
+configuration of proxies once their identity is validate (as required), and the user ought to be
+given access to all relevant information about the WPD proxy (i.e., ‘name’, ‘desc’ and ‘moreInfo’,
+the latter as a link). Furthermore, WPD proxies ought only be configured as the result of an
+intentional act, not as a side effect of normal Web browsing.</t>
+
+</section>
+
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+
+
+
+
+
+<reference anchor='RFC2119'>
+
+<front>
+<title abbrev='RFC Key Words'>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='Scott Bradner'>
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<street>Cambridge</street>
+<street>MA 02138</street></postal>
+<phone>- +1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year='1997' month='March' />
+<area>General</area>
+<keyword>keyword</keyword>
+<abstract>
+<t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list>
+<t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+<t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t></abstract></front>
+
+<seriesInfo name='BCP' value='14' />
+<seriesInfo name='RFC' value='2119' />
+<format type='TXT' octets='4723' target='http://www.rfc-editor.org/rfc/rfc2119.txt' />
+<format type='HTML' octets='17970' target='http://xml.resource.org/public/rfc/html/rfc2119.html' />
+<format type='XML' octets='5777' target='http://xml.resource.org/public/rfc/xml/rfc2119.xml' />
+</reference>
+
+
+
+<reference anchor='RFC2818'>
+
+<front>
+<title>HTTP Over TLS</title>
+<author initials='E.' surname='Rescorla' fullname='E. Rescorla'>
+<organization /></author>
+<date year='2000' month='May' />
+<abstract>
+<t>This memo describes how to use Transport Layer Security (TLS) to secure Hypertext Transfer Protocol (HTTP) connections over the Internet.  This memo provides information for the Internet community.</t></abstract></front>
+
+<seriesInfo name='RFC' value='2818' />
+<format type='TXT' octets='15170' target='http://www.rfc-editor.org/rfc/rfc2818.txt' />
+</reference>
+
+
+
+<reference anchor='RFC3986'>
+
+<front>
+<title abbrev='URI Generic Syntax'>Uniform Resource Identifier (URI): Generic Syntax</title>
+<author initials='T.' surname='Berners-Lee' fullname='Tim Berners-Lee'>
+<organization abbrev='W3C/MIT'>World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>Massachusetts Institute of Technology</street>
+<street>77 Massachusetts Avenue</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>USA</country></postal>
+<phone>+1-617-253-5702</phone>
+<facsimile>+1-617-258-5999</facsimile>
+<email>timbl@w3.org</email>
+<uri>http://www.w3.org/People/Berners-Lee/</uri></address></author>
+<author initials='R.' surname='Fielding' fullname='Roy T. Fielding'>
+<organization abbrev='Day Software'>Day Software</organization>
+<address>
+<postal>
+<street>5251 California Ave., Suite 110</street>
+<city>Irvine</city>
+<region>CA</region>
+<code>92617</code>
+<country>USA</country></postal>
+<phone>+1-949-679-2960</phone>
+<facsimile>+1-949-679-2972</facsimile>
+<email>fielding@gbiv.com</email>
+<uri>http://roy.gbiv.com/</uri></address></author>
+<author initials='L.' surname='Masinter' fullname='Larry Masinter'>
+<organization abbrev='Adobe Systems'>Adobe Systems Incorporated</organization>
+<address>
+<postal>
+<street>345 Park Ave</street>
+<city>San Jose</city>
+<region>CA</region>
+<code>95110</code>
+<country>USA</country></postal>
+<phone>+1-408-536-3024</phone>
+<email>LMM@acm.org</email>
+<uri>http://larry.masinter.net/</uri></address></author>
+<date year='2005' month='January' />
+<area>Applications</area>
+<keyword>uniform resource identifier</keyword>
+<keyword>URI</keyword>
+<keyword>URL</keyword>
+<keyword>URN</keyword>
+<keyword>WWW</keyword>
+<keyword>resource</keyword>
+<abstract>
+<t>
+A Uniform Resource Identifier (URI) is a compact sequence of characters
+that identifies an abstract or physical resource.  This specification
+defines the generic URI syntax and a process for resolving URI references
+that might be in relative form, along with guidelines and security
+considerations for the use of URIs on the Internet.
+The URI syntax defines a grammar that is a superset of all valid URIs,
+allowing an implementation to parse the common components of a URI
+reference without knowing the scheme-specific requirements of every
+possible identifier.  This specification does not define a generative
+grammar for URIs; that task is performed by the individual
+specifications of each URI scheme.
+</t></abstract></front>
+
+<seriesInfo name='STD' value='66' />
+<seriesInfo name='RFC' value='3986' />
+<format type='TXT' octets='141811' target='http://www.rfc-editor.org/rfc/rfc3986.txt' />
+<format type='HTML' octets='214067' target='http://xml.resource.org/public/rfc/html/rfc3986.html' />
+<format type='XML' octets='163534' target='http://xml.resource.org/public/rfc/xml/rfc3986.xml' />
+</reference>
+
+
+
+<reference anchor='RFC4632'>
+
+<front>
+<title>Classless Inter-domain Routing (CIDR): The Internet Address Assignment and Aggregation Plan</title>
+<author initials='V.' surname='Fuller' fullname='V. Fuller'>
+<organization /></author>
+<author initials='T.' surname='Li' fullname='T. Li'>
+<organization /></author>
+<date year='2006' month='August' />
+<abstract>
+<t>This memo discusses the strategy for address assignment of the existing 32-bit IPv4 address space with a view toward conserving the address space and limiting the growth rate of global routing state.  This document obsoletes the original Classless Inter-domain Routing (CIDR) spec in RFC 1519, with changes made both to clarify the concepts it introduced and, after more than twelve years, to update the Internet community on the results of deploying the technology described.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+
+<seriesInfo name='BCP' value='122' />
+<seriesInfo name='RFC' value='4632' />
+<format type='TXT' octets='66944' target='http://www.rfc-editor.org/rfc/rfc4632.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7159'>
+
+<front>
+<title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
+<author initials='T.' surname='Bray' fullname='T. Bray'>
+<organization /></author>
+<date year='2014' month='March' />
+<abstract>
+<t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format. It was derived from the ECMAScript Programming Language Standard. JSON defines a small set of formatting rules for the portable representation of structured data.&lt;/t>&lt;t> This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7159' />
+<format type='TXT' octets='27451' target='http://www.rfc-editor.org/rfc/rfc7159.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7230'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7230' />
+<format type='TXT' octets='205947' target='http://www.rfc-editor.org/rfc/rfc7230.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7234'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Caching</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7234' />
+<format type='TXT' octets='90647' target='http://www.rfc-editor.org/rfc/rfc7234.txt' />
+</reference>
+
+
+
+<reference anchor='I-D.ietf-httpbis-http2'>
+<front>
+<title>Hypertext Transfer Protocol version 2</title>
+
+<author initials='M' surname='Belshe' fullname='Mike Belshe'>
+    <organization />
+</author>
+
+<author initials='R' surname='Peon' fullname='Roberto Peon'>
+    <organization />
+</author>
+
+<author initials='M' surname='Thomson' fullname='Martin Thomson'>
+    <organization />
+</author>
+
+<date month='July' day='30' year='2014' />
+
+<abstract><t>This specification describes an optimized expression of the syntax of the Hypertext Transfer Protocol (HTTP).  HTTP/2 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent messages on the same connection.  It also introduces unsolicited push of representations from servers to clients.  This specification is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-http2-14' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-14.txt' />
+</reference>
+
+
+
+<reference anchor='W3C.CR-html5-20140731'
+           target='http://www.w3.org/TR/2014/CR-html5-20140731'>
+<front>
+<title>HTML5</title>
+
+<author initials='R.' surname='Berjon' fullname='Robin Berjon'>
+    <organization />
+</author>
+
+<author initials='S.' surname='Faulkner' fullname='Steve Faulkner'>
+    <organization />
+</author>
+
+<author initials='T.' surname='Leithead' fullname='Travis Leithead'>
+    <organization />
+</author>
+
+<author initials='E.' surname='Navara' fullname='Erika Doyle Navara'>
+    <organization />
+</author>
+
+<author initials='E.' surname='O&amp;#039;Connor' fullname='Edward O&amp;#039;Connor'>
+    <organization />
+</author>
+
+<author initials='S.' surname='Pfeiffer' fullname='Silvia Pfeiffer'>
+    <organization />
+</author>
+
+<date month='July' day='31' year='2014' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium CR' value='CR-html5-20140731' />
+<format type='HTML' target='http://www.w3.org/TR/2014/CR-html5-20140731' />
+</reference>
+
+
+
+
+    </references>
+
+    <references title='Informative References'>
+
+
+
+
+
+<reference anchor='RFC5246'>
+
+<front>
+<title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
+<author initials='T.' surname='Dierks' fullname='T. Dierks'>
+<organization /></author>
+<author initials='E.' surname='Rescorla' fullname='E. Rescorla'>
+<organization /></author>
+<date year='2008' month='August' />
+<abstract>
+<t>This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications security over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='5246' />
+<format type='TXT' octets='222395' target='http://www.rfc-editor.org/rfc/rfc5246.txt' />
+</reference>
+
+
+
+<reference anchor='RFC5785'>
+
+<front>
+<title>Defining Well-Known Uniform Resource Identifiers (URIs)</title>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'>
+<organization /></author>
+<author initials='E.' surname='Hammer-Lahav' fullname='E. Hammer-Lahav'>
+<organization /></author>
+<date year='2010' month='April' />
+<abstract>
+<t>This memo defines a path prefix for "well-known locations", "/.well-known/", in selected Uniform Resource Identifier (URI) schemes. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='5785' />
+<format type='TXT' octets='13779' target='http://www.rfc-editor.org/rfc/rfc5785.txt' />
+</reference>
+
+
+
+<reference anchor='RFC7231'>
+
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'>
+<organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2014' month='June' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t></abstract></front>
+
+<seriesInfo name='RFC' value='7231' />
+<format type='TXT' octets='235053' target='http://www.rfc-editor.org/rfc/rfc7231.txt' />
+</reference>
+
+
+
+
+    </references>
+
+
+
+  </back>
+</rfc>
+

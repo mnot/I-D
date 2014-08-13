@@ -1,0 +1,258 @@
+---
+title: The Web Proxy Description Format
+abbrev: Web Proxy Description
+docname: draft-nottingham-web-proxy-desc-00
+date: 2014
+category: std
+
+ipr: trust200902
+area: General
+workgroup:
+keyword: Internet-Draft
+
+stand_alone: yes
+pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
+
+author:
+ -
+    ins: M. Nottingham
+    name: Mark Nottingham
+    organization:
+    email: mnot@mnot.net
+    uri: http://www.mnot.net/
+
+normative:
+  RFC2119:
+  RFC2818:
+  RFC3986:
+  RFC4632:
+  RFC7159:
+  RFC7230:
+  RFC7234:
+  I-D.ietf-httpbis-http2:
+  W3C.CR-html5-20140731:
+
+informative:
+  RFC5246:
+  RFC5785:
+  RFC7231:
+
+
+--- abstract
+
+This specification defines a simple means of configuring Web proxies, and places additional
+requirements upon them in order to promote improved interoperability, security, and error handling.
+
+--- middle
+
+# Introduction
+
+Web proxies are configured in a variety of ways today, but existing approaches suffer from
+security, usability and interoperability issues.
+
+This specification defines:
+
+* A simple format for describing a Web proxy ("WPD"; see {{wpd}}) to facilitate configuration, and
+  so that it can be represented to users in a consistent way, and
+* A way to discover the proxy description using a well-known URL {{discover}}, so that direct
+  configuration of a proxy is as simple as entering a hostname, and
+* A set of additional requirements for proxies described in this fashion, as well as requirements
+  for User Agents connecting to them, designed to improve security, usability and interoperability.
+
+It can be used in a variety of ways, but is designed to meet the following goals:
+
+* Users should always be aware of a configured proxy and be able to confidently identify it, and
+* Configuring a proxy should be a deliberate act, but simple to do for non-technical users, and
+* Proxies should always respect the wishes of the end user and Web site, and
+* Proxies should never reduce or compromise the security of connections, and improve it where
+  possible, and
+* The proxy should be able to reliably communicate with the end user regarding its policies and
+  problems that are encountered.
+
+Furthermore, it is designed to be useful in the following cases:
+
+* An end user wants to use a proxy network that provides improved performance, by re-compressing
+  responses to http:// resources.
+* An end user wants to use a proxy network that provides improved privacy, by routing requests
+  through any number of intermediaries.
+* An end user is required to use a proxy to access Internet resources by their network (e.g., a
+  school, workplace or prison).
+
+Importantly, this specification does not address the automatic discovery of proxy configuration for
+a given network.
+
+It is expected that the mechanisms described could be implemented by a single program (e.g., a Web
+browser), or through an Operating System facility.
+
+
+## Notational Conventions
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
+"RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
+{{RFC2119}}.
+
+
+# The Web Proxy Description (WPD) Format {#wpd}
+
+WPD is a JSON {{RFC7159}} format that describes a Web proxy to its clients. Its root is an object
+containing WPD-specific object members. For example:
+
+    {
+        "name": "ExampleCorp Web Proxy",
+        "desc": "ExampleCorp's Proxy Gateway for Web access. Note that
+                 all traffic through this proxy is logged, and may be
+                 filtered for content."
+        "moreInfo": "https://inside.example.com/proxy/",
+        "proxies": [
+            {
+                "host": "proxy.example.com",
+                "port": 8080,
+                "validNetworks": ["192.0.2.0/24"]
+                },
+            {
+                "host": "proxy1.example.com",
+                "port": 8080,
+                "validNetworks": ["192.0.2.0/24"]
+            }
+        ],
+        "bypassDomains": ["example.com", "192.0.2.0/24"],
+    }
+
+
+When configuring a proxy through WPD, the User agent SHOULD present the relevant information
+contained within (i.e., the 'name', 'desc' and 'moreInfo' members, the latter as a link) to the end
+user. User agents SHOULD also make this information available to the end user whenever the WPD is
+in use.
+
+The remainder of this section defines the content of these members. Unrecognized members SHOULD
+be ignored.
+
+## name
+
+A string containing a short, memorable name for the proxy; typically 64 characters or less. This
+member MUST be present.
+
+## desc
+
+A string containing a textual description of the proxy's function(s); typically 256 characters or
+less. This member MUST be present.
+
+## moreInfo
+
+A string containing a URI {{RFC3986}} that leads to more information about the proxy, its
+operation, who operates it, etc. The URI MUST have a scheme of "https" {{RFC7230}}, and MUST be
+able to respond with an HTML {{W3C.CR-html5-20140731}} representation. This member MUST be present.
+
+## proxies
+
+An array containing one or more proxy objects; each proxy object represents a proxy endpoint that
+can be used when this proxy is configured.
+
+Proxy objects' members are defined by the following subsections; unrecognized members SHOULD be
+ignored.
+
+The ordering of proxy objects within the proxies array is not significant; clients MAY choose any
+proxy they wish (keeping in mind the requirements of validNetworks), and MAY use more than one at a
+time.
+
+When connecting to a WPD proxy, clients MUST use TLS and MUST validate the hostname as per
+{{RFC2818}} Section 3.1. If the proxy presents an invalid certificate, that proxy MUST be
+considered "failed" and not used (until a valid certificate is presented).
+
+WPD Proxies MUST support HTTP/2 {{I-D.ietf-httpbis-http2}} connections from clients. Clients
+that cannot establish a HTTP/2 connection to a WPD proxy MUST consider that proxy "failed."
+
+WPD Proxies MUST support forwarding requests with the "http" scheme {{RFC7230}}, and SHOULD support
+the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3.
+
+When user agents encounter 5xx responses to a CONNECT request from a WPD proxy, they MUST present
+the response to the end user, but MUST NOT present or process it as a response to the eventual
+request to be made through the tunnel (i.e., it has an identified payload, as per {{RFC7231}}
+Section 3.1.4.1).
+
+If a proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another proxy
+(if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
+re-establish contact with failed proxies (e.g., every minute).
+
+NOTE: the array of proxy objects is functionally similar to, but not as expressive as, the
+commonly-used "proxy.pac" format. While it would be expedient for WPD to just reference a
+proxy.pac, feedback so far is that proxy.pac has a number of deficiencies, and interoperability
+over it is poor. Therefore, this document specifies the proxy object instead, in order to gather
+feedback on an alternative approach.
+
+### host
+
+A string containing the host (as per {{RFC3986}}, section 3.2.2) of the proxy. This member MUST be
+present.
+
+### port
+
+A number representing the port that the proxy is listening on. This member MUST be present, and
+MUST be an integer.
+
+
+### validNetworks
+
+An array containing strings; each string contains a classless prefix {{RFC4632}} which the proxy
+can be used within. Clients SHOULD NOT attempt to use the proxy if their IP address is within one
+of the stated ranges.
+
+This member is optional.
+
+
+## bypassDomains
+
+An array containing strings; each string is either a host (as per {{RFC3986}} Section 3.2.2) or a classless prefix {{RFC4632}}. Clients SHOULD NOT use the WPD's proxies to access these domains.
+
+Note that when a "bare" IP address or classless prefix is used in bypassDomains, clients are not
+required to perform a reverse lookup on hostnames; these forms are only intended for accessing URLs
+that use the IP-literal or IPv4address forms.
+
+This member is optional.
+
+
+# Discovering WPD Files {#discover}
+
+To facilitate easy configuration of Web proxies, this specification defines a well-known URI
+{{RFC5785}}. Doing so allows a proxy's description to be found with a simple hostname; e.g.,
+"proxy.example.net" or even just "example.net".
+
+## The web-proxy-desc well-known URI {#well-known}
+
+The "web-proxy-desc" well-known URI allows discovery of a Web Proxy Description ({{wpd}}).
+
+This well-known URI is only valid when used with the "https" URI Scheme {{RFC7230}}; it MUST NOT be
+used with "http" URIs. In other words, WPD discovery is always protected by TLS {{RFC5246}}.
+
+The description found at this location is considered valid for its freshness lifetime, as defined
+in {{RFC7234}} Section 4.2. Once stale, clients SHOULD refresh it and apply any changes.
+
+If the WPD is not retrievable (e.g., a 404 response status), invalid (as per JSON {{RFC7159}} or
+the requirements in {{wpd}}), or its certificate is not valid for the host (as per {{RFC2818}}
+Section 3.1), the client MUST NOT use the WPD, and if a user agent, SHOULD inform the end user.
+
+The registration template is:
+
+* URI suffix: web-proxy-desc
+* Change controller: IETF
+* Specification document(s): [this document]
+* Related information: only to be used with 'https' scheme
+
+
+
+# IANA Considerations
+
+This specification registers a new well-known URI, as per {{RFC5785}}. See {{well-known}} for the
+template.
+
+# Security Considerations
+
+If a user can be convinced to configure a WPD hostname as their proxy, that host can observe all
+unencrypted traffic by the client. As such, WPD configuration interfaces ought only allow
+configuration of proxies once their identity is validate (as required), and the user ought to be
+given access to all relevant information about the WPD proxy (i.e., 'name', 'desc' and 'moreInfo',
+the latter as a link). Furthermore, WPD proxies ought only be configured as the result of an
+intentional act, not as a side effect of normal Web browsing.
+
+
+--- back
