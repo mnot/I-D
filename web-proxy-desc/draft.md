@@ -77,6 +77,7 @@ Furthermore, it is designed to be useful in the following cases:
   through any number of intermediaries.
 * An end user is required to use a proxy to access Internet resources by their network (e.g., a
   school, workplace or prison).
+* A network wants to offer enhanced access to selected Web sites, through interposition of a proxy.
 
 Importantly, this specification does not address the automatic discovery of proxy configuration for
 a given network.
