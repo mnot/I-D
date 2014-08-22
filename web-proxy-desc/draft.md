@@ -297,6 +297,8 @@ given access to all relevant information about the WPD proxy (i.e., 'name', 'des
 the latter as a link). Furthermore, WPD proxies ought only be configured as the result of an
 intentional act, not as a side effect of normal Web browsing.
 
+# Acknowledgements
 
+Thanks to Patrick McManus for his feedback and suggestions.
 
 --- back
