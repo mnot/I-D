@@ -115,7 +115,7 @@ containing WPD-specific object members. For example:
                 "validNetworks": ["192.0.2.0/24"]
             }
         ],
-        "bypassDomains": ["example.com", "192.0.2.0/24"],
+        "omitDomains": ["example.com", "192.0.2.0/24"],
     }
 
 
@@ -200,11 +200,14 @@ of the stated ranges.
 This member is optional.
 
 
-## bypassDomains
+## omitDomains
 
-An array containing strings; each string is either a host (as per {{RFC3986}} Section 3.2.2) or a classless prefix {{RFC4632}}. Clients SHOULD NOT use the WPD's proxies to access these domains.
+An array containing strings; each string is either a host (as per {{RFC3986}} Section 3.2.2) or a
+classless prefix {{RFC4632}}. Clients MUST NOT use the WPD's proxies to access those nominated
+host, nor hostnames that have the host as a root. Likewise, clients MUST NOT use the WPD's proxies
+to access bare IP addresses that fall within the classless prefix.
 
-Note that when a "bare" IP address or classless prefix is used in bypassDomains, clients are not
+Note that when a "bare" IP address or classless prefix is used in omitDomains, clients are not
 required to perform a reverse lookup on hostnames; these forms are only intended for accessing URLs
 that use the IP-literal or IPv4address forms.
 
