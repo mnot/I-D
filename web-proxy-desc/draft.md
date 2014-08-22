@@ -22,6 +22,7 @@ author:
     uri: http://www.mnot.net/
 
 normative:
+  RFC1918:
   RFC2119:
   RFC2818:
   RFC3986:
@@ -208,6 +209,11 @@ For example, if the value of validNetworks is
 
 then the only clients that could use the proxy would have IP addresses in the ranges 192.168.1.0 to
 192.168.1.3 and 192.168.2.0 to 192.168.2.255.
+
+Note that by their nature {{RFC1918}} private networks are not unique, and therefore there may be
+false positives. As such, clients SHOULD NOT automatically configure a WPD based upon validNetworks
+when the IP address is in these ranges, although they MAY notify the user of a WPD's possible
+applicability, and MAY use additional information to correlate a WPD to its proper network.
 
 
 ## forReferers
