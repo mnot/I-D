@@ -167,7 +167,14 @@ WPD Proxies MUST support HTTP/2 {{I-D.ietf-httpbis-http2}} connections from clie
 that cannot establish a HTTP/2 connection to a WPD proxy MUST consider that proxy "failed."
 
 WPD Proxies MUST support forwarding requests with the "http" scheme {{RFC7230}}, and SHOULD support
-the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3.
+the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3. 
+
+{{RFC7230}} Section 5.7.2 requires proxies to honour the semantic of the "no-transform"
+cache-control directive, and append the 214 (Transformation Applied) warn-code to other messages
+that have been transformed; WPD proxies MUST honour these requirements.
+
+User agents MUST use a CONNECT tunnel when retrieving URLs with the "https" scheme through WPD
+proxies.
 
 When user agents encounter 5xx responses to a CONNECT request from a WPD proxy, they MUST present
 the response to the end user, but MUST NOT present or process it as a response to the eventual
