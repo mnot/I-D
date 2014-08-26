@@ -94,6 +94,38 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
+# WPD Proxies {#wpd-proxy}
+
+This specification defines a particular kind of HTTP proxy (as per {{RFC7230}} Section 2.3) known
+as a "WPD proxy" that has additional requirements placed upon it, as well as upon those using it.
+
+WPD Proxies MUST support HTTP/2 {{I-D.ietf-httpbis-http2}} over TLS for connections from clients.
+Clients that cannot establish a HTTP/2 connection to a WPD proxy MUST consider that proxy "failed."
+
+WPD Proxies MUST support forwarding requests with the "http" scheme {{RFC7230}}, and SHOULD support
+the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3. 
+
+{{RFC7230}} Section 5.7.2 requires proxies to honour the semantic of the "no-transform"
+cache-control directive, and append the 214 (Transformation Applied) warn-code to other messages
+that have been transformed; WPD proxies MUST honour these requirements.
+
+When connecting to a WPD proxy, clients MUST use TLS and MUST validate the proxy hostname as per
+{{RFC2818}} Section 3.1. If the proxy presents an invalid certificate, that proxy MUST be
+considered "failed" and not used (until a valid certificate is presented).
+
+User agents MUST use a CONNECT tunnel when retrieving URLs with the "https" scheme through WPD
+proxies.
+
+When user agents encounter 5xx responses to a CONNECT request from a WPD proxy, they MUST present
+the response to the end user, but MUST NOT present or process it as a response to the eventual
+request to be made through the tunnel (i.e., it has an identified payload, as per {{RFC7231}}
+Section 3.1.4.1).
+
+If a proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another proxy
+(if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
+re-establish contact with failed proxies (e.g., every minute).
+
+
 # The Web Proxy Description (WPD) Format {#wpd}
 
 WPD is a JSON {{RFC7159}} format that describes a Web proxy to its clients. Its root is an object
@@ -150,7 +182,8 @@ able to respond with an HTML {{W3C.CR-html5-20140731}} representation. This memb
 ## proxies
 
 An array containing one or more proxy objects; each proxy object represents a proxy endpoint that
-can be used when this proxy is configured.
+can be used when this WPD is configured. See {{wpd-proxy}} for requirements specific to these
+proxies, as well as those clients connecting to them.
 
 Proxy objects' members are defined by the following subsections; unrecognized members SHOULD be
 ignored.
@@ -158,32 +191,6 @@ ignored.
 The ordering of proxy objects within the proxies array is not significant; clients MAY choose any
 proxy they wish (keeping in mind the requirements of validNetworks), and MAY use more than one at a
 time.
-
-When connecting to a WPD proxy, clients MUST use TLS and MUST validate the hostname as per
-{{RFC2818}} Section 3.1. If the proxy presents an invalid certificate, that proxy MUST be
-considered "failed" and not used (until a valid certificate is presented).
-
-WPD Proxies MUST support HTTP/2 {{I-D.ietf-httpbis-http2}} connections from clients. Clients
-that cannot establish a HTTP/2 connection to a WPD proxy MUST consider that proxy "failed."
-
-WPD Proxies MUST support forwarding requests with the "http" scheme {{RFC7230}}, and SHOULD support
-the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3. 
-
-{{RFC7230}} Section 5.7.2 requires proxies to honour the semantic of the "no-transform"
-cache-control directive, and append the 214 (Transformation Applied) warn-code to other messages
-that have been transformed; WPD proxies MUST honour these requirements.
-
-User agents MUST use a CONNECT tunnel when retrieving URLs with the "https" scheme through WPD
-proxies.
-
-When user agents encounter 5xx responses to a CONNECT request from a WPD proxy, they MUST present
-the response to the end user, but MUST NOT present or process it as a response to the eventual
-request to be made through the tunnel (i.e., it has an identified payload, as per {{RFC7231}}
-Section 3.1.4.1).
-
-If a proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another proxy
-(if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
-re-establish contact with failed proxies (e.g., every minute).
 
 NOTE: the array of proxy objects is functionally similar to, but not as expressive as, the
 commonly-used "proxy.pac" format. While it would be expedient for WPD to just reference a
