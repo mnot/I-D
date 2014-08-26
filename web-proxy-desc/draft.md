@@ -118,7 +118,7 @@ proxies.
 
 When user agents encounter 5xx responses to a CONNECT request from a WPD proxy, they MUST present
 the response to the end user, but MUST NOT present or process it as a response to the eventual
-request to be made through the tunnel (i.e., it has an identified payload, as per {{RFC7231}}
+request to be made through the tunnel (i.e., it has an unidentified payload, as per {{RFC7231}}
 Section 3.1.4.1).
 
 If a proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another proxy
