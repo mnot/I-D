@@ -121,9 +121,9 @@ the response to the end user, but MUST NOT present or process it as a response t
 request to be made through the tunnel (i.e., it has an unidentified payload, as per {{RFC7231}}
 Section 3.1.4.1).
 
-If a proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another proxy
-(if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
-re-establish contact with failed proxies (e.g., every minute).
+If a WPD proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another
+proxy (if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
+re-establish contact with failed WPD proxies (e.g., every minute).
 
 
 # The Web Proxy Description (WPD) Format {#wpd}
