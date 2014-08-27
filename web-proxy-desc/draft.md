@@ -279,6 +279,8 @@ then requests to "friendface.example.com", "www.friendface.example.com",
 response from one of these hosts generated further requests to "images.example.net" and
 "scripts.example.org", they would also use the proxies.
 
+Note that alwaysDirect takes precedence over forReferers. 
+
 TODO: tighten up what "processing" means here; the intent is to omit a href
 
 
