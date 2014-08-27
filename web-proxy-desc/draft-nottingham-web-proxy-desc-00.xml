@@ -21,8 +21,6 @@
     <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
       <organization></organization>
       <address>
-        
-        
         <email>mnot@mnot.net</email>
         <uri>http://www.mnot.net/</uri>
       </address>
@@ -57,18 +55,19 @@ security, usability and interoperability issues.</t>
 
 <t>This specification defines:</t>
 
-<t><list style='symbols'>
+<t><list style="symbols">
   <t>A simple format for describing a Web proxy (“WPD”; see <xref target="wpd"/>) to facilitate configuration, and
 so that it can be represented to users in a consistent way, and</t>
-  <t>A way to discover the proxy description using a well-known URL <xref target="discover"/>, so that direct
+  <t>A way to discover the proxy description using a well-known URL (<xref target="discover"/>), so that direct
 configuration of a proxy is as simple as entering a hostname, and</t>
   <t>A set of additional requirements for proxies described in this fashion, as well as requirements
-for User Agents connecting to them, designed to improve security, usability and interoperability.</t>
+for User Agents connecting to them, designed to improve security, usability and interoperability.
+See <xref target="wpd-proxy"/>.</t>
 </list></t>
 
 <t>It can be used in a variety of ways, but is designed to meet the following goals:</t>
 
-<t><list style='symbols'>
+<t><list style="symbols">
   <t>Users should always be aware of a configured proxy and be able to confidently identify it, and</t>
   <t>Configuring a proxy should be a deliberate act, but simple to do for non-technical users, and</t>
   <t>Proxies should always respect the wishes of the end user and Web site, and</t>
@@ -80,7 +79,7 @@ problems that are encountered.</t>
 
 <t>Furthermore, it is designed to be useful in the following cases:</t>
 
-<t><list style='symbols'>
+<t><list style="symbols">
   <t>An end user wants to use a proxy network that provides improved performance, by re-compressing
 responses to http:// resources.</t>
   <t>An end user wants to use a proxy network that provides improved privacy, by routing requests
@@ -91,7 +90,8 @@ school, workplace or prison).</t>
 </list></t>
 
 <t>Importantly, this specification does not address the automatic discovery of proxy configuration for
-a given network.</t>
+a given network, because proxy configuration is a security-sensitive action, and ought never be
+done automatically. </t>
 
 <t>It is expected that the mechanisms described could be implemented by a single program (e.g., a Web
 browser), or through an Operating System facility.</t>
@@ -130,6 +130,11 @@ proxies.</t>
 the response to the end user, but MUST NOT present or process it as a response to the eventual
 request to be made through the tunnel (i.e., it has an unidentified payload, as per <xref target="RFC7231"/>
 Section 3.1.4.1).</t>
+
+<t>NOTE: Many user agents refuse to show an error response to a CONNECT to the user, in order to deal
+with the issues brought to light by <xref target="bad-proxy"/>. While effective in dealing with those attacks,
+doing so effectively disallows communication between the proxy and the end user; this requirement
+is designed to force clients to re-open that channel.</t>
 
 <t>If a WPD proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another
 proxy (if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
@@ -324,6 +329,8 @@ to users when no suitable proxy is available.</t>
 <xref target="RFC5785"/>. Doing so allows a proxy’s description to be found with a simple hostname; e.g.,
 “proxy.example.net” or even just “example.net”.</t>
 
+<t>Clients MUST NOT use the DHCP “WPAD” mechanism to discover WPDs.</t>
+
 <section anchor="well-known" title="The web-proxy-desc well-known URI">
 
 <t>The “web-proxy-desc” well-known URI allows discovery of a Web Proxy Description (<xref target="wpd"/>).</t>
@@ -345,7 +352,7 @@ configured language.</t>
 
 <t>The registration template is:</t>
 
-<t><list style='symbols'>
+<t><list style="symbols">
   <t>URI suffix: web-proxy-desc</t>
   <t>Change controller: IETF</t>
   <t>Specification document(s): [this document]</t>
@@ -799,6 +806,24 @@ specifications of each URI scheme.
 </reference>
 
 
+<reference anchor="bad-proxy" target="research.microsoft.com/jump/79323">
+  <front>
+    <title>Pretty-Bad-Proxy: An Overlooked Adversary in Browsers’ HTTPS Deployments</title>
+    <author initials="S." surname="Chen" fullname="Shuo Chen">
+      <organization>Microsoft Research</organization>
+    </author>
+    <author initials="Z." surname="Mao" fullname="Ziqing Mao">
+      <organization>Purdue University</organization>
+    </author>
+    <author initials="Y." surname="Wang" fullname="Yi-Min Wang">
+      <organization>Microsoft Research</organization>
+    </author>
+    <author initials="M." surname="Zhang" fullname="Ming Zhang">
+      <organization>Microsoft Research</organization>
+    </author>
+    <date year="2009" month="January"/>
+  </front>
+</reference>
 
 
     </references>

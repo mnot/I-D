@@ -243,7 +243,7 @@ MUST be an integer.
 ### validNetworks
 
 An array containing strings; each string contains a classless prefix {{RFC4632}} which the proxy
-can be used within. Clients MUST NOT attempt to use the proxy if their IP address is within one
+can be used within. Clients MUST NOT attempt to use the proxy if their IP address is not within one
 of the stated ranges.
 
 This member is optional.
