@@ -82,7 +82,8 @@ Furthermore, it is designed to be useful in the following cases:
 * A network wants to offer enhanced access to selected Web sites, through interposition of a proxy.
 
 Importantly, this specification does not address the automatic discovery of proxy configuration for
-a given network.
+a given network, because proxy configuration is a security-sensitive action, and ought never be
+done automatically. 
 
 It is expected that the mechanisms described could be implemented by a single program (e.g., a Web
 browser), or through an Operating System facility.
