@@ -180,7 +180,7 @@ containing WPD-specific object members. For example:
                 "validNetworks": ["192.0.2.0/24"]
             }
         ],
-        "omitDomains": ["example.com", "192.0.2.0/24"],
+        "alwaysDirect": ["example.com", "192.0.2.0/24"],
 		"allowDirect": True,
 		"failPage": "https://www.example.com/proxy-fail"
     }
@@ -283,27 +283,26 @@ response from one of these hosts generated further requests to "images.example.n
 TODO: tighten up what "processing" means here; the intent is to omit a href
 
 
-## omitDomains
+## alwaysDirect
 
 An array containing strings; each string is either a host (as per {{RFC3986}} Section 3.2.2) or a
 classless prefix {{RFC4632}}. Clients MUST NOT use the WPD's proxies to access those nominated
 host, nor hostnames that have the host as a root. Likewise, clients MUST NOT use the WPD's proxies
 to access bare IP addresses that fall within the classless prefix.
 
-Note that when a "bare" IP address or classless prefix is used in omitDomains, clients are not
+Note that when a "bare" IP address or classless prefix is used in alwaysDirect, clients are not
 required to perform a reverse lookup on hostnames; these forms are only intended for accessing URLs
 that use the IP-literal or IPv4address forms.
 
 This member is optional.
 
-For example, if the value of omitDomains is:
+For example, if the value of alwaysDirect is:
 
     [ "example.com", "192.168.5/24" ]
 	
-then requests to "example.com", "www.example.com", "foo.example.com" etc would not use the proxy.
+then requests to "example.com", "www.example.com", "foo.example.com" etc would not use any proxy.
 Likewise, requests whose URL authority were bare IP addresses in the range 192.168.5.0 to
-192.168.5.255 would not use the proxy.
-
+192.168.5.255 would not use any proxy.
 
 ## allowDirect
 
