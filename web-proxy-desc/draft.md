@@ -305,6 +305,8 @@ To facilitate easy configuration of Web proxies, this specification defines a we
 {{RFC5785}}. Doing so allows a proxy's description to be found with a simple hostname; e.g.,
 "proxy.example.net" or even just "example.net".
 
+Clients MUST NOT use the DHCP "WPAD" mechanism to discover WPDs.
+
 ## The web-proxy-desc well-known URI {#well-known}
 
 The "web-proxy-desc" well-known URI allows discovery of a Web Proxy Description ({{wpd}}).
