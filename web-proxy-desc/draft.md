@@ -37,7 +37,31 @@ informative:
   RFC5246:
   RFC5785:
   RFC7231:
-
+  bad-proxy:
+    target: "research.microsoft.com/jump/79323"
+    title: "Pretty-Bad-Proxy: An Overlooked Adversary in Browsers’ HTTPS Deployments"
+    author:
+      - 
+        ins: S. Chen
+        name: Shuo Chen
+        organization: Microsoft Research
+        email: shuochen@microsoft.com
+      - 
+        ins: Z. Mao
+        name: Ziqing Mao
+        organization: Purdue University
+        email: zmao@cs.purdue.edu
+      - 
+        ins: Y. Wang
+        name: Yi-Min Wang
+        organization: Microsoft Research
+        email: ymwang@microsoft.com
+      - 
+        ins: M. Zhang
+        name: Ming Zhang
+        organization: Microsoft Research
+        email: mzh@microsoft.com
+    date: 05-2009
 
 --- abstract
 
@@ -122,6 +146,11 @@ When user agents encounter 5xx responses to a CONNECT request from a WPD proxy, 
 the response to the end user, but MUST NOT present or process it as a response to the eventual
 request to be made through the tunnel (i.e., it has an unidentified payload, as per {{RFC7231}}
 Section 3.1.4.1).
+
+NOTE: Many user agents refuse to show an error response to a CONNECT to the user, in order to deal
+with the issues brought to light by {{bad-proxy}}. While effective in dealing with those attacks,
+doing so effectively disallows communication between the proxy and the end user; this requirement
+is designed to force clients to re-open that channel.
 
 If a WPD proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another
 proxy (if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
