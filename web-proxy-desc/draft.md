@@ -181,7 +181,6 @@ containing WPD-specific object members. For example:
             }
         ],
         "alwaysDirect": ["example.com", "192.0.2.0/24"],
-		"failDirect": False,
 		"failPage": "https://www.example.com/proxy-fail"
     }
 
@@ -305,31 +304,21 @@ Likewise, requests whose URL authority were bare IP addresses in the range 192.1
 192.168.5.255 would not use any proxy.
 
 
-## failDirect
-
-A boolean indicating whether the client should attempt to directly access the origin server if
-all applicable proxies are unavailable. 
-
-When False, clients MUST NOT attempt to directly access the origin server when no proxy is
-available, but instead SHOULD inform the user that the proxy is unavailable. if failPage
-({failPage}) is available, user agents SHOULD render it to users instead.
-
-When True, clients MAY do so. If failDirect is not present, clients MAY default to this behavior.
-
-Here, "unavailable" means when the proxy is refusing connections, or not answering HTTP/2 pings. A
-stalled connection or HTTP 5xx error SHOULD NOT cause it to be considered unavailable on their own,
-since these conditions could be caused by upstream servers or networks.
-
-Clients SHOULD regularly (e.g., every 30 seconds) probe "down" proxies for availability.
-
-
 ## failPage {#failPage}
 
 A string containing a URL {{RFC3986}} for a Web page (most likely in HTML) that SHOULD be presented
 to users when no suitable proxy is available.
 
-By its nature, the failPage is not fetched through a proxy.
+A proxy is considered unavailable when it is refusing connections or not answering HTTP/2 pings. A
+stalled connection or HTTP 5xx error SHOULD NOT cause it to be considered unavailable on their own,
+since these conditions could be caused by upstream servers or networks.
 
+Clients SHOULD regularly (e.g., every 30 seconds) probe "down" proxies for availability.
+
+If failPage is absent, clients SHOULD attempt to directly connect to the origin when no suitable
+proxy is available.
+
+By its nature, the failPage is not fetched through a proxy.
 
 
 # Discovering WPD Files {#discover}
