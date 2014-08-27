@@ -41,22 +41,22 @@ informative:
     target: "research.microsoft.com/jump/79323"
     title: "Pretty-Bad-Proxy: An Overlooked Adversary in Browsers’ HTTPS Deployments"
     author:
-      - 
+      -
         ins: S. Chen
         name: Shuo Chen
         organization: Microsoft Research
         email: shuochen@microsoft.com
-      - 
+      -
         ins: Z. Mao
         name: Ziqing Mao
         organization: Purdue University
         email: zmao@cs.purdue.edu
-      - 
+      -
         ins: Y. Wang
         name: Yi-Min Wang
         organization: Microsoft Research
         email: ymwang@microsoft.com
-      - 
+      -
         ins: M. Zhang
         name: Ming Zhang
         organization: Microsoft Research
@@ -107,7 +107,7 @@ Furthermore, it is designed to be useful in the following cases:
 
 Importantly, this specification does not address the automatic discovery of proxy configuration for
 a given network, because proxy configuration is a security-sensitive action, and ought never be
-done automatically. 
+done automatically.
 
 It is expected that the mechanisms described could be implemented by a single program (e.g., a Web
 browser), or through an Operating System facility.
@@ -129,7 +129,7 @@ WPD Proxies MUST support HTTP/2 {{I-D.ietf-httpbis-http2}} over TLS for connecti
 Clients that cannot establish a HTTP/2 connection to a WPD proxy MUST consider that proxy "failed."
 
 WPD Proxies MUST support forwarding requests with the "http" scheme {{RFC7230}}, and SHOULD support
-the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3. 
+the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3.
 
 {{RFC7230}} Section 5.7.2 requires proxies to honour the semantic of the "no-transform"
 cache-control directive, and append the 214 (Transformation Applied) warn-code to other messages
@@ -270,7 +270,7 @@ other traffic.
 
 This member is optional.
 
-For example, if the value of forReferers is 
+For example, if the value of forReferers is
 
     [ "friendface.example.com" ]
 
@@ -279,7 +279,7 @@ then requests to "friendface.example.com", "www.friendface.example.com",
 response from one of these hosts generated further requests to "images.example.net" and
 "scripts.example.org", they would also use the proxies.
 
-Note that alwaysDirect takes precedence over forReferers. 
+Note that alwaysDirect takes precedence over forReferers.
 
 TODO: tighten up what "processing" means here; the intent is to omit a href
 
@@ -300,7 +300,7 @@ This member is optional.
 For example, if the value of alwaysDirect is:
 
     [ "example.com", "192.168.5/24" ]
-	
+
 then requests to "example.com", "www.example.com", "foo.example.com" etc would not use any proxy.
 Likewise, requests whose URL authority were bare IP addresses in the range 192.168.5.0 to
 192.168.5.255 would not use any proxy.
@@ -309,7 +309,7 @@ Likewise, requests whose URL authority were bare IP addresses in the range 192.1
 ## failDirect {#failDirect}
 
 A boolean indicating whether the client should attempt to directly access the origin server if
-all applicable proxies are unavailable. 
+all applicable proxies are unavailable.
 
 When False, clients MUST NOT attempt to directly access the origin server when no proxy is
 available, but instead SHOULD inform the user that the proxy is unavailable.
