@@ -384,3 +384,21 @@ intentional act, not as a side effect of normal Web browsing.
 Thanks to Patrick McManus for his feedback and suggestions.
 
 --- back
+
+# User Experience for WPDs
+
+There are a variety of ways to present proxy configuration to users and administrators, so this
+specification does not constrain how this is done. That said, guidance for the common case (visual
+Web browsers) can be helpful in assuring consistent user experience.
+
+One of the core principles of this specification is that WPDs need to be explicitly configured,
+either by the end user or an administrator on their behalf. This is because using a proxy is a
+security-sensitive operation; if an attacker can automatically configure a proxy, or convince a
+user to do so as part of accessing a site, they can gain access to the user's traffic, even when
+the user leaves the attacking network.
+
+Likewise, only a single WPD ought be configured at a time; combining WPDs leads both to ambiguity
+(which has precedence?) and user confusion.
+
+When a WPD is active, its ought be visible to the end user, to remind them of its presence, and to
+offer more information about the configured proxy.
