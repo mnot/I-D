@@ -286,10 +286,19 @@ TODO: tighten up what "processing" means here; the intent is to omit a href
 
 ## alwaysDirect
 
-An array containing strings; each string is either a host (as per {{RFC3986}} Section 3.2.2) or a
-classless prefix {{RFC4632}}. Clients MUST NOT use the WPD's proxies to access those nominated
-host, nor hostnames that have the host as a root. Likewise, clients MUST NOT use the WPD's proxies
-to access bare IP addresses that fall within the classless prefix.
+An array containing strings; each string is one of:
+
+* a host (as per {{RFC3986}} Section 3.2.2), 
+* a classless prefix {{RFC4632}}. 
+* the string "CONNECT".
+
+Clients MUST NOT use the WPD's proxies to access nominated hosts and hostnames that have the a
+nominated host as its root. Likewise, clients MUST NOT use the WPD's proxies to access bare IP
+addresses that fall within the classless prefix.
+
+If the string "CONNECT" appears in alwaysDirect, it indicates that requests that require
+establishment of a tunnel (e.g., for "https" URLs) MUST NOT use the WPD's proxies, but instead
+ought to be made directly to the origin (i.e., without a tunnel).
 
 Note that when a "bare" IP address or classless prefix is used in alwaysDirect, clients are not
 required to perform a reverse lookup on hostnames; these forms are only intended for accessing URLs
