@@ -172,12 +172,12 @@ containing WPD-specific object members. For example:
             {
                 "host": "proxy.example.com",
                 "port": 8080,
-                "validNetworks": ["192.0.2.0/24"]
+                "clientNetworks": ["192.0.2.0/24"]
                 },
             {
                 "host": "proxy1.example.com",
                 "port": 8080,
-                "validNetworks": ["192.0.2.0/24"]
+                "clientNetworks": ["192.0.2.0/24"]
             }
         ],
         "alwaysDirect": ["example.com", "192.0.2.0/24"],
@@ -220,7 +220,7 @@ Proxy objects' members are defined by the following subsections; unrecognized me
 ignored.
 
 The ordering of proxy objects within the proxies array is not significant; clients MAY choose any
-proxy they wish (keeping in mind the requirements of validNetworks), and MAY use more than one at a
+proxy they wish (keeping in mind the requirements of clientNetworks), and MAY use more than one at a
 time.
 
 NOTE: the array of proxy objects is functionally similar to, but not as expressive as, the
@@ -240,7 +240,7 @@ A number representing the port that the proxy is listening on. This member MUST 
 MUST be an integer.
 
 
-### validNetworks
+### clientNetworks
 
 An array containing strings; each string contains a classless prefix {{RFC4632}} which the proxy
 can be used within. Clients MUST NOT attempt to use the proxy if their IP address is not within one
@@ -248,7 +248,7 @@ of the stated ranges.
 
 This member is optional.
 
-For example, if the value of validNetworks is
+For example, if the value of clientNetworks is
 
    [ "192.168.1.0/32", "192.168.2.0/24" ]
 
@@ -256,7 +256,7 @@ then the only clients that could use the proxy would have IP addresses in the ra
 192.168.1.3 and 192.168.2.0 to 192.168.2.255.
 
 Note that by their nature {{RFC1918}} private networks are not unique, and therefore there may be
-false positives. As such, clients SHOULD NOT automatically configure a WPD based upon validNetworks
+false positives. As such, clients SHOULD NOT automatically configure a WPD based upon clientNetworks
 when the IP address is in these ranges, although they MAY notify the user of a WPD's possible
 applicability, and MAY use additional information to correlate a WPD to its proper network.
 
@@ -303,6 +303,7 @@ For example, if the value of alwaysDirect is:
 then requests to "example.com", "www.example.com", "foo.example.com" etc would not use any proxy.
 Likewise, requests whose URL authority were bare IP addresses in the range 192.168.5.0 to
 192.168.5.255 would not use any proxy.
+
 
 ## allowDirect
 
