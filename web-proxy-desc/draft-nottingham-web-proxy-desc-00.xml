@@ -278,10 +278,21 @@ response from one of these hosts generated further requests to “images.example
 </section>
 <section anchor="alwaysdirect" title="alwaysDirect">
 
-<t>An array containing strings; each string is either a host (as per <xref target="RFC3986"/> Section 3.2.2) or a
-classless prefix <xref target="RFC4632"/>. Clients MUST NOT use the WPD’s proxies to access those nominated
-host, nor hostnames that have the host as a root. Likewise, clients MUST NOT use the WPD’s proxies
-to access bare IP addresses that fall within the classless prefix.</t>
+<t>An array containing strings; each string is one of:</t>
+
+<t><list style="symbols">
+  <t>a host (as per <xref target="RFC3986"/> Section 3.2.2), </t>
+  <t>a classless prefix <xref target="RFC4632"/>. </t>
+  <t>the string “CONNECT”.</t>
+</list></t>
+
+<t>Clients MUST NOT use the WPD’s proxies to access nominated hosts and hostnames that have the a
+nominated host as its root. Likewise, clients MUST NOT use the WPD’s proxies to access bare IP
+addresses that fall within the classless prefix.</t>
+
+<t>If the string “CONNECT” appears in alwaysDirect, it indicates that requests that require
+establishment of a tunnel (e.g., for “https” URLs) MUST NOT use the WPD’s proxies, but instead
+ought to be made directly to the origin (i.e., without a tunnel).</t>
 
 <t>Note that when a “bare” IP address or classless prefix is used in alwaysDirect, clients are not
 required to perform a reverse lookup on hostnames; these forms are only intended for accessing URLs
