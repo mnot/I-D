@@ -55,10 +55,11 @@ This specification defines:
 
 * A simple format for describing a Web proxy ("WPD"; see {{wpd}}) to facilitate configuration, and
   so that it can be represented to users in a consistent way, and
-* A way to discover the proxy description using a well-known URL {{discover}}, so that direct
+* A way to discover the proxy description using a well-known URL ({{discover}}), so that direct
   configuration of a proxy is as simple as entering a hostname, and
 * A set of additional requirements for proxies described in this fashion, as well as requirements
-  for User Agents connecting to them, designed to improve security, usability and interoperability. See {{wpd-proxy}}
+  for User Agents connecting to them, designed to improve security, usability and interoperability.
+  See {{wpd-proxy}}.
 
 It can be used in a variety of ways, but is designed to meet the following goals:
 
