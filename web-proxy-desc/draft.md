@@ -58,7 +58,7 @@ This specification defines:
 * A way to discover the proxy description using a well-known URL {{discover}}, so that direct
   configuration of a proxy is as simple as entering a hostname, and
 * A set of additional requirements for proxies described in this fashion, as well as requirements
-  for User Agents connecting to them, designed to improve security, usability and interoperability.
+  for User Agents connecting to them, designed to improve security, usability and interoperability. See {{wpd-proxy}}
 
 It can be used in a variety of ways, but is designed to meet the following goals:
 
