@@ -373,7 +373,7 @@ template.
 
 If a user can be convinced to configure a WPD hostname as their proxy, that host can observe all
 unencrypted traffic by the client. As such, WPD configuration interfaces ought only allow
-configuration of proxies once their identity is validate (as required), and the user ought to be
+configuration of proxies once their identity is validated (as required), and the user ought to be
 given access to all relevant information about the WPD proxy (i.e., 'name', 'desc' and 'moreInfo',
 the latter as a link). Furthermore, WPD proxies ought only be configured as the result of an
 intentional act, not as a side effect of normal Web browsing.
