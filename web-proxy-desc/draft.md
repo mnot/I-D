@@ -159,8 +159,8 @@ re-establish contact with failed WPD proxies (e.g., every minute).
 
 # The Web Proxy Description (WPD) Format {#wpd}
 
-WPD is a JSON {{RFC7159}} format that describes a Web proxy to its clients. Its root is an object
-containing WPD-specific object members. For example:
+WPD is a JSON {{RFC7159}} format that describes a Web proxy to potential clients. Its root is an
+object containing WPD-specific object members. For example:
 
     {
         "name": "ExampleCorp Web Proxy",
