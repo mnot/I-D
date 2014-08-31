@@ -196,18 +196,19 @@ be ignored.
 ## name
 
 A string containing a short, memorable name for the proxy; typically 64 characters or less. This
-member MUST be present.
+member MUST be present for the WPD to be considered valid.
 
 ## desc
 
 A string containing a textual description of the proxy's function(s); typically 256 characters or
-less. This member MUST be present.
+less. This member MUST be present for the WPD to be considered valid.
 
 ## moreInfo
 
 A string containing a URL {{RFC3986}} that leads to more information about the proxy, its
 operation, who operates it, etc. The URL MUST have a scheme of "https" {{RFC7230}}, and MUST be
-able to respond with an HTML {{W3C.CR-html5-20140731}} representation. This member MUST be present.
+able to respond with an HTML {{W3C.CR-html5-20140731}} representation. This member MUST be present
+for the WPD to be considered valid.
 
 ## proxies
 
