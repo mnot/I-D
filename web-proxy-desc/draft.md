@@ -107,7 +107,7 @@ Furthermore, it is designed to be useful in the following cases:
 
 Importantly, this specification does not address the automatic discovery of proxy configuration for
 a given network, because proxy configuration is a security-sensitive action, and ought never be
-done automatically.
+performed without explicit user or administrator action.
 
 It is expected that the mechanisms described could be implemented by a single program (e.g., a Web
 browser), or through an Operating System facility.
