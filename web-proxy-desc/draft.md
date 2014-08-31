@@ -166,14 +166,14 @@ object containing WPD-specific object members. For example:
         "name": "ExampleCorp Web Proxy",
         "desc": "ExampleCorp's Proxy Gateway for Web access. Note that
                  all traffic through this proxy is logged, and may be
-                 filtered for content."
+                 filtered for content.",
         "moreInfo": "https://inside.example.com/proxy/",
         "proxies": [
             {
                 "host": "proxy.example.com",
                 "port": 8080,
                 "clientNetworks": ["192.0.2.0/24"]
-                },
+            },
             {
                 "host": "proxy1.example.com",
                 "port": 8080,
@@ -181,7 +181,7 @@ object containing WPD-specific object members. For example:
             }
         ],
         "alwaysDirect": ["example.com", "192.0.2.0/24"],
-		"failDirect": False
+        "failDirect": False
     }
 
 
