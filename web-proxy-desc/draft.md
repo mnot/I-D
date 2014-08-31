@@ -212,8 +212,8 @@ for the WPD to be considered valid.
 
 ## proxies
 
-An array containing one or more proxy objects; each proxy object represents a proxy endpoint that
-can be used when this WPD is configured. See {{wpd-proxy}} for requirements specific to these
+An array containing one or more proxy objects; each proxy object represents a HTTP proxy endpoint
+that can be used when this WPD is configured. See {{wpd-proxy}} for requirements specific to these
 proxies, as well as those clients connecting to them.
 
 Proxy objects' members are defined by the following subsections; unrecognized members SHOULD be
