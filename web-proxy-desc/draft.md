@@ -185,7 +185,7 @@ object containing WPD-specific object members. For example:
     }
 
 
-When configuring a proxy through WPD, the User agent SHOULD present the relevant information
+When configuring a proxy through WPD, a user agent SHOULD present the relevant information
 contained within (i.e., the 'name', 'desc' and 'moreInfo' members, the latter as a link) to the end
 user. User agents SHOULD also make this information available to the end user whenever the WPD is
 in use.
