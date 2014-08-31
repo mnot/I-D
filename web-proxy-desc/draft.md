@@ -330,7 +330,7 @@ When True, clients MAY do so. If failDirect is not present, clients MAY default 
 
 # Discovering WPD Files {#discover}
 
-To facilitate easy configuration of Web proxies, this specification defines a well-known URI
+To facilitate easy configuration of WPD proxies, this specification defines a well-known URI
 {{RFC5785}}. Doing so allows a proxy's description to be found with a simple hostname; e.g.,
 "proxy.example.net" or even just "example.net".
 
