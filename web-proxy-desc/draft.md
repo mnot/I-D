@@ -242,9 +242,9 @@ MUST be an integer.
 
 ### clientNetworks
 
-An array containing strings; each string contains a classless prefix {{RFC4632}} which the proxy
-can be used within. Clients MUST NOT attempt to use the proxy if their IP address is not within one
-of the stated ranges.
+An array containing strings; each string contains a classless prefix (see {{RFC4632}}) which the
+proxy can be used within. Clients MUST NOT attempt to use the proxy if their IP address is not
+within one of the stated ranges.
 
 This member is optional.
 
@@ -255,10 +255,11 @@ For example, if the value of clientNetworks is
 then the only clients that could use the proxy would have IP addresses in the ranges 192.168.1.0 to
 192.168.1.3 and 192.168.2.0 to 192.168.2.255.
 
-Note that by their nature {{RFC1918}} private networks are not unique, and therefore there may be
-false positives. As such, clients SHOULD NOT automatically configure a WPD based upon clientNetworks
-when the IP address is in these ranges, although they MAY notify the user of a WPD's possible
-applicability, and MAY use additional information to correlate a WPD to its proper network.
+Note that by their nature private networks (as specified in {{RFC1918}}) are not unique, and
+therefore there may be false positives. As such, clients SHOULD NOT automatically configure a WPD
+based upon clientNetworks when the IP address is in these ranges, although they MAY notify the user
+of a WPD's possible applicability, and MAY use additional information to correlate a WPD to its
+proper network.
 
 
 ## forReferers
