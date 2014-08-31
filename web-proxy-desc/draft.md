@@ -150,7 +150,7 @@ Section 3.1.4.1).
 NOTE: Many user agents refuse to show an error response to a CONNECT to the user, in order to deal
 with the issues brought to light by {{bad-proxy}}. While effective in dealing with those attacks,
 doing so effectively disallows communication between the proxy and the end user; this requirement
-is designed to force clients to re-open that channel.
+is designed to re-open that channel.
 
 If a WPD proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another
 proxy (if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
