@@ -396,8 +396,16 @@ security-sensitive operation; if an attacker can automatically configure a proxy
 user to do so as part of accessing a site, they can gain access to the user's traffic, even when
 the user leaves the attacking network.
 
-Likewise, only a single WPD ought be configured at a time; combining WPDs leads both to ambiguity
-(which has precedence?) and user confusion.
+Therefore, a user agent might allow configuration by entering a hostname (e.g., "example.net"),
+whereupon it retrieves the WPD, validates its certificate and contents, and present its information
+to the end user for confirmation.
+
+Once a WPD is confirmed, a user agent might "remember" it for future use; e.g., by allowing quick
+configuration through a drop-down menu. When a WPD nominates clientNetworks and the client does not
+have a suitable IP address, the drop-down might make that option unavailable.
+
+It is envisioned that only a single WPD ought be configured at a time; combining WPDs leads to
+ambiguity regarding precedence and therefore user confusion.
 
 When a WPD is active, its ought be visible to the end user, to remind them of its presence, and to
 offer more information about the configured proxy.
