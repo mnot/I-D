@@ -21,6 +21,8 @@
     <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
       <organization></organization>
       <address>
+        
+        
         <email>mnot@mnot.net</email>
         <uri>http://www.mnot.net/</uri>
       </address>
@@ -55,7 +57,7 @@ security, usability and interoperability issues.</t>
 
 <t>This specification defines:</t>
 
-<t><list style="symbols">
+<t><list style='symbols'>
   <t>A simple format for describing a Web proxy (“WPD”; see <xref target="wpd"/>) to facilitate configuration, and
 so that it can be represented to users in a consistent way, and</t>
   <t>A way to discover the proxy description using a well-known URL (<xref target="discover"/>), so that direct
@@ -67,7 +69,7 @@ See <xref target="wpd-proxy"/>.</t>
 
 <t>It can be used in a variety of ways, but is designed to meet the following goals:</t>
 
-<t><list style="symbols">
+<t><list style='symbols'>
   <t>Users should always be aware of a configured proxy and be able to confidently identify it, and</t>
   <t>Configuring a proxy should be a deliberate act, but simple to do for non-technical users, and</t>
   <t>Proxies should always respect the wishes of the end user and Web site, and</t>
@@ -79,7 +81,7 @@ problems that are encountered.</t>
 
 <t>Furthermore, it is designed to be useful in the following cases:</t>
 
-<t><list style="symbols">
+<t><list style='symbols'>
   <t>An end user wants to use a proxy network that provides improved performance, by re-compressing
 responses to http:// resources.</t>
   <t>An end user wants to use a proxy network that provides improved privacy, by routing requests
@@ -91,7 +93,7 @@ school, workplace or prison).</t>
 
 <t>Importantly, this specification does not address the automatic discovery of proxy configuration for
 a given network, because proxy configuration is a security-sensitive action, and ought never be
-done automatically.</t>
+performed without explicit user or administrator action.</t>
 
 <t>It is expected that the mechanisms described could be implemented by a single program (e.g., a Web
 browser), or through an Operating System facility.</t>
@@ -134,7 +136,7 @@ Section 3.1.4.1).</t>
 <t>NOTE: Many user agents refuse to show an error response to a CONNECT to the user, in order to deal
 with the issues brought to light by <xref target="bad-proxy"/>. While effective in dealing with those attacks,
 doing so effectively disallows communication between the proxy and the end user; this requirement
-is designed to force clients to re-open that channel.</t>
+is designed to re-open that channel.</t>
 
 <t>If a WPD proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another
 proxy (if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
@@ -143,22 +145,22 @@ re-establish contact with failed WPD proxies (e.g., every minute).</t>
 </section>
 <section anchor="wpd" title="The Web Proxy Description (WPD) Format">
 
-<t>WPD is a JSON <xref target="RFC7159"/> format that describes a Web proxy to its clients. Its root is an object
-containing WPD-specific object members. For example:</t>
+<t>WPD is a JSON <xref target="RFC7159"/> format that describes a Web proxy to potential clients. Its root is an
+object containing WPD-specific object members. For example:</t>
 
 <figure><artwork><![CDATA[
 {
     "name": "ExampleCorp Web Proxy",
     "desc": "ExampleCorp's Proxy Gateway for Web access. Note that
              all traffic through this proxy is logged, and may be
-             filtered for content."
+             filtered for content.",
     "moreInfo": "https://inside.example.com/proxy/",
     "proxies": [
         {
             "host": "proxy.example.com",
             "port": 8080,
             "clientNetworks": ["192.0.2.0/24"]
-            },
+        },
         {
             "host": "proxy1.example.com",
             "port": 8080,
@@ -166,11 +168,11 @@ containing WPD-specific object members. For example:</t>
         }
     ],
     "alwaysDirect": ["example.com", "192.0.2.0/24"],
-	"failDirect": False
+    "failDirect": False
 }
 ]]></artwork></figure>
 
-<t>When configuring a proxy through WPD, the User agent SHOULD present the relevant information
+<t>When configuring a proxy through WPD, a user agent SHOULD present the relevant information
 contained within (i.e., the ‘name’, ‘desc’ and ‘moreInfo’ members, the latter as a link) to the end
 user. User agents SHOULD also make this information available to the end user whenever the WPD is
 in use.</t>
@@ -181,26 +183,27 @@ be ignored.</t>
 <section anchor="name" title="name">
 
 <t>A string containing a short, memorable name for the proxy; typically 64 characters or less. This
-member MUST be present.</t>
+member MUST be present for the WPD to be considered valid.</t>
 
 </section>
 <section anchor="desc" title="desc">
 
 <t>A string containing a textual description of the proxy’s function(s); typically 256 characters or
-less. This member MUST be present.</t>
+less. This member MUST be present for the WPD to be considered valid.</t>
 
 </section>
 <section anchor="moreinfo" title="moreInfo">
 
-<t>A string containing a URI <xref target="RFC3986"/> that leads to more information about the proxy, its
-operation, who operates it, etc. The URI MUST have a scheme of “https” <xref target="RFC7230"/>, and MUST be
-able to respond with an HTML <xref target="W3C.CR-html5-20140731"/> representation. This member MUST be present.</t>
+<t>A string containing a URL <xref target="RFC3986"/> that leads to more information about the proxy, its
+operation, who operates it, etc. The URL MUST have a scheme of “https” <xref target="RFC7230"/>, and MUST be
+able to respond with an HTML <xref target="W3C.CR-html5-20140731"/> representation. This member MUST be present
+for the WPD to be considered valid.</t>
 
 </section>
 <section anchor="proxies" title="proxies">
 
-<t>An array containing one or more proxy objects; each proxy object represents a proxy endpoint that
-can be used when this WPD is configured. See <xref target="wpd-proxy"/> for requirements specific to these
+<t>An array containing one or more proxy objects; each proxy object represents a HTTP proxy endpoint
+that can be used when this WPD is configured. See <xref target="wpd-proxy"/> for requirements specific to these
 proxies, as well as those clients connecting to them.</t>
 
 <t>Proxy objects’ members are defined by the following subsections; unrecognized members SHOULD be
@@ -230,9 +233,9 @@ MUST be an integer.</t>
 </section>
 <section anchor="clientnetworks" title="clientNetworks">
 
-<t>An array containing strings; each string contains a classless prefix <xref target="RFC4632"/> which the proxy
-can be used within. Clients MUST NOT attempt to use the proxy if their IP address is not within one
-of the stated ranges.</t>
+<t>An array containing strings; each string contains a classless prefix (see <xref target="RFC4632"/>) which the
+proxy can be used within. Clients MUST NOT attempt to use the proxy if their IP address is not
+within one of the stated ranges.</t>
 
 <t>This member is optional.</t>
 
@@ -243,10 +246,11 @@ of the stated ranges.</t>
 <t>then the only clients that could use the proxy would have IP addresses in the ranges 192.168.1.0 to
 192.168.1.3 and 192.168.2.0 to 192.168.2.255.</t>
 
-<t>Note that by their nature <xref target="RFC1918"/> private networks are not unique, and therefore there may be
-false positives. As such, clients SHOULD NOT automatically configure a WPD based upon clientNetworks
-when the IP address is in these ranges, although they MAY notify the user of a WPD’s possible
-applicability, and MAY use additional information to correlate a WPD to its proper network.</t>
+<t>Note that by their nature private networks (as specified in <xref target="RFC1918"/>) are not unique, and
+therefore there may be false positives. As such, clients SHOULD NOT automatically configure a WPD
+based upon clientNetworks when the IP address is in these ranges, although they MAY notify the user
+of a WPD’s possible applicability, and MAY use additional information to correlate a WPD to its
+proper network.</t>
 
 </section>
 </section>
@@ -280,7 +284,7 @@ response from one of these hosts generated further requests to “images.example
 
 <t>An array containing strings; each string is one of:</t>
 
-<t><list style="symbols">
+<t><list style='symbols'>
   <t>a host (as per <xref target="RFC3986"/> Section 3.2.2), </t>
   <t>a classless prefix <xref target="RFC4632"/>. </t>
   <t>the string “CONNECT”.</t>
@@ -325,7 +329,7 @@ available, but instead SHOULD inform the user that the proxy is unavailable.</t>
 </section>
 <section anchor="discover" title="Discovering WPD Files">
 
-<t>To facilitate easy configuration of Web proxies, this specification defines a well-known URI
+<t>To facilitate easy configuration of WPD proxies, this specification defines a well-known URI
 <xref target="RFC5785"/>. Doing so allows a proxy’s description to be found with a simple hostname; e.g.,
 “proxy.example.net” or even just “example.net”.</t>
 
@@ -352,7 +356,7 @@ configured language.</t>
 
 <t>The registration template is:</t>
 
-<t><list style="symbols">
+<t><list style='symbols'>
   <t>URI suffix: web-proxy-desc</t>
   <t>Change controller: IETF</t>
   <t>Specification document(s): [this document]</t>
@@ -371,7 +375,7 @@ template.</t>
 
 <t>If a user can be convinced to configure a WPD hostname as their proxy, that host can observe all
 unencrypted traffic by the client. As such, WPD configuration interfaces ought only allow
-configuration of proxies once their identity is validate (as required), and the user ought to be
+configuration of proxies once their identity is validated (as required), and the user ought to be
 given access to all relevant information about the WPD proxy (i.e., ‘name’, ‘desc’ and ‘moreInfo’,
 the latter as a link). Furthermore, WPD proxies ought only be configured as the result of an
 intentional act, not as a side effect of normal Web browsing.</t>
@@ -841,8 +845,16 @@ security-sensitive operation; if an attacker can automatically configure a proxy
 user to do so as part of accessing a site, they can gain access to the user’s traffic, even when
 the user leaves the attacking network.</t>
 
-<t>Likewise, only a single WPD ought be configured at a time; combining WPDs leads both to ambiguity
-(which has precedence?) and user confusion.</t>
+<t>Therefore, a user agent might allow configuration by entering a hostname (e.g., “example.net”),
+whereupon it retrieves the WPD, validates its certificate and contents, and present its information
+to the end user for confirmation.</t>
+
+<t>Once a WPD is confirmed, a user agent might “remember” it for future use; e.g., by allowing quick
+configuration through a drop-down menu. When a WPD nominates clientNetworks and the client does not
+have a suitable IP address, the drop-down might make that option unavailable.</t>
+
+<t>It is envisioned that only a single WPD ought be configured at a time; combining WPDs leads to
+ambiguity regarding precedence and therefore user confusion.</t>
 
 <t>When a WPD is active, its ought be visible to the end user, to remind them of its presence, and to
 offer more information about the configured proxy.</t>
