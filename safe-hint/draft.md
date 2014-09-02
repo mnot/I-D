@@ -167,7 +167,7 @@ exist.
 * Microsoft Internet Explorer - see http://support.microsoft.com/kb/2980016
 * Microsoft Bing
 * Mozilla Firefox - see https://bugzilla.mozilla.org/show_bug.cgi?id=995070
-
+* Cisco - see http://blogs.cisco.com/security/filtering-explicit-content
 
 # Security Considerations
 
