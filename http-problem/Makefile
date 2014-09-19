@@ -7,7 +7,7 @@ stylesheet = "$(ID_BASE)/Tools/rfc2629xslt/rfc2629.xslt"
 xml2rfc ?= xml2rfc
 rfc2629dir = "..\\/Tools\\/rfc2629xslt\\/"
 
-TITLE = nottingham-$(shell basename ${CURDIR})
+TITLE = ietf-appsawg-$(shell basename ${CURDIR})
 LATEST = $(shell (ls draft-${TITLE}-*.xml || echo "draft-${TITLE}-00.xml") | sort | tail -1)
 VERSION = $(shell basename ${LATEST} .xml | awk -F- '{print $$NF}')
 
