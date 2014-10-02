@@ -168,6 +168,7 @@ exist.
 * Microsoft Bing
 * Mozilla Firefox - see https://bugzilla.mozilla.org/show_bug.cgi?id=995070
 * Cisco - see http://blogs.cisco.com/security/filtering-explicit-content
+* YouTube - based upon testing the live site (not formally announced)
 
 # Security Considerations
 
