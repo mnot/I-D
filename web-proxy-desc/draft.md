@@ -191,8 +191,8 @@ contained within (i.e., the 'name', 'desc' and 'moreInfo' members, the latter as
 user. User agents SHOULD also make this information available to the end user whenever the WPD is
 in use.
 
-The remainder of this section defines the content of these members. Unrecognized members SHOULD
-be ignored.
+The remainder of this section defines the content of the WPD object members. Unrecognized members
+SHOULD be ignored.
 
 ## name
 
