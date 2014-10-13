@@ -72,13 +72,13 @@ requirements upon them in order to promote improved interoperability, security, 
 
 # Introduction
 
-Web proxies are configured in a variety of ways today, but existing approaches suffer from
-security, usability and interoperability issues.
+Web proxies can be configured in a variety of ways, but existing approaches suffer from security,
+usability and interoperability issues.
 
 This specification defines:
 
 * A simple format for describing a Web proxy ("WPD"; see {{wpd}}) to facilitate configuration, and
-  so that it can be represented to users in a consistent way, and
+  to allow proxies to be represented to users in a consistent way, and
 * A way to discover the proxy description using a well-known URL ({{discover}}), so that direct
   configuration of a proxy is as simple as entering a hostname, and
 * A set of additional requirements for proxies described in this fashion, as well as requirements
@@ -92,7 +92,7 @@ It can be used in a variety of ways, but is designed to meet the following goals
 * Proxies should always respect the wishes of the end user and Web site, and
 * Proxies should never reduce or compromise the security of connections, and improve it where
   possible, and
-* The proxy should be able to reliably communicate with the end user regarding its policies and
+* Proxies should be able to reliably communicate with their end users regarding their policies and
   problems that are encountered.
 
 Furthermore, it is designed to be useful in the following cases:
