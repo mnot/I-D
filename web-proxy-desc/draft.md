@@ -226,9 +226,9 @@ than one at a time.
 
 NOTE: the array of proxy objects is functionally similar to, but not as expressive as, the
 commonly-used "proxy.pac" format. While it would be expedient for WPD to just reference a
-proxy.pac, feedback so far is that proxy.pac has a number of deficiencies, and interoperability
-over it is poor. Therefore, this document specifies the proxy object instead, in order to gather
-feedback on an alternative approach.
+proxy.pac, feedback so far is that proxy.pac has a number of deficiencies, and interoperability is
+poor. Therefore, this document specifies the proxy object instead, in order to gather feedback on
+an alternative approach.
 
 ### host
 
