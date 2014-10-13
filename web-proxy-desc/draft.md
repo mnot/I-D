@@ -343,6 +343,26 @@ available, but instead SHOULD inform the user that the proxy is unavailable.
 When True, clients MAY do so. If failDirect is not present, clients MAY default to this behavior.
 
 
+## exclusive {#exclusive}
+
+A boolean indicating whether the client is required to route all network traffic through the proxy.
+
+When True, clients MUST NOT initiate network traffic to any host except a valid WPD (once its
+identity and location are established), and MUST NOT allow network traffic from any host except
+valid WPDs. This includes all traffic from and to the client, no matter how it is generated or
+handled (e.g., browser "plug-ins").
+
+This directive is designed to accommodate privacy-enhancing proxies; therefore, clients that cannot
+reasonably assure conformance to the requirements in this section MUST NOT allow a WPD with this
+flag set to be configured.
+
+## privateMode {#privateMode}
+
+A boolean indicating whether the client should be configured in "private mode" when this WPD is
+active.
+
+When True, clients SHOULD configure "private mode" browsing. 
+
 
 # Discovering WPD Files {#discover}
 
