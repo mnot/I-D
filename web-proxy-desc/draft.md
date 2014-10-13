@@ -27,6 +27,10 @@ normative:
   RFC2818:
   RFC3986:
   RFC4632:
+  RFC5735:
+  RFC6761:
+  RFC6762:
+  RFC6890:
   RFC7159:
   RFC7230:
   RFC7234:
@@ -156,6 +160,14 @@ is designed to re-open that channel.
 If a WPD proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another
 proxy (if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
 re-establish contact with failed WPD proxies (e.g., every minute).
+
+Requests for the "localhost" {{RFC6761}} and "local" {{RFC6762}} top-level domains MUST NOT be
+routed through a WPD proxy. 
+
+Likewise, requests to the Loopback address blocks (127.0.0.0/8 and ::1/128) and the Link Local
+block (169.254.0.0/16 and fe80::/10) MUST NOT be routed through a WPD proxy; see {{RFC6890}}. Note
+that clients are not required to perform a reverse lookup on hostnames to conform to this
+requirement.
 
 
 # The Web Proxy Description (WPD) Format {#wpd}
