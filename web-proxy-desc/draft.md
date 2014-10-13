@@ -221,8 +221,8 @@ Proxy objects' members are defined by the following subsections; unrecognized me
 ignored.
 
 The ordering of proxy objects within the proxies array is not significant; clients MAY choose any
-proxy they wish (keeping in mind the requirements of clientNetworks), and MAY use more than one at a
-time.
+proxy they wish (as long as the specific requirement so the proxy object are met), and MAY use more
+than one at a time.
 
 NOTE: the array of proxy objects is functionally similar to, but not as expressive as, the
 commonly-used "proxy.pac" format. While it would be expedient for WPD to just reference a
