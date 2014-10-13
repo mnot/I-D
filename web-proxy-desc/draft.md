@@ -126,7 +126,8 @@ This specification defines a particular kind of HTTP proxy (as per {{RFC7230}} S
 as a "WPD proxy" that has additional requirements placed upon it, as well as upon those using it.
 
 WPD Proxies MUST support HTTP/2 {{I-D.ietf-httpbis-http2}} over TLS for connections from clients.
-Clients that cannot establish a HTTP/2 connection to a WPD proxy MUST consider that proxy "failed."
+Clients MUST use HTTP/2 over TLS to connect to a WPD proxy; if one cannot be established, the
+client MUST consider that proxy "failed."
 
 WPD Proxies MUST support forwarding requests with the "http" scheme {{RFC7230}}, and SHOULD support
 the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3.
@@ -135,9 +136,9 @@ the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3.
 cache-control directive, and append the 214 (Transformation Applied) warn-code to other messages
 that have been transformed; WPD proxies MUST honour these requirements.
 
-When connecting to a WPD proxy, clients MUST use TLS and MUST validate the proxy hostname as per
-{{RFC2818}} Section 3.1. If the proxy presents an invalid certificate, that proxy MUST be
-considered "failed" and not used (until a valid certificate is presented).
+When connecting to a WPD proxy, clients MUST validate the proxy hostname as per {{RFC2818}} Section
+3.1. If the proxy presents an invalid certificate, that proxy MUST be considered "failed" and not
+used (until a valid certificate is presented).
 
 User agents MUST use a CONNECT tunnel when retrieving URLs with the "https" scheme through WPD
 proxies.
