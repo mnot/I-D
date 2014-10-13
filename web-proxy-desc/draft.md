@@ -38,6 +38,7 @@ normative:
   W3C.CR-html5-20140731:
 
 informative:
+  RFC826:
   RFC5246:
   RFC5785:
   RFC7231:
@@ -271,8 +272,9 @@ then the only clients that could use the proxy would have IP addresses in the ra
 Note that by their nature private networks (as specified in {{RFC1918}}) are not unique, and
 therefore there may be false positives. As such, clients SHOULD NOT automatically configure a WPD
 based upon clientNetworks when the IP address is in these ranges, although they MAY notify the user
-of a WPD's possible applicability, and MAY use additional information to correlate a WPD to its
-proper network.
+of a WPD's possible applicability, and SHOULD use additional information to correlate a WPD to its
+proper network. For example, the MAC address of the network's gateway (as discovered by ARP
+{{RFC826}}) can be used to disambiguate multiple instances of the same network.
 
 
 ## forReferers
