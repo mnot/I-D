@@ -1,7 +1,7 @@
 ---
 title: The Web Proxy Description Format
 abbrev: Web Proxy Description
-docname: draft-nottingham-web-proxy-desc-00
+docname: draft-nottingham-web-proxy-desc-01
 date: 2014
 category: std
 
