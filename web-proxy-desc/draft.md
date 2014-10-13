@@ -311,9 +311,9 @@ Clients MUST NOT use the WPD's proxies to access nominated hosts and hostnames t
 nominated host as its root. Likewise, clients MUST NOT use the WPD's proxies to access bare IP
 addresses that fall within the classless prefix.
 
-If the string "CONNECT" appears in alwaysDirect, it indicates that requests that require
-establishment of a tunnel (e.g., for "https" URLs) MUST NOT use the WPD's proxies, but instead
-ought to be made directly to the origin (i.e., without a tunnel).
+If the string "CONNECT" (case-sensitive) appears in alwaysDirect, it indicates that requests that
+require establishment of a tunnel (e.g., for "https" URLs) MUST NOT use the WPD's proxies, but
+instead ought to be made directly to the origin (i.e., without a tunnel).
 
 Note that when a "bare" IP address or classless prefix is used in alwaysDirect, clients are not
 required to perform a reverse lookup on hostnames; these forms are only intended for accessing URLs

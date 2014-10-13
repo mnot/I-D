@@ -4,7 +4,7 @@
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
 ]>
 
-<rfc ipr="trust200902" docName="draft-nottingham-web-proxy-desc-00" category="std">
+<rfc ipr="trust200902" docName="draft-nottingham-web-proxy-desc-01" category="std">
 
 <?rfc toc="yes"?>
 <?rfc tocindent="yes"?>
@@ -21,8 +21,6 @@
     <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
       <organization></organization>
       <address>
-        
-        
         <email>mnot@mnot.net</email>
         <uri>http://www.mnot.net/</uri>
       </address>
@@ -52,14 +50,14 @@ requirements upon them in order to promote improved interoperability, security, 
 
 <section anchor="introduction" title="Introduction">
 
-<t>Web proxies are configured in a variety of ways today, but existing approaches suffer from
-security, usability and interoperability issues.</t>
+<t>Web proxies can be configured in a variety of ways, but existing approaches suffer from security,
+usability and interoperability issues.</t>
 
 <t>This specification defines:</t>
 
-<t><list style='symbols'>
+<t><list style="symbols">
   <t>A simple format for describing a Web proxy (“WPD”; see <xref target="wpd"/>) to facilitate configuration, and
-so that it can be represented to users in a consistent way, and</t>
+to allow proxies to be represented to users in a consistent way, and</t>
   <t>A way to discover the proxy description using a well-known URL (<xref target="discover"/>), so that direct
 configuration of a proxy is as simple as entering a hostname, and</t>
   <t>A set of additional requirements for proxies described in this fashion, as well as requirements
@@ -69,19 +67,19 @@ See <xref target="wpd-proxy"/>.</t>
 
 <t>It can be used in a variety of ways, but is designed to meet the following goals:</t>
 
-<t><list style='symbols'>
+<t><list style="symbols">
   <t>Users should always be aware of a configured proxy and be able to confidently identify it, and</t>
   <t>Configuring a proxy should be a deliberate act, but simple to do for non-technical users, and</t>
   <t>Proxies should always respect the wishes of the end user and Web site, and</t>
   <t>Proxies should never reduce or compromise the security of connections, and improve it where
 possible, and</t>
-  <t>The proxy should be able to reliably communicate with the end user regarding its policies and
+  <t>Proxies should be able to reliably communicate with their end users regarding their policies and
 problems that are encountered.</t>
 </list></t>
 
 <t>Furthermore, it is designed to be useful in the following cases:</t>
 
-<t><list style='symbols'>
+<t><list style="symbols">
   <t>An end user wants to use a proxy network that provides improved performance, by re-compressing
 responses to http:// resources.</t>
   <t>An end user wants to use a proxy network that provides improved privacy, by routing requests
@@ -112,7 +110,8 @@ browser), or through an Operating System facility.</t>
 as a “WPD proxy” that has additional requirements placed upon it, as well as upon those using it.</t>
 
 <t>WPD Proxies MUST support HTTP/2 <xref target="I-D.ietf-httpbis-http2"/> over TLS for connections from clients.
-Clients that cannot establish a HTTP/2 connection to a WPD proxy MUST consider that proxy “failed.”</t>
+Clients MUST use HTTP/2 over TLS to connect to a WPD proxy; if one cannot be established, the
+client MUST consider that proxy “failed.”</t>
 
 <t>WPD Proxies MUST support forwarding requests with the “http” scheme <xref target="RFC7230"/>, and SHOULD support
 the CONNECT method, as specified in <xref target="I-D.ietf-httpbis-http2"/> Section 8.3.</t>
@@ -121,9 +120,9 @@ the CONNECT method, as specified in <xref target="I-D.ietf-httpbis-http2"/> Sect
 cache-control directive, and append the 214 (Transformation Applied) warn-code to other messages
 that have been transformed; WPD proxies MUST honour these requirements.</t>
 
-<t>When connecting to a WPD proxy, clients MUST use TLS and MUST validate the proxy hostname as per
-<xref target="RFC2818"/> Section 3.1. If the proxy presents an invalid certificate, that proxy MUST be
-considered “failed” and not used (until a valid certificate is presented).</t>
+<t>When connecting to a WPD proxy, clients MUST validate the proxy hostname as per <xref target="RFC2818"/> Section
+3.1. If the proxy presents an invalid certificate, that proxy MUST be considered “failed” and not
+used (until a valid certificate is presented).</t>
 
 <t>User agents MUST use a CONNECT tunnel when retrieving URLs with the “https” scheme through WPD
 proxies.</t>
@@ -141,6 +140,14 @@ is designed to re-open that channel.</t>
 <t>If a WPD proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another
 proxy (if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
 re-establish contact with failed WPD proxies (e.g., every minute).</t>
+
+<t>Requests for the “localhost” <xref target="RFC6761"/> and “local” <xref target="RFC6762"/> top-level domains MUST NOT be
+routed through a WPD proxy. </t>
+
+<t>Likewise, requests to the Loopback address blocks (127.0.0.0/8 and ::1/128) and the Link Local
+block (169.254.0.0/16 and fe80::/10) MUST NOT be routed through a WPD proxy; see <xref target="RFC6890"/>. Note
+that clients are not required to perform a reverse lookup on hostnames to conform to this
+requirement.</t>
 
 </section>
 <section anchor="wpd" title="The Web Proxy Description (WPD) Format">
@@ -177,8 +184,8 @@ contained within (i.e., the ‘name’, ‘desc’ and ‘moreInfo’ members, t
 user. User agents SHOULD also make this information available to the end user whenever the WPD is
 in use.</t>
 
-<t>The remainder of this section defines the content of these members. Unrecognized members SHOULD
-be ignored.</t>
+<t>The remainder of this section defines the content of the WPD object members. Unrecognized members
+SHOULD be ignored.</t>
 
 <section anchor="name" title="name">
 
@@ -210,14 +217,14 @@ proxies, as well as those clients connecting to them.</t>
 ignored.</t>
 
 <t>The ordering of proxy objects within the proxies array is not significant; clients MAY choose any
-proxy they wish (keeping in mind the requirements of clientNetworks), and MAY use more than one at a
-time.</t>
+proxy they wish (as long as the specific requirement so the proxy object are met), and MAY use more
+than one at a time.</t>
 
 <t>NOTE: the array of proxy objects is functionally similar to, but not as expressive as, the
 commonly-used “proxy.pac” format. While it would be expedient for WPD to just reference a
-proxy.pac, feedback so far is that proxy.pac has a number of deficiencies, and interoperability
-over it is poor. Therefore, this document specifies the proxy object instead, in order to gather
-feedback on an alternative approach.</t>
+proxy.pac, feedback so far is that proxy.pac has a number of deficiencies, and interoperability is
+poor. Therefore, this document specifies the proxy object instead, in order to gather feedback on
+an alternative approach.</t>
 
 <section anchor="host" title="host">
 
@@ -284,7 +291,7 @@ response from one of these hosts generated further requests to “images.example
 
 <t>An array containing strings; each string is one of:</t>
 
-<t><list style='symbols'>
+<t><list style="symbols">
   <t>a host (as per <xref target="RFC3986"/> Section 3.2.2), </t>
   <t>a classless prefix <xref target="RFC4632"/>. </t>
   <t>the string “CONNECT”.</t>
@@ -356,7 +363,7 @@ configured language.</t>
 
 <t>The registration template is:</t>
 
-<t><list style='symbols'>
+<t><list style="symbols">
   <t>URI suffix: web-proxy-desc</t>
   <t>Change controller: IETF</t>
   <t>Specification document(s): [this document]</t>
@@ -623,6 +630,83 @@ specifications of each URI scheme.
 <seriesInfo name='BCP' value='122' />
 <seriesInfo name='RFC' value='4632' />
 <format type='TXT' octets='66944' target='http://www.rfc-editor.org/rfc/rfc4632.txt' />
+</reference>
+
+
+
+<reference anchor='RFC5735'>
+
+<front>
+<title>Special Use IPv4 Addresses</title>
+<author initials='M.' surname='Cotton' fullname='M. Cotton'>
+<organization /></author>
+<author initials='L.' surname='Vegoda' fullname='L. Vegoda'>
+<organization /></author>
+<date year='2010' month='January' />
+<abstract>
+<t>This document obsoletes RFC 3330.  It describes the global and other specialized IPv4 address blocks that have been assigned by the Internet Assigned Numbers Authority (IANA).  It does not address IPv4 address space assigned to operators and users through the Regional Internet Registries, nor does it address IPv4 address space assigned directly by IANA prior to the creation of the Regional Internet Registries.  It also does not address allocations or assignments of IPv6 addresses or autonomous system numbers.  This memo documents an Internet Best Current Practice.</t></abstract></front>
+
+<seriesInfo name='RFC' value='5735' />
+<format type='TXT' octets='20369' target='http://www.rfc-editor.org/rfc/rfc5735.txt' />
+</reference>
+
+
+
+<reference anchor='RFC6761'>
+
+<front>
+<title>Special-Use Domain Names</title>
+<author initials='S.' surname='Cheshire' fullname='S. Cheshire'>
+<organization /></author>
+<author initials='M.' surname='Krochmal' fullname='M. Krochmal'>
+<organization /></author>
+<date year='2013' month='February' />
+<abstract>
+<t>This document describes what it means to say that a Domain Name (DNS name) is reserved for special use, when reserving such a name is appropriate, and the procedure for doing so.  It establishes an IANA registry for such domain names, and seeds it with entries for some of the already established special domain names.</t></abstract></front>
+
+<seriesInfo name='RFC' value='6761' />
+<format type='TXT' octets='28862' target='http://www.rfc-editor.org/rfc/rfc6761.txt' />
+</reference>
+
+
+
+<reference anchor='RFC6762'>
+
+<front>
+<title>Multicast DNS</title>
+<author initials='S.' surname='Cheshire' fullname='S. Cheshire'>
+<organization /></author>
+<author initials='M.' surname='Krochmal' fullname='M. Krochmal'>
+<organization /></author>
+<date year='2013' month='February' />
+<abstract>
+<t>As networked devices become smaller, more portable, and more ubiquitous, the ability to operate with less configured infrastructure is increasingly important. In particular, the ability to look up DNS resource record data types (including, but not limited to, host names) in the absence of a conventional managed DNS server is useful.&lt;/t>&lt;t> Multicast DNS (mDNS) provides the ability to perform DNS-like operations on the local link in the absence of any conventional Unicast DNS server. In addition, Multicast DNS designates a portion of the DNS namespace to be free for local use, without the need to pay any annual fee, and without the need to set up delegations or otherwise configure a conventional DNS server to answer for those names.&lt;/t>&lt;t> The primary benefits of Multicast DNS names are that (i) they require little or no administration or configuration to set them up, (ii) they work when no infrastructure is present, and (iii) they work during infrastructure failures.</t></abstract></front>
+
+<seriesInfo name='RFC' value='6762' />
+<format type='TXT' octets='184992' target='http://www.rfc-editor.org/rfc/rfc6762.txt' />
+</reference>
+
+
+
+<reference anchor='RFC6890'>
+
+<front>
+<title>Special-Purpose IP Address Registries</title>
+<author initials='M.' surname='Cotton' fullname='M. Cotton'>
+<organization /></author>
+<author initials='L.' surname='Vegoda' fullname='L. Vegoda'>
+<organization /></author>
+<author initials='R.' surname='Bonica' fullname='R. Bonica'>
+<organization /></author>
+<author initials='B.' surname='Haberman' fullname='B. Haberman'>
+<organization /></author>
+<date year='2013' month='April' />
+<abstract>
+<t>This memo reiterates the assignment of an IPv4 address block (192.0.0.0/24) to IANA.  It also instructs IANA to restructure its IPv4 and IPv6 Special-Purpose Address Registries.  Upon restructuring, the aforementioned registries will record all special-purpose address blocks, maintaining a common set of information regarding each address block.</t></abstract></front>
+
+<seriesInfo name='BCP' value='153' />
+<seriesInfo name='RFC' value='6890' />
+<format type='TXT' octets='48326' target='http://www.rfc-editor.org/rfc/rfc6890.txt' />
 </reference>
 
 
