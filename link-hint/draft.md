@@ -1,7 +1,7 @@
 ---
 title: HTTP Link Hints
 abbrev:
-docname: draft-nottingham-link-hint-00
+docname: draft-nottingham-link-hint-01
 date: 2013
 category: info
 
@@ -27,17 +27,17 @@ normative:
   RFC4627:
   RFC5226:
   RFC5988:
-  I-D.ietf-httpbis-p1-messaging:
+  RFC7230:
   I-D.ietf-httpbis-p6-cache:
 
 informative:
   RFC5789:
   RFC6585:
   RFC6906:
-  I-D.ietf-httpbis-p4-conditional:
-  I-D.ietf-httpbis-p5-range:
-  I-D.ietf-httpbis-p7-auth:
-  I-D.snell-http-prefer:
+  RFC7232:
+  RFC7233:
+  RFC7235:
+  RFC7240:
   apps-discuss:
     target: https://www.ietf.org/mailman/listinfo/apps-discuss
     title: IETF Apps-Discuss Mailing List
@@ -61,7 +61,7 @@ Introduction
 ============
 
 Clients can discover a variety of information about a HTTP
-{{I-D.ietf-httpbis-p1-messaging}} resource by interacting with it. For
+{{RFC7230}} resource by interacting with it. For
 example, the methods supported can be learned through the Allow response header
 field, whereas the need for authentication is conveyed with a 401
 Authentication Required status code.
@@ -254,7 +254,7 @@ accept-ranges
 * Hint Name: accept-ranges
 * Description: Hints the range-specifier(s) available for the target resource;
   equivalent to the Accept-Ranges HTTP response header
-  {{I-D.ietf-httpbis-p5-range}}.
+  {{RFC7233}}.
 * Content Model: array (of strings)
 * Specification: [this document]
 
@@ -264,7 +264,7 @@ accept-prefer
 -------------
 
 * Hint Name: accept-prefer
-* Description: Hints the preference(s) {{I-D.snell-http-prefer}} that the
+* Description: Hints the preference(s) {{RFC7240}} that the
   target resource understands (and might act upon) in requests.
 * Content Model: array (of strings)
 * Specification: [this document]
@@ -278,7 +278,7 @@ precondition-req
 * Hint Name: precondition-req
 * Description: Hints that the target resource requires state-changing requests
   (e.g., PUT, PATCH) to include a precondition, as per
-  {{I-D.ietf-httpbis-p4-conditional}}, to avoid conflicts due to concurrent
+  {{RFC7232}}, to avoid conflicts due to concurrent
   updates.
 * Content Model: array (of strings)
 * Specification: [this document]
@@ -293,7 +293,7 @@ auth-schemes
 
 * Hint Name: auth-schemes
 * Description: Hints that the target resource requires authentication using the
-  HTTP Authentication Framework {{I-D.ietf-httpbis-p7-auth}}.
+  HTTP Authentication Framework {{RFC7235}}.
 * Content Model: array (of objects)
 * Specification: [this document]
 
