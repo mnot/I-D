@@ -27,7 +27,6 @@ normative:
   RFC2818:
   RFC3986:
   RFC4632:
-  RFC5735:
   RFC6761:
   RFC6762:
   RFC6890:
@@ -38,7 +37,7 @@ normative:
   W3C.CR-html5-20140731:
 
 informative:
-  RFC826:
+  RFC0826:
   RFC5246:
   RFC5785:
   RFC7231:
@@ -274,7 +273,7 @@ therefore there may be false positives. As such, clients SHOULD NOT automaticall
 based upon clientNetworks when the IP address is in these ranges, although they MAY notify the user
 of a WPD's possible applicability, and SHOULD use additional information to correlate a WPD to its
 proper network. For example, the MAC address of the network's gateway (as discovered by ARP
-{{RFC826}}) can be used to disambiguate multiple instances of the same network.
+{{RFC0826}}) can be used to disambiguate multiple instances of the same network.
 
 
 ## forReferers

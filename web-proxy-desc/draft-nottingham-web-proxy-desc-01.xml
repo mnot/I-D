@@ -256,8 +256,9 @@ within one of the stated ranges.</t>
 <t>Note that by their nature private networks (as specified in <xref target="RFC1918"/>) are not unique, and
 therefore there may be false positives. As such, clients SHOULD NOT automatically configure a WPD
 based upon clientNetworks when the IP address is in these ranges, although they MAY notify the user
-of a WPD’s possible applicability, and MAY use additional information to correlate a WPD to its
-proper network.</t>
+of a WPD’s possible applicability, and SHOULD use additional information to correlate a WPD to its
+proper network. For example, the MAC address of the network’s gateway (as discovered by ARP
+<xref target="RFC0826"/>) can be used to disambiguate multiple instances of the same network.</t>
 
 </section>
 </section>
@@ -301,9 +302,9 @@ response from one of these hosts generated further requests to “images.example
 nominated host as its root. Likewise, clients MUST NOT use the WPD’s proxies to access bare IP
 addresses that fall within the classless prefix.</t>
 
-<t>If the string “CONNECT” appears in alwaysDirect, it indicates that requests that require
-establishment of a tunnel (e.g., for “https” URLs) MUST NOT use the WPD’s proxies, but instead
-ought to be made directly to the origin (i.e., without a tunnel).</t>
+<t>If the string “CONNECT” (case-sensitive) appears in alwaysDirect, it indicates that requests that
+require establishment of a tunnel (e.g., for “https” URLs) MUST NOT use the WPD’s proxies, but
+instead ought to be made directly to the origin (i.e., without a tunnel).</t>
 
 <t>Note that when a “bare” IP address or classless prefix is used in alwaysDirect, clients are not
 required to perform a reverse lookup on hostnames; these forms are only intended for accessing URLs
@@ -331,6 +332,28 @@ all applicable proxies are unavailable.</t>
 available, but instead SHOULD inform the user that the proxy is unavailable.</t>
 
 <t>When True, clients MAY do so. If failDirect is not present, clients MAY default to this behavior.</t>
+
+</section>
+<section anchor="exclusive" title="exclusive">
+
+<t>A boolean indicating whether the client is required to route all network traffic through the proxy.</t>
+
+<t>When True, clients MUST NOT initiate network traffic to any host except a valid WPD (once its
+identity and location are established), and MUST NOT allow network traffic from any host except
+valid WPDs. This includes all traffic from and to the client, no matter how it is generated or
+handled (e.g., browser “plug-ins”).</t>
+
+<t>This directive is designed to accommodate privacy-enhancing proxies; therefore, clients that cannot
+reasonably assure conformance to the requirements in this section MUST NOT allow a WPD with this
+flag set to be configured.</t>
+
+</section>
+<section anchor="privateMode" title="privateMode">
+
+<t>A boolean indicating whether the client should be configured in “private mode” when this WPD is
+active.</t>
+
+<t>When True, clients SHOULD configure “private mode” browsing. </t>
 
 </section>
 </section>
@@ -634,24 +657,6 @@ specifications of each URI scheme.
 
 
 
-<reference anchor='RFC5735'>
-
-<front>
-<title>Special Use IPv4 Addresses</title>
-<author initials='M.' surname='Cotton' fullname='M. Cotton'>
-<organization /></author>
-<author initials='L.' surname='Vegoda' fullname='L. Vegoda'>
-<organization /></author>
-<date year='2010' month='January' />
-<abstract>
-<t>This document obsoletes RFC 3330.  It describes the global and other specialized IPv4 address blocks that have been assigned by the Internet Assigned Numbers Authority (IANA).  It does not address IPv4 address space assigned to operators and users through the Regional Internet Registries, nor does it address IPv4 address space assigned directly by IANA prior to the creation of the Regional Internet Registries.  It also does not address allocations or assignments of IPv6 addresses or autonomous system numbers.  This memo documents an Internet Best Current Practice.</t></abstract></front>
-
-<seriesInfo name='RFC' value='5735' />
-<format type='TXT' octets='20369' target='http://www.rfc-editor.org/rfc/rfc5735.txt' />
-</reference>
-
-
-
 <reference anchor='RFC6761'>
 
 <front>
@@ -838,6 +843,34 @@ specifications of each URI scheme.
     <references title='Informative References'>
 
 
+
+
+
+<reference anchor='RFC0826'>
+
+<front>
+<title>Ethernet Address Resolution Protocol: Or converting network protocol addresses to 48.bit Ethernet address for transmission on Ethernet hardware</title>
+<author initials='D.' surname='Plummer' fullname='David C. Plummer'>
+<organization>Symbolics, Inc.</organization>
+<address>
+<postal>
+<street>243 Vassar Street</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>US</country></postal>
+<email>DCP@MIT-MC</email></address></author>
+<date year='1982' day='1' month='November' />
+<abstract>
+<t>The implementation of protocol P on a sending host S decides, through protocol P's routing mechanism, that it wants to transmit to a target host T located some place on a connected piece of 10Mbit Ethernet cable.  To actually transmit the Ethernet packet a 48.bit Ethernet address must be generated.  The addresses of hosts within protocol P are not always compatible with the corresponding Ethernet address (being different lengths or values).  Presented here is a protocol that allows dynamic distribution of the information needed to build tables to translate an address A in protocol P's address space into a 48.bit Ethernet address.</t>
+<t>Generalizations have been made which allow the protocol to be used for non-10Mbit Ethernet hardware.  Some packet radio networks are examples of such hardware.</t>
+<t>The protocol proposed here is the result of a great deal of discussion with several other people, most notably J. Noel Chiappa, Yogen Dalal, and James E. Kulp, and helpful comments from David Moon.</t>
+<t>The purpose of this RFC is to present a method of Converting Protocol Addresses (e.g., IP addresses) to Local Network Addresses (e.g., Ethernet addresses).  This is a issue of general concern in the ARPA Internet community at this time.  The method proposed here is presented for your consideration and comment.  This is not the specification of a Internet Standard.</t></abstract></front>
+
+<seriesInfo name='STD' value='37' />
+<seriesInfo name='RFC' value='826' />
+<format type='TXT' octets='22026' target='http://www.rfc-editor.org/rfc/rfc826.txt' />
+</reference>
 
 
 
