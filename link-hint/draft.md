@@ -57,8 +57,7 @@ This draft should be discussed on the apps-discuss mailing list; see
 
 --- middle
 
-Introduction
-============
+# Introduction
 
 Clients can discover a variety of information about a HTTP
 {{RFC7230}} resource by interacting with it. For
@@ -100,16 +99,14 @@ resource (e.g., via a GET), or by another resource "containing" it (such as a
 "describedby" link relation).
 
 
-Notational Conventions
-----------------------
+## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in {{RFC2119}}.
 
 
-HTTP Link Hints {#link_hints}
-===============
+# HTTP Link Hints {#link_hints}
 
 A HTTP link hint is a (key, value) tuple that describes the target resource of
 a Web link {{RFC5988}}, or the link itself. The value's canonical form is a
@@ -152,11 +149,9 @@ to. This means that if a representation is specific to a particular user, the
 hints on links in that representation are also specific to that user.
 
 
-Pre-Defined HTTP Link Hints {#hints}
-===========================
+# Pre-Defined HTTP Link Hints {#hints}
 
-allow
------
+## allow
 
 * Hint Name: allow
 * Description: Hints the HTTP methods that can be used to interact with the
@@ -166,8 +161,7 @@ allow
 
 Content MUST be an array of strings, containing HTTP methods.
 
-formats
--------
+## formats
 
 * Hint Name: formats
 * Description: Hints the representation type(s) that the target resource can
@@ -189,8 +183,7 @@ the near future.
 All other members of the object are under control of the corresponding media
 type's definition.
 
-links
------
+## links
 
 * Hint Name: links
 * Description: Hints at links whose context is the target resource.
@@ -221,8 +214,7 @@ For example:
 }
 ~~~
 
-accept-post
------------
+## accept-post
 
 * Hint Name: accept-post
 * Description: Hints the POST request format(s) that the target resource can
@@ -234,8 +226,7 @@ Content MUST be an object, with the same constraints as for "formats".
 
 When this hint is present, "POST" SHOULD be listed in the "allow" hint.
 
-accept-patch
-------------
+## accept-patch
 
 * Hint Name: accept-patch
 * Description: Hints the PATCH {{RFC5789}} request format(s) that the target
@@ -248,8 +239,7 @@ no opportunity to communicate format-specific hints for PATCH formats.
 
 When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
 
-accept-ranges
--------------
+## accept-ranges
 
 * Hint Name: accept-ranges
 * Description: Hints the range-specifier(s) available for the target resource;
@@ -260,8 +250,7 @@ accept-ranges
 
 Content MUST be an array of strings, containing HTTP range-specifiers.
 
-accept-prefer
--------------
+## accept-prefer
 
 * Hint Name: accept-prefer
 * Description: Hints the preference(s) {{RFC7240}} that the
@@ -272,8 +261,7 @@ accept-prefer
 Content MUST be an array of strings, contain preferences. Note that, by its
 nature, a preference can be ignored by the server.
 
-precondition-req
-----------------
+## precondition-req
 
 * Hint Name: precondition-req
 * Description: Hints that the target resource requires state-changing requests
@@ -288,8 +276,7 @@ Content MUST be an array of strings, with possible values "etag" and
 
 See also the 428 Precondition Required status code ({{RFC6585}}).
 
-auth-schemes
-------------
+## auth-schemes
 
 * Hint Name: auth-schemes
 * Description: Hints that the target resource requires authentication using the
@@ -315,8 +302,7 @@ For example:
   }
 ~~~
 
-status
-------
+## status
 
 * Hint Name: status
 * Description: Hints the status of the target resource.
@@ -332,19 +318,16 @@ Content MUST be a string; possible values are:
 
 
 
-Security Considerations
-=======================
+# Security Considerations
 
 Clients need to exercise care when using hints. For example, a naive client
 might send credentials to a server that uses the auth-req hint, without
 checking to see if those credentials are appropriate for that server.
 
 
-IANA Considerations
-===================
+# IANA Considerations
 
-HTTP Link Hint Registry {#hint_registry}
------------------------
+## HTTP Link Hint Registry {#hint_registry}
 
 This specification defines the HTTP Link Hint Registry. See {{link_hints}}
 for a general description of the function of link hints.
@@ -379,8 +362,7 @@ avoid potential clashes with link serialisations.
 
 --- back
 
-Representing Link Hints in Link Headers {#link_header}
-=======================================
+# Representing Link Hints in Link Headers {#link_header}
 
 A link hint can be represented in a Link header ({{RFC5988}}, Section 5) as a
 link-extension.
@@ -433,15 +415,13 @@ Link: </>; rel="sample"; example="\"foo\", -1.23, true,
 
 
 
-Acknowledgements
-================
+# Acknowledgements
 
 Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Graham Klyne, Leif
 Hedstrom, Jeni Tennison, Erik Wilde and Jorge Williams for their suggestions
 and feedback.
 
-Open Issues
-===========
+# Open Issues
 
 The following is a list of placeholders for open issues.
 
