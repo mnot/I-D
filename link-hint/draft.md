@@ -2,7 +2,7 @@
 title: HTTP Link Hints
 abbrev:
 docname: draft-nottingham-link-hint-01
-date: 2013
+date: 2014
 category: info
 
 ipr: trust200902
