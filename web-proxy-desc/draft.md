@@ -1,7 +1,7 @@
 ---
 title: The Web Proxy Description Format
 abbrev: Web Proxy Description
-docname: draft-nottingham-web-proxy-desc-00
+docname: draft-nottingham-web-proxy-desc-01
 date: 2014
 category: std
 
@@ -27,6 +27,9 @@ normative:
   RFC2818:
   RFC3986:
   RFC4632:
+  RFC6761:
+  RFC6762:
+  RFC6890:
   RFC7159:
   RFC7230:
   RFC7234:
@@ -34,6 +37,7 @@ normative:
   W3C.CR-html5-20140731:
 
 informative:
+  RFC0826:
   RFC5246:
   RFC5785:
   RFC7231:
@@ -72,13 +76,13 @@ requirements upon them in order to promote improved interoperability, security, 
 
 # Introduction
 
-Web proxies are configured in a variety of ways today, but existing approaches suffer from
-security, usability and interoperability issues.
+Web proxies can be configured in a variety of ways, but existing approaches suffer from security,
+usability and interoperability issues.
 
 This specification defines:
 
 * A simple format for describing a Web proxy ("WPD"; see {{wpd}}) to facilitate configuration, and
-  so that it can be represented to users in a consistent way, and
+  to allow proxies to be represented to users in a consistent way, and
 * A way to discover the proxy description using a well-known URL ({{discover}}), so that direct
   configuration of a proxy is as simple as entering a hostname, and
 * A set of additional requirements for proxies described in this fashion, as well as requirements
@@ -92,7 +96,7 @@ It can be used in a variety of ways, but is designed to meet the following goals
 * Proxies should always respect the wishes of the end user and Web site, and
 * Proxies should never reduce or compromise the security of connections, and improve it where
   possible, and
-* The proxy should be able to reliably communicate with the end user regarding its policies and
+* Proxies should be able to reliably communicate with their end users regarding their policies and
   problems that are encountered.
 
 Furthermore, it is designed to be useful in the following cases:
@@ -126,7 +130,8 @@ This specification defines a particular kind of HTTP proxy (as per {{RFC7230}} S
 as a "WPD proxy" that has additional requirements placed upon it, as well as upon those using it.
 
 WPD Proxies MUST support HTTP/2 {{I-D.ietf-httpbis-http2}} over TLS for connections from clients.
-Clients that cannot establish a HTTP/2 connection to a WPD proxy MUST consider that proxy "failed."
+Clients MUST use HTTP/2 over TLS to connect to a WPD proxy; if one cannot be established, the
+client MUST consider that proxy "failed."
 
 WPD Proxies MUST support forwarding requests with the "http" scheme {{RFC7230}}, and SHOULD support
 the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3.
@@ -135,9 +140,9 @@ the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3.
 cache-control directive, and append the 214 (Transformation Applied) warn-code to other messages
 that have been transformed; WPD proxies MUST honour these requirements.
 
-When connecting to a WPD proxy, clients MUST use TLS and MUST validate the proxy hostname as per
-{{RFC2818}} Section 3.1. If the proxy presents an invalid certificate, that proxy MUST be
-considered "failed" and not used (until a valid certificate is presented).
+When connecting to a WPD proxy, clients MUST validate the proxy hostname as per {{RFC2818}} Section
+3.1. If the proxy presents an invalid certificate, that proxy MUST be considered "failed" and not
+used (until a valid certificate is presented).
 
 User agents MUST use a CONNECT tunnel when retrieving URLs with the "https" scheme through WPD
 proxies.
@@ -155,6 +160,14 @@ is designed to re-open that channel.
 If a WPD proxy becomes unresponsive, clients SHOULD consider it failed and attempt to use another
 proxy (if available) or inform the end user (if not available). Clients SHOULD regularly attempt to
 re-establish contact with failed WPD proxies (e.g., every minute).
+
+Requests for the "localhost" {{RFC6761}} and "local" {{RFC6762}} top-level domains MUST NOT be
+routed through a WPD proxy. 
+
+Likewise, requests to the Loopback address blocks (127.0.0.0/8 and ::1/128) and the Link Local
+block (169.254.0.0/16 and fe80::/10) MUST NOT be routed through a WPD proxy; see {{RFC6890}}. Note
+that clients are not required to perform a reverse lookup on hostnames to conform to this
+requirement.
 
 
 # The Web Proxy Description (WPD) Format {#wpd}
@@ -190,8 +203,8 @@ contained within (i.e., the 'name', 'desc' and 'moreInfo' members, the latter as
 user. User agents SHOULD also make this information available to the end user whenever the WPD is
 in use.
 
-The remainder of this section defines the content of these members. Unrecognized members SHOULD
-be ignored.
+The remainder of this section defines the content of the WPD object members. Unrecognized members
+SHOULD be ignored.
 
 ## name
 
@@ -220,14 +233,14 @@ Proxy objects' members are defined by the following subsections; unrecognized me
 ignored.
 
 The ordering of proxy objects within the proxies array is not significant; clients MAY choose any
-proxy they wish (keeping in mind the requirements of clientNetworks), and MAY use more than one at a
-time.
+proxy they wish (as long as the specific requirement so the proxy object are met), and MAY use more
+than one at a time.
 
 NOTE: the array of proxy objects is functionally similar to, but not as expressive as, the
 commonly-used "proxy.pac" format. While it would be expedient for WPD to just reference a
-proxy.pac, feedback so far is that proxy.pac has a number of deficiencies, and interoperability
-over it is poor. Therefore, this document specifies the proxy object instead, in order to gather
-feedback on an alternative approach.
+proxy.pac, feedback so far is that proxy.pac has a number of deficiencies, and interoperability is
+poor. Therefore, this document specifies the proxy object instead, in order to gather feedback on
+an alternative approach.
 
 ### host
 
@@ -258,8 +271,9 @@ then the only clients that could use the proxy would have IP addresses in the ra
 Note that by their nature private networks (as specified in {{RFC1918}}) are not unique, and
 therefore there may be false positives. As such, clients SHOULD NOT automatically configure a WPD
 based upon clientNetworks when the IP address is in these ranges, although they MAY notify the user
-of a WPD's possible applicability, and MAY use additional information to correlate a WPD to its
-proper network.
+of a WPD's possible applicability, and SHOULD use additional information to correlate a WPD to its
+proper network. For example, the MAC address of the network's gateway (as discovered by ARP
+{{RFC0826}}) can be used to disambiguate multiple instances of the same network.
 
 
 ## forReferers
@@ -298,9 +312,9 @@ Clients MUST NOT use the WPD's proxies to access nominated hosts and hostnames t
 nominated host as its root. Likewise, clients MUST NOT use the WPD's proxies to access bare IP
 addresses that fall within the classless prefix.
 
-If the string "CONNECT" appears in alwaysDirect, it indicates that requests that require
-establishment of a tunnel (e.g., for "https" URLs) MUST NOT use the WPD's proxies, but instead
-ought to be made directly to the origin (i.e., without a tunnel).
+If the string "CONNECT" (case-sensitive) appears in alwaysDirect, it indicates that requests that
+require establishment of a tunnel (e.g., for "https" URLs) MUST NOT use the WPD's proxies, but
+instead ought to be made directly to the origin (i.e., without a tunnel).
 
 Note that when a "bare" IP address or classless prefix is used in alwaysDirect, clients are not
 required to perform a reverse lookup on hostnames; these forms are only intended for accessing URLs
@@ -327,6 +341,26 @@ available, but instead SHOULD inform the user that the proxy is unavailable.
 
 When True, clients MAY do so. If failDirect is not present, clients MAY default to this behavior.
 
+
+## exclusive {#exclusive}
+
+A boolean indicating whether the client is required to route all network traffic through the proxy.
+
+When True, clients MUST NOT initiate network traffic to any host except a valid WPD (once its
+identity and location are established), and MUST NOT allow network traffic from any host except
+valid WPDs. This includes all traffic from and to the client, no matter how it is generated or
+handled (e.g., browser "plug-ins").
+
+This directive is designed to accommodate privacy-enhancing proxies; therefore, clients that cannot
+reasonably assure conformance to the requirements in this section MUST NOT allow a WPD with this
+flag set to be configured.
+
+## privateMode {#privateMode}
+
+A boolean indicating whether the client should be configured in "private mode" when this WPD is
+active.
+
+When True, clients SHOULD configure "private mode" browsing. 
 
 
 # Discovering WPD Files {#discover}
