@@ -74,8 +74,9 @@ informative:
 
 --- abstract
 
-This document proposes a set of guidelines for protocol efforts in relation to how they balance
-concerns and conflicts between different stakeholders.
+This document proposes a set of guidelines for protocol designers regarding how they balance
+concerns and conflicts between different stakeholders. It also requires the end user to be the
+highest priority stakeholder in application protocols.
 
 --- middle
 
