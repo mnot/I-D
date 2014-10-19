@@ -221,6 +221,5 @@ positively or negatively for various stakeholders.
 
 # Acknowledgements
 
-Thanks to Jacob Appelbaum for making the suggestion that led to this document. It's not everything
-you wanted, but it's a start.
+Thanks to Jacob Appelbaum for making the suggestion that led to this document.
 
