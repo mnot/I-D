@@ -163,7 +163,7 @@ completely, as it is often impossible to gain the informed consent of a large or
 stakeholders (e.g., end users).
 
 For example, there has been increasing pressure from network operators to change HTTP {{RFC7230}}
-to make it more amenable to optimisation, filtering, and interposition of other "value-added"
+to make it more amenable to optimisation, filtering, and interposition of other value-added
 services, especially in the face of more pervasive encryption (denoted by HTTPS URIs). However,
 since HTTPS is already defined as a two-party protocol with end-to-end encryption, inserting a
 third party in any fashion would violate the rights of two existing stakeholders; end users and
@@ -173,7 +173,7 @@ content publishers. Therefore, the HTTP Working Group has refused to consider su
 # Intermediation and Non-Stakeholders
 
 In protocol design, intermediation is often thought of as "those parties on the direct path between
-two people attempting to communicate"; e.g., so-called "middleboxes", "proxies" and so on.
+two people attempting to communicate"; e.g., middleboxes, proxies and so on.
 
 When discussing stakeholder rights, this definition is expanded to include those parties that have
 the ability to prevent or control communication between two parties. This naturally includes
