@@ -185,8 +185,8 @@ middleboxes, but can also include third parties not directly on-path.
 
 For example, HTTP has on-path intermediaries (proxies, gateways, etc.), but also off-path
 intermediaries, in the form of the DNS registrar, the DNS server, and also the Certificate
-Authority if TLS is in use. Certificate Transparency {{RFC6962}} potentially adds yet another intermediary
-to this protocol suite.
+Authority if TLS is in use. Certificate Transparency {{RFC6962}} potentially adds yet another
+intermediary to this protocol suite.
 
 Such intermediation SHOULD NOT be accommodated without purpose in Internet protocols, and protocol
 revisions (including extensions) MUST carefully weigh when new levels of intermediation are added.
