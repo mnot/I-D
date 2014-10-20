@@ -228,3 +228,5 @@ positively or negatively for various stakeholders.
 Thanks to Jacob Appelbaum for making the suggestion that led to this document.
 
 Thanks also to the WHATWG, for blazing the trail. 
+
+Thanks to Joe Hildebrand and Martin Thomson for their suggestions.
