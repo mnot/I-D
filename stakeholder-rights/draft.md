@@ -157,7 +157,7 @@ considerable benefits, since it clarifies their relationships up-front.
 
 # Erosion of Rights
 
-Over time, changes in the use, deployment patterns, legal context, or other factors can bring
+Changes in the use, deployment patterns, legal context, or other factors of a protocol can bring
 pressure to re-balance the priorities and rights of existing stakeholders, or insert new ones
 (usually, when a protocol is either extended or evolved).
 
@@ -166,12 +166,12 @@ assumed by existing stakeholders, without informed consent. Note that this may p
 completely, as it is often impossible to gain the informed consent of a large or diffuse group of
 stakeholders (e.g., end users).
 
-For example, there has been increasing pressure from network operators to change HTTP {{RFC7230}}
-to make it more amenable to optimisation, filtering, and interposition of other value-added
-services, especially in the face of more pervasive encryption (denoted by HTTPS URIs). However,
-since HTTPS is already defined as a two-party protocol with end-to-end encryption, inserting a
-third party in any fashion would violate the rights of two existing stakeholders; end users and
-content publishers. Therefore, the HTTP Working Group has refused to consider such changes.
+For example, there has been increasing pressure to change HTTP {{RFC7230}} to make it more amenable
+to optimisation, filtering, and interposition of other value-added services, especially in the face
+of more pervasive encryption (denoted by HTTPS URIs). However, since HTTPS is already defined as a
+two-party protocol with end-to-end encryption, inserting a third party in any fashion would violate
+the rights of two existing stakeholders; end users and content publishers. Therefore, the HTTP
+Working Group has refused to consider such changes.
 
 
 # Intermediation and Non-Stakeholders
