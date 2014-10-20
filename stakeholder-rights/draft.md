@@ -101,7 +101,7 @@ That said, it is increasingly difficult to avoid making ethical, societal and ev
 judgements in protocol design, as the Internet has become pervasive in many societies. 
 
 A recurring theme in this area is balancing the rights of various stakeholders, such as (but not
-limited to) end users, network operators, equipement vendors, implementers, content owners,
+limited to) end users, network operators, equipment vendors, implementers, content owners,
 governments, employers, and parents.
 
 This document proposes a set of guidelines regarding these "stakeholder rights" issues that
@@ -109,7 +109,7 @@ protocol designers ought to consider as new protocols are created, as well as wh
 protocols are extended and evolved.
 
 In doing so, we seek to enable "the tussle" {{TUSSLE}}; that is, our protocols (and therefore the
-code that implements them) should not attept to establish the law, as Lessig says, but instead
+code that implements them) should not attempt to establish the law, as Lessig says, but instead
 aspire to serve as a level, well-defined playing field where society's back-and-forth over the
 Internet can take place.
 
