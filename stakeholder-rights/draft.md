@@ -149,6 +149,11 @@ Extensions to existing protocols MUST document how they interact with the extend
 stakeholders. If the extended protocol's stakeholders are not yet documented, the extension MAY
 estimate its impact, in coordination with that protocol's community and the IESG.
 
+The burden of this documentation need not be high; if HTML can do it in a paragraph, so can most
+protocols. While it might be appropriate in a separate document (e.g., a requirements or use cases
+draft) or the protocol specification itself, documenting stakeholders in the WG charter has
+considerable benefits, since it clarifies their relationships up-front.
+
 
 # Erosion of Rights
 
