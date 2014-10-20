@@ -123,7 +123,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # Identifying Stakeholders
 
-New protocols MUST document relevant primary stakeholders and their interrelationships.
+Protocols MUST document relevant primary stakeholders and their interrelationships.
 
 For example, HTML does so using the priority of constituencies in the HTML Design Principles
 {{PRIORITY}}:
@@ -139,16 +139,15 @@ who are.
 
 Likewise, the responsibilities of, or expectations upon, stakeholders can vary greatly. For
 example, end users of Web browsers cannot be reasonably expected to make informed decisions about
-security, and therefore design decisions there are biased towards default security.
-
-When existing protocols are undergo major evolution or revision, this information SHOULD be
-documented.
+security, and therefore design decisions there are biased towards default security. When
+applicable, the expectations upon a stakeholder SHOULD be documented.
 
 End-user-facing application protocols MUST prioritise their users higher than any other
 stakeholders.
 
 Extensions to existing protocols MUST document how they interact with the extended protocol's
-stakeholders. If they are not documented, the extension MAY estimate its impact.
+stakeholders. If the extended protocol's stakeholders are not yet documented, the extension MAY
+estimate its impact, in coordination with that protocol's community and the IESG.
 
 
 # Erosion of Rights
