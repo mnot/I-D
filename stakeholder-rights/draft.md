@@ -188,9 +188,14 @@ intermediaries, in the form of the DNS registrar, the DNS server, and also the C
 Authority if TLS is in use. Certificate Transparency {{RFC6962}} potentially adds yet another
 intermediary to this protocol suite.
 
-Such intermediation SHOULD NOT be accommodated without purpose in Internet protocols, and protocol
-revisions (including extensions) MUST carefully weigh when new levels of intermediation are added.
-When a stakeholder has a role as an intermediary (in this sense), it MUST be documented.
+While there might be a good technical reason to interpose such an intermediary, it also introduces
+a new stakeholder, and thus needs to be done with due consideration of the impact on other
+stakeholders. 
+
+Therefore, such intermediation SHOULD NOT be accommodated without purpose in Internet protocols,
+and protocol revisions (including extensions) MUST carefully weigh when new levels of
+intermediation are added. When a stakeholder has a role as an intermediary (in this sense), it MUST
+be documented.
 
 
 # Promoting Stakeholders as "Winners"
