@@ -200,9 +200,9 @@ be documented.
 
 # Promoting Stakeholders as "Winners"
 
-In some situations, protocols engender network effects. For example, e-mail is only useful when the
-parties you wish to communicate with also have e-mail; when more people have e-mail, its value is
-greatly increased.
+Protocols often engender network effects. For example, e-mail is only useful when the parties you
+wish to communicate with also have e-mail; when more people have e-mail, its value is greatly
+increased.
 
 However, network effects can also be captured by a single party, in a "winner take all" market. For
 example, if we mint a new communication protocol without providing a way for two independent users
