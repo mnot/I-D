@@ -113,6 +113,10 @@ code that implements them) should not attempt to establish the law, as Lessig sa
 aspire to serve as a level, well-defined playing field where society's back-and-forth over the
 Internet can take place.
 
+In other words, while we cannot -- and should not -- create a human rights agenda at the IETF, we
+can make the impact of decisions upon them (as well as the rights of other stakeholders) more 
+apparent and deliberate, by making our priorities explicit.
+
 
 ## Notational Conventions
 
