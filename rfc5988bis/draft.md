@@ -2,7 +2,7 @@
 title: Web Linking
 abbrev: Web Linking
 docname: draft-nottingham-rfc598bis-00
-date: 2013
+date: 2014
 category: std
 updates: 5988
 
@@ -54,6 +54,13 @@ informative:
 This document specifies relation types for Web links, and defines a registry
 for them. It also defines the use of such links in HTTP headers with the Link
 header field.
+
+
+--- note_Note_to_Readers
+
+Draft-00 is a copy of RFC5988; the only changes are the removal of the initial
+registrations (since that job is done) and formatting.
+
 
 --- middle
 
