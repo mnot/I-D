@@ -101,30 +101,28 @@ from {{RFC5987}}, ext-value and parmname.
 
 # Links
 
+In this specification, a link is a typed connection between two resources, and
+is comprised of:
 
-In this specification, a link is a typed connection between two resources that
-are identified by Internationalised Resource Identifiers (IRIs) {{RFC3987}},
-and is comprised of:
-
-* A context IRI,
+* A link context,
 * a link relation type ({{link-relation-types}}),
-* a target IRI, and
+* a link target, and
 * optionally, target attributes.
       
+A link can be viewed as a statement of the form "{link context} has a {link
+relation type} resource at {link target}, which has {target attributes}".
 
-A link can be viewed as a statement of the form "{context IRI} has a {relation
-type} resource at {target IRI}, which has {target attributes}".
-
-Note that in the common case, the context IRI will also be a URI {{RFC3986}},
-because many protocols (such as HTTP) do not support dereferencing IRIs.
-Likewise, the target IRI will be converted to a URI (see {{RFC3987}}, Section
-3.1) in serialisations that do not support IRIs (e.g., the Link header).
+Link contexts and link targets are both IRIs {{RFC3987}}. However, in the
+common case, the link context will also be a URI {{RFC3986}}, because many
+protocols (such as HTTP) do not support dereferencing IRIs. Likewise, the
+link target will be sometimes be converted to a URI (see {{RFC3987}}, Section
+3.1) in places that do not support IRIs (such as the Link header field
+defined in {{#header}}).
 
 This specification does not place restrictions on the cardinality of links;
-there can be multiple links to and from a particular IRI, and multiple links of
-the same or different types between a given context and target
-. Likewise, the
-relative ordering of links in any particular serialisation, or between
+there can be multiple links to and from a particular target, and multiple links
+of the same or different types between a given context and target . Likewise,
+the relative ordering of links in any particular serialisation, or between
 serialisations (e.g., the Link header and in-content links) is not specified or
 significant in this specification; applications that wish to consider ordering
 significant can do so.
@@ -145,8 +143,8 @@ serialisation is communication of links through HTTP headers, specified in
 
 In the simplest case, a link relation type identifies the semantics of a link.
 For example, a link with the relation type "copyright" indicates that the
-resource identified by the target IRI is a statement of the copyright terms
-applying to the current context IRI.
+resource identified by the link target is a statement of the copyright terms
+applying to the current link context.
 
 Link relation types can also be used to indicate that the target resource has
 particular attributes, or exhibits particular behaviours; for example, a
@@ -179,11 +177,11 @@ be appropriate to the specificity of the relation type; i.e., if the semantics
 are highly specific to a particular application, the name should reflect that,
 so that more general names are available for less specific use.
 			
-Registered relation types MUST NOT constrain the media type of the context IRI,
-and MUST NOT constrain the available representation media types of the target
-IRI. However, they can specify the behaviours and properties of the target
-resource (e.g., allowable HTTP methods, request and response media types that
-must be supported).
+Registered relation types MUST NOT constrain the media type of the link
+context, and MUST NOT constrain the available representation media types of the
+link target. However, they can specify the behaviours and properties of the
+target resource (e.g., allowable HTTP methods, request and response media types
+that must be supported).
 
 
 ## Extension Relation Types
@@ -241,7 +239,7 @@ HTML, as well as the atom:link feed-level element in Atom {{RFC4287}}.
 	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
 	ext-rel-type   = URI
 
-## Target IRI
+## Link Target
 
 Each link-value conveys one target IRI as a URI-Reference (after conversion to
 one, if necessary; see {{RFC3987}}, Section 3.1) inside angle
@@ -249,7 +247,7 @@ brackets ("&lt;&gt;"). If the URI-Reference is relative, parsers MUST resolve
 it as per {{RFC3986}}, Section 5. Note that any base IRI from the
 message's content is not applied.
 		
-## Context IRI
+## Link Context
 
 By default, the context of a link conveyed in the Link header field is the IRI
 of the requested resource.
@@ -261,15 +259,15 @@ MUST resolve it as per {{RFC3986}}, Section 5. Note that any base
 URI from the body's content is not applied.
 				
 Consuming implementations can choose to ignore links with an anchor parameter.
-For example, the application in use may not allow the context IRI to be
+For example, the application in use may not allow the link context to be
 assigned to a different resource. In such cases, the entire link is to be
 ignored; consuming implementations MUST NOT process the link without applying
 the anchor.
 				
 <!-- probably need to revisit security considerations -->
 
-Note that depending on HTTP status code and response headers, the context IRI
-might be "anonymous" (i.e., no context IRI is available). For instance, this is
+Note that depending on HTTP status code and response headers, the link context
+might be "anonymous" (i.e., no link context is available). For instance, this is
 the case on a 404 response to a GET request.
 
 ## Relation Type
@@ -361,8 +359,8 @@ Here, both links have titles encoded in UTF-8, use the German language ("de"),
 and the second link contains the Unicode code point U+00E4 ("LATIN SMALL LETTER
 A WITH DIAERESIS").
 
-Note that link-values can convey multiple links between the same target and
-context IRIs; for example:
+Note that link-values can convey multiple links between the same link target and
+link context; for example:
 
 	Link: <http://example.org/>; 
 	      rel="start http://example.net/relation/other"
@@ -466,7 +464,7 @@ The Link entity-header field makes extensive use of IRIs and URIs. See
 
 # Internationalisation Considerations
 
-Target IRIs may need to be converted to URIs in order to express them in
+Link targets may need to be converted to URIs in order to express them in
 serialisations that do not support IRIs. This includes the Link HTTP header.
 
 Similarly, the anchor parameter of the Link header does not support IRIs, and
@@ -525,13 +523,13 @@ rel="alternate stylesheet") to preserve this relationship.
 # Notes on Using the Link Header with the Atom Format
 
 Atom conveys links in the atom:link element, with the "href" attribute
-indicating the target IRI and the "rel" attribute containing the relation type.
-The context of the link is either a feed IRI or an entry ID, depending on where
-it appears; generally, feed-level links are obvious candidates for transmission
-as a Link header.
+indicating the link target and the "rel" attribute containing the relation
+type. The context of the link is either a feed locator or an entry ID,
+depending on where it appears; generally, feed-level links are obvious
+candidates for transmission as a Link header.
 
 When serialising an atom:link into a Link header, it is necessary to convert
-target IRIs (if used) to URIs.
+link targets (if used) to URIs.
 
 Atom defines extension relation types in terms of IRIs. This specification
 re-defines them as URIs, to simplify and reduce errors in their comparison.
@@ -581,5 +579,9 @@ This specification has the following differences from its predecessor, RFC5988:
 * Updated references.
 
 * Link cardinality was clarified.
+
+* Terminology was changed from "target IRI" and "context IRI" to "link target"
+  and "link context" respectively.
+
 
 
