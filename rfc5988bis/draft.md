@@ -32,7 +32,7 @@ normative:
   RFC3864:
   RFC3986:
   RFC3987:
-  RFC4288:
+  RFC6838:
   RFC5226:
   RFC5646:
   RFC5987:
@@ -94,7 +94,7 @@ This document uses the Augmented Backus-Naur Form (ABNF) notation of
 quoted-string, token, SP (space), LOALPHA, DIGIT.
 
 Additionally, the following rules are included from {{RFC3986}}: URI and
-URI-Reference; from {{RFC4288}}: type-name and subtype-name; from
+URI-Reference; from {{RFC6838}}: type-name and subtype-name; from
 {{W3C.CR-html5-20140731}}: MediaDesc; from {{RFC5646}}: Language-Tag; and
 from {{RFC5987}}, ext-value and parmname.
 
@@ -151,7 +151,7 @@ particular attributes, or exhibits particular behaviours; for example, a
 "service" link implies that the identified resource is part of a defined
 protocol (in this case, a service description).
 
-Relation types are not to be confused with media types {{RFC4288}}; they do not
+Relation types are not to be confused with media types {{RFC6838}}; they do not
 identify the format of the representation that results when the link is
 dereferenced. Rather, they only describe how the current context is related to
 another resource.
