@@ -162,7 +162,7 @@ another resource.
 Relation types SHOULD NOT infer any additional semantics based upon the
 presence or absence of another link relation type, or its own cardinality of
 occurrence. An exception to this is the combination of the "alternate" and
-"stylesheet" registered relation types, which has special meaning in HTML4 for
+"stylesheet" registered relation types, which has special meaning in HTML for
 historical reasons.
 
 There are two kinds of relation types: registered and extension.
@@ -480,21 +480,21 @@ Note that registered Relation Names are required to be lower-case ASCII letters.
 
 --- back
 
-# Notes on Using the Link Header with the HTML4 Format
+# Notes on Using the Link Header with the HTML Format
 
 HTML motivated the original syntax of the Link header, and many of the design
 decisions in this document are driven by a desire to stay compatible with these
 uses.
 
-In HTML4, the link element can be mapped to links as specified here by using
+In HTML, the link element can be mapped to links as specified here by using
 the "href" attribute for the target URI, and "rel" to convey the relation type,
 as in the Link header. The context of the link is the URI associated with the
 entire HTML document.
 
-All of the link relation types defined by HTML4 have been included in the Link
+All of the link relation types defined by HTML have been included in the Link
 Relation Type registry, so they can be used without modification. However,
 there are several potential ways to serialise extension relation types into
-HTML4, including
+HTML, including
 		
 * As absolute URIs,
 * using the document-wide "profile" attribute's URI as a prefix for relation
@@ -506,7 +506,7 @@ HTML4, including
 
 
 Individual applications of linking will therefore need to define how their
-extension links should be serialised into HTML4.
+extension links should be serialised into HTML.
 
 Surveys of existing HTML content have shown that unregistered link relation
 types that are not URIs are (perhaps inevitably) common. Consuming HTML
@@ -514,11 +514,11 @@ implementations should not consider such unregistered short links to be errors,
 but rather relation types with a local scope (i.e., their meaning is specific
 and perhaps private to that document).
 
-HTML4 also defines several attributes on links that are not explicitly defined
+HTML also defines several attributes on links that are not explicitly defined
 by the Link header. These attributes can be serialised as link-extensions to
 maintain fidelity.
 
-Finally, the HTML4 specification gives a special meaning when the "alternate"
+Finally, the HTML specification gives a special meaning when the "alternate"
 and "stylesheet" relation types coincide in the same link. Such links should be
 serialised in the Link header using a single list of relation-types (e.g.,
 rel="alternate stylesheet") to preserve this relationship.
