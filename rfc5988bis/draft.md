@@ -122,11 +122,12 @@ Likewise, the target IRI will be converted to a URI (see {{RFC3987}}, Section
 
 This specification does not place restrictions on the cardinality of links;
 there can be multiple links to and from a particular IRI, and multiple links of
-different types between two given IRIs. Likewise, the relative ordering of
-links in any particular serialisation, or between serialisations (e.g., the
-Link header and in-content links) is not specified or significant in this
-specification; applications that wish to consider ordering significant can do
-so.
+the same or different types between a given context and target
+. Likewise, the
+relative ordering of links in any particular serialisation, or between
+serialisations (e.g., the Link header and in-content links) is not specified or
+significant in this specification; applications that wish to consider ordering
+significant can do so.
 
 Target attributes are a set of key/value pairs that describe the link or its
 target; for example, a media type hint. This specification does not attempt to
@@ -578,4 +579,7 @@ This specification has the following differences from its predecessor, RFC5988:
 * Incorporated errata.
 
 * Updated references.
+
+* Link cardinality was clarified.
+
 
