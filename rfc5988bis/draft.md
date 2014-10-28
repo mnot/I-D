@@ -4,7 +4,7 @@ abbrev: Web Linking
 docname: draft-nottingham-rfc598bis-00
 date: 2014
 category: std
-updates: 5988
+obsoletes: 5988
 
 ipr: pre5378Trust200902
 area: General
