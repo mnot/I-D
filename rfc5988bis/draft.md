@@ -58,8 +58,8 @@ header field.
 
 --- note_Note_to_Readers
 
-Draft-00 is a copy of RFC5988; the only changes are the removal of the initial
-registrations (since that job is done) and formatting.
+This is a work-in-progress to revise RFC5988; see issues list at:
+  https://github.com/mnot/I-D/issues?q=is%3Aopen+is%3Aissue+label%3Arfc5988bis
 
 
 --- middle
