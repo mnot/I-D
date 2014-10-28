@@ -117,7 +117,7 @@ common case, the link context will also be a URI {{RFC3986}}, because many
 protocols (such as HTTP) do not support dereferencing IRIs. Likewise, the
 link target will be sometimes be converted to a URI (see {{RFC3987}}, Section
 3.1) in places that do not support IRIs (such as the Link header field
-defined in {{#header}}).
+defined in {{header}}).
 
 This specification does not place restrictions on the cardinality of links;
 there can be multiple links to and from a particular target, and multiple links
