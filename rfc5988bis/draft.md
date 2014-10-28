@@ -35,6 +35,7 @@ normative:
   RFC5226:
   RFC5646:
   RFC5987:
+  RFC7230:
   
 informative:
   RFC2068:
@@ -90,8 +91,8 @@ interpreted as described in BCP 14, {{RFC2119}}, as scoped to those conformance
 targets.
 
 This document uses the Augmented Backus-Naur Form (ABNF) notation of
-{{RFC2616}}, and explicitly includes the following rules from it:
-quoted-string, token, SP (space), LOALPHA, DIGIT.
+{{RFC7230}}, including the #rule, and explicitly includes the following rules
+from it: quoted-string, token, SP (space), LOALPHA, DIGIT.
 
 Additionally, the following rules are included from {{RFC3986}}: URI and
 URI-Reference; from {{RFC6838}}: type-name and subtype-name; from
@@ -460,7 +461,7 @@ with due caution.
 The Link entity-header field makes extensive use of IRIs and URIs. See 
 {{RFC3987}} for security considerations relating to IRIs. See 
 {{RFC3986}} for security considerations relating to URIs. See 
-{{RFC2616}} for security considerations relating to HTTP headers.
+{{RFC7230}} for security considerations relating to HTTP headers.
 
 # Internationalisation Considerations
 
