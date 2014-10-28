@@ -577,3 +577,7 @@ This specification has the following differences from its predecessor, RFC5988:
 
 * The Link Relation Application Data Registry has been removed.
 
+* Incorporated errata.
+
+* Updated references.
+
