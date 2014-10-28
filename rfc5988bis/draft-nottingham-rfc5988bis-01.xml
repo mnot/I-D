@@ -1,0 +1,1309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+]>
+
+<rfc ipr="pre5378Trust200902" docName="draft-nottingham-rfc598bis-00" category="std" obsoletes="5988">
+
+<?rfc toc="yes"?>
+<?rfc tocindent="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc strict="yes"?>
+<?rfc compact="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<?rfc rfcedstyle="yes"?>
+
+  <front>
+    <title abbrev="Web Linking">Web Linking</title>
+
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization></organization>
+      <address>
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net/</uri>
+      </address>
+    </author>
+
+    <date year="2014"/>
+
+    <area>General</area>
+    
+    <keyword>link relation</keyword>
+
+    <abstract>
+
+
+<t>This document specifies relation types for Web links, and defines a registry
+for them. It also defines the use of such links in HTTP headers with the Link
+header field.</t>
+
+
+
+    </abstract>
+
+
+    <note title="Note to Readers">
+
+
+<t>Draft-00 is a copy of RFC5988; the only changes are the removal of the initial
+registrations (since that job is done) and formatting.</t>
+
+
+    </note>
+
+
+  </front>
+
+  <middle>
+
+
+<section anchor="introduction" title="Introduction">
+
+<t>A means of indicating the relationships between resources on the Web, as well
+as indicating the type of those relationships, has been available for some time
+in HTML <xref target="W3C.REC-html401-19991224"/>, and more recently in Atom <xref target="RFC4287"/>.
+These mechanisms, although conceptually similar, are separately specified.
+However, links between resources need not be format specific; it can be useful
+to have typed links that are independent of their serialisation, especially
+when a resource has representations in multiple formats.</t>
+
+<t>To this end, this document defines a framework for typed links that isn’t
+specific to a particular serialisation or application. It does so by redefining
+the link relation registry established by Atom to have a broader domain, and
+adding to it the relations that are defined by HTML.</t>
+
+<t>Furthermore, an HTTP header field for conveying typed links was defined in
+Section 19.6.2.4 of <xref target="RFC2068"/>, but removed from <xref target="RFC2616"/>, due to a lack of
+implementation experience. Since then, it has been implemented in some User
+Agents (e.g., for stylesheets), and several additional use cases have surfaced.</t>
+
+<t>Because it was removed, the status of the Link header is unclear, leading some
+to consider minting new application-specific HTTP headers instead of reusing
+it. This document addresses this by re-specifying the Link header as one such
+serialisation, with updated but backwards-compatible syntax.</t>
+
+</section>
+<section anchor="notational-conventions" title="Notational Conventions">
+
+<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”,
+“SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be
+interpreted as described in BCP 14, <xref target="RFC2119"/>, as scoped to those conformance
+targets.</t>
+
+<t>This document uses the Augmented Backus-Naur Form (ABNF) notation of
+<xref target="RFC2616"/>, and explicitly includes the following rules from it:
+quoted-string, token, SP (space), LOALPHA, DIGIT.</t>
+
+<t>Additionally, the following rules are included from <xref target="RFC3986"/>: URI and
+URI-Reference; from <xref target="RFC4288"/>: type-name and subtype-name; from
+<xref target="W3C.REC-html401-19991224"/>: MediaDesc; from <xref target="RFC5646"/>: Language-Tag; and
+from <xref target="RFC5987"/>, ext-value and parmname.</t>
+
+</section>
+<section anchor="links" title="Links">
+
+<t>In this specification, a link is a typed connection between two resources that
+are identified by Internationalised Resource Identifiers (IRIs) <xref target="RFC3987"/>,
+and is comprised of:</t>
+
+<t><list style="symbols">
+  <t>A context IRI,</t>
+  <t>a link relation type (<xref target="link-relation-types"/>),</t>
+  <t>a target IRI, and</t>
+  <t>optionally, target attributes.</t>
+</list></t>
+
+<t>A link can be viewed as a statement of the form “{context IRI} has a {relation
+type} resource at {target IRI}, which has {target attributes}”.</t>
+
+<t>Note that in the common case, the context IRI will also be a URI <xref target="RFC3986"/>,
+because many protocols (such as HTTP) do not support dereferencing IRIs.
+Likewise, the target IRI will be converted to a URI (see <xref target="RFC3987"/>, Section
+3.1) in serialisations that do not support IRIs (e.g., the Link header).</t>
+
+<t>This specification does not place restrictions on the cardinality of links;
+there can be multiple links to and from a particular IRI, and multiple links of
+different types between two given IRIs. Likewise, the relative ordering of
+links in any particular serialisation, or between serialisations (e.g., the
+Link header and in-content links) is not specified or significant in this
+specification; applications that wish to consider ordering significant can do
+so.</t>
+
+<t>Target attributes are a set of key/value pairs that describe the link or its
+target; for example, a media type hint. This specification does not attempt to
+coordinate their names or use, but does provide common target attributes for
+use in the Link HTTP header.</t>
+
+<t>Finally, this specification does not define a general syntax for expressing
+links, nor does it mandate a specific context for any given link; it is
+expected that serialisations of links will specify both aspects. One such
+serialisation is communication of links through HTTP headers, specified in
+<xref target="the-link-header-field"/>.</t>
+
+</section>
+<section anchor="link-relation-types" title="Link Relation Types">
+
+<t>In the simplest case, a link relation type identifies the semantics of a link.
+For example, a link with the relation type “copyright” indicates that the
+resource identified by the target IRI is a statement of the copyright terms
+applying to the current context IRI.</t>
+
+<t>Link relation types can also be used to indicate that the target resource has
+particular attributes, or exhibits particular behaviours; for example, a
+“service” link implies that the identified resource is part of a defined
+protocol (in this case, a service description).</t>
+
+<t>Relation types are not to be confused with media types <xref target="RFC4288"/>; they do not
+identify the format of the representation that results when the link is
+dereferenced. Rather, they only describe how the current context is related to
+another resource.</t>
+
+<t>Relation types SHOULD NOT infer any additional semantics based upon the
+presence or absence of another link relation type, or its own cardinality of
+occurrence. An exception to this is the combination of the “alternate” and
+“stylesheet” registered relation types, which has special meaning in HTML4 for
+historical reasons.</t>
+
+<t>There are two kinds of relation types: registered and extension.</t>
+
+<section anchor="registered-relation-types" title="Registered Relation Types">
+
+<t>Well-defined relation types can be registered as tokens for convenience and/or
+to promote reuse by other applications. This specification establishes an IANA
+registry of such relation types; see <xref target="link-relation-type-registry"/>.</t>
+
+<t>Registered relation type names MUST conform to the reg-rel-type rule, and MUST
+be compared character-by-character in a case-insensitive fashion. They SHOULD
+be appropriate to the specificity of the relation type; i.e., if the semantics
+are highly specific to a particular application, the name should reflect that,
+so that more general names are available for less specific use.</t>
+
+<t>Registered relation types MUST NOT constrain the media type of the context IRI,
+and MUST NOT constrain the available representation media types of the target
+IRI. However, they can specify the behaviours and properties of the target
+resource (e.g., allowable HTTP methods, request and response media types that
+must be supported).</t>
+
+<t>Additionally, specific applications of linking may require additional data to
+be included in the registry. For example, Web browsers might want to know what
+kinds of links should be downloaded when they archive a Web page; if this
+application-specific information is in the registry, new link relation types
+can control this behaviour without unnecessary coordination.</t>
+
+<t>To accommodate this, per-entry application data can be added to the Link
+Relation Type registry, by registering it in the Link Relation Application Data
+registry (<xref target="link-relation-application-data-registry"/>).</t>
+
+</section>
+<section anchor="extension-relation-types" title="Extension Relation Types">
+
+<t>Applications that don’t wish to register a relation type can use an extension
+relation type, which is a URI <xref target="RFC3986"/> that uniquely identifies the relation
+type. Although the URI can point to a resource that contains a definition of
+the semantics of the relation type, clients SHOULD NOT automatically access
+that resource to avoid overburdening its server.</t>
+
+<t>When extension relation types are compared, they MUST be compared as strings
+(after converting to URIs if serialised in a different format, such as a Curie
+<xref target="W3C.CR-curie-20090116"/>) in a case-insensitive fashion,
+character-by-character. Because of this, all-lowercase URIs SHOULD be used for
+extension relations.</t>
+
+<t>Note that while extension relation types are required to be URIs, a
+serialisation of links can specify that they are expressed in another form, as
+long as they can be converted to URIs.</t>
+
+</section>
+</section>
+<section anchor="the-link-header-field" title="The Link Header Field">
+
+<t>The Link entity-header field provides a means for serialising one or more links
+in HTTP headers. It is semantically equivalent to the &lt;LINK&gt; element in
+HTML, as well as the atom:link feed-level element in Atom <xref target="RFC4287"/>.</t>
+
+<figure><artwork><![CDATA[
+Link           = "Link" ":" #link-value  
+link-value     = "<" URI-Reference ">" *( ";" link-param )
+link-param     = ( ( "rel" "=" relation-types )
+             | ( "anchor" "=" <"> URI-Reference <"> )
+             | ( "rev" "=" relation-types )
+             | ( "hreflang" "=" Language-Tag )
+             | ( "media" "=" ( MediaDesc | ( <"> MediaDesc <"> ) ) )
+             | ( "title" "=" quoted-string )
+             | ( "title*" "=" ext-value )
+             | ( "type" "=" ( media-type | quoted-mt ) )
+             | ( link-extension ) )
+link-extension = ( parmname [ "=" ( ptoken | quoted-string ) ] )
+             | ( ext-name-star "=" ext-value )
+ext-name-star  = parmname "*" ; reserved for RFC2231-profiled
+                            ; extensions. Whitespace NOT
+                            ; allowed in between.
+ptoken         = 1*ptokenchar
+ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "(" 
+             | ")" | "*" | "+" | "-" | "." | "/" | DIGIT 
+             | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA 
+             | "[" | "]" | "^" | "_" | "`" | "{" | "|" 
+             | "}" | "~"
+media-type     = type-name "/" subtype-name
+quoted-mt      = <"> media-type <">
+relation-types = relation-type
+             | <"> relation-type *( 1*SP relation-type ) <">
+relation-type  = reg-rel-type | ext-rel-type
+reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+ext-rel-type   = URI
+]]></artwork></figure>
+
+<section anchor="target-iri" title="Target IRI">
+
+<t>Each link-value conveys one target IRI as a URI-Reference (after conversion to
+one, if necessary; see <xref target="RFC3987"/>, Section 3.1) inside angle
+brackets (“&lt;&gt;”). If the URI-Reference is relative, parsers MUST resolve
+it as per <xref target="RFC3986"/>, Section 5. Note that any base IRI from the
+message’s content is not applied.</t>
+
+</section>
+<section anchor="context-iri" title="Context IRI">
+
+<t>By default, the context of a link conveyed in the Link header field is the IRI
+of the requested resource.</t>
+
+<t>When present, the anchor parameter overrides this with another URI, such as a
+fragment of this resource, or a third resource (i.e., when the anchor value is
+an absolute URI). If the anchor parameter’s value is a relative URI, parsers
+MUST resolve it as per <xref target="RFC3986"/>, Section 5. Note that any base
+URI from the body’s content is not applied.</t>
+
+<t>Consuming implementations can choose to ignore links with an anchor parameter.
+For example, the application in use may not allow the context IRI to be
+assigned to a different resource. In such cases, the entire link is to be
+ignored; consuming implementations MUST NOT process the link without applying
+the anchor.</t>
+
+<!-- probably need to revisit security considerations -->
+
+<t>Note that depending on HTTP status code and response headers, the context IRI
+might be “anonymous” (i.e., no context IRI is available). For instance, this is
+the case on a 404 response to a GET request.</t>
+
+</section>
+<section anchor="relation-type" title="Relation Type">
+
+<t>The relation type of a link is conveyed in the “rel” parameter’s value. The
+“rel” parameter MUST NOT appear more than once in a given link-value;
+occurrences after the first MUST be ignored by parsers.</t>
+
+<t>The “rev” parameter has been used in the past to indicate that the semantics of
+the relationship are in the reverse direction. That is, a link from A to B with
+REL=”X” expresses the same relationship as a link from B to A with REV=”X”.
+“rev” is deprecated by this specification because it often confuses authors and
+readers; in most cases, using a separate relation type is preferable.</t>
+
+<t>Note that extension relation types are REQUIRED to be absolute URIs in Link
+headers, and MUST be quoted if they contain a semicolon (“;”) or comma (“,”)
+(as these characters are used as delimiters in the header itself).</t>
+
+</section>
+<section anchor="target-attributes" title="Target Attributes">
+
+<t>The “hreflang”, “media”, “title”, “title*”, “type”, and any link-extension
+link-params are considered to be target attributes for the link.</t>
+
+<t>The “hreflang” parameter, when present, is a hint indicating what the language
+of the result of dereferencing the link should be. Note that this is only a
+hint; for example, it does not override the Content-Language header of a HTTP
+response obtained by actually following the link. Multiple “hreflang”
+parameters on a single link-value indicate that multiple languages are
+available from the indicated resource.</t>
+
+<t>The “media” parameter, when present, is used to indicate intended destination
+medium or media for style information (see <xref target="W3C.REC-html401-19991224"/>,
+Section 6.13). Note that this may be updated by
+<xref target="W3C.CR-css3-mediaqueries-20090915"/>). Its value MUST be quoted if it contains
+a semicolon (“;”) or comma (“,”), and there MUST NOT be more than one “media”
+parameter in a link-value.</t>
+
+<t>The “title” parameter, when present, is used to label the destination of a link
+such that it can be used as a human-readable identifier (e.g., a menu entry) in
+the language indicated by the Content-Language header (if present). The “title”
+parameter MUST NOT appear more than once in a given link-value; occurrences
+after the first MUST be ignored by parsers.</t>
+
+<t>The “title*” parameter can be used to encode this label in a different
+character set, and/or contain language information as per <xref target="RFC5987"/>. The
+“title*” parameter MUST NOT appear more than once in a given link-value;
+occurrences after the first MUST be ignored by parsers. If the parameter does
+not contain language information, its language is indicated by the
+Content-Language header (when present).</t>
+
+<t>If both the “title” and “title*” parameters appear in a link-value, processors
+SHOULD use the “title*” parameter’s value.</t>
+
+<t>The “type” parameter, when present, is a hint indicating what the media type of
+the result of dereferencing the link should be. Note that this is only a hint;
+for example, it does not override the Content-Type header of a HTTP response
+obtained by actually following the link. There MUST NOT be more than one type
+parameter in a link-value.</t>
+
+</section>
+<section anchor="examples" title="Examples">
+
+<t>For example:</t>
+
+<figure><artwork><![CDATA[
+Link: <http://example.com/TheBook/chapter2>; rel="previous";
+      title="previous chapter"
+]]></artwork></figure>
+
+<t>indicates that “chapter2” is previous to this resource in a logical navigation
+path.</t>
+
+<t>Similarly,</t>
+
+<figure><artwork><![CDATA[
+Link: </>; rel="http://example.net/foo"
+]]></artwork></figure>
+
+<t>indicates that the root resource (“/”) is related to this resource with the
+extension relation type “http://example.net/foo”.</t>
+
+<t>The example below shows an instance of the Link header encoding multiple links,
+and also the use of RFC 2231 encoding to encode both non-ASCII characters and
+language information.</t>
+
+<figure><artwork><![CDATA[
+Link: </TheBook/chapter2>;
+      rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
+      </TheBook/chapter4>;
+      rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
+]]></artwork></figure>
+
+<t>Here, both links have titles encoded in UTF-8, use the German language (“de”),
+and the second link contains the Unicode code point U+00E4 (“LATIN SMALL LETTER
+A WITH DIAERESIS”).</t>
+
+<t>Note that link-values can convey multiple links between the same target and
+context IRIs; for example:</t>
+
+<figure><artwork><![CDATA[
+Link: <http://example.org/>; 
+      rel="start http://example.net/relation/other"
+]]></artwork></figure>
+
+<t>Here, the link to “http://example.org/” has the registered relation type
+“start” and the extension relation type “http://example.net/relation/other”.</t>
+
+</section>
+</section>
+<section anchor="iana-considerations" title="IANA Considerations">
+
+<section anchor="link-http-header-registration" title="Link HTTP Header Registration">
+
+<t>This specification updates the Message Header registry entry for “Link” in HTTP
+<xref target="RFC3864"/> to refer to this document.</t>
+
+<figure><artwork><![CDATA[
+Header field: Link
+Applicable protocol: http
+Status: standard
+Author/change controller:
+    IETF  (iesg@ietf.org)
+    Internet Engineering Task Force
+Specification document(s):
+    [RFC&rfc.number;]
+]]></artwork></figure>
+
+</section>
+<section anchor="link-relation-type-registry" title="Link Relation Type Registry">
+
+<t>This specification establishes the Link Relation Type registry, and updates
+Atom <xref target="RFC4287"/> to refer to it in place of the “Registry of Link
+Relations”.</t>
+
+<t>The underlying registry data (e.g., the XML file) must include Simplified BSD
+License text as described in Section 4.e of the Trust Legal Provisions (<eref target="http://trustee.ietf.org/license-info" />).</t>
+
+<section anchor="registering-new-link-relation-types" title="Registering New Link Relation Types">
+
+<t>Relation types are registered on the advice of a Designated Expert (appointed
+by the IESG or their delegate), with a Specification Required (using
+terminology from <xref target="RFC5226"/>).</t>
+
+<t>The requirements for registered relation types are described in
+<xref target="registered-relation-types"/>.</t>
+
+<t>Registration requests consist of the completed registration template below,
+typically published in an RFC or Open Standard (in the sense described by
+<xref target="RFC2026"/>, Section 7). However, to allow for the allocation of values prior
+to publication, the Designated Expert may approve registration once they are
+satisfied that a specification will be published.</t>
+
+<t>Note that relation types can be registered by third parties, if the Designated
+Expert determines that an unregistered relation type is widely deployed and not
+likely to be registered in a timely manner.</t>
+
+<t>The registration template is:</t>
+
+<t><list style="symbols">
+  <t>Relation Name: </t>
+  <t>Description:</t>
+  <t>Reference: </t>
+  <t>Notes: [optional]</t>
+  <t>Application Data: [optional]</t>
+</list></t>
+
+<t>Registration requests should be sent to the link-relations@ietf.org mailing
+list, marked clearly in the subject line (e.g., “NEW RELATION - example” to
+register an “example” relation type).</t>
+
+<t>Within at most 14 days of the request, the Designated Expert(s) will either
+approve or deny the registration request, communicating this decision to the
+review list and IANA. Denials should include an explanation and, if applicable,
+suggestions as to how to make the request successful.</t>
+
+<t>Decisions (or lack thereof) made by the Designated Expert can be first appealed
+to Application Area Directors (contactable using app-ads@tools.ietf.org email
+address or directly by looking up their email addresses on http://www.iesg.org/
+website) and, if the appellant is not satisfied with the response, to the full
+IESG (using the iesg@iesg.org mailing list).</t>
+
+<t>IANA should only accept registry updates from the Designated Expert(s), and
+should direct all requests for registration to the review mailing list.</t>
+
+</section>
+</section>
+<section anchor="link-relation-application-data-registry" title="Link Relation Application Data Registry">
+
+<t>This specification also establishes the Link Relation Application Field
+registry, to allow entries in the Link Relation Type registry to be extended
+with application-specific data (hereafter, “app data”) specific to all
+instances of a given link relation type.</t>
+
+<t>Application data is registered on the advice of a Designated Expert (appointed
+by the IESG or their delegate), with a Specification Required (using
+terminology from <xref target="RFC5226"/>).</t>
+
+<t>Registration requests consist of the completed registration template below:</t>
+
+<t><list style="symbols">
+  <t>Application Name: </t>
+  <t>Description: </t>
+  <t>Default Value: </t>
+  <t>Notes: [optional]</t>
+</list></t>
+
+<t>The Description SHOULD identify the value space of the app data. The Default
+Value MUST be appropriate to entries to which the app data does not apply.</t>
+
+<t>Entries that pre-date the addition of app data will automatically be considered
+to have the default value for that app data; if there are exceptions, the
+modification of such entries should be coordinated by the Designated Expert(s),
+in consultation with the author of the proposed app data as well as the
+registrant of the existing entry (if possible).</t>
+
+<t>Registration requests should be sent to the link-relations@ietf.org mailing
+list, marked clearly in the subject line (e.g., “NEW APP DATA - example” to
+register “example” app data).</t>
+
+<t>Within at most 14 days of the request, the Designated Expert will either
+approve or deny the registration request, communicating this decision to the
+review list. Denials should include an explanation and, if applicable,
+suggestions as to how to make the request successful. Registration requests
+that are undetermined for a period longer than 21 days can be brought to the
+IESG’s attention (using the iesg@iesg.org mailing list) for resolution.</t>
+
+<t>When a registration request is successful, the Designated Expert will forward
+it to IANA for publication. IANA should only accept registry updates from the
+Designated Expert(s), and should direct all requests for registration to the
+review mailing list.</t>
+
+</section>
+</section>
+<section anchor="security-considerations" title="Security Considerations">
+
+<t>The content of the Link header field is not secure, private or
+integrity-guaranteed, and due caution should be exercised when using it. Use of
+Transport Layer Security (TLS) with HTTP (<xref target="RFC2818"/> and <xref target="RFC2817"/>) is
+currently the only end-to-end way to provide such protection.</t>
+
+<t>Applications that take advantage of typed links should consider the attack
+vectors opened by automatically following, trusting, or otherwise using links
+gathered from HTTP headers. In particular, Link headers that use the “anchor”
+parameter to associate a link’s context with another resource should be treated
+with due caution.</t>
+
+<t>The Link entity-header field makes extensive use of IRIs and URIs. See 
+<xref target="RFC3987"/> for security considerations relating to IRIs. See 
+<xref target="RFC3986"/> for security considerations relating to URIs. See 
+<xref target="RFC2616"/> for security considerations relating to HTTP headers.</t>
+
+</section>
+<section anchor="internationalisation-considerations" title="Internationalisation Considerations">
+
+<t>Target IRIs may need to be converted to URIs in order to express them in
+serialisations that do not support IRIs. This includes the Link HTTP header.</t>
+
+<t>Similarly, the anchor parameter of the Link header does not support IRIs, and
+therefore IRIs must be converted to URIs before inclusion there. </t>
+
+<t>Relation types are defined as URIs, not IRIs, to aid in their comparison. It is
+not expected that they will be displayed to end users.</t>
+
+</section>
+
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+
+
+
+
+
+<reference anchor='RFC2026'>
+
+<front>
+<title abbrev='Internet Standards Process'>The Internet Standards Process -- Revision 3</title>
+<author initials='S.' surname='Bradner' fullname='Scott O. Bradner'>
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02138</code>
+<country>US</country></postal>
+<phone>+1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year='1996' month='October' />
+<abstract>
+<t>This memo documents the process used by the Internet community for the standardization of protocols and procedures.  It defines the stages in the standardization process, the requirements for moving a document between stages and the types of documents used during this process.  It also addresses the intellectual property rights and copyright issues associated with the standards process.</t></abstract></front>
+
+<seriesInfo name='BCP' value='9' />
+<seriesInfo name='RFC' value='2026' />
+<format type='TXT' octets='86731' target='http://www.rfc-editor.org/rfc/rfc2026.txt' />
+</reference>
+
+
+
+<reference anchor='RFC2119'>
+
+<front>
+<title abbrev='RFC Key Words'>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='Scott Bradner'>
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<street>Cambridge</street>
+<street>MA 02138</street></postal>
+<phone>- +1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year='1997' month='March' />
+<area>General</area>
+<keyword>keyword</keyword>
+<abstract>
+<t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list>
+<t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+<t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t></abstract></front>
+
+<seriesInfo name='BCP' value='14' />
+<seriesInfo name='RFC' value='2119' />
+<format type='TXT' octets='4723' target='http://www.rfc-editor.org/rfc/rfc2119.txt' />
+<format type='HTML' octets='17970' target='http://xml.resource.org/public/rfc/html/rfc2119.html' />
+<format type='XML' octets='5777' target='http://xml.resource.org/public/rfc/xml/rfc2119.xml' />
+</reference>
+
+
+
+<reference anchor='RFC2616'>
+
+<front>
+<title abbrev='HTTP/1.1'>Hypertext Transfer Protocol -- HTTP/1.1</title>
+<author initials='R.' surname='Fielding' fullname='Roy T. Fielding'>
+<organization abbrev='UC Irvine'>Department of Information and Computer Science</organization>
+<address>
+<postal>
+<street>University of California, Irvine</street>
+<city>Irvine</city>
+<region>CA</region>
+<code>92697-3425</code></postal>
+<facsimile>+1(949)824-1715</facsimile>
+<email>fielding@ics.uci.edu</email></address></author>
+<author initials='J.' surname='Gettys' fullname='James Gettys'>
+<organization abbrev='Compaq/W3C'>World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code></postal>
+<facsimile>+1(617)258-8682</facsimile>
+<email>jg@w3.org</email></address></author>
+<author initials='J.' surname='Mogul' fullname='Jeffrey C. Mogul'>
+<organization abbrev='Compaq'>Compaq Computer Corporation</organization>
+<address>
+<postal>
+<street>Western Research Laboratory</street>
+<street>250 University Avenue</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94305</code></postal>
+<email>mogul@wrl.dec.com</email></address></author>
+<author initials='H.' surname='Frystyk' fullname='Henrik Frystyk Nielsen'>
+<organization abbrev='W3C/MIT'>World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code></postal>
+<facsimile>+1(617)258-8682</facsimile>
+<email>frystyk@w3.org</email></address></author>
+<author initials='L.' surname='Masinter' fullname='Larry Masinter'>
+<organization abbrev='Xerox'>Xerox Corporation</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>3333 Coyote Hill Road</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94034</code></postal>
+<email>masinter@parc.xerox.com</email></address></author>
+<author initials='P.' surname='Leach' fullname='Paul J. Leach'>
+<organization abbrev='Microsoft'>Microsoft Corporation</organization>
+<address>
+<postal>
+<street>1 Microsoft Way</street>
+<city>Redmond</city>
+<region>WA</region>
+<code>98052</code></postal>
+<email>paulle@microsoft.com</email></address></author>
+<author initials='T.' surname='Berners-Lee' fullname='Tim Berners-Lee'>
+<organization abbrev='W3C/MIT'>World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code></postal>
+<facsimile>+1(617)258-8682</facsimile>
+<email>timbl@w3.org</email></address></author>
+<date year='1999' month='June' />
+<abstract>
+<t>
+   The Hypertext Transfer Protocol (HTTP) is an application-level
+   protocol for distributed, collaborative, hypermedia information
+   systems. It is a generic, stateless, protocol which can be used for
+   many tasks beyond its use for hypertext, such as name servers and
+   distributed object management systems, through extension of its
+   request methods, error codes and headers . A feature of HTTP is
+   the typing and negotiation of data representation, allowing systems
+   to be built independently of the data being transferred.
+</t>
+<t>
+   HTTP has been in use by the World-Wide Web global information
+   initiative since 1990. This specification defines the protocol
+   referred to as "HTTP/1.1", and is an update to RFC 2068 .
+</t></abstract></front>
+
+<seriesInfo name='RFC' value='2616' />
+<format type='TXT' octets='422317' target='http://www.rfc-editor.org/rfc/rfc2616.txt' />
+<format type='PS' octets='5529857' target='http://www.rfc-editor.org/rfc/rfc2616.ps' />
+<format type='PDF' octets='550558' target='http://www.rfc-editor.org/rfc/rfc2616.pdf' />
+<format type='HTML' octets='637302' target='http://xml.resource.org/public/rfc/html/rfc2616.html' />
+<format type='XML' octets='493420' target='http://xml.resource.org/public/rfc/xml/rfc2616.xml' />
+</reference>
+
+
+
+<reference anchor='RFC3864'>
+
+<front>
+<title>Registration Procedures for Message Header Fields</title>
+<author initials='G.' surname='Klyne' fullname='G. Klyne'>
+<organization /></author>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'>
+<organization /></author>
+<author initials='J.' surname='Mogul' fullname='J. Mogul'>
+<organization /></author>
+<date year='2004' month='September' />
+<abstract>
+<t>This specification defines registration procedures for the message header fields used by Internet mail, HTTP, Netnews and other applications.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+
+<seriesInfo name='BCP' value='90' />
+<seriesInfo name='RFC' value='3864' />
+<format type='TXT' octets='36231' target='http://www.rfc-editor.org/rfc/rfc3864.txt' />
+</reference>
+
+
+
+<reference anchor='RFC3986'>
+
+<front>
+<title abbrev='URI Generic Syntax'>Uniform Resource Identifier (URI): Generic Syntax</title>
+<author initials='T.' surname='Berners-Lee' fullname='Tim Berners-Lee'>
+<organization abbrev='W3C/MIT'>World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>Massachusetts Institute of Technology</street>
+<street>77 Massachusetts Avenue</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>USA</country></postal>
+<phone>+1-617-253-5702</phone>
+<facsimile>+1-617-258-5999</facsimile>
+<email>timbl@w3.org</email>
+<uri>http://www.w3.org/People/Berners-Lee/</uri></address></author>
+<author initials='R.' surname='Fielding' fullname='Roy T. Fielding'>
+<organization abbrev='Day Software'>Day Software</organization>
+<address>
+<postal>
+<street>5251 California Ave., Suite 110</street>
+<city>Irvine</city>
+<region>CA</region>
+<code>92617</code>
+<country>USA</country></postal>
+<phone>+1-949-679-2960</phone>
+<facsimile>+1-949-679-2972</facsimile>
+<email>fielding@gbiv.com</email>
+<uri>http://roy.gbiv.com/</uri></address></author>
+<author initials='L.' surname='Masinter' fullname='Larry Masinter'>
+<organization abbrev='Adobe Systems'>Adobe Systems Incorporated</organization>
+<address>
+<postal>
+<street>345 Park Ave</street>
+<city>San Jose</city>
+<region>CA</region>
+<code>95110</code>
+<country>USA</country></postal>
+<phone>+1-408-536-3024</phone>
+<email>LMM@acm.org</email>
+<uri>http://larry.masinter.net/</uri></address></author>
+<date year='2005' month='January' />
+<area>Applications</area>
+<keyword>uniform resource identifier</keyword>
+<keyword>URI</keyword>
+<keyword>URL</keyword>
+<keyword>URN</keyword>
+<keyword>WWW</keyword>
+<keyword>resource</keyword>
+<abstract>
+<t>
+A Uniform Resource Identifier (URI) is a compact sequence of characters
+that identifies an abstract or physical resource.  This specification
+defines the generic URI syntax and a process for resolving URI references
+that might be in relative form, along with guidelines and security
+considerations for the use of URIs on the Internet.
+The URI syntax defines a grammar that is a superset of all valid URIs,
+allowing an implementation to parse the common components of a URI
+reference without knowing the scheme-specific requirements of every
+possible identifier.  This specification does not define a generative
+grammar for URIs; that task is performed by the individual
+specifications of each URI scheme.
+</t></abstract></front>
+
+<seriesInfo name='STD' value='66' />
+<seriesInfo name='RFC' value='3986' />
+<format type='TXT' octets='141811' target='http://www.rfc-editor.org/rfc/rfc3986.txt' />
+<format type='HTML' octets='214067' target='http://xml.resource.org/public/rfc/html/rfc3986.html' />
+<format type='XML' octets='163534' target='http://xml.resource.org/public/rfc/xml/rfc3986.xml' />
+</reference>
+
+
+
+<reference anchor='RFC3987'>
+
+<front>
+<title>Internationalized Resource Identifiers (IRIs)</title>
+<author initials='M.' surname='Duerst' fullname='M. Duerst'>
+<organization /></author>
+<author initials='M.' surname='Suignard' fullname='M. Suignard'>
+<organization /></author>
+<date year='2005' month='January' />
+<abstract>
+<t>This document defines a new protocol element, the Internationalized Resource Identifier (IRI), as a complement of the Uniform Resource Identifier (URI). An IRI is a sequence of characters from the Universal Character Set (Unicode/ISO 10646). A mapping from IRIs to URIs is defined, which means that IRIs can be used instead of URIs, where appropriate, to identify resources.&lt;/t>&lt;t> The approach of defining a new protocol element was chosen instead of extending or changing the definition of URIs. This was done in order to allow a clear distinction and to avoid incompatibilities with existing software. Guidelines are provided for the use and deployment of IRIs in various protocols, formats, and software components that currently deal with URIs.</t></abstract></front>
+
+<seriesInfo name='RFC' value='3987' />
+<format type='TXT' octets='111190' target='http://www.rfc-editor.org/rfc/rfc3987.txt' />
+</reference>
+
+
+
+<reference anchor='RFC4288'>
+
+<front>
+<title>Media Type Specifications and Registration Procedures</title>
+<author initials='N.' surname='Freed' fullname='N. Freed'>
+<organization /></author>
+<author initials='J.' surname='Klensin' fullname='J. Klensin'>
+<organization /></author>
+<date year='2005' month='December' />
+<abstract>
+<t>This document defines procedures for the specification and registration of media types for use in MIME and other Internet protocols.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+
+<seriesInfo name='RFC' value='4288' />
+<format type='TXT' octets='52667' target='http://www.rfc-editor.org/rfc/rfc4288.txt' />
+</reference>
+
+
+
+<reference anchor='RFC5226'>
+
+<front>
+<title>Guidelines for Writing an IANA Considerations Section in RFCs</title>
+<author initials='T.' surname='Narten' fullname='T. Narten'>
+<organization /></author>
+<author initials='H.' surname='Alvestrand' fullname='H. Alvestrand'>
+<organization /></author>
+<date year='2008' month='May' />
+<abstract>
+<t>Many protocols make use of identifiers consisting of constants and other well-known values. Even after a protocol has been defined and deployment has begun, new values may need to be assigned (e.g., for a new option type in DHCP, or a new encryption or authentication transform for IPsec). To ensure that such quantities have consistent values and interpretations across all implementations, their assignment must be administered by a central authority. For IETF protocols, that role is provided by the Internet Assigned Numbers Authority (IANA).&lt;/t>&lt;t> In order for IANA to manage a given namespace prudently, it needs guidelines describing the conditions under which new values can be assigned or when modifications to existing values can be made. If IANA is expected to play a role in the management of a namespace, IANA must be given clear and concise instructions describing that role. This document discusses issues that should be considered in formulating a policy for assigning values to a namespace and provides guidelines for authors on the specific text that must be included in documents that place demands on IANA.&lt;/t>&lt;t> This document obsoletes RFC 2434. This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+
+<seriesInfo name='BCP' value='26' />
+<seriesInfo name='RFC' value='5226' />
+<format type='TXT' octets='66160' target='http://www.rfc-editor.org/rfc/rfc5226.txt' />
+</reference>
+
+
+
+<reference anchor='RFC5646'>
+
+<front>
+<title>Tags for Identifying Languages</title>
+<author initials='A.' surname='Phillips' fullname='A. Phillips'>
+<organization /></author>
+<author initials='M.' surname='Davis' fullname='M. Davis'>
+<organization /></author>
+<date year='2009' month='September' />
+<abstract>
+<t>This document describes the structure, content, construction, and semantics of language tags for use in cases where it is desirable to indicate the language used in an information object.  It also describes how to register values for use in language tags and the creation of user-defined extensions for private interchange.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front>
+
+<seriesInfo name='BCP' value='47' />
+<seriesInfo name='RFC' value='5646' />
+<format type='TXT' octets='208592' target='http://www.rfc-editor.org/rfc/rfc5646.txt' />
+</reference>
+
+
+
+<reference anchor='RFC5987'>
+
+<front>
+<title>Character Set and Language Encoding for Hypertext Transfer Protocol (HTTP) Header Field Parameters</title>
+<author initials='J.' surname='Reschke' fullname='J. Reschke'>
+<organization /></author>
+<date year='2010' month='August' />
+<abstract>
+<t>By default, message header field parameters in Hypertext Transfer Protocol (HTTP) messages cannot carry characters outside the ISO- 8859-1 character set.  RFC 2231 defines an encoding mechanism for use in Multipurpose Internet Mail Extensions (MIME) headers.  This document specifies an encoding suitable for use in HTTP header fields that is compatible with a profile of the encoding defined in RFC 2231. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='5987' />
+<format type='TXT' octets='20108' target='http://www.rfc-editor.org/rfc/rfc5987.txt' />
+</reference>
+
+
+
+
+    </references>
+
+    <references title='Informative References'>
+
+
+
+
+
+<reference anchor='RFC2068'>
+
+<front>
+<title abbrev='HTTP/1.1'>Hypertext Transfer Protocol -- HTTP/1.1</title>
+<author initials='R.' surname='Fielding' fullname='Roy T. Fielding'>
+<organization>University of California, Irvine, Department of Information and Computer Science</organization>
+<address>
+<postal>
+<street />
+<city>Irvine</city>
+<region>CA</region>
+<code>92717-3425</code>
+<country>US</country></postal>
+<facsimile>+1 714 824 4056</facsimile>
+<email>fielding@ics.uci.edu</email></address></author>
+<author initials='J.' surname='Gettys' fullname='Jim Gettys'>
+<organization>MIT Laboratory for Computer Science</organization>
+<address>
+<postal>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>US</country></postal>
+<facsimile>+1 617 258 8682</facsimile>
+<email>jg@w3.org</email></address></author>
+<author initials='J.' surname='Mogul' fullname='Jeffrey C. Mogul'>
+<organization>Digital Equipment Corporation, Western Research Laboratory</organization>
+<address>
+<postal>
+<street>250 University Avenue</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94301</code>
+<country>US</country></postal>
+<email>mogul@wrl.dec.com</email></address></author>
+<author initials='H.' surname='Nielsen' fullname='Henrik Frystyk Nielsen'>
+<organization>MIT Laboratory for Computer Science</organization>
+<address>
+<postal>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>US</country></postal>
+<facsimile>+1 617 258 8682</facsimile>
+<email>frystyk@w3.org</email></address></author>
+<author initials='T.' surname='Berners-Lee' fullname='Tim Berners-Lee'>
+<organization>MIT Laboratory for Computer Science</organization>
+<address>
+<postal>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>US</country></postal>
+<facsimile>+1 617 258 8682</facsimile>
+<email>timbl@w3.org</email></address></author>
+<date year='1997' month='January' />
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is an application-level protocol for distributed, collaborative, hypermedia information systems. It is a generic, stateless, object-oriented protocol which can be used for many tasks, such as name servers and distributed object management systems, through extension of its request methods. A feature of HTTP is the typing and negotiation of data representation, allowing systems to be built independently of the data being transferred.</t>
+<t>HTTP has been in use by the World-Wide Web global information initiative since 1990. This specification defines the protocol referred to as "HTTP/1.1".</t></abstract></front>
+
+<seriesInfo name='RFC' value='2068' />
+<format type='TXT' octets='378114' target='http://www.rfc-editor.org/rfc/rfc2068.txt' />
+</reference>
+
+
+
+<reference anchor='RFC2817'>
+
+<front>
+<title>Upgrading to TLS Within HTTP/1.1</title>
+<author initials='R.' surname='Khare' fullname='R. Khare'>
+<organization /></author>
+<author initials='S.' surname='Lawrence' fullname='S. Lawrence'>
+<organization /></author>
+<date year='2000' month='May' />
+<abstract>
+<t>This memo explains how to use the Upgrade mechanism in HTTP/1.1 to initiate Transport Layer Security (TLS) over an existing TCP connection. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='2817' />
+<format type='TXT' octets='27598' target='http://www.rfc-editor.org/rfc/rfc2817.txt' />
+</reference>
+
+
+
+<reference anchor='RFC2818'>
+
+<front>
+<title>HTTP Over TLS</title>
+<author initials='E.' surname='Rescorla' fullname='E. Rescorla'>
+<organization /></author>
+<date year='2000' month='May' />
+<abstract>
+<t>This memo describes how to use Transport Layer Security (TLS) to secure Hypertext Transfer Protocol (HTTP) connections over the Internet.  This memo provides information for the Internet community.</t></abstract></front>
+
+<seriesInfo name='RFC' value='2818' />
+<format type='TXT' octets='15170' target='http://www.rfc-editor.org/rfc/rfc2818.txt' />
+</reference>
+
+
+
+<reference anchor='RFC4287'>
+
+<front>
+<title abbrev='Atom Format'>The Atom Syndication Format</title>
+<author initials='M.' surname='Nottingham' fullname='Mark Nottingham' role='editor'>
+<organization />
+<address>
+<email>mnot@pobox.com</email>
+<uri>http://www.mnot.net/</uri></address></author>
+<author initials='R.' surname='Sayre' fullname='Robert Sayre' role='editor'>
+<organization />
+<address>
+<email>rfsayre@boswijck.com</email>
+<uri>http://boswijck.com</uri></address></author>
+<date year='2005' month='December' />
+<abstract>
+<t>This document specifies Atom, an XML-based Web content and metadata syndication format.</t></abstract></front>
+
+<seriesInfo name='RFC' value='4287' />
+<format type='TXT' octets='81922' target='http://www.rfc-editor.org/rfc/rfc4287.txt' />
+<format type='HTML' octets='164395' target='http://xml.resource.org/public/rfc/html/rfc4287.html' />
+<format type='XML' octets='108706' target='http://xml.resource.org/public/rfc/xml/rfc4287.xml' />
+</reference>
+
+
+
+<reference anchor='W3C.CR-css3-mediaqueries-20090915'
+           target='http://www.w3.org/TR/2009/CR-css3-mediaqueries-20090915'>
+<front>
+<title>Media Queries</title>
+
+<author initials='H.' surname='Lie' fullname='Håkon Wium Lie'>
+    <organization />
+</author>
+
+<author initials='T.' surname='Çelik' fullname='Tantek Çelik'>
+    <organization />
+</author>
+
+<author initials='D.' surname='Glazman' fullname='Daniel Glazman'>
+    <organization />
+</author>
+
+<author initials='A.' surname='Kesteren' fullname='Anne van Kesteren'>
+    <organization />
+</author>
+
+<date month='September' day='15' year='2009' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium CR' value='CR-css3-mediaqueries-20090915' />
+<format type='HTML' target='http://www.w3.org/TR/2009/CR-css3-mediaqueries-20090915' />
+</reference>
+
+
+
+<reference anchor='W3C.CR-curie-20090116'
+           target='http://www.w3.org/TR/2009/CR-curie-20090116'>
+<front>
+<title>CURIE Syntax 1.0</title>
+
+<author initials='M.' surname='Birbeck' fullname='Mark Birbeck'>
+    <organization />
+</author>
+
+<author initials='S.' surname='McCarron' fullname='Shane McCarron'>
+    <organization />
+</author>
+
+<date month='January' day='16' year='2009' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium CR' value='CR-curie-20090116' />
+<format type='HTML' target='http://www.w3.org/TR/2009/CR-curie-20090116' />
+</reference>
+
+
+
+<reference anchor='W3C.REC-html401-19991224'
+           target='http://www.w3.org/TR/1999/REC-html401-19991224'>
+<front>
+<title>HTML 4.01 Specification</title>
+
+<author initials='D.' surname='Raggett' fullname='Dave Raggett'>
+    <organization />
+</author>
+
+<author initials='A.' surname='Hors' fullname='Arnaud Le Hors'>
+    <organization />
+</author>
+
+<author initials='I.' surname='Jacobs' fullname='Ian Jacobs'>
+    <organization />
+</author>
+
+<date month='December' day='24' year='1999' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-html401-19991224' />
+<format type='HTML' target='http://www.w3.org/TR/1999/REC-html401-19991224' />
+</reference>
+
+
+
+<reference anchor='W3C.REC-rdfa-syntax-20081014'
+           target='http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014'>
+<front>
+<title>RDFa in XHTML: Syntax and Processing</title>
+
+<author initials='B.' surname='Adida' fullname='Ben Adida'>
+    <organization />
+</author>
+
+<author initials='M.' surname='Birbeck' fullname='Mark Birbeck'>
+    <organization />
+</author>
+
+<author initials='S.' surname='McCarron' fullname='Shane McCarron'>
+    <organization />
+</author>
+
+<author initials='S.' surname='Pemberton' fullname='Steven Pemberton'>
+    <organization />
+</author>
+
+<date month='October' day='14' year='2008' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-rdfa-syntax-20081014' />
+<format type='HTML' target='http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014' />
+</reference>
+
+
+
+<reference anchor='W3C.REC-xhtml-basic-20080729'
+           target='http://www.w3.org/TR/2008/REC-xhtml-basic-20080729'>
+<front>
+<title>XHTMLâ¢ Basic 1.1</title>
+
+<author initials='M.' surname='Baker' fullname='Mark Baker'>
+    <organization />
+</author>
+
+<author initials='M.' surname='Ishikawa' fullname='Masayasu Ishikawa'>
+    <organization />
+</author>
+
+<author initials='S.' surname='Matsui' fullname='Shinichi Matsui'>
+    <organization />
+</author>
+
+<author initials='P.' surname='Stark' fullname='Peter Stark'>
+    <organization />
+</author>
+
+<author initials='T.' surname='Wugofski' fullname='Ted Wugofski'>
+    <organization />
+</author>
+
+<author initials='T.' surname='Yamakami' fullname='Toshihiko Yamakami'>
+    <organization />
+</author>
+
+<date month='July' day='29' year='2008' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-xhtml-basic-20080729' />
+<format type='HTML' target='http://www.w3.org/TR/2008/REC-xhtml-basic-20080729' />
+</reference>
+
+
+
+
+    </references>
+
+
+<section anchor="notes-on-using-the-link-header-with-the-html4-format" title="Notes on Using the Link Header with the HTML4 Format">
+
+<t>HTML motivated the original syntax of the Link header, and many of the design
+decisions in this document are driven by a desire to stay compatible with these
+uses.</t>
+
+<t>In HTML4, the link element can be mapped to links as specified here by using
+the “href” attribute for the target URI, and “rel” to convey the relation type,
+as in the Link header. The context of the link is the URI associated with the
+entire HTML document.</t>
+
+<t>All of the link relation types defined by HTML4 have been included in the Link
+Relation Type registry, so they can be used without modification. However,
+there are several potential ways to serialise extension relation types into
+HTML4, including</t>
+
+<t><list style="symbols">
+  <t>As absolute URIs,</t>
+  <t>using the document-wide “profile” attribute’s URI as a prefix for relation
+types, or</t>
+  <t>using the RDFa <xref target="W3C.REC-rdfa-syntax-20081014"/> convention of mapping token
+prefixes to URIs (in a manner similar to XML name spaces) (note that RDFa is
+only defined to work in XHTML <xref target="W3C.REC-xhtml-basic-20080729"/>, but is
+sometimes used in HTML4).</t>
+</list></t>
+
+<t>Individual applications of linking will therefore need to define how their
+extension links should be serialised into HTML4.</t>
+
+<t>Surveys of existing HTML content have shown that unregistered link relation
+types that are not URIs are (perhaps inevitably) common. Consuming HTML
+implementations should not consider such unregistered short links to be errors,
+but rather relation types with a local scope (i.e., their meaning is specific
+and perhaps private to that document).</t>
+
+<t>HTML4 also defines several attributes on links that are not explicitly defined
+by the Link header. These attributes can be serialised as link-extensions to
+maintain fidelity.</t>
+
+<t>Finally, the HTML4 specification gives a special meaning when the “alternate”
+and “stylesheet” relation types coincide in the same link. Such links should be
+serialised in the Link header using a single list of relation-types (e.g.,
+rel=”alternate stylesheet”) to preserve this relationship.</t>
+
+</section>
+<section anchor="notes-on-using-the-link-header-with-the-atom-format" title="Notes on Using the Link Header with the Atom Format">
+
+<t>Atom conveys links in the atom:link element, with the “href” attribute
+indicating the target IRI and the “rel” attribute containing the relation type.
+The context of the link is either a feed IRI or an entry ID, depending on where
+it appears; generally, feed-level links are obvious candidates for transmission
+as a Link header.</t>
+
+<t>When serialising an atom:link into a Link header, it is necessary to convert
+target IRIs (if used) to URIs.</t>
+
+<t>Atom defines extension relation types in terms of IRIs. This specification
+re-defines them as URIs, to simplify and reduce errors in their comparison.</t>
+
+<t>Atom allows registered link relation types to be serialised as absolute URIs.
+Such relation types SHOULD be converted to the appropriate registered form
+(e.g., “http://www.iana.org/assignments/relation/self” to “self”) so that they
+are not mistaken for extension relation types.</t>
+
+<t>Furthermore, Atom link relation types are always compared in a case-sensitive
+fashion; therefore, registered link relation types SHOULD be converted to their
+registered form (usually, lowercase) when serialised in an Atom document.</t>
+
+<t>Note also that while the Link header allows multiple relations to be serialised
+in a single link, atom:link does not. In this case, a single link-value may map
+to several atom:link elements.</t>
+
+<t>As with HTML, atom:link defines some attributes that are not explicitly
+mirrored in the Link header syntax, but they can also be used as
+link-extensions to maintain fidelity.</t>
+
+</section>
+<section anchor="acknowledgements" title="Acknowledgements">
+
+<t>This specification lifts the idea and definition for the Link header from RFC
+2068; credit for it belongs entirely to the authors of and contributors to that
+document. The link relation type registrations themselves are sourced from
+several documents; see the applicable references.</t>
+
+<t>The author would like to thank the many people who commented upon, encouraged
+and gave feedback to this specification, especially including Frank Ellermann,
+Roy Fielding, Eran Hammer-Lahav, and Julian Reschke.</t>
+
+</section>
+
+
+  </back>
+</rfc>
+
