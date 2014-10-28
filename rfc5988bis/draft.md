@@ -476,6 +476,7 @@ therefore IRIs must be converted to URIs before inclusion there.
 Relation types are defined as URIs, not IRIs, to aid in their comparison. It is
 not expected that they will be displayed to end users.
 
+Note that registered Relation Names are required to be lower-case ASCII letters.
 
 --- back
 
