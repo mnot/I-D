@@ -225,7 +225,7 @@ HTML, as well as the atom:link feed-level element in Atom {{RFC4287}}.
 	             | ( link-extension ) )
 	link-extension = ( parmname [ "=" ( ptoken | quoted-string ) ] )
 	             | ( ext-name-star "=" ext-value )
-	ext-name-star  = parmname "*" ; reserved for RFC2231-profiled
+	ext-name-star  = parmname "*" ; reserved for RFC5987-profiled
 	                            ; extensions. Whitespace NOT
 	                            ; allowed in between.
 	ptoken         = 1*ptokenchar
@@ -350,7 +350,7 @@ indicates that the root resource ("/") is related to this resource with the
 extension relation type "http://example.net/foo".
 
 The example below shows an instance of the Link header encoding multiple links,
-and also the use of RFC 2231 encoding to encode both non-ASCII characters and
+and also the use of RFC 5987 encoding to encode both non-ASCII characters and
 language information.
 
 	Link: </TheBook/chapter2>;
