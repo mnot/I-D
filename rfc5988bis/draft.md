@@ -44,7 +44,7 @@ informative:
   RFC4287:
   W3C.CR-css3-mediaqueries-20090915:
   W3C.CR-curie-20090116:
-  W3C.REC-html401-19991224:
+  W3C.REC-CR-html5-20140731:
   W3C.REC-rdfa-syntax-20081014:
   W3C.REC-xhtml-basic-20080729:
 
@@ -69,7 +69,7 @@ This is a work-in-progress to revise RFC5988; see issues list at:
 
 A means of indicating the relationships between resources on the Web, as well
 as indicating the type of those relationships, has been available for some time
-in HTML {{W3C.REC-html401-19991224}}, and more recently in Atom {{RFC4287}}.
+in HTML {{W3C.CR-html5-20140731}}, and more recently in Atom {{RFC4287}}.
 These mechanisms, although conceptually similar, are separately specified.
 However, links between resources need not be format specific; it can be useful
 to have typed links that are independent of their serialisation, especially
@@ -97,7 +97,7 @@ quoted-string, token, SP (space), LOALPHA, DIGIT.
 
 Additionally, the following rules are included from {{RFC3986}}: URI and
 URI-Reference; from {{RFC4288}}: type-name and subtype-name; from
-{{W3C.REC-html401-19991224}}: MediaDesc; from {{RFC5646}}: Language-Tag; and
+{{W3C.CR-html5-20140731}}: MediaDesc; from {{RFC5646}}: Language-Tag; and
 from {{RFC5987}}, ext-value and parmname.
 
 
@@ -303,7 +303,7 @@ parameters on a single link-value indicate that multiple languages are
 available from the indicated resource.
 
 The "media" parameter, when present, is used to indicate intended destination
-medium or media for style information (see {{W3C.REC-html401-19991224}},
+medium or media for style information (see {{W3C.CR-html5-20140731}},
 Section 6.13). Note that this may be updated by
 {{W3C.CR-css3-mediaqueries-20090915}}). Its value MUST be quoted if it contains
 a semicolon (";") or comma (","), and there MUST NOT be more than one "media"
@@ -502,7 +502,7 @@ HTML4, including
 * using the RDFa {{W3C.REC-rdfa-syntax-20081014}} convention of mapping token
   prefixes to URIs (in a manner similar to XML name spaces) (note that RDFa is
   only defined to work in XHTML {{W3C.REC-xhtml-basic-20080729}}, but is
-  sometimes used in HTML4).
+  sometimes used in HTML).
 
 
 Individual applications of linking will therefore need to define how their
