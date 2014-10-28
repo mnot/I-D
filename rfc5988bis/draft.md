@@ -80,15 +80,9 @@ specific to a particular serialisation or application. It does so by redefining
 the link relation registry established by Atom to have a broader domain, and
 adding to it the relations that are defined by HTML.
 
-Furthermore, an HTTP header field for conveying typed links was defined in
-Section 19.6.2.4 of {{RFC2068}}, but removed from {{RFC2616}}, due to a lack of
-implementation experience. Since then, it has been implemented in some User
-Agents (e.g., for stylesheets), and several additional use cases have surfaced.
-
-Because it was removed, the status of the Link header is unclear, leading some
-to consider minting new application-specific HTTP headers instead of reusing
-it. This document addresses this by re-specifying the Link header as one such
-serialisation, with updated but backwards-compatible syntax.
+Furthermore, this document formalises an HTTP header field for conveying typed
+links, having been originally defined in Section 19.6.2.4 of {{RFC2068}}, but
+removed from {{RFC2616}}.
 
 # Notational Conventions
 
@@ -625,4 +619,6 @@ This specification has the following differences from its predecessor, RFC5988:
 
 * The initial relation type registrations were removed, since they've already
   been registered by 5988.
+  
+* The introduction has been shortened.
 
