@@ -617,3 +617,12 @@ several documents; see the applicable references.
 The author would like to thank the many people who commented upon, encouraged
 and gave feedback to this specification, especially including Frank Ellermann,
 Roy Fielding, Eran Hammer-Lahav, and Julian Reschke.
+
+
+# Changes from RFC5988
+
+This specification has the following differences from its predecessor, RFC5988:
+
+* The initial relation type registrations were removed, since they've already
+  been registered by 5988.
+
