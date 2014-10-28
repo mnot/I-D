@@ -136,7 +136,7 @@ Finally, this specification does not define a general syntax for expressing
 links, nor does it mandate a specific context for any given link; it is
 expected that serialisations of links will specify both aspects. One such
 serialisation is communication of links through HTTP headers, specified in
-{{the-link-header-field}}.
+{{header}}.
 
 
 # Link Relation Types
@@ -203,7 +203,7 @@ serialisation of links can specify that they are expressed in another form, as
 long as they can be converted to URIs.
 
 
-# The Link Header Field
+# The Link Header Field {#header}
 
 The Link entity-header field provides a means for serialising one or more links
 in HTTP headers. It is semantically equivalent to the &lt;LINK&gt; element in
