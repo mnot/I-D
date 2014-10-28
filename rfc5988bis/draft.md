@@ -44,7 +44,7 @@ informative:
   RFC4287:
   W3C.CR-css3-mediaqueries-20090915:
   W3C.CR-curie-20090116:
-  W3C.REC-CR-html5-20140731:
+  W3C.CR-html5-20140731:
   W3C.REC-rdfa-syntax-20081014:
   W3C.REC-xhtml-basic-20080729:
 
