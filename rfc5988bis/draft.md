@@ -76,9 +76,7 @@ to have typed links that are independent of their serialisation, especially
 when a resource has representations in multiple formats.
 
 To this end, this document defines a framework for typed links that isn't
-specific to a particular serialisation or application. It does so by redefining
-the link relation registry established by Atom to have a broader domain, and
-adding to it the relations that are defined by HTML.
+specific to a particular serialisation or application.
 
 Furthermore, this document formalises an HTTP header field for conveying typed
 links, having been originally defined in Section 19.6.2.4 of {{RFC2068}}, but
