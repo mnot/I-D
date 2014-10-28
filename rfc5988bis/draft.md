@@ -185,17 +185,8 @@ and MUST NOT constrain the available representation media types of the target
 IRI. However, they can specify the behaviours and properties of the target
 resource (e.g., allowable HTTP methods, request and response media types that
 must be supported).
-		
-Additionally, specific applications of linking may require additional data to
-be included in the registry. For example, Web browsers might want to know what
-kinds of links should be downloaded when they archive a Web page; if this
-application-specific information is in the registry, new link relation types
-can control this behaviour without unnecessary coordination.
 
-To accommodate this, per-entry application data can be added to the Link
-Relation Type registry, by registering it in the Link Relation Application Data
-registry ({{link-relation-application-data-registry}}).
-		
+
 ## Extension Relation Types
 
 Applications that don't wish to register a relation type can use an extension
@@ -382,6 +373,11 @@ Here, the link to "http://example.org/" has the registered relation type
 
 # IANA Considerations
 
+In addition to the actions below, IANA should terminate the Link Relation
+Application Data Registry, as it has not been used, and future use is not
+anticipated.
+
+
 ## Link HTTP Header Registration
 
 This specification updates the Message Header registry entry for "Link" in HTTP
@@ -431,7 +427,6 @@ The registration template is:
 * Description:
 * Reference: 
 * Notes: [optional]
-* Application Data: [optional]
 
 Registration requests should be sent to the link-relations@ietf.org mailing
 list, marked clearly in the subject line (e.g., "NEW RELATION - example" to
@@ -451,49 +446,6 @@ IESG (using the iesg@iesg.org mailing list).
 IANA should only accept registry updates from the Designated Expert(s), and
 should direct all requests for registration to the review mailing list.
 
-
-## Link Relation Application Data Registry
-		
-This specification also establishes the Link Relation Application Field
-registry, to allow entries in the Link Relation Type registry to be extended
-with application-specific data (hereafter, "app data") specific to all
-instances of a given link relation type.
-
-Application data is registered on the advice of a Designated Expert (appointed
-by the IESG or their delegate), with a Specification Required (using
-terminology from {{RFC5226}}).
-
-Registration requests consist of the completed registration template below:
-
-* Application Name: 
-* Description: 
-* Default Value: 
-* Notes: [optional]
-
-The Description SHOULD identify the value space of the app data. The Default
-Value MUST be appropriate to entries to which the app data does not apply.
-
-Entries that pre-date the addition of app data will automatically be considered
-to have the default value for that app data; if there are exceptions, the
-modification of such entries should be coordinated by the Designated Expert(s),
-in consultation with the author of the proposed app data as well as the
-registrant of the existing entry (if possible).
-
-Registration requests should be sent to the link-relations@ietf.org mailing
-list, marked clearly in the subject line (e.g., "NEW APP DATA - example" to
-register "example" app data).
-
-Within at most 14 days of the request, the Designated Expert will either
-approve or deny the registration request, communicating this decision to the
-review list. Denials should include an explanation and, if applicable,
-suggestions as to how to make the request successful. Registration requests
-that are undetermined for a period longer than 21 days can be brought to the
-IESG's attention (using the iesg@iesg.org mailing list) for resolution.
-
-When a registration request is successful, the Designated Expert will forward
-it to IANA for publication. IANA should only accept registry updates from the
-Designated Expert(s), and should direct all requests for registration to the
-review mailing list.
 
 # Security Considerations
 
@@ -621,4 +573,6 @@ This specification has the following differences from its predecessor, RFC5988:
   been registered by 5988.
   
 * The introduction has been shortened.
+
+* The Link Relation Application Data Registry has been removed.
 
