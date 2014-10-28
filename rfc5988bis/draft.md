@@ -28,7 +28,6 @@ author:
 normative:	
   RFC2026:
   RFC2119:
-  RFC2616:
   RFC3864:
   RFC3986:
   RFC3987:
@@ -39,6 +38,7 @@ normative:
   
 informative:
   RFC2068:
+  RFC2616:
   RFC2817:
   RFC2818:
   RFC4287:
