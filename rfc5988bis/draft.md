@@ -1,10 +1,10 @@
 ---
 title: Web Linking
 abbrev: Web Linking
-docname: draft-nottingham-rfc598bis-00
-date: 2013
+docname: draft-nottingham-rfc5988bis-01
+date: 2014
 category: std
-updates: 5988
+obsoletes: 5988
 
 ipr: pre5378Trust200902
 area: General
@@ -28,23 +28,24 @@ author:
 normative:	
   RFC2026:
   RFC2119:
-  RFC2616:
   RFC3864:
   RFC3986:
   RFC3987:
-  RFC4288:
+  RFC6838:
   RFC5226:
   RFC5646:
   RFC5987:
+  RFC7230:
   
 informative:
   RFC2068:
+  RFC2616:
   RFC2817:
   RFC2818:
   RFC4287:
   W3C.CR-css3-mediaqueries-20090915:
   W3C.CR-curie-20090116:
-  W3C.REC-html401-19991224:
+  W3C.CR-html5-20140731:
   W3C.REC-rdfa-syntax-20081014:
   W3C.REC-xhtml-basic-20080729:
 
@@ -55,6 +56,13 @@ This document specifies relation types for Web links, and defines a registry
 for them. It also defines the use of such links in HTTP headers with the Link
 header field.
 
+
+--- note_Note_to_Readers
+
+This is a work-in-progress to revise RFC5988; see issues list at:
+  https://github.com/mnot/I-D/issues?q=is%3Aopen+is%3Aissue+label%3Arfc5988bis
+
+
 --- middle
 
 
@@ -62,26 +70,18 @@ header field.
 
 A means of indicating the relationships between resources on the Web, as well
 as indicating the type of those relationships, has been available for some time
-in HTML {{W3C.REC-html401-19991224}}, and more recently in Atom {{RFC4287}}.
+in HTML {{W3C.CR-html5-20140731}}, and more recently in Atom {{RFC4287}}.
 These mechanisms, although conceptually similar, are separately specified.
 However, links between resources need not be format specific; it can be useful
 to have typed links that are independent of their serialisation, especially
 when a resource has representations in multiple formats.
 
 To this end, this document defines a framework for typed links that isn't
-specific to a particular serialisation or application. It does so by redefining
-the link relation registry established by Atom to have a broader domain, and
-adding to it the relations that are defined by HTML.
+specific to a particular serialisation or application.
 
-Furthermore, an HTTP header field for conveying typed links was defined in
-Section 19.6.2.4 of {{RFC2068}}, but removed from {{RFC2616}}, due to a lack of
-implementation experience. Since then, it has been implemented in some User
-Agents (e.g., for stylesheets), and several additional use cases have surfaced.
-
-Because it was removed, the status of the Link header is unclear, leading some
-to consider minting new application-specific HTTP headers instead of reusing
-it. This document addresses this by re-specifying the Link header as one such
-serialisation, with updated but backwards-compatible syntax.
+Furthermore, this document formalises an HTTP header field for conveying typed
+links, having been originally defined in Section 19.6.2.4 of {{RFC2068}}, but
+removed from {{RFC2616}}.
 
 # Notational Conventions
 
@@ -91,43 +91,42 @@ interpreted as described in BCP 14, {{RFC2119}}, as scoped to those conformance
 targets.
 
 This document uses the Augmented Backus-Naur Form (ABNF) notation of
-{{RFC2616}}, and explicitly includes the following rules from it:
-quoted-string, token, SP (space), LOALPHA, DIGIT.
+{{RFC7230}}, including the #rule, and explicitly includes the following rules
+from it: quoted-string, token, SP (space), LOALPHA, DIGIT.
 
 Additionally, the following rules are included from {{RFC3986}}: URI and
-URI-Reference; from {{RFC4288}}: type-name and subtype-name; from
-{{W3C.REC-html401-19991224}}: MediaDesc; from {{RFC5646}}: Language-Tag; and
+URI-Reference; from {{RFC6838}}: type-name and subtype-name; from
+{{W3C.CR-html5-20140731}}: MediaDesc; from {{RFC5646}}: Language-Tag; and
 from {{RFC5987}}, ext-value and parmname.
 
 
 # Links
 
+In this specification, a link is a typed connection between two resources, and
+is comprised of:
 
-In this specification, a link is a typed connection between two resources that
-are identified by Internationalised Resource Identifiers (IRIs) {{RFC3987}},
-and is comprised of:
-
-* A context IRI,
+* A link context,
 * a link relation type ({{link-relation-types}}),
-* a target IRI, and
+* a link target, and
 * optionally, target attributes.
       
+A link can be viewed as a statement of the form "{link context} has a {link
+relation type} resource at {link target}, which has {target attributes}".
 
-A link can be viewed as a statement of the form "{context IRI} has a {relation
-type} resource at {target IRI}, which has {target attributes}".
-
-Note that in the common case, the context IRI will also be a URI {{RFC3986}},
-because many protocols (such as HTTP) do not support dereferencing IRIs.
-Likewise, the target IRI will be converted to a URI (see {{RFC3987}}, Section
-3.1) in serialisations that do not support IRIs (e.g., the Link header).
+Link contexts and link targets are both IRIs {{RFC3987}}. However, in the
+common case, the link context will also be a URI {{RFC3986}}, because many
+protocols (such as HTTP) do not support dereferencing IRIs. Likewise, the
+link target will be sometimes be converted to a URI (see {{RFC3987}}, Section
+3.1) in places that do not support IRIs (such as the Link header field
+defined in {{header}}).
 
 This specification does not place restrictions on the cardinality of links;
-there can be multiple links to and from a particular IRI, and multiple links of
-different types between two given IRIs. Likewise, the relative ordering of
-links in any particular serialisation, or between serialisations (e.g., the
-Link header and in-content links) is not specified or significant in this
-specification; applications that wish to consider ordering significant can do
-so.
+there can be multiple links to and from a particular target, and multiple links
+of the same or different types between a given context and target . Likewise,
+the relative ordering of links in any particular serialisation, or between
+serialisations (e.g., the Link header and in-content links) is not specified or
+significant in this specification; applications that wish to consider ordering
+significant can do so.
 
 Target attributes are a set of key/value pairs that describe the link or its
 target; for example, a media type hint. This specification does not attempt to
@@ -138,22 +137,22 @@ Finally, this specification does not define a general syntax for expressing
 links, nor does it mandate a specific context for any given link; it is
 expected that serialisations of links will specify both aspects. One such
 serialisation is communication of links through HTTP headers, specified in
-{{the-link-header-field}}.
+{{header}}.
 
 
 # Link Relation Types
 
 In the simplest case, a link relation type identifies the semantics of a link.
 For example, a link with the relation type "copyright" indicates that the
-resource identified by the target IRI is a statement of the copyright terms
-applying to the current context IRI.
+resource identified by the link target is a statement of the copyright terms
+applying to the current link context.
 
 Link relation types can also be used to indicate that the target resource has
 particular attributes, or exhibits particular behaviours; for example, a
 "service" link implies that the identified resource is part of a defined
 protocol (in this case, a service description).
 
-Relation types are not to be confused with media types {{RFC4288}}; they do not
+Relation types are not to be confused with media types {{RFC6838}}; they do not
 identify the format of the representation that results when the link is
 dereferenced. Rather, they only describe how the current context is related to
 another resource.
@@ -161,7 +160,7 @@ another resource.
 Relation types SHOULD NOT infer any additional semantics based upon the
 presence or absence of another link relation type, or its own cardinality of
 occurrence. An exception to this is the combination of the "alternate" and
-"stylesheet" registered relation types, which has special meaning in HTML4 for
+"stylesheet" registered relation types, which has special meaning in HTML for
 historical reasons.
 
 There are two kinds of relation types: registered and extension.
@@ -179,22 +178,13 @@ be appropriate to the specificity of the relation type; i.e., if the semantics
 are highly specific to a particular application, the name should reflect that,
 so that more general names are available for less specific use.
 			
-Registered relation types MUST NOT constrain the media type of the context IRI,
-and MUST NOT constrain the available representation media types of the target
-IRI. However, they can specify the behaviours and properties of the target
-resource (e.g., allowable HTTP methods, request and response media types that
-must be supported).
-		
-Additionally, specific applications of linking may require additional data to
-be included in the registry. For example, Web browsers might want to know what
-kinds of links should be downloaded when they archive a Web page; if this
-application-specific information is in the registry, new link relation types
-can control this behaviour without unnecessary coordination.
+Registered relation types MUST NOT constrain the media type of the link
+context, and MUST NOT constrain the available representation media types of the
+link target. However, they can specify the behaviours and properties of the
+target resource (e.g., allowable HTTP methods, request and response media types
+that must be supported).
 
-To accommodate this, per-entry application data can be added to the Link
-Relation Type registry, by registering it in the Link Relation Application Data
-registry ({{link-relation-application-data-registry}}).
-		
+
 ## Extension Relation Types
 
 Applications that don't wish to register a relation type can use an extension
@@ -214,7 +204,7 @@ serialisation of links can specify that they are expressed in another form, as
 long as they can be converted to URIs.
 
 
-# The Link Header Field
+# The Link Header Field {#header}
 
 The Link entity-header field provides a means for serialising one or more links
 in HTTP headers. It is semantically equivalent to the &lt;LINK&gt; element in
@@ -233,7 +223,7 @@ HTML, as well as the atom:link feed-level element in Atom {{RFC4287}}.
 	             | ( link-extension ) )
 	link-extension = ( parmname [ "=" ( ptoken | quoted-string ) ] )
 	             | ( ext-name-star "=" ext-value )
-	ext-name-star  = parmname "*" ; reserved for RFC2231-profiled
+	ext-name-star  = parmname "*" ; reserved for RFC5987-profiled
 	                            ; extensions. Whitespace NOT
 	                            ; allowed in between.
 	ptoken         = 1*ptokenchar
@@ -250,7 +240,7 @@ HTML, as well as the atom:link feed-level element in Atom {{RFC4287}}.
 	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
 	ext-rel-type   = URI
 
-## Target IRI
+## Link Target
 
 Each link-value conveys one target IRI as a URI-Reference (after conversion to
 one, if necessary; see {{RFC3987}}, Section 3.1) inside angle
@@ -258,7 +248,7 @@ brackets ("&lt;&gt;"). If the URI-Reference is relative, parsers MUST resolve
 it as per {{RFC3986}}, Section 5. Note that any base IRI from the
 message's content is not applied.
 		
-## Context IRI
+## Link Context
 
 By default, the context of a link conveyed in the Link header field is the IRI
 of the requested resource.
@@ -270,15 +260,15 @@ MUST resolve it as per {{RFC3986}}, Section 5. Note that any base
 URI from the body's content is not applied.
 				
 Consuming implementations can choose to ignore links with an anchor parameter.
-For example, the application in use may not allow the context IRI to be
+For example, the application in use may not allow the link context to be
 assigned to a different resource. In such cases, the entire link is to be
 ignored; consuming implementations MUST NOT process the link without applying
 the anchor.
 				
 <!-- probably need to revisit security considerations -->
 
-Note that depending on HTTP status code and response headers, the context IRI
-might be "anonymous" (i.e., no context IRI is available). For instance, this is
+Note that depending on HTTP status code and response headers, the link context
+might be "anonymous" (i.e., no link context is available). For instance, this is
 the case on a 404 response to a GET request.
 
 ## Relation Type
@@ -311,7 +301,7 @@ parameters on a single link-value indicate that multiple languages are
 available from the indicated resource.
 
 The "media" parameter, when present, is used to indicate intended destination
-medium or media for style information (see {{W3C.REC-html401-19991224}},
+medium or media for style information (see {{W3C.CR-html5-20140731}},
 Section 6.13). Note that this may be updated by
 {{W3C.CR-css3-mediaqueries-20090915}}). Its value MUST be quoted if it contains
 a semicolon (";") or comma (","), and there MUST NOT be more than one "media"
@@ -358,7 +348,7 @@ indicates that the root resource ("/") is related to this resource with the
 extension relation type "http://example.net/foo".
 
 The example below shows an instance of the Link header encoding multiple links,
-and also the use of RFC 2231 encoding to encode both non-ASCII characters and
+and also the use of RFC 5987 encoding to encode both non-ASCII characters and
 language information.
 
 	Link: </TheBook/chapter2>;
@@ -370,8 +360,8 @@ Here, both links have titles encoded in UTF-8, use the German language ("de"),
 and the second link contains the Unicode code point U+00E4 ("LATIN SMALL LETTER
 A WITH DIAERESIS").
 
-Note that link-values can convey multiple links between the same target and
-context IRIs; for example:
+Note that link-values can convey multiple links between the same link target and
+link context; for example:
 
 	Link: <http://example.org/>; 
 	      rel="start http://example.net/relation/other"
@@ -380,6 +370,11 @@ Here, the link to "http://example.org/" has the registered relation type
 "start" and the extension relation type "http://example.net/relation/other".
 
 # IANA Considerations
+
+In addition to the actions below, IANA should terminate the Link Relation
+Application Data Registry, as it has not been used, and future use is not
+anticipated.
+
 
 ## Link HTTP Header Registration
 
@@ -430,7 +425,6 @@ The registration template is:
 * Description:
 * Reference: 
 * Notes: [optional]
-* Application Data: [optional]
 
 Registration requests should be sent to the link-relations@ietf.org mailing
 list, marked clearly in the subject line (e.g., "NEW RELATION - example" to
@@ -451,49 +445,6 @@ IANA should only accept registry updates from the Designated Expert(s), and
 should direct all requests for registration to the review mailing list.
 
 
-## Link Relation Application Data Registry
-		
-This specification also establishes the Link Relation Application Field
-registry, to allow entries in the Link Relation Type registry to be extended
-with application-specific data (hereafter, "app data") specific to all
-instances of a given link relation type.
-
-Application data is registered on the advice of a Designated Expert (appointed
-by the IESG or their delegate), with a Specification Required (using
-terminology from {{RFC5226}}).
-
-Registration requests consist of the completed registration template below:
-
-* Application Name: 
-* Description: 
-* Default Value: 
-* Notes: [optional]
-
-The Description SHOULD identify the value space of the app data. The Default
-Value MUST be appropriate to entries to which the app data does not apply.
-
-Entries that pre-date the addition of app data will automatically be considered
-to have the default value for that app data; if there are exceptions, the
-modification of such entries should be coordinated by the Designated Expert(s),
-in consultation with the author of the proposed app data as well as the
-registrant of the existing entry (if possible).
-
-Registration requests should be sent to the link-relations@ietf.org mailing
-list, marked clearly in the subject line (e.g., "NEW APP DATA - example" to
-register "example" app data).
-
-Within at most 14 days of the request, the Designated Expert will either
-approve or deny the registration request, communicating this decision to the
-review list. Denials should include an explanation and, if applicable,
-suggestions as to how to make the request successful. Registration requests
-that are undetermined for a period longer than 21 days can be brought to the
-IESG's attention (using the iesg@iesg.org mailing list) for resolution.
-
-When a registration request is successful, the Designated Expert will forward
-it to IANA for publication. IANA should only accept registry updates from the
-Designated Expert(s), and should direct all requests for registration to the
-review mailing list.
-
 # Security Considerations
 
 The content of the Link header field is not secure, private or
@@ -510,11 +461,11 @@ with due caution.
 The Link entity-header field makes extensive use of IRIs and URIs. See 
 {{RFC3987}} for security considerations relating to IRIs. See 
 {{RFC3986}} for security considerations relating to URIs. See 
-{{RFC2616}} for security considerations relating to HTTP headers.
+{{RFC7230}} for security considerations relating to HTTP headers.
 
 # Internationalisation Considerations
 
-Target IRIs may need to be converted to URIs in order to express them in
+Link targets may need to be converted to URIs in order to express them in
 serialisations that do not support IRIs. This includes the Link HTTP header.
 
 Similarly, the anchor parameter of the Link header does not support IRIs, and
@@ -523,24 +474,25 @@ therefore IRIs must be converted to URIs before inclusion there.
 Relation types are defined as URIs, not IRIs, to aid in their comparison. It is
 not expected that they will be displayed to end users.
 
+Note that registered Relation Names are required to be lower-case ASCII letters.
 
 --- back
 
-# Notes on Using the Link Header with the HTML4 Format
+# Notes on Using the Link Header with the HTML Format
 
 HTML motivated the original syntax of the Link header, and many of the design
 decisions in this document are driven by a desire to stay compatible with these
 uses.
 
-In HTML4, the link element can be mapped to links as specified here by using
+In HTML, the link element can be mapped to links as specified here by using
 the "href" attribute for the target URI, and "rel" to convey the relation type,
 as in the Link header. The context of the link is the URI associated with the
 entire HTML document.
 
-All of the link relation types defined by HTML4 have been included in the Link
+All of the link relation types defined by HTML have been included in the Link
 Relation Type registry, so they can be used without modification. However,
 there are several potential ways to serialise extension relation types into
-HTML4, including
+HTML, including
 		
 * As absolute URIs,
 * using the document-wide "profile" attribute's URI as a prefix for relation
@@ -548,11 +500,11 @@ HTML4, including
 * using the RDFa {{W3C.REC-rdfa-syntax-20081014}} convention of mapping token
   prefixes to URIs (in a manner similar to XML name spaces) (note that RDFa is
   only defined to work in XHTML {{W3C.REC-xhtml-basic-20080729}}, but is
-  sometimes used in HTML4).
+  sometimes used in HTML).
 
 
 Individual applications of linking will therefore need to define how their
-extension links should be serialised into HTML4.
+extension links should be serialised into HTML.
 
 Surveys of existing HTML content have shown that unregistered link relation
 types that are not URIs are (perhaps inevitably) common. Consuming HTML
@@ -560,11 +512,11 @@ implementations should not consider such unregistered short links to be errors,
 but rather relation types with a local scope (i.e., their meaning is specific
 and perhaps private to that document).
 
-HTML4 also defines several attributes on links that are not explicitly defined
+HTML also defines several attributes on links that are not explicitly defined
 by the Link header. These attributes can be serialised as link-extensions to
 maintain fidelity.
 
-Finally, the HTML4 specification gives a special meaning when the "alternate"
+Finally, the HTML specification gives a special meaning when the "alternate"
 and "stylesheet" relation types coincide in the same link. Such links should be
 serialised in the Link header using a single list of relation-types (e.g.,
 rel="alternate stylesheet") to preserve this relationship.
@@ -572,13 +524,13 @@ rel="alternate stylesheet") to preserve this relationship.
 # Notes on Using the Link Header with the Atom Format
 
 Atom conveys links in the atom:link element, with the "href" attribute
-indicating the target IRI and the "rel" attribute containing the relation type.
-The context of the link is either a feed IRI or an entry ID, depending on where
-it appears; generally, feed-level links are obvious candidates for transmission
-as a Link header.
+indicating the link target and the "rel" attribute containing the relation
+type. The context of the link is either a feed locator or an entry ID,
+depending on where it appears; generally, feed-level links are obvious
+candidates for transmission as a Link header.
 
 When serialising an atom:link into a Link header, it is necessary to convert
-target IRIs (if used) to URIs.
+link targets (if used) to URIs.
 
 Atom defines extension relation types in terms of IRIs. This specification
 re-defines them as URIs, to simplify and reduce errors in their comparison.
@@ -610,3 +562,27 @@ several documents; see the applicable references.
 The author would like to thank the many people who commented upon, encouraged
 and gave feedback to this specification, especially including Frank Ellermann,
 Roy Fielding, Eran Hammer-Lahav, and Julian Reschke.
+
+
+# Changes from RFC5988
+
+This specification has the following differences from its predecessor, RFC5988:
+
+* The initial relation type registrations were removed, since they've already
+  been registered by 5988.
+  
+* The introduction has been shortened.
+
+* The Link Relation Application Data Registry has been removed.
+
+* Incorporated errata.
+
+* Updated references.
+
+* Link cardinality was clarified.
+
+* Terminology was changed from "target IRI" and "context IRI" to "link target"
+  and "link context" respectively.
+
+
+
