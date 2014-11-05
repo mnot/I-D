@@ -138,7 +138,8 @@ the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3.
 
 {{RFC7230}} Section 5.7.2 requires proxies to honour the semantic of the "no-transform"
 cache-control directive, and append the 214 (Transformation Applied) warn-code to other messages
-that have been transformed; WPD proxies MUST honour these requirements.
+that have been transformed; WPD proxies need to honour these requirements, just like any other HTTP
+client.
 
 When connecting to a WPD proxy, clients MUST validate the proxy hostname as per {{RFC2818}} Section
 3.1. If the proxy presents an invalid certificate, that proxy MUST be considered "failed" and not
