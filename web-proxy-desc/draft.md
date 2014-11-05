@@ -34,7 +34,7 @@ normative:
   RFC7230:
   RFC7234:
   I-D.ietf-httpbis-http2:
-  W3C.CR-html5-20140731:
+  W3C.REC-html5-20141028:
 
 informative:
   RFC0826:
@@ -138,7 +138,8 @@ the CONNECT method, as specified in {{I-D.ietf-httpbis-http2}} Section 8.3.
 
 {{RFC7230}} Section 5.7.2 requires proxies to honour the semantic of the "no-transform"
 cache-control directive, and append the 214 (Transformation Applied) warn-code to other messages
-that have been transformed; WPD proxies MUST honour these requirements.
+that have been transformed; WPD proxies need to honour these requirements, just like any other HTTP
+client.
 
 When connecting to a WPD proxy, clients MUST validate the proxy hostname as per {{RFC2818}} Section
 3.1. If the proxy presents an invalid certificate, that proxy MUST be considered "failed" and not
@@ -220,7 +221,7 @@ less. This member MUST be present for the WPD to be considered valid.
 
 A string containing a URL {{RFC3986}} that leads to more information about the proxy, its
 operation, who operates it, etc. The URL MUST have a scheme of "https" {{RFC7230}}, and MUST be
-able to respond with an HTML {{W3C.CR-html5-20140731}} representation. This member MUST be present
+able to respond with an HTML {{W3C.REC-html5-20141028}} representation. This member MUST be present
 for the WPD to be considered valid.
 
 ## proxies
