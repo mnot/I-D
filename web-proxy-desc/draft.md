@@ -34,7 +34,7 @@ normative:
   RFC7230:
   RFC7234:
   I-D.ietf-httpbis-http2:
-  W3C.CR-html5-20140731:
+  W3C.REC-html5-20141028:
 
 informative:
   RFC0826:
@@ -220,7 +220,7 @@ less. This member MUST be present for the WPD to be considered valid.
 
 A string containing a URL {{RFC3986}} that leads to more information about the proxy, its
 operation, who operates it, etc. The URL MUST have a scheme of "https" {{RFC7230}}, and MUST be
-able to respond with an HTML {{W3C.CR-html5-20140731}} representation. This member MUST be present
+able to respond with an HTML {{W3C.REC-html5-20141028}} representation. This member MUST be present
 for the WPD to be considered valid.
 
 ## proxies
