@@ -118,7 +118,7 @@ Additionally, other clients MAY insert it; e.g., an operating system might
 choose to insert the preference in requests based upon system-wide
 configuration.
 
-Origin servers that utilize the "safe" preference SHOULD document that they do
+Origin servers that utilize the "safe" preference ought to document that they do
 so, along with the criteria that they use to denote objectionable content. If a
 server has more fine-grained degrees of "safety", it SHOULD select a reasonable
 default to use, and document that; it MAY use additional mechanisms (e.g.,
