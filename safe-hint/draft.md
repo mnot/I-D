@@ -239,10 +239,10 @@ preference will not be supported by all clients immediately, it is necessary to
 have another way to configure it.
 
 When honoring the safe preference, it is important that it not be possible to
-disable it through the Web interface, since "safe" may be inserted by an
-intermediary (e.g., at a school) or configured and locked down by an
-administrator (e.g., a parent). If per-site configuration is present and the
-safe preference is received, the safer interpretation is always used.
+disable it through the Web site's interface, since "safe" may be configured and
+locked down by the browser's administrator (e.g., a parent). If the site has
+configuration (e.g., stored user preferences) and the safe preference is
+received in a request, the "safer" interpretation is always used.
 
 The safe preference is designed to make as much of the Web a "safe" experience
 as possible; it is not intended to be configured site-by-site. Therefore, if
