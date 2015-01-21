@@ -2,7 +2,7 @@
 title: The "safe" HTTP Preference
 abbrev: Preference for Safe Browsing
 docname: draft-nottingham-safe-hint-06
-date: 2014
+date: 2015
 category: std
 
 ipr: trust200902
