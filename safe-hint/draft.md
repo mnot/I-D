@@ -62,10 +62,6 @@ simpler. A user agent that supports doing so (whether it be an individual
 browser, or through an Operating System HTTP library) need only be configured
 once to assure that the preference is advertised to all sites.
 
-Furthermore, a proxy (for example, at a school) can associate the preference
-with all (unencrypted) requests flowing through it, helping to assure that
-clients behind it are not exposed to "objectionable" content.
-
 This specification defines how to declare this desire in requests as a HTTP
 Preference {{RFC7240}}.
 
@@ -119,7 +115,7 @@ See {{browsers}} for advice specific to Web browsers wishing to support "safe".
 
 Additionally, other clients MAY insert it; e.g., an operating system might
 choose to insert the preference in requests based upon system-wide
-configuration, or a proxy might do so based upon its configuration.
+configuration.
 
 Origin servers that utilize the "safe" preference SHOULD document that they do
 so, along with the criteria that they use to denote objectionable content. If a
@@ -173,9 +169,9 @@ exist.
 # Security Considerations
 
 The "safe" preference is not a secure mechanism; it can be inserted or removed
-by intermediaries with access to the request stream. Its presence reveals
-limited information about the user, which may be of small assistance in
-"fingerprinting" the user.
+by intermediaries with access to the request stream (e.g. for "http://" URLs).
+Its presence reveals limited information about the user, which may be of small
+assistance in "fingerprinting" the user.
 
 By its nature, including "safe" in requests does not assure that all
 content will actually be safe; it is only when servers elect to honor it that
@@ -248,8 +244,8 @@ The safe preference is designed to make as much of the Web a "safe" experience
 as possible; it is not intended to be configured site-by-site. Therefore, if
 the user expresses a wish to disable "safe" mode, the site should remind them
 that the safe preference is being sent, and ask them to consult their
-administrator (since "safe" might be set by an intermediary or locked-down
-Operating System configuration).
+administrator (since "safe" might be set by a locked-down Operating System
+configuration).
 
 As explained in {{safe}}, responses that change based upon the presence of the
 "safe" preference need to either carry the "Vary: Prefer" response header
