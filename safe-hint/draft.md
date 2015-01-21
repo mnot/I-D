@@ -67,7 +67,8 @@ Preference {{RFC7240}}.
 
 Note that this specification does not precisely define what "safe" is; rather,
 it is interpreted within the scope of each Web site that chooses to act upon
-this information (or not). 
+this information. Furthermore, sending "safe" does not guarantee that the
+Web site will use it.
 
 That said, the intent of "safe" is to allow end users (or those acting on their
 behalf) to express a desire to avoid content that is considered "objectionable"
