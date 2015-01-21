@@ -60,7 +60,8 @@ browser on every device used.
 If this desire is proactively advertised by the user agent, things become much
 simpler. A user agent that supports doing so (whether it be an individual
 browser, or through an Operating System HTTP library) need only be configured
-once to assure that the preference is advertised to all sites.
+once to assure that the preference is advertised to a set of sites, or even all
+sites.
 
 This specification defines how to declare this desire in requests as a HTTP
 Preference {{RFC7240}}.
@@ -108,11 +109,10 @@ User-Agent: ExampleBrowser/1.0
 Prefer: safe
 ~~~
 
-When configured to do so, user agents SHOULD include the "safe" preference in
-every request, to ensure that the preference is available to all requested
-resources.
-
-See {{browsers}} for advice specific to Web browsers wishing to support "safe".
+User agents SHOULD include the "safe" preference in all requests, to ensure
+that the preference is available to the applicable resources. Note that the
+resources which "safe" is sent to is potentially configurable; see {{browsers}}
+for more information.
 
 Additionally, other clients MAY insert it; e.g., an operating system might
 choose to insert the preference in requests based upon system-wide
@@ -227,6 +227,11 @@ system).
 Browsers might also allow the "safe" preference to be "locked" -- that is,
 prevent modification without administrative access, or a passcode.
 
+Note that this specification does not constrain browsers to send "safe" on all
+requests, although that is one possible implementation; e.g., an alternate
+implementation strategy would be to allow a blacklist (of sites that "safe" is
+not sent to).
+
 
 # Supporting "safe" on Web Sites {#servers}
 
@@ -241,10 +246,8 @@ locked down by the browser's administrator (e.g., a parent). If the site has
 configuration (e.g., stored user preferences) and the safe preference is
 received in a request, the "safer" interpretation is always used.
 
-The safe preference is designed to make as much of the Web a "safe" experience
-as possible; it is not intended to be configured site-by-site. Therefore, if
-the user expresses a wish to disable "safe" mode, the site should remind them
-that the safe preference is being sent, and ask them to consult their
+If the user expresses a wish to disable "safe" mode, the site should remind
+them that the safe preference is being sent, and ask them to consult their
 administrator (since "safe" might be set by a locked-down Operating System
 configuration).
 
