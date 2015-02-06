@@ -1,5 +1,5 @@
 ---
-title: Encryption Content-Encoding for HTTP
+title: Encrypted Content-Encoding for HTTP
 abbrev: HTTP encryption coding
 docname: draft-nottingham-http-encryption-encoding-01
 date: 2015
@@ -20,6 +20,11 @@ author:
     organization: 
     email: mnot@mnot.net
     uri: http://www.mnot.net/
+-
+    ins: M. Thomson
+	name: Martin Thomson
+	organization: Mozilla
+	email: martin.thomson@gmail.com
 
 normative:
   RFC2119:
@@ -34,11 +39,7 @@ informative:
 
 --- abstract
 
-This memo introduces an "encryption" content-coding for HTTP, to allow message payloads to be
-encrypted, and for that encryption to be persisted on the server.
-
-Such a capability would allow, for example, storing content on a HTTP server without exposing its
-contents to that server.
+This memo introduces a content-codings for HTTP that allows message payloads to be encrypted.
 
 
 --- middle
@@ -57,15 +58,9 @@ without exposing its contents.
 These uses are not met by the use of TLS {{RFC5246}}, since it only encrypts the channel between
 the client and server.
 
-This document specifies an "encryption" content-coding ({RFC7231}}) for HTTP to serve these use
-cases.
+This document specifies a content-coding ({RFC7231}}) for HTTP to serve these and other use
+cases. 
 
-The most common uses for such an encoding would be in the successful response to a GET request, or
-in a PUT request.
-
-Using this content coding in a PATCH or POST request is less likely to be useful, since the server
-needs to process the request body to perform the method. Likewise, using this content-coding in an
-unsuccessful response to a GET request is likely to be counterproductive.
 
 ## Notational Conventions
 
@@ -74,32 +69,46 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# The "encrypted" HTTP content-coding  {#encrypted}
+# The "aesgcm-128" HTTP content-coding
 
-The "encrypted" HTTP content-coding indicates that a payload has been encrypted using the cipher
-described in the Encryption HTTP header field.
+The "aesgcm-128" HTTP content-coding indicates that a payload has been encrypted using Advanced
+Encryption Standard (AES) in Galois/Counter Mode (GCM) {AES}} {{NIST.800-38D}}, using a 128 bit key.
 
-When it appears, the Encryption HTTP header field MUST be present in the message.
+When this content-coding is in use, the Encryption header field {#encryption} MUST be present, and
+MUST have a corresponding value with the following parameters:
+
+- block size - fixed for message scope; default 4k, change via parameter
+- padding - 1 byte
+- IV - per-block prefix
+- auth tags - end of block
+
+
 
 
 # The "Encryption" HTTP header field  {#encryption}
 
-The "Encryption" HTTP header field describes the cipher(s) that have been applied to a message
-payload.
+The "Encryption" HTTP header field describes the parameters that are necessary for encrypted
+content encoding(s) that have been applied to a message payload.
 
 ~~~
-  Encryption-val = #cipher
-  cipher = token *( ";" param )
+  Encryption-val = #cipher_params
+  cipher_params = *( ";" param )
 ~~~
 
-Each cipher is identified by a token; see {{cipher-registry}}. 
+The following parameters are defined for all ciphers' potential use:
+
+* "key" - contains the base64 URL-encoded bytes of the key.
+
+* "keyid" - contains 
+
+* "" -
 
 One parameter, "key", is defined for all ciphers; it carries a URI {{RFC3986}} that identifies the
 key used to encrypt the payload. Individual tokens MAY define the parameters that are appropriate
 for them.
 
-If the payload is encrypted more than once (as reflected by having multiple 'encrypted'
-content-codings), each cipher MUST be reflected in "Encryption", in the order in which they were
+If the payload is encrypted more than once (as reflected by having multiple content-codings that
+imply encryption), each cipher MUST be reflected in "Encryption", in the order in which they were
 applied.
 
 Servers processing PUT requests MUST persist the value of the Encryption header field.
@@ -112,9 +121,9 @@ Servers processing PUT requests MUST persist the value of the Encryption header 
 ~~~
 HTTP/1.1 200 OK
 Content-Type: application/octet-stream
-Content-Encoding: encrypted
+Content-Encoding: aesgcm-128
 Connection: close
-Encryption: rsa256; key="http://example.org/bob/keys/123"
+Encryption: key="http://example.org/bob/keys/123"
 
 [encrypted payload]
 ~~~
