@@ -29,6 +29,7 @@ author:
 normative:
   RFC2119:
   RFC3986:
+  RFC4492:
   RFC7230:
   RFC7231:
 
@@ -39,7 +40,7 @@ informative:
 
 --- abstract
 
-This memo introduces a content-codings for HTTP that allows message payloads to be encrypted.
+This memo introduces a content-coding for HTTP that allows message payloads to be encrypted.
 
 
 --- middle
@@ -76,31 +77,42 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 # The "aesgcm-128" HTTP content-coding
 
 The "aesgcm-128" HTTP content-coding indicates that a payload has been encrypted using Advanced
-Encryption Standard (AES) in Galois/Counter Mode (GCM) {AES}} {{NIST.800-38D}}, using a 128 bit key.
+Encryption Standard (AES) in Galois/Counter Mode (GCM) {{AES}} {{NIST.800-38D}}, using a 128 bit
+content encryption key.
 
-When this content-coding is in use, the Encryption header field {#encryption} MUST be present, and
-MUST include sufficient information to determine the content encryption key.
+When this content-coding is in use, the Encryption header field {{encryption}} MUST be present, and
+MUST include sufficient information to determine the content encryption key (see {{derivation}}).
 
 The "aesgcm-128" content-coding uses a fixed block size for any given payload.  Each block is
 preceded by a 96-bit initialization vector and followed by 128-bit authentication tag.  The block
 size defaults to 4096 bytes, but this value can be changed using the "bs" parameter on the
 Encryption header field.
 
-The encrypted content is therefore an arbitrarily long sequence of blocks, each consisting of 12
-bytes of IV, "bs" bytes of encrypted data, and 16 bytes of authentication.
+The encrypted content is therefore an sequence of blocks, each consisting of 12 bytes of IV,
+encrypted data of a length equal to the value of the "bs" parameter, and 16 bytes of authentication
+tag.
+
+The final block can be any size up to the block size.  AES-GCM does not require block-level padding,
+so the size of an encrypted block can be determined by subtracting the 28 bytes of IV and
+authentication tag from the remaining bytes.
 
 Each block contains between 0 and 255 bytes of padding, inserted into a block before the enciphered
 content.  The length of the padding is stored in the first byte of the payload.  All padding bytes
-MUST be set to zero.
+MUST be set to zero.  It is a fatal decryption error to have a block with more padding than the
+block size.
 
-The final block can be any size up to the block size.  AES-GCM does not depend on having block-level
-padding, so the size of an encrypted block directly corresponds to the size of the plaintext.
+The additional data passed to the AES-GCM algorithm consists of the concatenation of:
+
+1. the ASCII-encoded string "Content-Encoding: aesgcm-128",
+2. a zero octet, and
+3. the index of the current block encoded as a 64-bit unsigned integer, with the first block index
+   being zero.
 
 
 # The "Encryption" HTTP header field  {#encryption}
 
-The "Encryption" HTTP header field describes the parameters that are necessary for encrypted
-content encoding(s) that have been applied to a message payload.
+The "Encryption" HTTP header field describes the encrypted content encoding(s) that have been
+applied to a message payload, and therefore how those content encoding(s) can be removed.
 
 ~~~
   Encryption-val = #cipher_params
@@ -108,10 +120,16 @@ content encoding(s) that have been applied to a message payload.
 ~~~
 
 If the payload is encrypted more than once (as reflected by having multiple content-codings that
-imply encryption), each cipher MUST be reflected in "Encryption", in the order in which they were
-applied.
+imply encryption), each cipher is reflected in the Encryption header field, in the order in which
+they were applied.
 
-Servers processing PUT requests MUST persist the value of the Encryption header field.
+The Encryption header MAY be omitted if the sender does not intend for the immediate receipient to
+be able to decrypt the message.  Alternatively, the Encryption header field MAY be omitted if the
+sender intends for the recipient to acquire the header field by other means.
+
+Servers processing PUT requests MUST persist the value of the Encryption header field, unless they
+remove the content-coding by decrypting the payload.
+
 
 ## Encryption Header Field Parameters
 
@@ -136,9 +154,36 @@ described in {{derivation}}.
 In addition to key determination parameters, the "bs" parameter includes a positive integer value
 that describes the block size.
 
+
 ## Content Encryption Key Derivation {#derivation}
 
-TODO
+The content encryption key used by the content-coding is determined based on the information in the
+Encryption header field.  Several variations are possible:
+
+explicit key:
+
+: The "key" parameter is decoded and used directly if present.  Other key determination parameters
+can be ignored if this parameter is present.
+
+identified key:
+
+: The "keyid" is used to identify a key that is discovered by some out-of-band means.  A "keyid"
+parameter can be omitted if a key can be identified based on other information.
+
+p256-dh:
+
+: The "p256-dh" parameter contains a elliptic curve Diffie-Hellman share {{RFC4492}}.  This share is
+combined with a share from the intended recipient of the encrypted message.  When a "p256-dh"
+parameter is present, the "keyid" parameter identifies the share from the intended recipient.
+
+
+The product of each of these alternatives generates a sequence of bytes.  This is used as the secret
+input to the TLS pseudorandom function (PRF) {{RFC5246}} with the SHA-256 hash function to generate
+the key.
+
+The label used for the PRF is the ASCII string "encrypted Content-Encoding" and the seed is the
+value of the "nonce" parameter, which is first decoded.  The "nonce" parameter therefore MUST be
+provided to enable decryption.
 
 
 # Examples
@@ -155,10 +200,9 @@ Encryption: keyid="http://example.org/bob/keys/123"
 [encrypted payload]
 ~~~
 
-Here, a successful HTTP GET response has been encrypted using rsa256 and a key identified with the
-HTTP URI scheme.
+Here, a successful HTTP GET response has been encrypted using a key that is identified by a URI.
 
-Note that the media type has been normalized to "application/octet-stream" to avoid exposing
+Note that the media type has been changed to "application/octet-stream" to avoid exposing
 information about the content.
 
 ## Encryption and Compression
