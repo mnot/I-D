@@ -139,9 +139,9 @@ information about the content.
 ~~~
 HTTP/1.1 200 OK
 Content-Type: text/html
-Content-Encoding: encrypted, gzip
+Content-Encoding: aesgcm-128, gzip
 Transfer-Encoding: chunked
-Encryption: rsa256; key="mailto:me@example.com"
+Encryption: key="mailto:me@example.com"
 
 [encrypted payload]
 ~~~
@@ -152,10 +152,10 @@ Encryption: rsa256; key="mailto:me@example.com"
 PUT /thing HTTP/1.1
 Host: storage.example.com
 Content-Type: application/http
-Content-Encoding: encrypted, encrypted
+Content-Encoding: aesgcm-128, aesgcm-128
 Content-Length: 1234
-Encryption: rsa256; key="mailto:me@example.com",
-            rsa256; key="http://example.org/bob/keys/123"
+Encryption: key="mailto:me@example.com",
+            key="http://example.org/bob/keys/123"
 
 [encrypted payload]
 ~~~
@@ -165,13 +165,13 @@ Here, a PUT request has been encrypted with two keys; both will be necessary to 
 
 # IANA Considerations
 
-## The "encrypted" HTTP content-coding
+## The "aesgcm-128" HTTP content-coding
 
 This memo registers the "encrypted" HTTP content-coding in the HTTP Content Codings Registry, as
 detailed in {{encrypted}}.
 
-* Name: encrypted
-* Description: encrypted data
+* Name: aesgcm-128
+* Description: AES-GCM encryption with a 128-bit key
 * Reference [this specification]
 
 ## The "Encryption" HTTP header field
@@ -185,11 +185,6 @@ detailed in {{encryption}}.
 * Reference: [this specification]
 * Notes: 
 
-## The HTTP Encryption Registry {#cipher-registry}
-
-### Initial Contents
-
-* "rsa256" - 
 
 # Security Considerations
 
