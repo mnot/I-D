@@ -61,6 +61,10 @@ the client and server.
 This document specifies a content-coding ({RFC7231}}) for HTTP to serve these and other use
 cases.
 
+This mechanism is likely only a small part of a larger design that uses content encryption.  In
+particular, this document does not describe key management practices.  How clients and servers
+acquire and identify keys will depend on the use case.
+
 
 ## Notational Conventions
 
@@ -146,7 +150,7 @@ HTTP/1.1 200 OK
 Content-Type: application/octet-stream
 Content-Encoding: aesgcm-128
 Connection: close
-Encryption: key="http://example.org/bob/keys/123"
+Encryption: keyid="http://example.org/bob/keys/123"
 
 [encrypted payload]
 ~~~
@@ -164,7 +168,7 @@ HTTP/1.1 200 OK
 Content-Type: text/html
 Content-Encoding: aesgcm-128, gzip
 Transfer-Encoding: chunked
-Encryption: key="mailto:me@example.com"
+Encryption: keyid="mailto:me@example.com"
 
 [encrypted payload]
 ~~~
@@ -177,8 +181,8 @@ Host: storage.example.com
 Content-Type: application/http
 Content-Encoding: aesgcm-128, aesgcm-128
 Content-Length: 1234
-Encryption: key="mailto:me@example.com",
-            key="http://example.org/bob/keys/123"
+Encryption: keyid="mailto:me@example.com",
+            keyid="http://example.org/bob/keys/123"
 
 [encrypted payload]
 ~~~
