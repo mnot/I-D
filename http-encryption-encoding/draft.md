@@ -7,7 +7,7 @@ category: info
 
 ipr: trust200902
 area: General
-workgroup: 
+workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
@@ -17,14 +17,14 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: http://www.mnot.net/
 -
     ins: M. Thomson
-	name: Martin Thomson
-	organization: Mozilla
-	email: martin.thomson@gmail.com
+    name: Martin Thomson
+    organization: Mozilla
+    email: martin.thomson@gmail.com
 
 normative:
   RFC2119:
@@ -59,7 +59,7 @@ These uses are not met by the use of TLS {{RFC5246}}, since it only encrypts the
 the client and server.
 
 This document specifies a content-coding ({RFC7231}}) for HTTP to serve these and other use
-cases. 
+cases.
 
 
 ## Notational Conventions
@@ -99,7 +99,7 @@ The following parameters are defined for all ciphers' potential use:
 
 * "key" - contains the base64 URL-encoded bytes of the key.
 
-* "keyid" - contains 
+* "keyid" - contains
 
 * "" -
 
@@ -183,7 +183,7 @@ detailed in {{encryption}}.
 * Protocol: HTTP
 * Status: Standard
 * Reference: [this specification]
-* Notes: 
+* Notes:
 
 
 # Security Considerations
@@ -233,7 +233,7 @@ Applications using this mechanism need to be aware that the size of encrypted me
 their timing, HTTP methods, URIs and so on, may leak sensitive information.
 
 This risk can be partially mitigated by splitting up files into segments and storing the
-separately. It can also be mitigated by using HTTP/2 {{I-D.ietf-httpbis-http2}} combined with 
+separately. It can also be mitigated by using HTTP/2 {{I-D.ietf-httpbis-http2}} combined with
 TLS {{RFC5246}}.
 
 
