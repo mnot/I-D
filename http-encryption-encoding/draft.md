@@ -75,14 +75,22 @@ The "aesgcm-128" HTTP content-coding indicates that a payload has been encrypted
 Encryption Standard (AES) in Galois/Counter Mode (GCM) {AES}} {{NIST.800-38D}}, using a 128 bit key.
 
 When this content-coding is in use, the Encryption header field {#encryption} MUST be present, and
-MUST have a corresponding value with the following parameters:
+MUST include sufficient information to determine the content encryption key.
 
-- block size - fixed for message scope; default 4k, change via parameter
-- padding - 1 byte
-- IV - per-block prefix
-- auth tags - end of block
+The "aesgcm-128" content-coding uses a fixed block size for any given payload.  Each block is
+preceded by a 96-bit initialization vector and followed by 128-bit authentication tag.  The block
+size defaults to 4096 bytes, but this value can be changed using the "bs" parameter on the
+Encryption header field.
 
+The encrypted content is therefore an arbitrarily long sequence of blocks, each consisting of 12
+bytes of IV, "bs" bytes of encrypted data, and 16 bytes of authentication.
 
+Each block contains between 0 and 255 bytes of padding, inserted into a block before the enciphered
+content.  The length of the padding is stored in the first byte of the payload.  All padding bytes
+MUST be set to zero.
+
+The final block can be any size up to the block size.  AES-GCM does not depend on having block-level
+padding, so the size of an encrypted block directly corresponds to the size of the plaintext.
 
 
 # The "Encryption" HTTP header field  {#encryption}
@@ -92,20 +100,8 @@ content encoding(s) that have been applied to a message payload.
 
 ~~~
   Encryption-val = #cipher_params
-  cipher_params = *( ";" param )
+  cipher_params = [ param *( ";" param ) ]
 ~~~
-
-The following parameters are defined for all ciphers' potential use:
-
-* "key" - contains the base64 URL-encoded bytes of the key.
-
-* "keyid" - contains
-
-* "" -
-
-One parameter, "key", is defined for all ciphers; it carries a URI {{RFC3986}} that identifies the
-key used to encrypt the payload. Individual tokens MAY define the parameters that are appropriate
-for them.
 
 If the payload is encrypted more than once (as reflected by having multiple content-codings that
 imply encryption), each cipher MUST be reflected in "Encryption", in the order in which they were
@@ -113,10 +109,37 @@ applied.
 
 Servers processing PUT requests MUST persist the value of the Encryption header field.
 
+## Encryption Header Field Parameters
+
+The following parameters are used in determining the key that is used for encryption:
+
+key:
+: contains the base64 URL-encoded [RFC4648] bytes of the key.
+
+keyid:
+: contains a string that identifies a key.
+
+p256-dh:
+: contains an ephemeral elliptic curve Diffie-Hellman share over the P-256 curve {{FIPS186}}. The
+share is base64 URL-encoded [RFC4648] bytes of the uncompressed curve point.
+
+nonce:
+: contains a base64 URL-encoded bytes of a nonce that is used to derive a content encryption key.
+
+These parameters are used to determine a content encryption key.  The key derivation process is
+described in {{derivation}}.
+
+In addition to key determination parameters, the "bs" parameter includes a positive integer value
+that describes the block size.
+
+## Content Encryption Key Derivation {#derivation}
+
+TODO
+
 
 # Examples
 
-## Successful GET response
+## Successful GET Response
 
 ~~~
 HTTP/1.1 200 OK
@@ -179,12 +202,26 @@ detailed in {{encrypted}}.
 This memo registers the "Encryption" HTTP header field in the Permanent Message Header Registry, as
 detailed in {{encryption}}.
 
-* Field name: Encrypted
+* Field name: Encryption
 * Protocol: HTTP
 * Status: Standard
 * Reference: [this specification]
 * Notes:
 
+## The HTTP Encryption Registry {#cipher-registry}
+
+This memo establishes a registry for parameters used by the "Encryption" header
+field under the "Hypertext Transfer Protocol (HTTP) Parameters" grouping.  The
+"Hypertext Transfer Protocol (HTTP) Encryption Parameters" operates under an
+"Expert Review" policy [RFC5226].
+
+The initial contents of this registry are:
+
+* keyid
+* key
+* p256-dh
+* nonce
+* bs
 
 # Security Considerations
 
