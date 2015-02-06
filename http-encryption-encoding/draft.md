@@ -213,13 +213,34 @@ detailed in {{encryption}}.
 This memo establishes a registry for parameters used by the "Encryption" header
 field under the "Hypertext Transfer Protocol (HTTP) Parameters" grouping.  The
 "Hypertext Transfer Protocol (HTTP) Encryption Parameters" operates under an
-"Expert Review" policy [RFC5226].
+"Specification Required" policy [RFC5226].
+
+Entries in this registry are expected to include the following information:
+
+Parameter Name:
+: The name of the parameter.
+Purpose:
+: A brief description of the purpose of the parameter.
+Reference:
+: A reference to a specification that defines the semantics of the parameter.
 
 The initial contents of this registry are:
 
-* keyid
-* key
-* p256-dh
+Parameter Name:
+: keyid
+Purpose:
+: Identify the key that is in use.
+
+Parameter Name:
+: key
+Purpose:
+: Provide an explicit key.
+
+Parameter Name:
+: p256-dh
+Purpose:
+: Carry an elliptic curve Diffie-Hellman share used to derive a key.
+
 * nonce
 * bs
 
