@@ -20,7 +20,7 @@ author:
     organization:
     email: mnot@mnot.net
     uri: http://www.mnot.net/
--
+ -
     ins: M. Thomson
     name: Martin Thomson
     organization: Mozilla
@@ -28,12 +28,30 @@ author:
 
 normative:
   RFC2119:
-  RFC3986:
   RFC4492:
+  RFC4648:
   RFC7230:
-  RFC7231:
+  AES:
+    title: Advanced Encryption Standard (AES)
+    author: 
+      - org: National Institute of Standards and Technology (NIST)
+    date: November 2001
+    seriesinfo: FIPS PUB 197
+  NIST80038D:
+    title: "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC"
+    author: 
+      - org: National Institute of Standards and Technology (NIST)
+    date: December 2001
+    seriesinfo: NIST PUB 800-38D
+  FIPS186:
+    title: Digital Signature Standard (DSS)
+    author: 
+      - org: National Institute of Standards and Technology (NIST)
+    date: May 1994
+    seriesinfo: FIPS PUB 186
 
 informative:
+  RFC5226:
   RFC5246:
   RFC7235:
   I-D.ietf-httpbis-http2:
@@ -74,10 +92,10 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# The "aesgcm-128" HTTP content-coding
+# The "aesgcm-128" HTTP content-coding {#aesgcm128}
 
 The "aesgcm-128" HTTP content-coding indicates that a payload has been encrypted using Advanced
-Encryption Standard (AES) in Galois/Counter Mode (GCM) {{AES}} {{NIST.800-38D}}, using a 128 bit
+Encryption Standard (AES) in Galois/Counter Mode (GCM) {{AES}} {{NIST80038D}}, using a 128 bit
 content encryption key.
 
 When this content-coding is in use, the Encryption header field {{encryption}} MUST be present, and
@@ -239,7 +257,7 @@ Here, a PUT request has been encrypted with two keys; both will be necessary to 
 ## The "aesgcm-128" HTTP content-coding
 
 This memo registers the "encrypted" HTTP content-coding in the HTTP Content Codings Registry, as
-detailed in {{encrypted}}.
+detailed in {{aesgcm128}}.
 
 * Name: aesgcm-128
 * Description: AES-GCM encryption with a 128-bit key
