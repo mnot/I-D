@@ -123,7 +123,7 @@ If the payload is encrypted more than once (as reflected by having multiple cont
 imply encryption), each cipher is reflected in the Encryption header field, in the order in which
 they were applied.
 
-The Encryption header MAY be omitted if the sender does not intend for the immediate receipient to
+The Encryption header MAY be omitted if the sender does not intend for the immediate recipient to
 be able to decrypt the message.  Alternatively, the Encryption header field MAY be omitted if the
 sender intends for the recipient to acquire the header field by other means.
 
