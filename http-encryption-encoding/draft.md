@@ -294,12 +294,6 @@ Purpose:
 
 # Security Considerations
 
-## Key Exposure
-
-As with any encryption scheme, this mechanism is only as secure as the key. Because the key is
-identified by (and potentially available at) a URI, care needs to be taken that it will not be
-unduly exposed.
-
 
 ## Leaking Information in Headers
 
