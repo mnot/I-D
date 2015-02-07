@@ -7,7 +7,7 @@ category: info
 
 ipr: trust200902
 area: General
-workgroup: 
+workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
@@ -17,18 +17,19 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: http://www.mnot.net/
 -
     ins: M. Thomson
-	name: Martin Thomson
-	organization: Mozilla
-	email: martin.thomson@gmail.com
+    name: Martin Thomson
+    organization: Mozilla
+    email: martin.thomson@gmail.com
 
 normative:
   RFC2119:
   RFC3986:
+  RFC4492:
   RFC7230:
   RFC7231:
 
@@ -39,7 +40,7 @@ informative:
 
 --- abstract
 
-This memo introduces a content-codings for HTTP that allows message payloads to be encrypted.
+This memo introduces a content-coding for HTTP that allows message payloads to be encrypted.
 
 
 --- middle
@@ -59,7 +60,11 @@ These uses are not met by the use of TLS {{RFC5246}}, since it only encrypts the
 the client and server.
 
 This document specifies a content-coding ({RFC7231}}) for HTTP to serve these and other use
-cases. 
+cases.
+
+This mechanism is likely only a small part of a larger design that uses content encryption.  In
+particular, this document does not describe key management practices.  How clients and servers
+acquire and identify keys will depend on the use case.
 
 
 ## Notational Conventions
@@ -72,66 +77,132 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 # The "aesgcm-128" HTTP content-coding
 
 The "aesgcm-128" HTTP content-coding indicates that a payload has been encrypted using Advanced
-Encryption Standard (AES) in Galois/Counter Mode (GCM) {AES}} {{NIST.800-38D}}, using a 128 bit key.
+Encryption Standard (AES) in Galois/Counter Mode (GCM) {{AES}} {{NIST.800-38D}}, using a 128 bit
+content encryption key.
 
-When this content-coding is in use, the Encryption header field {#encryption} MUST be present, and
-MUST have a corresponding value with the following parameters:
+When this content-coding is in use, the Encryption header field {{encryption}} MUST be present, and
+MUST include sufficient information to determine the content encryption key (see {{derivation}}).
 
-- block size - fixed for message scope; default 4k, change via parameter
-- padding - 1 byte
-- IV - per-block prefix
-- auth tags - end of block
+The "aesgcm-128" content-coding uses a fixed block size for any given payload.  Each block is
+preceded by a 96-bit initialization vector and followed by 128-bit authentication tag.  The block
+size defaults to 4096 bytes, but this value can be changed using the "bs" parameter on the
+Encryption header field.
 
+The encrypted content is therefore an sequence of blocks, each consisting of 12 bytes of IV,
+encrypted data of a length equal to the value of the "bs" parameter, and 16 bytes of authentication
+tag.
 
+The final block can be any size up to the block size.  AES-GCM does not require block-level padding,
+so the size of an encrypted block can be determined by subtracting the 28 bytes of IV and
+authentication tag from the remaining bytes.
+
+Each block contains between 0 and 255 bytes of padding, inserted into a block before the enciphered
+content.  The length of the padding is stored in the first byte of the payload.  All padding bytes
+MUST be set to zero.  It is a fatal decryption error to have a block with more padding than the
+block size.
+
+The additional data passed to the AES-GCM algorithm consists of the concatenation of:
+
+1. the ASCII-encoded string "Content-Encoding: aesgcm-128",
+2. a zero octet, and
+3. the index of the current block encoded as a 64-bit unsigned integer, with the first block index
+   being zero.
 
 
 # The "Encryption" HTTP header field  {#encryption}
 
-The "Encryption" HTTP header field describes the parameters that are necessary for encrypted
-content encoding(s) that have been applied to a message payload.
+The "Encryption" HTTP header field describes the encrypted content encoding(s) that have been
+applied to a message payload, and therefore how those content encoding(s) can be removed.
 
 ~~~
   Encryption-val = #cipher_params
-  cipher_params = *( ";" param )
+  cipher_params = [ param *( ";" param ) ]
 ~~~
 
-The following parameters are defined for all ciphers' potential use:
-
-* "key" - contains the base64 URL-encoded bytes of the key.
-
-* "keyid" - contains 
-
-* "" -
-
-One parameter, "key", is defined for all ciphers; it carries a URI {{RFC3986}} that identifies the
-key used to encrypt the payload. Individual tokens MAY define the parameters that are appropriate
-for them.
-
 If the payload is encrypted more than once (as reflected by having multiple content-codings that
-imply encryption), each cipher MUST be reflected in "Encryption", in the order in which they were
-applied.
+imply encryption), each cipher is reflected in the Encryption header field, in the order in which
+they were applied.
 
-Servers processing PUT requests MUST persist the value of the Encryption header field.
+The Encryption header MAY be omitted if the sender does not intend for the immediate receipient to
+be able to decrypt the message.  Alternatively, the Encryption header field MAY be omitted if the
+sender intends for the recipient to acquire the header field by other means.
+
+Servers processing PUT requests MUST persist the value of the Encryption header field, unless they
+remove the content-coding by decrypting the payload.
+
+
+## Encryption Header Field Parameters
+
+The following parameters are used in determining the key that is used for encryption:
+
+key:
+: contains the base64 URL-encoded [RFC4648] bytes of the key.
+
+keyid:
+: contains a string that identifies a key.
+
+p256-dh:
+: contains an ephemeral elliptic curve Diffie-Hellman share over the P-256 curve {{FIPS186}}. The
+share is base64 URL-encoded [RFC4648] bytes of the uncompressed curve point.
+
+nonce:
+: contains a base64 URL-encoded bytes of a nonce that is used to derive a content encryption key.
+
+These parameters are used to determine a content encryption key.  The key derivation process is
+described in {{derivation}}.
+
+In addition to key determination parameters, the "bs" parameter includes a positive integer value
+that describes the block size.
+
+
+## Content Encryption Key Derivation {#derivation}
+
+The content encryption key used by the content-coding is determined based on the information in the
+Encryption header field.  Several variations are possible:
+
+explicit key:
+
+: The "key" parameter is decoded and used directly if present.  Other key determination parameters
+can be ignored if this parameter is present.
+
+identified key:
+
+: The "keyid" is used to identify a key that is discovered by some out-of-band means.  A "keyid"
+parameter can be omitted if a key can be identified based on other information.
+
+p256-dh:
+
+: The "p256-dh" parameter contains a elliptic curve Diffie-Hellman share {{RFC4492}}.  This share is
+combined with a share from the intended recipient of the encrypted message.  When a "p256-dh"
+parameter is present, the "keyid" parameter identifies the share from the intended recipient.
+
+
+The product of each of these alternatives generates a sequence of bytes.  This is used as the secret
+input to the TLS pseudorandom function (PRF) {{RFC5246}} with the SHA-256 hash function to generate
+the key.
+
+The label used for the PRF is the ASCII string "encrypted Content-Encoding" and the seed is the
+value of the "nonce" parameter, which is first decoded.  The "nonce" parameter therefore MUST be
+provided to enable decryption.
 
 
 # Examples
 
-## Successful GET response
+## Successful GET Response
 
 ~~~
 HTTP/1.1 200 OK
 Content-Type: application/octet-stream
 Content-Encoding: aesgcm-128
 Connection: close
-Encryption: key="http://example.org/bob/keys/123"
+Encryption: keyid="http://example.org/bob/keys/123"
 
 [encrypted payload]
 ~~~
 
-Here, a successful HTTP GET response has been encrypted using rsa256 and a key identified with the
-HTTP URI scheme.
+Here, a successful HTTP GET response has been encrypted using a key that is identified by a URI.
 
-Note that the media type has been normalized to "application/octet-stream" to avoid exposing
+Note that the media type has been changed to "application/octet-stream" to avoid exposing
 information about the content.
 
 ## Encryption and Compression
@@ -141,7 +212,7 @@ HTTP/1.1 200 OK
 Content-Type: text/html
 Content-Encoding: aesgcm-128, gzip
 Transfer-Encoding: chunked
-Encryption: key="mailto:me@example.com"
+Encryption: keyid="mailto:me@example.com"
 
 [encrypted payload]
 ~~~
@@ -154,8 +225,8 @@ Host: storage.example.com
 Content-Type: application/http
 Content-Encoding: aesgcm-128, aesgcm-128
 Content-Length: 1234
-Encryption: key="mailto:me@example.com",
-            key="http://example.org/bob/keys/123"
+Encryption: keyid="mailto:me@example.com",
+            keyid="http://example.org/bob/keys/123"
 
 [encrypted payload]
 ~~~
@@ -179,12 +250,47 @@ detailed in {{encrypted}}.
 This memo registers the "Encryption" HTTP header field in the Permanent Message Header Registry, as
 detailed in {{encryption}}.
 
-* Field name: Encrypted
+* Field name: Encryption
 * Protocol: HTTP
 * Status: Standard
 * Reference: [this specification]
-* Notes: 
+* Notes:
 
+## The HTTP Encryption Registry {#cipher-registry}
+
+This memo establishes a registry for parameters used by the "Encryption" header
+field under the "Hypertext Transfer Protocol (HTTP) Parameters" grouping.  The
+"Hypertext Transfer Protocol (HTTP) Encryption Parameters" operates under an
+"Specification Required" policy [RFC5226].
+
+Entries in this registry are expected to include the following information:
+
+Parameter Name:
+: The name of the parameter.
+Purpose:
+: A brief description of the purpose of the parameter.
+Reference:
+: A reference to a specification that defines the semantics of the parameter.
+
+The initial contents of this registry are:
+
+Parameter Name:
+: keyid
+Purpose:
+: Identify the key that is in use.
+
+Parameter Name:
+: key
+Purpose:
+: Provide an explicit key.
+
+Parameter Name:
+: p256-dh
+Purpose:
+: Carry an elliptic curve Diffie-Hellman share used to derive a key.
+
+* nonce
+* bs
 
 # Security Considerations
 
@@ -233,7 +339,7 @@ Applications using this mechanism need to be aware that the size of encrypted me
 their timing, HTTP methods, URIs and so on, may leak sensitive information.
 
 This risk can be partially mitigated by splitting up files into segments and storing the
-separately. It can also be mitigated by using HTTP/2 {{I-D.ietf-httpbis-http2}} combined with 
+separately. It can also be mitigated by using HTTP/2 {{I-D.ietf-httpbis-http2}} combined with
 TLS {{RFC5246}}.
 
 
