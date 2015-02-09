@@ -320,10 +320,12 @@ fDBJbV-a2XnWwcJQTpDinRoDqOHdmH5XxJD0Gob7wEg
 ~~~
 
 This example shows the same string, "I am the walrus", encrypted using ECDH over the P-256 curve
-[FIPS186].  The receiver (in this case, the HTTP client) uses the key identified by the string
-"theKey" and the sender (the server) uses a key pair for which the public share is included in the
-"ecdh" parameter above.  All keys are shown using uncompressed points [X.692] encoded using URL-safe
-base64.  Line wrapping is added for presentation purposes only.
+[FIPS186]. The content body is shown here encoded in URL-safe base64 for presentation reasons only.
+
+The receiver (in this case, the HTTP client) uses the key identified by the string "theKey" and the
+sender (the server) uses a key pair for which the public share is included in the "ecdh" parameter
+above. The keys shown below use uncompressed points [X.692] encoded using URL-safe base64. Line
+wrapping is added for presentation purposes only.
 
 ~~~
 Receiver:
