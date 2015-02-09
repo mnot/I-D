@@ -78,7 +78,7 @@ This memo introduces a content-coding for HTTP that allows message payloads to b
 # Introduction
 
 It is sometimes desirable to encrypt the contents of a HTTP message (request or response) in a
-persistent manner, so that when their payload is stored (e.g., with a HTTP PUT), only someone with
+persistent manner, so that when the payload is stored (e.g., with a HTTP PUT), only someone with
 the appropriate key can read it.
 
 For example, it might be necessary to store a file on a server without exposing its contents to
@@ -113,11 +113,11 @@ When this content-coding is in use, the Encryption header field {{encryption}} M
 MUST include sufficient information to determine the content encryption key (see {{derivation}}).
 
 The "aesgcm-128" content-coding uses a fixed block size for any given payload.  Each block is
-followed by 128-bit authentication tag.  The block size defaults to 4096 octets, but can be changed
+followed by a 128-bit authentication tag.  The block size defaults to 4096 octets, but can be changed
 using the "bs" parameter on the Encryption header field.  This block size is not to be mistaken for
 the block size of the cipher.
 
-The encrypted content is therefore an sequence of blocks, each with a length equal to the value of
+The encrypted content is therefore a sequence of blocks, each with a length equal to the value of
 the "bs" parameter, and 16 octets of authentication tag.
 
 ~~~
@@ -126,9 +126,9 @@ the "bs" parameter, and 16 octets of authentication tag.
 +-------------------------------+-----------------+
 ~~~
 
-The final block can be any size up to the block size.  AES-GCM does not require padding of
-plaintext, so the size of the final encrypted block can be determined by subtracting the 16 bytes of
-authentication tag from the remaining bytes.
+The plaintext can be of any size up to the block size.  AES-GCM does not require padding of
+plaintext, so the space consumed by the ciphertext can be computed by adding the length of
+the authentication tag to the bs parameter.
 
 Each block contains between 0 and 255 bytes of padding, inserted into a block before the enciphered
 content.  The length of the padding is stored in the first byte of the payload.  All padding bytes
@@ -136,13 +136,13 @@ MUST be set to zero.  It is a fatal decryption error to have a block with more p
 block size.
 
 The initialization vector for each block is a 96-bit value containing the index of the current
-block.  Blocks are indexed starting at zero.
+block in network byte order.  Blocks are indexed starting at zero.
 
 The additional data passed to the AES-GCM algorithm consists of the concatenation of:
 
-1. the ASCII-encoded string "Content-Encoding: aesgcm-128",
+1. the ASCII-encoded string "Content-Encoding: aesgcm-128" (with no trailing 0),
 2. a zero octet, and
-3. the index of the current block encoded as a 64-bit unsigned integer.
+3. the index of the current block encoded as a 64-bit unsigned integer in network byte order.
 
 
 # The "Encryption" HTTP header field  {#encryption}
@@ -187,8 +187,8 @@ is encoding using the URL-safe base64 encoding [RFC4648].
 nonce:
 
 : The "nonce" parameter contains a base64 URL-encoded bytes of a nonce that is used to derive a
-content encryption key.  The nonce value MUST be present, and MUST contain 128 bits of random
-entropy.
+content encryption key.  The nonce value MUST be present, and MUST be exactly 16 octets
+long.
 
 These parameters are used to determine a content encryption key.  The key derivation process is
 described in {{derivation}}.
@@ -209,7 +209,7 @@ can be ignored if this parameter is present.
 
 identified key:
 
-: The "keyid" is used to identify a key that is discovered by some out-of-band means.  A "keyid"
+: The "keyid" is used to identify a key that is established by some out-of-band means.  A "keyid"
 parameter can be omitted if a key can be identified based on other information.
 
 ecdh:
@@ -226,7 +226,7 @@ specify what curve and point format to use, or how a curve and point format is n
 sender and receiver.
 
 
-The product of each of these alternatives methods generates a sequence of octets.  This is used as
+The output of each of these alternatives methods is a sequence of octets which is used as
 the secret input to the TLS pseudorandom function (PRF) (as defined in Section 5 of [RFC5246])
 with the SHA-256 hash function [FIPS180-2] to generate the key.
 
