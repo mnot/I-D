@@ -369,40 +369,41 @@ field under the "Hypertext Transfer Protocol (HTTP) Parameters" grouping.  The
 
 Entries in this registry are expected to include the following information:
 
-Parameter Name:
-: The name of the parameter.
-Purpose:
-: A brief description of the purpose of the parameter.
-Reference:
-: A reference to a specification that defines the semantics of the parameter.
+* Parameter Name: The name of the parameter.
+* Purpose: A brief description of the purpose of the parameter.
+* Reference: A reference to a specification that defines the semantics of the parameter.
 
 The initial contents of this registry are:
 
-Parameter Name:
-: keyid
-Purpose:
-: Identify the key that is in use.
+### keyid
 
-Parameter Name:
-: key
-Purpose:
-: Provide an explicit key.
+* Parameter Name: keyid
+* Purpose: Identify the key that is in use.
+* Reference: [this document]
 
-Parameter Name:
-: ecdh
-Purpose:
-: Carry an elliptic curve Diffie-Hellman share used to derive a key.
+### key
 
-Parameter Name:
-: nonce
-Purpose:
-: Provide a source of entropy for derivation of the content encryption key.
-  This value is mandatory.
+* Parameter Name: key
+* Purpose: Provide an explicit key.
+* Reference: [this document]
 
-Parameter Name:
-: bs
-Purpose:
-: The size of the encrypted blocks.
+### ecdh
+
+* Parameter Name: ecdh
+* Purpose: Carry an elliptic curve Diffie-Hellman share used to derive a key.
+* Reference: [this document]
+
+### nonce
+
+* Parameter Name: nonce
+* Purpose: Provide a source of entropy for derivation of the content encryption key. This value is mandatory.
+* Reference: [this document]
+
+### bs
+
+* Parameter Name: bs
+* Purpose: The size of the encrypted blocks.
+* Reference: [this document]
 
 
 # Security Considerations
