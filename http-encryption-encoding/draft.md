@@ -31,24 +31,31 @@ normative:
   RFC4492:
   RFC4648:
   RFC7230:
+  RFC7231:
   AES:
     title: Advanced Encryption Standard (AES)
-    author: 
+    author:
       - org: National Institute of Standards and Technology (NIST)
     date: November 2001
     seriesinfo: FIPS PUB 197
   NIST80038D:
     title: "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC"
-    author: 
+    author:
       - org: National Institute of Standards and Technology (NIST)
     date: December 2001
     seriesinfo: NIST PUB 800-38D
   FIPS186:
     title: Digital Signature Standard (DSS)
-    author: 
+    author:
       - org: National Institute of Standards and Technology (NIST)
     date: May 1994
     seriesinfo: FIPS PUB 186
+  FIPS180-2:
+    title: NIST FIPS 180-2, Secure Hash Standard
+    author:
+      name: NIST
+      ins: National Institute of Standards and Technology, U.S. Department of Commerce
+    date: 2002-08
 
 informative:
   RFC5226:
@@ -196,8 +203,8 @@ parameter is present, the "keyid" parameter identifies the share from the intend
 
 
 The product of each of these alternatives generates a sequence of bytes.  This is used as the secret
-input to the TLS pseudorandom function (PRF) {{RFC5246}} with the SHA-256 hash function to generate
-the key.
+input to the TLS pseudorandom function (PRF) {{RFC5246}} with the SHA-256 hash function
+{{FIPS180-2}} to generate the key.
 
 The label used for the PRF is the ASCII string "encrypted Content-Encoding" and the seed is the
 value of the "nonce" parameter, which is first decoded.  The "nonce" parameter therefore MUST be
