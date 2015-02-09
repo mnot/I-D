@@ -106,7 +106,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 # The "aesgcm-128" HTTP content-coding {#aesgcm128}
 
 The "aesgcm-128" HTTP content-coding indicates that a payload has been encrypted using Advanced
-Encryption Standard (AES) in Galois/Counter Mode (GCM) [AES] [NIST80038D], using a 128 bit
+Encryption Standard (AES) in Galois/Counter Mode (GCM) {{AES}} {{NIST80038D}}, using a 128 bit
 content encryption key.
 
 When this content-coding is in use, the Encryption header field {{encryption}} MUST be present, and
