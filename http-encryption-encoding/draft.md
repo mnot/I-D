@@ -109,29 +109,29 @@ When this content-coding is in use, the Encryption header field {{encryption}} M
 MUST include sufficient information to determine the content encryption key (see {{derivation}}).
 
 The "aesgcm-128" content-coding uses a fixed block size for any given payload.  Each block is
-preceded by a 96-bit initialization vector and followed by 128-bit authentication tag.  The block
-size defaults to 4096 bytes, but this value can be changed using the "bs" parameter on the
-Encryption header field.
+followed by 128-bit authentication tag.  The block size defaults to 4096 bytes, but this value can
+be changed using the "bs" parameter on the Encryption header field.
 
-The encrypted content is therefore an sequence of blocks, each consisting of 12 bytes of IV,
-encrypted data of a length equal to the value of the "bs" parameter, and 16 bytes of authentication
-tag.
+The encrypted content is therefore an sequence of blocks, each with a length equal to the value of
+the "bs" parameter, and 16 bytes of authentication tag.
 
 The final block can be any size up to the block size.  AES-GCM does not require block-level padding,
-so the size of an encrypted block can be determined by subtracting the 28 bytes of IV and
-authentication tag from the remaining bytes.
+so the size of an encrypted block can be determined by subtracting the 16 bytes of authentication
+tag from the remaining bytes.
 
 Each block contains between 0 and 255 bytes of padding, inserted into a block before the enciphered
 content.  The length of the padding is stored in the first byte of the payload.  All padding bytes
 MUST be set to zero.  It is a fatal decryption error to have a block with more padding than the
 block size.
 
+The initialization vector for each block is a 96-bit value containing the index of the current
+block.  Blocks are indexed starting at zero.
+
 The additional data passed to the AES-GCM algorithm consists of the concatenation of:
 
 1. the ASCII-encoded string "Content-Encoding: aesgcm-128",
 2. a zero octet, and
-3. the index of the current block encoded as a 64-bit unsigned integer, with the first block index
-   being zero.
+3. the index of the current block encoded as a 64-bit unsigned integer.
 
 
 # The "Encryption" HTTP header field  {#encryption}
