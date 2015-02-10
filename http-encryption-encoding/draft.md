@@ -187,8 +187,9 @@ is encoding using the URL-safe base64 encoding [RFC4648].
 nonce:
 
 : The "nonce" parameter contains a base64 URL-encoded bytes of a nonce that is used to derive a
-content encryption key.  The nonce value MUST be present, and MUST be exactly 16 octets
-long.
+content encryption key.  The nonce value MUST be present, and MUST be exactly 16 octets long.  A
+nonce cannot be reused for two different representations that have the same content encryptionkey;
+generating a random nonce ensures this with a very high probability.
 
 These parameters are used to determine a content encryption key.  The key derivation process is
 described in {{derivation}}.
