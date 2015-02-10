@@ -187,8 +187,9 @@ is encoding using the URL-safe base64 encoding [RFC4648].
 nonce:
 
 : The "nonce" parameter contains a base64 URL-encoded bytes of a nonce that is used to derive a
-content encryption key.  The nonce value MUST be present, and MUST be exactly 16 octets
-long.
+content encryption key.  The nonce value MUST be present, and MUST be exactly 16 octets long.  A
+nonce MUST NOT be reused for two different messages that have the same content encryption key;
+generating a random nonce for each message ensures that nonce reuse is highly unlikely.
 
 These parameters are used to determine a content encryption key.  The key derivation process is
 described in {{derivation}}.
@@ -418,6 +419,18 @@ Implementation of cryptography can be difficult.  For instance, implementations 
 the potential for exposing keying material on side channels, such as might be exposed by the time it
 takes to perform a given operation.  The requirements for a good implementation of cryptographic
 algorithms can change over time.
+
+
+## Key and Nonce Reuse
+
+Encrypting different plaintext with the same content encryption key and initialization vector in
+AES-GCM is not safe.  The scheme defined here relies on the uniqueness of the nonce to ensure that
+the content encryption key is different for every message.
+
+If a key and nonce are reused, this could expose the content encryption key.  If the same key is
+used for multiple messages, then the nonce MUST be unique for each.  An implementation SHOULD
+generate a random nonce for every message, though using a counter for the nonce could achieve the
+desired result.
 
 
 ## Content Integrity
