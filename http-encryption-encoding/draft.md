@@ -52,8 +52,10 @@ normative:
     date: 2002-08
 
 informative:
+  RFC2440:
   RFC5226:
   RFC5246:
+  RFC5652:
   RFC7235:
   I-D.ietf-httpbis-http2:
   FIPS186:
@@ -67,6 +69,18 @@ informative:
      author:
        - org: ANSI
      seriesinfo: ANSI X9.62, 1998.
+  I-D.ietf-jose-json-web-encryption:
+  XMLENC:
+     title: "XML Encryption Syntax and Processing"
+     author:
+       - ins: D. Eastlake
+       - ins: J. Reagle
+       - ins: T. Imamura
+       - ins: B. Dillaway
+       - ins: E. Simon
+     date: 2002-12
+     seriesinfo: W3C REC
+     target: "http://www.w3.org/TR/xmlenc-core/"
 
 --- abstract
 
@@ -88,6 +102,11 @@ without exposing its contents.
 
 These uses are not met by the use of TLS [RFC5246], since it only encrypts the channel between the
 client and server.
+
+Message-based encryption formats - such as those that are described by [RFC2440], [RFC5652],
+[I-D.ietf-jose-json-web-encryption], and [XMLENC] - are not suited to stream processing, which is
+necessary for HTTP messages.  While virtually any of these alternatives could be profiled and
+adapted to suit, the overhead and complexity that would introduce is sub-optimal.
 
 This document specifies a content-coding [RFC7231]) for HTTP to serve these and other use cases.
 
