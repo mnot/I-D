@@ -52,8 +52,10 @@ normative:
     date: 2002-08
 
 informative:
+  RFC2440:
   RFC5226:
   RFC5246:
+  RFC5652:
   RFC7235:
   I-D.ietf-httpbis-http2:
   FIPS186:
@@ -67,6 +69,18 @@ informative:
      author:
        - org: ANSI
      seriesinfo: ANSI X9.62, 1998.
+  I-D.ietf-jose-json-web-encryption:
+  XMLENC:
+     title: "XML Encryption Syntax and Processing"
+     author:
+       - ins: D. Eastlake
+       - ins: J. Reagle
+       - ins: T. Imamura
+       - ins: B. Dillaway
+       - ins: E. Simon
+     date: 2002-12
+     seriesinfo: W3C REC
+     target: "http://www.w3.org/TR/xmlenc-core/"
 
 --- abstract
 
