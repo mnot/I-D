@@ -112,37 +112,36 @@ content encryption key.
 When this content-coding is in use, the Encryption header field {{encryption}} MUST be present, and
 MUST include sufficient information to determine the content encryption key (see {{derivation}}).
 
-The "aesgcm-128" content-coding uses a fixed block size for any given payload.  Each block is
-followed by a 128-bit authentication tag.  The block size defaults to 4096 octets, but can be changed
-using the "bs" parameter on the Encryption header field.  This block size is not to be mistaken for
-the block size of the cipher.
+The "aesgcm-128" content-coding uses a fixed record size for any given payload.  Each record is
+followed by a 128-bit authentication tag.  The record size defaults to 4096 octets, but can be changed
+using the "rs" parameter on the Encryption header field.
 
-The encrypted content is therefore a sequence of blocks, each with a length equal to the value of
-the "bs" parameter, and 16 octets of authentication tag.
+The encrypted content is therefore a sequence of records, each with a length equal to the value of
+the "rs" parameter, and 16 octets of authentication tag.
 
 ~~~
 +-------------------------------+-----------------+
-| Encrypted Content (bs octets) | Tag (16 octets) |
+| Encrypted Content (rs octets) | Tag (16 octets) |
 +-------------------------------+-----------------+
 ~~~
 
-The plaintext can be of any size up to the block size.  AES-GCM does not require padding of
-plaintext, so the space consumed by the ciphertext can be computed by adding the length of
-the authentication tag to the bs parameter.
+The plaintext in the final record can be of any size up to the record size.  AES-GCM does not
+require padding of plaintext, so the space consumed by the ciphertext can be computed by adding the
+length of the authentication tag to the "rs" parameter.
 
-Each block contains between 0 and 255 bytes of padding, inserted into a block before the enciphered
+Each record contains between 0 and 255 bytes of padding, inserted into a record before the enciphered
 content.  The length of the padding is stored in the first byte of the payload.  All padding bytes
-MUST be set to zero.  It is a fatal decryption error to have a block with more padding than the
-block size.
+MUST be set to zero.  It is a fatal decryption error to have a record with more padding than the
+record size.
 
-The initialization vector for each block is a 96-bit value containing the index of the current
-block in network byte order.  Blocks are indexed starting at zero.
+The initialization vector for each record is a 96-bit value containing the index of the current
+record in network byte order.  Records are indexed starting at zero.
 
 The additional data passed to the AES-GCM algorithm consists of the concatenation of:
 
 1. the ASCII-encoded string "Content-Encoding: aesgcm-128" (with no trailing 0),
 2. a zero octet, and
-3. the index of the current block encoded as a 64-bit unsigned integer in network byte order.
+3. the index of the current record encoded as a 64-bit unsigned integer in network byte order.
 
 
 # The "Encryption" HTTP header field  {#encryption}
@@ -194,8 +193,8 @@ generating a random nonce for each message ensures that nonce reuse is highly un
 These parameters are used to determine a content encryption key.  The key derivation process is
 described in {{derivation}}.
 
-In addition to key determination parameters, the "bs" parameter includes a positive integer value
-that describes the block size.
+In addition to key determination parameters, the "rs" parameter includes a positive integer value
+that describes the record size.
 
 
 ## Content Encryption Key Derivation {#derivation}
@@ -402,10 +401,10 @@ The initial contents of this registry are:
 * Purpose: Provide a source of entropy for derivation of the content encryption key. This value is mandatory.
 * Reference: [this document]
 
-### bs
+### rs
 
-* Parameter Name: bs
-* Purpose: The size of the encrypted blocks.
+* Parameter Name: rs
+* Purpose: The size of the encrypted records.
 * Reference: [this document]
 
 
