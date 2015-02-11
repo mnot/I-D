@@ -450,17 +450,24 @@ Encrypting different plaintext with the same content encryption key and nonce in
 [RFC5116].  The scheme defined here relies on the uniqueness of the "nonce" parameter to ensure that
 the content encryption key is different for every message.
 
-If a key and nonce are reused, this could expose the content encryption key.  If the same key is
-used for multiple messages, then the nonce parameter MUST be unique for each.  An implementation
-SHOULD generate a random nonce parameter for every message, though using a counter could achieve the
-desired result.
+If a key and nonce are reused, this could expose the content encryption key and it makes message
+modification trivial.  If the same key is used for multiple messages, then the nonce parameter MUST
+be unique for each.  An implementation SHOULD generate a random nonce parameter for every message,
+though using a counter could achieve the desired result.
 
 
 ## Content Integrity
 
-This mechanism does not provide any means of authenticating the origin of content.  The
-authentication tag only ensures that those with access to the encryption and decryption keys can
-produce valid content.
+This mechanism only provides content origin authentication.  The authentication tag only ensures
+that those with access to the content encryption key produce a message that will be accepted as
+valid.
+
+Any entity with the content encryption key can therefore produce content that will be accepted as
+valid.  This includes all recipients of the same message.
+
+Furthermore, any entity that is able to modify both the Encryption header field and the message
+payload can replace messages.  Without the content encryption key however, modifications to or
+replacement of parts of a message are not possible.
 
 
 ## Leaking Information in Headers
