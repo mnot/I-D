@@ -32,18 +32,7 @@ normative:
   RFC4648:
   RFC7230:
   RFC7231:
-  AES:
-    title: Advanced Encryption Standard (AES)
-    author:
-      - org: National Institute of Standards and Technology (NIST)
-    date: November 2001
-    seriesinfo: FIPS PUB 197
-  NIST80038D:
-    title: "Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC"
-    author:
-      - org: National Institute of Standards and Technology (NIST)
-    date: December 2001
-    seriesinfo: NIST PUB 800-38D
+  RFC5116:
   FIPS180-2:
     title: NIST FIPS 180-2, Secure Hash Standard
     author:
@@ -106,38 +95,54 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 # The "aesgcm-128" HTTP content-coding {#aesgcm128}
 
 The "aesgcm-128" HTTP content-coding indicates that a payload has been encrypted using Advanced
-Encryption Standard (AES) in Galois/Counter Mode (GCM) {{AES}} {{NIST80038D}}, using a 128 bit
-content encryption key.
+Encryption Standard (AES) in Galois/Counter Mode (GCM) as identified as AEAD_AES_128_GCM in
+[RFC5116], Section 5.1.  The AEAD_AES_128_GCM algorithm uses a 128 bit content encryption key.
 
-When this content-coding is in use, the Encryption header field {{encryption}} MUST be present, and
-MUST include sufficient information to determine the content encryption key (see {{derivation}}).
+When this content-coding is in use, the Encryption header field {{encryption}} is used to determine
+the content encryption key (see {{derivation}}).
 
-The "aesgcm-128" content-coding uses a fixed record size for any given payload.  Each record is
-followed by a 128-bit authentication tag.  The record size defaults to 4096 octets, but can be changed
-using the "rs" parameter on the Encryption header field.
-
-The encrypted content is therefore a sequence of records, each with a length equal to the value of
-the "rs" parameter, and 16 octets of authentication tag.
+The "aesgcm-128" content-coding uses a fixed record size.  The final encoding is a series of
+fixed-size records, though the final record can be any length.
 
 ~~~
-+-------------------------------+-----------------+
-| Encrypted Content (rs octets) | Tag (16 octets) |
-+-------------------------------+-----------------+
+       +------+
+       | data |         input of between rs-256
+       +------+            and rs-1 octets
+           |
+           v
++-----+-----------+
+| pad |   data    |     add padding to form plaintext
++-----+-----------+
+         |
+         v
++--------------------+
+|    ciphertext      |  encrypt with AEAD_AES_128_GCM
++--------------------+     expands by 16 octets
 ~~~
 
-The plaintext in the final record can be of any size up to the record size.  AES-GCM does not
-require padding of plaintext, so the space consumed by the ciphertext can be computed by adding the
-length of the authentication tag to the "rs" parameter.
+The record size determines the length of each portion of plaintext that is enciphered.  The record
+size defaults to 4096 octets, but can be changed using the "rs" parameter on the Encryption header
+field.
+
+AEAD_AES_128_GCM expands ciphertext to be 16 octets longer than its input plaintext.  Therefore, the
+length of each enciphered record is equal to the value of the "rs" parameter plus 16 octets.  It is
+a fatal decryption error to have a remainder of 16 octets or less in size (though AEAD_AES_128_GCM
+permits input plaintext to be zero length, records always contain at least one padding byte).
 
 Each record contains between 0 and 255 bytes of padding, inserted into a record before the enciphered
 content.  The length of the padding is stored in the first byte of the payload.  All padding bytes
 MUST be set to zero.  It is a fatal decryption error to have a record with more padding than the
 record size.
 
-The initialization vector for each record is a 96-bit value containing the index of the current
-record in network byte order.  Records are indexed starting at zero.
+The nonce used for each record is a 96-bit value containing the index of the current record in
+network byte order.  Records are indexed starting at zero.
 
-The additional data passed to the AES-GCM algorithm consists of the concatenation of:
+Note:
+
+: The nonce used by the AEAD algorithms in [RFC5116] is different from the value of the "nonce"
+parameter, which is used to ensure that two content encryption keys are not the same.
+
+The additional data passed to the AEAD algorithm consists of the concatenation of:
 
 1. the ASCII-encoded string "Content-Encoding: aesgcm-128" (with no trailing 0),
 2. a zero octet, and
@@ -226,9 +231,9 @@ specify what curve and point format to use, or how a curve and point format is n
 sender and receiver.
 
 
-The output of each of these alternatives methods is a sequence of octets which is used as
-the secret input to the TLS pseudorandom function (PRF) (as defined in Section 5 of [RFC5246])
-with the SHA-256 hash function [FIPS180-2] to generate the key.
+The output of each of these alternative methods is a sequence of octets which is used as the secret
+input to the TLS pseudorandom function (PRF) (as defined in Section 5 of [RFC5246]) with the SHA-256
+hash function [FIPS180-2] to generate the key.
 
 The label used for the PRF is the ASCII string "encrypted Content-Encoding" and the seed is the
 value of the "nonce" parameter, which is first decoded.  The "nonce" parameter therefore MUST be
@@ -301,8 +306,8 @@ Encryption: key="T9jtNY-vTvq7mSVlNFJbyw";
 zIZwlquLit2UEsKh1eBATJadBieZUEOI9sfiJtT6DwU
 ~~~
 
-This example shows the string "I am the walrus" being encrypted.  The content body is shown here
-encoded in URL-safe base64 for presentation reasons only.
+This example shows the string "I am the walrus" being encrypted.  The content body contains a single
+record only and is shown here encoded in URL-safe base64 for presentation reasons only.
 
 
 ## Diffie-Hellman Encryption
@@ -311,10 +316,10 @@ encoded in URL-safe base64 for presentation reasons only.
 HTTP/1.1 200 OK
 Content-Length: 31
 Content-Encoding: aesgcm-128
-Encryption: keyid="theKey";
+Encryption: keyid="the key";
             nonce="6hCMStcuoSdfvDjpm0qhdQ";
-            ecdh="BOsUGWuTKnbckPjtsU-vCi1BQaQu5B9iEoP8No2B34r
-                  SRvaA_er_d2tpRy-3e-a6n5W7MIPBcacIJ7eDWkvnDxI"
+            ecdh="BOsUGWuTKnbckPjtsU-vCi1BQaQu5B9iEoP8No2B34rS
+                  RvaA_er_d2tpRy-3e-a6n5W7MIPBcacIJ7eDWkvnDxI"
 
 fDBJbV-a2XnWwcJQTpDinRoDqOHdmH5XxJD0Gob7wEg
 ~~~
@@ -322,18 +327,18 @@ fDBJbV-a2XnWwcJQTpDinRoDqOHdmH5XxJD0Gob7wEg
 This example shows the same string, "I am the walrus", encrypted using ECDH over the P-256 curve
 [FIPS186]. The content body is shown here encoded in URL-safe base64 for presentation reasons only.
 
-The receiver (in this case, the HTTP client) uses the key identified by the string "theKey" and the
+The receiver (in this case, the HTTP client) uses the key identified by the string "the key" and the
 sender (the server) uses a key pair for which the public share is included in the "ecdh" parameter
 above. The keys shown below use uncompressed points [X.692] encoded using URL-safe base64. Line
 wrapping is added for presentation purposes only.
 
 ~~~
 Receiver:
-  private key: iG9ObZuRssarFIh859KjDpysTMybv4HNoZoPc-1DzWo
-  public key: BOsUGWuTKnbckPjtsU-vCi1BQaQu5B9iEoP8No2B34rS
-              RvaA_er_d2tpRy-3e-a6n5W7MIPBcacIJ7eDWkvnDxI
-Sender:
   private key: XKtP2DkzcIe5IP-F2aQEGhLyIAsFQ0_i0oerP7KhVDs
+  public key: BMsH0i3-wrEXL8cL66n42WLM0yjNnyYL6hIVyhcnHlb-
+              GcruWEGr-5avwIu3oJVCQofFvuwu3y3VJFcIDA5tTyg
+Sender:
+  private key: iG9ObZuRssarFIh859KjDpysTMybv4HNoZoPc-1DzWo
   public key: <the value of the "ecdh" parameter>
 ~~~
 
@@ -422,13 +427,13 @@ algorithms can change over time.
 
 ## Key and Nonce Reuse
 
-Encrypting different plaintext with the same content encryption key and initialization vector in
-AES-GCM is not safe.  The scheme defined here relies on the uniqueness of the nonce to ensure that
+Encrypting different plaintext with the same content encryption key and nonce in AES-GCM is not safe
+[RFC5116].  The scheme defined here relies on the uniqueness of the "nonce" parameter to ensure that
 the content encryption key is different for every message.
 
 If a key and nonce are reused, this could expose the content encryption key.  If the same key is
-used for multiple messages, then the nonce MUST be unique for each.  An implementation SHOULD
-generate a random nonce for every message, though using a counter for the nonce could achieve the
+used for multiple messages, then the nonce parameter MUST be unique for each.  An implementation
+SHOULD generate a random nonce parameter for every message, though using a counter could achieve the
 desired result.
 
 
