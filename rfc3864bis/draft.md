@@ -138,11 +138,7 @@ an Internet- draft) SHOULD be accompanied by updates to the corresponding reposi
 ## Definitions of Message Header Fields
 
 RFC 2822 [4] defines a general syntax for message headers, and also defines a number of fields for
-use with Internet mail. HTTP/1.0 [10] and HTTP/1.1 [24] do likewise for HTTP. Additional field
-names are defined in a variety of standards-track RFC documents, including: RFC 1036 [5], RFC 1496
-[6], RFC 1505 [7], RFC 1864 [9], RFC 2156 [14], RFC 2183 [15], RFC 2045 [11], RFC 2046 [12], RFC
-2557 [23], RFC 2227 [16], RFC 2231 [17], RFC 2298 [18], RFC 2369 [19], RFC 2421 [21], RFC 2518
-[22], RFC 2617 [25], RFC 2821 [26], RFC 2912 [27], RFC 2919 [28], RFC 2965 [29], and RFC 3282 [31].
+use with Internet mail. HTTP/1.0 [10] and HTTP/1.1 [24] do likewise for HTTP.
 
 ### Application-specific Message Header Fields
 
@@ -476,97 +472,32 @@ Michelle Cotton.
    [5]  Horton, M. and R. Adams, "Standard for interchange of USENET
         messages", RFC 1036, December 1987.
 
-   [6]  Alvestrand, H., Jordan, K., and J. Romaguera, "Rules for
-        downgrading messages from X.400/88 to X.400/84 when MIME
-        content-types are present in the messages", RFC 1496, August
-        1993.
-
-   [7]  Costanzo, A., Robinson, D., and R. Ullmann, "Encoding Header
-        Field for Internet Messages", RFC 1505, August 1993.
-
    [8]  Sollins, K. and L. Masinter, "Functional Requirements for
         Uniform Resource Names", RFC 1737, December 1994.
 
-   [9]  Myers, J. and M. Rose, "The Content-MD5 Header Field", RFC 1864,
-        October 1995.
-
    [10] Berners-Lee, T., Fielding, R. and H. Frystyk, "Hypertext
         Transfer Protocol -- HTTP/1.0", RFC 1945, May 1996.
-
 
    [11] Freed, N. and N. Borenstein, "Multipurpose Internet Mail
         Extensions (MIME) Part One: Format of Internet Message Bodies",
         RFC 2045, November 1996.
 
-   [12] Freed, N. and N. Borenstein, "Multipurpose Internet Mail
-        Extensions (MIME) Part Two: Media Types", RFC 2046, November
-        1996.
-
    [13] Moats, R., "URN Syntax", RFC 2141, May 1997.
-
-   [14] Kille, S., "MIXER (Mime Internet X.400 Enhanced Relay): Mapping
-        between X.400 and RFC 822/MIME", RFC 2156, January 1998.
-
-   [15] Troost, R., Dorner, S., and K. Moore, "Communicating
-        Presentation Information in Internet Messages: The Content-
-        Disposition Header Field", RFC 2183, August 1997.
-
-   [16] Mogul, J. and P. Leach, "Simple Hit-Metering and Usage-Limiting
-        for HTTP", RFC 2227, October 1997.
-
-   [17] Freed, N. and K. Moore, "MIME Parameter Value and Encoded Word
-        Extensions: Character Sets, Languages, and Continuations", RFC
-        2231, November 1997.
-
-   [18] Hansen, T. and G. Vaudreuil, Eds., "Message Disposition
-        Notification", RFC 3798, May 2004.
-
-   [19] Neufeld, G. and J. Baer, "The Use of URLs as Meta-Syntax for
-        Core Mail List Commands and their Transport through Message
-        Header Fields", RFC 2369, July 1998.
 
    [20] Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
         Resource Identifiers (URI): Generic Syntax", RFC 2396, August
         1998.
 
-   [21] Vaudreuil, G. and G. Parsons, "Voice Profile for Internet Mail -
-        version 2 (VPIMv2)", RFC 3801, June 2004.
-
-   [22] Goland, Y., Whitehead, E., Faizi, A., Carter, S., and D. Jensen,
-        "HTTP Extensions for Distributed Authoring -- WEBDAV", RFC 2518,
-        February 1999.
-
-   [23] Palme, F., Hopmann, A., Shelness, N., and E. Stefferud, "MIME
-        Encapsulation of Aggregate Documents, such as HTML (MHTML)", RFC
-        2557, March 1999.
-
-
    [24] Fielding, R., Gettys, J., Mogul, J., Nielsen, H., Masinter, L.,
         Leach, P., and T. Berners-Lee, "Hypertext Transfer Protocol --
         HTTP/1.1", RFC 2616, June 1999.
 
-   [25] Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S.,
-        Leach, P., Luotonen, A., and L. Stewart, "HTTP Authentication:
-        Basic and Digest Access Authentication", RFC 2617, June 1999.
-
    [26] Klensin, J., Ed., "Simple Mail Transfer Protocol", RFC 2821,
         April 2001.
-
-   [27] Klyne, G., "Indicating Media Features for MIME Content", RFC
-        2912, September 2000.
-
-   [28] Chandhok, R. and G. Wenger, "List-Id: A Structured Field and
-        Namespace for the Identification of Mailing Lists", RFC 2919,
-        March 2001.
-
-   [29] Kristol, D. and L. Montulli, "HTTP State Management Mechanism",
-        RFC 2965, October 2000.
 
    [30] Rosenberg, J., Schulzrinne, H., Camarillo, G., Johnston, A.,
         Peterson, J., Sparks, R., Handley, M., and E. Schooler, "SIP:
         Session Initiation Protocol", RFC 3261, June 2002.
-
-   [31] Alvestrand, H., "Content Language Headers", RFC 3282, May 2002.
 
    [32] Bray, T., Paoli, J., Sperberg-McQueen, C., and E. Maler,
         "Extensible Markup Language (XML) 1.0 (2nd ed)", W3C
