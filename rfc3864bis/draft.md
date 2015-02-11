@@ -98,7 +98,7 @@ procedures for creating entries in them.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14,
-RFC 2119 [2].
+{{RFC 2119}}.
 
 
 # Message Header Fields
