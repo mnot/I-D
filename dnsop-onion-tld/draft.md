@@ -133,13 +133,28 @@ This property can be compromised if:
 * The access protocol is implemented or deployed incorrectly, or
 * The access protocol itself is found to have a flaw.
 
-.onion names are self-authenticating, in that they are based on the first 80
-bits of a hash of the server's cryptographic key.
+.onion names are self-authenticating, in that they are derived from the
+cryptographic key used by the service in establishing the Tor circuit. As a
+result, the cryptographic label component of a .onion name is not intended to
+be human-meaningful.
 
-If an attacker finds a key that produces the same hash, collision corresponding
-to the hidden server's key, they would be able to impersonate that server 
+Because the Tor network is designed to not be subject to any central
+controlling authorities with regards to routing and service publication, .onion
+names cannot be registered, assigned, transferred or revoked. "Ownership" of a
+.onion name is derived solely from control of a public/private key pair which
+corresponds to the algorithmic derivation of the name according to the rules of
+the Tor network.
 
-XXX TBD -- need detail here
+Users must take special precautions to ensure that the .onion name they are
+communicating with is correct, as attackers may be able to find keys which
+produce service names that are visually or apparently semantically similar to
+the desired service.
+
+As the number of bits used in generating the .onion name is less than the size
+of the corresponding private key, an attacker may also be able to find a key
+that produces the same .onion name with substantially less work than a
+cryptographic attack on the full strength key. If this is possible the attacker
+may be able to impersonate the service on the network.
 
 If client software attempts to resolve a .onion name, it can leak the identity
 of the service that the user is attempting to access to DNS resolvers,
