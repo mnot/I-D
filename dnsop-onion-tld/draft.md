@@ -94,10 +94,11 @@ These properties have the following effects upon parties using or processing
 different security properties, and also being only available through software
 that is aware of Onion routing.
 
-2. Application Software: Applications SHOULD recognize .onion names as
-special by either invoking Onion routing directly, or using a proxy (e.g.,
-SOCKS {{RFC1928}}) to do so. Applications that are not able or configured to do
-so MUST generate an error upon use of .onion, and MUST NOT perform a DNS lookup.
+2. Application Software: Applications SHOULD recognize .onion names as special
+by either invoking Onion routing directly, or using a proxy (e.g., SOCKS
+{{RFC1928}}) to do so. Applications that are not able or configured to do so
+SHOULD generate an error upon use of .onion, and SHOULD NOT perform a DNS
+lookup.
 
 3. Name Resolution APIs and Libraries: Resolvers SHOULD either respond to
 requests for .onion names by invoking Onion routing (directly or with a proxy),
@@ -109,7 +110,7 @@ for .onion names. They SHOULD generate NXDOMAIN for all such queries.
 5. Authoritative DNS Servers: Authoritative servers SHOULD respond to queries
 for .onion with NXDOMAIN.
 
-6. DNS Server Operators: Operators MUST NOT try to configure an authoritative
+6. DNS Server Operators: Operators SHOULD NOT try to configure an authoritative
 DNS server to answer queries for .onion. If they do so, client software is 
 likely ignore any results (see above).
 
