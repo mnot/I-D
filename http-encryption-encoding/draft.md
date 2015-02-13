@@ -120,6 +120,10 @@ Encryption Standard (AES) in Galois/Counter Mode (GCM) as identified as AEAD_AES
 When this content-coding is in use, the Encryption header field {{encryption}} is used to determine
 the content encryption key (see {{derivation}}).
 
+The "aesgcm-128" content-coding uses a single fixed set of encryption primitives.  Cipher suite
+agility is achieved by defining a new content-coding scheme.  This ensures that only the HTTP
+Accept-Encoding header field is necessary to negotiate the use of encryption.
+
 The "aesgcm-128" content-coding uses a fixed record size.  The final encoding is a series of
 fixed-size records, though the final record can be any length.
 
