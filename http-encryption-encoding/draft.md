@@ -515,3 +515,8 @@ of individual messages.
 
 
 --- back
+
+# Acknowledgements
+
+The following people provided valuable feedback and suggestions: Richard Barnes,
+Stephen Farrell, Eric Rescorla, and Jim Schaad.
