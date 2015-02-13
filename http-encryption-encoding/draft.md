@@ -240,15 +240,7 @@ ecdh:
 
 : The ECDH share included in the "ecdh" parameter is combined with a share from the intended
 recipient of the encrypted message using elliptic curve Diffie-Hellman (ECDH) [RFC4492] to determine
-a shared secret.
-
-: When an "ecdh" parameter is present, the "keyid" parameter identifies the key pair that the
-intended recipient needs to use to recover the shared secret.  The specific curve and point format
-are therefore identified by the "keyid" parameter, which identifies the key pair that the receiver
-uses to decrypt the content.  Specifications that rely on this form of encryption MUST either
-specify what curve and point format to use, or how a curve and point format is negotiated between
-sender and receiver.
-
+a shared secret.  This is explained in more detail in {{ecdh}}.
 
 The output of each of these alternative methods is a sequence of octets which is used as the secret
 input to the TLS pseudorandom function (PRF) (as defined in Section 5 of [RFC5246]) with the SHA-256
@@ -257,6 +249,28 @@ hash function [FIPS180-2] to generate the key.
 The label used for the PRF is the ASCII string "encrypted Content-Encoding" and the seed is the
 value of the "nonce" parameter, which is first decoded.  The "nonce" parameter therefore MUST be
 provided to enable decryption.
+
+
+### ECDH Key Derivation {#ecdh}
+
+When an "ecdh" parameter is present, key derivation relies on several pieces of
+information that the sender and receiver have agreed upon out of band:
+
+* The elliptic curve that will be used for the ECDH process
+
+* The format of the ephemeral public share that is included in the "ecdh"
+  parameter.  For instance, both parties might need to agree whether this is an
+  uncompressed or compressed point.
+
+The "keyid" parameter contains an identifier for these agreed parameters as well as the keying
+material used by the receiver.  This means that the actual content of the "ecdh" parameter does not
+need to explicitly include all this information.
+
+The intended recipient recovers this information and their shared secret and are then able to
+generate a shared secret using the ECDH process on the selected curve.
+
+Specifications that rely on an ECDH exchange for this content-coding MUST either specify what curve
+and point format to use, or how a curve and point format is negotiated between sender and receiver.
 
 
 # Examples
