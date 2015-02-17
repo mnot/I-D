@@ -41,8 +41,9 @@ informative:
 --- abstract
 
 The 'Key' header field for HTTP responses allows an origin server to describe
-the cache key for a negotiated response: a short algorithm that can be used
-upon later requests to determine if the same response is reusable.
+the secondary cache key ({{RFC7234}}, section 4.1) for a negotiated response: a
+short algorithm that can be used upon later requests to determine if the same
+response is reusable.
 
 Key has the advantage of avoiding an additional round trip for validation
 whenever a new request differs slightly, but not significantly, from prior
