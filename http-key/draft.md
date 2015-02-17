@@ -54,8 +54,7 @@ Accept* fields in order to reduce the risk of fingerprinting.
 
 --- middle
 
-Introduction
-============
+# Introduction
 
 In HTTP caching {{I-D.ietf-httpbis-p6-cache}}, the Vary response header field
 effectively modifies the key used to store and access a response to include
@@ -89,8 +88,7 @@ This document defines a new response header field, "Key", that allows servers
 to describe the cache key in a much more fine-grained manner, leading to
 improved cache efficiency.
 
-Notational Conventions
-----------------------
+## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
@@ -102,8 +100,7 @@ This document uses the Augmented Backus-Naur Form (ABNF) notation of
 OWS, field-name and quoted-string rules from that document, and the
 parameter and attribute rules from {{I-D.ietf-httpbis-p2-semantics}}.
 
-The "Key" Response Header Field
-===============================
+# The "Key" Response Header Field
 
 The "Key" response header field describes the request attributes that the
 server has used to select the current representation. 
@@ -148,8 +145,7 @@ header field and an Accept-Language header field value that starts with "fr"
 Note that both the field-name and modifier names themselves are case
 insensitive.
   
-Header Matching
---------------- 
+## Header Matching
 
 When used by a cache to determine whether a stored response can be used to
 satisfy a presented request, each field-name identifies a potential request
@@ -206,8 +202,7 @@ to alter the input lists, or to alter the semantics of subsequent matches.
 
 Unrecognised modifiers MUST result in a failure to match.
   
-Key Modifiers
--------------
+## Key Modifiers
 
 This document defines the following key modifiers:
 
@@ -393,8 +388,7 @@ would match, while
 would not (because it contains "b").
 
 
-Examples
---------
+## Examples
 
 For example, this response header field:
 
@@ -425,8 +419,7 @@ And an Accept-Language field value for French:
 ~~~
 
 
-Relationship to Vary
---------------------
+## Relationship to Vary
 
 Origin servers SHOULD still send Vary as normal with Key, to accommodate
 implementations that do not (yet) understand it. For example,
@@ -438,14 +431,12 @@ implementations that do not (yet) understand it. For example,
 
 
 
-IANA Considerations
-===================
+# IANA Considerations
 
 TBD
 
 
-Security Considerations
-=======================
+# Security Considerations
 
 TBD
 
