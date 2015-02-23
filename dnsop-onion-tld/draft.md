@@ -21,7 +21,7 @@ author:
     email: jacob@appelbaum.net
  -
     ins: A. Muffett
-    name: Alex Muffett
+    name: Alec Muffett
     organization: Facebook
     email: alecm@fb.com    
 
