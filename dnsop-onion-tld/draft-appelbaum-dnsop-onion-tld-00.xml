@@ -85,19 +85,20 @@ interpreted as described in <xref target="RFC2119"/>.</t>
 <t><list style="numbers">
   <t>Users: human users are expected to recognize .onion names as having
 different security properties, and also being only available through software
-that is aware of Onion routing.</t>
-  <t>Application Software: Applications SHOULD to recognize .onion names as
-special by either invoking Onion routing directly, or using a proxy (e.g.,
-SOCKS <xref target="RFC1928"/>) to do so. Applications that are not able or configured to do
-so MUST generate an error upon use of .onion, and MUST NOT perform a DNS lookup.</t>
-  <t>Name Resolution APIs and Libraries: Resolvers MUST either respond to
-requests for .onion names by invoking Onion routing (directly or with a proxy),
-or by responding with NXDOMAIN.</t>
-  <t>Caching DNS Servers: Caching servers MUST NOT attempt to look up records for
-.onion names. They SHOULD generate NXDOMAIN for all such queries.</t>
-  <t>Authoritative DNS Servers: Authoritative servers MUST respond to queries
+that is aware of onion addresses.</t>
+  <t>Application Software: Applications SHOULD recognize .onion names as special
+by either accessing them directly, or using a proxy (e.g., SOCKS
+<xref target="RFC1928"/>) to do so. Applications that are not able or configured to do so
+SHOULD generate an error upon use of .onion, and SHOULD NOT perform a DNS
+lookup.</t>
+  <t>Name Resolution APIs and Libraries: Resolvers SHOULD either respond to
+requests for .onion names by resolving them (see <xref target="tor-rendezvous"/>) or by
+responding with NXDOMAIN.</t>
+  <t>Caching DNS Servers: Caching servers SHOULD NOT attempt to look up records
+for .onion names. They SHOULD generate NXDOMAIN for all such queries.</t>
+  <t>Authoritative DNS Servers: Authoritative servers SHOULD respond to queries
 for .onion with NXDOMAIN.</t>
-  <t>DNS Server Operators: Operators MUST NOT try to configure an authoritative
+  <t>DNS Server Operators: Operators SHOULD NOT try to configure an authoritative
 DNS server to answer queries for .onion. If they do so, client software is 
 likely ignore any results (see above).</t>
   <t>DNS Registries/Registrars: Registrars MUST NOT register .onion names; all
@@ -123,18 +124,32 @@ location of the server is obscured from the client.</t>
   <t>The access protocol itself is found to have a flaw.</t>
 </list></t>
 
-<t>.onion names are self-authenticating, in that they are based on the first 80
-bits of a hash of the server’s cryptographic key.</t>
+<t>.onion names are self-authenticating, in that they are derived from the
+cryptographic key used by the service in establishing the Tor circuit. As a
+result, the cryptographic label component of a .onion name is not intended to
+be human-meaningful.</t>
 
-<t>If an attacker finds a key that produces the same hash, collision corresponding
-to the hidden server’s key, they would be able to impersonate that server </t>
+<t>Because the Tor network is designed to not be subject to any central
+controlling authorities with regards to routing and service publication, .onion
+names cannot be registered, assigned, transferred or revoked. “Ownership” of a
+.onion name is derived solely from control of a public/private key pair which
+corresponds to the algorithmic derivation of the name.</t>
 
-<t>XXX TBD – need detail here</t>
+<t>Users must take special precautions to ensure that the .onion name they are
+communicating with is correct, as attackers may be able to find keys which
+produce service names that are visually or apparently semantically similar to
+the desired service.</t>
+
+<t>As the number of bits used in generating the .onion name is less than the size
+of the corresponding private key, an attacker may also be able to find a key
+that produces the same .onion name with substantially less work than a
+cryptographic attack on the full strength key. If this is possible the attacker
+may be able to impersonate the service on the network.</t>
 
 <t>If client software attempts to resolve a .onion name, it can leak the identity
 of the service that the user is attempting to access to DNS resolvers,
 authoritative DNS servers, and observers on the intervening network. This can
-be mitigated by following the recommendations in {#onion}.</t>
+be mitigated by following the recommendations in <xref target="onion"/>.</t>
 
 </section>
 
