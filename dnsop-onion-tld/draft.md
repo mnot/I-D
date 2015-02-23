@@ -92,17 +92,17 @@ These properties have the following effects upon parties using or processing
 
 1. Users: human users are expected to recognize .onion names as having
 different security properties, and also being only available through software
-that is aware of Onion routing.
+that is aware of onion addresses.
 
 2. Application Software: Applications SHOULD recognize .onion names as special
-by either invoking Onion routing directly, or using a proxy (e.g., SOCKS
+by either accessing them directly, or using a proxy (e.g., SOCKS
 {{RFC1928}}) to do so. Applications that are not able or configured to do so
 SHOULD generate an error upon use of .onion, and SHOULD NOT perform a DNS
 lookup.
 
 3. Name Resolution APIs and Libraries: Resolvers SHOULD either respond to
-requests for .onion names by invoking Onion routing (directly or with a proxy),
-or by responding with NXDOMAIN.
+requests for .onion names by resolving them (see {{tor-rendezvous}}) or by
+responding with NXDOMAIN.
 
 4. Caching DNS Servers: Caching servers SHOULD NOT attempt to look up records
 for .onion names. They SHOULD generate NXDOMAIN for all such queries.
@@ -142,8 +142,7 @@ Because the Tor network is designed to not be subject to any central
 controlling authorities with regards to routing and service publication, .onion
 names cannot be registered, assigned, transferred or revoked. "Ownership" of a
 .onion name is derived solely from control of a public/private key pair which
-corresponds to the algorithmic derivation of the name according to the rules of
-the Tor network.
+corresponds to the algorithmic derivation of the name.
 
 Users must take special precautions to ensure that the .onion name they are
 communicating with is correct, as attackers may be able to find keys which
@@ -159,7 +158,7 @@ may be able to impersonate the service on the network.
 If client software attempts to resolve a .onion name, it can leak the identity
 of the service that the user is attempting to access to DNS resolvers,
 authoritative DNS servers, and observers on the intervening network. This can
-be mitigated by following the recommendations in {#onion}.
+be mitigated by following the recommendations in {{onion}}.
 
 
 --- back
