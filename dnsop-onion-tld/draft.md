@@ -32,6 +32,7 @@ normative:
 informative:
   RFC1928:
   RFC3986:
+  RFC7230:
   Dingledine2004:
     target: "https://www.onion-router.net/Publications/tor-design.pdf"
     title: "Tor: the second-generation onion router"
@@ -63,16 +64,18 @@ This document registers the ".onion" Special-Use Domain Name {{RFC6761}}.
 
 # Introduction
 
-The Tor network {{Dingledine2004}} has the ability to host "hidden" services
+The Tor network {{Dingledine2004}} has the ability to host network services
 using the ".onion" Top-Level Domain. Such addresses can be used as other domain
 names can (e.g., in URLs {{RFC3986}}), but instead of using the DNS
 infrastructure, .onion names are hashes that correspond to the identity of a
-given service, thereby conflating location and authentication.
+given service, thereby combining location and authentication.
 
 In this way, .onion names are "special" in the sense defined by {{RFC6761}}
 Section 3; they require hardware and software implementations to change their
 handling, in order to achieve the desired properties of the name (see
 {{security}}). These differences are listed in {{onion}}.
+
+Like other TLDs, .onion addresses can have an arbitrary number of subdomain components. This information is not meaningful to the Tor protocol, but can be used in application protocols like HTTP {{RFC7230}}.
 
 See {{tor-address}} and {{tor-rendezvous}} for the details of the creation and
 use of .onion names.
@@ -124,10 +127,10 @@ This document registers the "onion" TLD in the  registry of Special-Use Domain N
 
 # Security Considerations {#security}
 
-.onion names provide access to "hidden" services; that is, the identity and
-location of the server is obscured from the client.
+.onion names are often used provide access to "hidden" services; that is, the
+identity and location of the server is obscured from the client.
 
-This property can be compromised if:
+This property can be compromised if, for example:
 
 * The server "leaks" its identity in another way (e.g., in an application-level message), or
 * The access protocol is implemented or deployed incorrectly, or
