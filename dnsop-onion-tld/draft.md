@@ -127,24 +127,27 @@ This document registers the "onion" TLD in the  registry of Special-Use Domain N
 
 # Security Considerations {#security}
 
-.onion names are often used provide access to "hidden" services; that is, the
-identity and location of the server is obscured from the client.
+.onion names are often used provide access to end to end encrypted, secure,
+anonymized services; that is, the identity and location of the server is
+obscured from the client. The location of the client is obscured from the
+server. The identity of the client may or may not be disclosed through an
+optional cryptographic authentication process.
 
-This property can be compromised if, for example:
+These properties can be compromised if, for example:
 
 * The server "leaks" its identity in another way (e.g., in an application-level message), or
 * The access protocol is implemented or deployed incorrectly, or
 * The access protocol itself is found to have a flaw.
 
 .onion names are self-authenticating, in that they are derived from the
-cryptographic key used by the service in establishing the Tor circuit. As a
-result, the cryptographic label component of a .onion name is not intended to
-be human-meaningful.
+cryptographic keys used by the server in a client verifiable manner during
+connection establishment. As a result, the cryptographic label component of a
+.onion name is not intended to be human-meaningful.
 
-Because the Tor network is designed to not be subject to any central
-controlling authorities with regards to routing and service publication, .onion
-names cannot be registered, assigned, transferred or revoked. "Ownership" of a
-.onion name is derived solely from control of a public/private key pair which
+The Tor network is designed to not be subject to any central controlling
+authorities with regards to routing and service publication, so .onion names
+cannot be registered, assigned, transferred or revoked. "Ownership" of a .onion
+name is derived solely from control of a public/private key pair which
 corresponds to the algorithmic derivation of the name.
 
 Users must take special precautions to ensure that the .onion name they are
@@ -152,11 +155,14 @@ communicating with is correct, as attackers may be able to find keys which
 produce service names that are visually or apparently semantically similar to
 the desired service.
 
-As the number of bits used in generating the .onion name is less than the size
-of the corresponding private key, an attacker may also be able to find a key
-that produces the same .onion name with substantially less work than a
-cryptographic attack on the full strength key. If this is possible the attacker
-may be able to impersonate the service on the network.
+The cryptographic label for an .onion name is constructed by hashing the public
+key of the service with SHA1, truncating the output of the hash to 80bits in
+length and the resulting hash output is concatenated with the string ".onion".
+As the number of output bits in generating the .onion name is less than the
+full size of the corresponding public key, an attacker may also be able to find
+a key that produces a collision with the same .onion name with substantially
+less work than a cryptographic attack on the full strength key. If this is
+possible the attacker may be able to impersonate the service on the network.
 
 If client software attempts to resolve a .onion name, it can leak the identity
 of the service that the user is attempting to access to DNS resolvers,
