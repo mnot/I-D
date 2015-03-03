@@ -252,6 +252,11 @@ step of HKDF can therefore be simplified to the first 16 octets of a single HMAC
 An Encryption-Key header field can be used to describe the input keying material used in the
 Encryption header field.
 
+~~~
+  Encryption-Key-val = #encryption_key_params
+  encryption_key_params = [ param *( ";" param ) ]
+~~~
+
 keyid:
 
 : The "keyid" parameter corresponds to the "keyid" parameter in the Encryption header field.
