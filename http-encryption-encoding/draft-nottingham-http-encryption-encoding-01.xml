@@ -90,44 +90,58 @@ acquire and identify keys will depend on the use case.</t>
 <section anchor="aesgcm128" title="The “aesgcm-128” HTTP content-coding">
 
 <t>The “aesgcm-128” HTTP content-coding indicates that a payload has been encrypted using Advanced
-Encryption Standard (AES) in Galois/Counter Mode (GCM) <xref target="AES"/> <xref target="NIST80038D"/>, using a 128 bit
-content encryption key.</t>
+Encryption Standard (AES) in Galois/Counter Mode (GCM) as identified as AEAD_AES_128_GCM in
+<xref target="RFC5116"></xref>, Section 5.1.  The AEAD_AES_128_GCM algorithm uses a 128 bit content encryption key.</t>
 
-<t>When this content-coding is in use, the Encryption header field <xref target="encryption"/> MUST be present, and
-MUST include sufficient information to determine the content encryption key (see <xref target="derivation"/>).</t>
+<t>When this content-coding is in use, the Encryption header field <xref target="encryption"/> describes how
+encryption has been applied.  The Encryption-Key header field <xref target="encryption-key"/> can be included to
+describe how the the content encryption key is derived or retrieved.</t>
 
-<t>The “aesgcm-128” content-coding uses a fixed block size for any given payload.  Each block is
-followed by a 128-bit authentication tag.  The block size defaults to 4096 octets, but can be changed
-using the “bs” parameter on the Encryption header field.  This block size is not to be mistaken for
-the block size of the cipher.</t>
+<t>The “aesgcm-128” content-coding uses a single fixed set of encryption primitives.  Cipher suite
+agility is achieved by defining a new content-coding scheme.  This ensures that only the HTTP
+Accept-Encoding header field is necessary to negotiate the use of encryption.</t>
 
-<t>The encrypted content is therefore a sequence of blocks, each with a length equal to the value of
-the “bs” parameter, and 16 octets of authentication tag.</t>
+<t>The “aesgcm-128” content-coding uses a fixed record size.  The resulting encoding is a series of
+fixed-size records, though the final record can contain any amount of data.</t>
 
 <figure><artwork><![CDATA[
-+-------------------------------+-----------------+
-| Encrypted Content (bs octets) | Tag (16 octets) |
-+-------------------------------+-----------------+
+       +------+
+       | data |         input of between rs-256
+       +------+            and rs-1 octets
+           |
+           v
++-----+-----------+
+| pad |   data    |     add padding to form plaintext
++-----+-----------+
+         |
+         v
++--------------------+
+|    ciphertext      |  encrypt with AEAD_AES_128_GCM
++--------------------+     expands by 16 octets
 ]]></artwork></figure>
 
-<t>The plaintext can be of any size up to the block size.  AES-GCM does not require padding of
-plaintext, so the space consumed by the ciphertext can be computed by adding the length of
-the authentication tag to the bs parameter.</t>
+<t>The record size determines the length of each portion of plaintext that is enciphered.  The record
+size defaults to 4096 octets, but can be changed using the “rs” parameter on the Encryption header
+field.</t>
 
-<t>Each block contains between 0 and 255 bytes of padding, inserted into a block before the enciphered
-content.  The length of the padding is stored in the first byte of the payload.  All padding bytes
-MUST be set to zero.  It is a fatal decryption error to have a block with more padding than the
-block size.</t>
+<t>AEAD_AES_128_GCM expands ciphertext to be 16 octets longer than its input plaintext.  Therefore, the
+length of each enciphered record is equal to the value of the “rs” parameter plus 16 octets.  It is
+a fatal decryption error to have a remainder of 16 octets or less in size (though AEAD_AES_128_GCM
+permits input plaintext to be zero length, records always contain at least one padding octet).</t>
 
-<t>The initialization vector for each block is a 96-bit value containing the index of the current
-block in network byte order.  Blocks are indexed starting at zero.</t>
+<t>Each record contains between 0 and 255 octets of padding, inserted into a record before the
+enciphered content.  The length of the padding is stored in the first octet of the payload.  All
+padding octets MUST be set to zero.  It is a fatal decryption error to have a record with more
+padding than the record size.</t>
 
-<t>The additional data passed to the AES-GCM algorithm consists of the concatenation of:</t>
+<t>The nonce used for each record is a 96-bit value containing the index of the current record in
+network byte order.  Records are indexed starting at zero.</t>
 
-<t><list style="numbers">
-  <t>the ASCII-encoded string “Content-Encoding: aesgcm-128” (with no trailing 0),</t>
-  <t>a zero octet, and</t>
-  <t>the index of the current block encoded as a 64-bit unsigned integer in network byte order.</t>
+<t>The additional data passed to the AEAD algorithm is a zero-length octet sequence.</t>
+
+<t><list style="hanging">
+  <t hangText='Issue:'>
+  Double check that having no AAD is safe.</t>
 </list></t>
 
 </section>
@@ -137,13 +151,13 @@ block in network byte order.  Blocks are indexed starting at zero.</t>
 applied to a message payload, and therefore how those content encoding(s) can be removed.</t>
 
 <figure><artwork><![CDATA[
-  Encryption-val = #cipher_params
-  cipher_params = [ param *( ";" param ) ]
+  Encryption-val = #encryption_params
+  encryption_params = [ param *( ";" param ) ]
 ]]></artwork></figure>
 
 <t>If the payload is encrypted more than once (as reflected by having multiple content-codings that
-imply encryption), each cipher is reflected in the Encryption header field, in the order in which
-they were applied.</t>
+imply encryption), each application of the content encoding is reflected in the Encryption header
+field, in the order in which they were applied.</t>
 
 <t>The Encryption header MAY be omitted if the sender does not intend for the immediate recipient to
 be able to decrypt the message.  Alternatively, the Encryption header field MAY be omitted if the
@@ -157,58 +171,108 @@ remove the content-coding by decrypting the payload.</t>
 <t>The following parameters are used in determining the key that is used for encryption:</t>
 
 <t><list style="hanging">
-  <t hangText='key:'>
-  The “key” parameter contains the URL-safe base64 <xref target="RFC4648"></xref> bytes of the key.</t>
   <t hangText='keyid:'>
-  The “keyid” parameter contains a string that identifies a key.</t>
-  <t hangText='ecdh:'>
-  The “ecdh” parameter contains an ephemeral elliptic curve Diffie-Hellman (ECDH) share.  The point
-is encoding using the URL-safe base64 encoding <xref target="RFC4648"></xref>.</t>
-  <t hangText='nonce:'>
-  The “nonce” parameter contains a base64 URL-encoded bytes of a nonce that is used to derive a
-content encryption key.  The nonce value MUST be present, and MUST be exactly 16 octets long.  A
-nonce MUST NOT be reused for two different messages that have the same content encryption key;
-generating a random nonce for each message ensures that nonce reuse is highly unlikely.</t>
+  The “keyid” parameter contains a string that identifies the keying material that is used.  The
+“keyid” parameter SHOULD be included, unless key identification is guaranteed by other means.  The
+“keyid” parameter MUST be used if keying material is included in an Encryption-Key header field.</t>
+  <t hangText='salt:'>
+  The “salt” parameter contains a base64 URL-encoded octets that is used as salt in deriving a
+unique content encryption key (see <xref target="derivation"/>).  The “salt” parameter MUST be present, and MUST
+be exactly 16 octets long.  The “salt” parameter MUST NOT be reused for two different messages that
+have the same content encryption key; generating a random nonce for each message ensures that reuse
+is highly unlikely.</t>
+  <t hangText='rs:'>
+  The “rs” parameter contains a positive decimal integer that describes the record size in octets.
+This value MUST be greater than 1.  If the “rs” parameter is absent, the record size defaults to
+4096 octets.</t>
 </list></t>
-
-<t>These parameters are used to determine a content encryption key.  The key derivation process is
-described in <xref target="derivation"/>.</t>
-
-<t>In addition to key determination parameters, the “bs” parameter includes a positive integer value
-that describes the block size.</t>
 
 </section>
 <section anchor="derivation" title="Content Encryption Key Derivation">
 
-<t>The content encryption key used by the content-coding is determined based on the information in the
-Encryption header field.  Several variations are possible:</t>
+<t>In order to allow the reuse of keying material for multiple different messages, a content encryption
+key is derived for each message.  This key is derived from the decoded value of the “s” parameter
+using the HMAC-based key derivation function (HKDF) described in <xref target="RFC5869"></xref> using the SHA-256 hash
+algorithm <xref target="FIPS180-2"></xref>.</t>
+
+<t>The decoded value of the “salt” parameter is the salt input to HKDF function.  The keying material
+identified by the “keyid” parameter is the input keying material (IKM) to HKDF.  Input keying
+material can either be prearranged, or can be described using the Encryption-Key header field
+<xref target="encryption-key"/>.  The first step of HKDF is therefore:</t>
+
+<figure><artwork><![CDATA[
+   PRK = HMAC-SHA-256(salt, IKM)
+]]></artwork></figure>
+
+<t>AEAD_AES_128_GCM requires 16 octets (128 bits) of key, so the length (L) parameter of HKDF is 16.
+The info parameter is set to the ASCII-encoded string “Content-Encoding: aesgcm128”.  The second
+step of HKDF can therefore be simplified to the first 16 octets of a single HMAC:</t>
+
+<figure><artwork><![CDATA[
+   OKM = HMAC-SHA-256(PRK, "Content-Encoding: aesgcm128" || 0x01)
+]]></artwork></figure>
+
+</section>
+</section>
+<section anchor="encryption-key" title="Encryption-Key Header Field">
+
+<t>An Encryption-Key header field can be used to describe the input keying material used in the
+Encryption header field.</t>
 
 <t><list style="hanging">
-  <t hangText='explicit key:'>
-  The “key” parameter is decoded and used directly if present.  Other key determination parameters
-can be ignored if this parameter is present.</t>
-  <t hangText='identified key:'>
-  The “keyid” is used to identify a key that is established by some out-of-band means.  A “keyid”
-parameter can be omitted if a key can be identified based on other information.</t>
-  <t hangText='ecdh:'>
-  The ECDH share included in the “ecdh” parameter is combined with a share from the intended
-recipient of the encrypted message using elliptic curve Diffie-Hellman (ECDH) <xref target="RFC4492"></xref> to determine
-a shared secret.</t>
-  <t>When an “ecdh” parameter is present, the “keyid” parameter identifies the key pair that the
-intended recipient needs to use to recover the shared secret.  The specific curve and point format
-are therefore identified by the “keyid” parameter, which identifies the key pair that the receiver
-uses to decrypt the content.  Specifications that rely on this form of encryption MUST either
-specify what curve and point format to use, or how a curve and point format is negotiated between
-sender and receiver.</t>
+  <t hangText='keyid:'>
+  The “keyid” parameter corresponds to the “keyid” parameter in the Encryption header field.</t>
+  <t hangText='key:'>
+  The “key” parameter contains the URL-safe base64 <xref target="RFC4648"></xref> octets of the input keying material.</t>
+  <t hangText='dh:'>
+  The “dh” parameter contains an ephemeral Diffie-Hellman share. This form of the header field can
+be used to encrypt content for a specific recipient.</t>
 </list></t>
 
-<t>The output of each of these alternatives methods is a sequence of octets which is used as
-the secret input to the TLS pseudorandom function (PRF) (as defined in Section 5 of <xref target="RFC5246"></xref>)
-with the SHA-256 hash function <xref target="FIPS180-2"></xref> to generate the key.</t>
+<t>The input keying material used by the content-encoding key derivation (see <xref target="derivation"/>) can be
+determined based on the information in the Encryption-Key header field.  The method for key
+derivation depends on the parameters that are present in the header field.</t>
 
-<t>The label used for the PRF is the ASCII string “encrypted Content-Encoding” and the seed is the
-value of the “nonce” parameter, which is first decoded.  The “nonce” parameter therefore MUST be
-provided to enable decryption.</t>
+<t>Note that different methods for determining input keying materal will produce different
+amounts of data.  The HKDF process ensures that the final content encryption key is the necessary
+size.</t>
+
+<t>Alternative methods for determining input keying material MAY be defined by specifications that use
+this content-encoding.</t>
+
+<section anchor="explicit-key" title="Explicit Key">
+
+<t>The “key” parameter is decoded and used directly if present.  The “key” parameter MUST decode to
+exactly 16 octets in order to be used as input keying material for “aesgcm128” content encoding.</t>
+
+<t>Other key determination parameters can be ignored if the “key” parameter is present.</t>
+
+</section>
+<section anchor="diffie-hellman" title="Diffie-Hellman">
+
+<t>The “dh” parameter is included to describe a Diffie-Hellman share, either modp (or finite field)
+Diffie-Hellman <xref target="DH"></xref> or elliptic curve Diffie-Hellman (ECDH) <xref target="RFC4492"></xref>.</t>
+
+<t>This share is combined with other information at the recipient to determine the HKDF input keying
+material.  In order for the exchange to be successful, the following information MUST be established
+out of band:</t>
+
+<t><list style="symbols">
+  <t>Which Diffie-Hellman form is used.</t>
+  <t>The modp group or elliptic curve that will be used.</t>
+  <t>The format of the ephemeral public share that is included in the “dh” parameter.  For instance,
+using ECDH both parties need to agree whether this is an uncompressed or compressed point.</t>
+</list></t>
+
+<t>In addition to identifying which content-encoding this input keying material is used for, the
+“keyid” parameter is used to identify this additional information at the receiver.</t>
+
+<t>The intended recipient recovers their private key and are then able to generate a shared secret
+using the appropriate Diffie-Hellman process.</t>
+
+<t>Specifications that rely on an Diffie-Hellman exchange for determining input keying material MUST
+either specify the parameters for Diffie-Hellman (group parameters, or curves and point format) that
+are used, or describe how those parameters are negotiated between sender and receiver.</t>
 
 </section>
 </section>
@@ -222,7 +286,7 @@ Content-Type: application/octet-stream
 Content-Encoding: aesgcm-128
 Connection: close
 Encryption: keyid="http://example.org/bob/keys/123";
-            nonce="XZwpw6o37R-6qoZjw6KwAw"
+            salt="XZwpw6o37R-6qoZjw6KwAw"
 
 [encrypted payload]
 ]]></artwork></figure>
@@ -241,7 +305,7 @@ Content-Type: text/html
 Content-Encoding: aesgcm-128, gzip
 Transfer-Encoding: chunked
 Encryption: keyid="mailto:me@example.com";
-            nonce="m2hJ_NttRtFyUiMRPwfpHA"
+            salt="m2hJ_NttRtFyUiMRPwfpHA"
 
 [encrypted payload]
 ]]></artwork></figure>
@@ -256,16 +320,15 @@ Content-Type: application/http
 Content-Encoding: aesgcm-128, aesgcm-128
 Content-Length: 1234
 Encryption: keyid="mailto:me@example.com";
-            ecdh="BLiZzhckgp88pANskUpCkGV7-IFLHC-aF8MMPW7i8P...";
-            nonce="NfzOeuV5USPRA-n_9s1Lag",
+            salt="NfzOeuV5USPRA-n_9s1Lag",
             keyid="http://example.org/bob/keys/123";
-            nonce="bDMSGoc2uobK_IhavSHsHA"
+            salt="bDMSGoc2uobK_IhavSHsHA"; rs=1200
 
 [encrypted payload]
 ]]></artwork></figure>
 
 <t>Here, a PUT request has been encrypted with two keys; both will be necessary to read the content.
-The inner layer of encryption uses elliptic curve Diffie-Hellman (the actual value is truncated).</t>
+The outer layer of encryption uses a 1200 octet record size.</t>
 
 </section>
 <section anchor="encryption-with-explicit-key" title="Encryption with Explicit Key">
@@ -274,14 +337,15 @@ The inner layer of encryption uses elliptic curve Diffie-Hellman (the actual val
 HTTP/1.1 200 OK
 Content-Length: 31
 Content-Encoding: aesgcm-128
-Encryption: key="T9jtNY-vTvq7mSVlNFJbyw";
-            nonce="nJJ-xXkP5sM_8Zp00Gp-ig"
+Encryption: keyid="a1"; salt="owIfQR647esVfrzCW_i9GQ"
+Encryption-Key: keyid="a1"; key="JcqK-OLkJZlJ3sJJWstJCA"
 
-zIZwlquLit2UEsKh1eBATJadBieZUEOI9sfiJtT6DwU
+LwTC-fwdKh8de0smD2jfzHodb1EYbuuTNpcYXLW257Q
 ]]></artwork></figure>
 
-<t>This example shows the string “I am the walrus” being encrypted.  The content body is shown here
-encoded in URL-safe base64 for presentation reasons only.</t>
+<t>This example shows the string “I am the walrus” encrypted using an explicit key.  The content body
+contains a single record only and is shown here encoded in URL-safe base64 for presentation reasons
+only.</t>
 
 </section>
 <section anchor="diffie-hellman-encryption" title="Diffie-Hellman Encryption">
@@ -290,30 +354,30 @@ encoded in URL-safe base64 for presentation reasons only.</t>
 HTTP/1.1 200 OK
 Content-Length: 31
 Content-Encoding: aesgcm-128
-Encryption: keyid="theKey";
-            nonce="6hCMStcuoSdfvDjpm0qhdQ";
-            ecdh="BOsUGWuTKnbckPjtsU-vCi1BQaQu5B9iEoP8No2B34r
-                  SRvaA_er_d2tpRy-3e-a6n5W7MIPBcacIJ7eDWkvnDxI"
+Encryption: keyid="dhkey"; salt="XYFSCgMVjc45IMfLOcMfiw"
+Encryption-Key: keyid="dhkey";
+                dh="BELKqvZ7n3p5C9_ipP_6X9DBNAGuJujSN7YWbtcGZMMH
+                    3urZM-zlii3mGGCMjlqR-yWwiPlMdKRdOL8gQSdHw8E"
 
-fDBJbV-a2XnWwcJQTpDinRoDqOHdmH5XxJD0Gob7wEg
+P6ikHE_wyKnYHXxLswvuFBO3JJOZpM1Bg3KikQEmczU
 ]]></artwork></figure>
 
 <t>This example shows the same string, “I am the walrus”, encrypted using ECDH over the P-256 curve
 <xref target="FIPS186"></xref>. The content body is shown here encoded in URL-safe base64 for presentation reasons only.</t>
 
-<t>The receiver (in this case, the HTTP client) uses the key identified by the string “theKey” and the
-sender (the server) uses a key pair for which the public share is included in the “ecdh” parameter
+<t>The receiver (in this case, the HTTP client) uses the key identified by the string “dhkey” and the
+sender (the server) uses a key pair for which the public share is included in the “dh” parameter
 above. The keys shown below use uncompressed points <xref target="X.692"></xref> encoded using URL-safe base64. Line
 wrapping is added for presentation purposes only.</t>
 
 <figure><artwork><![CDATA[
-Receiver:
-  private key: iG9ObZuRssarFIh859KjDpysTMybv4HNoZoPc-1DzWo
-  public key: BOsUGWuTKnbckPjtsU-vCi1BQaQu5B9iEoP8No2B34rS
-              RvaA_er_d2tpRy-3e-a6n5W7MIPBcacIJ7eDWkvnDxI
-Sender:
-  private key: XKtP2DkzcIe5IP-F2aQEGhLyIAsFQ0_i0oerP7KhVDs
-  public key: <the value of the "ecdh" parameter>
+   Receiver:
+      private key: QjGwenE3vCg8Eajo-PukGgUkYq8Vu-SQn04Cc9DR-YA
+      public key: BBM3pYS4nXG6bQYnZbGDY7l6CVrQTZ-1u00h7XV6A_TD
+                v7mXvv5k29uoLid8SdDycw341PJTW4hNCe2FNysN52U
+   Sender:
+      private key: wlC-qzKBWO6jYq32nlD0ZZVsI5jGVBC1gN7zkXjaPks
+      public key: <the value of the "dh" parameter>
 ]]></artwork></figure>
 
 </section>
@@ -332,7 +396,7 @@ detailed in <xref target="aesgcm128"/>.</t>
 </list></t>
 
 </section>
-<section anchor="the-encryption-http-header-field" title="The “Encryption” HTTP header field">
+<section anchor="encryption-header-fields" title="Encryption Header Fields">
 
 <t>This memo registers the “Encryption” HTTP header field in the Permanent Message Header Registry, as
 detailed in <xref target="encryption"/>.</t>
@@ -345,8 +409,19 @@ detailed in <xref target="encryption"/>.</t>
   <t>Notes:</t>
 </list></t>
 
+<t>This memo registers the “Encryption-Key” HTTP header field in the Permanent Message Header Registry,
+as detailed in <xref target="encryption-key"/>.</t>
+
+<t><list style="symbols">
+  <t>Field name: Encryption-Key</t>
+  <t>Protocol: HTTP</t>
+  <t>Status: Standard</t>
+  <t>Reference: [this specification]</t>
+  <t>Notes:</t>
+</list></t>
+
 </section>
-<section anchor="cipher-registry" title="The HTTP Encryption Registry">
+<section anchor="encryption-registry" title="The HTTP Encryption Parameter Registry">
 
 <t>This memo establishes a registry for parameters used by the “Encryption” header
 field under the “Hypertext Transfer Protocol (HTTP) Parameters” grouping.  The
@@ -372,6 +447,51 @@ field under the “Hypertext Transfer Protocol (HTTP) Parameters” grouping.  T
 </list></t>
 
 </section>
+<section anchor="salt" title="salt">
+
+<t><list style="symbols">
+  <t>Parameter Name: salt</t>
+  <t>Purpose: Provide a source of entropy for derivation of the content encryption key. This value is mandatory.</t>
+  <t>Reference: [this document]</t>
+</list></t>
+
+</section>
+<section anchor="rs" title="rs">
+
+<t><list style="symbols">
+  <t>Parameter Name: rs</t>
+  <t>Purpose: The size of the encrypted records.</t>
+  <t>Reference: [this document]</t>
+</list></t>
+
+</section>
+</section>
+<section anchor="encryption-key-registry" title="The HTTP Encryption-Key Parameter Registry">
+
+<t>This memo establishes a registry for parameters used by the “Encryption-Key” header
+field under the “Hypertext Transfer Protocol (HTTP) Parameters” grouping.  The
+“Hypertext Transfer Protocol (HTTP) Encryption Parameters” operates under an
+“Specification Required” policy <xref target="RFC5226"></xref>.</t>
+
+<t>Entries in this registry are expected to include the following information:</t>
+
+<t><list style="symbols">
+  <t>Parameter Name: The name of the parameter.</t>
+  <t>Purpose: A brief description of the purpose of the parameter.</t>
+  <t>Reference: A reference to a specification that defines the semantics of the parameter.</t>
+</list></t>
+
+<t>The initial contents of this registry are:</t>
+
+<section anchor="keyid-1" title="keyid">
+
+<t><list style="symbols">
+  <t>Parameter Name: keyid</t>
+  <t>Purpose: Identify the key that is in use.</t>
+  <t>Reference: [this document]</t>
+</list></t>
+
+</section>
 <section anchor="key" title="key">
 
 <t><list style="symbols">
@@ -381,29 +501,11 @@ field under the “Hypertext Transfer Protocol (HTTP) Parameters” grouping.  T
 </list></t>
 
 </section>
-<section anchor="ecdh" title="ecdh">
+<section anchor="dh" title="dh">
 
 <t><list style="symbols">
-  <t>Parameter Name: ecdh</t>
-  <t>Purpose: Carry an elliptic curve Diffie-Hellman share used to derive a key.</t>
-  <t>Reference: [this document]</t>
-</list></t>
-
-</section>
-<section anchor="nonce" title="nonce">
-
-<t><list style="symbols">
-  <t>Parameter Name: nonce</t>
-  <t>Purpose: Provide a source of entropy for derivation of the content encryption key. This value is mandatory.</t>
-  <t>Reference: [this document]</t>
-</list></t>
-
-</section>
-<section anchor="bs" title="bs">
-
-<t><list style="symbols">
-  <t>Parameter Name: bs</t>
-  <t>Purpose: The size of the encrypted blocks.</t>
+  <t>Parameter Name: dh</t>
+  <t>Purpose: Carry a modp or elliptic curve Diffie-Hellman share used to derive a key.</t>
   <t>Reference: [this document]</t>
 </list></t>
 
@@ -416,28 +518,35 @@ field under the “Hypertext Transfer Protocol (HTTP) Parameters” grouping.  T
 distribution of keys between valid senders and receivers.  Defining key management is part of
 composing this mechanism into a larger application, protocol, or framework.</t>
 
-<t>Implementation of cryptography can be difficult.  For instance, implementations need to account for
-the potential for exposing keying material on side channels, such as might be exposed by the time it
-takes to perform a given operation.  The requirements for a good implementation of cryptographic
-algorithms can change over time.</t>
+<t>Implementation of cryptography - and key management in particular - can be difficult.  For instance,
+implementations need to account for the potential for exposing keying material on side channels,
+such as might be exposed by the time it takes to perform a given operation.  The requirements for a
+good implementation of cryptographic algorithms can change over time.</t>
 
 <section anchor="key-and-nonce-reuse" title="Key and Nonce Reuse">
 
-<t>Encrypting different plaintext with the same content encryption key and initialization vector in
-AES-GCM is not safe.  The scheme defined here relies on the uniqueness of the nonce to ensure that
+<t>Encrypting different plaintext with the same content encryption key and nonce in AES-GCM is not safe
+<xref target="RFC5116"></xref>.  The scheme defined here relies on the uniqueness of the “nonce” parameter to ensure that
 the content encryption key is different for every message.</t>
 
-<t>If a key and nonce are reused, this could expose the content encryption key.  If the same key is
-used for multiple messages, then the nonce MUST be unique for each.  An implementation SHOULD
-generate a random nonce for every message, though using a counter for the nonce could achieve the
-desired result.</t>
+<t>If a key and nonce are reused, this could expose the content encryption key and it makes message
+modification trivial.  If the same key is used for multiple messages, then the nonce parameter MUST
+be unique for each.  An implementation SHOULD generate a random nonce parameter for every message,
+though using a counter could achieve the desired result.</t>
 
 </section>
 <section anchor="content-integrity" title="Content Integrity">
 
-<t>This mechanism does not provide any means of authenticating the origin of content.  The
-authentication tag only ensures that those with access to the encryption and decryption keys can
-produce valid content.</t>
+<t>This mechanism only provides content origin authentication.  The authentication tag only ensures
+that those with access to the content encryption key produce a message that will be accepted as
+valid.</t>
+
+<t>Any entity with the content encryption key can therefore produce content that will be accepted as
+valid.  This includes all recipients of the same message.</t>
+
+<t>Furthermore, any entity that is able to modify both the Encryption header field and the message
+payload can replace messages.  Without the content encryption key however, modifications to or
+replacement of parts of a message are not possible.</t>
 
 </section>
 <section anchor="leaking-information-in-headers" title="Leaking Information in Headers">
@@ -617,26 +726,40 @@ of individual messages.</t>
 </reference>
 
 
-<reference anchor="AES" >
-  <front>
-    <title>Advanced Encryption Standard (AES)</title>
-    <author >
-      <organization>National Institute of Standards and Technology (NIST)</organization>
-    </author>
-    <date year="2001" month="November"/>
-  </front>
-  <seriesInfo name="FIPS PUB 197" value=""/>
+
+<reference anchor='RFC5116'>
+
+<front>
+<title>An Interface and Algorithms for Authenticated Encryption</title>
+<author initials='D.' surname='McGrew' fullname='D. McGrew'>
+<organization /></author>
+<date year='2008' month='January' />
+<abstract>
+<t>This document defines algorithms for Authenticated Encryption with Associated Data (AEAD), and defines a uniform interface and a registry for such algorithms.  The interface and registry can be used as an application-independent set of cryptoalgorithm suites.  This approach provides advantages in efficiency and security, and promotes the reuse of crypto implementations. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='5116' />
+<format type='TXT' octets='50539' target='http://www.rfc-editor.org/rfc/rfc5116.txt' />
 </reference>
-<reference anchor="NIST80038D" >
-  <front>
-    <title>Recommendation for Block Cipher Modes of Operation: Galois/Counter Mode (GCM) and GMAC</title>
-    <author >
-      <organization>National Institute of Standards and Technology (NIST)</organization>
-    </author>
-    <date year="2001" month="December"/>
-  </front>
-  <seriesInfo name="NIST PUB 800-38D" value=""/>
+
+
+
+<reference anchor='RFC5869'>
+
+<front>
+<title>HMAC-based Extract-and-Expand Key Derivation Function (HKDF)</title>
+<author initials='H.' surname='Krawczyk' fullname='H. Krawczyk'>
+<organization /></author>
+<author initials='P.' surname='Eronen' fullname='P. Eronen'>
+<organization /></author>
+<date year='2010' month='May' />
+<abstract>
+<t>This document specifies a simple Hashed Message Authentication Code (HMAC)-based key derivation function (HKDF), which can be used as a building block in various protocols and applications.  The key derivation function (KDF) is intended to support a wide range of applications and requirements, and is conservative in its use of cryptographic hash functions.  This document is not an Internet Standards Track specification; it is published for informational purposes.</t></abstract></front>
+
+<seriesInfo name='RFC' value='5869' />
+<format type='TXT' octets='25854' target='http://www.rfc-editor.org/rfc/rfc5869.txt' />
 </reference>
+
+
 <reference anchor="FIPS180-2" >
   <front>
     <title>NIST FIPS 180-2, Secure Hash Standard</title>
@@ -645,6 +768,19 @@ of individual messages.</t>
     </author>
     <date year="2002" month="August"/>
   </front>
+</reference>
+<reference anchor="DH" >
+  <front>
+    <title>New Directions in Cryptography</title>
+    <author initials="W." surname="Diffie">
+      <organization></organization>
+    </author>
+    <author initials="M." surname="Hellman">
+      <organization></organization>
+    </author>
+    <date year="1977" month="June"/>
+  </front>
+  <seriesInfo name="IEEE Transactions on Information Theory, V.IT-22 n.6" value=""/>
 </reference>
 
 
@@ -845,15 +981,15 @@ of individual messages.</t>
     <organization />
 </author>
 
-<date month='November' day='29' year='2014' />
+<date month='February' day='10' year='2015' />
 
-<abstract><t>This specification describes an optimized expression of the semantics of the Hypertext Transfer Protocol (HTTP).  HTTP/2 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent messages on the same connection.  It also introduces unsolicited push of representations from servers to clients.  This specification is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.</t></abstract>
+<abstract><t>This specification describes an optimized expression of the semantics of the Hypertext Transfer Protocol (HTTP).  HTTP/2 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent exchanges on the same connection.  It also introduces unsolicited push of representations from servers to clients.  This specification is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.</t></abstract>
 
 </front>
 
-<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-http2-16' />
+<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-http2-17' />
 <format type='TXT'
-        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-16.txt' />
+        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-http2-17.txt' />
 </reference>
 
 
@@ -931,6 +1067,13 @@ of individual messages.</t>
 
     </references>
 
+
+<section anchor="acknowledgements" title="Acknowledgements">
+
+<t>The following people provided valuable feedback and suggestions: Richard Barnes,
+Stephen Farrell, Eric Rescorla, and Jim Schaad.</t>
+
+</section>
 
 
   </back>

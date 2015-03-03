@@ -159,17 +159,17 @@ field.
 AEAD_AES_128_GCM expands ciphertext to be 16 octets longer than its input plaintext.  Therefore, the
 length of each enciphered record is equal to the value of the "rs" parameter plus 16 octets.  It is
 a fatal decryption error to have a remainder of 16 octets or less in size (though AEAD_AES_128_GCM
-permits input plaintext to be zero length, records always contain at least one padding byte).
+permits input plaintext to be zero length, records always contain at least one padding octet).
 
-Each record contains between 0 and 255 bytes of padding, inserted into a record before the enciphered
-content.  The length of the padding is stored in the first byte of the payload.  All padding bytes
-MUST be set to zero.  It is a fatal decryption error to have a record with more padding than the
-record size.
+Each record contains between 0 and 255 octets of padding, inserted into a record before the
+enciphered content.  The length of the padding is stored in the first octet of the payload.  All
+padding octets MUST be set to zero.  It is a fatal decryption error to have a record with more
+padding than the record size.
 
 The nonce used for each record is a 96-bit value containing the index of the current record in
 network byte order.  Records are indexed starting at zero.
 
-The additional data passed to the AEAD algorithm is a zero-length byte sequence.
+The additional data passed to the AEAD algorithm is a zero-length octet sequence.
 
 Issue:
 : Double check that having no AAD is safe.
@@ -209,9 +209,9 @@ keyid:
 
 salt:
 
-: The "salt" parameter contains a base64 URL-encoded bytes that is used as salt in deriving a unique
-content encryption key (see {{derivation}}).  The "salt" parameter MUST be present, and MUST be
-exactly 16 octets long.  The "salt" parameter MUST NOT be reused for two different messages that
+: The "salt" parameter contains a base64 URL-encoded octets that is used as salt in deriving a
+unique content encryption key (see {{derivation}}).  The "salt" parameter MUST be present, and MUST
+be exactly 16 octets long.  The "salt" parameter MUST NOT be reused for two different messages that
 have the same content encryption key; generating a random nonce for each message ensures that reuse
 is highly unlikely.
 
@@ -231,25 +231,25 @@ algorithm [FIPS180-2].
 
 The decoded value of the "salt" parameter is the salt input to HKDF function.  The keying material
 identified by the "keyid" parameter is the input keying material (IKM) to HKDF.  Input keying
-material can either be known ahead of time, or can be described using the Encryption-Key header
-field {{encryption-key}}.  The first step of HKDF is therefore:
+material can either be prearranged, or can be described using the Encryption-Key header field
+{{encryption-key}}.  The first step of HKDF is therefore:
 
 ~~~
-PRK = HMAC-SHA-256(salt, IKM)
+   PRK = HMAC-SHA-256(salt, IKM)
 ~~~
 
-AEAD_AES_128_GCM requires 16 bytes (128 bits) of key, so the length (L) parameter of HKDF is 16.
+AEAD_AES_128_GCM requires 16 octets (128 bits) of key, so the length (L) parameter of HKDF is 16.
 The info parameter is set to the ASCII-encoded string "Content-Encoding: aesgcm128".  The second
-step of HKDF can therefore be simplified to the first 16 bytes of a single HMAC:
+step of HKDF can therefore be simplified to the first 16 octets of a single HMAC:
 
 ~~~
-OKM = HMAC-SHA-256(PRK, "Content-Encoding: aesgcm128" || 0x01)[0..15]
+   OKM = HMAC-SHA-256(PRK, "Content-Encoding: aesgcm128" || 0x01)
 ~~~
 
 
 # Encryption-Key Header Field {#encryption-key}
 
-An Encryption-Key header field can thereby be used to describe the input keying material used in the
+An Encryption-Key header field can be used to describe the input keying material used in the
 Encryption header field.
 
 keyid:
@@ -258,27 +258,32 @@ keyid:
 
 key:
 
-: The "key" parameter contains the URL-safe base64 [RFC4648] bytes of the input keying material.
+: The "key" parameter contains the URL-safe base64 [RFC4648] octets of the input keying material.
 
 dh:
 
-: The "dh" parameter contains an ephemeral Diffie-Hellman share. This is used to encrypt content for
-a specific recipient.
+: The "dh" parameter contains an ephemeral Diffie-Hellman share. This form of the header field can
+be used to encrypt content for a specific recipient.
 
 
 The input keying material used by the content-encoding key derivation (see {{derivation}}) can be
 determined based on the information in the Encryption-Key header field.  The method for key
 derivation depends on the parameters that are present in the header field.
 
-Note that different derivation methods will produce input keying material of different lengths.  The
-HKDF process ensures that the final content encryption key is the correct size.
+Note that different methods for determining input keying materal will produce different
+amounts of data.  The HKDF process ensures that the final content encryption key is the necessary
+size.
+
+Alternative methods for determining input keying material MAY be defined by specifications that use
+this content-encoding.
 
 
 ## Explicit Key
 
 The "key" parameter is decoded and used directly if present.  The "key" parameter MUST decode to
 exactly 16 octets in order to be used as input keying material for "aesgcm128" content encoding.
-Other key determination parameters can be ignored if this parameter is present.
+
+Other key determination parameters can be ignored if the "key" parameter is present.
 
 
 ## Diffie-Hellman
@@ -300,23 +305,12 @@ out of band:
 In addition to identifying which content-encoding this input keying material is used for, the
 "keyid" parameter is used to identify this additional information at the receiver.
 
+The intended recipient recovers their private key and are then able to generate a shared secret
+using the appropriate Diffie-Hellman process.
 
-### ECDH Key Derivation {#ecdh}
-
-When an "ecdh" parameter is present, key derivation relies on several pieces of
-information that the sender and receiver have agreed upon out of band:
-
-* The elliptic curve that will be used for the ECDH process
-
-The "keyid" parameter contains an identifier for these agreed parameters as well as the keying
-material used by the receiver.  This means that the actual content of the "ecdh" parameter does not
-need to explicitly include all this information.
-
-The intended recipient recovers this information and their shared secret and are then able to
-generate a shared secret using the ECDH process on the selected curve.
-
-Specifications that rely on an ECDH exchange for this content-coding MUST either specify what curve
-and point format to use, or how a curve and point format is negotiated between sender and receiver.
+Specifications that rely on an Diffie-Hellman exchange for determining input keying material MUST
+either specify the parameters for Diffie-Hellman (group parameters, or curves and point format) that
+are used, or describe how those parameters are negotiated between sender and receiver.
 
 
 # Examples
@@ -363,12 +357,13 @@ Content-Length: 1234
 Encryption: keyid="mailto:me@example.com";
             salt="NfzOeuV5USPRA-n_9s1Lag",
             keyid="http://example.org/bob/keys/123";
-            salt="bDMSGoc2uobK_IhavSHsHA"
+            salt="bDMSGoc2uobK_IhavSHsHA"; rs=1200
 
 [encrypted payload]
 ~~~
 
 Here, a PUT request has been encrypted with two keys; both will be necessary to read the content.
+The outer layer of encryption uses a 1200 octet record size.
 
 
 ## Encryption with Explicit Key
@@ -377,14 +372,15 @@ Here, a PUT request has been encrypted with two keys; both will be necessary to 
 HTTP/1.1 200 OK
 Content-Length: 31
 Content-Encoding: aesgcm-128
-Encryption-Key: keyid=1; key="T9jtNY-vTvq7mSVlNFJbyw"
-Encryption: keyid=1; nonce="nJJ-xXkP5sM_8Zp00Gp-ig"
+Encryption: keyid="a1"; salt="owIfQR647esVfrzCW_i9GQ"
+Encryption-Key: keyid="a1"; key="JcqK-OLkJZlJ3sJJWstJCA"
 
-zIZwlquLit2UEsKh1eBATJadBieZUEOI9sfiJtT6DwU
+LwTC-fwdKh8de0smD2jfzHodb1EYbuuTNpcYXLW257Q
 ~~~
 
-This example shows the string "I am the walrus" being encrypted.  The content body contains a single
-record only and is shown here encoded in URL-safe base64 for presentation reasons only.
+This example shows the string "I am the walrus" encrypted using an explicit key.  The content body
+contains a single record only and is shown here encoded in URL-safe base64 for presentation reasons
+only.
 
 
 ## Diffie-Hellman Encryption
@@ -393,30 +389,30 @@ record only and is shown here encoded in URL-safe base64 for presentation reason
 HTTP/1.1 200 OK
 Content-Length: 31
 Content-Encoding: aesgcm-128
-Encryption: keyid="the key";
-            salt="6hCMStcuoSdfvDjpm0qhdQ";
-            dh="BOsUGWuTKnbckPjtsU-vCi1BQaQu5B9iEoP8No2B34rS
-                RvaA_er_d2tpRy-3e-a6n5W7MIPBcacIJ7eDWkvnDxI"
+Encryption: keyid="dhkey"; salt="XYFSCgMVjc45IMfLOcMfiw"
+Encryption-Key: keyid="dhkey";
+                dh="BELKqvZ7n3p5C9_ipP_6X9DBNAGuJujSN7YWbtcGZMMH
+                    3urZM-zlii3mGGCMjlqR-yWwiPlMdKRdOL8gQSdHw8E"
 
-fDBJbV-a2XnWwcJQTpDinRoDqOHdmH5XxJD0Gob7wEg
+P6ikHE_wyKnYHXxLswvuFBO3JJOZpM1Bg3KikQEmczU
 ~~~
 
 This example shows the same string, "I am the walrus", encrypted using ECDH over the P-256 curve
 [FIPS186]. The content body is shown here encoded in URL-safe base64 for presentation reasons only.
 
-The receiver (in this case, the HTTP client) uses the key identified by the string "the key" and the
+The receiver (in this case, the HTTP client) uses the key identified by the string "dhkey" and the
 sender (the server) uses a key pair for which the public share is included in the "dh" parameter
 above. The keys shown below use uncompressed points [X.692] encoded using URL-safe base64. Line
 wrapping is added for presentation purposes only.
 
 ~~~
-Receiver:
-  private key: XKtP2DkzcIe5IP-F2aQEGhLyIAsFQ0_i0oerP7KhVDs
-  public key: BMsH0i3-wrEXL8cL66n42WLM0yjNnyYL6hIVyhcnHlb-
-              GcruWEGr-5avwIu3oJVCQofFvuwu3y3VJFcIDA5tTyg
-Sender:
-  private key: iG9ObZuRssarFIh859KjDpysTMybv4HNoZoPc-1DzWo
-  public key: <the value of the "dh" parameter>
+   Receiver:
+      private key: QjGwenE3vCg8Eajo-PukGgUkYq8Vu-SQn04Cc9DR-YA
+      public key: BBM3pYS4nXG6bQYnZbGDY7l6CVrQTZ-1u00h7XV6A_TD
+                v7mXvv5k29uoLid8SdDycw341PJTW4hNCe2FNysN52U
+   Sender:
+      private key: wlC-qzKBWO6jYq32nlD0ZZVsI5jGVBC1gN7zkXjaPks
+      public key: <the value of the "dh" parameter>
 ~~~
 
 
@@ -453,7 +449,7 @@ as detailed in {{encryption-key}}.
 * Notes:
 
 
-## The HTTP Encryption Registry {#encryption-registry}
+## The HTTP Encryption Parameter Registry {#encryption-registry}
 
 This memo establishes a registry for parameters used by the "Encryption" header
 field under the "Hypertext Transfer Protocol (HTTP) Parameters" grouping.  The
@@ -487,7 +483,7 @@ The initial contents of this registry are:
 * Reference: [this document]
 
 
-## The HTTP Encryption-Key Registry {#encryption-key-registry}
+## The HTTP Encryption-Key Parameter Registry {#encryption-key-registry}
 
 This memo establishes a registry for parameters used by the "Encryption-Key" header
 field under the "Hypertext Transfer Protocol (HTTP) Parameters" grouping.  The
@@ -527,10 +523,10 @@ This mechanism assumes the presence of a key management framework that is used t
 distribution of keys between valid senders and receivers.  Defining key management is part of
 composing this mechanism into a larger application, protocol, or framework.
 
-Implementation of cryptography can be difficult.  For instance, implementations need to account for
-the potential for exposing keying material on side channels, such as might be exposed by the time it
-takes to perform a given operation.  The requirements for a good implementation of cryptographic
-algorithms can change over time.
+Implementation of cryptography - and key management in particular - can be difficult.  For instance,
+implementations need to account for the potential for exposing keying material on side channels,
+such as might be exposed by the time it takes to perform a given operation.  The requirements for a
+good implementation of cryptographic algorithms can change over time.
 
 
 ## Key and Nonce Reuse
