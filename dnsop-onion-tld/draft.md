@@ -66,7 +66,7 @@ This document registers the ".onion" Special-Use Domain Name {{RFC6761}}.
 
 The Tor network {{Dingledine2004}} has the ability to host network services
 using the ".onion" Top-Level Domain. Such addresses can be used as other domain
-names can (e.g., in URLs {{RFC3986}}), but instead of using the DNS
+names would be (e.g., in URLs {{RFC3986}}), but instead of using the DNS
 infrastructure, .onion names are hashes that correspond to the identity of a
 given service, thereby combining location and authentication.
 
@@ -115,7 +115,7 @@ for .onion with NXDOMAIN.
 
 6. DNS Server Operators: Operators SHOULD NOT try to configure an authoritative
 DNS server to answer queries for .onion. If they do so, client software is 
-likely ignore any results (see above).
+likely to ignore any results (see above).
 
 7. DNS Registries/Registrars: Registrars MUST NOT register .onion names; all
 such requests MUST be denied.
@@ -155,8 +155,13 @@ communicating with is correct, as attackers may be able to find keys which
 produce service names that are visually or apparently semantically similar to
 the desired service.
 
+Also, users need be aware of the difference between a .onion name used and
+accessed directly via Tor-capable software, versus .onion subdomains of other
+TLDs and providers (e.g., the difference between facebookcorewwwi.onion and
+facebookcorewwwi.onion.cab).
+
 The cryptographic label for an .onion name is constructed by hashing the public
-key of the service with SHA1, truncating the output of the hash to 80bits in
+key of the service with SHA1, truncating the output of the hash to 80 bits in
 length and the resulting hash output is concatenated with the string ".onion".
 As the number of output bits in generating the .onion name is less than the
 full size of the corresponding public key, an attacker may also be able to find
