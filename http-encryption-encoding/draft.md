@@ -49,7 +49,7 @@ normative:
     seriesinfo: IEEE Transactions on Information Theory, V.IT-22 n.6
 
 informative:
-  RFC2440:
+  RFC4880:
   RFC5226:
   RFC5246:
   RFC5652:
@@ -100,7 +100,7 @@ without exposing its contents.
 These uses are not met by the use of TLS [RFC5246], since it only encrypts the channel between the
 client and server.
 
-Message-based encryption formats - such as those that are described by [RFC2440], [RFC5652],
+Message-based encryption formats - such as those that are described by [RFC4880], [RFC5652],
 [I-D.ietf-jose-json-web-encryption], and [XMLENC] - are not suited to stream processing, which is
 necessary for HTTP messages.  While virtually any of these alternatives could be profiled and
 adapted to suit, the overhead and complexity that would introduce is sub-optimal.
