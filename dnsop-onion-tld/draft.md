@@ -158,8 +158,8 @@ the desired service.
 
 Also, users need be aware of the difference between a .onion name used and
 accessed directly via Tor-capable software, versus .onion subdomains of other
-TLDs and providers (e.g., the difference between facebookcorewwwi.onion and
-facebookcorewwwi.onion.cab).
+TLDs and providers (e.g., the difference between example.onion and
+example.onion.tld).
 
 The cryptographic label for an .onion name is constructed by hashing the public
 key of the service with SHA1, truncating the output of the hash to 80 bits in
