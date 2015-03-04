@@ -8,7 +8,11 @@ category: std
 ipr: trust200902
 area: General
 workgroup: dnsop
-keyword: Internet-Draft
+keyword: 
+ - Internet-Draft
+ - onion
+ - tld
+ - dns
 
 stand_alone: yes
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
