@@ -118,9 +118,9 @@ for .onion names. They SHOULD generate NXDOMAIN for all such queries.
 5. Authoritative DNS Servers: Authoritative servers SHOULD respond to queries
 for .onion with NXDOMAIN.
 
-6. DNS Server Operators: Operators SHOULD NOT try to configure an authoritative
-DNS server to answer queries for .onion. If they do so, client software is 
-likely to ignore any results (see above).
+6. DNS Server Operators: Operators SHOULD NOT configure an authoritative DNS
+server to answer queries for .onion. If they do so, client software is likely
+to ignore any results (see above).
 
 7. DNS Registries/Registrars: Registrars MUST NOT register .onion names; all
 such requests MUST be denied.
