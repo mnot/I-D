@@ -58,7 +58,7 @@ informative:
 
 --- abstract
 
-This document registers the ".onion" Special-Use Domain Name {{RFC6761}}.
+This document registers the ".onion" Special-Use Domain Name.
 
 --- middle
 
