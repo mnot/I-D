@@ -68,7 +68,7 @@ without exposing its contents.</t>
 <t>These uses are not met by the use of TLS <xref target="RFC5246"></xref>, since it only encrypts the channel between the
 client and server.</t>
 
-<t>Message-based encryption formats - such as those that are described by <xref target="RFC2440"></xref>, <xref target="RFC5652"></xref>,
+<t>Message-based encryption formats - such as those that are described by <xref target="RFC4880"></xref>, <xref target="RFC5652"></xref>,
 <xref target="I-D.ietf-jose-json-web-encryption"></xref>, and <xref target="XMLENC"></xref> - are not suited to stream processing, which is
 necessary for HTTP messages.  While virtually any of these alternatives could be profiled and
 adapted to suit, the overhead and complexity that would introduce is sub-optimal.</t>
@@ -218,6 +218,11 @@ step of HKDF can therefore be simplified to the first 16 octets of a single HMAC
 
 <t>An Encryption-Key header field can be used to describe the input keying material used in the
 Encryption header field.</t>
+
+<figure><artwork><![CDATA[
+  Encryption-Key-val = #encryption_key_params
+  encryption_key_params = [ param *( ";" param ) ]
+]]></artwork></figure>
 
 <t><list style="hanging">
   <t hangText='keyid:'>
@@ -792,103 +797,26 @@ of individual messages.</t>
 
 
 
-<reference anchor='RFC2440'>
+<reference anchor='RFC4880'>
 
 <front>
 <title>OpenPGP Message Format</title>
-<author initials='J.' surname='Callas' fullname='Jon Callas'>
-<organization>Network Associates, Inc.</organization>
-<address>
-<postal>
-<street>3965 Freedom Circle</street>
-<street>Santa Clara</street>
-<street>CA 95054</street>
-<country>USA</country></postal>
-<phone>+1 408-346-5860</phone>
-<email>jon@pgp.com</email></address></author>
-<author initials='L.' surname='Donnerhacke' fullname='Lutz Donnerhacke'>
-<organization>IKS GmbH</organization>
-<address>
-<postal>
-<street>Wildenbruchstr. 15</street>
-<street>07745 Jena</street>
-<country>Germany</country></postal>
-<phone>+49-3641-675642</phone>
-<email>lutz@iks-jena.de</email></address></author>
-<author initials='H.' surname='Finney' fullname='Hal Finney'>
-<organization>Network Associates, Inc.</organization>
-<address>
-<postal>
-<street>3965 Freedom Circle</street>
-<street>Santa Clara</street>
-<street>CA 95054</street>
-<country>USA</country></postal>
-<email>hal@pgp.com</email></address></author>
-<author initials='R.' surname='Thayer' fullname='Rodney Thayer'>
-<organization>EIS Corporation</organization>
-<address>
-<postal>
-<street>Clearwater</street>
-<street>FL 33767</street>
-<country>USA</country></postal>
-<email>rodney@unitran.com</email></address></author>
-<date year='1998' month='November' />
-<area>Security</area>
-<keyword>pretty good privacy</keyword>
-<keyword>PGP</keyword>
-<keyword>security</keyword>
+<author initials='J.' surname='Callas' fullname='J. Callas'>
+<organization /></author>
+<author initials='L.' surname='Donnerhacke' fullname='L. Donnerhacke'>
+<organization /></author>
+<author initials='H.' surname='Finney' fullname='H. Finney'>
+<organization /></author>
+<author initials='D.' surname='Shaw' fullname='D. Shaw'>
+<organization /></author>
+<author initials='R.' surname='Thayer' fullname='R. Thayer'>
+<organization /></author>
+<date year='2007' month='November' />
 <abstract>
-<t>
-   This document defines many tag values, yet it doesn&apos;t describe a
-   mechanism for adding new tags (for new features).  Traditionally the
-   Internet Assigned Numbers Authority (IANA) handles the allocation of
-   new values for future expansion and RFCs usually define the procedure
-   to be used by the IANA.  However, there are subtle (and not so
-   subtle) interactions that may occur in this protocol between new
-   features and existing features which result in a significant
-   reduction in over all security.  Therefore, this document does not
-   define an extension procedure.  Instead requests to define new tag
-   values (say for new encryption algorithms for example) should be
-   forwarded to the IESG Security Area Directors for consideration or
-   forwarding to the appropriate IETF Working Group for consideration.
-</t>
-<t>
-   This document is maintained in order to publish all necessary
-   information needed to develop interoperable applications based on the
-   OpenPGP format. It is not a step-by-step cookbook for writing an
-   application. It describes only the format and methods needed to read,
-   check, generate, and write conforming packets crossing any network.
-   It does not deal with storage and implementation questions.  It does,
-   however, discuss implementation issues necessary to avoid security
-   flaws.
-</t>
-<t>
-   Open-PGP software uses a combination of strong public-key and
-   symmetric cryptography to provide security services for electronic
-   communications and data storage.  These services include
-   confidentiality, key management, authentication, and digital
-   signatures. This document specifies the message formats used in
-   OpenPGP.
-</t></abstract>
-<note title='IESG Note'>
-<t>
-   This document defines many tag values, yet it doesn&apos;t describe a
-   mechanism for adding new tags (for new features).  Traditionally the
-   Internet Assigned Numbers Authority (IANA) handles the allocation of
-   new values for future expansion and RFCs usually define the procedure
-   to be used by the IANA.  However, there are subtle (and not so
-   subtle) interactions that may occur in this protocol between new
-   features and existing features which result in a significant
-   reduction in over all security.  Therefore, this document does not
-   define an extension procedure.  Instead requests to define new tag
-   values (say for new encryption algorithms for example) should be
-   forwarded to the IESG Security Area Directors for consideration or
-   forwarding to the appropriate IETF Working Group for consideration.
-</t></note></front>
+<t>This document is maintained in order to publish all necessary information needed to develop interoperable applications based on the OpenPGP format. It is not a step-by-step cookbook for writing an application. It describes only the format and methods needed to read, check, generate, and write conforming packets crossing any network. It does not deal with storage and implementation questions. It does, however, discuss implementation issues necessary to avoid security flaws.&lt;/t>&lt;t> OpenPGP software uses a combination of strong public-key and symmetric cryptography to provide security services for electronic communications and data storage. These services include confidentiality, key management, authentication, and digital signatures. This document specifies the message formats used in OpenPGP. [STANDARDS-TRACK]</t></abstract></front>
 
-<seriesInfo name='RFC' value='2440' />
-<format type='TXT' octets='141371' target='http://www.rfc-editor.org/rfc/rfc2440.txt' />
-<format type='XML' octets='137322' target='http://xml.resource.org/public/rfc/xml/rfc2440.xml' />
+<seriesInfo name='RFC' value='4880' />
+<format type='TXT' octets='203706' target='http://www.rfc-editor.org/rfc/rfc4880.txt' />
 </reference>
 
 
