@@ -65,7 +65,8 @@ informative:
      title: "Public Key Cryptography For The Financial Services Industry: The Elliptic Curve Digital Signature Algorithm (ECDSA)"
      author:
        - org: ANSI
-     seriesinfo: ANSI X9.62, 1998.
+     date: 1998
+     seriesinfo: ANSI X9.62
   I-D.ietf-jose-json-web-encryption:
   XMLENC:
      title: "XML Encryption Syntax and Processing"
