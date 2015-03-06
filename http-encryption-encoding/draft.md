@@ -105,7 +105,7 @@ Message-based encryption formats - such as those that are described by [RFC4880]
 necessary for HTTP messages.  While virtually any of these alternatives could be profiled and
 adapted to suit, the overhead and complexity that would introduce is sub-optimal.
 
-This document specifies a content-coding [RFC7231]) for HTTP to serve these and other use cases.
+This document specifies a content-coding (Section 3.1.2 of [RFC7231]) for HTTP to serve these and other use cases.
 
 This mechanism is likely only a small part of a larger design that uses content encryption.  In
 particular, this document does not describe key management practices.  How clients and servers
@@ -125,8 +125,8 @@ The "aesgcm-128" HTTP content-coding indicates that a payload has been encrypted
 Encryption Standard (AES) in Galois/Counter Mode (GCM) as identified as AEAD_AES_128_GCM in
 [RFC5116], Section 5.1.  The AEAD_AES_128_GCM algorithm uses a 128 bit content encryption key.
 
-When this content-coding is in use, the Encryption header field {{encryption}} describes how
-encryption has been applied.  The Encryption-Key header field {{encryption-key}} can be included to
+When this content-coding is in use, the Encryption header field ({{encryption}}) describes how
+encryption has been applied.  The Encryption-Key header field ({{encryption-key}}) can be included to
 describe how the the content encryption key is derived or retrieved.
 
 The "aesgcm-128" content-coding uses a single fixed set of encryption primitives.  Cipher suite
@@ -232,7 +232,7 @@ algorithm [FIPS180-2].
 The decoded value of the "salt" parameter is the salt input to HKDF function.  The keying material
 identified by the "keyid" parameter is the input keying material (IKM) to HKDF.  Input keying
 material can either be prearranged, or can be described using the Encryption-Key header field
-{{encryption-key}}.  The first step of HKDF is therefore:
+({{encryption-key}}).  The first step of HKDF is therefore:
 
 ~~~
    PRK = HMAC-SHA-256(salt, IKM)
@@ -562,16 +562,16 @@ replacement of parts of a message are not possible.
 
 ## Leaking Information in Headers
 
-Because "encrypted" only operates upon the message payload, any information exposed in headers is
+Because "encrypted" only operates upon the message payload, any information exposed in header fields is
 visible to anyone who can read the message.
 
-For example, the Content-Type header can leak information about the message payload.
+For example, the Content-Type header field can leak information about the message payload.
 
 There are a number of strategies available to mitigate this threat, depending upon the
 application's threat model and the users' tolerance for leaked information:
 
 1. Determine that it is not an issue. For example, if it is expected that all content stored will be
-"application/json", or another very common media type, exposing the Content-Type header could be an
+"application/json", or another very common media type, exposing the Content-Type header field could be an
 acceptable risk.
 
 2. If it is considered sensitive information and it is possible to determine it through other means
@@ -580,7 +580,7 @@ normalize them. In the case of Content-Type, this could be accomplished by alway
 Content-Type: application/octet-stream (the most generic media type).
 
 3. If it is considered sensitive information and it is not possible to convey it elsewhere,
-encapsulate the HTTP message using the application/http media type [RFC7230], encrypting that as the
+encapsulate the HTTP message using the application/http media type (Section 8.3.2 of [RFC7230]), encrypting that as the
 payload of the "outer" message.
 
 
