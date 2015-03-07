@@ -578,7 +578,7 @@ acceptable risk.
 2. If it is considered sensitive information and it is possible to determine it through other means
 (e.g., out of band, using hints in other representations, etc.), omit the relevant headers, and/or
 normalize them. In the case of Content-Type, this could be accomplished by always sending
-Content-Type: application/octet-stream (the most generic media type).
+Content-Type: application/octet-stream (the most generic media type), or no Content-Type at all.
 
 3. If it is considered sensitive information and it is not possible to convey it elsewhere,
 encapsulate the HTTP message using the application/http media type (Section 8.3.2 of [RFC7230]), encrypting that as the
