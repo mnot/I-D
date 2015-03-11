@@ -160,12 +160,12 @@ communicating with is correct, as attackers may be able to find keys which
 produce service names that are visually or apparently semantically similar to
 the desired service.
 
-Also, users need be aware of the difference between a .onion name used and
+Also, users need to understand the difference between a .onion name used and
 accessed directly via Tor-capable software, versus .onion subdomains of other
 TLDs and providers (e.g., the difference between example.onion and
 example.onion.tld).
 
-The cryptographic label for an .onion name is constructed by applying a
+The cryptographic label for a .onion name is constructed by applying a
 function to the public key of the server, the output of which is rendered
 as a string and concatenated with the string ".onion". Dependent upon the
 specifics of the function used, an attacker may be able to find a key that
