@@ -71,7 +71,7 @@ This document registers the ".onion" Special-Use Domain Name.
 The Tor network {{Dingledine2004}} has the ability to host network services
 using the ".onion" Top-Level Domain. Such addresses can be used as other domain
 names would be (e.g., in URLs {{RFC3986}}), but instead of using the DNS
-infrastructure, .onion names are hashes that correspond to the identity of a
+infrastructure, .onion names functionally correspond to the identity of a
 given service, thereby combining location and authentication.
 
 In this way, .onion names are "special" in the sense defined by {{RFC6761}}
@@ -165,14 +165,13 @@ accessed directly via Tor-capable software, versus .onion subdomains of other
 TLDs and providers (e.g., the difference between example.onion and
 example.onion.tld).
 
-The cryptographic label for an .onion name is constructed by hashing the public
-key of the service with SHA1, truncating the output of the hash to 80 bits in
-length and the resulting hash output is concatenated with the string ".onion".
-As the number of output bits in generating the .onion name is less than the
-full size of the corresponding public key, an attacker may also be able to find
-a key that produces a collision with the same .onion name with substantially
-less work than a cryptographic attack on the full strength key. If this is
-possible the attacker may be able to impersonate the service on the network.
+The cryptographic label for an .onion name is constructed by applying a
+function to the public key of the server, the output of which is rendered
+as a string and concatenated with the string ".onion". Dependent upon the
+specifics of the function used, an attacker may be able to find a key that
+produces a collision with the same .onion name with substantially less work
+than a cryptographic attack on the full strength key. If this is possible the
+attacker may be able to impersonate the service on the network.
 
 If client software attempts to resolve a .onion name, it can leak the identity
 of the service that the user is attempting to access to DNS resolvers,
