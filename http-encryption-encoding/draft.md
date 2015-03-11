@@ -1,7 +1,7 @@
 ---
 title: Encrypted Content-Encoding for HTTP
 abbrev: HTTP encryption coding
-docname: draft-nottingham-http-encryption-encoding-00
+docname: draft-nottingham-http-encryption-encoding-01
 date: 2015
 category: info
 
