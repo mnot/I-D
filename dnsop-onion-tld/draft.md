@@ -180,3 +180,7 @@ be mitigated by following the recommendations in {{onion}}.
 
 
 --- back
+
+# Acknowledgements
+
+Thanks to Roger Dingledine, Linus Nordberg and Seth David Schoen for their input and review.
