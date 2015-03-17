@@ -7,3 +7,5 @@
 	mv $@/draft-nottingham--00.xml $@/draft-nottingham-$@-00.xml
 	sed -i '' -e"s/draft-nottingham--00/draft-nottingham-$@-00/" \
 		$@/draft-nottingham-$@-00.xml
+	sed -i '' -e"s/draft-nottingham--00/draft-nottingham-$@-00/" \
+		$@/draft.md
