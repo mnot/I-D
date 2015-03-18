@@ -65,7 +65,7 @@ informative:
 
 --- abstract
 
-This draft attempts to identify potential harms associated with new metadata facilities in Internet protocols, and suggest possible mitigations. Its goal is to have the discussion of these tradeoffs up-front, rather than after the development of such mechanisms.
+This draft attempts to identify potential impacts associated with new metadata facilities in Internet protocols, and suggest possible mitigations. Its goal is to have the discussion of these tradeoffs up-front, rather than after the development of such mechanisms.
 
 --- middle
 
@@ -85,7 +85,7 @@ Indeed, much of the effort in combatting pervasive monitoring (as per {{RFC7258}
 
 Any new metadata facility, then -- whether it be introduced to an existing protocol, or as part of a new one -- should be held up to scrutiny.
 
-This draft attempts to identify potential harms associated with new metadata facilities in Internet protocols, and suggest possible mitigations. Its goal is to have the discussion of these tradeoffs up-front, rather than after the development of such mechanisms.
+This draft attempts to identify potential impacts associated with new metadata facilities in Internet protocols, and suggest possible mitigations. Its goal is to have the discussion of these tradeoffs up-front, rather than after the development of such mechanisms.
 
 It should be noted that the addition of metadata to protocols isn't being posed as an inherent harm -- i.e., there are some legitimate uses of metadata, particularly if it eases the adoption of encrypted protocols. However, the balance between the interests of stakeholders like end users, content providers and network operators needs to be carefully considered.
 
