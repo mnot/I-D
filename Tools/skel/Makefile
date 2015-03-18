@@ -1,6 +1,7 @@
 
 id_base = ..
 xml2rfc ?= xml2rfc
+saxpath ?= /usr/local/share/saxon-b/saxon9.jar
 kramdown-rfc2629 ?= kramdown-rfc2629
 idnits ?= idnits
 
@@ -33,7 +34,9 @@ idnits: $(target).txt
 	$(kramdown-rfc2629) $< > $@
 	
 %.html: %.xml
-	$(xml2rfc) --html $< $@
+	sed -i '' -e"s/rfc2629.dtd/$(id_base)\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
+	java -classpath $(saxpath) net.sf.saxon.Transform -novw -l $< $(id_base)/Tools/rfcbootstrap/rfcbootstrap.xslt > $@
+#	$(xml2rfc) --html $< $@
 
 %.txt: %.xml
 	$(xml2rfc) $< $@
