@@ -378,10 +378,10 @@ The outer layer of encryption uses a 1200 octet record size.
 HTTP/1.1 200 OK
 Content-Length: 31
 Content-Encoding: aesgcm-128
-Encryption: keyid="a1"; salt="owIfQR647esVfrzCW_i9GQ"
-Encryption-Key: keyid="a1"; key="JcqK-OLkJZlJ3sJJWstJCA"
+Encryption: keyid="a1"; salt="ibZx1RNz537h1XNkRcPpjA"
+Encryption-Key: keyid="a1"; key="9Z57YCb3dK95dSsdFJbkag"
 
-LwTC-fwdKh8de0smD2jfzHodb1EYbuuTNpcYXLW257Q
+zK3kpG__Z8whjIkG6RYgPz11oUkTKcxPy9WP-VPMfuc
 ~~~
 
 This example shows the string "I am the walrus" encrypted using an explicit key.  The content body
@@ -395,12 +395,12 @@ only.
 HTTP/1.1 200 OK
 Content-Length: 31
 Content-Encoding: aesgcm-128
-Encryption: keyid="dhkey"; salt="XYFSCgMVjc45IMfLOcMfiw"
+Encryption: keyid="dhkey"; salt="5hpuYfxDzG6nSs9-EQuaBg"
 Encryption-Key: keyid="dhkey";
-                dh="BELKqvZ7n3p5C9_ipP_6X9DBNAGuJujSN7YWbtcGZMMH
-                    3urZM-zlii3mGGCMjlqR-yWwiPlMdKRdOL8gQSdHw8E"
+                dh="BLsyIPbDn6bquEOwHaju2gj8kUVoflzTtPs_6fGoock_
+                    dwxi1BcgFtObPVnic4alcEucx8I6G8HmEZCJnAl36Zg"
 
-P6ikHE_wyKnYHXxLswvuFBO3JJOZpM1Bg3KikQEmczU
+BmuHqRzdD4W1mibxglrPiRHZRSY49Dzdm6jHrWXzZrE
 ~~~
 
 This example shows the same string, "I am the walrus", encrypted using ECDH over the P-256 curve
@@ -413,11 +413,11 @@ wrapping is added for presentation purposes only.
 
 ~~~
    Receiver:
-      private key: QjGwenE3vCg8Eajo-PukGgUkYq8Vu-SQn04Cc9DR-YA
-      public key: BBM3pYS4nXG6bQYnZbGDY7l6CVrQTZ-1u00h7XV6A_TD
-                v7mXvv5k29uoLid8SdDycw341PJTW4hNCe2FNysN52U
+      private key: iCjNf8v4ox_g1rJuSs_gbNmYuUYx76ZRruQs_CHRzDg
+      public key: BPM1w41cSD4BMeBTY0Fz9ryLM-LeM22Dvt0gaLRukf05
+                  rMhzFAvxVW_mipg5O0hkWad9ZWW0uMRO2Nrd32v8odQ
    Sender:
-      private key: wlC-qzKBWO6jYq32nlD0ZZVsI5jGVBC1gN7zkXjaPks
+      private key: W0cxgeHDZkR3uMQYAbVgF5swKQUAR7DgoTaaQVlA-Fg
       public key: <the value of the "dh" parameter>
 ~~~
 
