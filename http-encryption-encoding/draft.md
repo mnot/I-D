@@ -104,9 +104,12 @@ client and server.
 Message-based encryption formats - such as those that are described by [RFC4880], [RFC5652],
 [I-D.ietf-jose-json-web-encryption], and [XMLENC] - are not suited to stream processing, which is
 necessary for HTTP messages.  While virtually any of these alternatives could be profiled and
-adapted to suit, the overhead and complexity that would introduce is sub-optimal.
+adapted to suit, the overhead and complexity that would introduce is sub-optimal.  However, this
+format can be interpreted as sequence of JSON Web Encryption [I-D.ietf-jose-json-web-encryption]
+values with a fixed header, see {{jwe}}.
 
-This document specifies a content-coding (Section 3.1.2 of [RFC7231]) for HTTP to serve these and other use cases.
+This document specifies a content-coding (Section 3.1.2 of [RFC7231]) for HTTP to serve these and
+other use cases.
 
 This mechanism is likely only a small part of a larger design that uses content encryption.  In
 particular, this document does not describe key management practices.  How clients and servers
@@ -372,7 +375,7 @@ Here, a PUT request has been encrypted with two keys; both will be necessary to 
 The outer layer of encryption uses a 1200 octet record size.
 
 
-## Encryption with Explicit Key
+## Encryption with Explicit Key {#explicit}
 
 ~~~
 HTTP/1.1 200 OK
@@ -607,7 +610,37 @@ of individual messages.
 
 --- back
 
+# JWE Mapping {#jwe}
+
+The "aesgcm-128" content encoding can be considered as a sequence of JSON Web Encryption (JWE)
+objects, each corresponding to a single fixed size record.  The following transformations are
+applied to a JWE object that might be expressed using the JWE Compact Serialization:
+
+* The JWE Protected Header is fixed to a value { "alg": "dir", "enc": "A128GCM" }, describing direct
+  encryption using AES-GCM with a 128-bit key.  This header is not transmitted, it is instead
+  implied by the value of the Content-Encoding header field.
+
+* The JWE Encrypted Key is empty, as stipulated by the direct encryption algorithm.
+
+* The JWE Initialization Vector ("iv") for each record is set to the 96-bit integer value of the
+  record sequence number, starting at zero.  This value is also not transmitted.
+
+* The final value is the concatenated JWE Ciphertext and the JWE Authentication Tag, both expressed
+  without URL-safe Base 64 encoding.  The "." separator is omitted, since the length of these fields
+  is known.
+
+Thus, the example in {{explicit}} can be rendered using the JWE Compact Serialization as:
+
+~~~
+eyAiYWxnIjogImRpciIsICJlbmMiOiAiQTEyOEdDTSIgfQ..AAAAAAAAAAAAAAAA.
+LwTC-fwdKh8de0smD2jfzA.eh1vURhu65M2lxhctbbntA
+~~~
+
+Where the first line represents the fixed JWE Protected Header, JWE Encrypted Key, and JWE
+Initialization Vector, all of which are determined algorithmically.  The second line contains the
+encoded body, split into JWE Ciphertext and JWE Authentication Tag.
+
 # Acknowledgements
 
 The following people provided valuable feedback and suggestions: Richard Barnes,
-Stephen Farrell, Eric Rescorla, and Jim Schaad.
+Mike Jones, Stephen Farrell, Eric Rescorla, and Jim Schaad.
