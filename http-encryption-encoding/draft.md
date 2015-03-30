@@ -135,7 +135,8 @@ agility is achieved by defining a new content-coding scheme.  This ensures that 
 Accept-Encoding header field is necessary to negotiate the use of encryption.
 
 The "aesgcm-128" content-coding uses a fixed record size.  The resulting encoding is a series of
-fixed-size records, though the final record can contain any amount of data.
+fixed-size records, with a final record that is one or more octets shorter than a fixed sized
+record.
 
 ~~~
        +------+
@@ -172,8 +173,14 @@ network byte order.  Records are indexed starting at zero.
 
 The additional data passed to the AEAD algorithm is a zero-length octet sequence.
 
+A sequence of full-sized records can be truncated to produce a shorter sequence of records with
+valid authentication tags.  To prevent an attacker from truncating a stream, an endoder MUST append
+a record that contains only padding if the final record is not shorter than the record size.  A
+receiver MUST treat the stream as failed due to truncation if the final record is not less than the
+full record size.
+
 Issue:
-: Double check that having no AAD is safe.
+: Double check that this construction (with no AAD) is safe.
 
 
 # The "Encryption" HTTP header field  {#encryption}
