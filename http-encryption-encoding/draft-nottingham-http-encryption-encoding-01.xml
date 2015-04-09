@@ -14,7 +14,7 @@
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
 
-<rfc ipr="trust200902" docName="draft-nottingham-http-encryption-encoding-00" category="info">
+<rfc ipr="trust200902" docName="draft-nottingham-http-encryption-encoding-01" category="info">
 
   <front>
     <title abbrev="HTTP encryption coding">Encrypted Content-Encoding for HTTP</title>
@@ -71,9 +71,12 @@ client and server.</t>
 <t>Message-based encryption formats - such as those that are described by <xref target="RFC4880"></xref>, <xref target="RFC5652"></xref>,
 <xref target="I-D.ietf-jose-json-web-encryption"></xref>, and <xref target="XMLENC"></xref> - are not suited to stream processing, which is
 necessary for HTTP messages.  While virtually any of these alternatives could be profiled and
-adapted to suit, the overhead and complexity that would introduce is sub-optimal.</t>
+adapted to suit, the overhead and complexity that would introduce is sub-optimal.  However, this
+format can be interpreted as sequence of JSON Web Encryption <xref target="I-D.ietf-jose-json-web-encryption"></xref>
+values with a fixed header, see <xref target="jwe"/>.</t>
 
-<t>This document specifies a content-coding <xref target="RFC7231"></xref>) for HTTP to serve these and other use cases.</t>
+<t>This document specifies a content-coding (Section 3.1.2 of <xref target="RFC7231"></xref>) for HTTP to serve these and
+other use cases.</t>
 
 <t>This mechanism is likely only a small part of a larger design that uses content encryption.  In
 particular, this document does not describe key management practices.  How clients and servers
@@ -93,8 +96,8 @@ acquire and identify keys will depend on the use case.</t>
 Encryption Standard (AES) in Galois/Counter Mode (GCM) as identified as AEAD_AES_128_GCM in
 <xref target="RFC5116"></xref>, Section 5.1.  The AEAD_AES_128_GCM algorithm uses a 128 bit content encryption key.</t>
 
-<t>When this content-coding is in use, the Encryption header field <xref target="encryption"/> describes how
-encryption has been applied.  The Encryption-Key header field <xref target="encryption-key"/> can be included to
+<t>When this content-coding is in use, the Encryption header field (<xref target="encryption"/>) describes how
+encryption has been applied.  The Encryption-Key header field (<xref target="encryption-key"/>) can be included to
 describe how the the content encryption key is derived or retrieved.</t>
 
 <t>The “aesgcm-128” content-coding uses a single fixed set of encryption primitives.  Cipher suite
@@ -198,7 +201,7 @@ algorithm <xref target="FIPS180-2"></xref>.</t>
 <t>The decoded value of the “salt” parameter is the salt input to HKDF function.  The keying material
 identified by the “keyid” parameter is the input keying material (IKM) to HKDF.  Input keying
 material can either be prearranged, or can be described using the Encryption-Key header field
-<xref target="encryption-key"/>.  The first step of HKDF is therefore:</t>
+(<xref target="encryption-key"/>).  The first step of HKDF is therefore:</t>
 
 <figure><artwork><![CDATA[
    PRK = HMAC-SHA-256(salt, IKM)
@@ -336,7 +339,7 @@ Encryption: keyid="mailto:me@example.com";
 The outer layer of encryption uses a 1200 octet record size.</t>
 
 </section>
-<section anchor="encryption-with-explicit-key" title="Encryption with Explicit Key">
+<section anchor="explicit" title="Encryption with Explicit Key">
 
 <figure><artwork><![CDATA[
 HTTP/1.1 200 OK
@@ -556,24 +559,24 @@ replacement of parts of a message are not possible.</t>
 </section>
 <section anchor="leaking-information-in-headers" title="Leaking Information in Headers">
 
-<t>Because “encrypted” only operates upon the message payload, any information exposed in headers is
+<t>Because “encrypted” only operates upon the message payload, any information exposed in header fields is
 visible to anyone who can read the message.</t>
 
-<t>For example, the Content-Type header can leak information about the message payload.</t>
+<t>For example, the Content-Type header field can leak information about the message payload.</t>
 
 <t>There are a number of strategies available to mitigate this threat, depending upon the
 application’s threat model and the users’ tolerance for leaked information:</t>
 
 <t><list style="numbers">
   <t>Determine that it is not an issue. For example, if it is expected that all content stored will be
-“application/json”, or another very common media type, exposing the Content-Type header could be an
+“application/json”, or another very common media type, exposing the Content-Type header field could be an
 acceptable risk.</t>
   <t>If it is considered sensitive information and it is possible to determine it through other means
 (e.g., out of band, using hints in other representations, etc.), omit the relevant headers, and/or
 normalize them. In the case of Content-Type, this could be accomplished by always sending
-Content-Type: application/octet-stream (the most generic media type).</t>
+Content-Type: application/octet-stream (the most generic media type), or no Content-Type at all.</t>
   <t>If it is considered sensitive information and it is not possible to convey it elsewhere,
-encapsulate the HTTP message using the application/http media type <xref target="RFC7230"></xref>, encrypting that as the
+encapsulate the HTTP message using the application/http media type (Section 8.3.2 of <xref target="RFC7230"></xref>), encrypting that as the
 payload of the “outer” message.</t>
 </list></t>
 
@@ -937,9 +940,9 @@ of individual messages.</t>
     <author >
       <organization>ANSI</organization>
     </author>
-    <date year="n.d."/>
+    <date year="1998"/>
   </front>
-  <seriesInfo name="ANSI X9.62, 1998." value=""/>
+  <seriesInfo name="ANSI X9.62" value=""/>
 </reference>
 
 
@@ -996,10 +999,40 @@ of individual messages.</t>
     </references>
 
 
+<section anchor="jwe" title="JWE Mapping">
+
+<t>The “aesgcm-128” content encoding can be considered as a sequence of JSON Web Encryption (JWE)
+objects, each corresponding to a single fixed size record.  The following transformations are
+applied to a JWE object that might be expressed using the JWE Compact Serialization:</t>
+
+<t><list style="symbols">
+  <t>The JWE Protected Header is fixed to a value { “alg”: “dir”, “enc”: “A128GCM” }, describing direct
+encryption using AES-GCM with a 128-bit key.  This header is not transmitted, it is instead
+implied by the value of the Content-Encoding header field.</t>
+  <t>The JWE Encrypted Key is empty, as stipulated by the direct encryption algorithm.</t>
+  <t>The JWE Initialization Vector (“iv”) for each record is set to the 96-bit integer value of the
+record sequence number, starting at zero.  This value is also not transmitted.</t>
+  <t>The final value is the concatenated JWE Ciphertext and the JWE Authentication Tag, both expressed
+without URL-safe Base 64 encoding.  The “.” separator is omitted, since the length of these fields
+is known.</t>
+</list></t>
+
+<t>Thus, the example in <xref target="explicit"/> can be rendered using the JWE Compact Serialization as:</t>
+
+<figure><artwork><![CDATA[
+eyAiYWxnIjogImRpciIsICJlbmMiOiAiQTEyOEdDTSIgfQ..AAAAAAAAAAAAAAAA.
+LwTC-fwdKh8de0smD2jfzA.eh1vURhu65M2lxhctbbntA
+]]></artwork></figure>
+
+<t>Where the first line represents the fixed JWE Protected Header, JWE Encrypted Key, and JWE
+Initialization Vector, all of which are determined algorithmically.  The second line contains the
+encoded body, split into JWE Ciphertext and JWE Authentication Tag.</t>
+
+</section>
 <section anchor="acknowledgements" title="Acknowledgements">
 
 <t>The following people provided valuable feedback and suggestions: Richard Barnes,
-Stephen Farrell, Eric Rescorla, and Jim Schaad.</t>
+Mike Jones, Stephen Farrell, Eric Rescorla, and Jim Schaad.</t>
 
 </section>
 

@@ -104,9 +104,12 @@ client and server.
 Message-based encryption formats - such as those that are described by [RFC4880], [RFC5652],
 [I-D.ietf-jose-json-web-encryption], and [XMLENC] - are not suited to stream processing, which is
 necessary for HTTP messages.  While virtually any of these alternatives could be profiled and
-adapted to suit, the overhead and complexity that would introduce is sub-optimal.
+adapted to suit, the overhead and complexity that would introduce is sub-optimal.  However, this
+format can be interpreted as sequence of JSON Web Encryption [I-D.ietf-jose-json-web-encryption]
+values with a fixed header, see {{jwe}}.
 
-This document specifies a content-coding (Section 3.1.2 of [RFC7231]) for HTTP to serve these and other use cases.
+This document specifies a content-coding (Section 3.1.2 of [RFC7231]) for HTTP to serve these and
+other use cases.
 
 This mechanism is likely only a small part of a larger design that uses content encryption.  In
 particular, this document does not describe key management practices.  How clients and servers
@@ -135,7 +138,8 @@ agility is achieved by defining a new content-coding scheme.  This ensures that 
 Accept-Encoding header field is necessary to negotiate the use of encryption.
 
 The "aesgcm-128" content-coding uses a fixed record size.  The resulting encoding is a series of
-fixed-size records, though the final record can contain any amount of data.
+fixed-size records, with a final record that is one or more octets shorter than a fixed sized
+record.
 
 ~~~
        +------+
@@ -172,8 +176,14 @@ network byte order.  Records are indexed starting at zero.
 
 The additional data passed to the AEAD algorithm is a zero-length octet sequence.
 
+A sequence of full-sized records can be truncated to produce a shorter sequence of records with
+valid authentication tags.  To prevent an attacker from truncating a stream, an endoder MUST append
+a record that contains only padding if the final record is not shorter than the record size.  A
+receiver MUST treat the stream as failed due to truncation if the final record is not less than the
+full record size.
+
 Issue:
-: Double check that having no AAD is safe.
+: Double check that this construction (with no AAD) is safe.
 
 
 # The "Encryption" HTTP header field  {#encryption}
@@ -372,16 +382,16 @@ Here, a PUT request has been encrypted with two keys; both will be necessary to 
 The outer layer of encryption uses a 1200 octet record size.
 
 
-## Encryption with Explicit Key
+## Encryption with Explicit Key {#explicit}
 
 ~~~
 HTTP/1.1 200 OK
 Content-Length: 31
 Content-Encoding: aesgcm-128
-Encryption: keyid="a1"; salt="owIfQR647esVfrzCW_i9GQ"
-Encryption-Key: keyid="a1"; key="JcqK-OLkJZlJ3sJJWstJCA"
+Encryption: keyid="a1"; salt="ibZx1RNz537h1XNkRcPpjA"
+Encryption-Key: keyid="a1"; key="9Z57YCb3dK95dSsdFJbkag"
 
-LwTC-fwdKh8de0smD2jfzHodb1EYbuuTNpcYXLW257Q
+zK3kpG__Z8whjIkG6RYgPz11oUkTKcxPy9WP-VPMfuc
 ~~~
 
 This example shows the string "I am the walrus" encrypted using an explicit key.  The content body
@@ -395,12 +405,12 @@ only.
 HTTP/1.1 200 OK
 Content-Length: 31
 Content-Encoding: aesgcm-128
-Encryption: keyid="dhkey"; salt="XYFSCgMVjc45IMfLOcMfiw"
+Encryption: keyid="dhkey"; salt="5hpuYfxDzG6nSs9-EQuaBg"
 Encryption-Key: keyid="dhkey";
-                dh="BELKqvZ7n3p5C9_ipP_6X9DBNAGuJujSN7YWbtcGZMMH
-                    3urZM-zlii3mGGCMjlqR-yWwiPlMdKRdOL8gQSdHw8E"
+                dh="BLsyIPbDn6bquEOwHaju2gj8kUVoflzTtPs_6fGoock_
+                    dwxi1BcgFtObPVnic4alcEucx8I6G8HmEZCJnAl36Zg"
 
-P6ikHE_wyKnYHXxLswvuFBO3JJOZpM1Bg3KikQEmczU
+BmuHqRzdD4W1mibxglrPiRHZRSY49Dzdm6jHrWXzZrE
 ~~~
 
 This example shows the same string, "I am the walrus", encrypted using ECDH over the P-256 curve
@@ -413,11 +423,11 @@ wrapping is added for presentation purposes only.
 
 ~~~
    Receiver:
-      private key: QjGwenE3vCg8Eajo-PukGgUkYq8Vu-SQn04Cc9DR-YA
-      public key: BBM3pYS4nXG6bQYnZbGDY7l6CVrQTZ-1u00h7XV6A_TD
-                v7mXvv5k29uoLid8SdDycw341PJTW4hNCe2FNysN52U
+      private key: iCjNf8v4ox_g1rJuSs_gbNmYuUYx76ZRruQs_CHRzDg
+      public key: BPM1w41cSD4BMeBTY0Fz9ryLM-LeM22Dvt0gaLRukf05
+                  rMhzFAvxVW_mipg5O0hkWad9ZWW0uMRO2Nrd32v8odQ
    Sender:
-      private key: wlC-qzKBWO6jYq32nlD0ZZVsI5jGVBC1gN7zkXjaPks
+      private key: W0cxgeHDZkR3uMQYAbVgF5swKQUAR7DgoTaaQVlA-Fg
       public key: <the value of the "dh" parameter>
 ~~~
 
@@ -607,7 +617,37 @@ of individual messages.
 
 --- back
 
+# JWE Mapping {#jwe}
+
+The "aesgcm-128" content encoding can be considered as a sequence of JSON Web Encryption (JWE)
+objects, each corresponding to a single fixed size record.  The following transformations are
+applied to a JWE object that might be expressed using the JWE Compact Serialization:
+
+* The JWE Protected Header is fixed to a value { "alg": "dir", "enc": "A128GCM" }, describing direct
+  encryption using AES-GCM with a 128-bit key.  This header is not transmitted, it is instead
+  implied by the value of the Content-Encoding header field.
+
+* The JWE Encrypted Key is empty, as stipulated by the direct encryption algorithm.
+
+* The JWE Initialization Vector ("iv") for each record is set to the 96-bit integer value of the
+  record sequence number, starting at zero.  This value is also not transmitted.
+
+* The final value is the concatenated JWE Ciphertext and the JWE Authentication Tag, both expressed
+  without URL-safe Base 64 encoding.  The "." separator is omitted, since the length of these fields
+  is known.
+
+Thus, the example in {{explicit}} can be rendered using the JWE Compact Serialization as:
+
+~~~
+eyAiYWxnIjogImRpciIsICJlbmMiOiAiQTEyOEdDTSIgfQ..AAAAAAAAAAAAAAAA.
+LwTC-fwdKh8de0smD2jfzA.eh1vURhu65M2lxhctbbntA
+~~~
+
+Where the first line represents the fixed JWE Protected Header, JWE Encrypted Key, and JWE
+Initialization Vector, all of which are determined algorithmically.  The second line contains the
+encoded body, split into JWE Ciphertext and JWE Authentication Tag.
+
 # Acknowledgements
 
 The following people provided valuable feedback and suggestions: Richard Barnes,
-Stephen Farrell, Eric Rescorla, and Jim Schaad.
+Mike Jones, Stephen Farrell, Eric Rescorla, and Jim Schaad.
