@@ -3,7 +3,7 @@ title: Encrypted Content-Encoding for HTTP
 abbrev: HTTP encryption coding
 docname: draft-nottingham-http-encryption-encoding-01
 date: 2015
-category: info
+category: std
 
 ipr: trust200902
 area: General
