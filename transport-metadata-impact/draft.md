@@ -79,8 +79,7 @@ For example, networks may wish to communicate their state to applications, so th
 
 Applications also need to give enough information to networks to enable proper function; e.g., packets in UDP flows need to be associated to be able to cleanly transit NAT and firewalls. See {{I-D.trammell-stackevo-newtea}} and {{I-D.hardie-spud-use-cases}} for more discussion.
 
-At the same time, it has been widely noted that "metadata" in various forms can be profoundly sensitive information, particularly when aggregated
-into large sets over extensive periods of time.
+At the same time, it has been widely noted that "metadata" in various forms can be profoundly sensitive information, particularly when aggregated into large sets over extensive periods of time.
 
 Indeed, much of the effort in combatting pervasive monitoring (as per {{RFC7258}}) has focused on minimizing metadata in existing, known protocols (such as TLS and HTTP).
 
