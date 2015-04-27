@@ -160,13 +160,13 @@ Content-Type: application/problem+json
 Content-Language: en
 
 {
- "type": "http://example.com/probs/out-of-credit",
+ "type": "https://example.com/probs/out-of-credit",
  "title": "You do not have enough credit.",
  "detail": "Your current balance is 30, but that costs 50.",
- "instance": "http://example.net/account/12345/msgs/abc",
+ "instance": "/account/12345/msgs/abc",
  "balance": 30,
- "accounts": ["http://example.net/account/12345",
-              "http://example.net/account/67890"]
+ "accounts": ["/account/12345",
+              "/account/67890"]
 }]]></artwork></figure>
 
       <t>Here, the out-of-credit problem (identified by its type URI)
@@ -183,7 +183,7 @@ Content-Language: en
 
         <t><list style='symbols'>
 
-          <t>"type" (string) - An absolute URI <xref target="RFC3986"/> that
+          <t>"type" (string) - A URI reference <xref target="RFC3986"/> that
           identifies the problem type. When dereferenced, it is encouraged to
           provide human-readable documentation for the problem type (e.g.,
           using HTML <xref target="W3C.REC-html401-19991224"/>). When this
@@ -200,7 +200,7 @@ Content-Language: en
            <t>"detail" (string) - An human readable explanation specific to
           this occurrence of the problem.</t>
           
-           <t>"instance" (string) - An absolute URI that identifies the
+           <t>"instance" (string) - A URI reference that identifies the
           specific occurrence of the problem. It may or may not yield
           further information if dereferenced.</t>
         
@@ -227,6 +227,10 @@ Content-Language: en
         <t>Consumers SHOULD NOT parse the detail member for information;
         extensions are more suitable and less error-prone ways to obtain
         such information.</t>
+
+        <t>Note that both "type" and "instance" accept relative URIs; this means
+          that they must be resolved relative to the document's base URI, as 
+          per {{RFC3986}}, Section 5.</t>
 
       </section>
       <section title="Extension Members">
@@ -508,16 +512,16 @@ Content-Language: en
 
 <?xml version="1.0" encoding="UTF-8"?>
 <problem xmlns="urn:ietf:rfc:XXXX">
-  <type>http://example.com/probs/out-of-credit</type>
+  <type>https://example.com/probs/out-of-credit</type>
   <title>You do not have enough credit.</title>
   <detail>Your current balance is 30, but that costs 50.</detail>
   <instance>
-    http://example.net/account/12345/msgs/abc
+    https://example.net/account/12345/msgs/abc
   </instance>
   <balance>30</balance>
   <accounts>
-    <i>http://example.net/account/12345</i>
-    <i>http://example.net/account/67890</i>
+    <i>https://example.net/account/12345</i>
+    <i>https://example.net/account/67890</i>
   </accounts>
 </problem>]]></artwork></figure> 
 
@@ -548,13 +552,13 @@ Content-Language: en
      <figure><artwork><![CDATA[
        <script type="application/problem+json">
          {
-          "type": "http://example.com/probs/out-of-credit",
+          "type": "https://example.com/probs/out-of-credit",
           "title": "You do not have enough credit.",
           "detail": "Your current balance is 30, but that costs 50.",
-          "instance": "http://example.net/account/12345/msgs/abc",
+          "instance": "/account/12345/msgs/abc",
           "balance": 30,
-          "accounts": ["http://example.net/account/12345",
-                       "http://example.net/account/67890"]
+          "accounts": ["/account/12345",
+                       "/account/67890"]
          }
        </script>
 }]]></artwork></figure>
