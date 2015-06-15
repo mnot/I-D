@@ -20,6 +20,11 @@ author:
     organization: Akamai
     email: mnot@mnot.net
     uri: http://www.mnot.net/
+ -
+    ins: E. Nygren
+    name: Erik Nygren
+    organization: Akamai
+    email: nygren@akamai.com
 
 normative:
   RFC2119:
@@ -65,11 +70,14 @@ It MUST occur on stream 0; an ORIGIN frame on any other stream is invalid and MU
 When received by a client, it can be used to inform HTTP/2 connection coalescing (see {{RFC7540}},
 Section 9.1.1), but does not relax the requirement there that the server is authoritative.
 
-Once an ORIGIN frame has been received and processed, clients that implement this specification
-SHOULD NOT use that connection for a given origin if it did not appear within the ORIGIN frame.
-
 If multiple ORIGIN frames are received on the same connection, only the most recent is to be
 considered current.
+
+Once an ORIGIN frame has been received and processed, clients that implement this specification
+SHOULD NOT use that connection for a given origin if it did not appear within the current ORIGIN
+frame.
+
+
 
 The ORIGIN frame type is 0xb (decimal 11).
 
