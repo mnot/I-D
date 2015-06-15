@@ -94,7 +94,7 @@ Origin-Len:
 Origin:
   An optional sequence of characters containing the ASCII serialization of an origin ({{RFC6454}}, Section 6.2) that the sender believes this connection is authoritative for.
 
-The ORIGIN frame does not define any flags.
+The ORIGIN frame does not define any flags. It can contain one or more Origin-Len/Origin pairs.
 
 The ORIGIN frame is processed hop-by-hop. An intermediary must not forward ORIGIN frames.
 
