@@ -60,7 +60,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 ## The ORIGIN HTTP/2 Frame
 
 The ORIGIN HTTP/2 frame ({{RFC7540}}, Section 4) indicates what origin(s) {{RFC6454}} the sender
-considers this connection authoritative for.
+considers this connection authoritative for (in the sense of {{RFC7540}}, Section 10.1).
 
 The ORIGIN frame is a non-critical extension to HTTP/2. Endpoints that do not support this frame
 can safely ignore it.
@@ -105,6 +105,6 @@ Clients configured to use a proxy MUST ignore any ORIGIN frames received from it
 
 Clients that blindly trust the ORIGIN frame's contents will be vulnerable to a large number of
 attacks; hence the reinforcement that this specification does not relax the requirement for server
-authority.
+authority in {{RFC7540}}, Section 10.1.
 
 --- back
