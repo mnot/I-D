@@ -56,7 +56,7 @@
 <section anchor="introduction" title="Introduction">
 
 <t>The Tor network <xref target="Dingledine2004"/> has the ability to host network services
-using the “.onion” Top-Level Domain. Such addresses can be used as other domain
+using the “.onion” Special-Use Top-Level Domain. Such addresses can be used as other domain
 names would be (e.g., in URLs <xref target="RFC3986"/>), but instead of using the DNS
 infrastructure, .onion names functionally correspond to the identity of a
 given service, thereby combining location and authentication.</t>
@@ -66,7 +66,7 @@ Section 3; they require hardware and software implementations to change their
 handling, in order to achieve the desired properties of the name (see
 <xref target="security"/>). These differences are listed in <xref target="onion"/>.</t>
 
-<t>Like other TLDs, .onion addresses can have an arbitrary number of subdomain components. This information is not meaningful to the Tor protocol, but can be used in application protocols like HTTP <xref target="RFC7230"/>.</t>
+<t>Like Top-Level Domain Names, .onion addresses can have an arbitrary number of subdomain components. This information is not meaningful to the Tor protocol, but can be used in application protocols like HTTP <xref target="RFC7230"/>.</t>
 
 <t>See <xref target="tor-address"/> and <xref target="tor-rendezvous"/> for the details of the creation and
 use of .onion names.</t>
@@ -93,15 +93,14 @@ protocol MUST recognize .onion names as special by either accessing them directl
 or using a proxy (e.g., SOCKS <xref target="RFC1928"/>) to do so. Applications that do not 
 implement the Tor protocol SHOULD generate an error upon the use of .onion, and 
 SHOULD NOT perform a DNS lookup.</t>
-  <t>Name Resolution APIs and Libraries: Resolvers that implement the Tor
-protocol MUST either respond to requests for .onion names by resolving them
-(see <xref target="tor-rendezvous"/>) or by responding with NXDOMAIN. Other resolvers SHOULD
-respond with NXDOMAIN.</t>
+  <t>Name Resolution APIs and Libraries: Resolvers MUST either either respond to 
+requests for .onion names by resolving them according to <xref target="tor-rendezvous"/> or by 
+responding with NXDOMAIN.</t>
   <t>Caching DNS Servers: Caching servers SHOULD NOT attempt to look up records
-for .onion names. They SHOULD generate NXDOMAIN for all such queries.</t>
-  <t>Authoritative DNS Servers: Authoritative servers SHOULD respond to queries
+for .onion names. They MUST generate NXDOMAIN for all such queries.</t>
+  <t>Authoritative DNS Servers: Authoritative servers MUST respond to queries
 for .onion with NXDOMAIN.</t>
-  <t>DNS Server Operators: Operators SHOULD NOT configure an authoritative DNS
+  <t>DNS Server Operators: Operators MUST NOT configure an authoritative DNS
 server to answer queries for .onion. If they do so, client software is likely
 to ignore any results (see above).</t>
   <t>DNS Registries/Registrars: Registrars MUST NOT register .onion names; all
@@ -111,7 +110,7 @@ such requests MUST be denied.</t>
 </section>
 <section anchor="iana-considerations" title="IANA Considerations">
 
-<t>This document registers the “onion” TLD in the  registry of Special-Use Domain Names <xref target="RFC6761"/>. See <xref target="onion"/> for the registration template.</t>
+<t>This document registers “onion” in the registry of Special-Use Domain Names <xref target="RFC6761"/>. See <xref target="onion"/> for the registration template.</t>
 
 </section>
 <section anchor="security" title="Security Considerations">
@@ -148,7 +147,7 @@ the desired service.</t>
 
 <t>Also, users need to understand the difference between a .onion name used and
 accessed directly via Tor-capable software, versus .onion subdomains of other
-TLDs and providers (e.g., the difference between example.onion and
+top-level domain names and providers (e.g., the difference between example.onion and
 example.onion.tld).</t>
 
 <t>The cryptographic label for a .onion name is constructed by applying a
@@ -424,8 +423,8 @@ specifications of each URI scheme.
 <t>Thanks to Roger Dingledine, Linus Nordberg, and Seth David Schoen for their input and review.</t>
 
 <t>This specification builds upon previous work by Christian Grothoff, Matthias Wachs, Hellekin
-O. Wolf, Jacob Appelbaum, and Leif Ryge to register the .onion TLD in conjunction with other, 
-similar TLDs.</t>
+O. Wolf, Jacob Appelbaum, and Leif Ryge to register .onion in conjunction with other, 
+similar Special-Use Top-Level Domain Names.</t>
 
 </section>
 
