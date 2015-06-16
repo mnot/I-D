@@ -106,18 +106,17 @@ or using a proxy (e.g., SOCKS {{RFC1928}}) to do so. Applications that do not
 implement the Tor protocol SHOULD generate an error upon the use of .onion, and 
 SHOULD NOT perform a DNS lookup.
 
-3. Name Resolution APIs and Libraries: Resolvers that implement the Tor
-protocol MUST either respond to requests for .onion names by resolving them
-(see {{tor-rendezvous}}) or by responding with NXDOMAIN. Other resolvers SHOULD
-respond with NXDOMAIN.
+3. Name Resolution APIs and Libraries: Resolvers MUST either either respond to 
+requests for .onion names by resolving them according to {{tor-rendezvous}} or by 
+responding with NXDOMAIN.
 
 4. Caching DNS Servers: Caching servers SHOULD NOT attempt to look up records
-for .onion names. They SHOULD generate NXDOMAIN for all such queries.
+for .onion names. They MUST generate NXDOMAIN for all such queries.
 
-5. Authoritative DNS Servers: Authoritative servers SHOULD respond to queries
+5. Authoritative DNS Servers: Authoritative servers MUST respond to queries
 for .onion with NXDOMAIN.
 
-6. DNS Server Operators: Operators SHOULD NOT configure an authoritative DNS
+6. DNS Server Operators: Operators MUST NOT configure an authoritative DNS
 server to answer queries for .onion. If they do so, client software is likely
 to ignore any results (see above).
 
