@@ -160,7 +160,7 @@ corresponds to the algorithmic derivation of the name.
 
 Users must take special precautions to ensure that the .onion name they are
 communicating with is correct, as attackers may be able to find keys which
-produce service names that are visually or apparently semantically similar to
+produce service names that are visually or semantically similar to
 the desired service.
 
 Also, users need to understand the difference between a .onion name used and
