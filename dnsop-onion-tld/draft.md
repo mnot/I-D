@@ -69,7 +69,7 @@ This document registers the ".onion" Special-Use Domain Name.
 # Introduction
 
 The Tor network {{Dingledine2004}} has the ability to host network services
-using the ".onion" Top-Level Domain. Such addresses can be used as other domain
+using the ".onion" Special-Use Top-Level Domain. Such addresses can be used as other domain
 names would be (e.g., in URLs {{RFC3986}}), but instead of using the DNS
 infrastructure, .onion names functionally correspond to the identity of a
 given service, thereby combining location and authentication.
@@ -79,7 +79,7 @@ Section 3; they require hardware and software implementations to change their
 handling, in order to achieve the desired properties of the name (see
 {{security}}). These differences are listed in {{onion}}.
 
-Like other TLDs, .onion addresses can have an arbitrary number of subdomain components. This information is not meaningful to the Tor protocol, but can be used in application protocols like HTTP {{RFC7230}}.
+Like Top-Level Domain Names, .onion addresses can have an arbitrary number of subdomain components. This information is not meaningful to the Tor protocol, but can be used in application protocols like HTTP {{RFC7230}}.
 
 See {{tor-address}} and {{tor-rendezvous}} for the details of the creation and
 use of .onion names.
@@ -126,7 +126,7 @@ such requests MUST be denied.
 
 # IANA Considerations
 
-This document registers the "onion" TLD in the registry of Special-Use Domain Names {{RFC6761}}. See {{onion}} for the registration template.
+This document registers "onion" in the registry of Special-Use Domain Names {{RFC6761}}. See {{onion}} for the registration template.
 
 # Security Considerations {#security}
 
@@ -160,7 +160,7 @@ the desired service.
 
 Also, users need to understand the difference between a .onion name used and
 accessed directly via Tor-capable software, versus .onion subdomains of other
-TLDs and providers (e.g., the difference between example.onion and
+top-level domain names and providers (e.g., the difference between example.onion and
 example.onion.tld).
 
 The cryptographic label for a .onion name is constructed by applying a
@@ -184,5 +184,5 @@ be mitigated by following the recommendations in {{onion}}.
 Thanks to Roger Dingledine, Linus Nordberg, and Seth David Schoen for their input and review.
 
 This specification builds upon previous work by Christian Grothoff, Matthias Wachs, Hellekin
-O. Wolf, Jacob Appelbaum, and Leif Ryge to register the .onion TLD in conjunction with other, 
-similar TLDs.
+O. Wolf, Jacob Appelbaum, and Leif Ryge to register .onion in conjunction with other, 
+similar Special-Use Top-Level Domain Names.
