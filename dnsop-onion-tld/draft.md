@@ -91,7 +91,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 interpreted as described in {{RFC2119}}.
 
 
-# The ".onion" Special-Use TLD {#onion}
+# The ".onion" Special-Use Domain Name {#onion}
 
 These properties have the following effects upon parties using or processing
 .onion names (as per {{RFC6761}}):
