@@ -135,7 +135,7 @@ This document registers the "onion" TLD in the  registry of Special-Use Domain N
 
 # Security Considerations {#security}
 
-.onion names are often used provide access to end to end encrypted, secure,
+.onion names are often used to provide access to end to end encrypted, secure,
 anonymized services; that is, the identity and location of the server is
 obscured from the client. The location of the client is obscured from the
 server. The identity of the client may or may not be disclosed through an
