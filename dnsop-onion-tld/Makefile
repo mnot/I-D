@@ -4,7 +4,7 @@ xml2rfc ?= xml2rfc
 kramdown-rfc2629 ?= kramdown-rfc2629
 idnits ?= idnits
 
-title = appelbaum-$(shell basename ${CURDIR})
+title = ietf-$(shell basename ${CURDIR})
 latest = $(shell (ls draft-${title}-*.xml || echo "draft-${title}-00.xml") | sort | tail -1)
 version = $(shell basename ${latest} .xml | awk -F- '{print $$NF}')
 

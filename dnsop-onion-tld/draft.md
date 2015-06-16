@@ -1,7 +1,7 @@
 ---
 title: The .onion Special-Use Domain Name
 abbrev: .onion
-docname: draft-appelbaum-dnsop-onion-tld-01
+docname: draft-ietf-dnsop-onion-tld-00
 date: 2015
 category: std
 
