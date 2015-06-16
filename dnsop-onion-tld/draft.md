@@ -37,7 +37,6 @@ informative:
   RFC1928:
   RFC3986:
   RFC7230:
-  I-D.grothoff-iesg-special-use-p2p-names:
   Dingledine2004:
     target: "https://www.onion-router.net/Publications/tor-design.pdf"
     title: "Tor: the second-generation onion router"
@@ -84,9 +83,6 @@ Like other TLDs, .onion addresses can have an arbitrary number of subdomain comp
 
 See {{tor-address}} and {{tor-rendezvous}} for the details of the creation and
 use of .onion names.
-
-Note that this draft was preceded by {{I-D.grothoff-iesg-special-use-p2p-names}}, which registered
-.onion alongside other, similar TLDs. Because .onion is in wide use, it has become urgent to expedite its registration. This does not indicate that the other registrations should be abandoned.
 
 ## Notational Conventions
 
