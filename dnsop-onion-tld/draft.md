@@ -21,7 +21,7 @@ author:
  - 
     ins: J. Appelbaum
     name: Jacob Appelbaum
-    organization: Tor Project Inc.
+    organization: The Tor Project, Inc
     email: jacob@appelbaum.net
  -
     ins: A. Muffett
