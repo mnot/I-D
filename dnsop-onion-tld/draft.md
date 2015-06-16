@@ -126,7 +126,7 @@ such requests MUST be denied.
 
 # IANA Considerations
 
-This document registers the "onion" TLD in the  registry of Special-Use Domain Names {{RFC6761}}. See {{onion}} for the registration template.
+This document registers the "onion" TLD in the registry of Special-Use Domain Names {{RFC6761}}. See {{onion}} for the registration template.
 
 # Security Considerations {#security}
 
