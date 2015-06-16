@@ -100,11 +100,11 @@ These properties have the following effects upon parties using or processing
 different security properties, and also being only available through software
 that is aware of onion addresses.
 
-2. Application Software: Applications that implement the Tor protocol MUST
-recognize .onion names as special by either accessing them directly, or using a
-proxy (e.g., SOCKS {{RFC1928}}) to do so. Applications that do not implement
-the Tor protocol SHOULD generate an error upon the use of .onion, and SHOULD
-NOT perform a DNS lookup.
+2. Application Software: Applications (including proxies) that implement the Tor 
+protocol MUST recognize .onion names as special by either accessing them directly, 
+or using a proxy (e.g., SOCKS {{RFC1928}}) to do so. Applications that do not 
+implement the Tor protocol SHOULD generate an error upon the use of .onion, and 
+SHOULD NOT perform a DNS lookup.
 
 3. Name Resolution APIs and Libraries: Resolvers that implement the Tor
 protocol MUST either respond to requests for .onion names by resolving them
