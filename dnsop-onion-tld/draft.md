@@ -186,8 +186,8 @@ be mitigated by following the recommendations in {{onion}}.
 
 # Acknowledgements
 
-Thanks to Roger Dingledine, Linus Nordberg and Seth David Schoen for their input and review.
+Thanks to Roger Dingledine, Linus Nordberg, and Seth David Schoen for their input and review.
 
 This specification builds upon previous work by Christian Grothoff, Matthias Wachs, Hellekin
-O. Wolf, Jacob Appelbaum and Leif Ryge to register the .onion TLD in conjunction with other, 
+O. Wolf, Jacob Appelbaum, and Leif Ryge to register the .onion TLD in conjunction with other, 
 similar TLDs.
