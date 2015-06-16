@@ -26,6 +26,12 @@
         <uri>http://www.mnot.net/</uri>
       </address>
     </author>
+    <author initials="E." surname="Nygren" fullname="Erik Nygren">
+      <organization>Akamai</organization>
+      <address>
+        <email>nygren@akamai.com</email>
+      </address>
+    </author>
 
     <date year="2015"/>
 
@@ -69,7 +75,7 @@ penalty of adding latency. To address that, this specification defines a new HTT
 <section anchor="the-origin-http2-frame" title="The ORIGIN HTTP/2 Frame">
 
 <t>The ORIGIN HTTP/2 frame (<xref target="RFC7540"/>, Section 4) indicates what origin(s) <xref target="RFC6454"/> the sender
-considers this connection authoritative for.</t>
+considers this connection authoritative for (in the sense of <xref target="RFC7540"/>, Section 10.1).</t>
 
 <t>The ORIGIN frame is a non-critical extension to HTTP/2. Endpoints that do not support this frame
 can safely ignore it.</t>
@@ -79,11 +85,12 @@ can safely ignore it.</t>
 <t>When received by a client, it can be used to inform HTTP/2 connection coalescing (see <xref target="RFC7540"/>,
 Section 9.1.1), but does not relax the requirement there that the server is authoritative.</t>
 
-<t>Once an ORIGIN frame has been received and processed, clients that implement this specification
-SHOULD NOT use that connection for a given origin if it did not appear within the ORIGIN frame.</t>
-
 <t>If multiple ORIGIN frames are received on the same connection, only the most recent is to be
 considered current.</t>
+
+<t>Once an ORIGIN frame has been received and processed, clients that implement this specification
+SHOULD NOT use that connection for a given origin if it did not appear within the current ORIGIN
+frame.</t>
 
 <t>The ORIGIN frame type is 0xb (decimal 11).</t>
 
@@ -100,7 +107,7 @@ considered current.</t>
 Origin:
   An optional sequence of characters containing the ASCII serialization of an origin (<xref target="RFC6454"/>, Section 6.2) that the sender believes this connection is authoritative for.</t>
 
-<t>The ORIGIN frame does not define any flags.</t>
+<t>The ORIGIN frame does not define any flags. It can contain one or more Origin-Len/Origin pairs.</t>
 
 <t>The ORIGIN frame is processed hop-by-hop. An intermediary must not forward ORIGIN frames.</t>
 
@@ -112,7 +119,7 @@ Origin:
 
 <t>Clients that blindly trust the ORIGIN frame’s contents will be vulnerable to a large number of
 attacks; hence the reinforcement that this specification does not relax the requirement for server
-authority.</t>
+authority in <xref target="RFC7540"/>, Section 10.1.</t>
 
 </section>
 
