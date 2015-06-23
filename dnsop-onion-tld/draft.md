@@ -106,7 +106,7 @@ or using a proxy (e.g., SOCKS {{RFC1928}}) to do so. Applications that do not
 implement the Tor protocol SHOULD generate an error upon the use of .onion, and 
 SHOULD NOT perform a DNS lookup.
 
-3. Name Resolution APIs and Libraries: Resolvers MUST either either respond to 
+3. Name Resolution APIs and Libraries: Resolvers MUST either respond to 
 requests for .onion names by resolving them according to {{tor-rendezvous}} or by 
 responding with NXDOMAIN.
 
