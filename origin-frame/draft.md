@@ -87,7 +87,8 @@ The ORIGIN frame type is 0xb (decimal 11).
 +-------------------------------+-------------------------------+
 ~~~~
 
-The ORIGIN frame contains the following fields:
+The ORIGIN frame contains the following fields, sets of which may be
+	repeated within the frame to indicate multiple origins:
 
 Origin-Len:
   An unsigned, 16-bit integer indicating the length, in octets, of the Origin field.
