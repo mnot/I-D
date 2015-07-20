@@ -25,6 +25,7 @@ normative:
   RFC2119:
 
 informative:
+  RFC3935:
   CODELAW:
     target: http://harvardmagazine.com/2000/01/code-is-law-html
     title: "Code Is Law: On Liberty in Cyberspace"
@@ -143,7 +144,9 @@ example, end users of Web browsers cannot be reasonably expected to make informe
 security, and therefore design decisions there are biased towards default security. When
 applicable, the expectations upon a stakeholder SHOULD be documented.
 
-Interent protocols MUST prioritise end users higher than any other stakeholders.
+Interent protocols MUST prioritise end users higher than any other stakeholders. We are biased towards the needs of end users because of the IETF's mission {{RFC3935}}:
+
+> The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
 
 Extensions to existing protocols MUST document how they interact with the extended protocol's
 stakeholders. If the extended protocol's stakeholders are not yet documented, the extension MAY
