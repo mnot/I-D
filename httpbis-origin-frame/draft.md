@@ -1,7 +1,7 @@
 ---
 title: The ORIGIN HTTP/2 Frame
 abbrev: ORIGIN Frames
-docname: draft-nottingham-origin-frame-00
+docname: draft-nottingham-httpbis-origin-frame-00
 date: 2015
 category: std
 

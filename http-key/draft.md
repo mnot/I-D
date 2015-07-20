@@ -41,9 +41,10 @@ informative:
 --- abstract
 
 The 'Key' header field for HTTP responses allows an origin server to describe
-the secondary cache key ({{RFC7234}}, section 4.1) for a negotiated response: a
-short algorithm that can be used upon later requests to determine if the same
-response is reusable.
+the secondary cache key ({{RFC7234}}, section 4.1) for response it is attached
+to, by conveying what is effectively a short algorithm that can be used upon
+later requests to determine if the same response is reusable for a given
+request.
 
 Key has the advantage of avoiding an additional round trip for validation
 whenever a new request differs slightly, but not significantly, from prior
@@ -64,7 +65,7 @@ negotiation {{I-D.ietf-httpbis-p2-semantics}} to work with caches.
 
 However, Vary's operation is coarse-grained; although caches are allowed to
 normalise the values of headers based upon their semantics, doing so requires
-the cache to understand those semantics, and is still quite limited.
+the cache to understand those semantics, and is therefore limited in utility.
 
 For example, if a response is cached with the response header field:
 
@@ -111,7 +112,7 @@ allows more fine-grained description, using "key modifiers".
 
 Caches can use this information as part of determining whether a stored
 response can be used to satisfy a given request. When a cache fully 
-implements this mechanism, it MAY ignore the Vary response header field.
+understands the Key header field for a response, it MAY ignore that message's Vary response header field.
 
 Additionally, user agents can use this information to discover if additional
 request header fields might influence the resulting response.
@@ -206,6 +207,72 @@ Unrecognised modifiers MUST result in a failure to match.
 ## Key Modifiers
 
 This document defines the following key modifiers:
+
+
+### "name"
+
+### "range"
+
+The "range" modifier matches if both lists contain at least one member with a value falling within the specified numeric range.
+
+Formally, the syntax is:
+
+~~~
+range     = [ range_num ] ":" [ range_num ]
+range_num = [ "-" ] [ 0*DIGIT "." ] 1*DIGIT
+~~~
+
+For example, given the key:
+
+~~~
+Key: Foo;range=20:30
+~~~
+
+the range is from 20 to 30 (inclusive). Thus, each of the following headers would match:
+
+~~~
+ Foo: 20
+ Foo: 25.2
+ Foo: 30
+ Foo: 30.0
+~~~
+
+whilst the following would not:
+
+~~~
+ Foo: 19
+ Foo: -5
+ Foo: 30.1
+ Foo: 
+ Foo: 25, 2
+ Foo: 25;abc
+ Foo: 22m
+ Foo: thing=25
+ Foo: bar
+~~~
+
+The range can be incomplete on either side; for example, given:
+
+~~~
+Key: Foo;range=:30
+~~~
+
+each of the following headers would match:
+
+~~~
+ Foo: 20
+ Foo: 1.5
+ Foo: 0
+ Foo: -500
+~~~
+
+
+### "substr"
+
+The "substr" modifier matches if the parameter value (after unquoting) is
+contained as a sequence of characters in at least one member of both lists.
+
+
 
 ### "w": Word Match Modifier
 
