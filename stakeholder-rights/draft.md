@@ -79,6 +79,11 @@ This document defines a set of guidelines for protocol designers to help balance
 conflicts between different stakeholders. It also requires the end user to be the highest priority
 stakeholder in Internet protocols.
 
+--- note_Note_to_Readers
+
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/stakeholder>.
+
+
 --- middle
 
 # Introduction
