@@ -144,7 +144,7 @@ example, end users of Web browsers cannot be reasonably expected to make informe
 security, and therefore design decisions there are biased towards default security. When
 applicable, the expectations upon a stakeholder SHOULD be documented.
 
-Interent protocols MUST prioritise end users higher than any other stakeholders. We are biased towards the needs of end users because of the IETF's mission {{RFC3935}}:
+Internet protocols MUST prioritize end users higher than any other stakeholders. We are biased towards the needs of end users because of the IETF's mission {{RFC3935}}:
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
 
@@ -171,7 +171,7 @@ completely, as it is often impossible to gain the informed consent of a large or
 stakeholders (e.g., end users).
 
 For example, there has been increasing pressure to change HTTP {{RFC7230}} to make it more amenable
-to optimisation, filtering, and interposition of other value-added services, especially in the face
+to optimization, filtering, and interposition of other value-added services, especially in the face
 of more pervasive encryption (denoted by HTTPS URIs). However, since HTTPS is already defined as a
 two-party protocol with end-to-end encryption, inserting a third party in any fashion would violate
 the rights of two existing stakeholders; end users and content publishers. Therefore, the HTTP
