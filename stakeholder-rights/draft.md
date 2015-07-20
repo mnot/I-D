@@ -74,9 +74,9 @@ informative:
 
 --- abstract
 
-This document proposes a set of guidelines for protocol designers to help balance concerns and
+This document defines a set of guidelines for protocol designers to help balance concerns and
 conflicts between different stakeholders. It also requires the end user to be the highest priority
-stakeholder in application protocols.
+stakeholder in Internet protocols.
 
 --- middle
 
@@ -113,9 +113,9 @@ code that implements them) should not attempt to establish the law, as Lessig sa
 aspire to serve as a level, well-defined playing field where society's back-and-forth over the
 Internet can take place.
 
-In other words, while we cannot -- and should not -- create a human rights agenda at the IETF, we
-can make the impact of decisions upon them (as well as the rights of other stakeholders) more 
-apparent and deliberate, by making our priorities explicit.
+In other words, while we cannot -- and should not -- create an explicit human rights agenda at the
+IETF, we can make the impact of decisions upon them (as well as the rights of other stakeholders)
+more apparent and deliberate, by making our priorities explicit.
 
 
 ## Notational Conventions
@@ -135,19 +135,15 @@ For example, HTML does so using the priority of constituencies in the HTML Desig
 > In case of conflict, consider users over authors over implementors over specifiers over theoretical purity. In other words costs or difficulties to the user should be given more weight than costs to authors; which in turn should be given more weight than costs to implementors; which should be given more weight than costs to authors of the spec itself, which should be given more weight than those proposing changes for theoretical reasons alone. Of course, it is preferred to make things better for multiple constituencies at once.
 
 Note how the relative priority of stakeholders is explicit; this is intentional and encouraged.
-Some stakeholders -- especially end users, for protocols where they are involved -- can withdraw
-their support when their rights are not respected, leading to a failed effort. In other situations,
-while a stakeholder believes that their rights are fundamental, this may not be necessary for the
-successful deployment of the protocol, and therefore their rights are not proportionate to those
-who are.
+Some stakeholders -- especially end users -- can withdraw
+their support when their rights are not respected, leading to a failed effort. 
 
 Likewise, the responsibilities of, or expectations upon, stakeholders can vary greatly. For
 example, end users of Web browsers cannot be reasonably expected to make informed decisions about
 security, and therefore design decisions there are biased towards default security. When
 applicable, the expectations upon a stakeholder SHOULD be documented.
 
-End-user-facing application protocols MUST prioritise their users higher than any other
-stakeholders.
+Interent protocols MUST prioritise end users higher than any other stakeholders.
 
 Extensions to existing protocols MUST document how they interact with the extended protocol's
 stakeholders. If the extended protocol's stakeholders are not yet documented, the extension MAY
@@ -158,6 +154,7 @@ protocols. While it might be appropriate in a separate document (e.g., a require
 draft) or the protocol specification itself, documenting stakeholders in the WG charter has
 considerable benefits, since it clarifies their relationships up-front.
 
+Inevitably, documenting and interpreting the stakeholder roles will become controversial; this is to be expected, and is still preferable to avoiding the discussion.
 
 # Erosion of Rights
 
