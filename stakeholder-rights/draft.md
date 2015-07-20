@@ -2,7 +2,7 @@
 title: Representing Stakeholder Rights in Internet Protocols
 abbrev: Stakeholder Rights
 docname: draft-nottingham-stakeholder-rights-01
-date: 2014
+date: 2015
 category: bcp
 
 ipr: trust200902
