@@ -33,7 +33,7 @@ author:
     email: niels@article19.org    
  -
     ins: J. Hall
-    name: Joe Lorenzo Hall
+    name: Joseph Lorenzo Hall
     organization: CDT
     email: joe@cdt.org
 
