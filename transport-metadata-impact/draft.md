@@ -26,6 +26,11 @@ author:
     organization: W3C
     email: wseltzer@w3.org
     uri: http://wendy.seltzer.org
+ -
+    ins: N. ten Oever
+    name: Niels ten Oever
+    organization: Article19
+    email: niels@article19.org    
 
 normative:
 
