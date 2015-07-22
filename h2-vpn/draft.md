@@ -61,6 +61,28 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 The SETTINGS_VPN HTTP/2 setting (0xTBD) indicates that the sender is willing to use create VPNs over the HTTP/2 connection that it occurs within. 
 
 
+## The STARTVPN HTTP/2 Frame Type
+
+The STARTVPN frame (type=0xTBD) is used to open a stream ({{RFC7540}} Section 5.1) that represents
+a Virtual Private Network. STARTVPN frames can be sent on a stream in the "idle" state.
+
+~~~
++---------------+
+ |Pad Length? (8)|
+ +-+-------------+-----------------------------------------------+
+ |                           Padding (*)                       ...
+ +---------------------------------------------------------------+
+~~~
+
+The STARTVPN frame payload has the following fields:
+
+* Pad Length: An 8-bit field containing the length of the frame padding in units of octets. This field is only present if the PADDED flag is set.
+
+The STARTVPN frame defines the following flags:
+
+* PADDED (0x0): When set, bit 0 indicates that the Pad Length field and any padding that it describes are present.
+
+
 ## The IP HTTP/2 Frame Type
 
 IP frames (type=0xTBD) convey individual IP packets in the Virtual Private Network associated with the stream ID.
@@ -127,8 +149,7 @@ TBD
 
 * Fill out security considerations
 * Fill out IANA considerations
-* Authentication
-* Fully describe effects upon / interaction with state model
+* Authentication (in STARTVPN)
 * More fully describe use cases
   * Multiplexing multiple VPNs
   * Onion routing as a complementary extension
