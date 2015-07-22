@@ -116,7 +116,7 @@ protocols are extended and evolved.
 
 In doing so, we seek to enable "the tussle" {{TUSSLE}}; that is, our protocols (and therefore the
 code that implements them) should not attempt to establish the law, as Lessig says, but instead
-aspire to serve as a level, well-defined playing field where society's back-and-forth over the
+aspire to serve as a level, well-defined venue where society's back-and-forth over the
 Internet can take place.
 
 In other words, while we cannot -- and should not -- create an explicit human rights agenda at the
