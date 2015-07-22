@@ -31,6 +31,11 @@ author:
     name: Niels ten Oever
     organization: Article19
     email: niels@article19.org    
+ -
+    ins: J. Hall
+    name: Joe Lorenzo Hall
+    organization: CDT
+    email: joe@cdt.org
 
 normative:
 
