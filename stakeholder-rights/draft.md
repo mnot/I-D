@@ -1,6 +1,6 @@
 ---
-title: Representing Stakeholder Rights in Internet Protocols
-abbrev: Stakeholder Rights
+title: Representing Constituent Rights in Internet Protocols
+abbrev: IETF Constituencies
 docname: draft-nottingham-stakeholder-rights-01
 date: 2015
 category: bcp
@@ -76,8 +76,8 @@ informative:
 --- abstract
 
 This document defines a set of guidelines for protocol designers to help balance concerns and
-conflicts between different stakeholders. It also requires the end user to be the highest priority
-stakeholder in Internet protocols.
+conflicts between different constituents. It also requires the end user to be the highest priority
+constituent in Internet protocols.
 
 --- note_Note_to_Readers
 
@@ -106,11 +106,11 @@ This is indeed a heavy responsibility.
 That said, it is increasingly difficult to avoid making ethical, societal and even legal
 judgements in protocol design, as the Internet has become pervasive in many societies. 
 
-A recurring theme in this area is balancing the rights of various stakeholders, such as (but not
+A recurring theme in this area is balancing the rights of various constituents, such as (but not
 limited to) end users, network operators, equipment vendors, implementers, content owners,
 governments, employers, and parents.
 
-This document proposes a set of guidelines regarding these "stakeholder rights" issues that
+This document proposes a set of guidelines regarding these "constituent rights" issues that
 protocol designers ought to consider as new protocols are created, as well as when existing
 protocols are extended and evolved.
 
@@ -120,7 +120,7 @@ aspire to serve as a level, well-defined playing field where society's back-and-
 Internet can take place.
 
 In other words, while we cannot -- and should not -- create an explicit human rights agenda at the
-IETF, we can make the impact of decisions upon them (as well as the rights of other stakeholders)
+IETF, we can make the impact of decisions upon them (as well as the rights of other constituents)
 more apparent and deliberate, by making our priorities explicit.
 
 
@@ -131,64 +131,64 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# Identifying Stakeholders
+# Identifying Constituents
 
-Protocols MUST document relevant primary stakeholders and their interrelationships.
+Protocols MUST document relevant primary constituents and their interrelationships.
 
 For example, HTML does so using the priority of constituencies in the HTML Design Principles
 {{PRIORITY}}:
 
 > In case of conflict, consider users over authors over implementors over specifiers over theoretical purity. In other words costs or difficulties to the user should be given more weight than costs to authors; which in turn should be given more weight than costs to implementors; which should be given more weight than costs to authors of the spec itself, which should be given more weight than those proposing changes for theoretical reasons alone. Of course, it is preferred to make things better for multiple constituencies at once.
 
-Note how the relative priority of stakeholders is explicit; this is intentional and encouraged.
-Some stakeholders -- especially end users -- can withdraw
+Note how the relative priority of constituents is explicit; this is intentional and encouraged.
+Some constituents -- especially end users -- can withdraw
 their support when their rights are not respected, leading to a failed effort. 
 
-Likewise, the responsibilities of, or expectations upon, stakeholders can vary greatly. For
+Likewise, the responsibilities of, or expectations upon, constituents can vary greatly. For
 example, end users of Web browsers cannot be reasonably expected to make informed decisions about
 security, and therefore design decisions there are biased towards default security. When
-applicable, the expectations upon a stakeholder SHOULD be documented.
+applicable, the expectations upon a constituent SHOULD be documented.
 
-Internet protocols MUST prioritize end users higher than any other stakeholders. We are biased towards the needs of end users because of the IETF's mission {{RFC3935}}:
+Internet protocols MUST prioritize end users higher than any other constituents. We are biased towards the needs of end users because of the IETF's mission {{RFC3935}}:
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
 
 Extensions to existing protocols MUST document how they interact with the extended protocol's
-stakeholders. If the extended protocol's stakeholders are not yet documented, the extension MAY
+constituents. If the extended protocol's constituents are not yet documented, the extension MAY
 estimate its impact, in coordination with that protocol's community and the IESG.
 
 The burden of this documentation need not be high; if HTML can do it in a paragraph, so can most
 protocols. While it might be appropriate in a separate document (e.g., a requirements or use cases
-draft) or the protocol specification itself, documenting stakeholders in the WG charter has
+draft) or the protocol specification itself, documenting constituents in the WG charter has
 considerable benefits, since it clarifies their relationships up-front.
 
-Inevitably, documenting and interpreting the stakeholder roles will become controversial; this is to be expected, and is still preferable to avoiding the discussion.
+Inevitably, documenting and interpreting the constituent roles will become controversial; this is to be expected, and is still preferable to avoiding the discussion.
 
 # Erosion of Rights
 
 Changes in the use, deployment patterns, legal context, or other factors of a protocol can bring
-pressure to re-balance the priorities and rights of existing stakeholders, or insert new ones
+pressure to re-balance the priorities and rights of existing constituents, or insert new ones
 (usually, when a protocol is either extended or evolved).
 
-Such changes MUST NOT violate documented rights of existing stakeholders, or those reasonably
-assumed by existing stakeholders, without informed consent. Note that this may preclude the change
+Such changes MUST NOT violate documented rights of existing constituents, or those reasonably
+assumed by existing constituents, without informed consent. Note that this may preclude the change
 completely, as it is often impossible to gain the informed consent of a large or diffuse group of
-stakeholders (e.g., end users).
+constituents (e.g., end users).
 
 For example, there has been increasing pressure to change HTTP {{RFC7230}} to make it more amenable
 to optimization, filtering, and interposition of other value-added services, especially in the face
 of more pervasive encryption (denoted by HTTPS URIs). However, since HTTPS is already defined as a
 two-party protocol with end-to-end encryption, inserting a third party in any fashion would violate
-the rights of two existing stakeholders; end users and content publishers. Therefore, the HTTP
+the rights of two existing constituents; end users and content publishers. Therefore, the HTTP
 Working Group has refused to consider such changes.
 
 
-# Intermediation and Non-Stakeholders
+# Intermediation and Non-Constituents
 
 In protocol design, intermediation is often thought of as "those parties on the direct path between
 two people attempting to communicate"; e.g., middleboxes, proxies and so on.
 
-When discussing stakeholder rights, this definition is expanded to include those parties that have
+When discussing constituent rights, this definition is expanded to include those parties that have
 the ability to prevent or control communication between two parties. This naturally includes
 middleboxes, but can also include third parties not directly on-path.
 
@@ -198,16 +198,16 @@ Authority if TLS is in use. Certificate Transparency {{RFC6962}} potentially add
 intermediary to this protocol suite.
 
 While there might be a good technical reason to interpose such an intermediary, it also introduces
-a new stakeholder, and thus needs to be done with due consideration of the impact on other
-stakeholders. 
+a new constituent, and thus needs to be done with due consideration of the impact on other
+constituents. 
 
 Therefore, such intermediation SHOULD NOT be accommodated without purpose in Internet protocols,
 and protocol revisions (including extensions) MUST carefully weigh when new levels of
-intermediation are added. When a stakeholder has a role as an intermediary (in this sense), it MUST
+intermediation are added. When a constituent has a role as an intermediary (in this sense), it MUST
 be documented.
 
 
-# Promoting Stakeholders as "Winners"
+# Promoting Constituents as "Winners"
 
 Protocols often engender network effects. For example, e-mail is only useful when the parties you
 wish to communicate with also have e-mail; when more people have e-mail, its value is greatly
@@ -232,7 +232,7 @@ This document does not require action by IANA.
 # Security Considerations
 
 This document does not specify a protocol; however, applying its guidelines might affect security
-positively or negatively for various stakeholders.
+positively or negatively for various constituents.
 
 
 --- back
