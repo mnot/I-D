@@ -150,6 +150,7 @@ TBD
 * Fill out security considerations
 * Fill out IANA considerations
 * Authentication (in STARTVPN)
+* Address discovery (DHCP)
 * More fully describe use cases
   * Multiplexing multiple VPNs
   * Onion routing as a complementary extension
