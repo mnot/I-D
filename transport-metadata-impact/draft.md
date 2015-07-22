@@ -20,6 +20,12 @@ author:
     organization: 
     email: mnot@mnot.net
     uri: http://www.mnot.net/
+ -
+    ins: W. Seltzer
+    name: Wendy Seltzer
+    organization: W3C
+    email: wseltzer@w3.org
+    uri: http://wendy.seltzer.org
 
 normative:
 
