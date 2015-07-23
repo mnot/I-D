@@ -1,7 +1,7 @@
 ---
-title: Representing Constituent Rights in Internet Protocols
+title: Constituencies for Internet Standards
 abbrev: IETF Constituencies
-docname: draft-nottingham-stakeholder-rights-01
+docname: draft-nottingham-we-fight-for-the-users-00
 date: 2015
 category: bcp
 
@@ -75,53 +75,65 @@ informative:
 
 --- abstract
 
-This document defines a set of guidelines for protocol designers to help balance concerns and
-conflicts between different constituents. It also requires the end user to be the highest priority
-constituent in Internet protocols.
+Internet standards serve and are used by a variety of constituencies. This document contains guidelines for identifying and serving these constituencies, and determining how to resolve conflicts between their interests, when necessary. 
+
+It also mandates end users as the highest priority constituency for Internet protocols.
 
 --- note_Note_to_Readers
 
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/stakeholder>.
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/for-the-users>.
 
 
 --- middle
 
 # Introduction
 
-The IETF is often reluctant to make decisions based upon human rights in our standards documents,
-for good reason. We are a technical body, not a political one, and we do not presume to impose our
-values onto the users of the Internet. Doing so would not be in the interest of the users that we
-aim to protect, because it would set a precedent that a technical body could do so. Furthermore,
-embedding such value judgements in our protocols would make fragmentation of the network -- and
-therefore losing its embedded value as a whole -- much more likely.
+The IETF is most comfortable making technical decisions; our process is defined to favor technical
+merit, and our well-known bias towards "rough consensus and running code" is well suited to this
+area of work.
 
-Another way to say this is in the words of Lawrence Lessig, who said {{CODELAW}}:
+However, the running code that results from our work (when things work well) inevitably has an
+impact beyond technical considerations. As much as engineers would like to be removed from
+"political" considerations, as the Internet has become prevalent in many societies, it has become a
+profoundly political thing; it has helped overthrow governments, revolutionize social orders,
+control populations and reveal people's secrets. It has created wealth for some individuals and
+companies, while destroying others'.
 
-> Ours is the age of cyberspace. It, too, has a regulator. This regulator, too, threatens liberty. But so obsessed are we with the idea that liberty means "freedom from government" that we don’t even see the regulation in this new space. We therefore don’t see the threat to liberty that this regulation presents.
+These effects are in no small part attributable to how the Internet works; its design affords some
+uses, while discouraging others. Or, in the words of Lawrence Lessig {{CODELAW}}:
 
-> This regulator is code—the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
+> Ours is the age of cyberspace. It, too, has a regulator... This regulator is code—the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
 
-This is indeed a heavy responsibility.
+All of this begs the question: Who do we go through the pain of rough consensus and write the
+running code for?
 
-That said, it is increasingly difficult to avoid making ethical, societal and even legal
-judgements in protocol design, as the Internet has become pervasive in many societies. 
+There are a variety of identifiable constituents that Internet standards can provide benefit to,
+such as (but not limited to) end users, network operators, schools, equipment vendors,
+specification implementers, content owners, governments, employers, and parents.
 
-A recurring theme in this area is balancing the rights of various constituents, such as (but not
-limited to) end users, network operators, equipment vendors, implementers, content owners,
-governments, employers, and parents.
+Good specifications will provide benefit to all of the relevant constituencies, because they do not
+represent a zero-sum game. However, on occasion we do need to balance the benefits of a protocol
+design decision between two (or more) constituents.
 
-This document proposes a set of guidelines regarding these "constituent rights" issues that
-protocol designers ought to consider as new protocols are created, as well as when existing
-protocols are extended and evolved.
+Likewise, sometimes efforts are brought to the IETF that represent the technical needs of a
+specific constituency that does not take the needs of others into account. On its own, such a
+specification meets a technical need for its community, at the expense of another set of
+constituents.
 
-In doing so, we seek to enable "the tussle" {{TUSSLE}}; that is, our protocols (and therefore the
-code that implements them) should not attempt to establish the law, as Lessig says, but instead
-aspire to serve as a level, well-defined venue where society's back-and-forth over the
-Internet can take place.
+Currently, such decisions occur in an ad hoc fashion, often without explicitly being discussed.
+This approach works reasonably well in many cases; even if a constituency is not directly
+represented in the process, there are often advocates for their interest, and ultimately protocols
+that disadvantage a particular constituency tend to be either rejected by it or eventually replaced.
 
-In other words, while we cannot -- and should not -- create an explicit human rights agenda at the
-IETF, we can make the impact of decisions upon them (as well as the rights of other constituents)
-more apparent and deliberate, by making our priorities explicit.
+However, we do sometimes expend a considerable amount of energy mitigating potential harm to
+under-represented constituencies. Furthermore, the Internet is not a value-neutral space, as per
+the IETF's mission {{RFC3935}}:
+
+> The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
+
+To better define the criteria that we use to make such decisions when necessary, and to help
+fulfill the mission of the IETF, this document outlines a set of guidelines about how the
+constituents of Internet standards should be identified, and when necessary, balanced.
 
 
 ## Notational Conventions
