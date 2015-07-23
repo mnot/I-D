@@ -162,13 +162,11 @@ For example, HTML does so using the priority of constituencies in the HTML Desig
 > In case of conflict, consider users over authors over implementors over specifiers over theoretical purity. In other words costs or difficulties to the user should be given more weight than costs to authors; which in turn should be given more weight than costs to implementors; which should be given more weight than costs to authors of the spec itself, which should be given more weight than those proposing changes for theoretical reasons alone. Of course, it is preferred to make things better for multiple constituencies at once.
 
 Note how the relative priority of constituents is explicit; this is intentional and encouraged.
-Some constituents -- especially end users -- can withdraw
-their support when their rights are not respected, leading to a failed effort. 
 
 Likewise, the responsibilities of, or expectations upon, constituents can vary greatly. For
 example, end users of Web browsers cannot be reasonably expected to make informed decisions about
 security, and therefore design decisions there are biased towards default security. When
-applicable, the expectations upon a constituent SHOULD be documented.
+applicable, the expectations upon a constituency SHOULD be documented.
 
 Extensions to existing standards MUST document how they interact with the extended standard's
 constituents. If the extended standard's constituents are not yet documented, the extension MAY
@@ -184,7 +182,7 @@ to be expected, and is still preferable to avoiding the discussion. The point is
 explicit, so that the effected constituencies can be made aware of the discussion, and judge the
 outcome.
 
-# Erosion of Rights
+## Changing Constituencies
 
 Changes in the use, deployment patterns, legal context, or other factors of a standard can bring
 pressure to re-balance the priorities and rights of existing constituents, or insert new ones
@@ -203,7 +201,7 @@ the rights of two existing constituents; end users and content publishers. There
 Working Group has refused to consider such changes.
 
 
-# Intermediation and Non-Constituents
+## Avoiding Unnecessary Constituents
 
 In protocol design, intermediation is often thought of as "those parties on the direct path between
 two people attempting to communicate"; e.g., middleboxes, proxies and so on.
@@ -221,28 +219,8 @@ While there might be a good technical reason to interpose such an intermediary, 
 a new constituent, and thus needs to be done with due consideration of the impact on other
 constituents. 
 
-Therefore, such intermediation SHOULD NOT be accommodated without purpose in Internet standards,
-and standard revisions (including extensions) MUST carefully weigh when new levels of
-intermediation are added. When a constituent has a role as an intermediary (in this sense), it MUST
-be documented.
+Therefore, unnecessary constituents SHOULD be avoided when possible in Internet standards. 
 
-
-# Promoting Constituents as "Winners"
-
-Standards often engender network effects. For example, e-mail is only useful when the parties you
-wish to communicate with also have e-mail; when more people have e-mail, its value is greatly
-increased.
-
-However, network effects can also be captured by a single party, in a "winner take all" market. For
-example, if we mint a new communication protocol without providing a way for two independent users
-to identify each other and rendezvous, it creates a condition whereby a rendezvous service can
-create network effects and possibly "win" the market.
-
-This is the antithesis of Internetworking, and SHOULD NOT be intentionally enabled, by commission
-or omission, by Internet standards.
-
-Practically speaking, this means that protocols -- especially application protocols -- are required
-to accommodate what is commonly known as "federation".
 
 
 # IANA Considerations
