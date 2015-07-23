@@ -60,12 +60,14 @@
 <section anchor="introduction" title="Introduction">
 
 <t>Virtual Private Networks have become a common means of assuring that traffic is carried over a
-protected network. However, current VPN technologies can be discriminated from non-VPN traffic,
-leading to them being blocked in some networks.</t>
+protected network. However, current VPN technologies can often be easily discriminated from non-VPN
+traffic, leading to them being blocked in some networks.</t>
 
 <t>As HTTP/2 is deployed more, it becomes an attractive substrate for carrying a VPN, due to its lack
 of discriminators, its multiplexed, low-overhead framing layer, its typical use of encryption, and
 the large number of HTTP endpoints on the Internet.</t>
+
+<t>This document describes a set of extensions that allow an IP-based Virtual Private Network to be created over a HTTP/2 connection.</t>
 
 <section anchor="notational-conventions" title="Notational Conventions">
 
@@ -80,8 +82,15 @@ the large number of HTTP endpoints on the Internet.</t>
 <section anchor="the-startvpn-http2-frame-type" title="The STARTVPN HTTP/2 Frame Type">
 
 <t>The STARTVPN frame (type=0xTBD) is used to open a stream (<xref target="RFC7540"/> Section 5.1) that represents
-a Virtual Private Network, and is also sent to acknowledge the opening of VPN. STARTVPN frames can
-be sent on a stream in the “idle” state.</t>
+a Virtual Private Network.</t>
+
+<t>A STARTVPN frame can be sent on a stream in the “idle” state to request creation of a VPN with the
+peer; it transitions the stream to the “open” state. Once a stream is opened in this fashion, the
+recipient can send a single STARTVPN frame to acknowledge the opening, or a RST_STREAM frame to
+close the stream.</t>
+
+<t>STARTVPN frames MAY also contain padding. Padding can be added to STARTVPN frames to obscure the
+size of messages. Padding is a security feature; see <xref target="RFC7540"/>, Section 10.7.</t>
 
 <figure><artwork><![CDATA[
  +---------------+
@@ -99,6 +108,7 @@ be sent on a stream in the “idle” state.</t>
   <t>Auth Data: Authentication data. This field can carry arbitrary authentication data, typically
 pre-arranged with the server.</t>
   <t>Pad Length: An 8-bit field containing the length of the frame padding in units of octets. This field is only present if the PADDED flag is set.</t>
+  <t>Padding: Padding octets that contain no application semantic value. Padding octets MUST be set to zero when sending. A receiver is not obligated to verify padding but MAY treat non-zero padding as a connection error (<xref target="RFC7540"/>, Section 5.4.1) of type PROTOCOL_ERROR.</t>
 </list></t>
 
 <t>The STARTVPN frame defines the following flags:</t>
@@ -106,6 +116,14 @@ pre-arranged with the server.</t>
 <t><list style="symbols">
   <t>PADDED (0x0): When set, bit 0 indicates that the Pad Length field and any padding that it describes are present.</t>
 </list></t>
+
+<t>The total number of padding octets is determined by the value of the Pad Length field. If the
+length of the padding is the length of the frame payload or greater, the recipient MUST treat this
+as a connection error (<xref target="RFC7540"/> Section 5.4.1) of type PROTOCOL_ERROR.</t>
+
+<t>STARTVPN frames MUST be associated with a stream. If a STARTVPN frame is received whose stream
+identifier field is 0x0, the recipient MUST respond with a connection error (<xref target="RFC7540"/>, Section
+5.4.1) of type PROTOCOL_ERROR.</t>
 
 </section>
 <section anchor="the-ip-http2-frame-type" title="The IP HTTP/2 Frame Type">
@@ -141,15 +159,14 @@ pre-arranged with the server.</t>
 </list></t>
 
 <t>IP frames MUST be associated with a stream. If an IP frame is received whose stream identifier
-field is 0x0, the recipient MUST respond with a connection error (<xref target="RFC7540"/>, Section
- 5.4.1) of type
-PROTOCOL_ERROR.</t>
+field is 0x0, the recipient MUST respond with a connection error (<xref target="RFC7540"/>, Section 5.4.1) of
+type PROTOCOL_ERROR.</t>
 
-<t>IP frames are subject to flow control and can only be sent when a stream is in the “open” or
-“half-closed (remote)” state. The entire IP frame payload is included in flow control, including
-the Pad Length and Padding fields if present. If an IP frame is received whose stream is not in
-“open” or “half-closed (local)” state, the recipient MUST respond with a stream error (<xref target="RFC7540"/>
-Section 5.4.2) of type STREAM_CLOSED.</t>
+<t>IP frames are subject to flow control (<xref target="RFC7540"/>, Section 5.2) and can only be sent when a stream
+is in the “open” or “half-closed (remote)” state. The entire IP frame payload is included in flow
+control, including the Pad Length and Padding fields if present. If an IP frame is received whose
+stream is not in “open” or “half-closed (local)” state, the recipient MUST respond with a stream
+error (<xref target="RFC7540"/> Section 5.4.2) of type STREAM_CLOSED.</t>
 
 <t>The total number of padding octets is determined by the value of the Pad Length field. If the
 length of the padding is the length of the frame payload or greater, the recipient MUST treat this
