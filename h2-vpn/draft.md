@@ -66,7 +66,7 @@ a Virtual Private Network, and is also sent to acknowledge the opening of VPN. S
 be sent on a stream in the "idle" state.
 
 ~~~
-+---------------+
+ +---------------+
  |Pad Length? (8)|
  +---------------+-----------------------------------------------+
  |                          Auth Data (*)                      ...
