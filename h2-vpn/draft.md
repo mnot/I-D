@@ -62,18 +62,23 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 ## The STARTVPN HTTP/2 Frame Type
 
 The STARTVPN frame (type=0xTBD) is used to open a stream ({{RFC7540}} Section 5.1) that represents
-a Virtual Private Network. STARTVPN frames can be sent on a stream in the "idle" state.
+a Virtual Private Network, and is also sent to acknowledge the opening of VPN. STARTVPN frames can
+be sent on a stream in the "idle" state.
 
 ~~~
 +---------------+
  |Pad Length? (8)|
- +-+-------------+-----------------------------------------------+
+ +---------------+-----------------------------------------------+
+ |                          Auth Data (*)                      ...
+ +---------------------------------------------------------------+
  |                           Padding (*)                       ...
  +---------------------------------------------------------------+
 ~~~
 
 The STARTVPN frame payload has the following fields:
 
+* Auth Data: Authentication data. This field can carry arbitrary authentication data, typically
+  pre-arranged with the server. 
 * Pad Length: An 8-bit field containing the length of the frame padding in units of octets. This field is only present if the PADDED flag is set.
 
 The STARTVPN frame defines the following flags:
@@ -132,8 +137,12 @@ value of zero.
 After a HTTP/2 connection is started (e.g., using the "h2" protocol identifier), either peer MAY
 initiate a VPN by sending a STARTVPN frame.
 
+The initiating STARTVPN SHOULD contain authentication data to allow the recipient to determine
+whether its peer is authorized to create a VPN; however, alternative mechanisms MAY be used (e.g.,
+TLS client certificates).
+
 If the other peer is willing and able to create a VPN, it will reply with a STARTVPN frame on the
-same stream.
+same stream. Otherwise, as per HTTP/2, it MUST ignore the frame. IP frames MUST not be sent by either peer before a STARTVPN frame is received.
 
 Note that HTTP/2 connections MAY carry multiple VPN connections simultaneously, and MAY also carry
 normal HTTP traffic.
@@ -164,6 +173,5 @@ TBD
 # TODO
 
 * Fill out security considerations
-* Authentication (in STARTVPN)
 * Does DHCP need a MAC address, or can it be synthesised?
 * Onion routing as a complementary extension?
