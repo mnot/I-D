@@ -42,9 +42,9 @@ Virtual Private Networks have become a common means of assuring that traffic is 
 protected network. However, current VPN technologies can be discriminated from non-VPN traffic,
 leading to them being blocked in some networks.
 
-As HTTP/2 is deployed more, it becomes an attractive substrate for carrying a VPN, due to both its
-broad use, its multiplexed, low-overhead framing layer, its typical use of encryption, and the
-large number of HTTP endpoints on the Internet.
+As HTTP/2 is deployed more, it becomes an attractive substrate for carrying a VPN, due to its lack
+of discriminators, its multiplexed, low-overhead framing layer, its typical use of encryption, and
+the large number of HTTP endpoints on the Internet.
 
 
 ## Notational Conventions
