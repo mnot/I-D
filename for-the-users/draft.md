@@ -1,7 +1,7 @@
 ---
 title: Considering the Users of Internet Standards
 abbrev: IETF Constituencies
-docname: draft-nottingham-we-fight-for-the-users-00
+docname: draft-nottingham-for-the-users-00
 date: 2015
 category: bcp
 
@@ -9,6 +9,8 @@ ipr: trust200902
 area: General
 workgroup: 
 keyword: Internet-Draft
+keyword: constituent
+keyword: constituency
 
 stand_alone: yes
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
@@ -25,6 +27,7 @@ normative:
   RFC2119:
 
 informative:
+  RFC2460:
   RFC3935:
   CODELAW:
     target: http://harvardmagazine.com/2000/01/code-is-law-html
@@ -147,12 +150,30 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # The Internet is for End Users
 
-Internet standards MUST prioritize end users higher than any other constituents. We are biased towards the needs of end users because of the IETF's mission {{RFC3935}}:
+Internet standards MUST prioritize end users higher than any other constituents. While networks
+need to be managed, employers and equipment vendors need to meet business goals, etc., our mission
+is to "build a better human society" {{RFC3935}} and -- on the Internet -- society is composed of
+what we call "end users."
 
-> The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
+This does not mean that end users have ultimate priority; there may be cases where genuine
+technical need of another constituent requires that end user requirements compromise. However, such
+tradeoffs need to be carefully examined, and avoided when there are alternate means of achieving
+the desired goals.
+
+For example, IPv6 {{RFC2460}} identifies each client with a unique address -- even though this
+provides a way to track end user activity and helps identify them -- because it is technically
+necessary to provide networking (and despite this, there are mechanisms like XXXX to mitigate this
+effect, for those users who desire it).
+
+In contrast, other proposals like those to allow middleboxes to inspect encrypted traffic for purposes such as data loss prevention or virus scanning fail to meet this requirement, because there are alternative mechanisms available (such as endpoint-based solutions). 
+
+Standardizing such mechanisms would 
+
+Importantly, this does mean that prioritizing another constituent over end users to accommodate a
+particular service, product, or business model alone MUST NOT be sanctioned by Internet standards.
 
 
-# Identifying Constituents of Internet Standards
+# Identifying the Constituents of Internet Standards
 
 Internet standards MUST document relevant primary constituents and their interrelationships.
 
@@ -229,8 +250,8 @@ This document does not require action by IANA.
 
 # Security Considerations
 
-This document does not have direct security impact; however, applying its guidelines might affect
-security positively or negatively for various constituents.
+This document does not have direct security impact; however, applying its guidelines (or failing
+to) might affect security positively or negatively for various constituents.
 
 
 --- back
@@ -239,7 +260,9 @@ security positively or negatively for various constituents.
 
 Thanks to Jacob Appelbaum for making the suggestion that led to this document.
 
-Thanks also to the WHATWG, for blazing the trail. 
+Thanks also to the WHATWG for blazing the trail.
+
+Thanks to Edward Snowden for his comments regarding the priority of end users.
 
 Thanks to Harald Alvestrand for his substantial feedback, Joe Hildebrand and Martin Thomson for
 their suggestions, and Niels ten Oever for encouragement.
