@@ -164,13 +164,11 @@ This document defines two entries in the HTTP/2 Frame Type registry.
 
 # Security Considerations
 
-TBD
+This specification is designed to avoid the exposure of discriminators to observers, to make it
+more difficult to block a VPN. However, VPN traffic has different characteristics (e.g., traffic
+volumes and timing, especially when it's possible to compare "normal" HTTP/2 traffic to it. Padding
+(both in the IP frames and the HTTP/2 HEADERS and DATA frames) may partially mitigate these attacks.
 
 --- back
 
 
-# TODO
-
-* Fill out security considerations
-* Does DHCP need a MAC address, or can it be synthesised?
-* Onion routing as a complementary extension?
