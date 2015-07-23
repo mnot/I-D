@@ -165,7 +165,7 @@ provides a way to track end user activity and helps identify them -- because it 
 necessary to provide networking (and despite this, there are mechanisms like XXXX to mitigate this
 effect, for those users who desire it).
 
-In contrast, proposals like those to allow middleboxes to inspect encrypted traffic for purposes
+In contrast, proposed standards to allow middleboxes to inspect encrypted traffic for purposes
 such as data loss prevention or virus scanning fail to meet this requirement, because there are
 alternative mechanisms available (such as endpoint-based solutions). The convenience gained by the
 employers who deploy such devices is not a reasonable exchange for the reduction in overall
