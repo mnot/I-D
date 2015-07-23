@@ -54,9 +54,9 @@
 protected network. However, current VPN technologies can be discriminated from non-VPN traffic,
 leading to them being blocked in some networks.</t>
 
-<t>As HTTP/2 is deployed more, it becomes an attractive substrate for carrying a VPN, due to both its
-broad use, its multiplexed, low-overhead framing layer, its typical use of encryption, and the
-large number of HTTP endpoints on the Internet.</t>
+<t>As HTTP/2 is deployed more, it becomes an attractive substrate for carrying a VPN, due to its lack
+of discriminators, its multiplexed, low-overhead framing layer, its typical use of encryption, and
+the large number of HTTP endpoints on the Internet.</t>
 
 <section anchor="notational-conventions" title="Notational Conventions">
 
@@ -68,9 +68,6 @@ large number of HTTP endpoints on the Internet.</t>
 </section>
 <section anchor="extensions-for-vpn-over-http2" title="Extensions for VPN over HTTP/2">
 
-<section anchor="the-settingsvpn-http2-setting" title="The SETTINGS_VPN HTTP/2 Setting">
-
-</section>
 <section anchor="the-startvpn-http2-frame-type" title="The STARTVPN HTTP/2 Frame Type">
 
 <t>The STARTVPN frame (type=0xTBD) is used to open a stream (<xref target="RFC7540"/> Section 5.1) that represents
@@ -78,7 +75,7 @@ a Virtual Private Network, and is also sent to acknowledge the opening of VPN. S
 be sent on a stream in the “idle” state.</t>
 
 <figure><artwork><![CDATA[
-+---------------+
+ +---------------+
  |Pad Length? (8)|
  +---------------+-----------------------------------------------+
  |                          Auth Data (*)                      ...
@@ -123,7 +120,7 @@ pre-arranged with the server.</t>
 <t><list style="symbols">
   <t>Pad Length: An 8-bit field containing the length of the frame padding in units of octets. This field is conditional (as signified by a “?” in the diagram) and is only present if the PADDED flag is set.</t>
   <t>IP Data: Transport data. The amount of data is the remainder of the frame payload after subtracting the length of the other fields that are present.</t>
-  <t>Padding: Padding octets that contain no application semantic value. Padding octets MUST be set to zero when sending. A receiver is not obligated to verify padding but MAY treat non-zero padding as a connection error (Section 5.4.1) of type PROTOCOL_ERROR.</t>
+  <t>Padding: Padding octets that contain no application semantic value. Padding octets MUST be set to zero when sending. A receiver is not obligated to verify padding but MAY treat non-zero padding as a connection error (<xref target="RFC7540"/>, Section 5.4.1) of type PROTOCOL_ERROR.</t>
 </list></t>
 
 <t>The IP frame defines the following flags:</t>
@@ -135,7 +132,8 @@ pre-arranged with the server.</t>
 </list></t>
 
 <t>IP frames MUST be associated with a stream. If an IP frame is received whose stream identifier
-field is 0x0, the recipient MUST respond with a connection error (Section 5.4.1) of type
+field is 0x0, the recipient MUST respond with a connection error (<xref target="RFC7540"/>, Section
+ 5.4.1) of type
 PROTOCOL_ERROR.</t>
 
 <t>IP frames are subject to flow control and can only be sent when a stream is in the “open” or
