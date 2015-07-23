@@ -29,6 +29,7 @@ normative:
 informative:
   RFC2460:
   RFC3935:
+  RFC4941:
   RFC6265:
   CODELAW:
     target: http://harvardmagazine.com/2000/01/code-is-law-html
@@ -167,8 +168,8 @@ the desired goals.
 
 For example, IPv6 {{RFC2460}} identifies each client with a unique address -- even though this
 provides a way to track end user activity and helps identify them -- because it is technically
-necessary to provide networking (and despite this, there are mechanisms like XXXX to mitigate this
-effect, for those users who desire it).
+necessary to provide networking (and despite this, there are mechanisms like {{RFC4941}} to
+mitigate this effect, for those users who desire it).
 
 In contrast, proposed standards to allow middleboxes to inspect encrypted traffic for purposes
 such as data loss prevention or virus scanning fail to meet this requirement, because there are
