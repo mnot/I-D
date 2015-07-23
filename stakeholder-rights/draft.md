@@ -182,7 +182,7 @@ to be expected, and is still preferable to avoiding the discussion. The point is
 explicit, so that the effected constituencies can be made aware of the discussion, and judge the
 outcome.
 
-## Changing Constituencies
+## Handling Change in Constituencies
 
 Changes in the use, deployment patterns, legal context, or other factors of a standard can bring
 pressure to re-balance the priorities and rights of existing constituents, or insert new ones
