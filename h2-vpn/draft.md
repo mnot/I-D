@@ -129,11 +129,30 @@ value of zero.
 
 # VPN over HTTP/2 Operation
 
+After a HTTP/2 connection is started (e.g., using the "h2" protocol identifier), either peer MAY
+initiate a VPN by sending a STARTVPN frame.
+
+If the other peer is willing and able to create a VPN, it will reply with a STARTVPN frame on the
+same stream.
+
+Note that HTTP/2 connections MAY carry multiple VPN connections simultaneously, and MAY also carry
+normal HTTP traffic.
+
+Upon successful establishment of a VPN, the peers can begin exchanging IP frames. Address discovery can occur as would over a normal IP connection (e.g., using static configuration or DHCP).
 
 
 # IANA Considerations
 
-TBD
+This document defines two entries in the HTTP/2 Frame Type registry.
+
+* Frame Type: STARTVPN
+* Code: TBD
+* Specification: [this document]
+
+* Frame Type: IP
+* Code: TBD
+* Specification: [this document]
+
 
 # Security Considerations
 
@@ -145,12 +164,6 @@ TBD
 # TODO
 
 * Fill out security considerations
-* Fill out IANA considerations
 * Authentication (in STARTVPN)
-* Address discovery (DHCP)
-* More fully describe use cases
-  * Multiplexing multiple VPNs
-  * Onion routing as a complementary extension
-* Describe general best practices for running a VPN over TCP
-  * Hopefully by referencing other RFCs rather than reinventing
-  * It'll get better with UDP-based HTTP
+* Does DHCP need a MAC address, or can it be synthesised?
+* Onion routing as a complementary extension?
