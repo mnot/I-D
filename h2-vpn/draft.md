@@ -67,8 +67,15 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 ## The STARTVPN HTTP/2 Frame Type
 
 The STARTVPN frame (type=0xTBD) is used to open a stream ({{RFC7540}} Section 5.1) that represents
-a Virtual Private Network, and is also sent to acknowledge the opening of VPN. STARTVPN frames can
-be sent on a stream in the "idle" state.
+a Virtual Private Network. 
+
+A STARTVPN frame can be sent on a stream in the "idle" state to request creation of a VPN with the
+peer; it transitions the stream to the "open" state. Once a stream is opened in this fashion, the
+recipient can send a single STARTVPN frame to acknowledge the opening, or a RST_STREAM frame to
+close the stream.
+
+STARTVPN frames MAY also contain padding. Padding can be added to STARTVPN frames to obscure the
+size of messages. Padding is a security feature; see {{RFC7540}}, Section 10.7.
 
 ~~~
  +---------------+
@@ -85,10 +92,19 @@ The STARTVPN frame payload has the following fields:
 * Auth Data: Authentication data. This field can carry arbitrary authentication data, typically
   pre-arranged with the server. 
 * Pad Length: An 8-bit field containing the length of the frame padding in units of octets. This field is only present if the PADDED flag is set.
+* Padding: Padding octets that contain no application semantic value. Padding octets MUST be set to zero when sending. A receiver is not obligated to verify padding but MAY treat non-zero padding as a connection error ({{RFC7540}}, Section 5.4.1) of type PROTOCOL_ERROR.
 
 The STARTVPN frame defines the following flags:
 
 * PADDED (0x0): When set, bit 0 indicates that the Pad Length field and any padding that it describes are present.
+
+The total number of padding octets is determined by the value of the Pad Length field. If the
+length of the padding is the length of the frame payload or greater, the recipient MUST treat this
+as a connection error ({{RFC7540}} Section 5.4.1) of type PROTOCOL_ERROR.
+
+STARTVPN frames MUST be associated with a stream. If a STARTVPN frame is received whose stream
+identifier field is 0x0, the recipient MUST respond with a connection error ({{RFC7540}}, Section
+5.4.1) of type PROTOCOL_ERROR.
 
 
 ## The IP HTTP/2 Frame Type
@@ -120,9 +136,8 @@ The IP frame defines the following flags:
 * PADDED (0x4): When set, bit 3 indicates that the Pad Length field and any padding that it describes are present.
 
 IP frames MUST be associated with a stream. If an IP frame is received whose stream identifier
-field is 0x0, the recipient MUST respond with a connection error ({{RFC7540}}, Section
- 5.4.1) of type
-PROTOCOL_ERROR.
+field is 0x0, the recipient MUST respond with a connection error ({{RFC7540}}, Section 5.4.1) of
+type PROTOCOL_ERROR.
 
 IP frames are subject to flow control and can only be sent when a stream is in the "open" or
 "half-closed (remote)" state. The entire IP frame payload is included in flow control, including
