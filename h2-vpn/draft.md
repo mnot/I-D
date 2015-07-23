@@ -56,8 +56,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # Extensions for VPN over HTTP/2
 
-## The SETTINGS_VPN HTTP/2 Setting
-
 
 ## The STARTVPN HTTP/2 Frame Type
 
