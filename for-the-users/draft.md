@@ -29,6 +29,7 @@ normative:
 informative:
   RFC2460:
   RFC3935:
+  RFC6265:
   CODELAW:
     target: http://harvardmagazine.com/2000/01/code-is-law-html
     title: "Code Is Law: On Liberty in Cyberspace"
@@ -130,7 +131,7 @@ that disadvantage a particular constituency tend to be either rejected by it or 
 
 However, we do sometimes expend a considerable amount of energy mitigating potential harm to
 under-represented constituencies, and often harm to a constituency is not so onerous or obvious as
-to dissuade them from using something (e.g., {{RFCxxxx}}). 
+to dissuade them from using something (e.g., {{RFC6265}}). 
 
 Furthermore, the Internet is not a value-neutral space, as per the IETF's mission {{RFC3935}}:
 
