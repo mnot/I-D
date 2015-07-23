@@ -155,6 +155,10 @@ need to be managed, employers and equipment vendors need to meet business goals,
 is to "build a better human society" {{RFC3935}} and -- on the Internet -- society is composed of
 what we call "end users."
 
+Furthermore, the success of the Internet to date is arguably due largely to its bias towards
+end user concerns to date; without a firm preference for their benefit, trust in the Internet will
+erode, and its value -- for all constituents -- will be greatly diminished.
+
 This does not mean that end users have ultimate priority; there may be cases where genuine
 technical need of another constituent requires that end user requirements compromise. However, such
 tradeoffs need to be carefully examined, and avoided when there are alternate means of achieving
