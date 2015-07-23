@@ -104,7 +104,7 @@ The IP frame contains the following fields:
 
 * Pad Length: An 8-bit field containing the length of the frame padding in units of octets. This field is conditional (as signified by a "?" in the diagram) and is only present if the PADDED flag is set.
 * IP Data: Transport data. The amount of data is the remainder of the frame payload after subtracting the length of the other fields that are present.
-* Padding: Padding octets that contain no application semantic value. Padding octets MUST be set to zero when sending. A receiver is not obligated to verify padding but MAY treat non-zero padding as a connection error (Section 5.4.1) of type PROTOCOL_ERROR.
+* Padding: Padding octets that contain no application semantic value. Padding octets MUST be set to zero when sending. A receiver is not obligated to verify padding but MAY treat non-zero padding as a connection error ({{RFC7540}}, Section 5.4.1) of type PROTOCOL_ERROR.
 
 The IP frame defines the following flags:
 
@@ -113,7 +113,8 @@ The IP frame defines the following flags:
 * PADDED (0x4): When set, bit 3 indicates that the Pad Length field and any padding that it describes are present.
 
 IP frames MUST be associated with a stream. If an IP frame is received whose stream identifier
-field is 0x0, the recipient MUST respond with a connection error (Section 5.4.1) of type
+field is 0x0, the recipient MUST respond with a connection error ({{RFC7540}}, Section
+ 5.4.1) of type
 PROTOCOL_ERROR.
 
 IP frames are subject to flow control and can only be sent when a stream is in the "open" or
