@@ -139,11 +139,11 @@ IP frames MUST be associated with a stream. If an IP frame is received whose str
 field is 0x0, the recipient MUST respond with a connection error ({{RFC7540}}, Section 5.4.1) of
 type PROTOCOL_ERROR.
 
-IP frames are subject to flow control and can only be sent when a stream is in the "open" or
-"half-closed (remote)" state. The entire IP frame payload is included in flow control, including
-the Pad Length and Padding fields if present. If an IP frame is received whose stream is not in
-"open" or "half-closed (local)" state, the recipient MUST respond with a stream error ({{RFC7540}}
-Section 5.4.2) of type STREAM_CLOSED.
+IP frames are subject to flow control ({{RFC7540}}, Section 5.2) and can only be sent when a stream
+is in the "open" or "half-closed (remote)" state. The entire IP frame payload is included in flow
+control, including the Pad Length and Padding fields if present. If an IP frame is received whose
+stream is not in "open" or "half-closed (local)" state, the recipient MUST respond with a stream
+error ({{RFC7540}} Section 5.4.2) of type STREAM_CLOSED.
 
 The total number of padding octets is determined by the value of the Pad Length field. If the
 length of the padding is the length of the frame payload or greater, the recipient MUST treat this
