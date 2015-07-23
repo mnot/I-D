@@ -44,12 +44,14 @@ The issues list for this draft can be found at <https://github.com/mnot/I-D/labe
 # Introduction
 
 Virtual Private Networks have become a common means of assuring that traffic is carried over a
-protected network. However, current VPN technologies can be discriminated from non-VPN traffic,
-leading to them being blocked in some networks.
+protected network. However, current VPN technologies can often be easily discriminated from non-VPN
+traffic, leading to them being blocked in some networks.
 
 As HTTP/2 is deployed more, it becomes an attractive substrate for carrying a VPN, due to its lack
 of discriminators, its multiplexed, low-overhead framing layer, its typical use of encryption, and
 the large number of HTTP endpoints on the Internet.
+
+This document describes a set of extensions that allow an IP-based Virtual Private Network to be created over a HTTP/2 connection.
 
 
 ## Notational Conventions
