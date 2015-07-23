@@ -58,8 +58,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 ## The SETTINGS_VPN HTTP/2 Setting
 
-The SETTINGS_VPN HTTP/2 setting (0xTBD) indicates that the sender is willing to use create VPNs over the HTTP/2 connection that it occurs within. 
-
 
 ## The STARTVPN HTTP/2 Frame Type
 
@@ -131,7 +129,6 @@ value of zero.
 
 # VPN over HTTP/2 Operation
 
-A sender MUST receive a SETTINGS_VPN setting from its peer before sending any IP frames. 
 
 
 # IANA Considerations
