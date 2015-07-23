@@ -70,7 +70,36 @@ large number of HTTP endpoints on the Internet.</t>
 
 <section anchor="the-settingsvpn-http2-setting" title="The SETTINGS_VPN HTTP/2 Setting">
 
-<t>The SETTINGS_VPN HTTP/2 setting (0xTBD) indicates that the sender is willing to use create VPNs over the HTTP/2 connection that it occurs within.</t>
+</section>
+<section anchor="the-startvpn-http2-frame-type" title="The STARTVPN HTTP/2 Frame Type">
+
+<t>The STARTVPN frame (type=0xTBD) is used to open a stream (<xref target="RFC7540"/> Section 5.1) that represents
+a Virtual Private Network, and is also sent to acknowledge the opening of VPN. STARTVPN frames can
+be sent on a stream in the “idle” state.</t>
+
+<figure><artwork><![CDATA[
++---------------+
+ |Pad Length? (8)|
+ +---------------+-----------------------------------------------+
+ |                          Auth Data (*)                      ...
+ +---------------------------------------------------------------+
+ |                           Padding (*)                       ...
+ +---------------------------------------------------------------+
+]]></artwork></figure>
+
+<t>The STARTVPN frame payload has the following fields:</t>
+
+<t><list style="symbols">
+  <t>Auth Data: Authentication data. This field can carry arbitrary authentication data, typically
+pre-arranged with the server.</t>
+  <t>Pad Length: An 8-bit field containing the length of the frame padding in units of octets. This field is only present if the PADDED flag is set.</t>
+</list></t>
+
+<t>The STARTVPN frame defines the following flags:</t>
+
+<t><list style="symbols">
+  <t>PADDED (0x0): When set, bit 0 indicates that the Pad Length field and any padding that it describes are present.</t>
+</list></t>
 
 </section>
 <section anchor="the-ip-http2-frame-type" title="The IP HTTP/2 Frame Type">
@@ -126,12 +155,34 @@ value of zero.</t>
 </section>
 <section anchor="vpn-over-http2-operation" title="VPN over HTTP/2 Operation">
 
-<t>A sender MUST receive a SETTINGS_VPN setting from its peer before sending any IP frames.</t>
+<t>After a HTTP/2 connection is started (e.g., using the “h2” protocol identifier), either peer MAY
+initiate a VPN by sending a STARTVPN frame.</t>
+
+<t>The initiating STARTVPN SHOULD contain authentication data to allow the recipient to determine
+whether its peer is authorized to create a VPN; however, alternative mechanisms MAY be used (e.g.,
+TLS client certificates).</t>
+
+<t>If the other peer is willing and able to create a VPN, it will reply with a STARTVPN frame on the
+same stream. Otherwise, as per HTTP/2, it MUST ignore the frame. IP frames MUST not be sent by either peer before a STARTVPN frame is received.</t>
+
+<t>Note that HTTP/2 connections MAY carry multiple VPN connections simultaneously, and MAY also carry
+normal HTTP traffic.</t>
+
+<t>Upon successful establishment of a VPN, the peers can begin exchanging IP frames. Address discovery can occur as would over a normal IP connection (e.g., using static configuration or DHCP).</t>
 
 </section>
 <section anchor="iana-considerations" title="IANA Considerations">
 
-<t>TBD</t>
+<t>This document defines two entries in the HTTP/2 Frame Type registry.</t>
+
+<t><list style="symbols">
+  <t>Frame Type: STARTVPN</t>
+  <t>Code: TBD</t>
+  <t>Specification: [this document]</t>
+  <t>Frame Type: IP</t>
+  <t>Code: TBD</t>
+  <t>Specification: [this document]</t>
+</list></t>
 
 </section>
 <section anchor="security-considerations" title="Security Considerations">
@@ -216,19 +267,8 @@ value of zero.</t>
 
 <t><list style="symbols">
   <t>Fill out security considerations</t>
-  <t>Fill out IANA considerations</t>
-  <t>Authentication</t>
-  <t>Fully describe effects upon / interaction with state model</t>
-  <t>More fully describe use cases
-  <list style="symbols">
-      <t>Multiplexing multiple VPNs</t>
-      <t>Onion routing as a complementary extension</t>
-    </list></t>
-  <t>Describe general best practices for running a VPN over TCP
-  <list style="symbols">
-      <t>Hopefully by referencing other RFCs rather than reinventing</t>
-      <t>It’ll get better with UDP-based HTTP</t>
-    </list></t>
+  <t>Does DHCP need a MAC address, or can it be synthesised?</t>
+  <t>Onion routing as a complementary extension?</t>
 </list></t>
 
 </section>
