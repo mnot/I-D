@@ -34,6 +34,11 @@ informative:
 
 This document describes a set of extensions that allow an IP-based Virtual Private Network to be created over a HTTP/2 connection.
 
+--- note_Note_to_Readers
+
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/h2-vpn>.
+
+
 --- middle
 
 # Introduction
