@@ -1,5 +1,5 @@
 ---
-title: Constituencies for Internet Standards
+title: Considering the Users of Internet Standards
 abbrev: IETF Constituencies
 docname: draft-nottingham-we-fight-for-the-users-00
 date: 2015
@@ -75,9 +75,9 @@ informative:
 
 --- abstract
 
-Internet standards serve and are used by a variety of constituencies. This document contains guidelines for identifying and serving these constituencies, and determining how to resolve conflicts between their interests, when necessary. 
+Internet standards serve and are used by a variety of constituencies. This document contains guidelines for identifying and serving them, and determining how to resolve conflicts between their interests, when necessary. 
 
-It also mandates end users as the highest priority constituency for Internet protocols.
+It also mandates end users as the highest priority constituency for Internet standards.
 
 --- note_Note_to_Readers
 
@@ -117,23 +117,25 @@ design decision between two (or more) constituents.
 
 Likewise, sometimes efforts are brought to the IETF that represent the technical needs of a
 specific constituency that does not take the needs of others into account. On its own, such a
-specification meets a technical need for its community, at the expense of another set of
-constituents.
+specification meets a technical need for its community, but at the expense of others. When
+presented with such a proposal, we need to decide how to handle it.
 
 Currently, such decisions occur in an ad hoc fashion, often without explicitly being discussed.
 This approach works reasonably well in many cases; even if a constituency is not directly
-represented in the process, there are often advocates for their interest, and ultimately protocols
+represented in the process, there are often advocates for their interests, and ultimately protocols
 that disadvantage a particular constituency tend to be either rejected by it or eventually replaced.
 
 However, we do sometimes expend a considerable amount of energy mitigating potential harm to
-under-represented constituencies. Furthermore, the Internet is not a value-neutral space, as per
-the IETF's mission {{RFC3935}}:
+under-represented constituencies, and often harm to a constituency is not so onerous or obvious as
+to dissuade them from using something (e.g., {{RFCxxxx}}). 
+
+Furthermore, the Internet is not a value-neutral space, as per the IETF's mission {{RFC3935}}:
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
 
-To better define the criteria that we use to make such decisions when necessary, and to help
-fulfill the mission of the IETF, this document outlines a set of guidelines about how the
-constituents of Internet standards should be identified, and when necessary, balanced.
+To better define the criteria that we use to make such decisions when necessary, minimize potential
+harm, and to help fulfill the mission of the IETF, this document outlines a set of guidelines about
+how the constituents of Internet standards should be identified, and when necessary, balanced.
 
 
 ## Notational Conventions
@@ -143,9 +145,16 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# Identifying Constituents
+# The Internet is for End Users
 
-Protocols MUST document relevant primary constituents and their interrelationships.
+Internet standards MUST prioritize end users higher than any other constituents. We are biased towards the needs of end users because of the IETF's mission {{RFC3935}}:
+
+> The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
+
+
+# Identifying Constituents of Internet Standards
+
+Internet standards MUST document relevant primary constituents and their interrelationships.
 
 For example, HTML does so using the priority of constituencies in the HTML Design Principles
 {{PRIORITY}}:
@@ -161,26 +170,25 @@ example, end users of Web browsers cannot be reasonably expected to make informe
 security, and therefore design decisions there are biased towards default security. When
 applicable, the expectations upon a constituent SHOULD be documented.
 
-Internet protocols MUST prioritize end users higher than any other constituents. We are biased towards the needs of end users because of the IETF's mission {{RFC3935}}:
-
-> The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
-
-Extensions to existing protocols MUST document how they interact with the extended protocol's
-constituents. If the extended protocol's constituents are not yet documented, the extension MAY
-estimate its impact, in coordination with that protocol's community and the IESG.
+Extensions to existing standards MUST document how they interact with the extended standard's
+constituents. If the extended standard's constituents are not yet documented, the extension MAY
+estimate its impact, in coordination with that standard's community and the IESG.
 
 The burden of this documentation need not be high; if HTML can do it in a paragraph, so can most
-protocols. While it might be appropriate in a separate document (e.g., a requirements or use cases
-draft) or the protocol specification itself, documenting constituents in the WG charter has
-considerable benefits, since it clarifies their relationships up-front.
+standards. While it might be appropriate in a separate document (e.g., a requirements or use cases
+draft) or the specification itself, documenting constituents in the WG charter has considerable
+benefits, since it clarifies their relationships up-front.
 
-Inevitably, documenting and interpreting the constituent roles will become controversial; this is to be expected, and is still preferable to avoiding the discussion.
+Inevitably, documenting and interpreting the constituent roles will become controversial; this is
+to be expected, and is still preferable to avoiding the discussion. The point is to make it
+explicit, so that the effected constituencies can be made aware of the discussion, and judge the
+outcome.
 
 # Erosion of Rights
 
-Changes in the use, deployment patterns, legal context, or other factors of a protocol can bring
+Changes in the use, deployment patterns, legal context, or other factors of a standard can bring
 pressure to re-balance the priorities and rights of existing constituents, or insert new ones
-(usually, when a protocol is either extended or evolved).
+(usually, when a standard is either extended or evolved).
 
 Such changes MUST NOT violate documented rights of existing constituents, or those reasonably
 assumed by existing constituents, without informed consent. Note that this may preclude the change
@@ -200,7 +208,7 @@ Working Group has refused to consider such changes.
 In protocol design, intermediation is often thought of as "those parties on the direct path between
 two people attempting to communicate"; e.g., middleboxes, proxies and so on.
 
-When discussing constituent rights, this definition is expanded to include those parties that have
+When discussing constituencies, this definition can be expanded to include those parties that have
 the ability to prevent or control communication between two parties. This naturally includes
 middleboxes, but can also include third parties not directly on-path.
 
@@ -213,15 +221,15 @@ While there might be a good technical reason to interpose such an intermediary, 
 a new constituent, and thus needs to be done with due consideration of the impact on other
 constituents. 
 
-Therefore, such intermediation SHOULD NOT be accommodated without purpose in Internet protocols,
-and protocol revisions (including extensions) MUST carefully weigh when new levels of
+Therefore, such intermediation SHOULD NOT be accommodated without purpose in Internet standards,
+and standard revisions (including extensions) MUST carefully weigh when new levels of
 intermediation are added. When a constituent has a role as an intermediary (in this sense), it MUST
 be documented.
 
 
 # Promoting Constituents as "Winners"
 
-Protocols often engender network effects. For example, e-mail is only useful when the parties you
+Standards often engender network effects. For example, e-mail is only useful when the parties you
 wish to communicate with also have e-mail; when more people have e-mail, its value is greatly
 increased.
 
@@ -231,7 +239,7 @@ to identify each other and rendezvous, it creates a condition whereby a rendezvo
 create network effects and possibly "win" the market.
 
 This is the antithesis of Internetworking, and SHOULD NOT be intentionally enabled, by commission
-or omission, by Internet protocols.
+or omission, by Internet standards.
 
 Practically speaking, this means that protocols -- especially application protocols -- are required
 to accommodate what is commonly known as "federation".
@@ -243,8 +251,8 @@ This document does not require action by IANA.
 
 # Security Considerations
 
-This document does not specify a protocol; however, applying its guidelines might affect security
-positively or negatively for various constituents.
+This document does not have direct security impact; however, applying its guidelines might affect
+security positively or negatively for various constituents.
 
 
 --- back
