@@ -80,7 +80,9 @@ informative:
 
 --- abstract
 
-Internet standards serve and are used by a variety of constituencies. This document contains guidelines for identifying and serving them, and determining how to resolve conflicts between their interests, when necessary. 
+Internet standards serve and are used by a variety of constituencies. This document contains
+guidelines for identifying them, serving them, and determining how to resolve conflicts between
+their interests, when necessary.
 
 It also mandates end users as the highest priority constituency for Internet standards.
 
