@@ -214,20 +214,20 @@ outcome.
 ## Handling Change in Constituencies
 
 Changes in the use, deployment patterns, legal context, or other factors of a standard can bring
-pressure to re-balance the priorities and rights of existing constituents, or insert new ones
-(usually, when a standard is either extended or evolved).
+pressure to re-balance the priorities of existing constituents, or insert new ones (usually, when a
+standard is either extended or evolved).
 
-Such changes MUST NOT violate documented rights of existing constituents, or those reasonably
-assumed by existing constituents, without informed consent. Note that this may preclude the change
-completely, as it is often impossible to gain the informed consent of a large or diffuse group of
-constituents (e.g., end users).
+Such changes MUST NOT violate the priority of existing constituents, or those reasonably assumed by
+existing constituents, without informed consent. Note that this may preclude the change completely,
+as it is often impossible to gain the informed consent of a large or diffuse group of constituents
+(e.g., end users).
 
 For example, there has been increasing pressure to change HTTP {{RFC7230}} to make it more amenable
 to optimization, filtering, and interposition of other value-added services, especially in the face
 of more pervasive encryption (denoted by HTTPS URIs). However, since HTTPS is already defined as a
 two-party protocol with end-to-end encryption, inserting a third party in any fashion would violate
-the rights of two existing constituents; end users and content publishers. Therefore, the HTTP
-Working Group has refused to consider such changes.
+the expectations of two existing constituents; end users and content publishers. Therefore, the
+HTTP Working Group has refused to consider such changes.
 
 
 ## Avoiding Unnecessary Constituents
