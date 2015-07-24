@@ -96,8 +96,8 @@ The issues list for this draft can be found at <https://github.com/mnot/I-D/labe
 # Introduction
 
 The IETF is most comfortable making technical decisions; our process is defined to favor technical
-merit, and our well-known bias towards "rough consensus and running code" is well suited to this
-area of work.
+merit, and our known bias towards "rough consensus and running code" is well suited to this area of
+work.
 
 However, the running code that results from our work (when things work well) inevitably has an
 impact beyond technical considerations. As much as engineers would like to be removed from
