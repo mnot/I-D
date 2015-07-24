@@ -99,12 +99,12 @@ The IETF is most comfortable making technical decisions; our process is defined 
 merit, and our known bias towards "rough consensus and running code" is well suited to this area of
 work.
 
-However, the running code that results from our work (when things work well) inevitably has an
-impact beyond technical considerations. As much as engineers would like to be removed from
-"political" considerations, as the Internet has become prevalent in many societies, it has become a
-profoundly political thing; it has helped overthrow governments, revolutionize social orders,
-control populations and reveal people's secrets. It has created wealth for some individuals and
-companies, while destroying others'.
+However, the running code that results (when things work well) inevitably has an impact beyond
+technical considerations. As much as engineers would like to be removed from "political"
+considerations, as the Internet has become prevalent in many societies, it has become a profoundly
+political thing; it has helped overthrow governments, revolutionize social orders, control
+populations and reveal people's secrets. It has created wealth for some individuals and companies,
+while destroying others'.
 
 These effects are in no small part attributable to how the Internet works; its design affords some
 uses, while discouraging others. Or, in the words of Lawrence Lessig {{CODELAW}}:
