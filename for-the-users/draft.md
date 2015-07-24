@@ -118,9 +118,9 @@ There are a variety of identifiable constituents that Internet standards can pro
 such as (but not limited to) end users, network operators, schools, equipment vendors,
 specification implementers, content owners, governments, employers, and parents.
 
-Good specifications will provide benefit to all of the relevant constituencies, because they do not
-represent a zero-sum game. However, on occasion we do need to balance the benefits of a protocol
-design decision between two (or more) constituents.
+Good specifications will provide benefit to all of the relevant constituencies, because standards
+do not represent a zero-sum game. However, on occasion we do need to balance the benefits of a
+protocol design decision between two (or more) constituents.
 
 Likewise, sometimes efforts are brought to the IETF that represent the technical needs of a
 specific constituency that does not take the needs of others into account. On its own, such a
