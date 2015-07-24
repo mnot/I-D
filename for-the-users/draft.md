@@ -190,7 +190,7 @@ For example, HTML does so using the priority of constituencies in the HTML Desig
 
 > In case of conflict, consider users over authors over implementors over specifiers over theoretical purity. In other words costs or difficulties to the user should be given more weight than costs to authors; which in turn should be given more weight than costs to implementors; which should be given more weight than costs to authors of the spec itself, which should be given more weight than those proposing changes for theoretical reasons alone. Of course, it is preferred to make things better for multiple constituencies at once.
 
-Note how the relative priority of constituents is explicit; this is intentional and encouraged.
+Note how the relative priority of constituents is explicit; this is intentional and encouraged. However, it need not be a strict ranking in all cases; in some areas, it can be more useful to give equal weight to constituencies, so as to encourage the tussle {{TUSSLE}}.
 
 Likewise, the responsibilities of, or expectations upon, constituents can vary greatly. For
 example, end users of Web browsers cannot be reasonably expected to make informed decisions about
