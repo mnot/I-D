@@ -27,6 +27,7 @@ normative:
   RFC2119:
 
 informative:
+  RFC1958:
   RFC2460:
   RFC3935:
   RFC4941:
@@ -101,10 +102,8 @@ work.
 
 However, the running code that results (when things work well) inevitably has an impact beyond
 technical considerations. As much as engineers would like to be removed from "political"
-considerations, as the Internet has become prevalent in many societies, it has become a profoundly
-political thing; it has helped overthrow governments, revolutionize social orders, control
-populations and reveal people's secrets. It has created wealth for some individuals and companies,
-while destroying others'.
+considerations, as the Internet has become prevalent in many societies, it has a profound
+societal impact. The Internet has played a role in political organizing, revolutionizing access to information and improving accountability, it has also contributed to surveillance and harassment. It has created wealth for some individuals and companies, while destroying others'.
 
 These effects are in no small part attributable to how the Internet works; its design affords some
 uses, while discouraging others. Or, in the words of Lawrence Lessig {{CODELAW}}:
@@ -115,8 +114,8 @@ All of this begs the question: Who do we go through the pain of rough consensus 
 running code for?
 
 There are a variety of identifiable constituents that Internet standards can provide benefit to,
-such as (but not limited to) end users, network operators, schools, equipment vendors,
-specification implementers, content owners, governments, employers, and parents.
+such as (but not limited to) end users, network operators, social movements, NGOs, schools, equipment vendors,
+specification implementers, content owners, governments, and employers.
 
 Good specifications will provide benefit to all of the relevant constituencies, because standards
 do not represent a zero-sum game. However, on occasion we do need to balance the benefits of a
@@ -140,8 +139,7 @@ Furthermore, the Internet is not a value-neutral space, as per the IETF's missio
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
 
-To better define the criteria that we use to make such decisions when necessary, minimize potential
-harm, and to help fulfill the mission of the IETF, this document outlines a set of guidelines about
+To better define the criteria that we use to make such decisions when necessary, document these decisions, minimize potential harm, and to help fulfill the mission of the IETF, this document outlines a set of guidelines about
 how the constituents of Internet standards should be identified, and when necessary, balanced.
 
 
@@ -156,17 +154,16 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 Internet standards MUST prioritize end users higher than any other constituents. While networks
 need to be managed, employers and equipment vendors need to meet business goals, etc., our mission
-is to "build a better human society" {{RFC3935}} and -- on the Internet -- society is composed of
-what we call "end users."
+is to "build a better human society" {{RFC3935}} and providing "global connectivity" {{RFC1958}} and -- on the Internet -- society is composed of what we call "end users."
 
 Furthermore, the success of the Internet to date is arguably due largely to its bias towards
-end user concerns to date; without a firm preference for their benefit, trust in the Internet will
+end user concerns; without a firm preference for their benefit, trust in the Internet will
 erode, and its value -- for all constituents -- will be greatly diminished.
 
 This does not mean that end users have ultimate priority; there may be cases where genuine
 technical need of another constituent requires that end user requirements compromise. However, such
 tradeoffs need to be carefully examined, and avoided when there are alternate means of achieving
-the desired goals.
+the desired goals. If not, these choices and reasoning should be carefully documented.
 
 For example, IPv6 {{RFC2460}} identifies each client with a unique address -- even though this
 provides a way to track end user activity and helps identify them -- because it is technically
