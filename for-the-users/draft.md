@@ -81,8 +81,8 @@ informative:
 --- abstract
 
 Internet standards serve and are used by a variety of constituencies. This document contains
-guidelines for identifying them, serving them, and determining how to resolve conflicts between
-their interests, when necessary.
+guidelines for identifying those constituencies, serving them, and determining how to resolve
+conflicts between their interests, when necessary.
 
 It also mandates end users as the highest priority constituency for Internet standards.
 
@@ -95,23 +95,20 @@ The issues list for this draft can be found at <https://github.com/mnot/I-D/labe
 
 # Introduction
 
-As the Internet has become prevalent in many societies, it has become a profoundly political thing;
-it has helped overthrow governments, revolutionize social orders, control populations and reveal
-people's secrets. It has created wealth for some individuals and companies, while destroying
-others'.
+As the Internet has become prevalent in many societies, it has also unavoidably become a profoundly
+political thing; it has helped overthrow governments, revolutionize social orders, control
+populations and reveal people's secrets. It has created wealth for some individuals and companies,
+while destroying others'.
 
-The IETF is most comfortable making technical decisions; our process is defined to favor technical
-merit, and our known bias towards "rough consensus and running code" is well suited to this area of
-work.
+The IETF, however, is most comfortable making technical decisions; our process is defined to favor
+technical merit, and our known bias towards "rough consensus and running code" is well suited to
+this area of work.
 
-The running code that results from our process (when things work well) inevitably has an impact
-beyond technical considerations, and we need to explicitly address these consequences when
-designing our protocols.
+Nevertheless, the running code that results from our process (when things work well) inevitably has
+an impact beyond technical considerations, because the underlying decisions afford some uses, while
+discouraging others. Or, in the words of Lawrence Lessig {{CODELAW}}:
 
-These effects are in no small part attributable to how the Internet works; its design affords some
-uses, while discouraging others. Or, in the words of Lawrence Lessig {{CODELAW}}:
-
-> Ours is the age of cyberspace. It, too, has a regulator... This regulator is code—the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
+> Ours is the age of cyberspace. It, too, has a regulator... This regulator is code — the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
 
 All of this begs the question: Who do we go through the pain of rough consensus and write the
 running code for?
@@ -136,7 +133,7 @@ that disadvantage a particular constituency tend to be either rejected by it or 
 
 However, we do sometimes expend a considerable amount of energy mitigating potential harm to
 under-represented constituencies, and often harm to a constituency is not so onerous or obvious as
-to dissuade them from using something (e.g., {{RFC6265}}). 
+to dissuade them from using something (e.g., {{RFC6265}}).
 
 Furthermore, the Internet is not a value-neutral space, as per the IETF's mission {{RFC3935}}:
 
