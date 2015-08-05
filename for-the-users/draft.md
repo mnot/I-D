@@ -81,8 +81,8 @@ informative:
 --- abstract
 
 Internet standards serve and are used by a variety of constituencies. This document contains
-guidelines for identifying those constituencies, serving them, and determining how to resolve
-conflicts between their interests, when necessary.
+guidelines for explicitly identifying those constituencies, serving them, and determining how to
+resolve conflicts between their interests, when necessary.
 
 It also mandates end users as the highest priority constituency for Internet standards.
 
@@ -100,7 +100,7 @@ political thing; it has helped overthrow governments, revolutionize social order
 populations and reveal people's secrets. It has created wealth for some individuals and companies,
 while destroying others'.
 
-The IETF, however, is most comfortable making technical decisions; our process is defined to favor
+The IETF is most comfortable making purely technical decisions; our process is defined to favor
 technical merit, and our known bias towards "rough consensus and running code" is well suited to
 this area of work.
 
@@ -115,7 +115,8 @@ running code for?
 
 There are a variety of identifiable constituents that Internet standards can provide benefit to,
 such as (but not limited to) end users, network operators, schools, equipment vendors,
-specification implementers, content owners, governments, employers, and parents.
+specification authors, specification implementers, content owners, governments, non-governmental
+organisations, social movements, employers, and parents.
 
 Good specifications will provide benefit to all of the relevant constituencies, because standards
 do not represent a zero-sum game. However, on occasion we do need to balance the benefits of a
@@ -139,9 +140,10 @@ Furthermore, the Internet is not a value-neutral space, as per the IETF's missio
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
 
-To better define the criteria that we use to make such decisions when necessary, minimize potential
-harm, and to help fulfill the mission of the IETF, this document outlines a set of guidelines about
-how the constituents of Internet standards should be identified, and when necessary, balanced.
+To better define the criteria that we use to make such decisions when necessary, document them,
+minimize potential harm, and to help fulfill the mission of the IETF, this document outlines a set
+of guidelines about how the constituents of Internet standards should be identified, and when
+necessary, balanced.
 
 
 ## Notational Conventions
@@ -159,25 +161,18 @@ is to "build a better human society" {{RFC3935}} and -- on the Internet -- socie
 what we call "end users."
 
 Furthermore, the success of the Internet to date is arguably due largely to its bias towards
-end user concerns to date; without a firm preference for their benefit, trust in the Internet will
+end user concerns; without a firm preference for their benefit, trust in the Internet will
 erode, and its value -- for all constituents -- will be greatly diminished.
 
 This does not mean that end users have ultimate priority; there may be cases where genuine
 technical need of another constituent requires that end user requirements compromise. However, such
 tradeoffs need to be carefully examined, and avoided when there are alternate means of achieving
-the desired goals.
+the desired goals. If they cannot be, these choices and reasoning should be carefully documented.
 
 For example, IPv6 {{RFC2460}} identifies each client with a unique address -- even though this
 provides a way to track end user activity and helps identify them -- because it is technically
 necessary to provide networking (and despite this, there are mechanisms like {{RFC4941}} to
 mitigate this effect, for those users who desire it).
-
-In contrast, proposed standards to allow middleboxes to inspect encrypted traffic for purposes
-such as data loss prevention or virus scanning fail to meet this requirement, because there are
-alternative mechanisms available (such as endpoint-based solutions). The convenience gained by the
-employers who deploy such devices is not a reasonable exchange for the reduction in overall
-end-user security caused by the erosion of end-to-end encryption, especially when the same
-mechanisms could be legitimately deployed by ISPs and governments once they were standardized.
 
 
 # Identifying the Constituents of Internet Standards
@@ -269,7 +264,7 @@ Thanks to Jacob Appelbaum for making the suggestion that led to this document.
 
 Thanks also to the WHATWG for blazing the trail.
 
-Thanks to Edward Snowden for his comments regarding the priority of end users.
+Thanks to Edward Snowden for his comments regarding the priority of end users at IETF93.
 
-Thanks to Harald Alvestrand for his substantial feedback, Joe Hildebrand and Martin Thomson for
-their suggestions, and Niels ten Oever for encouragement.
+Thanks to Harald Alvestrand for his substantial feedback and Joe Hildebrand, Niels ten Oever, and
+Martin Thomson for their suggestions.
