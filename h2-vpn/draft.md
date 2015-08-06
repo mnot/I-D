@@ -186,4 +186,8 @@ volumes and timing, especially when it's possible to compare "normal" HTTP/2 tra
 
 --- back
 
+# TODO
 
+* Authentication needs to be solidified.
+* DHCP may not be realistic for IP address + DNS.
+* Allow the server to specify routable addresses.
