@@ -66,7 +66,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 ## The STARTVPN HTTP/2 Frame Type
 
-The STARTVPN frame (type=0xTBD) is used to open a stream ({{RFC7540}} Section 5.1) that represents
+The STARTVPN frame (type=0xf0) is used to open a stream ({{RFC7540}} Section 5.1) that represents
 a Virtual Private Network. 
 
 A STARTVPN frame can be sent on a stream in the "idle" state to request creation of a VPN with the
@@ -78,8 +78,8 @@ STARTVPN frames MAY also contain padding. Padding can be added to STARTVPN frame
 size of messages. Padding is a security feature; see {{RFC7540}}, Section 10.7.
 
 ~~~
- +---------------+
- |Pad Length? (8)|
+ +---------------+---------------+
+ |   Magic (8)   |Pad Length? (8)|
  +---------------+-----------------------------------------------+
  |                          Auth Data (*)                      ...
  +---------------------------------------------------------------+
@@ -89,6 +89,7 @@ size of messages. Padding is a security feature; see {{RFC7540}}, Section 10.7.
 
 The STARTVPN frame payload has the following fields:
 
+* Magic: Because this protocol uses HTTP/2 Experimental Use frame types, a prefix is used to disambiguate its use. This value is fixed as the ASCII string "nocensor" (0x6e 0x6f 0x63 0x65 0x6e 0x73 0x6f 0x72).
 * Auth Data: Authentication data. This field can carry arbitrary authentication data, typically
   pre-arranged with the server. 
 * Pad Length: An 8-bit field containing the length of the frame padding in units of octets. This field is only present if the PADDED flag is set.
@@ -109,7 +110,7 @@ identifier field is 0x0, the recipient MUST respond with a connection error ({{R
 
 ## The IP HTTP/2 Frame Type
 
-IP frames (type=0xTBD) convey individual IP packets in the Virtual Private Network associated with the stream ID.
+IP frames (type=0xf1) convey individual IP packets in the Virtual Private Network associated with the stream ID.
 
 IP frames MAY also contain padding. Padding can be added to IP frames to obscure the size of messages. Padding is a security feature; see {{RFC7540}}, Section 10.7.
 
@@ -173,15 +174,7 @@ Upon successful establishment of a VPN, the peers can begin exchanging IP frames
 
 # IANA Considerations
 
-This document defines two entries in the HTTP/2 Frame Type registry.
-
-* Frame Type: STARTVPN
-* Code: TBD
-* Specification: [this document]
-
-* Frame Type: IP
-* Code: TBD
-* Specification: [this document]
+This document does not require action by IANA.
 
 
 # Security Considerations
