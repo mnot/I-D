@@ -202,7 +202,7 @@ benefits, since it clarifies their relationships up-front.
 
 Inevitably, documenting and interpreting the constituent roles will become controversial; this is
 to be expected, and is still preferable to avoiding the discussion. The point is to make it
-explicit, so that the effected constituencies can be made aware of the discussion, and judge the
+explicit, so that the affected constituencies can be made aware of the discussion, and judge the
 outcome.
 
 ## Handling Change in Constituencies
