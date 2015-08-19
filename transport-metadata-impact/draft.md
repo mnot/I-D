@@ -157,7 +157,7 @@ Much of the potential for harm above comes about because a transport-level metad
 
 In other words, if the network doesn't have a means of inserting a unique identifier for customers, they won't be able to do so. If notification of constrained network conditions takes place using well-defined terms, regulatory regimes can be adjusted to achieve desired outcomes. And, information about application semantics can be carefully vetted for security considerations before being included in transport metadata.
 
-Technically, the vocabulary could be constrained by merely requiring nodes to silently drop non-standard metadata. 
+One way to technically enforce such constraints would be to require nodes to silently drop non-standard metadata. Another would be to not make metadata extensible at all.
 
 Naturally, this would constrain the ability of networks and applications to add new terms to metadata, thereby requiring more careful thought to go into the metadata that is standardised "up front." 
 
