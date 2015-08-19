@@ -66,6 +66,27 @@ informative:
       ins: J. Hoffman-Andrews
       name: Jacob Hoffman-Andrews
       organization: Electronic Frontier Foundation
+  Injection:
+    title: "The Rise of Mobile Tracking Headers: How Telcos Around the World Are Threatening Your Privacy"
+    target: "https://www.accessnow.org/blog/2015/08/17/read-our-new-report-on-the-troubling-rise-of-tracking-headers-worldwide2"
+    date: 17 August 2015
+    author:
+      - 
+        ins: N. Ammari
+        name: Nader Ammari
+        organization: Access
+      - 
+        ins: G. Björksten
+        name: Gustaf Björksten
+        organization: Access
+      - 
+        ins: P. Micek
+        name: Peter Micek
+        organization: Access
+      - 
+        ins: D. Olukotun
+        name: Deji Olukotun
+        organization: Access     
   RFC3864:
   RFC7230:
   RFC1984:
@@ -109,9 +130,9 @@ Adding metadata to protocols is not an inherent harm – i.e., there are some le
 
 ## Security and Privacy
 
-In late 2014, it was found that Verizon was injecting HTTP headers into requests that identified their mobile customers using a unique identifier, allowing "third-party advertisers and websites to assemble a deep, permanent profile of visitors' web browsing habits without their consent."  {{X-UIDH}}
+It's been established {{Injection}} that many network operators inject HTTP headers into requests, in order to identify their customers using a unique identifier, thereby allowing "third-party advertisers and websites to assemble a deep, permanent profile of visitors' web browsing habits without their consent." {{X-UIDH}}
 
-In doing so, Verizon was taking advantage of a relatively unconstrained extension point in the HTTP protocol -- header fields. While HTTP header fields do require registration {{RFC3864}}, the requirements are lax, and fields are often used without registration, because there is no technical enforcement of the requirements, due to HTTP's policy of ignoring unrecognized header fields {{RFC7230}}.
+In doing so, these networks are taking advantage of a relatively unconstrained extension point in the HTTP protocol -- header fields. While HTTP header fields do require registration {{RFC3864}}, the requirements are lax, and fields are often used without registration, because there is no technical enforcement of the requirements, due to HTTP's policy of ignoring unrecognized header fields {{RFC7230}}.
 
 HTTP header fields can be made a protected end-to-end facility by using HTTPS, avoiding the risk of such injection. A new transport metadata facility that explicitly allows any node on the path to add arbitrary metadata cannot.
 
