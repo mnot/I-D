@@ -103,7 +103,7 @@ Any new metadata facility, then – whether it be introduced to an existing prot
 
 This draft attempts to identify potential impacts associated with new metadata facilities in Internet protocols, and suggest possible mitigations. Its goal is to initiate a discussion of these tradeoffs up-front, rather than waiting until after the development of such mechanisms.
 
-Adding metadata to protocols is not an inherent harm – i.e., there are some legitimate uses of metadata, particularly if it eases the adoption of encrypted protocols or aligns well with both the interests of users and service or network operations, e.g., traffic management on mobile networks. However, the balance between the interests of stakeholders like end users, content providers and network operators needs to be carefully considered.
+Adding metadata to protocols is not an inherent harm – i.e., there are some legitimate uses of metadata, particularly if it eases the adoption of encrypted protocols or aligns well with both the interests of users and service or network operations, e.g., traffic management on mobile networks. However, the balance between the interests of constituents like end users, content providers and network operators needs to be carefully considered.
 
 # Potential Impact
 
