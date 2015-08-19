@@ -89,7 +89,7 @@ This draft attempts to identify potential impacts associated with new metadata f
 
 Recently, there has been an increasing amount of discussion in the IETF about adorning protocol flows with metadata about the network's state for consumption by applications, as well as that of the application in order to inform decisions in the network. For examples, see {{I-D.nottingham-gin}}, {{I-D.sprecher-mobile-tg-exposure-req-arch}} and {{I-D.hildebrand-spud-prototype}}.
 
-These discussions are being at least partially motivated by the increasing use of encryption, both in deployment (thanks to the Snowden revelations) and standards (thanks in some part to {{RFC7258}}, {{IAB-confidentiality}}, and {{TAG-securing-web}}); while it's becoming widely accepted that networks don't have legitimate need to access the content of flows in most cases, they still wish to meet certain use cases that require more information.
+These discussions are being at least partially motivated by the increasing use of encryption, both in deployment (thanks to the Snowden revelations) and standards (thanks in some part to {{RFC7258}}, {{IAB-confidentiality}}, and {{TAG-securing-web}}); while it's becoming widely accepted that transit networks don't have legitimate need to access the content of flows in most cases, they still wish to meet certain use cases that require more information.
 
 For example, networks may wish to communicate their state to applications, so that link limitations and transient problems can be accounted for in applications, by doing things like degrading (or improving) video streaming quality. 
 
