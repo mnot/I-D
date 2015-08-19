@@ -99,7 +99,7 @@ At the same time, it has been widely noted that "metadata" in various forms can 
 
 Indeed, much of the effort in combatting pervasive monitoring (as per {{RFC7258}}) has focused on minimizing metadata in existing, known protocols (such as TLS and HTTP).
 
-Any new metadata facility, then – whether it be introduced to an existing protocol, or as part of a new one – should be carefully scrutinized and narrowly tailored to conservatively emit metadata.
+Any new metadata facility, then – whether it be introduced to an existing protocol, or as part of a new one – needs to be carefully scrutinized and narrowly tailored to conservatively emit metadata.
 
 This draft attempts to identify potential impacts associated with new metadata facilities in Internet protocols, and suggest possible mitigations. Its goal is to initiate a discussion of these tradeoffs up-front, rather than waiting until after the development of such mechanisms.
 
