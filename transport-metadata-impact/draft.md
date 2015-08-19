@@ -15,11 +15,15 @@ pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
 author:
  -
-    ins: M. Nottingham
-    name: Mark Nottingham
-    organization: 
-    email: mnot@mnot.net
-    uri: http://www.mnot.net/
+    ins: J. Hall
+    name: Joseph Lorenzo Hall
+    organization: CDT
+    email: joe@cdt.org
+ -
+    ins: N. ten Oever
+    name: Niels ten Oever
+    organization: Article19
+    email: niels@article19.org    
  -
     ins: W. Seltzer
     name: Wendy Seltzer
@@ -27,15 +31,11 @@ author:
     email: wseltzer@w3.org
     uri: http://wendy.seltzer.org
  -
-    ins: N. ten Oever
-    name: Niels ten Oever
-    organization: Article19
-    email: niels@article19.org    
- -
-    ins: J. Hall
-    name: Joseph Lorenzo Hall
-    organization: CDT
-    email: joe@cdt.org
+    ins: M. Nottingham
+    name: Mark Nottingham
+    organization: 
+    email: mnot@mnot.net
+    uri: http://www.mnot.net/
 
 normative:
 
