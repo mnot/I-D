@@ -5,10 +5,12 @@
 Network Working Group                                      M. Nottingham
 Internet-Draft
 Intended status: Informational                                W. Seltzer
-Expires: February 8, 2016                                            W3C
+Expires: February 20, 2016                                           W3C
                                                             N. ten Oever
                                                                Article19
-                                                          August 7, 2015
+                                                                 J. Hall
+                                                                     CDT
+                                                         August 19, 2015
 
 
                    User Impact of Transport Metadata
@@ -36,7 +38,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on February 8, 2016.
+   This Internet-Draft will expire on February 20, 2016.
 
 Copyright Notice
 
@@ -48,16 +50,16 @@ Copyright Notice
    (http://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
-   to this document.  Code Components extracted from this document must
-   include Simplified BSD License text as described in Section 4.e of
 
 
 
-Nottingham, et al.      Expires February 8, 2016                [Page 1]
+Nottingham, et al.      Expires February 20, 2016               [Page 1]
 
 Internet-Draft          Transport Metadata Impact            August 2015
 
 
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
 
@@ -88,9 +90,9 @@ Table of Contents
    increasing use of encryption, both in deployment (thanks to the
    Snowden revelations) and standards (thanks in some part to [RFC7258],
    [IAB-confidentiality], and [TAG-securing-web]); while it's becoming
-   widely accepted that networks don't have legitimate need to access
-   the content of flows in most cases, they still wish to meet certain
-   use cases that require more information.
+   widely accepted that transit networks don't have legitimate need to
+   access the content of flows in most cases, they still wish to meet
+   certain use cases that require more information.
 
    For example, networks may wish to communicate their state to
    applications, so that link limitations and transient problems can be
@@ -103,23 +105,25 @@ Table of Contents
    [I-D.trammell-stackevo-newtea] and [I-D.hardie-spud-use-cases] for
    more discussion.
 
-   At the same time, it has been widely noted that "metadata" in various
-   forms can be profoundly sensitive information, particularly when
-   aggregated into large sets over extensive periods of time.
 
 
 
-Nottingham, et al.      Expires February 8, 2016                [Page 2]
+
+Nottingham, et al.      Expires February 20, 2016               [Page 2]
 
 Internet-Draft          Transport Metadata Impact            August 2015
 
+
+   At the same time, it has been widely noted that "metadata" in various
+   forms can be profoundly sensitive information, particularly when
+   aggregated into large sets over extensive periods of time.
 
    Indeed, much of the effort in combatting pervasive monitoring (as per
    [RFC7258]) has focused on minimizing metadata in existing, known
    protocols (such as TLS and HTTP).
 
    Any new metadata facility, then - whether it be introduced to an
-   existing protocol, or as part of a new one - should be carefully
+   existing protocol, or as part of a new one - needs to be carefully
    scrutinized and narrowly tailored to conservatively emit metadata.
 
    This draft attempts to identify potential impacts associated with new
@@ -133,20 +137,20 @@ Internet-Draft          Transport Metadata Impact            August 2015
    adoption of encrypted protocols or aligns well with both the
    interests of users and service or network operations, e.g., traffic
    management on mobile networks.  However, the balance between the
-   interests of stakeholders like end users, content providers and
+   interests of constituents like end users, content providers and
    network operators needs to be carefully considered.
 
 2.  Potential Impact
 
 2.1.  Security and Privacy
 
-   In late 2014, it was found that Verizon was injecting HTTP headers
-   into requests that identified their mobile customers using a unique
-   identifier, allowing "third-party advertisers and websites to
-   assemble a deep, permanent profile of visitors' web browsing habits
-   without their consent."  [X-UIDH]
+   It's been established [Injection] that many network operators inject
+   HTTP headers into requests, in order to identify their customers
+   using a unique identifier, thereby allowing "third-party advertisers
+   and websites to assemble a deep, permanent profile of visitors' web
+   browsing habits without their consent."  [X-UIDH]
 
-   In doing so, Verizon was taking advantage of a relatively
+   In doing so, these networks are taking advantage of a relatively
    unconstrained extension point in the HTTP protocol - header fields.
    While HTTP header fields do require registration [RFC3864], the
    requirements are lax, and fields are often used without registration,
@@ -158,23 +162,23 @@ Internet-Draft          Transport Metadata Impact            August 2015
    metadata facility that explicitly allows any node on the path to add
    arbitrary metadata cannot.
 
-   Well-intentioned metadata can also put the user at substantial risk
-   without careful consideration.  For example, if a Web browser
-   "labels" flows based upon what they contain (e.g., "video", "image",
-   "interactive"), an observer on the network path - including pervasive
 
 
 
-Nottingham, et al.      Expires February 8, 2016                [Page 3]
+Nottingham, et al.      Expires February 20, 2016               [Page 3]
 
 Internet-Draft          Transport Metadata Impact            August 2015
 
 
+   Well-intentioned metadata can also put the user at substantial risk
+   without careful consideration.  For example, if a Web browser
+   "labels" flows based upon what they contain (e.g., "video", "image",
+   "interactive"), an observer on the network path - including pervasive
    ones - can more effectively perform traffic analysis to determine
    what the user is doing.  Similarly, metadata adornment might reveal
    sensitive information; for example the Server Name Indicator (SNI) in
    the TLS handshake would reveal if a web visitor intends to go to
-   "falungong.github.com" versus "kitties.github.com".
+   "bannedcontent.github.com" versus "kitties.github.com".
 
    Standardizing an extensible transport metadata mechanism could also
    trigger various jurisdictions to define and require insertion of in-
@@ -213,24 +217,26 @@ Internet-Draft          Transport Metadata Impact            August 2015
    questionable use could be mitigated by constraining the data that's
    allowed in this side channel.
 
+
+
+
+
+Nottingham, et al.      Expires February 20, 2016               [Page 4]
+
+Internet-Draft          Transport Metadata Impact            August 2015
+
+
    In other words, if the network doesn't have a means of inserting a
    unique identifier for customers, they won't be able to do so.  If
    notification of constrained network conditions takes place using
    well-defined terms, regulatory regimes can be adjusted to achieve
    desired outcomes.  And, information about application semantics can
-
-
-
-Nottingham, et al.      Expires February 8, 2016                [Page 4]
-
-Internet-Draft          Transport Metadata Impact            August 2015
-
-
    be carefully vetted for security considerations before being included
    in transport metadata.
 
-   Technically, the vocabulary could be constrained by merely requiring
-   nodes to silently drop non-standard metadata.
+   One way to technically enforce such constraints would be to require
+   nodes to silently drop non-standard metadata.  Another would be to
+   not make metadata extensible at all.
 
    Naturally, this would constrain the ability of networks and
    applications to add new terms to metadata, thereby requiring more
@@ -267,20 +273,19 @@ Internet-Draft          Transport Metadata Impact            August 2015
               Hardie, T., "Use Cases for SPUD", draft-hardie-spud-use-
               cases-01 (work in progress), February 2015.
 
+
+
+
+
+Nottingham, et al.      Expires February 20, 2016               [Page 5]
+
+Internet-Draft          Transport Metadata Impact            August 2015
+
+
    [I-D.hildebrand-spud-prototype]
               Hildebrand, J. and B. Trammell, "Substrate Protocol for
               User Datagrams (SPUD) Prototype", draft-hildebrand-spud-
               prototype-03 (work in progress), March 2015.
-
-
-
-
-
-
-Nottingham, et al.      Expires February 8, 2016                [Page 5]
-
-Internet-Draft          Transport Metadata Impact            August 2015
-
 
    [I-D.nottingham-gin]
               Nottingham, M., "Granular Information about Networks",
@@ -304,6 +309,14 @@ Internet-Draft          Transport Metadata Impact            August 2015
               <http://www.iab.org/2014/11/14/
               iab-statement-on-internet-confidentiality/>.
 
+   [Injection]
+              Ammari, N., Bjo&#776;rksten, G., Micek, P., and D.
+              Olukotun, "The Rise of Mobile Tracking Headers: How Telcos
+              Around the World Are Threatening Your Privacy", August
+              2015, <https://www.accessnow.org/blog/2015/08/17/read-our-
+              new-report-on-the-troubling-rise-of-tracking-headers-
+              worldwide2>.
+
    [RFC1984]  IAB and , "IAB and IESG Statement on Cryptographic
               Technology and the Internet", RFC 1984, DOI 10.17487/
               RFC1984, August 1996,
@@ -313,6 +326,17 @@ Internet-Draft          Transport Metadata Impact            August 2015
               Procedures for Message Header Fields", BCP 90, RFC 3864,
               DOI 10.17487/RFC3864, September 2004,
               <http://www.rfc-editor.org/info/rfc3864>.
+
+
+
+
+
+
+
+Nottingham, et al.      Expires February 20, 2016               [Page 6]
+
+Internet-Draft          Transport Metadata Impact            August 2015
+
 
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing", RFC
@@ -326,17 +350,6 @@ Internet-Draft          Transport Metadata Impact            August 2015
    [TAG-securing-web]
               W3C Technical Architecture Group, "Securing the Web",
               January 2015, <http://www.w3.org/2001/tag/doc/web-https>.
-
-
-
-
-
-
-
-Nottingham, et al.      Expires February 8, 2016                [Page 6]
-
-Internet-Draft          Transport Metadata Impact            August 2015
-
 
    [X-UIDH]   Hoffman-Andrews, J., "Verizon Injecting Perma-Cookies to
               Track Mobile Customers, Bypassing Privacy Controls",
@@ -364,6 +377,10 @@ Authors' Addresses
    Email: niels@article19.org
 
 
+   Joseph Lorenzo Hall
+   CDT
+
+   Email: joe@cdt.org
 
 
 
@@ -372,21 +389,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Nottingham, et al.      Expires February 8, 2016                [Page 7]
+Nottingham, et al.      Expires February 20, 2016               [Page 7]
