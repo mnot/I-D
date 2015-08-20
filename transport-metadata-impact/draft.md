@@ -15,6 +15,12 @@ pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
 author:
  -
+    ins: M. Nottingham
+    name: Mark Nottingham
+    organization: 
+    email: mnot@mnot.net
+    uri: https://www.mnot.net/
+ -
     ins: J. Hall
     name: Joseph Lorenzo Hall
     organization: CDT
@@ -30,12 +36,6 @@ author:
     organization: W3C
     email: wseltzer@w3.org
     uri: http://wendy.seltzer.org
- -
-    ins: M. Nottingham
-    name: Mark Nottingham
-    organization: 
-    email: mnot@mnot.net
-    uri: https://www.mnot.net/
 
 normative:
 
