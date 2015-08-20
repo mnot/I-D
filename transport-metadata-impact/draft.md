@@ -24,18 +24,20 @@ author:
     ins: J. Hall
     name: Joseph Lorenzo Hall
     organization: CDT
+    uri: https://cdt.org/
     email: joe@cdt.org
  -
     ins: N. ten Oever
     name: Niels ten Oever
     organization: Article19
+    uri: https://www.article19.org/
     email: niels@article19.org    
  -
     ins: W. Seltzer
     name: Wendy Seltzer
     organization: W3C
     email: wseltzer@w3.org
-    uri: http://wendy.seltzer.org
+    uri: http://wendy.seltzer.org/
 
 normative:
 
