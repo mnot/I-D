@@ -110,7 +110,7 @@ discouraging others. Or, in the words of Lawrence Lessig {{CODELAW}}:
 
 > Ours is the age of cyberspace. It, too, has a regulator... This regulator is code — the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
 
-All of this begs the question: Who do we go through the pain of rough consensus and write the
+All of this raises the question: Who do we go through the pain of rough consensus and write the
 running code for?
 
 There are a variety of identifiable constituents that Internet standards can provide benefit to,
