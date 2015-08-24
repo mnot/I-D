@@ -123,6 +123,12 @@ to ignore any results (see above).
 7. DNS Registries/Registrars: Registrars MUST NOT register .onion names; all
 such requests MUST be denied.
 
+Note that the restriction upon the registration of .onion names does not
+prohibit IANA from inserting a record into the root zone database to reserve
+the name.
+
+Likewise, it does not prevent non-DNS service providers such as (trust
+providers) from supporting .onion names in their applications.
 
 # IANA Considerations
 
