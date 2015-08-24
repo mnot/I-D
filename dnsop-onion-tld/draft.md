@@ -96,7 +96,7 @@ interpreted as described in {{RFC2119}}.
 These properties have the following effects upon parties using or processing
 .onion names (as per {{RFC6761}}):
 
-1. Users: human users are expected to recognize .onion names as having
+1. Users: Human users are expected to recognize .onion names as having
 different security properties, and also being only available through software
 that is aware of onion addresses.
 
