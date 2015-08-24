@@ -69,7 +69,7 @@ This document registers the ".onion" Special-Use Domain Name.
 # Introduction
 
 The Tor network {{Dingledine2004}} has the ability to host network services
-using the ".onion" Special-Use Top-Level Domain. Such addresses can be used as other domain
+using the ".onion" Special-Use Top-Level Domain. Such names can be used as other domain
 names would be (e.g., in URLs {{RFC3986}}), but instead of using the DNS
 infrastructure, .onion names functionally correspond to the identity of a
 given service, thereby combining location and authentication.
@@ -79,7 +79,7 @@ Section 3; they require hardware and software implementations to change their
 handling, in order to achieve the desired properties of the name (see
 {{security}}). These differences are listed in {{onion}}.
 
-Like Top-Level Domain Names, .onion addresses can have an arbitrary number of subdomain components. This information is not meaningful to the Tor protocol, but can be used in application protocols like HTTP {{RFC7230}}.
+Like Top-Level Domain Names, .onion names can have an arbitrary number of subdomain components. This information is not meaningful to the Tor protocol, but can be used in application protocols like HTTP {{RFC7230}}.
 
 See {{tor-address}} and {{tor-rendezvous}} for the details of the creation and
 use of .onion names.
@@ -98,7 +98,7 @@ These properties have the following effects upon parties using or processing
 
 1. Users: Human users are expected to recognize .onion names as having
 different security properties, and also being only available through software
-that is aware of onion addresses.
+that is aware of onion names.
 
 2. Application Software: Applications (including proxies) that implement the Tor 
 protocol MUST recognize .onion names as special by either accessing them directly, 
