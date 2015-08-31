@@ -74,6 +74,23 @@ names would be (e.g., in URLs {{RFC3986}}), but instead of using the DNS
 infrastructure, .onion names functionally correspond to the identity of a
 given service, thereby combining location and authentication.
 
+.onion names are often used to provide access to end to end encrypted, secure,
+anonymized services; that is, the identity and location of the server is
+obscured from the client. The location of the client is obscured from the
+server. The identity of the client may or may not be disclosed through an
+optional cryptographic authentication process.
+
+.onion names are self-authenticating, in that they are derived from the
+cryptographic keys used by the server in a client verifiable manner during
+connection establishment. As a result, the cryptographic label component of a
+.onion name is not intended to be human-meaningful.
+
+The Tor network is designed to not be subject to any central controlling
+authorities with regards to routing and service publication, so .onion names
+cannot be registered, assigned, transferred or revoked. "Ownership" of a .onion
+name is derived solely from control of a public/private key pair which
+corresponds to the algorithmic derivation of the name.
+
 In this way, .onion names are "special" in the sense defined by {{RFC6761}}
 Section 3; they require hardware and software implementations to change their
 handling, in order to achieve the desired properties of the name (see
@@ -136,28 +153,11 @@ This document registers "onion" in the registry of Special-Use Domain Names {{RF
 
 # Security Considerations {#security}
 
-.onion names are often used to provide access to end to end encrypted, secure,
-anonymized services; that is, the identity and location of the server is
-obscured from the client. The location of the client is obscured from the
-server. The identity of the client may or may not be disclosed through an
-optional cryptographic authentication process.
-
-These properties can be compromised if, for example:
+The security properties of .onion names can be compromised if, for example:
 
 * The server "leaks" its identity in another way (e.g., in an application-level message), or
 * The access protocol is implemented or deployed incorrectly, or
 * The access protocol itself is found to have a flaw.
-
-.onion names are self-authenticating, in that they are derived from the
-cryptographic keys used by the server in a client verifiable manner during
-connection establishment. As a result, the cryptographic label component of a
-.onion name is not intended to be human-meaningful.
-
-The Tor network is designed to not be subject to any central controlling
-authorities with regards to routing and service publication, so .onion names
-cannot be registered, assigned, transferred or revoked. "Ownership" of a .onion
-name is derived solely from control of a public/private key pair which
-corresponds to the algorithmic derivation of the name.
 
 Users must take special precautions to ensure that the .onion name they are
 communicating with is correct, as attackers may be able to find keys which
