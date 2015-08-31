@@ -38,7 +38,7 @@ informative:
   RFC3986:
   RFC7230:
   Dingledine2004:
-    target: "https://www.onion-router.net/Publications/tor-design.pdf"
+    target: "https://spec.torproject.org/tor-spec"
     title: "Tor: the second-generation onion router"
     author:
       - ins: R. Dingledine
@@ -46,14 +46,14 @@ informative:
       - ins: P. Syverson
     date: 2004
   tor-address:
-    target: "https://gitweb.torproject.org/torspec.git/plain/address-spec.txt"
+    target: "https://spec.torproject.org/address-spec"
     title: "Special Hostnames in Tor"
     author:
       - ins: N. Mathewson
       - ins: R. Dingledine
     date: September 2001
   tor-rendezvous:
-    target: "https://gitweb.torproject.org/torspec.git/plain/rend-spec.txt"
+    target: "https://spec.torproject.org/rend-spec"
     title: "Tor Rendezvous Specification"
     author: 
       - ins: N. Mathewson
