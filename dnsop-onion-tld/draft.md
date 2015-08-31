@@ -179,8 +179,9 @@ attacker may be able to impersonate the service on the network.
 
 If client software attempts to resolve a .onion name, it can leak the identity
 of the service that the user is attempting to access to DNS resolvers,
-authoritative DNS servers, and observers on the intervening network. This can
-be mitigated by following the recommendations in {{onion}}.
+authoritative DNS servers, and observers on the intervening network. This risk
+is mitigated when the recommendations in {{onion}} are followed, but are still
+present when using systems that are not updated.
 
 
 --- back
