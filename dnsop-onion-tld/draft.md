@@ -71,10 +71,10 @@ This document registers the ".onion" Special-Use Domain Name.
 # Introduction
 
 The Tor network {{Dingledine2004}} has the ability to host network services
-using the ".onion" Special-Use Top-Level Domain. Such names can be used as other domain
-names would be (e.g., in URLs {{RFC3986}}), but instead of using the DNS
-infrastructure, .onion names functionally correspond to the identity of a
-given service, thereby combining location and authentication.
+using the ".onion" Special-Use Top-Level Domain. Such names can be used as
+other domain names would be (e.g., in URLs {{RFC3986}}), but instead of using
+the DNS infrastructure, .onion names functionally correspond to the identity of
+a given service, thereby combining location and authentication.
 
 .onion names are often used to provide access to end to end encrypted, secure,
 anonymized services; that is, the identity and location of the server is
@@ -124,15 +124,15 @@ These properties have the following effects upon parties using or processing
 different security properties, and also being only available through software
 that is aware of onion names.
 
-2. Application Software: Applications (including proxies) that implement the Tor 
-protocol MUST recognize .onion names as special by either accessing them directly, 
-or using a proxy (e.g., SOCKS {{RFC1928}}) to do so. Applications that do not 
-implement the Tor protocol SHOULD generate an error upon the use of .onion, and 
-SHOULD NOT perform a DNS lookup.
+2. Application Software: Applications (including proxies) that implement the
+Tor protocol MUST recognize .onion names as special by either accessing them
+directly, or using a proxy (e.g., SOCKS {{RFC1928}}) to do so. Applications
+that do not implement the Tor protocol SHOULD generate an error upon the use of
+.onion, and SHOULD NOT perform a DNS lookup.
 
-3. Name Resolution APIs and Libraries: Resolvers MUST either respond to 
-requests for .onion names by resolving them according to {{tor-rendezvous}} or by 
-responding with NXDOMAIN.
+3. Name Resolution APIs and Libraries: Resolvers MUST either respond to
+requests for .onion names by resolving them according to {{tor-rendezvous}} or
+by responding with NXDOMAIN.
 
 4. Caching DNS Servers: Caching servers SHOULD NOT attempt to look up records
 for .onion names. They MUST generate NXDOMAIN for all such queries.
@@ -156,7 +156,8 @@ providers) from supporting .onion names in their applications.
 
 # IANA Considerations
 
-This document registers "onion" in the registry of Special-Use Domain Names {{RFC6761}}. See {{onion}} for the registration template.
+This document registers "onion" in the registry of Special-Use Domain Names
+{{RFC6761}}. See {{onion}} for the registration template.
 
 # Security Considerations {#security}
 
@@ -173,8 +174,8 @@ the desired service.
 
 Also, users need to understand the difference between a .onion name used and
 accessed directly via Tor-capable software, versus .onion subdomains of other
-top-level domain names and providers (e.g., the difference between example.onion and
-example.onion.tld).
+top-level domain names and providers (e.g., the difference between
+example.onion and example.onion.tld).
 
 The cryptographic label for a .onion name is constructed by applying a
 function to the public key of the server, the output of which is rendered
@@ -197,8 +198,9 @@ software is updated to drop any request to the ".onion" TLD.
 
 # Acknowledgements
 
-Thanks to Roger Dingledine, Linus Nordberg, and Seth David Schoen for their input and review.
+Thanks to Roger Dingledine, Linus Nordberg, and Seth David Schoen for their
+input and review.
 
-This specification builds upon previous work by Christian Grothoff, Matthias Wachs, Hellekin
-O. Wolf, Jacob Appelbaum, and Leif Ryge to register .onion in conjunction with other, 
-similar Special-Use Top-Level Domain Names.
+This specification builds upon previous work by Christian Grothoff, Matthias
+Wachs, Hellekin O. Wolf, Jacob Appelbaum, and Leif Ryge to register .onion in
+conjunction with other, similar Special-Use Top-Level Domain Names.
