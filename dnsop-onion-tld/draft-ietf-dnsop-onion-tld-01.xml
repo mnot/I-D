@@ -14,7 +14,7 @@
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
 
-<rfc ipr="trust200902" docName="draft-ietf-dnsop-onion-tld-00" category="std">
+<rfc ipr="trust200902" docName="draft-ietf-dnsop-onion-tld-01" category="std">
 
   <front>
     <title abbrev=".onion">The .onion Special-Use Domain Name</title>
@@ -53,20 +53,42 @@
   <middle>
 
 
-<section anchor="introduction" title="Introduction">
+<section anchor="intro" title="Introduction">
 
 <t>The Tor network <xref target="Dingledine2004"/> has the ability to host network services
-using the “.onion” Special-Use Top-Level Domain. Such addresses can be used as other domain
-names would be (e.g., in URLs <xref target="RFC3986"/>), but instead of using the DNS
-infrastructure, .onion names functionally correspond to the identity of a
-given service, thereby combining location and authentication.</t>
+using the “.onion” Special-Use Top-Level Domain. Such names can be used as
+other domain names would be (e.g., in URLs <xref target="RFC3986"/>), but instead of using
+the DNS infrastructure, .onion names functionally correspond to the identity of
+a given service, thereby combining location and authentication.</t>
+
+<t>.onion names are used to provide access to end to end encrypted, secure,
+anonymized services; that is, the identity and location of the server is
+obscured from the client. The location of the client is obscured from the
+server. The identity of the client may or may not be disclosed through an
+optional cryptographic authentication process.</t>
+
+<t>.onion names are self-authenticating, in that they are derived from the
+cryptographic keys used by the server in a client verifiable manner during
+connection establishment. As a result, the cryptographic label component of a
+.onion name is not intended to be human-meaningful.</t>
+
+<t>The Tor network is designed to not be subject to any central controlling
+authorities with regards to routing and service publication, so .onion names
+cannot be registered, assigned, transferred or revoked. “Ownership” of a .onion
+name is derived solely from control of a public/private key pair which
+corresponds to the algorithmic derivation of the name.</t>
 
 <t>In this way, .onion names are “special” in the sense defined by <xref target="RFC6761"/>
 Section 3; they require hardware and software implementations to change their
 handling, in order to achieve the desired properties of the name (see
 <xref target="security"/>). These differences are listed in <xref target="onion"/>.</t>
 
-<t>Like Top-Level Domain Names, .onion addresses can have an arbitrary number of subdomain components. This information is not meaningful to the Tor protocol, but can be used in application protocols like HTTP <xref target="RFC7230"/>.</t>
+<t>Like Top-Level Domain Names, .onion names can have an arbitrary number of
+subdomain components. This information is not meaningful to the Tor protocol,
+but can be used in application protocols like HTTP <xref target="RFC7230"/>. Note that such
+names must conform to DNS name syntax (as defined in Section 3.5 of <xref target="RFC1034"/>
+and Section 2.1 of <xref target="RFC1123"/>), as they will still be exposed to DNS
+implementations.</t>
 
 <t>See <xref target="tor-address"/> and <xref target="tor-rendezvous"/> for the details of the creation and
 use of .onion names.</t>
@@ -85,17 +107,17 @@ interpreted as described in <xref target="RFC2119"/>.</t>
 .onion names (as per <xref target="RFC6761"/>):</t>
 
 <t><list style="numbers">
-  <t>Users: human users are expected to recognize .onion names as having
-different security properties, and also being only available through software
-that is aware of onion addresses.</t>
-  <t>Application Software: Applications (including proxies) that implement the Tor 
-protocol MUST recognize .onion names as special by either accessing them directly, 
-or using a proxy (e.g., SOCKS <xref target="RFC1928"/>) to do so. Applications that do not 
-implement the Tor protocol SHOULD generate an error upon the use of .onion, and 
-SHOULD NOT perform a DNS lookup.</t>
-  <t>Name Resolution APIs and Libraries: Resolvers MUST either respond to 
-requests for .onion names by resolving them according to <xref target="tor-rendezvous"/> or by 
-responding with NXDOMAIN.</t>
+  <t>Users: Human users are expected to recognize .onion names as having
+different security properties (see <xref target="intro"/>), and also being only available
+through software that is aware of onion names.</t>
+  <t>Application Software: Applications (including proxies) that implement the
+Tor protocol MUST recognize .onion names as special by either accessing them
+directly, or using a proxy (e.g., SOCKS <xref target="RFC1928"/>) to do so. Applications
+that do not implement the Tor protocol SHOULD generate an error upon the use of
+.onion, and SHOULD NOT perform a DNS lookup.</t>
+  <t>Name Resolution APIs and Libraries: Resolvers MUST either respond to
+requests for .onion names by resolving them according to <xref target="tor-rendezvous"/> or
+by responding with NXDOMAIN.</t>
   <t>Caching DNS Servers: Caching servers SHOULD NOT attempt to look up records
 for .onion names. They MUST generate NXDOMAIN for all such queries.</t>
   <t>Authoritative DNS Servers: Authoritative servers MUST respond to queries
@@ -107,21 +129,23 @@ to ignore any results (see above).</t>
 such requests MUST be denied.</t>
 </list></t>
 
+<t>Note that the restriction upon the registration of .onion names does not
+prohibit IANA from inserting a record into the root zone database to reserve
+the name.</t>
+
+<t>Likewise, it does not prevent non-DNS service providers such as (trust
+providers) from supporting .onion names in their applications.</t>
+
 </section>
 <section anchor="iana-considerations" title="IANA Considerations">
 
-<t>This document registers “onion” in the registry of Special-Use Domain Names <xref target="RFC6761"/>. See <xref target="onion"/> for the registration template.</t>
+<t>This document registers “onion” in the registry of Special-Use Domain Names
+<xref target="RFC6761"/>. See <xref target="onion"/> for the registration template.</t>
 
 </section>
 <section anchor="security" title="Security Considerations">
 
-<t>.onion names are often used to provide access to end to end encrypted, secure,
-anonymized services; that is, the identity and location of the server is
-obscured from the client. The location of the client is obscured from the
-server. The identity of the client may or may not be disclosed through an
-optional cryptographic authentication process.</t>
-
-<t>These properties can be compromised if, for example:</t>
+<t>The security properties of .onion names can be compromised if, for example:</t>
 
 <t><list style="symbols">
   <t>The server “leaks” its identity in another way (e.g., in an application-level message), or</t>
@@ -129,26 +153,18 @@ optional cryptographic authentication process.</t>
   <t>The access protocol itself is found to have a flaw.</t>
 </list></t>
 
-<t>.onion names are self-authenticating, in that they are derived from the
-cryptographic keys used by the server in a client verifiable manner during
-connection establishment. As a result, the cryptographic label component of a
-.onion name is not intended to be human-meaningful.</t>
-
-<t>The Tor network is designed to not be subject to any central controlling
-authorities with regards to routing and service publication, so .onion names
-cannot be registered, assigned, transferred or revoked. “Ownership” of a .onion
-name is derived solely from control of a public/private key pair which
-corresponds to the algorithmic derivation of the name.</t>
-
 <t>Users must take special precautions to ensure that the .onion name they are
-communicating with is correct, as attackers may be able to find keys which
-produce service names that are visually or semantically similar to
-the desired service.</t>
+communicating with is the intended one, as attackers may be able to find keys
+which produce service names that are visually or semantically similar to the
+desired service. This risk is magnified because .onion names are typically not
+human-meaningful. It can be mitigated by generating human meaningful .onion
+names (at considerable computing expense), or through users using bookmarks and
+other trusted stores when following links.</t>
 
 <t>Also, users need to understand the difference between a .onion name used and
 accessed directly via Tor-capable software, versus .onion subdomains of other
-top-level domain names and providers (e.g., the difference between example.onion and
-example.onion.tld).</t>
+top-level domain names and providers (e.g., the difference between
+example.onion and example.onion.tld).</t>
 
 <t>The cryptographic label for a .onion name is constructed by applying a
 function to the public key of the server, the output of which is rendered
@@ -158,10 +174,13 @@ produces a collision with the same .onion name with substantially less work
 than a cryptographic attack on the full strength key. If this is possible the
 attacker may be able to impersonate the service on the network.</t>
 
-<t>If client software attempts to resolve a .onion name, it can leak the identity
-of the service that the user is attempting to access to DNS resolvers,
-authoritative DNS servers, and observers on the intervening network. This can
-be mitigated by following the recommendations in <xref target="onion"/>.</t>
+<t>A legacy client may inadvertently attempt to resolve a “.onion” name through
+the DNS. This causes a disclosure that the client is using TOR to reach a
+specific service. Malicious resolvers could be engineered to capture and
+record such leaks, which might have very adverse consequences for the
+well-being of the TOR user. This issue is mitigated if the client’s TOR
+software is updated to not leak such queries, or if the client’s DNS
+software is updated to drop any request to the “.onion” TLD.</t>
 
 </section>
 
@@ -176,205 +195,34 @@ be mitigated by following the recommendations in <xref target="onion"/>.</t>
 
 
 
-<reference anchor='RFC2119'>
-
+<reference  anchor='RFC2119' target='http://www.rfc-editor.org/info/rfc2119'>
 <front>
-<title abbrev='RFC Key Words'>Key words for use in RFCs to Indicate Requirement Levels</title>
-<author initials='S.' surname='Bradner' fullname='Scott Bradner'>
-<organization>Harvard University</organization>
-<address>
-<postal>
-<street>1350 Mass. Ave.</street>
-<street>Cambridge</street>
-<street>MA 02138</street></postal>
-<phone>- +1 617 495 3864</phone>
-<email>sob@harvard.edu</email></address></author>
+<title>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='S. Bradner'><organization /></author>
 <date year='1997' month='March' />
-<area>General</area>
-<keyword>keyword</keyword>
-<abstract>
-<t>
-   In many standards track documents several words are used to signify
-   the requirements in the specification.  These words are often
-   capitalized.  This document defines these words as they should be
-   interpreted in IETF documents.  Authors who follow these guidelines
-   should incorporate this phrase near the beginning of their document:
-
-<list>
-<t>
-      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
-      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
-      "OPTIONAL" in this document are to be interpreted as described in
-      RFC 2119.
-</t></list></t>
-<t>
-   Note that the force of these words is modified by the requirement
-   level of the document in which they are used.
-</t></abstract></front>
-
-<seriesInfo name='BCP' value='14' />
-<seriesInfo name='RFC' value='2119' />
-<format type='TXT' octets='4723' target='http://www.rfc-editor.org/rfc/rfc2119.txt' />
-<format type='HTML' octets='17970' target='http://xml.resource.org/public/rfc/html/rfc2119.html' />
-<format type='XML' octets='5777' target='http://xml.resource.org/public/rfc/xml/rfc2119.xml' />
+<abstract><t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract>
+</front>
+<seriesInfo name='BCP' value='14'/>
+<seriesInfo name='RFC' value='2119'/>
+<seriesInfo name='DOI' value='10.17487/RFC2119'/>
 </reference>
 
 
 
-<reference anchor='RFC6761'>
-
+<reference  anchor='RFC6761' target='http://www.rfc-editor.org/info/rfc6761'>
 <front>
 <title>Special-Use Domain Names</title>
-<author initials='S.' surname='Cheshire' fullname='S. Cheshire'>
-<organization /></author>
-<author initials='M.' surname='Krochmal' fullname='M. Krochmal'>
-<organization /></author>
+<author initials='S.' surname='Cheshire' fullname='S. Cheshire'><organization /></author>
+<author initials='M.' surname='Krochmal' fullname='M. Krochmal'><organization /></author>
 <date year='2013' month='February' />
-<abstract>
-<t>This document describes what it means to say that a Domain Name (DNS name) is reserved for special use, when reserving such a name is appropriate, and the procedure for doing so.  It establishes an IANA registry for such domain names, and seeds it with entries for some of the already established special domain names.</t></abstract></front>
-
-<seriesInfo name='RFC' value='6761' />
-<format type='TXT' octets='28862' target='http://www.rfc-editor.org/rfc/rfc6761.txt' />
+<abstract><t>This document describes what it means to say that a Domain Name (DNS name) is reserved for special use, when reserving such a name is appropriate, and the procedure for doing so.  It establishes an IANA registry for such domain names, and seeds it with entries for some of the already established special domain names.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='6761'/>
+<seriesInfo name='DOI' value='10.17487/RFC6761'/>
 </reference>
 
 
-
-
-    </references>
-
-    <references title='Informative References'>
-
-
-
-
-
-<reference anchor='RFC1928'>
-
-<front>
-<title>SOCKS Protocol Version 5</title>
-<author initials='M.' surname='Leech' fullname='Marcus Leech'>
-<organization>Bell-Northern Research Ltd</organization>
-<address>
-<postal>
-<street>P.O. Box 3511</street>
-<street>Stn. C</street>
-<city>Ottawa</city>
-<region>Ontario</region>
-<code>K1Y 4H7</code>
-<country>CA</country></postal>
-<phone>+1 613 763 9145</phone>
-<email>mleech@bnr.ca</email></address></author>
-<author initials='M.' surname='Ganis' fullname='M. Ganis'>
-<organization>International Business Machines</organization></author>
-<author initials='Y.' surname='Lee' fullname='Y. Lee'>
-<organization>NEC Systems Laboratory</organization></author>
-<author initials='R.' surname='Kuris' fullname='R. Kuris'>
-<organization>Unify Corporation</organization></author>
-<author initials='D.' surname='Koblas' fullname='D. Koblas'>
-<organization>Independent Consultant</organization></author>
-<author initials='L.' surname='Jones' fullname='L. Jones'>
-<organization>Hewlett-Packard Company</organization></author>
-<date year='1996' month='March' /></front>
-
-<seriesInfo name='RFC' value='1928' />
-<format type='TXT' octets='19741' target='http://www.rfc-editor.org/rfc/rfc1928.txt' />
-</reference>
-
-
-
-<reference anchor='RFC3986'>
-
-<front>
-<title abbrev='URI Generic Syntax'>Uniform Resource Identifier (URI): Generic Syntax</title>
-<author initials='T.' surname='Berners-Lee' fullname='Tim Berners-Lee'>
-<organization abbrev='W3C/MIT'>World Wide Web Consortium</organization>
-<address>
-<postal>
-<street>Massachusetts Institute of Technology</street>
-<street>77 Massachusetts Avenue</street>
-<city>Cambridge</city>
-<region>MA</region>
-<code>02139</code>
-<country>USA</country></postal>
-<phone>+1-617-253-5702</phone>
-<facsimile>+1-617-258-5999</facsimile>
-<email>timbl@w3.org</email>
-<uri>http://www.w3.org/People/Berners-Lee/</uri></address></author>
-<author initials='R.' surname='Fielding' fullname='Roy T. Fielding'>
-<organization abbrev='Day Software'>Day Software</organization>
-<address>
-<postal>
-<street>5251 California Ave., Suite 110</street>
-<city>Irvine</city>
-<region>CA</region>
-<code>92617</code>
-<country>USA</country></postal>
-<phone>+1-949-679-2960</phone>
-<facsimile>+1-949-679-2972</facsimile>
-<email>fielding@gbiv.com</email>
-<uri>http://roy.gbiv.com/</uri></address></author>
-<author initials='L.' surname='Masinter' fullname='Larry Masinter'>
-<organization abbrev='Adobe Systems'>Adobe Systems Incorporated</organization>
-<address>
-<postal>
-<street>345 Park Ave</street>
-<city>San Jose</city>
-<region>CA</region>
-<code>95110</code>
-<country>USA</country></postal>
-<phone>+1-408-536-3024</phone>
-<email>LMM@acm.org</email>
-<uri>http://larry.masinter.net/</uri></address></author>
-<date year='2005' month='January' />
-<area>Applications</area>
-<keyword>uniform resource identifier</keyword>
-<keyword>URI</keyword>
-<keyword>URL</keyword>
-<keyword>URN</keyword>
-<keyword>WWW</keyword>
-<keyword>resource</keyword>
-<abstract>
-<t>
-A Uniform Resource Identifier (URI) is a compact sequence of characters
-that identifies an abstract or physical resource.  This specification
-defines the generic URI syntax and a process for resolving URI references
-that might be in relative form, along with guidelines and security
-considerations for the use of URIs on the Internet.
-The URI syntax defines a grammar that is a superset of all valid URIs,
-allowing an implementation to parse the common components of a URI
-reference without knowing the scheme-specific requirements of every
-possible identifier.  This specification does not define a generative
-grammar for URIs; that task is performed by the individual
-specifications of each URI scheme.
-</t></abstract></front>
-
-<seriesInfo name='STD' value='66' />
-<seriesInfo name='RFC' value='3986' />
-<format type='TXT' octets='141811' target='http://www.rfc-editor.org/rfc/rfc3986.txt' />
-<format type='HTML' octets='214067' target='http://xml.resource.org/public/rfc/html/rfc3986.html' />
-<format type='XML' octets='163534' target='http://xml.resource.org/public/rfc/xml/rfc3986.xml' />
-</reference>
-
-
-
-<reference anchor='RFC7230'>
-
-<front>
-<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
-<author initials='R.' surname='Fielding' fullname='R. Fielding'>
-<organization /></author>
-<author initials='J.' surname='Reschke' fullname='J. Reschke'>
-<organization /></author>
-<date year='2014' month='June' />
-<abstract>
-<t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract></front>
-
-<seriesInfo name='RFC' value='7230' />
-<format type='TXT' octets='205947' target='http://www.rfc-editor.org/rfc/rfc7230.txt' />
-</reference>
-
-
-<reference anchor="Dingledine2004" target="https://www.onion-router.net/Publications/tor-design.pdf">
+<reference anchor="Dingledine2004" target="https://spec.torproject.org/tor-spec">
   <front>
     <title>Tor: the second-generation onion router</title>
     <author initials="R." surname="Dingledine">
@@ -389,19 +237,7 @@ specifications of each URI scheme.
     <date year="2004"/>
   </front>
 </reference>
-<reference anchor="tor-address" target="https://gitweb.torproject.org/torspec.git/plain/address-spec.txt">
-  <front>
-    <title>Special Hostnames in Tor</title>
-    <author initials="N." surname="Mathewson">
-      <organization></organization>
-    </author>
-    <author initials="R." surname="Dingledine">
-      <organization></organization>
-    </author>
-    <date year="2001" month="September"/>
-  </front>
-</reference>
-<reference anchor="tor-rendezvous" target="https://gitweb.torproject.org/torspec.git/plain/rend-spec.txt">
+<reference anchor="tor-rendezvous" target="https://spec.torproject.org/rend-spec">
   <front>
     <title>Tor Rendezvous Specification</title>
     <author initials="N." surname="Mathewson">
@@ -417,14 +253,112 @@ specifications of each URI scheme.
 
     </references>
 
+    <references title='Informative References'>
+
+
+
+
+
+<reference  anchor='RFC1034' target='http://www.rfc-editor.org/info/rfc1034'>
+<front>
+<title>Domain names - concepts and facilities</title>
+<author initials='P.V.' surname='Mockapetris' fullname='P.V. Mockapetris'><organization /></author>
+<date year='1987' month='November' />
+<abstract><t>This RFC is the revised basic definition of The Domain Name System.  It obsoletes RFC-882.  This memo describes the domain style names and their used for host address look up and electronic mail forwarding.  It discusses the clients and servers in the domain name system and the protocol used between them.</t></abstract>
+</front>
+<seriesInfo name='STD' value='13'/>
+<seriesInfo name='RFC' value='1034'/>
+<seriesInfo name='DOI' value='10.17487/RFC1034'/>
+</reference>
+
+
+
+<reference  anchor='RFC1123' target='http://www.rfc-editor.org/info/rfc1123'>
+<front>
+<title>Requirements for Internet Hosts - Application and Support</title>
+<author initials='R.' surname='Braden' fullname='R. Braden' role='editor'><organization /></author>
+<date year='1989' month='October' />
+<abstract><t>This RFC is an official specification for the Internet community.  It incorporates by reference, amends, corrects, and supplements the primary protocol standards documents relating to hosts.  [STANDARDS-TRACK]</t></abstract>
+</front>
+<seriesInfo name='STD' value='3'/>
+<seriesInfo name='RFC' value='1123'/>
+<seriesInfo name='DOI' value='10.17487/RFC1123'/>
+</reference>
+
+
+
+<reference  anchor='RFC1928' target='http://www.rfc-editor.org/info/rfc1928'>
+<front>
+<title>SOCKS Protocol Version 5</title>
+<author initials='M.' surname='Leech' fullname='M. Leech'><organization /></author>
+<author initials='M.' surname='Ganis' fullname='M. Ganis'><organization /></author>
+<author initials='Y.' surname='Lee' fullname='Y. Lee'><organization /></author>
+<author initials='R.' surname='Kuris' fullname='R. Kuris'><organization /></author>
+<author initials='D.' surname='Koblas' fullname='D. Koblas'><organization /></author>
+<author initials='L.' surname='Jones' fullname='L. Jones'><organization /></author>
+<date year='1996' month='March' />
+<abstract><t>This memo describes a protocol that is an evolution of the previous version of the protocol, version 4 [1]. This new protocol stems from active discussions and prototype implementations.  [STANDARDS-TRACK]</t></abstract>
+</front>
+<seriesInfo name='RFC' value='1928'/>
+<seriesInfo name='DOI' value='10.17487/RFC1928'/>
+</reference>
+
+
+
+<reference  anchor='RFC3986' target='http://www.rfc-editor.org/info/rfc3986'>
+<front>
+<title>Uniform Resource Identifier (URI): Generic Syntax</title>
+<author initials='T.' surname='Berners-Lee' fullname='T. Berners-Lee'><organization /></author>
+<author initials='R.' surname='Fielding' fullname='R. Fielding'><organization /></author>
+<author initials='L.' surname='Masinter' fullname='L. Masinter'><organization /></author>
+<date year='2005' month='January' />
+<abstract><t>A Uniform Resource Identifier (URI) is a compact sequence of characters that identifies an abstract or physical resource.  This specification defines the generic URI syntax and a process for resolving URI references that might be in relative form, along with guidelines and security considerations for the use of URIs on the Internet.  The URI syntax defines a grammar that is a superset of all valid URIs, allowing an implementation to parse the common components of a URI reference without knowing the scheme-specific requirements of every possible identifier.  This specification does not define a generative grammar for URIs; that task is performed by the individual specifications of each URI scheme.  [STANDARDS-TRACK]</t></abstract>
+</front>
+<seriesInfo name='STD' value='66'/>
+<seriesInfo name='RFC' value='3986'/>
+<seriesInfo name='DOI' value='10.17487/RFC3986'/>
+</reference>
+
+
+
+<reference  anchor='RFC7230' target='http://www.rfc-editor.org/info/rfc7230'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the &quot;http&quot; and &quot;https&quot; Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7230'/>
+<seriesInfo name='DOI' value='10.17487/RFC7230'/>
+</reference>
+
+
+<reference anchor="tor-address" target="https://spec.torproject.org/address-spec">
+  <front>
+    <title>Special Hostnames in Tor</title>
+    <author initials="N." surname="Mathewson">
+      <organization></organization>
+    </author>
+    <author initials="R." surname="Dingledine">
+      <organization></organization>
+    </author>
+    <date year="2001" month="September"/>
+  </front>
+</reference>
+
+
+    </references>
+
 
 <section anchor="acknowledgements" title="Acknowledgements">
 
-<t>Thanks to Roger Dingledine, Linus Nordberg, and Seth David Schoen for their input and review.</t>
+<t>Thanks to Roger Dingledine, Linus Nordberg, and Seth David Schoen for their
+input and review.</t>
 
-<t>This specification builds upon previous work by Christian Grothoff, Matthias Wachs, Hellekin
-O. Wolf, Jacob Appelbaum, and Leif Ryge to register .onion in conjunction with other, 
-similar Special-Use Top-Level Domain Names.</t>
+<t>This specification builds upon previous work by Christian Grothoff, Matthias
+Wachs, Hellekin O. Wolf, Jacob Appelbaum, and Leif Ryge to register .onion in
+conjunction with other, similar Special-Use Top-Level Domain Names.</t>
 
 </section>
 
