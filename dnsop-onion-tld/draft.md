@@ -34,6 +34,8 @@ normative:
   RFC6761:
 
 informative:
+  RFC1034:
+  RFC1123:
   RFC1928:
   RFC3986:
   RFC7230:
@@ -96,7 +98,12 @@ Section 3; they require hardware and software implementations to change their
 handling, in order to achieve the desired properties of the name (see
 {{security}}). These differences are listed in {{onion}}.
 
-Like Top-Level Domain Names, .onion names can have an arbitrary number of subdomain components. This information is not meaningful to the Tor protocol, but can be used in application protocols like HTTP {{RFC7230}}.
+Like Top-Level Domain Names, .onion names can have an arbitrary number of
+subdomain components. This information is not meaningful to the Tor protocol,
+but can be used in application protocols like HTTP {{RFC7230}}. Note that such
+names must conform to DNS name syntax (as defined in Section 3.5 of {{RFC1034}}
+and Section 2.1 of {{RFC1123}}), as they will still be exposed to DNS
+implementations.
 
 See {{tor-address}} and {{tor-rendezvous}} for the details of the creation and
 use of .onion names.
