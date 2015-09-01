@@ -177,11 +177,13 @@ produces a collision with the same .onion name with substantially less work
 than a cryptographic attack on the full strength key. If this is possible the
 attacker may be able to impersonate the service on the network.
 
-If client software attempts to resolve a .onion name, it can leak the identity
-of the service that the user is attempting to access to DNS resolvers,
-authoritative DNS servers, and observers on the intervening network. This risk
-is mitigated when the recommendations in {{onion}} are followed, but are still
-present when using systems that are not updated.
+A legacy client may inadvertently attempt to resolve a ".onion" name through
+the DNS. This causes a disclosure that the client is using TOR to reach a
+specific service. Malicious resolvers could be engineered to capture and
+record such leaks, which might have very adverse consequences for the
+well-being of the TOR user. This issue is mitigated if the client's TOR
+software is updated to not leak such queries, or if the client's DNS
+software is updated to drop any request to the ".onion" TLD.
 
 
 --- back
