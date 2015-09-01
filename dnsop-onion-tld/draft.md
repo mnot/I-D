@@ -168,9 +168,12 @@ The security properties of .onion names can be compromised if, for example:
 * The access protocol itself is found to have a flaw.
 
 Users must take special precautions to ensure that the .onion name they are
-communicating with is correct, as attackers may be able to find keys which
-produce service names that are visually or semantically similar to
-the desired service.
+communicating with is the intended one, as attackers may be able to find keys
+which produce service names that are visually or semantically similar to the
+desired service. This risk is magnified because .onion names are typically not
+human-meaningful. It can be mitigated by generating human meaningful .onion
+names (at considerable computing expense), or through users using bookmarks and
+other trusted stores when following links.
 
 Also, users need to understand the difference between a .onion name used and
 accessed directly via Tor-capable software, versus .onion subdomains of other
