@@ -184,20 +184,20 @@ response, to determine if it can be selected.
 To generate a secondary cache key for a given request (including that which
 is stored with a response), the following steps are taken:
 
-1. Let `key_value` be the most recently seen Key header field value for the resource, as the result of Creating a Header Field Value {{value}}.
+1. Let `key_value` be the most recently seen Key header field value for the resource, as the result of Creating a Header Field Value ({{value}}).
 2. Let `secondary_key` be an empty string.
 3. Create `key_list` by splitting `key_value` on "," characters.
 4. For `key_item` in `key_list`:
    1. Remove any leading and trailing WSP from `key_item`.
-   2. If `key_item` does not contain a ";" character, fail Key processing {{fail}}.
+   2. If `key_item` does not contain a ";" character, fail Key processing ({{fail}}).
    3. Let `field_name` be the string before the first ";" character in `key_item`.
-   4. Let `field_value` be the result of Creating a Header Field Value {{value}} with `field_name` as the `target_field_name` and the request header list as `header_list`.
+   4. Let `field_value` be the result of Creating a Header Field Value ({{value}}) with `field_name` as the `target_field_name` and the request header list as `header_list`.
    5. Let `parameters` be the string after the first ";" character in `key_item`.
    6. Create `param_list` by splitting `parameters` on ";" characters, excepting ";" characters within quoted strings, as per {{RFC7230}} Section 3.2.6.
    7. For `parameter` in `param_list`:
-      1. If `parameter` does not contain a "=", fail Key processing {{fail}}.
+      1. If `parameter` does not contain a "=", fail Key processing ({{fail}}).
       2. Let `param_name` be the string before the first "=" character in `parameter`, case-normalized to lowercase.
-      3. If `param_name` does not identify a Key parameter processing algorithm that is implemented, fail Key processing {{fail}}.
+      3. If `param_name` does not identify a Key parameter processing algorithm that is implemented, fail Key processing ({{fail}}).
       4. Let `param_value` be the string after the first "=" character in `parameter`.
       5. If the first and last characters of `param_value` are both DQUOTE:
          1. Remove the first and last characters of `param_value`.
@@ -284,7 +284,7 @@ To process a set of header fields against a div parameter, follow these steps (o
 2. If `header_value` is the empty string, return "none".
 3. If `header_value` contains a ",", remove it and all subsequent characters.
 4. Remove all WSP characters from `header_value`.
-5. If `header_value` does not match the div ABNF rule, fail parameter processing {{fail-param}}.
+5. If `header_value` does not match the div ABNF rule, fail parameter processing ({{fail-param}}).
 6. Return the quotient of `header_value` / `parameter_value` (omitting the modulus).
 
 For example, the Key:
@@ -328,7 +328,7 @@ To process a set of header fields against a range parameter, follow these steps
 1. If `header_value` is the empty string, return "none".
 2. If `header_value` contains a ",", remove it and all subsequent characters.
 3. Remove all WSP characters from `header_value`.
-4. If `header_value` does not match the bucket ABNF rule, fail parameter processing {{fail-param}}.
+4. If `header_value` does not match the bucket ABNF rule, fail parameter processing ({{fail-param}}).
 5. Let `bucket_id` be 0.
 6. Create a list `bucket_list` by splitting `parameter_value` on ":" characters.
 6. For each `bucket_value` in `bucket_list`:
