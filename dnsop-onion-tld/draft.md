@@ -32,13 +32,6 @@ author:
 normative:
   RFC2119:
   RFC6761:
-
-informative:
-  RFC1034:
-  RFC1123:
-  RFC1928:
-  RFC3986:
-  RFC7230:
   Dingledine2004:
     target: "https://spec.torproject.org/tor-spec"
     title: "Tor: the second-generation onion router"
@@ -47,13 +40,6 @@ informative:
       - ins: N. Mathewson
       - ins: P. Syverson
     date: 2004
-  tor-address:
-    target: "https://spec.torproject.org/address-spec"
-    title: "Special Hostnames in Tor"
-    author:
-      - ins: N. Mathewson
-      - ins: R. Dingledine
-    date: September 2001
   tor-rendezvous:
     target: "https://spec.torproject.org/rend-spec"
     title: "Tor Rendezvous Specification"
@@ -61,6 +47,20 @@ informative:
       - ins: N. Mathewson
       - ins: R. Dingledine
     date: April 2014
+
+informative:
+  RFC1034:
+  RFC1123:
+  RFC1928:
+  RFC3986:
+  RFC7230:
+  tor-address:
+    target: "https://spec.torproject.org/address-spec"
+    title: "Special Hostnames in Tor"
+    author:
+      - ins: N. Mathewson
+      - ins: R. Dingledine
+    date: September 2001
 
 --- abstract
 
