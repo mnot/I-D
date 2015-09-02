@@ -317,7 +317,7 @@ Key: Bar;div=5
 ~~~
 
 indicates that the "Bar" header's field value should be segmented into groups of 5. Thus, the
-following field values would be considered the same:
+following field values would be considered the same (because, divided by 5, they all result in 1):
 
 ~~~
 Bar: 1
@@ -325,7 +325,7 @@ Bar: 3 , 42
 Bar: 4, 1
 ~~~
 
-whereas these would be considered to be in a different group;
+whereas these would be considered to be in a different group (because, divided by 5, they all result in 2);
 
 ~~~
 Bar: 12
