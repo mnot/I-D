@@ -100,6 +100,36 @@ reading of HTTP) not a match, resulting in a cache miss:</t>
 to describe the cache key in a much more fine-grained manner, leading to
 improved cache efficiency.</t>
 
+<section anchor="examples" title="Examples">
+
+<t>For example, this response header field:</t>
+
+<figure><artwork><![CDATA[
+  Key: cookie;param=_sess;param=ID, 
+       Accept-Encoding;match="gzip"
+]]></artwork></figure>
+
+<t>instructs caches to create a secondary cache key that consists of the “_sess” and “ID” cookie values, as well as whether the Accept-Encoding header contains the whole value “gzip”.</t>
+
+<t>This Key:</t>
+
+<figure><artwork><![CDATA[
+  Key: user-agent;substr=MSIE
+]]></artwork></figure>
+
+<t>indicates that there are two possible secondary cache keys for this resource;
+one for requests whose User-Agent header field contains “MSIE”, and another for
+those that don’t.</t>
+
+<t>A more complex example:</t>
+
+<figure><artwork><![CDATA[
+  Key: user-agent;substr=MSIE;Substr="mobile";substr=bot
+]]></artwork></figure>
+
+<t>indicates that there are eight possible secondary cache keys. </t>
+
+</section>
 <section anchor="notational-conventions" title="Notational Conventions">
 
 <t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”,
@@ -174,6 +204,17 @@ cases such as selection upon Acccept-Encoding values, individual Cookie header
 fields, User-Agent substrings and numerical ranges. Future parameters may
 define further capabilities.</t>
 
+<section anchor="relationship-to-vary" title="Relationship to Vary">
+
+<t>Origin servers SHOULD still send Vary when using Key, to accommodate
+implementations that do not (yet) understand it. For example,</t>
+
+<figure><artwork><![CDATA[
+  Vary: Accept-Encoding
+  Key: Accept-Encoding;match="gzip"
+]]></artwork></figure>
+
+</section>
 <section anchor="calculating-a-secondary-cache-key" title="Calculating a Secondary Cache Key">
 
 <t>When used by a cache to determine whether a stored response can be used to
@@ -217,7 +258,7 @@ is stored with a response), the following steps are taken:</t>
               <t>Remove the first and last characters of <spanx style="verb">param_value</spanx>.</t>
               <t>Replace quoted-pairs within <spanx style="verb">param_value</spanx> with the octet following the backslash, as per <xref target="RFC7230"/> Section 3.2.6.</t>
             </list></t>
-          <t>If <spanx style="verb">param_value</spanx> does not conform to the syntax defined for it by the parameter definition, fail parameter processing <xref target="fail-param"/> and skep to the next <spanx style="verb">key_item</spanx>.</t>
+          <t>If <spanx style="verb">param_value</spanx> does not conform to the syntax defined for it by the parameter definition, fail parameter processing <xref target="fail-param"/> and skip to the next <spanx style="verb">key_item</spanx>.</t>
           <t>Run the identified processing algorithm on <spanx style="verb">field_value</spanx> with the <spanx style="verb">param_value</spanx>, and append the result to <spanx style="verb">secondary_key</spanx>. If parameter processing fails <xref target="fail-param"/>, skip to the next <spanx style="verb">key_item</spanx>.</t>
           <t>Append a separator character (e.g., NULL) to <spanx style="verb">secondary_key</spanx>.</t>
         </list></t>
@@ -545,47 +586,6 @@ Def: liam="678"         // '"678"'
 
 </section>
 </section>
-<section anchor="examples" title="Examples">
-
-<t>For example, this response header field:</t>
-
-<figure><artwork><![CDATA[
-  Key: cookie;param=_sess;param=ID, 
-       Accept-Encoding;match="gzip"
-]]></artwork></figure>
-
-<t>instructs caches to create a secondary cache key that consists of the “_sess” and “ID” cookie values, as well as whether the Accept-Encoding header contains the whole value “gzip”.</t>
-
-<t>This Key:</t>
-
-<figure><artwork><![CDATA[
-  Key: user-agent;substr=MSIE
-]]></artwork></figure>
-
-<t>indicates that there are two possible secondary cache keys for this resource;
-one for requests whose User-Agent header field contains “MSIE”, and another for
-those that don’t.</t>
-
-<t>A more complex example:</t>
-
-<figure><artwork><![CDATA[
-  Key: user-agent;substr=MSIE;Substr="mobile";substr=bot
-]]></artwork></figure>
-
-<t>indicates that there are eight possible secondary cache keys. </t>
-
-</section>
-<section anchor="relationship-to-vary" title="Relationship to Vary">
-
-<t>Origin servers SHOULD still send Vary when using Key, to accommodate
-implementations that do not (yet) understand it. For example,</t>
-
-<figure><artwork><![CDATA[
-  Vary: Accept-Encoding
-  Key: Accept-Encoding;match="gzip"
-]]></artwork></figure>
-
-</section>
 </section>
 <section anchor="iana" title="IANA Considerations">
 
@@ -740,6 +740,12 @@ risk.</t>
     </references>
 
 
+
+<section anchor="acknowledgements" title="Acknowledgements">
+
+<t>Thanks to Ilya Grigorik, Amos Jeffries and Yoav Weiss for their feedback.</t>
+
+</section>
 
 
   </back>
