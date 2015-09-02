@@ -89,6 +89,35 @@ This document defines a new response header field, "Key", that allows servers
 to describe the cache key in a much more fine-grained manner, leading to
 improved cache efficiency.
 
+## Examples
+
+For example, this response header field:
+
+~~~
+  Key: cookie;param=_sess;param=ID, 
+       Accept-Encoding;match="gzip"
+~~~
+
+instructs caches to create a secondary cache key that consists of the "_sess" and "ID" cookie values, as well as whether the Accept-Encoding header contains the whole value "gzip".
+ 
+This Key:
+
+~~~
+  Key: user-agent;substr=MSIE
+~~~
+
+indicates that there are two possible secondary cache keys for this resource;
+one for requests whose User-Agent header field contains "MSIE", and another for
+those that don't.
+
+A more complex example:
+
+~~~
+  Key: user-agent;substr=MSIE;Substr="mobile";substr=bot
+~~~
+
+indicates that there are eight possible secondary cache keys. 
+
 
 ## Notational Conventions
 
@@ -508,35 +537,6 @@ Def: abc=123; liam=890  // '890'
 Def: liam="678"         // '"678"'
 ~~~
 
-
-## Examples
-
-For example, this response header field:
-
-~~~
-  Key: cookie;param=_sess;param=ID, 
-       Accept-Encoding;match="gzip"
-~~~
-
-instructs caches to create a secondary cache key that consists of the "_sess" and "ID" cookie values, as well as whether the Accept-Encoding header contains the whole value "gzip".
- 
-This Key:
-
-~~~
-  Key: user-agent;substr=MSIE
-~~~
-
-indicates that there are two possible secondary cache keys for this resource;
-one for requests whose User-Agent header field contains "MSIE", and another for
-those that don't.
-
-A more complex example:
-
-~~~
-  Key: user-agent;substr=MSIE;Substr="mobile";substr=bot
-~~~
-
-indicates that there are eight possible secondary cache keys. 
 
 
 
