@@ -353,9 +353,8 @@ whereas the following would fall into the second bucket:
 
 ~~~
 Foo: 20
-Foo: 39.999
+Foo: 29.999
 Foo:  24   , 10
-Foo: 30
 ~~~
 
 
