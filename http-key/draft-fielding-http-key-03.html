@@ -46,11 +46,11 @@
 div    = 1*DIGIT
 </pre></div><p id="rfc.section.2.3.1.p.3">To process a set of header fields against a div parameter, follow these steps (or their equivalent):</p><ol><li>If <samp>parameter_value</samp> is “0”, fail parameter processing <a href="#fail-param" title="Failing Parameter Processing">Section&nbsp;2.2.2</a>.</li><li>If <samp>header_value</samp> is the empty string, return “none”.</li><li>If <samp>header_value</samp> contains a “,”, remove it and all subsequent characters.</li><li>Remove all WSP characters from <samp>header_value</samp>.</li><li>If <samp>header_value</samp> does not match the div ABNF rule, fail parameter processing (<a href="#fail-param" title="Failing Parameter Processing">Section&nbsp;2.2.2</a>).</li><li>Return the quotient of <samp>header_value</samp> / <samp>parameter_value</samp> (omitting the modulus).</li></ol><p id="rfc.section.2.3.1.p.5">For example, the Key:</p><div id="rfc.figure.u.12"><pre>
 Key: Bar;div=5
-</pre></div><p id="rfc.section.2.3.1.p.6">indicates that the “Bar” header’s field value should be segmented into groups of 5. Thus, the following field values would be considered the same:</p><div id="rfc.figure.u.13"><pre>
+</pre></div><p id="rfc.section.2.3.1.p.6">indicates that the “Bar” header’s field value should be segmented into groups of 5. Thus, the following field values would be considered the same (because, divided by 5, they all result in 1):</p><div id="rfc.figure.u.13"><pre>
 Bar: 1
 Bar: 3 , 42
 Bar: 4, 1
-</pre></div><p id="rfc.section.2.3.1.p.7">whereas these would be considered to be in a different group;</p><div id="rfc.figure.u.14"><pre>
+</pre></div><p id="rfc.section.2.3.1.p.7">whereas these would be considered to be in a different group (because, divided by 5, they all result in 2);</p><div id="rfc.figure.u.14"><pre>
 Bar: 12
 Bar: 10
 Bar: 14, 1
