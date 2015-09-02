@@ -164,6 +164,17 @@ fields, User-Agent substrings and numerical ranges. Future parameters may
 define further capabilities.
 
 
+## Relationship to Vary
+
+Origin servers SHOULD still send Vary when using Key, to accommodate
+implementations that do not (yet) understand it. For example,
+
+~~~
+  Vary: Accept-Encoding
+  Key: Accept-Encoding;match="gzip"
+~~~
+
+
 ## Calculating a Secondary Cache Key
 
 When used by a cache to determine whether a stored response can be used to
@@ -526,17 +537,6 @@ A more complex example:
 ~~~
 
 indicates that there are eight possible secondary cache keys. 
-
-
-## Relationship to Vary
-
-Origin servers SHOULD still send Vary when using Key, to accommodate
-implementations that do not (yet) understand it. For example,
-
-~~~
-  Vary: Accept-Encoding
-  Key: Accept-Encoding;match="gzip"
-~~~
 
 
 
