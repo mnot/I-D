@@ -53,6 +53,12 @@ Key also informs user agents of the request characteristics that might result
 in different content, which can be useful if the user agent is not sending
 request header fields in order to reduce the risk of fingerprinting.
 
+
+--- note_Note_to_Readers
+
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/key>.
+
+
 --- middle
 
 # Introduction
