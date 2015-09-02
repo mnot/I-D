@@ -318,7 +318,7 @@ pre-defined "buckets".
 Its value's syntax is:
 
 ~~~
-range  = [ range_num ] *( ":" [ bucket ] )
+range  = [ bucket ] *( ":" [ bucket ] )
 bucket = [ 0*DIGIT "." ] 1*DIGIT
 ~~~
 
