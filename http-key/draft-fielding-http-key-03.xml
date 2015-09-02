@@ -201,24 +201,24 @@ is stored with a response), the following steps are taken:</t>
   <t>For <spanx style="verb">key_item</spanx> in <spanx style="verb">key_list</spanx>:
   <list style="numbers">
       <t>Remove any leading and trailing WSP from <spanx style="verb">key_item</spanx>.</t>
-      <t>If <spanx style="verb">key_item</spanx> does not contain a “;” character, fail Key processing (<xref target="fail"/>).</t>
+      <t>If <spanx style="verb">key_item</spanx> does not contain a “;” character, fail parameter processing (<xref target="fail-param"/>) and skip to the next <spanx style="verb">key_item</spanx>.</t>
       <t>Let <spanx style="verb">field_name</spanx> be the string before the first “;” character in <spanx style="verb">key_item</spanx>.</t>
       <t>Let <spanx style="verb">field_value</spanx> be the result of Creating a Header Field Value (<xref target="value"/>) with <spanx style="verb">field_name</spanx> as the <spanx style="verb">target_field_name</spanx> and the request header list as <spanx style="verb">header_list</spanx>.</t>
       <t>Let <spanx style="verb">parameters</spanx> be the string after the first “;” character in <spanx style="verb">key_item</spanx>.</t>
       <t>Create <spanx style="verb">param_list</spanx> by splitting <spanx style="verb">parameters</spanx> on “;” characters, excepting “;” characters within quoted strings, as per <xref target="RFC7230"/> Section 3.2.6.</t>
       <t>For <spanx style="verb">parameter</spanx> in <spanx style="verb">param_list</spanx>:
       <list style="numbers">
-          <t>If <spanx style="verb">parameter</spanx> does not contain a “=”, fail Key processing (<xref target="fail"/>).</t>
+          <t>If <spanx style="verb">parameter</spanx> does not contain a “=”, fail parameter processing (<xref target="fail-param"/>) and skip to the next <spanx style="verb">key_item</spanx>.</t>
           <t>Let <spanx style="verb">param_name</spanx> be the string before the first “=” character in <spanx style="verb">parameter</spanx>, case-normalized to lowercase.</t>
-          <t>If <spanx style="verb">param_name</spanx> does not identify a Key parameter processing algorithm that is implemented, fail Key processing (<xref target="fail"/>).</t>
+          <t>If <spanx style="verb">param_name</spanx> does not identify a Key parameter processing algorithm that is implemented, fail parameter processing (<xref target="fail-param"/>) and skip to the next <spanx style="verb">key_item</spanx>.</t>
           <t>Let <spanx style="verb">param_value</spanx> be the string after the first “=” character in <spanx style="verb">parameter</spanx>.</t>
           <t>If the first and last characters of <spanx style="verb">param_value</spanx> are both DQUOTE:
           <list style="numbers">
               <t>Remove the first and last characters of <spanx style="verb">param_value</spanx>.</t>
               <t>Replace quoted-pairs within <spanx style="verb">param_value</spanx> with the octet following the backslash, as per <xref target="RFC7230"/> Section 3.2.6.</t>
             </list></t>
-          <t>If <spanx style="verb">param_value</spanx> does not conform to the syntax defined for it by the parameter definition, fail Key processing.</t>
-          <t>Run the identified processing algorithm on <spanx style="verb">field_value</spanx> with the <spanx style="verb">param_value</spanx>, and append the result to <spanx style="verb">secondary_key</spanx>.</t>
+          <t>If <spanx style="verb">param_value</spanx> does not conform to the syntax defined for it by the parameter definition, fail parameter processing <xref target="fail-param"/> and skep to the next <spanx style="verb">key_item</spanx>.</t>
+          <t>Run the identified processing algorithm on <spanx style="verb">field_value</spanx> with the <spanx style="verb">param_value</spanx>, and append the result to <spanx style="verb">secondary_key</spanx>. If parameter processing fails <xref target="fail-param"/>, skip to the next <spanx style="verb">key_item</spanx>.</t>
           <t>Append a separator character (e.g., NULL) to <spanx style="verb">secondary_key</spanx>.</t>
         </list></t>
     </list></t>
@@ -259,25 +259,15 @@ implementation strategies, including (but not limited to):</t>
 </list></t>
 
 </section>
-<section anchor="fail" title="Failing Key Processing">
-
-<t>To assure consistent operation, several conditions can result in Key processing
-failing.</t>
-
-<t>When this happens, implementations MUST behave as if the Key header was not
-present; typically, this means falling back to the value of the Vary header
-field.</t>
-
-</section>
 <section anchor="fail-param" title="Failing Parameter Processing">
 
 <t>In some cases, a key parameter cannot determine a secondary cache key
 corresponding to its nominated header field value. When this happens, Key
 processing needs to fail safely, so that the correct behavior is observed.</t>
 
-<t>When this happens, implementations MUST either fail Key processing {#fail}, or
-assure that the nominated header fields being compared match, as per
-<xref target="RFC7234"/>, Section 4.1.</t>
+<t>When this happens, implementations MUST either behave as if the Key header was
+not present, or assure that the nominated header fields being compared match,
+as per <xref target="RFC7234"/>, Section 4.1.</t>
 
 </section>
 </section>
@@ -304,7 +294,7 @@ div    = 1*DIGIT
 <t>To process a set of header fields against a div parameter, follow these steps (or their equivalent):</t>
 
 <t><list style="numbers">
-  <t>If <spanx style="verb">parameter_value</spanx> is “0”, fail Key processing.</t>
+  <t>If <spanx style="verb">parameter_value</spanx> is “0”, fail parameter processing <xref target="fail-param"/>.</t>
   <t>If <spanx style="verb">header_value</spanx> is the empty string, return “none”.</t>
   <t>If <spanx style="verb">header_value</spanx> contains a “,”, remove it and all subsequent characters.</t>
   <t>Remove all WSP characters from <spanx style="verb">header_value</spanx>.</t>
@@ -343,7 +333,7 @@ pre-defined “buckets”.</t>
 <t>Its value’s syntax is:</t>
 
 <figure><artwork><![CDATA[
-range  = [ range_num ] *( ":" [ bucket ] )
+range  = [ bucket ] *( ":" [ bucket ] )
 bucket = [ 0*DIGIT "." ] 1*DIGIT
 ]]></artwork></figure>
 
@@ -393,9 +383,8 @@ Foo: 19.9
 
 <figure><artwork><![CDATA[
 Foo: 20
-Foo: 39.999
+Foo: 29.999
 Foo:  24   , 10
-Foo: 30
 ]]></artwork></figure>
 
 </section>

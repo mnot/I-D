@@ -5,8 +5,8 @@
 Network Working Group                                        R. Fielding
 Internet-Draft                                Adobe Systems Incorporated
 Intended status: Informational                             M. Nottingham
-Expires: March 4, 2016
-                                                       September 1, 2015
+Expires: March 5, 2016
+                                                       September 2, 2015
 
 
                    The Key HTTP Response Header Field
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on March 4, 2016.
+   This Internet-Draft will expire on March 5, 2016.
 
 
 
@@ -53,7 +53,7 @@ Status of This Memo
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                 [Page 1]
+Fielding & Nottingham     Expires March 5, 2016                 [Page 1]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -80,8 +80,7 @@ Table of Contents
    2.  The "Key" Response Header Field . . . . . . . . . . . . . . .   3
      2.1.  Calculating a Secondary Cache Key . . . . . . . . . . . .   4
        2.1.1.  Creating a Header Field Value . . . . . . . . . . . .   7
-       2.1.2.  Failing Key Processing  . . . . . . . . . . . . . . .   7
-       2.1.3.  Failing Parameter Processing  . . . . . . . . . . . .   7
+       2.1.2.  Failing Parameter Processing  . . . . . . . . . . . .   7
      2.2.  Key Parameters  . . . . . . . . . . . . . . . . . . . . .   8
        2.2.1.  div . . . . . . . . . . . . . . . . . . . . . . . . .   8
        2.2.2.  range . . . . . . . . . . . . . . . . . . . . . . . .   9
@@ -109,7 +108,8 @@ Table of Contents
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                 [Page 2]
+
+Fielding & Nottingham     Expires March 5, 2016                 [Page 2]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -165,7 +165,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                 [Page 3]
+Fielding & Nottingham     Expires March 5, 2016                 [Page 3]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -221,7 +221,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                 [Page 4]
+Fielding & Nottingham     Expires March 5, 2016                 [Page 4]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -257,8 +257,9 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
        1.  Remove any leading and trailing WSP from "key_item".
 
-       2.  If "key_item" does not contain a ";" character, fail Key
-           processing (Section 2.1.2).
+       2.  If "key_item" does not contain a ";" character, fail
+           parameter processing (Section 2.1.2) and skip to the next
+           "key_item".
 
        3.  Let "field_name" be the string before the first ";" character
            in "key_item".
@@ -271,28 +272,33 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
        5.  Let "parameters" be the string after the first ";" character
            in "key_item".
 
-       6.  Create "param_list" by splitting "parameters" on ";"
-           characters, excepting ";" characters within quoted strings,
-           as per [RFC7230] Section 3.2.6.
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                 [Page 5]
+
+
+Fielding & Nottingham     Expires March 5, 2016                 [Page 5]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
+       6.  Create "param_list" by splitting "parameters" on ";"
+           characters, excepting ";" characters within quoted strings,
+           as per [RFC7230] Section 3.2.6.
+
        7.  For "parameter" in "param_list":
 
-           1.  If "parameter" does not contain a "=", fail Key
-               processing (Section 2.1.2).
+           1.  If "parameter" does not contain a "=", fail parameter
+               processing (Section 2.1.2) and skip to the next
+               "key_item".
 
            2.  Let "param_name" be the string before the first "="
                character in "parameter", case-normalized to lowercase.
 
            3.  If "param_name" does not identify a Key parameter
-               processing algorithm that is implemented, fail Key
-               processing (Section 2.1.2).
+               processing algorithm that is implemented, fail parameter
+               processing (Section 2.1.2) and skip to the next
+               "key_item".
 
            4.  Let "param_value" be the string after the first "="
                character in "parameter".
@@ -308,11 +314,13 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
                    Section 3.2.6.
 
            6.  If "param_value" does not conform to the syntax defined
-               for it by the parameter definition, fail Key processing.
+               for it by the parameter definition, fail parameter
+               processing Section 2.1.2 and skep to the next "key_item".
 
            7.  Run the identified processing algorithm on "field_value"
                with the "param_value", and append the result to
-               "secondary_key".
+               "secondary_key".  If parameter processing fails
+               Section 2.1.2, skip to the next "key_item".
 
            8.  Append a separator character (e.g., NULL) to
                "secondary_key".
@@ -322,6 +330,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    Note that this specification does not require that exact algorithm to
    be implemented.  However, implementations' observable behavior MUST
    be identical to running it.  This includes parameter processing
+
+
+
+Fielding & Nottingham     Expires March 5, 2016                 [Page 6]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
+
    algorithms; implementations MAY use different internal artefacts for
    secondary cache keys, as long as the results are the same.
 
@@ -330,13 +346,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    header field for the resource in question, this can be achieved using
    a variety of implementation strategies, including (but not limited
    to):
-
-
-
-Fielding & Nottingham     Expires March 4, 2016                 [Page 6]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
    o  Generating a new secondary cache key for every stored response
       associated with the resource upon each request.
@@ -369,16 +378,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    4.  Return the concatenation of "target_field_values", separating
        each with "," characters.
 
-2.1.2.  Failing Key Processing
-
-   To assure consistent operation, several conditions can result in Key
-   processing failing.
-
-   When this happens, implementations MUST behave as if the Key header
-   was not present; typically, this means falling back to the value of
-   the Vary header field.
-
-2.1.3.  Failing Parameter Processing
+2.1.2.  Failing Parameter Processing
 
    In some cases, a key parameter cannot determine a secondary cache key
    corresponding to its nominated header field value.  When this
@@ -389,14 +389,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                 [Page 7]
+Fielding & Nottingham     Expires March 5, 2016                 [Page 7]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
-   When this happens, implementations MUST either fail Key processing
-   {#fail}, or assure that the nominated header fields being compared
-   match, as per [RFC7234], Section 4.1.
+   When this happens, implementations MUST either behave as if the Key
+   header was not present, or assure that the nominated header fields
+   being compared match, as per [RFC7234], Section 4.1.
 
 2.2.  Key Parameters
 
@@ -421,7 +421,8 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    To process a set of header fields against a div parameter, follow
    these steps (or their equivalent):
 
-   1.  If "parameter_value" is "0", fail Key processing.
+   1.  If "parameter_value" is "0", fail parameter processing
+       Section 2.1.2.
 
    2.  If "header_value" is the empty string, return "none".
 
@@ -431,7 +432,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    4.  Remove all WSP characters from "header_value".
 
    5.  If "header_value" does not match the div ABNF rule, fail
-       parameter processing (Section 2.1.3).
+       parameter processing (Section 2.1.2).
 
    6.  Return the quotient of "header_value" / "parameter_value"
        (omitting the modulus).
@@ -444,8 +445,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-
-Fielding & Nottingham     Expires March 4, 2016                 [Page 8]
+Fielding & Nottingham     Expires March 5, 2016                 [Page 8]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -471,7 +471,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    Its value's syntax is:
 
-   range  = [ range_num ] *( ":" [ bucket ] )
+   range  = [ bucket ] *( ":" [ bucket ] )
    bucket = [ 0*DIGIT "." ] 1*DIGIT
 
    To process a set of header fields against a range parameter, follow
@@ -485,7 +485,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    3.  Remove all WSP characters from "header_value".
 
    4.  If "header_value" does not match the bucket ABNF rule, fail
-       parameter processing (Section 2.1.3).
+       parameter processing (Section 2.1.2).
 
    5.  Let "bucket_id" be 0.
 
@@ -501,7 +501,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                 [Page 9]
+Fielding & Nottingham     Expires March 5, 2016                 [Page 9]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -534,9 +534,8 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    whereas the following would fall into the second bucket:
 
    Foo: 20
-   Foo: 39.999
+   Foo: 29.999
    Foo:  24   , 10
-   Foo: 30
 
 2.2.3.  match
 
@@ -557,7 +556,8 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                [Page 10]
+
+Fielding & Nottingham     Expires March 5, 2016                [Page 10]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -613,7 +613,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                [Page 11]
+Fielding & Nottingham     Expires March 5, 2016                [Page 11]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -669,7 +669,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                [Page 12]
+Fielding & Nottingham     Expires March 5, 2016                [Page 12]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -725,7 +725,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                [Page 13]
+Fielding & Nottingham     Expires March 5, 2016                [Page 13]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -781,7 +781,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                [Page 14]
+Fielding & Nottingham     Expires March 5, 2016                [Page 14]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -837,7 +837,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                [Page 15]
+Fielding & Nottingham     Expires March 5, 2016                [Page 15]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -893,4 +893,4 @@ Authors' Addresses
 
 
 
-Fielding & Nottingham     Expires March 4, 2016                [Page 16]
+Fielding & Nottingham     Expires March 5, 2016                [Page 16]
