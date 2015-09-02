@@ -202,7 +202,7 @@ is stored with a response), the following steps are taken:
       5. If the first and last characters of `param_value` are both DQUOTE:
          1. Remove the first and last characters of `param_value`.
          2. Replace quoted-pairs within `param_value` with the octet following the backslash, as per {{RFC7230}} Section 3.2.6.
-      6. If `param_value` does not conform to the syntax defined for it by the parameter definition, fail parameter processing {{fail-param}} and skep to the next `key_item`.
+      6. If `param_value` does not conform to the syntax defined for it by the parameter definition, fail parameter processing {{fail-param}} and skip to the next `key_item`.
       7. Run the identified processing algorithm on `field_value` with the `param_value`, and append the result to `secondary_key`. If parameter processing fails {{fail-param}}, skip to the next `key_item`.
       8. Append a separator character (e.g., NULL) to `secondary_key`.
 5. Return `secondary_key`.
