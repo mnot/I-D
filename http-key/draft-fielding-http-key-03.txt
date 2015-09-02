@@ -29,6 +29,11 @@ Abstract
    agent is not sending request header fields in order to reduce the
    risk of fingerprinting.
 
+Note to Readers
+
+   The issues list for this draft can be found at
+   https://github.com/mnot/I-D/labels/key .
+
 Status of This Memo
 
    This Internet-Draft is submitted in full conformance with the
@@ -45,11 +50,6 @@ Status of This Memo
    material or to cite them other than as "work in progress."
 
    This Internet-Draft will expire on March 5, 2016.
-
-
-
-
-
 
 
 
@@ -268,8 +268,8 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    In particular, when a cache fully implements this specification, it
    creates a secondary cache key for every request by following the
-   instructions in the Key header field, storing it along with the
-   response when a response is cached.
+   instructions in the Key header field, ignoring the Vary header for
+   this purpose.
 
    Then, when a new request is presented, the secondary cache key
    generated for that request can be compared to the stored one to find
@@ -283,7 +283,8 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
    To generate a secondary cache key for a given request (including that
-   which is stored with a response), the following steps are taken:
+   which is stored with a response) using Key, the following steps are
+   taken:
 
    1.  Let "key_value" be the most recently seen Key header field value
        for the resource, as the result of Creating a Header Field Value
@@ -329,7 +330,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
                processing algorithm that is implemented, fail parameter
                processing (Section 2.2.2) and skip to the next
                "key_item".
-
 
 
 
