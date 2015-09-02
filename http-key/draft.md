@@ -189,21 +189,21 @@ is stored with a response), the following steps are taken:
 3. Create `key_list` by splitting `key_value` on "," characters.
 4. For `key_item` in `key_list`:
    1. Remove any leading and trailing WSP from `key_item`.
-   2. If `key_item` does not contain a ";" character, fail Key processing ({{fail}}).
+   2. If `key_item` does not contain a ";" character, fail parameter processing ({{fail-param}}) and skip to the next `key_item`.
    3. Let `field_name` be the string before the first ";" character in `key_item`.
    4. Let `field_value` be the result of Creating a Header Field Value ({{value}}) with `field_name` as the `target_field_name` and the request header list as `header_list`.
    5. Let `parameters` be the string after the first ";" character in `key_item`.
    6. Create `param_list` by splitting `parameters` on ";" characters, excepting ";" characters within quoted strings, as per {{RFC7230}} Section 3.2.6.
    7. For `parameter` in `param_list`:
-      1. If `parameter` does not contain a "=", fail Key processing ({{fail}}).
+      1. If `parameter` does not contain a "=", fail parameter processing ({{fail-param}}) and skip to the next `key_item`.
       2. Let `param_name` be the string before the first "=" character in `parameter`, case-normalized to lowercase.
-      3. If `param_name` does not identify a Key parameter processing algorithm that is implemented, fail Key processing ({{fail}}).
+      3. If `param_name` does not identify a Key parameter processing algorithm that is implemented, fail parameter processing ({{fail-param}}) and skip to the next `key_item`.
       4. Let `param_value` be the string after the first "=" character in `parameter`.
       5. If the first and last characters of `param_value` are both DQUOTE:
          1. Remove the first and last characters of `param_value`.
          2. Replace quoted-pairs within `param_value` with the octet following the backslash, as per {{RFC7230}} Section 3.2.6.
-      6. If `param_value` does not conform to the syntax defined for it by the parameter definition, fail Key processing.
-      7. Run the identified processing algorithm on `field_value` with the `param_value`, and append the result to `secondary_key`.
+      6. If `param_value` does not conform to the syntax defined for it by the parameter definition, fail parameter processing {{fail-param}} and skep to the next `key_item`.
+      7. Run the identified processing algorithm on `field_value` with the `param_value`, and append the result to `secondary_key`. If parameter processing fails {{fail-param}}, skip to the next `key_item`.
       8. Append a separator character (e.g., NULL) to `secondary_key`.
 5. Return `secondary_key`.
 
@@ -236,25 +236,15 @@ Given a header field name `target_field_name` and `header_list`, a list of
 5. Return the concatenation of `target_field_values`, separating each with "," characters.
 
 
-### Failing Key Processing {#fail}
-
-To assure consistent operation, several conditions can result in Key processing
-failing.
-
-When this happens, implementations MUST behave as if the Key header was not
-present; typically, this means falling back to the value of the Vary header
-field.
-
-
 ### Failing Parameter Processing {#fail-param}
 
 In some cases, a key parameter cannot determine a secondary cache key
 corresponding to its nominated header field value. When this happens, Key
 processing needs to fail safely, so that the correct behavior is observed.
 
-When this happens, implementations MUST either fail Key processing {#fail}, or
-assure that the nominated header fields being compared match, as per
-{{RFC7234}}, Section 4.1.
+When this happens, implementations MUST either behave as if the Key header was
+not present, or assure that the nominated header fields being compared match,
+as per {{RFC7234}}, Section 4.1.
   
 
 ## Key Parameters
@@ -280,7 +270,7 @@ div    = 1*DIGIT
 
 To process a set of header fields against a div parameter, follow these steps (or their equivalent):
 
-1. If `parameter_value` is "0", fail Key processing.
+1. If `parameter_value` is "0", fail parameter processing {{fail-param}}.
 2. If `header_value` is the empty string, return "none".
 3. If `header_value` contains a ",", remove it and all subsequent characters.
 4. Remove all WSP characters from `header_value`.
