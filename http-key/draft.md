@@ -601,3 +601,8 @@ monitoring in cache implementations are reasonable mitigations against this
 risk.
 
 --- back
+
+# Acknowledgements
+
+Thanks to Ilya Grigorik, Amos Jeffries and Yoav Weiss for their feedback.
+
