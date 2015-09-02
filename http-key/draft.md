@@ -221,14 +221,14 @@ response selection process (as defined in {{RFC7234}}, Section 4.3)) works.
 
 In particular, when a cache fully implements this specification, it creates a
 secondary cache key for every request by following the instructions in the Key
-header field, storing it along with the response when a response is cached.
+header field, ignoring the Vary header for this purpose.
 
 Then, when a new request is presented, the secondary cache key generated for
 that request can be compared to the stored one to find the appropriate
 response, to determine if it can be selected.
 
 To generate a secondary cache key for a given request (including that which
-is stored with a response), the following steps are taken:
+is stored with a response) using Key, the following steps are taken:
 
 1. Let `key_value` be the most recently seen Key header field value for the resource, as the result of Creating a Header Field Value ({{value}}).
 2. Let `secondary_key` be an empty string.
