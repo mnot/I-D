@@ -40,18 +40,17 @@ informative:
 
 --- abstract
 
-The 'Key' header field for HTTP responses allows an origin server to describe
-the secondary cache key ({{RFC7234}}, section 4.1) for a resource, by conveying
-what is effectively a short algorithm that can be used upon later requests to
-determine if a stored response is reusable for a given request.
+The 'Key' header field for HTTP responses allows an origin server to describe the secondary cache
+key ({{RFC7234}}, section 4.1) for a resource, by conveying what is effectively a short algorithm
+that can be used upon later requests to determine if a stored response is reusable for a given
+request.
 
-Key has the advantage of avoiding an additional round trip for validation
-whenever a new request differs slightly, but not significantly, from prior
-requests.
+Key has the advantage of avoiding an additional round trip for validation whenever a new request
+differs slightly, but not significantly, from prior requests.
 
-Key also informs user agents of the request characteristics that might result
-in different content, which can be useful if the user agent is not sending
-request header fields in order to reduce the risk of fingerprinting.
+Key also informs user agents of the request characteristics that might result in different content,
+which can be useful if the user agent is not sending request header fields in order to reduce the
+risk of fingerprinting.
 
 
 --- note_Note_to_Readers
@@ -63,14 +62,13 @@ The issues list for this draft can be found at <https://github.com/mnot/I-D/labe
 
 # Introduction
 
-In HTTP caching {{RFC7234}}, the Vary response header field
-effectively modifies the key used to store and access a response to include
-information from the request's headers. This allows proactive content
-negotiation {{RFC7231}} to work with caches.
+In HTTP caching {{RFC7234}}, the Vary response header field effectively modifies the key used to
+store and access a response to include information from the request's headers. This allows
+proactive content negotiation {{RFC7231}} to work with caches.
 
-However, Vary's operation is coarse-grained; although caches are allowed to
-normalise the values of headers based upon their semantics, doing so requires
-the cache to understand those semantics, and is therefore limited in utility.
+However, Vary's operation is coarse-grained; although caches are allowed to normalise the values of
+headers based upon their semantics, doing so requires the cache to understand those semantics, and
+is therefore limited in utility.
 
 For example, if a response is cached with the response header field:
 
@@ -84,16 +82,15 @@ and and its associated request is:
   Accept-Encoding: gzip
 ~~~
   
-then a subsequent request presented with the following header is (in a strict
-reading of HTTP) not a match, resulting in a cache miss:
+then a subsequent request presented with the following header is (in a strict reading of HTTP) not
+a match, resulting in a cache miss:
 
 ~~~
   Accept-Encoding: identity, gzip
 ~~~
 
-This document defines a new response header field, "Key", that allows servers
-to describe the cache key in a much more fine-grained manner, leading to
-improved cache efficiency.
+This document defines a new response header field, "Key", that allows servers to describe the cache
+key in a much more fine-grained manner, leading to improved cache efficiency.
 
 ## Examples
 
@@ -104,7 +101,8 @@ For example, this response header field:
        Accept-Encoding;match="gzip"
 ~~~
 
-instructs caches to create a secondary cache key that consists of the "_sess" and "ID" cookie values, as well as whether the Accept-Encoding header contains the whole value "gzip".
+instructs caches to create a secondary cache key that consists of the "_sess" and "ID" cookie
+values, as well as whether the Accept-Encoding header contains the whole value "gzip".
  
 This Key:
 
@@ -112,9 +110,8 @@ This Key:
   Key: user-agent;substr=MSIE
 ~~~
 
-indicates that there are two possible secondary cache keys for this resource;
-one for requests whose User-Agent header field contains "MSIE", and another for
-those that don't.
+indicates that there are two possible secondary cache keys for this resource; one for requests
+whose User-Agent header field contains "MSIE", and another for those that don't.
 
 A more complex example:
 
@@ -127,45 +124,41 @@ indicates that there are eight possible secondary cache keys.
 
 ## Notational Conventions
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-document are to be interpreted as described in {{RFC2119}}.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
+"RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
+{{RFC2119}}.
 
-This document uses the Augmented Backus-Naur Form (ABNF) notation of
-{{RFC5234}} (including the DQUOTE rule), and the list rule extension defined in
-{{RFC7230}}, Section 7. It includes by reference the field-name, quoted-string
-and quoted-pair rules from that document, and the parameter rule from
-{{RFC7231}}.
+This document uses the Augmented Backus-Naur Form (ABNF) notation of {{RFC5234}} (including the
+DQUOTE rule), and the list rule extension defined in {{RFC7230}}, Section 7. It includes by
+reference the field-name, quoted-string and quoted-pair rules from that document, and the parameter
+rule from {{RFC7231}}.
 
 
 # The "Key" Response Header Field
 
-The "Key" response header field describes the portions of the request that the
-resource currently uses to select representations.
+The "Key" response header field describes the portions of the request that the resource currently
+uses to select representations.
 
-As such, its semantics are similar to the "Vary" response header field, but it
-allows more fine-grained description, using "key parameters".
+As such, its semantics are similar to the "Vary" response header field, but it allows more
+fine-grained description, using "key parameters".
 
-Caches can use this information as part of determining whether a stored
-response can be used to satisfy a given request. When a cache knows and fully 
-understands the Key header field for a given resource, it MAY ignore the 
-Vary response header field in any stored responses for it.
+Caches can use this information as part of determining whether a stored response can be used to
+satisfy a given request. When a cache knows and fully understands the Key header field for a given
+resource, it MAY ignore the Vary response header field in any stored responses for it.
 
-Additionally, user agents can use Key to discover if additional request header
-fields might influence the resource's selection of responses.
+Additionally, user agents can use Key to discover if additional request header fields might
+influence the resource's selection of responses.
 
-The Key field-value is a comma-delimited list of selecting header fields
-(similar to Vary), with zero to many parameters each, delimited by
-semicolons. Whitespace is not allowed in the field-value between each
-field-name and its parameter set.
+The Key field-value is a comma-delimited list of selecting header fields (similar to Vary), with
+zero to many parameters each, delimited by semicolons. Whitespace is not allowed in the field-value
+between each field-name and its parameter set.
 
 ~~~
   Key = 1#field-name *( ";" parameter )
 ~~~
 
-Note that, as per {{RFC7231}}, parameter names are case-insensitive, and
-parameter values can be double-quoted strings (potentially with "\"-escaped
-characters inside).
+Note that, as per {{RFC7231}}, parameter names are case-insensitive, and parameter values can be
+double-quoted strings (potentially with "\"-escaped characters inside).
 
 The following header fields have the same effect:
 
@@ -180,29 +173,26 @@ However, Key's use of parameters allows:
   Key: Accept-Encoding;match="gzip", Cookie;param=foo
 ~~~
   
-to indicate that the secondary cache key depends upon whether requests contain
-the whole value "gzip" (in any case) in the Accept-Encoding header field, and
-the "foo" Cookie.
+to indicate that the secondary cache key depends upon whether requests contain the whole value
+"gzip" (in any case) in the Accept-Encoding header field, and the "foo" Cookie.
 
-One important difference between Vary and Key is how they are applied. Vary is
-specified to be specific to the response it occurs within, whereas Key is
-specific to the resource (as identified by the request URL) it is associated
-with. The most recent key you receive for a given resource is applicable to all
-responses from that resource.
+One important difference between Vary and Key is how they are applied. Vary is specified to be
+specific to the response it occurs within, whereas Key is specific to the resource (as identified
+by the request URL) it is associated with. The most recent key you receive for a given resource is
+applicable to all responses from that resource.
 
-This difference allows more efficient implementation (and reflects practices
-that many caches use in implementing Vary already).
+This difference allows more efficient implementation (and reflects practices that many caches use
+in implementing Vary already).
 
-This specification defines a selection of Key parameters to address common use
-cases such as selection upon Acccept-Encoding values, individual Cookie header
-fields, User-Agent substrings and numerical ranges. Future parameters may
-define further capabilities.
+This specification defines a selection of Key parameters to address common use cases such as
+selection upon Acccept-Encoding values, individual Cookie header fields, User-Agent substrings and
+numerical ranges. Future parameters may define further capabilities.
 
 
 ## Relationship to Vary
 
-Origin servers SHOULD still send Vary when using Key, to accommodate
-implementations that do not (yet) understand it. For example,
+Origin servers SHOULD still send Vary when using Key, to accommodate implementations that do not
+(yet) understand it. For example,
 
 ~~~
   Vary: Accept-Encoding
@@ -212,23 +202,22 @@ implementations that do not (yet) understand it. For example,
 
 ## Calculating a Secondary Cache Key
 
-When used by a cache to determine whether a stored response can be used to
-satisfy a presented request, each field-name in Key identifies a potential
-request header, just as with the Vary response header field.
+When used by a cache to determine whether a stored response can be used to satisfy a presented
+request, each field-name in Key identifies a potential request header, just as with the Vary
+response header field.
 
-However, each of these can have zero to many key parameters that change how the
-response selection process (as defined in {{RFC7234}}, Section 4.3)) works.
+However, each of these can have zero to many key parameters that change how the response selection
+process (as defined in {{RFC7234}}, Section 4.3)) works.
 
-In particular, when a cache fully implements this specification, it creates a
-secondary cache key for every request by following the instructions in the Key
-header field, ignoring the Vary header for this purpose.
+In particular, when a cache fully implements this specification, it creates a secondary cache key
+for every request by following the instructions in the Key header field, ignoring the Vary header
+for this purpose.
 
-Then, when a new request is presented, the secondary cache key generated for
-that request can be compared to the stored one to find the appropriate
-response, to determine if it can be selected.
+Then, when a new request is presented, the secondary cache key generated for that request can be
+compared to the stored one to find the appropriate response, to determine if it can be selected.
 
-To generate a secondary cache key for a given request (including that which
-is stored with a response) using Key, the following steps are taken:
+To generate a secondary cache key for a given request (including that which is stored with a
+response) using Key, the following steps are taken:
 
 1. Let `key_value` be the most recently seen Key header field value for the resource, as the result of Creating a Header Field Value ({{value}}).
 2. Let `secondary_key` be an empty string.
@@ -253,16 +242,14 @@ is stored with a response) using Key, the following steps are taken:
       8. Append a separator character (e.g., NULL) to `secondary_key`.
 5. Return `secondary_key`.
 
-Note that this specification does not require that exact algorithm to be
-implemented. However, implementations' observable behavior MUST be identical to
-running it. This includes parameter processing algorithms; implementations MAY
-use different internal artefacts for secondary cache keys, as long as the
-results are the same.
+Note that this specification does not require that exact algorithm to be implemented. However,
+implementations' observable behavior MUST be identical to running it. This includes parameter
+processing algorithms; implementations MAY use different internal artefacts for secondary cache
+keys, as long as the results are the same.
 
-Likewise, while the secondary cache key associated with both stored and
-presented requests is required to use the most recently seen Key header field
-for the resource in question, this can be achieved using a variety of
-implementation strategies, including (but not limited to):
+Likewise, while the secondary cache key associated with both stored and presented requests is
+required to use the most recently seen Key header field for the resource in question, this can be
+achieved using a variety of implementation strategies, including (but not limited to):
 
 * Generating a new secondary cache key for every stored response associated with the resource upon each request. 
 * Caching the secondary cache key with the stored request/response pair and re-generating it when the Key header field is observed to change.
@@ -271,8 +258,8 @@ implementation strategies, including (but not limited to):
 
 ### Creating a Header Field Value {#value}
 
-Given a header field name `target_field_name` and `header_list`, a list of
-(`field_name`, `field_value`) tuples:
+Given a header field name `target_field_name` and `header_list`, a list of (`field_name`,
+`field_value`) tuples:
 
 1. Let `target_field_values` be an empty list. 
 3. For each (`field_name`, `field_value`) tuple in `header_list`:
@@ -284,29 +271,28 @@ Given a header field name `target_field_name` and `header_list`, a list of
 
 ### Failing Parameter Processing {#fail-param}
 
-In some cases, a key parameter cannot determine a secondary cache key
-corresponding to its nominated header field value. When this happens, Key
-processing needs to fail safely, so that the correct behavior is observed.
+In some cases, a key parameter cannot determine a secondary cache key corresponding to its
+nominated header field value. When this happens, Key processing needs to fail safely, so that the
+correct behavior is observed.
 
-When this happens, implementations MUST either behave as if the Key header was
-not present, or assure that the nominated header fields being compared match,
-as per {{RFC7234}}, Section 4.1.
+When this happens, implementations MUST either behave as if the Key header was not present, or
+assure that the nominated header fields being compared match, as per {{RFC7234}}, Section 4.1.
   
 
 ## Key Parameters
 
-A Key parameter associates a name with a specific processing algorithm that
-takes two inputs; a HTTP header value "header_value" (as described in
-{{value}}), and "parameter_value", a string that indicates how the identified
-header should be processed.
+A Key parameter associates a name with a specific processing algorithm that takes two inputs; a
+HTTP header value "header_value" (as described in {{value}}), and "parameter_value", a string that
+indicates how the identified header should be processed.
 
-The set of key parameters (and their associated processing algorithms) is
-extensible; see {{iana}}. This document defines the following key parameters:
+The set of key parameters (and their associated processing algorithms) is extensible; see {{iana}}.
+This document defines the following key parameters:
 
 
 ### div
 
-The "div" parameter normalizes positive integer header values into groups by dividing them by a configured value.
+The "div" parameter normalizes positive integer header values into groups by dividing them by a
+configured value.
 
 Its value's syntax is:
 
@@ -329,7 +315,8 @@ For example, the Key:
 Key: Bar;div=5
 ~~~
 
-indicates that the "Bar" header's field value should be segmented into groups of 5. Thus, the following field values would be considered the same:
+indicates that the "Bar" header's field value should be segmented into groups of 5. Thus, the
+following field values would be considered the same:
 
 ~~~
 Bar: 1
@@ -348,8 +335,7 @@ Bar: 14, 1
 
 ### range
 
-The "range" parameter normalizes positive numeric header values into
-pre-defined "buckets".
+The "range" parameter normalizes positive numeric header values into pre-defined "buckets".
 
 Its value's syntax is:
 
@@ -358,8 +344,8 @@ range  = [ bucket ] *( ":" [ bucket ] )
 bucket = [ 0*DIGIT "." ] 1*DIGIT
 ~~~
 
-To process a set of header fields against a range parameter, follow these steps
-(or their equivalent):
+To process a set of header fields against a range parameter, follow these steps (or their
+equivalent):
 
 1. If `header_value` is the empty string, return "none".
 2. If `header_value` contains a ",", remove it and all subsequent characters.
@@ -406,8 +392,8 @@ Foo:  24   , 10
 
 ### match
 
-The "match" parameter is used to determine if an exact value occurs in a list
-of header values. It is case-sensitive.
+The "match" parameter is used to determine if an exact value occurs in a list of header values. It
+is case-sensitive.
 
 Its value's syntax is:
 
@@ -415,8 +401,8 @@ Its value's syntax is:
 match  = token
 ~~~
 
-To process a set of header fields against a match parameter, follow these steps
-(or their equivalent):
+To process a set of header fields against a match parameter, follow these steps (or their
+equivalent):
 
 1. If `header_value` is the empty string, return "none".
 2. Create `header_list` by splitting `header_value` on "," characters.
@@ -453,8 +439,8 @@ Baz: charlie2
 
 ### substr
 
-The "substr" parameter is used to determine if a value occurs as a substring of
-an item in a list of header values. It is case-sensitive.
+The "substr" parameter is used to determine if a value occurs as a substring of an item in a list
+of header values. It is case-sensitive.
 
 Its value's syntax is:
 
@@ -462,8 +448,8 @@ Its value's syntax is:
 substr  = token
 ~~~
 
-To process a set of header fields against a substr parameter, follow these
-steps (or their equivalent):
+To process a set of header fields against a substr parameter, follow these steps (or their
+equivalent):
 
 1. If `header_value` is the empty string, return "none".
 2. Create `header_list` by splitting `header_value` on "," characters.
@@ -500,7 +486,8 @@ Abc: Ben net
 
 ### param
 
-The "param" parameter considers the request header field as a list of key=value parameters, and uses the nominated key's value as the secondary cache key.
+The "param" parameter considers the request header field as a list of key=value parameters, and
+uses the nominated key's value as the secondary cache key.
 
 Its value's syntax is:
 
@@ -508,7 +495,8 @@ Its value's syntax is:
 param  = token
 ~~~
 
-To process a list of header fields against a param parameter, follow these steps (or their equivalent):
+To process a list of header fields against a param parameter, follow these steps (or their
+equivalent):
 
 1. Let `header_list` be an empty list.
 2. Create `header_list_tmp1` by splitting header_value on "," characters.
@@ -532,8 +520,7 @@ For example, the Key:
 Key: Def;param=liam
 ~~~
 
-The following headers would return the string (surrounded in single quotes)
-indicated:
+The following headers would return the string (surrounded in single quotes) indicated:
 
 ~~~
 Def: liam=123           // '123'
@@ -558,14 +545,12 @@ Key Parameter registrations MUST include the following fields:
 * Parameter Name: [name]
 * Reference: [Pointer to specification text]
 
-Values to be added to this namespace require IETF Review (see Section 4.1 of
-[RFC5226]) and MUST conform to the purpose of content coding defined in this
-section.
+Values to be added to this namespace require IETF Review (see Section 4.1 of [RFC5226]) and MUST
+conform to the purpose of content coding defined in this section.
 
 ## Registrations
 
-This specification makes the following entries in the HTTP Key Parameter
-Registry:
+This specification makes the following entries in the HTTP Key Parameter Registry:
 
 |----------------|------------|
 | Parameter Name | Reference  |
@@ -585,26 +570,23 @@ Registry:
 
 # Security Considerations
 
-Because Key is an alternative to Vary, it is possible for caches to behave
-differently based upon whether they implement Key. Likewise, because support
-for any one Key parameter is not required, it is possible for different
-implementations of Key to behave differently. In both cases, an attacker might
-be able to exploit these differences.
+Because Key is an alternative to Vary, it is possible for caches to behave differently based upon
+whether they implement Key. Likewise, because support for any one Key parameter is not required, it
+is possible for different implementations of Key to behave differently. In both cases, an attacker
+might be able to exploit these differences.
 
-This risk is mitigated by the requirement to fall back to Vary when unsupported
-parameters are encountered, coupled with the requirement that servers that use
-Key also include a relevant Vary header.
+This risk is mitigated by the requirement to fall back to Vary when unsupported parameters are
+encountered, coupled with the requirement that servers that use Key also include a relevant Vary
+header.
 
-An attacker with the ability to inject response headers might be able to
-perform a cache poisoning attack that tailors a response to a specific user
-(e.g., by Keying to a Cookie that's specific to them). While the attack is
-still possible without Key, the ability to tailor is new.
+An attacker with the ability to inject response headers might be able to perform a cache poisoning
+attack that tailors a response to a specific user (e.g., by Keying to a Cookie that's specific to
+them). While the attack is still possible without Key, the ability to tailor is new.
 
-When implemented, Key might result in a larger number of stored responses for a
-given resource in caches; this, in turn, might be used to create an attack upon
-the cache itself. Good cache replacement algorithms and denial of service
-monitoring in cache implementations are reasonable mitigations against this
-risk.
+When implemented, Key might result in a larger number of stored responses for a given resource in
+caches; this, in turn, might be used to create an attack upon the cache itself. Good cache
+replacement algorithms and denial of service monitoring in cache implementations are reasonable
+mitigations against this risk.
 
 --- back
 
