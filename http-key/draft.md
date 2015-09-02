@@ -219,10 +219,11 @@ compared to the stored one to find the appropriate response, to determine if it 
 To generate a secondary cache key for a given request (including that which is stored with a
 response) using Key, the following steps are taken:
 
-1. Let `key_value` be the most recently seen Key header field value for the resource, as the result of Creating a Header Field Value ({{value}}).
-2. Let `secondary_key` be an empty string.
-3. Create `key_list` by splitting `key_value` on "," characters.
-4. For `key_item` in `key_list`:
+1. If the Key header field is not present on the most recent cacheable (as per {{RFC7234}}, Section 3)) response seen for the resource, abort this algorithm (i.e., fall back to using Vary to determine the secondary cache key).
+2. Let `key_value` be the most recently seen Key header field value for the resource, as the result of Creating a Header Field Value ({{value}}).
+3. Let `secondary_key` be an empty string.
+4. Create `key_list` by splitting `key_value` on "," characters.
+5. For `key_item` in `key_list`:
    1. Remove any leading and trailing WSP from `key_item`.
    2. If `key_item` does not contain a ";" character, fail parameter processing ({{fail-param}}) and skip to the next `key_item`.
    3. Let `field_name` be the string before the first ";" character in `key_item`.
@@ -240,7 +241,7 @@ response) using Key, the following steps are taken:
       6. If `param_value` does not conform to the syntax defined for it by the parameter definition, fail parameter processing {{fail-param}} and skip to the next `key_item`.
       7. Run the identified processing algorithm on `field_value` with the `param_value`, and append the result to `secondary_key`. If parameter processing fails {{fail-param}}, skip to the next `key_item`.
       8. Append a separator character (e.g., NULL) to `secondary_key`.
-5. Return `secondary_key`.
+6. Return `secondary_key`.
 
 Note that this specification does not require that exact algorithm to be implemented. However,
 implementations' observable behavior MUST be identical to running it. This includes parameter
