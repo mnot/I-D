@@ -325,7 +325,7 @@ For example, the Key:
 Key: Bar;div=5
 ~~~
 
-indicates that the "Bar" header's field value should be segmented into groups of 5. Thus, the
+indicates that the "Bar" header's field value should be partitioned into groups of 5. Thus, the
 following field values would be considered the same (because, divided by 5, they all result in 1):
 
 ~~~
@@ -343,46 +343,46 @@ Bar: 14, 1
 ~~~
  
 
-### range
+### partition
 
-The "range" parameter normalizes positive numeric header values into pre-defined "buckets".
+The "partition" parameter normalizes positive numeric header values into pre-defined segments.
 
 Its value's syntax is:
 
 ~~~
-range  = [ bucket ] *( ":" [ bucket ] )
-bucket = [ 0*DIGIT "." ] 1*DIGIT
+partition = [ segment ] *( ":" [ segment ] )
+segment   = [ 0*DIGIT "." ] 1*DIGIT
 ~~~
 
-To process a set of header fields against a range parameter, follow these steps (or their
+To process a set of header fields against a partition parameter, follow these steps (or their
 equivalent):
 
 1. If `header_value` is the empty string, return "none".
 2. If `header_value` contains a ",", remove it and all subsequent characters.
 3. Remove all WSP characters from `header_value`.
-4. If `header_value` does not match the bucket ABNF rule, fail parameter processing ({{fail-param}}).
-5. Let `bucket_id` be 0.
-6. Create a list `bucket_list` by splitting `parameter_value` on ":" characters.
-6. For each `bucket_value` in `bucket_list`:
-   1. If `header_value` is less than `bucket_value` when they are numerically compared, skip to step 7.
-   2. Increment `bucket_id` by 1.
-7. Return `bucket_id`.
+4. If `header_value` does not match the segment ABNF rule, fail parameter processing ({{fail-param}}).
+5. Let `segment_id` be 0.
+6. Create a list `segment_list` by splitting `parameter_value` on ":" characters.
+6. For each `segment_value` in `segment_list`:
+   1. If `header_value` is less than `segment_value` when they are numerically compared, skip to step 7.
+   2. Increment `segment_id` by 1.
+7. Return `segment_id`.
 
 
 For example, the Key:
 
 ~~~
-Key: Foo;range=20:30:40
+Key: Foo;partition=20:30:40
 ~~~
 
-indicates that the "Foo" header's field value should be divided into four "buckets":
+indicates that the "Foo" header's field value should be divided into four segments:
 
 * less than 20
 * 20 to less than 30
 * 30 to less than 40
 * forty or greater
 
-Thus, the following headers would all be normalized to the first bucket:
+Thus, the following headers would all be normalized to the first segment:
 
 ~~~
 Foo: 1
@@ -391,7 +391,7 @@ Foo: 4, 54
 Foo: 19.9
 ~~~
 
-whereas the following would fall into the second bucket:
+whereas the following would fall into the second segment:
 
 ~~~
 Foo: 20
@@ -562,19 +562,19 @@ conform to the purpose of content coding defined in this section.
 
 This specification makes the following entries in the HTTP Key Parameter Registry:
 
-|----------------|------------|
-| Parameter Name | Reference  |
-|----------------+------------|
-| div            | {{div}}    |
-|----------------+------------|
-| range          | {{range}}  |
-|----------------+------------|
-| match          | {{match}}  |
-|----------------+------------|
-| substr         | {{substr}} |
-|----------------+------------|
-| param          | {{param}}  |
-|----------------|------------|
+|----------------|---------------|
+| Parameter Name | Reference     |
+|----------------+---------------|
+| div            | {{div}}       |
+|----------------+---------------|
+| partition      | {{partition}} |
+|----------------+---------------|
+| match          | {{match}}     |
+|----------------+---------------|
+| substr         | {{substr}}    |
+|----------------+---------------|
+| param          | {{param}}     |
+|----------------|---------------|
 
 
 
