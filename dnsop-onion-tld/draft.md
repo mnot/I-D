@@ -47,13 +47,6 @@ normative:
       - ins: N. Mathewson
       - ins: R. Dingledine
     date: April 2014
-
-informative:
-  RFC1034:
-  RFC1123:
-  RFC1928:
-  RFC3986:
-  RFC7230:
   tor-address:
     target: "https://spec.torproject.org/address-spec"
     title: "Special Hostnames in Tor"
@@ -61,6 +54,13 @@ informative:
       - ins: N. Mathewson
       - ins: R. Dingledine
     date: September 2001
+
+informative:
+  RFC1034:
+  RFC1123:
+  RFC1928:
+  RFC3986:
+  RFC7230:
 
 --- abstract
 
