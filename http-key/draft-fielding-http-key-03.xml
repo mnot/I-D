@@ -352,7 +352,7 @@ div    = 1*DIGIT
 Key: Bar;div=5
 ]]></artwork></figure>
 
-<t>indicates that the “Bar” header’s field value should be segmented into groups of 5. Thus, the
+<t>indicates that the “Bar” header’s field value should be partitioned into groups of 5. Thus, the
 following field values would be considered the same (because, divided by 5, they all result in 1):</t>
 
 <figure><artwork><![CDATA[
@@ -370,42 +370,42 @@ Bar: 14, 1
 ]]></artwork></figure>
 
 </section>
-<section anchor="range" title="range">
+<section anchor="partition" title="partition">
 
-<t>The “range” parameter normalizes positive numeric header values into pre-defined “buckets”.</t>
+<t>The “partition” parameter normalizes positive numeric header values into pre-defined segments.</t>
 
 <t>Its value’s syntax is:</t>
 
 <figure><artwork><![CDATA[
-range  = [ bucket ] *( ":" [ bucket ] )
-bucket = [ 0*DIGIT "." ] 1*DIGIT
+partition = [ segment ] *( ":" [ segment ] )
+segment   = [ 0*DIGIT "." ] 1*DIGIT
 ]]></artwork></figure>
 
-<t>To process a set of header fields against a range parameter, follow these steps (or their
+<t>To process a set of header fields against a partition parameter, follow these steps (or their
 equivalent):</t>
 
 <t><list style="numbers">
   <t>If <spanx style="verb">header_value</spanx> is the empty string, return “none”.</t>
   <t>If <spanx style="verb">header_value</spanx> contains a “,”, remove it and all subsequent characters.</t>
   <t>Remove all WSP characters from <spanx style="verb">header_value</spanx>.</t>
-  <t>If <spanx style="verb">header_value</spanx> does not match the bucket ABNF rule, fail parameter processing (<xref target="fail-param"/>).</t>
-  <t>Let <spanx style="verb">bucket_id</spanx> be 0.</t>
-  <t>Create a list <spanx style="verb">bucket_list</spanx> by splitting <spanx style="verb">parameter_value</spanx> on “:” characters.</t>
-  <t>For each <spanx style="verb">bucket_value</spanx> in <spanx style="verb">bucket_list</spanx>:
+  <t>If <spanx style="verb">header_value</spanx> does not match the segment ABNF rule, fail parameter processing (<xref target="fail-param"/>).</t>
+  <t>Let <spanx style="verb">segment_id</spanx> be 0.</t>
+  <t>Create a list <spanx style="verb">segment_list</spanx> by splitting <spanx style="verb">parameter_value</spanx> on “:” characters.</t>
+  <t>For each <spanx style="verb">segment_value</spanx> in <spanx style="verb">segment_list</spanx>:
   <list style="numbers">
-      <t>If <spanx style="verb">header_value</spanx> is less than <spanx style="verb">bucket_value</spanx> when they are numerically compared, skip to step 7.</t>
-      <t>Increment <spanx style="verb">bucket_id</spanx> by 1.</t>
+      <t>If <spanx style="verb">header_value</spanx> is less than <spanx style="verb">segment_value</spanx> when they are numerically compared, skip to step 7.</t>
+      <t>Increment <spanx style="verb">segment_id</spanx> by 1.</t>
     </list></t>
-  <t>Return <spanx style="verb">bucket_id</spanx>.</t>
+  <t>Return <spanx style="verb">segment_id</spanx>.</t>
 </list></t>
 
 <t>For example, the Key:</t>
 
 <figure><artwork><![CDATA[
-Key: Foo;range=20:30:40
+Key: Foo;partition=20:30:40
 ]]></artwork></figure>
 
-<t>indicates that the “Foo” header’s field value should be divided into four “buckets”:</t>
+<t>indicates that the “Foo” header’s field value should be divided into four segments:</t>
 
 <t><list style="symbols">
   <t>less than 20</t>
@@ -414,7 +414,7 @@ Key: Foo;range=20:30:40
   <t>forty or greater</t>
 </list></t>
 
-<t>Thus, the following headers would all be normalized to the first bucket:</t>
+<t>Thus, the following headers would all be normalized to the first segment:</t>
 
 <figure><artwork><![CDATA[
 Foo: 1
@@ -423,7 +423,7 @@ Foo: 4, 54
 Foo: 19.9
 ]]></artwork></figure>
 
-<t>whereas the following would fall into the second bucket:</t>
+<t>whereas the following would fall into the second segment:</t>
 
 <figure><artwork><![CDATA[
 Foo: 20
@@ -618,8 +618,8 @@ conform to the purpose of content coding defined in this section.</t>
       <ttcol align='left'>Reference</ttcol>
       <c>div</c>
       <c><xref target="div"/></c>
-      <c>range</c>
-      <c><xref target="range"/></c>
+      <c>partition</c>
+      <c><xref target="partition"/></c>
       <c>match</c>
       <c><xref target="match"/></c>
       <c>substr</c>

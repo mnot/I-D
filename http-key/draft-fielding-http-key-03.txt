@@ -85,7 +85,7 @@ Table of Contents
        2.2.2.  Failing Parameter Processing  . . . . . . . . . . . .   9
      2.3.  Key Parameters  . . . . . . . . . . . . . . . . . . . . .   9
        2.3.1.  div . . . . . . . . . . . . . . . . . . . . . . . . .   9
-       2.3.2.  range . . . . . . . . . . . . . . . . . . . . . . . .  10
+       2.3.2.  partition . . . . . . . . . . . . . . . . . . . . . .  10
        2.3.3.  match . . . . . . . . . . . . . . . . . . . . . . . .  11
        2.3.4.  substr  . . . . . . . . . . . . . . . . . . . . . . .  12
        2.3.5.  param . . . . . . . . . . . . . . . . . . . . . . . .  13
@@ -513,7 +513,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    Key: Bar;div=5
 
-   indicates that the "Bar" header's field value should be segmented
+   indicates that the "Bar" header's field value should be partitioned
    into groups of 5.  Thus, the following field values would be
    considered the same (because, divided by 5, they all result in 1):
 
@@ -528,18 +528,18 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    Bar: 10
    Bar: 14, 1
 
-2.3.2.  range
+2.3.2.  partition
 
-   The "range" parameter normalizes positive numeric header values into
-   pre-defined "buckets".
+   The "partition" parameter normalizes positive numeric header values
+   into pre-defined segments.
 
    Its value's syntax is:
 
-   range  = [ bucket ] *( ":" [ bucket ] )
-   bucket = [ 0*DIGIT "." ] 1*DIGIT
+   partition = [ segment ] *( ":" [ segment ] )
+   segment   = [ 0*DIGIT "." ] 1*DIGIT
 
-   To process a set of header fields against a range parameter, follow
-   these steps (or their equivalent):
+   To process a set of header fields against a partition parameter,
+   follow these steps (or their equivalent):
 
    1.  If "header_value" is the empty string, return "none".
 
@@ -548,10 +548,10 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    3.  Remove all WSP characters from "header_value".
 
-   4.  If "header_value" does not match the bucket ABNF rule, fail
+   4.  If "header_value" does not match the segment ABNF rule, fail
        parameter processing (Section 2.2.2).
 
-   5.  Let "bucket_id" be 0.
+   5.  Let "segment_id" be 0.
 
 
 
@@ -562,24 +562,24 @@ Fielding & Nottingham    Expires March 10, 2016                [Page 10]
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
-   6.  Create a list "bucket_list" by splitting "parameter_value" on ":"
-       characters.
+   6.  Create a list "segment_list" by splitting "parameter_value" on
+       ":" characters.
 
-   7.  For each "bucket_value" in "bucket_list":
+   7.  For each "segment_value" in "segment_list":
 
-       1.  If "header_value" is less than "bucket_value" when they are
+       1.  If "header_value" is less than "segment_value" when they are
            numerically compared, skip to step 7.
 
-       2.  Increment "bucket_id" by 1.
+       2.  Increment "segment_id" by 1.
 
-   8.  Return "bucket_id".
+   8.  Return "segment_id".
 
    For example, the Key:
 
-   Key: Foo;range=20:30:40
+   Key: Foo;partition=20:30:40
 
    indicates that the "Foo" header's field value should be divided into
-   four "buckets":
+   four segments:
 
    o  less than 20
 
@@ -590,14 +590,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    o  forty or greater
 
    Thus, the following headers would all be normalized to the first
-   bucket:
+   segment:
 
    Foo: 1
    Foo: 0
    Foo: 4, 54
    Foo: 19.9
 
-   whereas the following would fall into the second bucket:
+   whereas the following would fall into the second segment:
 
    Foo: 20
    Foo: 29.999
@@ -813,7 +813,7 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
                     | Parameter Name | Reference     |
                     +----------------+---------------+
                     | div            | Section 2.3.1 |
-                    | range          | Section 2.3.2 |
+                    | partition      | Section 2.3.2 |
                     | match          | Section 2.3.3 |
                     | substr         | Section 2.3.4 |
                     | param          | Section 2.3.5 |
