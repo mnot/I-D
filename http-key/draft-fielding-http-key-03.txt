@@ -5,8 +5,7 @@
 Network Working Group                                        R. Fielding
 Internet-Draft                                Adobe Systems Incorporated
 Intended status: Informational                             M. Nottingham
-Expires: March 5, 2016
-                                                       September 2, 2015
+Expires: March 10, 2016                                September 7, 2015
 
 
                    The Key HTTP Response Header Field
@@ -49,11 +48,12 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on March 5, 2016.
+   This Internet-Draft will expire on March 10, 2016.
 
 
 
-Fielding & Nottingham     Expires March 5, 2016                 [Page 1]
+
+Fielding & Nottingham    Expires March 10, 2016                 [Page 1]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -79,71 +79,69 @@ Table of Contents
      1.1.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   3
      1.2.  Notational Conventions  . . . . . . . . . . . . . . . . .   4
    2.  The "Key" Response Header Field . . . . . . . . . . . . . . .   4
-     2.1.  Relationship to Vary  . . . . . . . . . . . . . . . . . .   5
-     2.2.  Calculating a Secondary Cache Key . . . . . . . . . . . .   5
+     2.1.  Relationship with Vary  . . . . . . . . . . . . . . . . .   5
+     2.2.  Calculating a Secondary Cache Key . . . . . . . . . . . .   6
        2.2.1.  Creating a Header Field Value . . . . . . . . . . . .   8
-       2.2.2.  Failing Parameter Processing  . . . . . . . . . . . .   8
-     2.3.  Key Parameters  . . . . . . . . . . . . . . . . . . . . .   8
+       2.2.2.  Failing Parameter Processing  . . . . . . . . . . . .   9
+     2.3.  Key Parameters  . . . . . . . . . . . . . . . . . . . . .   9
        2.3.1.  div . . . . . . . . . . . . . . . . . . . . . . . . .   9
        2.3.2.  range . . . . . . . . . . . . . . . . . . . . . . . .  10
        2.3.3.  match . . . . . . . . . . . . . . . . . . . . . . . .  11
        2.3.4.  substr  . . . . . . . . . . . . . . . . . . . . . . .  12
        2.3.5.  param . . . . . . . . . . . . . . . . . . . . . . . .  13
-   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
-     3.1.  Procedure . . . . . . . . . . . . . . . . . . . . . . . .  14
+   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  15
+     3.1.  Procedure . . . . . . . . . . . . . . . . . . . . . . . .  15
      3.2.  Registrations . . . . . . . . . . . . . . . . . . . . . .  15
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
-   5.  Normative References  . . . . . . . . . . . . . . . . . . . .  15
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  16
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  16
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  16
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .  16
+     5.2.  Informative References  . . . . . . . . . . . . . . . . .  16
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  17
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
 
 1.  Introduction
 
    In HTTP caching [RFC7234], the Vary response header field effectively
    modifies the key used to store and access a response to include
-   information from the request's headers.  This allows proactive
-   content negotiation [RFC7231] to work with caches.
-
-   However, Vary's operation is coarse-grained; although caches are
-   allowed to normalise the values of headers based upon their
+   information from the request's headers.  This "secondary cache key"
+   allows proactive content negotiation [RFC7231] to work with caches.
 
 
 
-Fielding & Nottingham     Expires March 5, 2016                 [Page 2]
+
+Fielding & Nottingham    Expires March 10, 2016                 [Page 2]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
-   semantics, doing so requires the cache to understand those semantics,
-   and is therefore limited in utility.
+   Vary's operation is generic; it works well when caches understand the
+   semantics of the selecting headers.  For example, the Accept-Language
+   request header field has a well-defined syntax for expressing the
+   client's preferences; a cache that understands this header field can
+   select the appropriate response (based upon its Content-Language
+   header field) and serve it to a client, without any knowledge of the
+   underlying resource.
 
-   For example, if a response is cached with the response header field:
-
-     Vary: Accept-Encoding
-
-   and and its associated request is:
-
-     Accept-Encoding: gzip
-
-   then a subsequent request presented with the following header is (in
-   a strict reading of HTTP) not a match, resulting in a cache miss:
-
-     Accept-Encoding: identity, gzip
+   Vary does not work as well when the criteria for selecting a response
+   are specific to the resource.  For example, if the nature of the
+   response depends upon the presence or absence of a particular Cookie
+   ([RFC6265]) in a request, Vary doesn't have a mechanism to offer
+   enough fine-grained, resource-specific information to aid a cache's
+   selection of the appropriate response.
 
    This document defines a new response header field, "Key", that allows
-   servers to describe the cache key in a much more fine-grained manner,
-   leading to improved cache efficiency.
+   resources to describe the secondary cache key in a fine-grained,
+   resource-specific manner, leading to improved cache efficiency when
+   responses depend upon such headers.
 
 1.1.  Examples
 
    For example, this response header field:
 
-     Key: cookie;param=_sess;param=ID,
-          Accept-Encoding;match="gzip"
+     Key: cookie;param=_sess;param=ID
 
-   instructs caches to create a secondary cache key that consists of the
-   "_sess" and "ID" cookie values, as well as whether the Accept-
-   Encoding header contains the whole value "gzip".
+   indicates that the selected response depends upon the "_sess" and
+   "ID" cookie values.
 
    This Key:
 
@@ -155,17 +153,19 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    A more complex example:
 
-     Key: user-agent;substr=MSIE;Substr="mobile";substr=bot
+     Key: user-agent;substr=MSIE;Substr="mobile", Cookie;param="ID"
 
-   indicates that there are eight possible secondary cache keys.
-
-
-
-
+   indicates that the selected response depends on the presence of two
+   strings in the User-Agent request header field, as well as the value
+   of the "ID" cookie request header field.
 
 
 
-Fielding & Nottingham     Expires March 5, 2016                 [Page 3]
+
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                 [Page 3]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
@@ -221,16 +221,15 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
 
-Fielding & Nottingham     Expires March 5, 2016                 [Page 4]
+Fielding & Nottingham    Expires March 10, 2016                 [Page 4]
 
 Internet-Draft     The Key HTTP Response Header Field     September 2015
 
 
-     Key: Accept-Encoding;match="gzip", Cookie;param=foo
+     Key: Accept-Encoding, Cookie;param=foo
 
-   to indicate that the secondary cache key depends upon whether
-   requests contain the whole value "gzip" (in any case) in the Accept-
-   Encoding header field, and the "foo" Cookie.
+   to indicate that the secondary cache key depends upon the Accept-
+   Encoding header field and the "foo" Cookie.
 
    One important difference between Vary and Key is how they are
    applied.  Vary is specified to be specific to the response it occurs
@@ -243,17 +242,45 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    practices that many caches use in implementing Vary already).
 
    This specification defines a selection of Key parameters to address
-   common use cases such as selection upon Acccept-Encoding values,
-   individual Cookie header fields, User-Agent substrings and numerical
-   ranges.  Future parameters may define further capabilities.
+   common use cases such as selection upon individual Cookie header
+   fields, User-Agent substrings and numerical ranges.  Future
+   parameters may define further capabilities.
 
-2.1.  Relationship to Vary
+2.1.  Relationship with Vary
 
-   Origin servers SHOULD still send Vary when using Key, to accommodate
-   implementations that do not (yet) understand it.  For example,
+   Origin servers SHOULD still send Vary when using Key, to ensure
+   backwards compatibility.
 
-     Vary: Accept-Encoding
-     Key: Accept-Encoding;match="gzip"
+   For example,
+
+     Vary: User-Agent
+     Key: User-Agent;substr="mozilla"
+
+   Note that, in some cases, it may be better to explicitly use "Vary:
+   *" if clients and caches don't have any practical way to use the Vary
+   header field's value.  For example,
+
+     Vary: *
+     Key: Cookie;param="ID"
+
+   Except when Vary: * is used, the set of headers used in Key SHOULD
+   reflect the same request header fields as Vary does, even if they
+   don't have parameters.  For example,
+
+     Vary: Accept-Encoding, User-Agent
+     Key: Accept-Encoding, User-Agent;substr="mozilla"
+
+   Here, Accept-Encoding is included in Key without parameters; caches
+   MAY treat these as they do values in the Vary header, relying upon
+   knowledge of their generic semantics to select an appropriate
+   response.
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                 [Page 5]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
 
 2.2.  Calculating a Secondary Cache Key
 
@@ -274,13 +301,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    Then, when a new request is presented, the secondary cache key
    generated for that request can be compared to the stored one to find
    the appropriate response, to determine if it can be selected.
-
-
-
-Fielding & Nottingham     Expires March 5, 2016                 [Page 5]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
    To generate a secondary cache key for a given request (including that
    which is stored with a response) using Key, the following steps are
@@ -310,6 +330,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
        3.  Let "field_name" be the string before the first ";" character
            in "key_item".
 
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                 [Page 6]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
+
        4.  Let "field_value" be the result of Creating a Header Field
            Value (Section 2.2.1) with "field_name" as the
            "target_field_name" and the request header list as
@@ -330,13 +358,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
            2.  Let "param_name" be the string before the first "="
                character in "parameter", case-normalized to lowercase.
-
-
-
-Fielding & Nottingham     Expires March 5, 2016                 [Page 6]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
            3.  If "param_name" does not identify a Key parameter
                processing algorithm that is implemented, fail parameter
@@ -365,6 +386,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
                "secondary_key".  If parameter processing fails
                Section 2.2.2, skip to the next "key_item".
 
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                 [Page 7]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
+
            8.  Append a separator character (e.g., NULL) to
                "secondary_key".
 
@@ -384,15 +413,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    o  Generating a new secondary cache key for every stored response
       associated with the resource upon each request.
-
-
-
-
-
-Fielding & Nottingham     Expires March 5, 2016                 [Page 7]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
    o  Caching the secondary cache key with the stored request/response
       pair and re-generating it when the Key header field is observed to
@@ -422,6 +442,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    4.  Return the concatenation of "target_field_values", separating
        each with "," characters.
 
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                 [Page 8]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
+
 2.2.2.  Failing Parameter Processing
 
    In some cases, a key parameter cannot determine a secondary cache key
@@ -439,16 +467,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    algorithm that takes two inputs; a HTTP header value "header_value"
    (as described in Section 2.2.1), and "parameter_value", a string that
    indicates how the identified header should be processed.
-
-
-
-
-
-
-Fielding & Nottingham     Expires March 5, 2016                 [Page 8]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
    The set of key parameters (and their associated processing
    algorithms) is extensible; see Section 3.  This document defines the
@@ -479,6 +497,15 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    5.  If "header_value" does not match the div ABNF rule, fail
        parameter processing (Section 2.2.2).
 
+
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                 [Page 9]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
+
    6.  Return the quotient of "header_value" / "parameter_value"
        (omitting the modulus).
 
@@ -496,15 +523,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    whereas these would be considered to be in a different group
    (because, divided by 5, they all result in 2);
-
-
-
-
-
-Fielding & Nottingham     Expires March 5, 2016                 [Page 9]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
    Bar: 12
    Bar: 10
@@ -535,6 +553,15 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    5.  Let "bucket_id" be 0.
 
+
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                [Page 10]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
+
    6.  Create a list "bucket_list" by splitting "parameter_value" on ":"
        characters.
 
@@ -553,14 +580,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    indicates that the "Foo" header's field value should be divided into
    four "buckets":
-
-
-
-
-Fielding & Nottingham     Expires March 5, 2016                [Page 10]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
    o  less than 20
 
@@ -591,6 +610,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    Its value's syntax is:
 
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                [Page 11]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
+
    match  = token
 
    To process a set of header fields against a match parameter, follow
@@ -609,14 +636,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
            identical to "parameter_value", return "1".
 
    4.  Return "0".
-
-
-
-
-Fielding & Nottingham     Expires March 5, 2016                [Page 11]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
    For example, the Key:
 
@@ -647,6 +666,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    substr  = token
 
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                [Page 12]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
+
    To process a set of header fields against a substr parameter, follow
    these steps (or their equivalent):
 
@@ -665,14 +692,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    4.  Return "0".
 
    For example, the Key:
-
-
-
-
-Fielding & Nottingham     Expires March 5, 2016                [Page 12]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
    Key: Abc;substr=bennet
 
@@ -704,6 +723,13 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    To process a list of header fields against a param parameter, follow
    these steps (or their equivalent):
 
+
+
+Fielding & Nottingham    Expires March 10, 2016                [Page 13]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
+
    1.  Let "header_list" be an empty list.
 
    2.  Create "header_list_tmp1" by splitting header_value on ","
@@ -721,14 +747,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
            2.  Append "header_item_tmp2" to header_list.
 
    4.  For each "header_item" in "header_list":
-
-
-
-
-Fielding & Nottingham     Expires March 5, 2016                [Page 13]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
        1.  If the "=" character does not occur within "header_item",
            skip to the next "header_item".
@@ -760,6 +778,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    Def: abc=123; liam=890  // '890'
    Def: liam="678"         // '"678"'
 
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                [Page 14]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
+
 3.  IANA Considerations
 
    This specification defines the HTTP Key Parameter Registry,
@@ -777,14 +803,6 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    Values to be added to this namespace require IETF Review (see
    Section 4.1 of [RFC5226]) and MUST conform to the purpose of content
    coding defined in this section.
-
-
-
-
-Fielding & Nottingham     Expires March 5, 2016                [Page 14]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
 3.2.  Registrations
 
@@ -816,6 +834,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
 
    An attacker with the ability to inject response headers might be able
    to perform a cache poisoning attack that tailors a response to a
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                [Page 15]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
+
    specific user (e.g., by Keying to a Cookie that's specific to them).
    While the attack is still possible without Key, the ability to tailor
    is new.
@@ -826,21 +852,14 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
    replacement algorithms and denial of service monitoring in cache
    implementations are reasonable mitigations against this risk.
 
-5.  Normative References
+5.  References
+
+5.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/
               RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
-
-
-
-
-
-Fielding & Nottingham     Expires March 5, 2016                [Page 15]
-
-Internet-Draft     The Key HTTP Response Header Field     September 2015
-
 
    [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
               Specifications: ABNF", STD 68, RFC 5234, DOI 10.17487/
@@ -861,6 +880,23 @@ Internet-Draft     The Key HTTP Response Header Field     September 2015
               Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
               RFC 7234, DOI 10.17487/RFC7234, June 2014,
               <http://www.rfc-editor.org/info/rfc7234>.
+
+5.2.  Informative References
+
+   [RFC6265]  Barth, A., "HTTP State Management Mechanism", RFC 6265,
+              DOI 10.17487/RFC6265, April 2011,
+              <http://www.rfc-editor.org/info/rfc6265>.
+
+
+
+
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                [Page 16]
+
+Internet-Draft     The Key HTTP Response Header Field     September 2015
+
 
 Appendix A.  Acknowledgements
 
@@ -893,4 +929,24 @@ Authors' Addresses
 
 
 
-Fielding & Nottingham     Expires March 5, 2016                [Page 16]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Fielding & Nottingham    Expires March 10, 2016                [Page 17]
