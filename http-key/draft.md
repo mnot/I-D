@@ -36,6 +36,7 @@ normative:
   RFC7234:
   
 informative:
+  RFC6265:
 
 
 --- abstract
@@ -63,46 +64,34 @@ The issues list for this draft can be found at <https://github.com/mnot/I-D/labe
 # Introduction
 
 In HTTP caching {{RFC7234}}, the Vary response header field effectively modifies the key used to
-store and access a response to include information from the request's headers. This allows
-proactive content negotiation {{RFC7231}} to work with caches.
+store and access a response to include information from the request's headers. This "secondary
+cache key" allows proactive content negotiation {{RFC7231}} to work with caches.
 
-However, Vary's operation is coarse-grained; although caches are allowed to normalise the values of
-headers based upon their semantics, doing so requires the cache to understand those semantics, and
-is therefore limited in utility.
+Vary's operation is generic; it works well when caches understand the semantics of the selecting
+headers. For example, the Accept-Language request header field has a well-defined syntax for
+expressing the client's preferences; a cache that understands this header field can select the
+appropriate response (based upon its Content-Language header field) and serve it to a client,
+without any knowledge of the underlying resource.
 
-For example, if a response is cached with the response header field:
+Vary does not work as well when the criteria for selecting a response are specific to the resource.
+For example, if the nature of the response depends upon the presence or absence of a particular
+Cookie ({{RFC6265}}) in a request, Vary doesn't have a mechanism to offer enough fine-grained,
+resource-specific information to aid a cache's selection of the appropriate response.
 
-~~~
-  Vary: Accept-Encoding
-~~~
-  
-and and its associated request is:
+This document defines a new response header field, "Key", that allows resources to describe the
+secondary cache key in a fine-grained, resource-specific manner, leading to improved cache
+efficiency when responses depend upon such headers.
 
-~~~
-  Accept-Encoding: gzip
-~~~
-  
-then a subsequent request presented with the following header is (in a strict reading of HTTP) not
-a match, resulting in a cache miss:
-
-~~~
-  Accept-Encoding: identity, gzip
-~~~
-
-This document defines a new response header field, "Key", that allows servers to describe the cache
-key in a much more fine-grained manner, leading to improved cache efficiency.
 
 ## Examples
 
 For example, this response header field:
 
 ~~~
-  Key: cookie;param=_sess;param=ID, 
-       Accept-Encoding;match="gzip"
+  Key: cookie;param=_sess;param=ID
 ~~~
 
-instructs caches to create a secondary cache key that consists of the "_sess" and "ID" cookie
-values, as well as whether the Accept-Encoding header contains the whole value "gzip".
+indicates that the selected response depends upon the "_sess" and "ID" cookie values.
  
 This Key:
 
@@ -116,10 +105,11 @@ whose User-Agent header field contains "MSIE", and another for those that don't.
 A more complex example:
 
 ~~~
-  Key: user-agent;substr=MSIE;Substr="mobile";substr=bot
+  Key: user-agent;substr=MSIE;Substr="mobile", Cookie;param="ID"
 ~~~
 
-indicates that there are eight possible secondary cache keys. 
+indicates that the selected response depends on the presence of two strings in the User-Agent
+request header field, as well as the value of the "ID" cookie request header field.
 
 
 ## Notational Conventions
@@ -170,11 +160,11 @@ The following header fields have the same effect:
 However, Key's use of parameters allows:
 
 ~~~
-  Key: Accept-Encoding;match="gzip", Cookie;param=foo
+  Key: Accept-Encoding, Cookie;param=foo
 ~~~
   
-to indicate that the secondary cache key depends upon whether requests contain the whole value
-"gzip" (in any case) in the Accept-Encoding header field, and the "foo" Cookie.
+to indicate that the secondary cache key depends upon the Accept-Encoding header field and the
+"foo" Cookie.
 
 One important difference between Vary and Key is how they are applied. Vary is specified to be
 specific to the response it occurs within, whereas Key is specific to the resource (as identified
@@ -185,19 +175,38 @@ This difference allows more efficient implementation (and reflects practices tha
 in implementing Vary already).
 
 This specification defines a selection of Key parameters to address common use cases such as
-selection upon Acccept-Encoding values, individual Cookie header fields, User-Agent substrings and
-numerical ranges. Future parameters may define further capabilities.
+selection upon individual Cookie header fields, User-Agent substrings and numerical ranges. Future
+parameters may define further capabilities.
 
 
-## Relationship to Vary
+## Relationship with Vary
 
-Origin servers SHOULD still send Vary when using Key, to accommodate implementations that do not
-(yet) understand it. For example,
+Origin servers SHOULD still send Vary when using Key, to ensure backwards compatibility. 
+
+For example,
 
 ~~~
-  Vary: Accept-Encoding
-  Key: Accept-Encoding;match="gzip"
+  Vary: User-Agent
+  Key: User-Agent;substr="mozilla"
 ~~~
+
+Note that, in some cases, it may be better to explicitly use "Vary: *" if clients and caches don't have any practical way to use the Vary header field's value. For example,
+
+~~~
+  Vary: *
+  Key: Cookie;param="ID"
+~~~
+
+Except when Vary: * is used, the set of headers used in Key SHOULD reflect the same request header fields as Vary does, even if they don't have parameters. For example,
+
+~~~
+  Vary: Accept-Encoding, User-Agent
+  Key: Accept-Encoding, User-Agent;substr="mozilla"
+~~~
+
+Here, Accept-Encoding is included in Key without parameters; caches MAY treat these as they do
+values in the Vary header, relying upon knowledge of their generic semantics to select an
+appropriate response.
 
 
 ## Calculating a Secondary Cache Key
