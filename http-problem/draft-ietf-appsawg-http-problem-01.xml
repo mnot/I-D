@@ -4,6 +4,7 @@
    <!ENTITY rfc2119 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>  
    <!ENTITY rfc7303 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7303.xml'>  
    <!ENTITY rfc3986 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml'>  
+   <!ENTITY rfc4918 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4918.xml'>  
    <!ENTITY rfc7159 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7159.xml'>  
    <!ENTITY rfc5234 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5234.xml'>  
    <!ENTITY rfc5987 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5987.xml'>  
@@ -111,7 +112,7 @@
       <t>Additionally, problems can contain other information, such as a URI
       that identifies the specific occurrence of the problem (effectively
       giving an identifier to the concept "The time Joe didn't have enough
-      credit last Thursday"), which may be useful for support or forensic
+      credit last Thursday"), which can be useful for support or forensic
       purposes.</t>
       
       <t>The data model for problem details is a JSON <xref target="RFC7159"/>
@@ -176,6 +177,31 @@ Content-Language: en
       "balance" conveys the account's balance, and "accounts" gives links
       where the account can be topped up.</t>
 
+      <t>The ability to convey problem-specific extensions allows more than 
+        one problem to be conveyed. For example:</t>
+        
+        <figure><artwork><![CDATA[
+   HTTP/1.1 400 Bad Request
+   Content-Type: application/problem+json
+   Content-Language: en
+
+   {
+    "type": "https://example.net/validation-error",
+    "title": "Your request parameters didn't validate.",
+    "invalid-params": [ { 
+                          "name": "age", 
+                          "reason": "must be a positive integer"
+                        },
+                        { 
+                          "name": "color",
+                          "reason": "must be 'green', 'red' or 'blue'"}
+                      ]
+   }]]></artwork></figure>
+
+     <t>Note that this requires each of the sub-problems to be similar enough
+     to use the same HTTP status code. If they do not, the 207 (Multi-Status)
+     <xref target="RFC4918"/> code could be used to encapsulate multiple status
+     messages.</t>
           
         <section title="Problem Details Object Members" anchor="members">
 
@@ -479,6 +505,7 @@ Content-Language: en
         </reference>
         &rfc7303;
         &rfc5988;
+        &rfc4918;
         &rfc6694;
         &rfc6838;
         &html;
