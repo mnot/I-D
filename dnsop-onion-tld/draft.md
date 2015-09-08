@@ -83,7 +83,7 @@ server. The identity of the client may or may not be disclosed through an
 optional cryptographic authentication process.
 
 .onion names are self-authenticating, in that they are derived from the
-cryptographic keys used by the server in a client verifiable manner during
+cryptographic keys used by the server in a client-verifiable manner during
 connection establishment. As a result, the cryptographic label component of a
 .onion name is not intended to be human-meaningful.
 
@@ -95,15 +95,16 @@ corresponds to the algorithmic derivation of the name.
 
 In this way, .onion names are "special" in the sense defined by {{RFC6761}}
 Section 3; they require hardware and software implementations to change their
-handling, in order to achieve the desired properties of the name (see
+handling in order to achieve the desired properties of the name (see
 {{security}}). These differences are listed in {{onion}}.
 
 Like Top-Level Domain Names, .onion names can have an arbitrary number of
 subdomain components. This information is not meaningful to the Tor protocol,
-but can be used in application protocols like HTTP {{RFC7230}}. Note that such
-names must conform to DNS name syntax (as defined in Section 3.5 of {{RFC1034}}
-and Section 2.1 of {{RFC1123}}), as they will still be exposed to DNS
-implementations.
+but can be used in application protocols like HTTP {{RFC7230}}. 
+
+Note that .onion names are required conform to DNS name syntax (as defined in
+Section 3.5 of {{RFC1034}} and Section 2.1 of {{RFC1123}}), as they will still
+be exposed to DNS implementations.
 
 See {{tor-address}} and {{tor-rendezvous}} for the details of the creation and
 use of .onion names.
@@ -121,7 +122,7 @@ These properties have the following effects upon parties using or processing
 .onion names (as per {{RFC6761}}):
 
 1. Users: Human users are expected to recognize .onion names as having
-different security properties (see {{intro}}), and also being only available
+different security properties (see {{intro}}), and also as being only available
 through software that is aware of onion names.
 
 2. Application Software: Applications (including proxies) that implement the
@@ -151,7 +152,7 @@ Note that the restriction upon the registration of .onion names does not
 prohibit IANA from inserting a record into the root zone database to reserve
 the name.
 
-Likewise, it does not prevent non-DNS service providers such as (trust
+Likewise, it does not prevent non-DNS service providers (such as trust
 providers) from supporting .onion names in their applications.
 
 # IANA Considerations
