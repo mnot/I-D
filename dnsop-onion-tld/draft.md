@@ -135,8 +135,9 @@ that do not implement the Tor protocol SHOULD generate an error upon the use of
 requests for .onion names by resolving them according to {{tor-rendezvous}} or
 by responding with NXDOMAIN.
 
-4. Caching DNS Servers: Caching servers SHOULD NOT attempt to look up records
-for .onion names. They MUST generate NXDOMAIN for all such queries.
+4. Caching DNS Servers: Caching servers, where not explicitly adapted to
+interoperate with Tor, SHOULD NOT attempt to look up records for .onion names.
+They MUST generate NXDOMAIN for all such queries.
 
 5. Authoritative DNS Servers: Authoritative servers MUST respond to queries
 for .onion with NXDOMAIN.
