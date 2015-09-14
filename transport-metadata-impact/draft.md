@@ -19,7 +19,25 @@ author:
     name: Mark Nottingham
     organization: 
     email: mnot@mnot.net
-    uri: http://www.mnot.net/
+    uri: https://www.mnot.net/
+ -
+    ins: J. Hall
+    name: Joseph Lorenzo Hall
+    organization: CDT
+    uri: https://cdt.org/
+    email: joe@cdt.org
+ -
+    ins: N. ten Oever
+    name: Niels ten Oever
+    organization: Article19
+    uri: https://www.article19.org/
+    email: niels@article19.org    
+ -
+    ins: W. Seltzer
+    name: Wendy Seltzer
+    organization: W3C
+    email: wseltzer@w3.org
+    uri: http://wendy.seltzer.org/
 
 normative:
 
@@ -50,6 +68,27 @@ informative:
       ins: J. Hoffman-Andrews
       name: Jacob Hoffman-Andrews
       organization: Electronic Frontier Foundation
+  Injection:
+    title: "The Rise of Mobile Tracking Headers: How Telcos Around the World Are Threatening Your Privacy"
+    target: "https://www.accessnow.org/blog/2015/08/17/read-our-new-report-on-the-troubling-rise-of-tracking-headers-worldwide2"
+    date: 17 August 2015
+    author:
+      - 
+        ins: N. Ammari
+        name: Nader Ammari
+        organization: Access
+      - 
+        ins: G. Björksten
+        name: Gustaf Björksten
+        organization: Access
+      - 
+        ins: P. Micek
+        name: Peter Micek
+        organization: Access
+      - 
+        ins: D. Olukotun
+        name: Deji Olukotun
+        organization: Access     
   RFC3864:
   RFC7230:
   RFC1984:
@@ -65,7 +104,7 @@ informative:
 
 --- abstract
 
-This draft attempts to identify potential impacts associated with new metadata facilities in Internet protocols, and suggest possible mitigations. Its goal is to have the discussion of these tradeoffs up-front, rather than after the development of such mechanisms.
+This draft attempts to identify potential impacts associated with new, extensible metadata facilities in Internet protocols, and suggests possible mitigations. Its goal is to have the discussion of these tradeoffs up-front, rather than after the development of such mechanisms.
 
 --- middle
 
@@ -83,23 +122,23 @@ At the same time, it has been widely noted that "metadata" in various forms can 
 
 Indeed, much of the effort in combatting pervasive monitoring (as per {{RFC7258}}) has focused on minimizing metadata in existing, known protocols (such as TLS and HTTP).
 
-Any new metadata facility, then – whether it be introduced to an existing protocol, or as part of a new one – should be carefully scrutinized and narrowly tailored to conservatively emit metadata.
+Any new metadata facility, then – whether it be introduced to an existing protocol, or as part of a new one – needs to be carefully scrutinized and narrowly tailored to conservatively emit metadata. Of particular concern is an observed trend towards arbitrarily extensible metadata.
 
 This draft attempts to identify potential impacts associated with new metadata facilities in Internet protocols, and suggest possible mitigations. Its goal is to initiate a discussion of these tradeoffs up-front, rather than waiting until after the development of such mechanisms.
 
-Adding metadata to protocols is not an inherent harm – i.e., there are some legitimate uses of metadata, particularly if it eases the adoption of encrypted protocols or aligns well with both the interests of users and service or network operations, e.g., traffic management on mobile networks. However, the balance between the interests of stakeholders like end users, content providers and network operators needs to be carefully considered.
+Adding metadata to protocols is not an inherent harm – i.e., there are some legitimate uses of metadata, particularly if it eases the adoption of encrypted protocols or aligns well with both the interests of users and service or network operations, e.g., traffic management on mobile networks. However, the balance between the interests of constituents like end users, content providers and network operators needs to be carefully considered.
 
 # Potential Impact
 
 ## Security and Privacy
 
-In late 2014, it was found that Verizon was injecting HTTP headers into requests that identified their mobile customers using a unique identifier, allowing "third-party advertisers and websites to assemble a deep, permanent profile of visitors' web browsing habits without their consent."  {{X-UIDH}}
+It's been established {{Injection}} that many network operators inject HTTP headers into requests, in order to identify their customers using a unique identifier, thereby allowing "third-party advertisers and websites to assemble a deep, permanent profile of visitors' web browsing habits without their consent." {{X-UIDH}}
 
-In doing so, Verizon was taking advantage of a relatively unconstrained extension point in the HTTP protocol -- header fields. While HTTP header fields do require registration {{RFC3864}}, the requirements are lax, and fields are often used without registration, because there is no technical enforcement of the requirements, due to HTTP's policy of ignoring unrecognized header fields {{RFC7230}}.
+In doing so, these networks are taking advantage of a relatively unconstrained extension point in the HTTP protocol -- header fields. While HTTP header fields do require registration {{RFC3864}}, the requirements are lax, and fields are often used without registration, because there is no technical enforcement of the requirements, due to HTTP's policy of ignoring unrecognized header fields {{RFC7230}}.
 
 HTTP header fields can be made a protected end-to-end facility by using HTTPS, avoiding the risk of such injection. A new transport metadata facility that explicitly allows any node on the path to add arbitrary metadata cannot.
 
-Well-intentioned metadata can also put the user at substantial risk without careful consideration. For example, if a Web browser "labels" flows based upon what they contain (e.g., "video", "image", "interactive"), an observer on the network path -- including pervasive ones -- can more effectively perform traffic analysis to determine what the user is doing. Similarly, metadata adornment might reveal sensitive information; for example the Server Name Indicator (SNI) in the TLS handshake would reveal if a web visitor intends to go to `falungong.github.com` versus `kitties.github.com`.
+Well-intentioned metadata can also put the user at substantial risk without careful consideration. For example, if a Web browser "labels" flows based upon what they contain (e.g., "video", "image", "interactive"), an observer on the network path -- including pervasive ones -- can more effectively perform traffic analysis to determine what the user is doing. Similarly, metadata adornment might reveal sensitive information; for example the Server Name Indicator (SNI) in the TLS handshake would reveal if a web visitor intends to go to `bannedcontent.github.com` versus `kitties.github.com`.
 
 Standardizing an extensible transport metadata mechanism could also trigger various jurisdictions to define and require insertion of in-band metadata, an extension of current practices {{AU-data-retention}}. While the IETF would not be directly responsible for such an outcome, it is notable that in the past we've explicitly said we won't serve conceptually similar use cases {{RFC1984}}.
 
@@ -107,7 +146,7 @@ Standardizing an extensible transport metadata mechanism could also trigger vari
 
 There is obvious potential for network neutrality impact from a mechanism that allows networks to communicate with endpoints about flows. 
 
-For example, if a network can instruct content servers to throttle back bandwidth available to users for video based upon a commercial arrangement (or lack thereof), the network can achieve their goals without directly throttling traffic, thereby offering the potential to circulate a regulatory regime that's designed to effect network neutrality.
+For example, if a network can instruct content servers to throttle back bandwidth available to users for video based upon a commercial arrangement (or lack thereof), the network can achieve their goals without directly throttling traffic, thereby offering the potential to circumvent a regulatory regime that's designed to effect network neutrality.
 
 While the IETF has not take as firm a stance on network neutrality as it has for Pervasive Monitoring (for good reasons, since network neutrality problems are at their heart a sign of market failure, not a technical issue), new metadata facilities that enable existing regulatory regimes -- thereby upsetting "the tussle" -- must be carefully considered.
 
@@ -120,7 +159,7 @@ Much of the potential for harm above comes about because a transport-level metad
 
 In other words, if the network doesn't have a means of inserting a unique identifier for customers, they won't be able to do so. If notification of constrained network conditions takes place using well-defined terms, regulatory regimes can be adjusted to achieve desired outcomes. And, information about application semantics can be carefully vetted for security considerations before being included in transport metadata.
 
-Technically, the vocabulary could be constrained by merely requiring nodes to silently drop non-standard metadata. 
+One way to technically enforce such constraints would be to require nodes to silently drop non-standard metadata. Another would be to not make metadata extensible at all.
 
 Naturally, this would constrain the ability of networks and applications to add new terms to metadata, thereby requiring more careful thought to go into the metadata that is standardised "up front." 
 

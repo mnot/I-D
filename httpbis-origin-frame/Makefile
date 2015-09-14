@@ -3,10 +3,9 @@ id_base = ..
 xml2rfc ?= xml2rfc
 saxpath ?= /usr/local/share/saxon-b/saxon9.jar
 kramdown-rfc2629 ?= kramdown-rfc2629
-bootstrap ?= ../../rfcbootstrap/rfcbootstrap.xslt
 idnits ?= idnits
 
-title = fielding-$(shell basename ${CURDIR})
+title = nottingham-$(shell basename ${CURDIR})
 latest = $(shell (ls draft-${title}-*.xml || echo "draft-${title}-00.xml") | sort | tail -1)
 version = $(shell basename ${latest} .xml | awk -F- '{print $$NF}')
 
@@ -36,7 +35,7 @@ idnits: $(target).txt
 	
 %.html: %.xml
 	sed -i '' -e"s/rfc2629.dtd/$(id_base)\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
-	java -classpath $(saxpath) net.sf.saxon.Transform -novw -l $< $(bootstrap) > $@
+	java -classpath $(saxpath) net.sf.saxon.Transform -novw -l $< $(id_base)/Tools/rfcbootstrap/rfcbootstrap.xslt > $@
 #	$(xml2rfc) --html $< $@
 
 %.txt: %.xml
