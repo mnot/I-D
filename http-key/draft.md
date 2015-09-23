@@ -408,7 +408,7 @@ is case-sensitive.
 Its value's syntax is:
 
 ~~~
-match  = token
+match  = ( token / quoted-string )
 ~~~
 
 To process a set of header fields against a match parameter, follow these steps (or their
@@ -455,7 +455,7 @@ of header values. It is case-sensitive.
 Its value's syntax is:
 
 ~~~
-substr  = token
+substr  = ( token / quoted-string )
 ~~~
 
 To process a set of header fields against a substr parameter, follow these steps (or their
@@ -502,7 +502,7 @@ uses the nominated key's value as the secondary cache key.
 Its value's syntax is:
 
 ~~~
-param  = token
+param  = ( token / quoted-string )
 ~~~
 
 To process a list of header fields against a param parameter, follow these steps (or their
