@@ -11,7 +11,7 @@ workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
-pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
+pi: [toc, tocindent, sortrefs, symrefs, strict, compact, subcompact, comments, inline]
 
 author:
  -
@@ -228,11 +228,14 @@ compared to the stored one to find the appropriate response, to determine if it 
 To generate a secondary cache key for a given request (including that which is stored with a
 response) using Key, the following steps are taken:
 
+{: style="format %d)"}
 1. If the Key header field is not present on the most recent cacheable (as per {{RFC7234}}, Section 3)) response seen for the resource, abort this algorithm (i.e., fall back to using Vary to determine the secondary cache key).
 2. Let `key_value` be the most recently seen Key header field value for the resource, as the result of Creating a Header Field Value ({{value}}).
 3. Let `secondary_key` be an empty string.
 4. Create `key_list` by splitting `key_value` on "," characters.
-5. For `key_item` in `key_list`:
+5. For `key_item` in `key_list`: 
+
+   {: style="format %d)"}
    1. Remove any leading and trailing WSP from `key_item`.
    2. If `key_item` does not contain a ";" character, fail parameter processing ({{fail-param}}) and skip to the next `key_item`.
    3. Let `field_name` be the string before the first ";" character in `key_item`.
@@ -240,11 +243,15 @@ response) using Key, the following steps are taken:
    5. Let `parameters` be the string after the first ";" character in `key_item`.
    6. Create `param_list` by splitting `parameters` on ";" characters, excepting ";" characters within quoted strings, as per {{RFC7230}} Section 3.2.6.
    7. For `parameter` in `param_list`:
+
+      {: style="format %d)"}
       1. If `parameter` does not contain a "=", fail parameter processing ({{fail-param}}) and skip to the next `key_item`.
       2. Let `param_name` be the string before the first "=" character in `parameter`, case-normalized to lowercase.
       3. If `param_name` does not identify a Key parameter processing algorithm that is implemented, fail parameter processing ({{fail-param}}) and skip to the next `key_item`.
       4. Let `param_value` be the string after the first "=" character in `parameter`.
       5. If the first and last characters of `param_value` are both DQUOTE:
+      
+         {: style="format %d)"}
          1. Remove the first and last characters of `param_value`.
          2. Replace quoted-pairs within `param_value` with the octet following the backslash, as per {{RFC7230}} Section 3.2.6.
       6. If `param_value` does not conform to the syntax defined for it by the parameter definition, fail parameter processing {{fail-param}} and skip to the next `key_item`.
@@ -271,8 +278,11 @@ achieved using a variety of implementation strategies, including (but not limite
 Given a header field name `target_field_name` and `header_list`, a list of (`field_name`,
 `field_value`) tuples:
 
+{: style="format %d)"}
 1. Let `target_field_values` be an empty list. 
 3. For each (`field_name`, `field_value`) tuple in `header_list`:
+
+   {: style="format %d)"}
    1. If `field_name` does not match `target_field_name`, skip to the next tuple.
    1. Strip leading and trailing WSP from `field_value` and append it to `target_field_values`.
 4. If `target_field_values` is empty, return an empty string.
@@ -312,6 +322,7 @@ div    = 1*DIGIT
 
 To process a set of header fields against a div parameter, follow these steps (or their equivalent):
 
+{: style="format %d)"}
 1. If `parameter_value` is "0", fail parameter processing {{fail-param}}.
 2. If `header_value` is the empty string, return "none".
 3. If `header_value` contains a ",", remove it and all subsequent characters.
@@ -357,6 +368,7 @@ segment   = [ 0*DIGIT "." ] 1*DIGIT
 To process a set of header fields against a partition parameter, follow these steps (or their
 equivalent):
 
+{: style="format %d)"}
 1. If `header_value` is the empty string, return "none".
 2. If `header_value` contains a ",", remove it and all subsequent characters.
 3. Remove all WSP characters from `header_value`.
@@ -364,6 +376,8 @@ equivalent):
 5. Let `segment_id` be 0.
 6. Create a list `segment_list` by splitting `parameter_value` on ":" characters.
 6. For each `segment_value` in `segment_list`:
+
+   {: style="format %d)"}
    1. If `header_value` is less than `segment_value` when they are numerically compared, skip to step 7.
    2. Increment `segment_id` by 1.
 7. Return `segment_id`.
@@ -414,9 +428,12 @@ match  = ( token / quoted-string )
 To process a set of header fields against a match parameter, follow these steps (or their
 equivalent):
 
+{: style="format %d)"}
 1. If `header_value` is the empty string, return "none".
 2. Create `header_list` by splitting `header_value` on "," characters.
 3. For each `header_item` in `header_list`:
+
+   {: style="format %d)"}
    1. Remove leading and trailing WSP characters in `header_item`.
    2. If the value of `header_item` is character-for-character identical to `parameter_value`, return "1".
 4. Return "0".
@@ -461,9 +478,12 @@ substr  = ( token / quoted-string )
 To process a set of header fields against a substr parameter, follow these steps (or their
 equivalent):
 
+{: style="format %d)"}
 1. If `header_value` is the empty string, return "none".
 2. Create `header_list` by splitting `header_value` on "," characters.
 3. For each `header_item` in `header_list`:
+
+   {: style="format %d)"}
    1. Remove leading and trailing WSP characters in `header_item`.
    2. If the value of `parameter_value` is character-for-character present as a substring of `header_value`, return "1".
 4. Return "0".
@@ -508,14 +528,21 @@ param  = ( token / quoted-string )
 To process a list of header fields against a param parameter, follow these steps (or their
 equivalent):
 
+{: style="format %d)"}
 1. Let `header_list` be an empty list.
 2. Create `header_list_tmp1` by splitting header_value on "," characters.
 3. For each `header_item_tmp1` in `header_list_tmp1`:
+
+   {: style="format %d)"}
    1. Create `header_list_tmp2` by splitting `header_item_tmp1` on ";" characters.
    2. For each `header_item_tmp2` in `header_list_tmp2`:
+
+      {: style="format %d)"}
       1. Remove leading and trailing WSP from `header_item_tmp2`.
       2. Append `header_item_tmp2` to header_list.
 4. For each `header_item` in `header_list`:
+
+   {: style="format %d)"}
    1. If the "=" character does not occur within `header_item`, skip to the next `header_item`.
    2. Let `item_name` be the string occurring before the first "=" character in `header_item`.
    3. If `item_name` does not case-insensitively match `parameter_value`, skip to the next `header_item`. 
