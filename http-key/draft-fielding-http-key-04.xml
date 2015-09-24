@@ -11,10 +11,11 @@
 <?rfc symrefs="yes"?>
 <?rfc strict="yes"?>
 <?rfc compact="yes"?>
+<?rfc subcompact="yes"?>
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
 
-<rfc ipr="trust200902" docName="draft-fielding-http-key-03" category="info">
+<rfc ipr="trust200902" docName="draft-fielding-http-key-04" category="info">
 
   <front>
     <title>The Key HTTP Response Header Field</title>
@@ -240,27 +241,24 @@ compared to the stored one to find the appropriate response, to determine if it 
 <t>To generate a secondary cache key for a given request (including that which is stored with a
 response) using Key, the following steps are taken:</t>
 
-<t><list style="numbers">
+<t><list style="format %d)">
   <t>If the Key header field is not present on the most recent cacheable (as per <xref target="RFC7234"/>, Section 3)) response seen for the resource, abort this algorithm (i.e., fall back to using Vary to determine the secondary cache key).</t>
   <t>Let <spanx style="verb">key_value</spanx> be the most recently seen Key header field value for the resource, as the result of Creating a Header Field Value (<xref target="value"/>).</t>
   <t>Let <spanx style="verb">secondary_key</spanx> be an empty string.</t>
   <t>Create <spanx style="verb">key_list</spanx> by splitting <spanx style="verb">key_value</spanx> on “,” characters.</t>
-  <t>For <spanx style="verb">key_item</spanx> in <spanx style="verb">key_list</spanx>:
-  <list style="numbers">
+  <t>For <spanx style="verb">key_item</spanx> in <spanx style="verb">key_list</spanx>:  <list style="format %d)">
       <t>Remove any leading and trailing WSP from <spanx style="verb">key_item</spanx>.</t>
       <t>If <spanx style="verb">key_item</spanx> does not contain a “;” character, fail parameter processing (<xref target="fail-param"/>) and skip to the next <spanx style="verb">key_item</spanx>.</t>
       <t>Let <spanx style="verb">field_name</spanx> be the string before the first “;” character in <spanx style="verb">key_item</spanx>.</t>
       <t>Let <spanx style="verb">field_value</spanx> be the result of Creating a Header Field Value (<xref target="value"/>) with <spanx style="verb">field_name</spanx> as the <spanx style="verb">target_field_name</spanx> and the request header list as <spanx style="verb">header_list</spanx>.</t>
       <t>Let <spanx style="verb">parameters</spanx> be the string after the first “;” character in <spanx style="verb">key_item</spanx>.</t>
       <t>Create <spanx style="verb">param_list</spanx> by splitting <spanx style="verb">parameters</spanx> on “;” characters, excepting “;” characters within quoted strings, as per <xref target="RFC7230"/> Section 3.2.6.</t>
-      <t>For <spanx style="verb">parameter</spanx> in <spanx style="verb">param_list</spanx>:
-      <list style="numbers">
+      <t>For <spanx style="verb">parameter</spanx> in <spanx style="verb">param_list</spanx>:      <list style="format %d)">
           <t>If <spanx style="verb">parameter</spanx> does not contain a “=”, fail parameter processing (<xref target="fail-param"/>) and skip to the next <spanx style="verb">key_item</spanx>.</t>
           <t>Let <spanx style="verb">param_name</spanx> be the string before the first “=” character in <spanx style="verb">parameter</spanx>, case-normalized to lowercase.</t>
           <t>If <spanx style="verb">param_name</spanx> does not identify a Key parameter processing algorithm that is implemented, fail parameter processing (<xref target="fail-param"/>) and skip to the next <spanx style="verb">key_item</spanx>.</t>
           <t>Let <spanx style="verb">param_value</spanx> be the string after the first “=” character in <spanx style="verb">parameter</spanx>.</t>
-          <t>If the first and last characters of <spanx style="verb">param_value</spanx> are both DQUOTE:
-          <list style="numbers">
+          <t>If the first and last characters of <spanx style="verb">param_value</spanx> are both DQUOTE:          <list style="format %d)">
               <t>Remove the first and last characters of <spanx style="verb">param_value</spanx>.</t>
               <t>Replace quoted-pairs within <spanx style="verb">param_value</spanx> with the octet following the backslash, as per <xref target="RFC7230"/> Section 3.2.6.</t>
             </list></t>
@@ -292,10 +290,9 @@ achieved using a variety of implementation strategies, including (but not limite
 <t>Given a header field name <spanx style="verb">target_field_name</spanx> and <spanx style="verb">header_list</spanx>, a list of (<spanx style="verb">field_name</spanx>,
 <spanx style="verb">field_value</spanx>) tuples:</t>
 
-<t><list style="numbers">
+<t><list style="format %d)">
   <t>Let <spanx style="verb">target_field_values</spanx> be an empty list.</t>
-  <t>For each (<spanx style="verb">field_name</spanx>, <spanx style="verb">field_value</spanx>) tuple in <spanx style="verb">header_list</spanx>:
-  <list style="numbers">
+  <t>For each (<spanx style="verb">field_name</spanx>, <spanx style="verb">field_value</spanx>) tuple in <spanx style="verb">header_list</spanx>:  <list style="format %d)">
       <t>If <spanx style="verb">field_name</spanx> does not match <spanx style="verb">target_field_name</spanx>, skip to the next tuple.</t>
       <t>Strip leading and trailing WSP from <spanx style="verb">field_value</spanx> and append it to <spanx style="verb">target_field_values</spanx>.</t>
     </list></t>
@@ -337,7 +334,7 @@ div    = 1*DIGIT
 
 <t>To process a set of header fields against a div parameter, follow these steps (or their equivalent):</t>
 
-<t><list style="numbers">
+<t><list style="format %d)">
   <t>If <spanx style="verb">parameter_value</spanx> is “0”, fail parameter processing <xref target="fail-param"/>.</t>
   <t>If <spanx style="verb">header_value</spanx> is the empty string, return “none”.</t>
   <t>If <spanx style="verb">header_value</spanx> contains a “,”, remove it and all subsequent characters.</t>
@@ -384,15 +381,14 @@ segment   = [ 0*DIGIT "." ] 1*DIGIT
 <t>To process a set of header fields against a partition parameter, follow these steps (or their
 equivalent):</t>
 
-<t><list style="numbers">
+<t><list style="format %d)">
   <t>If <spanx style="verb">header_value</spanx> is the empty string, return “none”.</t>
   <t>If <spanx style="verb">header_value</spanx> contains a “,”, remove it and all subsequent characters.</t>
   <t>Remove all WSP characters from <spanx style="verb">header_value</spanx>.</t>
   <t>If <spanx style="verb">header_value</spanx> does not match the segment ABNF rule, fail parameter processing (<xref target="fail-param"/>).</t>
   <t>Let <spanx style="verb">segment_id</spanx> be 0.</t>
   <t>Create a list <spanx style="verb">segment_list</spanx> by splitting <spanx style="verb">parameter_value</spanx> on “:” characters.</t>
-  <t>For each <spanx style="verb">segment_value</spanx> in <spanx style="verb">segment_list</spanx>:
-  <list style="numbers">
+  <t>For each <spanx style="verb">segment_value</spanx> in <spanx style="verb">segment_list</spanx>:  <list style="format %d)">
       <t>If <spanx style="verb">header_value</spanx> is less than <spanx style="verb">segment_value</spanx> when they are numerically compared, skip to step 7.</t>
       <t>Increment <spanx style="verb">segment_id</spanx> by 1.</t>
     </list></t>
@@ -446,11 +442,10 @@ match  = ( token / quoted-string )
 <t>To process a set of header fields against a match parameter, follow these steps (or their
 equivalent):</t>
 
-<t><list style="numbers">
+<t><list style="format %d)">
   <t>If <spanx style="verb">header_value</spanx> is the empty string, return “none”.</t>
   <t>Create <spanx style="verb">header_list</spanx> by splitting <spanx style="verb">header_value</spanx> on “,” characters.</t>
-  <t>For each <spanx style="verb">header_item</spanx> in <spanx style="verb">header_list</spanx>:
-  <list style="numbers">
+  <t>For each <spanx style="verb">header_item</spanx> in <spanx style="verb">header_list</spanx>:  <list style="format %d)">
       <t>Remove leading and trailing WSP characters in <spanx style="verb">header_item</spanx>.</t>
       <t>If the value of <spanx style="verb">header_item</spanx> is character-for-character identical to <spanx style="verb">parameter_value</spanx>, return “1”.</t>
     </list></t>
@@ -497,11 +492,10 @@ substr  = ( token / quoted-string )
 <t>To process a set of header fields against a substr parameter, follow these steps (or their
 equivalent):</t>
 
-<t><list style="numbers">
+<t><list style="format %d)">
   <t>If <spanx style="verb">header_value</spanx> is the empty string, return “none”.</t>
   <t>Create <spanx style="verb">header_list</spanx> by splitting <spanx style="verb">header_value</spanx> on “,” characters.</t>
-  <t>For each <spanx style="verb">header_item</spanx> in <spanx style="verb">header_list</spanx>:
-  <list style="numbers">
+  <t>For each <spanx style="verb">header_item</spanx> in <spanx style="verb">header_list</spanx>:  <list style="format %d)">
       <t>Remove leading and trailing WSP characters in <spanx style="verb">header_item</spanx>.</t>
       <t>If the value of <spanx style="verb">parameter_value</spanx> is character-for-character present as a substring of <spanx style="verb">header_value</spanx>, return “1”.</t>
     </list></t>
@@ -548,20 +542,17 @@ param  = ( token / quoted-string )
 <t>To process a list of header fields against a param parameter, follow these steps (or their
 equivalent):</t>
 
-<t><list style="numbers">
+<t><list style="format %d)">
   <t>Let <spanx style="verb">header_list</spanx> be an empty list.</t>
   <t>Create <spanx style="verb">header_list_tmp1</spanx> by splitting header_value on “,” characters.</t>
-  <t>For each <spanx style="verb">header_item_tmp1</spanx> in <spanx style="verb">header_list_tmp1</spanx>:
-  <list style="numbers">
+  <t>For each <spanx style="verb">header_item_tmp1</spanx> in <spanx style="verb">header_list_tmp1</spanx>:  <list style="format %d)">
       <t>Create <spanx style="verb">header_list_tmp2</spanx> by splitting <spanx style="verb">header_item_tmp1</spanx> on “;” characters.</t>
-      <t>For each <spanx style="verb">header_item_tmp2</spanx> in <spanx style="verb">header_list_tmp2</spanx>:
-      <list style="numbers">
+      <t>For each <spanx style="verb">header_item_tmp2</spanx> in <spanx style="verb">header_list_tmp2</spanx>:      <list style="format %d)">
           <t>Remove leading and trailing WSP from <spanx style="verb">header_item_tmp2</spanx>.</t>
           <t>Append <spanx style="verb">header_item_tmp2</spanx> to header_list.</t>
         </list></t>
     </list></t>
-  <t>For each <spanx style="verb">header_item</spanx> in <spanx style="verb">header_list</spanx>:
-  <list style="numbers">
+  <t>For each <spanx style="verb">header_item</spanx> in <spanx style="verb">header_list</spanx>:  <list style="format %d)">
       <t>If the “=” character does not occur within <spanx style="verb">header_item</spanx>, skip to the next <spanx style="verb">header_item</spanx>.</t>
       <t>Let <spanx style="verb">item_name</spanx> be the string occurring before the first “=” character in <spanx style="verb">header_item</spanx>.</t>
       <t>If <spanx style="verb">item_name</spanx> does not case-insensitively match <spanx style="verb">parameter_value</spanx>, skip to the next <spanx style="verb">header_item</spanx>.</t>
