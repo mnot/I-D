@@ -35,7 +35,7 @@ idnits: $(target).txt
 	$(kramdown-rfc2629) $< > $@
 	
 %.html: %.xml
-	sed -i '' -e"s/rfc2629.dtd/$(id_base)\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
+	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
 	java -classpath $(saxpath) net.sf.saxon.Transform -novw -l $< $(bootstrap) > $@
 #	$(xml2rfc) --html $< $@
 
