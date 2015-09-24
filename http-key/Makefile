@@ -16,7 +16,7 @@ next = draft-$(title)-$(shell printf "%.2d" `echo ${version}+1 | bc`)
 
 .PHONY: latest clean next diff idnits update
 
-latest: $(target).html $(target).txt
+latest: $(target).html $(target).txt index.html index.txt
 
 clean:
 	rm -f $(target).html $(target).txt
@@ -41,6 +41,12 @@ idnits: $(target).txt
 
 %.txt: %.xml
 	$(xml2rfc) $< $@
+
+index.html: $(target).html
+	cp $< $@
+
+index.txt: $(target).txt
+	cp $< $@
 
 update:
 	cp $(id_base)/Tools/skel/Makefile .
