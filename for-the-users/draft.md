@@ -175,7 +175,7 @@ necessary to provide networking (and despite this, there are mechanisms like {{R
 mitigate this effect, for those users who desire it).
 
 
-# Identifying the Constituents of Internet Standards
+# Identifying Constituents
 
 Internet standards MUST document relevant primary constituents and their interrelationships.
 
