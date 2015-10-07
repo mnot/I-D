@@ -36,7 +36,7 @@ idnits: $(target).txt
 	
 %.html: %.xml
 	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
-	java -classpath $(saxpath) net.sf.saxon.Transform -novw -l $< $(bootstrap) > $@
+	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) > $@
 #	$(xml2rfc) --html $< $@
 
 %.txt: %.xml
