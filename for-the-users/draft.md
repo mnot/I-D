@@ -188,7 +188,7 @@ failure.
 The relevant parties to an Internet standard MUST be documented, along with their
 interrelationships.
 
-For example, HTML does so using the priority of constituencies in the HTML Design Principles
+For example, HTML does so using the "priority of constituencies" in the HTML Design Principles
 {{PRIORITY}}:
 
 > In case of conflict, consider users over authors over implementors over specifiers over theoretical purity. In other words costs or difficulties to the user should be given more weight than costs to authors; which in turn should be given more weight than costs to implementors; which should be given more weight than costs to authors of the spec itself, which should be given more weight than those proposing changes for theoretical reasons alone. Of course, it is preferred to make things better for multiple parties at once.
