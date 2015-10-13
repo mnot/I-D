@@ -5,7 +5,7 @@
 %::
 	cp -a Tools/skel $@
 	mv $@/draft-nottingham--00.xml $@/draft-nottingham-$@-00.xml
-	sed -i '' -e"s/draft-nottingham--00/draft-nottingham-$@-00/" \
+	sed -i '' -e"s/SHORTNAME/$@/g" \
 		$@/draft-nottingham-$@-00.xml
-	sed -i '' -e"s/draft-nottingham--00/draft-nottingham-$@-00/" \
+	sed -i '' -e"s/SHORTNAME/$@/g" \
 		$@/draft.md

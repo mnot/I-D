@@ -1,7 +1,7 @@
 ---
 title: 
 abbrev: 
-docname: draft-nottingham--00
+docname: draft-nottingham-SHORTNAME-00
 date: 2015
 category: info
 
@@ -28,6 +28,15 @@ informative:
 
 
 --- abstract
+
+
+--- note_Note_to_Readers
+
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/SHORTNAME>.
+
+The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/SHORTNAME/>.
+
+Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/SHORTNAME>.
 
 
 --- middle
