@@ -91,6 +91,9 @@ It also mandates end users as the highest priority concern for Internet standard
 
 The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/for-the-users>.
 
+The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/for-the-users/>.
+
+Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/for-the-users>.
 
 --- middle
 
