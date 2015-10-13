@@ -281,5 +281,5 @@ Thanks also to the WHATWG for blazing the trail.
 
 Thanks to Edward Snowden for his comments regarding the priority of end users at IETF93.
 
-Thanks to Harald Alvestrand for his substantial feedback and Joe Hildebrand, Russ Housley, Niels
-ten Oever, and Martin Thomson for their suggestions.
+Thanks to Harald Alvestrand for his substantial feedback and Stephen Farrell, Joe Hildebrand, Russ
+Housley, Niels ten Oever, and Martin Thomson for their suggestions.
