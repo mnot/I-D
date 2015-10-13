@@ -208,9 +208,9 @@ greatly. For example, end users of Web browsers cannot be reasonably expected to
 decisions about security, and therefore design decisions there are biased towards default security.
 When applicable, the expectations upon a party SHOULD be documented.
 
-Extensions to existing standards MUST document how they interact with the extended standard's
-relevant parties. If this is not yet documented, the extension MAY estimate its impact, in
-coordination with that standard's community and the IESG.
+Extensions to existing standards MUST consider how they interact with the extended standard's
+relevant parties. If they are not yet documented, this SHOULD be done in coordination with that
+standard's community and the IESG.
 
 The burden of this documentation need not be high; if HTML can do it in a paragraph, so can most
 other standards. While it might be appropriate in a separate document (e.g., a requirements or use
