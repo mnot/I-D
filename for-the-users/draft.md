@@ -122,17 +122,21 @@ provide benefit to, such as (but not limited to) end users, network operators, s
 vendors, specification authors, specification implementers, content owners, governments,
 non-governmental organisations, social movements, employers, and parents.
 
-Good specifications will provide benefit to all of the relevant parties, because standards do not
-represent a zero-sum game. However, on occasion we do need to balance the benefits of a decision
-between two (or more) parties.
+Successful specifications will provide some benefit to all of the relevant parties, because
+standards do not represent a zero-sum game. However, there are often situations where we need to
+balance the benefits of a decision between two (or more) parties.
 
-Likewise, sometimes efforts are brought to the IETF that represent the technical needs of some
-parties, but does not take the needs of others into account. On its own, such a specification meets
-a technical need for a subset of the Internet community, but at the expense of other parts. When
-presented with such a proposal, we need to decide how to handle it.
+We regularly decide to take up work against those who attempt to use the Internet for goals that we
+do not believe are beneficial; for example, those who attempt to disrupt Internet access
+(denial-of-service attackers) and those who seek to obtain data or control over a system that is
+not authorised by its administrator.
 
-Currently, such decisions occur in an ad hoc fashion, often without explicitly being discussed.
-This approach works reasonably well in many cases; even if a party is not directly
+Additionally, efforts are sometimes brought to the IETF that represent the needs of some parties
+but at the expense of others. When presented with such a proposal, we need to decide how to handle
+it.
+
+Currently, these kinds of decisions occur in an ad hoc fashion, often without explicitly being
+discussed. This approach works reasonably well in many cases; even if a party is not directly
 represented in the process, there are often advocates for their interests, and ultimately protocols
 that disadvantage a particular party tend to be either rejected by it or eventually replaced.
 
@@ -140,12 +144,14 @@ However, we do sometimes expend a considerable amount of energy mitigating poten
 under-represented members of the Internet community, and often such harm is not so onerous or
 obvious as to dissuade them from using something (e.g., {{RFC6265}}).
 
-In other words -- because our decisions have ethical implications, we will consider their impact
-and determine whether it is within our core values, and do so in a well-defined open fashion.
+In other words -- because our decisions have ethical implications, we should consider their impact
+and determine whether it is within our core values, and do so in a well-defined, open fashion.
 
 To facilitate that, this document outlines a set of guidelines for identifying the relevant parties
-to an Internet standard, along with their relative priorities. It also gives end user the highest
-priority in such considerations.
+to an Internet standard. The aim of doing so is to both clarify the decision-making process, and to
+aid external parties when engaging with and judging the results of the standards process.
+
+It also gives end user the highest priority in such considerations.
 
 
 ## Notational Conventions
