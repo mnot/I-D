@@ -58,8 +58,13 @@ header field.
 
 --- note_Note_to_Readers
 
-This is a work-in-progress to revise RFC5988; see issues list at:
-  https://github.com/mnot/I-D/issues?q=is%3Aopen+is%3Aissue+label%3Arfc5988bis
+This is a work-in-progress to revise RFC5988.
+
+The issues list can be found at <https://github.com/mnot/I-D/labels/rfc5988bis>.
+
+The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/rfc5988bis/>.
+
+Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/rfc5988bis>.
 
 
 --- middle
