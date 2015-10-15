@@ -1,6 +1,6 @@
 ---
 title: Web Linking
-abbrev: Web Linking
+abbrev:
 docname: draft-nottingham-rfc5988bis-00
 date: 2015
 category: std
