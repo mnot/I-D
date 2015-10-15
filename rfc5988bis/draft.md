@@ -47,7 +47,6 @@ informative:
   W3C.CR-curie-20090116:
   W3C.CR-html5-20140731:
   W3C.REC-rdfa-syntax-20081014:
-  W3C.REC-xhtml-basic-20080729:
 
 
 --- abstract
@@ -498,9 +497,7 @@ HTML, including
 * using the document-wide "profile" attribute's URI as a prefix for relation
   types, or
 * using the RDFa {{W3C.REC-rdfa-syntax-20081014}} convention of mapping token
-  prefixes to URIs (in a manner similar to XML name spaces) (note that RDFa is
-  only defined to work in XHTML {{W3C.REC-xhtml-basic-20080729}}, but is
-  sometimes used in HTML).
+  prefixes to URIs (in a manner similar to XML name spaces).
 
 
 Individual applications of linking will therefore need to define how their
