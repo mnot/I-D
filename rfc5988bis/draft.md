@@ -178,7 +178,7 @@ are not considered equivalent to the registered relation types by many processor
 be serialised unless the application using link relations specifically allows them.
 
 
-### Registering New Link Relation Types {#procedure}
+### Registering Link Relation Types {#procedure}
 
 Relation types are registered on the advice of a Designated Expert (appointed by the IESG or their
 delegate), with a Specification Required (using terminology from {{RFC5226}}).
