@@ -44,7 +44,7 @@ informative:
   RFC2817:
   RFC2818:
   RFC4287:
-  W3C.CR-curie-20090116:
+  W3C.REC-xml-names-20091208:
   W3C.REC-html5-20141028:
   W3C.REC-html-rdfa-20150317:
 
@@ -225,7 +225,7 @@ resource that contains a definition of the semantics of the relation type, clien
 automatically access that resource to avoid overburdening its server.
 
 When extension relation types are compared, they MUST be compared as strings (after converting to
-URIs if serialised in a different format, such as a Curie {{W3C.CR-curie-20090116}}) in a
+URIs if serialised in a different format, such as a XML QNames {{W3C.REC-xml-names-20091208}}) in a
 case-insensitive fashion, character-by-character. Because of this, all-lowercase URIs SHOULD be
 used for extension relations.
 
