@@ -235,9 +235,7 @@ specify that they are expressed in another form, as long as they can be converte
 
 # The Link Header Field {#header}
 
-The Link entity-header field provides a means for serialising one or more links in HTTP headers. It
-is semantically equivalent to the &lt;LINK&gt; element in HTML, as well as the atom:link feed-level
-element in Atom {{RFC4287}}.
+The Link entity-header field provides a means for serialising one or more links in HTTP headers.
 
 	Link           = "Link" ":" #link-value  
 	link-value     = "<" URI-Reference ">" *( ";" link-param )
@@ -522,8 +520,8 @@ Julian Reschke.
 
 This specification has the following differences from its predecessor, RFC5988:
 
-* The initial relation type registrations were removed, since they've already
-  been registered by 5988.
+* The initial relation type registrations were removed, since they've already been registered by
+  5988.
   
 * The introduction has been shortened.
 
@@ -535,8 +533,10 @@ This specification has the following differences from its predecessor, RFC5988:
 
 * Link cardinality was clarified.
 
-* Terminology was changed from "target IRI" and "context IRI" to "link target"
-  and "link context" respectively.
+* Terminology was changed from "target IRI" and "context IRI" to "link target" and "link context"
+  respectively.
 
 * A convention for assigning a URI to registered relation types was defined.
 
+* Removed misleading statement that the link header field is semantically equivalent to HTML and
+  Atom links.
