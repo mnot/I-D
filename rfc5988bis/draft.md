@@ -159,8 +159,7 @@ There are two kinds of relation types: registered and extension.
 ## Registered Relation Types
 
 Well-defined relation types can be registered as tokens for convenience and/or to promote reuse by
-other applications. This specification establishes an IANA registry of such relation types; see
-{{link-relation-type-registry}}.
+other applications, using the procedure in {{procedure}}.
 
 Registered relation type names MUST conform to the reg-rel-type rule, and MUST be compared
 character-by-character in a case-insensitive fashion. They SHOULD be appropriate to the specificity
