@@ -71,18 +71,16 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/rfc59
 
 # Introduction
 
-A means of indicating the relationships between resources on the Web, as well as indicating the
-type of those relationships, has been available for some time in HTML {{W3C.CR-html5-20140731}},
-and more recently in Atom {{RFC4287}}. These mechanisms, although conceptually similar, are
-separately specified. However, links between resources need not be format specific; it can be
-useful to have typed links that are independent of their serialisation, especially when a resource
-has representations in multiple formats.
+This specification defines a way to indicate the relationships between resources on the Web
+("links") and the type of those relationships ("link relation types").
 
-To this end, this document defines a framework for typed links that isn't specific to a particular
-serialisation or application.
+HTML {{W3C.CR-html5-20140731}} and Atom {{RFC4287}} both have well-defined concepts of linking;
+this specification generalises this into a framework that encompasses linking in these formats and
+(potentially) elsewhere.
 
-Furthermore, this document formalises an HTTP header field for conveying typed links, having been
-originally defined in Section 19.6.2.4 of {{RFC2068}}, but removed from {{RFC2616}}.
+Furthermore, this specification formalises an HTTP header field for conveying such links, having
+been originally defined in Section 19.6.2.4 of {{RFC2068}}, but removed from {{RFC2616}}.
+
 
 # Notational Conventions
 
