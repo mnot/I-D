@@ -92,7 +92,7 @@ Table of Contents
    3.  Links . . . . . . . . . . . . . . . . . . . . . . . . . . . .   3
    4.  Link Relation Types . . . . . . . . . . . . . . . . . . . . .   4
      4.1.  Registered Relation Types . . . . . . . . . . . . . . . .   5
-       4.1.1.  Registering New Link Relation Types . . . . . . . . .   5
+       4.1.1.  Registering Link Relation Types . . . . . . . . . . .   5
      4.2.  Extension Relation Types  . . . . . . . . . . . . . . . .   6
    5.  The Link Header Field . . . . . . . . . . . . . . . . . . . .   7
      5.1.  Link Target . . . . . . . . . . . . . . . . . . . . . . .   8
@@ -117,9 +117,9 @@ Internet-Draft                 Web Linking                  October 2015
      9.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
      9.2.  Informative References  . . . . . . . . . . . . . . . . .  13
    Appendix A.  Using the Link Header with the HTML Format . . . . .  15
-   Appendix B.  Using the Link Header with the Atom Format . . . . .  16
+   Appendix B.  Using the Link Header with the Atom Format . . . . .  15
    Appendix C.  Acknowledgements . . . . . . . . . . . . . . . . . .  16
-   Appendix D.  Changes from RFC5988 . . . . . . . . . . . . . . . .  17
+   Appendix D.  Changes from RFC5988 . . . . . . . . . . . . . . . .  16
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  17
 
 1.  Introduction
@@ -266,7 +266,7 @@ Internet-Draft                 Web Linking                  October 2015
    relation types by many processors, and SHOULD NOT be serialised
    unless the application using link relations specifically allows them.
 
-4.1.1.  Registering New Link Relation Types
+4.1.1.  Registering Link Relation Types
 
    Relation types are registered on the advice of a Designated Expert
    (appointed by the IESG or their delegate), with a Specification
@@ -415,7 +415,7 @@ Internet-Draft                 Web Linking                  October 2015
    applied.
 
    Consuming implementations can choose to ignore links with an anchor
-   parameter.  For example, the application in use may not allow the
+   parameter.  For example, the application in use might not allow the
    link context to be assigned to a different resource.  In such cases,
    the entire link is to be ignored; consuming implementations MUST NOT
    process the link without applying the anchor.
@@ -735,6 +735,12 @@ Internet-Draft                 Web Linking                  October 2015
               Wide Web Consortium CR CR-curie-20090116, January 2009,
               <http://www.w3.org/TR/2009/CR-curie-20090116>.
 
+   [W3C.REC-html-rdfa-20150317]
+              Sporny, M., "HTML+RDFa 1.1 - Second Edition", World Wide
+              Web Consortium Recommendation REC-html-rdfa-20150317,
+              March 2015,
+              <http://www.w3.org/TR/2015/REC-html-rdfa-20150317>.
+
    [W3C.REC-html5-20141028]
               Hickson, I., Berjon, R., Faulkner, S., Leithead, T.,
               Navara, E., O&#039;Connor, E., and S. Pfeiffer, "HTML5",
@@ -742,12 +748,6 @@ Internet-Draft                 Web Linking                  October 2015
               html5-20141028, October 2014,
               <http://www.w3.org/TR/2014/REC-html5-20141028>.
 
-   [W3C.REC-rdfa-syntax-20081014]
-              Adida, B., Birbeck, M., McCarron, S., and S. Pemberton,
-              "RDFa in XHTML: Syntax and Processing", World Wide Web
-              Consortium Recommendation REC-rdfa-syntax-20081014,
-              October 2008,
-              <http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014>.
 
 
 
@@ -790,7 +790,7 @@ Appendix A.  Using the Link Header with the HTML Format
 
    HTML motivated the original syntax of the Link header, and many of
    the design decisions in this document are driven by a desire to stay
-   compatible with these uses.
+   compatible with it.
 
    In HTML, the link element can be mapped to links as specified here by
    using the "href" attribute for the target URI, and "rel" to convey
@@ -800,47 +800,31 @@ Appendix A.  Using the Link Header with the HTML Format
    All of the link relation types defined by HTML have been included in
    the Link Relation Type registry, so they can be used without
    modification.  However, there are several potential ways to serialise
-   extension relation types into HTML, including
+   extension relation types into HTML, including:
 
    o  As absolute URIs,
 
-   o  using the document-wide "profile" attribute's URI as a prefix for
-      relation types, or
-
-   o  using the RDFa [W3C.REC-rdfa-syntax-20081014] convention of
-      mapping token prefixes to URIs (in a manner similar to XML name
-      spaces).
+   o  using the RDFa [W3C.REC-html-rdfa-20150317] convention of mapping
+      token prefixes to URIs (in a manner similar to XML name spaces).
 
    Individual applications of linking will therefore need to define how
    their extension links should be serialised into HTML.
 
    Surveys of existing HTML content have shown that unregistered link
    relation types that are not URIs are (perhaps inevitably) common.
-   Consuming HTML implementations should not consider such unregistered
+   Consuming HTML implementations ought not consider such unregistered
    short links to be errors, but rather relation types with a local
    scope (i.e., their meaning is specific and perhaps private to that
    document).
 
-   HTML also defines several attributes on links that are not explicitly
-   defined by the Link header.  These attributes can be serialised as
-   link-extensions to maintain fidelity.
+   HTML also defines several attributes on links that can be see as
+   target attributes, including "media", "hreflang", "type" and "sizes".
 
    Finally, the HTML specification gives a special meaning when the
    "alternate" and "stylesheet" relation types coincide in the same
-   link.  Such links should be serialised in the Link header using a
+   link.  Such links ought to be serialised in the Link header using a
    single list of relation-types (e.g., rel="alternate stylesheet") to
    preserve this relationship.
-
-
-
-
-
-
-
-Nottingham               Expires April 18, 2016                [Page 15]
-
-Internet-Draft                 Web Linking                  October 2015
-
 
 Appendix B.  Using the Link Header with the Atom Format
 
@@ -850,6 +834,13 @@ Appendix B.  Using the Link Header with the Atom Format
    feed locator or an entry ID, depending on where it appears;
    generally, feed-level links are obvious candidates for transmission
    as a Link header.
+
+
+
+Nottingham               Expires April 18, 2016                [Page 15]
+
+Internet-Draft                 Web Linking                  October 2015
+
 
    When serialising an atom:link into a Link header, it is necessary to
    convert link targets (if used) to URIs.
@@ -890,14 +881,6 @@ Appendix C.  Acknowledgements
    including Frank Ellermann, Roy Fielding, Eran Hammer-Lahav, and
    Julian Reschke.
 
-
-
-
-Nottingham               Expires April 18, 2016                [Page 16]
-
-Internet-Draft                 Web Linking                  October 2015
-
-
 Appendix D.  Changes from RFC5988
 
    This specification has the following differences from its
@@ -907,6 +890,13 @@ Appendix D.  Changes from RFC5988
       they've already been registered by 5988.
 
    o  The introduction has been shortened.
+
+
+
+Nottingham               Expires April 18, 2016                [Page 16]
+
+Internet-Draft                 Web Linking                  October 2015
+
 
    o  The Link Relation Application Data Registry has been removed.
 
@@ -931,6 +921,16 @@ Author's Address
 
    EMail: mnot@mnot.net
    URI:   http://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
 
 
 

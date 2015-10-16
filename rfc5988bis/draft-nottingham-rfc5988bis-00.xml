@@ -174,7 +174,7 @@ prepending “http://www.iana.org/assignments/relation/” to its name. Note tha
 are not considered equivalent to the registered relation types by many processors, and SHOULD NOT
 be serialised unless the application using link relations specifically allows them.</t>
 
-<section anchor="procedure" title="Registering New Link Relation Types">
+<section anchor="procedure" title="Registering Link Relation Types">
 
 <t>Relation types are registered on the advice of a Designated Expert (appointed by the IESG or their
 delegate), with a Specification Required (using terminology from <xref target="RFC5226"/>).</t>
@@ -288,11 +288,9 @@ parameter’s value is a relative URI, parsers MUST resolve it as per <xref targ
 that any base URI from the body’s content is not applied.</t>
 
 <t>Consuming implementations can choose to ignore links with an anchor parameter. For example, the
-application in use may not allow the link context to be assigned to a different resource. In such
+application in use might not allow the link context to be assigned to a different resource. In such
 cases, the entire link is to be ignored; consuming implementations MUST NOT process the link
 without applying the anchor.</t>
-
-<!-- probably need to revisit security considerations -->
 
 <t>Note that depending on HTTP status code and response headers, the link context might be “anonymous”
 (i.e., no link context is available). For instance, this is the case on a 404 response to a GET
@@ -805,32 +803,20 @@ they will be displayed to end users.</t>
 
 
 
-<reference anchor='W3C.REC-rdfa-syntax-20081014'
-           target='http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014'>
+<reference anchor='W3C.REC-html-rdfa-20150317'
+           target='http://www.w3.org/TR/2015/REC-html-rdfa-20150317'>
 <front>
-<title>RDFa in XHTML: Syntax and Processing</title>
+<title>HTML+RDFa 1.1 - Second Edition</title>
 
-<author initials='B.' surname='Adida' fullname='Ben Adida'>
+<author initials='M.' surname='Sporny' fullname='Manu Sporny'>
     <organization />
 </author>
 
-<author initials='M.' surname='Birbeck' fullname='Mark Birbeck'>
-    <organization />
-</author>
-
-<author initials='S.' surname='McCarron' fullname='Shane McCarron'>
-    <organization />
-</author>
-
-<author initials='S.' surname='Pemberton' fullname='Steven Pemberton'>
-    <organization />
-</author>
-
-<date month='October' day='14' year='2008' />
+<date month='March' day='17' year='2015' />
 </front>
 
-<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-rdfa-syntax-20081014' />
-<format type='HTML' target='http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014' />
+<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-html-rdfa-20150317' />
+<format type='HTML' target='http://www.w3.org/TR/2015/REC-html-rdfa-20150317' />
 </reference>
 
 
@@ -842,7 +828,7 @@ they will be displayed to end users.</t>
 <section anchor="using-the-link-header-with-the-html-format" title="Using the Link Header with the HTML Format">
 
 <t>HTML motivated the original syntax of the Link header, and many of the design decisions in this
-document are driven by a desire to stay compatible with these uses.</t>
+document are driven by a desire to stay compatible with it.</t>
 
 <t>In HTML, the link element can be mapped to links as specified here by using the “href” attribute
 for the target URI, and “rel” to convey the relation type, as in the Link header. The context of
@@ -850,13 +836,11 @@ the link is the URI associated with the entire HTML document.</t>
 
 <t>All of the link relation types defined by HTML have been included in the Link Relation Type
 registry, so they can be used without modification. However, there are several potential ways to
-serialise extension relation types into HTML, including</t>
+serialise extension relation types into HTML, including:</t>
 
 <t><list style="symbols">
   <t>As absolute URIs,</t>
-  <t>using the document-wide “profile” attribute’s URI as a prefix for relation
-types, or</t>
-  <t>using the RDFa <xref target="W3C.REC-rdfa-syntax-20081014"/> convention of mapping token
+  <t>using the RDFa <xref target="W3C.REC-html-rdfa-20150317"/> convention of mapping token
 prefixes to URIs (in a manner similar to XML name spaces).</t>
 </list></t>
 
@@ -864,16 +848,17 @@ prefixes to URIs (in a manner similar to XML name spaces).</t>
 be serialised into HTML.</t>
 
 <t>Surveys of existing HTML content have shown that unregistered link relation types that are not URIs
-are (perhaps inevitably) common. Consuming HTML implementations should not consider such
+are (perhaps inevitably) common. Consuming HTML implementations ought not consider such
 unregistered short links to be errors, but rather relation types with a local scope (i.e., their
 meaning is specific and perhaps private to that document).</t>
 
-<t>HTML also defines several attributes on links that are not explicitly defined by the Link header.
-These attributes can be serialised as link-extensions to maintain fidelity.</t>
+<t>HTML also defines several attributes on links that can be see as target attributes, including
+“media”, “hreflang”, “type” and “sizes”.</t>
 
 <t>Finally, the HTML specification gives a special meaning when the “alternate” and “stylesheet”
-relation types coincide in the same link. Such links should be serialised in the Link header using
-a single list of relation-types (e.g., rel=”alternate stylesheet”) to preserve this relationship.</t>
+relation types coincide in the same link. Such links ought to be serialised in the Link header
+using a single list of relation-types (e.g., rel=”alternate stylesheet”) to preserve this
+relationship.</t>
 
 </section>
 <section anchor="using-the-link-header-with-the-atom-format" title="Using the Link Header with the Atom Format">
