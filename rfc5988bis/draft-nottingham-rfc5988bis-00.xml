@@ -72,7 +72,7 @@
 <t>This specification defines a way to indicate the relationships between resources on the Web
 (“links”) and the type of those relationships (“link relation types”).</t>
 
-<t>HTML <xref target="W3C.CR-html5-20140731"/> and Atom <xref target="RFC4287"/> both have well-defined concepts of linking;
+<t>HTML <xref target="W3C.REC-html5-20141028"/> and Atom <xref target="RFC4287"/> both have well-defined concepts of linking;
 this specification generalises this into a framework that encompasses linking in these formats and
 (potentially) elsewhere.</t>
 
@@ -91,8 +91,9 @@ been originally defined in Section 19.6.2.4 of <xref target="RFC2068"/>, but rem
 LOALPHA, DIGIT.</t>
 
 <t>Additionally, the following rules are included from <xref target="RFC3986"/>: URI and URI-Reference; from
-<xref target="RFC6838"/>: type-name and subtype-name; from <xref target="W3C.CR-html5-20140731"/>: MediaDesc; from
-<xref target="RFC5646"/>: Language-Tag; and from <xref target="I-D.ietf-httpbis-rfc5987bis"/>, ext-value and parmname.</t>
+<xref target="RFC6838"/>: type-name and subtype-name; from <xref target="W3C.CR-css3-mediaqueries-20090915"/>:
+media_query_list; from <xref target="RFC5646"/>: Language-Tag; and from <xref target="I-D.ietf-httpbis-rfc5987bis"/>,
+ext-value and parmname.</t>
 
 </section>
 <section anchor="links" title="Links">
@@ -234,9 +235,7 @@ specify that they are expressed in another form, as long as they can be converte
 </section>
 <section anchor="header" title="The Link Header Field">
 
-<t>The Link entity-header field provides a means for serialising one or more links in HTTP headers. It
-is semantically equivalent to the &lt;LINK&gt; element in HTML, as well as the atom:link feed-level
-element in Atom <xref target="RFC4287"/>.</t>
+<t>The Link entity-header field provides a means for serialising one or more links in HTTP headers.</t>
 
 <figure><artwork><![CDATA[
 Link           = "Link" ":" #link-value  
@@ -245,7 +244,7 @@ link-param     = ( ( "rel" "=" relation-types )
              | ( "anchor" "=" <"> URI-Reference <"> )
              | ( "rev" "=" relation-types )
              | ( "hreflang" "=" Language-Tag )
-             | ( "media" "=" ( MediaDesc | ( <"> MediaDesc <"> ) ) )
+             | ( "media" "=" ( media_query_list | ( <"> media_query_list <"> ) ) )
              | ( "title" "=" quoted-string )
              | ( "title*" "=" ext-value )
              | ( "type" "=" ( media-type | quoted-mt ) )
@@ -328,9 +327,9 @@ the Content-Language header of a HTTP response obtained by actually following th
 the indicated resource.</t>
 
 <t>The “media” parameter, when present, is used to indicate intended destination medium or media for
-style information (see <xref target="W3C.CR-html5-20140731"/>, Section 6.13). Note that this may be updated by
-<xref target="W3C.CR-css3-mediaqueries-20090915"/>). Its value MUST be quoted if it contains a semicolon (“;”)
-or comma (“,”), and there MUST NOT be more than one “media” parameter in a link-value.</t>
+style information (see <xref target="W3C.REC-html5-20141028"/>, Section 4.2.4). Its value MUST be quoted if it
+contains a semicolon (“;”) or comma (“,”), and there MUST NOT be more than one “media” parameter in
+a link-value.</t>
 
 <t>The “title” parameter, when present, is used to label the destination of a link such that it can be
 used as a human-readable identifier (e.g., a menu entry) in the language indicated by the
@@ -605,6 +604,36 @@ they will be displayed to end users.</t>
 
 
 
+<reference anchor='W3C.CR-css3-mediaqueries-20090915'
+           target='http://www.w3.org/TR/2009/CR-css3-mediaqueries-20090915'>
+<front>
+<title>Media Queries</title>
+
+<author initials='H.' surname='Lie' fullname='Håkon Wium Lie'>
+    <organization />
+</author>
+
+<author initials='T.' surname='Çelik' fullname='Tantek Çelik'>
+    <organization />
+</author>
+
+<author initials='D.' surname='Glazman' fullname='Daniel Glazman'>
+    <organization />
+</author>
+
+<author initials='A.' surname='Kesteren' fullname='Anne van Kesteren'>
+    <organization />
+</author>
+
+<date month='September' day='15' year='2009' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium CR' value='CR-css3-mediaqueries-20090915' />
+<format type='HTML' target='http://www.w3.org/TR/2009/CR-css3-mediaqueries-20090915' />
+</reference>
+
+
+
 <reference anchor='I-D.ietf-httpbis-rfc5987bis'>
 <front>
 <title>Indicating Character Encoding and Language for HTTP Header Field Parameters</title>
@@ -712,36 +741,6 @@ they will be displayed to end users.</t>
 
 
 
-<reference anchor='W3C.CR-css3-mediaqueries-20090915'
-           target='http://www.w3.org/TR/2009/CR-css3-mediaqueries-20090915'>
-<front>
-<title>Media Queries</title>
-
-<author initials='H.' surname='Lie' fullname='Håkon Wium Lie'>
-    <organization />
-</author>
-
-<author initials='T.' surname='Çelik' fullname='Tantek Çelik'>
-    <organization />
-</author>
-
-<author initials='D.' surname='Glazman' fullname='Daniel Glazman'>
-    <organization />
-</author>
-
-<author initials='A.' surname='Kesteren' fullname='Anne van Kesteren'>
-    <organization />
-</author>
-
-<date month='September' day='15' year='2009' />
-</front>
-
-<seriesInfo name='World Wide Web Consortium CR' value='CR-css3-mediaqueries-20090915' />
-<format type='HTML' target='http://www.w3.org/TR/2009/CR-css3-mediaqueries-20090915' />
-</reference>
-
-
-
 <reference anchor='W3C.CR-curie-20090116'
            target='http://www.w3.org/TR/2009/CR-curie-20090116'>
 <front>
@@ -764,10 +763,14 @@ they will be displayed to end users.</t>
 
 
 
-<reference anchor='W3C.CR-html5-20140731'
-           target='http://www.w3.org/TR/2014/CR-html5-20140731'>
+<reference anchor='W3C.REC-html5-20141028'
+           target='http://www.w3.org/TR/2014/REC-html5-20141028'>
 <front>
 <title>HTML5</title>
+
+<author initials='I.' surname='Hickson' fullname='Ian Hickson'>
+    <organization />
+</author>
 
 <author initials='R.' surname='Berjon' fullname='Robin Berjon'>
     <organization />
@@ -793,11 +796,11 @@ they will be displayed to end users.</t>
     <organization />
 </author>
 
-<date month='July' day='31' year='2014' />
+<date month='October' day='28' year='2014' />
 </front>
 
-<seriesInfo name='World Wide Web Consortium CR' value='CR-html5-20140731' />
-<format type='HTML' target='http://www.w3.org/TR/2014/CR-html5-20140731' />
+<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-html5-20141028' />
+<format type='HTML' target='http://www.w3.org/TR/2014/REC-html5-20141028' />
 </reference>
 
 
@@ -918,16 +921,18 @@ Julian Reschke.</t>
 <t>This specification has the following differences from its predecessor, RFC5988:</t>
 
 <t><list style="symbols">
-  <t>The initial relation type registrations were removed, since they’ve already
-been registered by 5988.</t>
+  <t>The initial relation type registrations were removed, since they’ve already been registered by
+5988.</t>
   <t>The introduction has been shortened.</t>
   <t>The Link Relation Application Data Registry has been removed.</t>
   <t>Incorporated errata.</t>
   <t>Updated references.</t>
   <t>Link cardinality was clarified.</t>
-  <t>Terminology was changed from “target IRI” and “context IRI” to “link target”
-and “link context” respectively.</t>
+  <t>Terminology was changed from “target IRI” and “context IRI” to “link target” and “link context”
+respectively.</t>
   <t>A convention for assigning a URI to registered relation types was defined.</t>
+  <t>Removed misleading statement that the link header field is semantically equivalent to HTML and
+Atom links.</t>
 </list></t>
 
 </section>

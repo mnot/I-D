@@ -97,14 +97,14 @@ Table of Contents
    5.  The Link Header Field . . . . . . . . . . . . . . . . . . . .   7
      5.1.  Link Target . . . . . . . . . . . . . . . . . . . . . . .   8
      5.2.  Link Context  . . . . . . . . . . . . . . . . . . . . . .   8
-     5.3.  Relation Type . . . . . . . . . . . . . . . . . . . . . .   9
+     5.3.  Relation Type . . . . . . . . . . . . . . . . . . . . . .   8
      5.4.  Target Attributes . . . . . . . . . . . . . . . . . . . .   9
      5.5.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  10
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  11
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  10
      6.1.  Link HTTP Header Registration . . . . . . . . . . . . . .  11
      6.2.  Link Relation Type Registry . . . . . . . . . . . . . . .  11
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  12
-   8.  Internationalisation Considerations . . . . . . . . . . . . .  12
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
+   8.  Internationalisation Considerations . . . . . . . . . . . . .  11
    9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
 
 
@@ -128,7 +128,7 @@ Internet-Draft                 Web Linking                  October 2015
    between resources on the Web ("links") and the type of those
    relationships ("link relation types").
 
-   HTML [W3C.CR-html5-20140731] and Atom [RFC4287] both have well-
+   HTML [W3C.REC-html5-20141028] and Atom [RFC4287] both have well-
    defined concepts of linking; this specification generalises this into
    a framework that encompasses linking in these formats and
    (potentially) elsewhere.
@@ -150,8 +150,9 @@ Internet-Draft                 Web Linking                  October 2015
 
    Additionally, the following rules are included from [RFC3986]: URI
    and URI-Reference; from [RFC6838]: type-name and subtype-name; from
-   [W3C.CR-html5-20140731]: MediaDesc; from [RFC5646]: Language-Tag; and
-   from [I-D.ietf-httpbis-rfc5987bis], ext-value and parmname.
+   [W3C.CR-css3-mediaqueries-20090915]: media_query_list; from
+   [RFC5646]: Language-Tag; and from [I-D.ietf-httpbis-rfc5987bis], ext-
+   value and parmname.
 
 3.  Links
 
@@ -161,7 +162,6 @@ Internet-Draft                 Web Linking                  October 2015
    o  A link context,
 
    o  a link relation type (Section 4),
-
 
 
 
@@ -354,37 +354,37 @@ Internet-Draft                 Web Linking                  October 2015
 5.  The Link Header Field
 
    The Link entity-header field provides a means for serialising one or
-   more links in HTTP headers.  It is semantically equivalent to the
-   <LINK> element in HTML, as well as the atom:link feed-level element
-   in Atom [RFC4287].
+   more links in HTTP headers.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Link           = "Link" ":" #link-value
+link-value     = "<" URI-Reference ">" *( ";" link-param )
+link-param     = ( ( "rel" "=" relation-types )
+             | ( "anchor" "=" <"> URI-Reference <"> )
+             | ( "rev" "=" relation-types )
+             | ( "hreflang" "=" Language-Tag )
+             | ( "media" "=" ( media_query_list | ( <"> media_query_list <"> ) ) )
+             | ( "title" "=" quoted-string )
+             | ( "title*" "=" ext-value )
+             | ( "type" "=" ( media-type | quoted-mt ) )
+             | ( link-extension ) )
+link-extension = ( parmname [ "=" ( ptoken | quoted-string ) ] )
+             | ( ext-name-star "=" ext-value )
+ext-name-star  = parmname "*" ; reserved for RFC5987-profiled
+                            ; extensions. Whitespace NOT
+                            ; allowed in between.
+ptoken         = 1*ptokenchar
+ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "("
+             | ")" | "*" | "+" | "-" | "." | "/" | DIGIT
+             | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA
+             | "[" | "]" | "^" | "_" | "`" | "{" | "|"
+             | "}" | "~"
+media-type     = type-name "/" subtype-name
+quoted-mt      = <"> media-type <">
+relation-types = relation-type
+             | <"> relation-type *( 1*SP relation-type ) <">
+relation-type  = reg-rel-type | ext-rel-type
+reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+ext-rel-type   = URI
 
 
 
@@ -393,36 +393,6 @@ Nottingham               Expires April 18, 2016                 [Page 7]
 
 Internet-Draft                 Web Linking                  October 2015
 
-
-   Link           = "Link" ":" #link-value
-   link-value     = "<" URI-Reference ">" *( ";" link-param )
-   link-param     = ( ( "rel" "=" relation-types )
-                | ( "anchor" "=" <"> URI-Reference <"> )
-                | ( "rev" "=" relation-types )
-                | ( "hreflang" "=" Language-Tag )
-                | ( "media" "=" ( MediaDesc | ( <"> MediaDesc <"> ) ) )
-                | ( "title" "=" quoted-string )
-                | ( "title*" "=" ext-value )
-                | ( "type" "=" ( media-type | quoted-mt ) )
-                | ( link-extension ) )
-   link-extension = ( parmname [ "=" ( ptoken | quoted-string ) ] )
-                | ( ext-name-star "=" ext-value )
-   ext-name-star  = parmname "*" ; reserved for RFC5987-profiled
-                               ; extensions. Whitespace NOT
-                               ; allowed in between.
-   ptoken         = 1*ptokenchar
-   ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "("
-                | ")" | "*" | "+" | "-" | "." | "/" | DIGIT
-                | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA
-                | "[" | "]" | "^" | "_" | "`" | "{" | "|"
-                | "}" | "~"
-   media-type     = type-name "/" subtype-name
-   quoted-mt      = <"> media-type <">
-   relation-types = relation-type
-                | <"> relation-type *( 1*SP relation-type ) <">
-   relation-type  = reg-rel-type | ext-rel-type
-   reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
-   ext-rel-type   = URI
 
 5.1.  Link Target
 
@@ -441,15 +411,6 @@ Internet-Draft                 Web Linking                  October 2015
    such as a fragment of this resource, or a third resource (i.e., when
    the anchor value is an absolute URI).  If the anchor parameter's
    value is a relative URI, parsers MUST resolve it as per [RFC3986],
-
-
-
-
-Nottingham               Expires April 18, 2016                 [Page 8]
-
-Internet-Draft                 Web Linking                  October 2015
-
-
    Section 5.  Note that any base URI from the body's content is not
    applied.
 
@@ -482,6 +443,13 @@ Internet-Draft                 Web Linking                  October 2015
    or comma (",") (as these characters are used as delimiters in the
    header itself).
 
+
+
+Nottingham               Expires April 18, 2016                 [Page 8]
+
+Internet-Draft                 Web Linking                  October 2015
+
+
 5.4.  Target Attributes
 
    The "hreflang", "media", "title", "title*", "type", and any link-
@@ -498,18 +466,9 @@ Internet-Draft                 Web Linking                  October 2015
 
    The "media" parameter, when present, is used to indicate intended
    destination medium or media for style information (see
-
-
-
-Nottingham               Expires April 18, 2016                 [Page 9]
-
-Internet-Draft                 Web Linking                  October 2015
-
-
-   [W3C.CR-html5-20140731], Section 6.13).  Note that this may be
-   updated by [W3C.CR-css3-mediaqueries-20090915]).  Its value MUST be
-   quoted if it contains a semicolon (";") or comma (","), and there
-   MUST NOT be more than one "media" parameter in a link-value.
+   [W3C.REC-html5-20141028], Section 4.2.4).  Its value MUST be quoted
+   if it contains a semicolon (";") or comma (","), and there MUST NOT
+   be more than one "media" parameter in a link-value.
 
    The "title" parameter, when present, is used to label the destination
    of a link such that it can be used as a human-readable identifier
@@ -536,6 +495,17 @@ Internet-Draft                 Web Linking                  October 2015
    the link.  There MUST NOT be more than one type parameter in a link-
    value.
 
+
+
+
+
+
+
+Nottingham               Expires April 18, 2016                 [Page 9]
+
+Internet-Draft                 Web Linking                  October 2015
+
+
 5.5.  Examples
 
    For example:
@@ -552,15 +522,6 @@ Internet-Draft                 Web Linking                  October 2015
 
    indicates that the root resource ("/") is related to this resource
    with the extension relation type "http://example.net/foo".
-
-
-
-
-
-Nottingham               Expires April 18, 2016                [Page 10]
-
-Internet-Draft                 Web Linking                  October 2015
-
 
    The example below shows an instance of the Link header encoding
    multiple links, and also the use of RFC 5987 encoding to encode both
@@ -591,6 +552,16 @@ Internet-Draft                 Web Linking                  October 2015
    Relation Application Data Registry, as it has not been used, and
    future use is not anticipated.
 
+
+
+
+
+
+Nottingham               Expires April 18, 2016                [Page 10]
+
+Internet-Draft                 Web Linking                  October 2015
+
+
 6.1.  Link HTTP Header Registration
 
    This specification updates the Message Header registry entry for
@@ -609,14 +580,6 @@ Internet-Draft                 Web Linking                  October 2015
 
    This specification updates the procedures for the Link Relation Type
    registry; see Section 4.1.1.
-
-
-
-
-Nottingham               Expires April 18, 2016                [Page 11]
-
-Internet-Draft                 Web Linking                  October 2015
-
 
    The underlying registry data (e.g., the XML file) must include
    Simplified BSD License text as described in Section 4.e of the Trust
@@ -647,6 +610,14 @@ Internet-Draft                 Web Linking                  October 2015
    them in serialisations that do not support IRIs.  This includes the
    Link HTTP header.
 
+
+
+
+Nottingham               Expires April 18, 2016                [Page 11]
+
+Internet-Draft                 Web Linking                  October 2015
+
+
    Similarly, the anchor parameter of the Link header does not support
    IRIs, and therefore IRIs must be converted to URIs before inclusion
    there.
@@ -666,13 +637,6 @@ Internet-Draft                 Web Linking                  October 2015
               Reschke, J., "Indicating Character Encoding and Language
               for HTTP Header Field Parameters", draft-ietf-httpbis-
               rfc5987bis-00 (work in progress), October 2015.
-
-
-
-Nottingham               Expires April 18, 2016                [Page 12]
-
-Internet-Draft                 Web Linking                  October 2015
-
 
    [RFC2026]  Bradner, S., "The Internet Standards Process -- Revision
               3", BCP 9, RFC 2026, DOI 10.17487/RFC2026, October 1996,
@@ -702,6 +666,14 @@ Internet-Draft                 Web Linking                  October 2015
               DOI 10.17487/RFC5226, May 2008,
               <http://www.rfc-editor.org/info/rfc5226>.
 
+
+
+
+Nottingham               Expires April 18, 2016                [Page 12]
+
+Internet-Draft                 Web Linking                  October 2015
+
+
    [RFC5646]  Phillips, A., Ed. and M. Davis, Ed., "Tags for Identifying
               Languages", BCP 47, RFC 5646, DOI 10.17487/RFC5646,
               September 2009, <http://www.rfc-editor.org/info/rfc5646>.
@@ -716,19 +688,18 @@ Internet-Draft                 Web Linking                  October 2015
               7230, DOI 10.17487/RFC7230, June 2014,
               <http://www.rfc-editor.org/info/rfc7230>.
 
+   [W3C.CR-css3-mediaqueries-20090915]
+              Lie, H., Celik, T., Glazman, D., and A. Kesteren, "Media
+              Queries", World Wide Web Consortium CR CR-css3-
+              mediaqueries-20090915, September 2009,
+              <http://www.w3.org/TR/2009/CR-css3-mediaqueries-20090915>.
+
 9.2.  Informative References
 
    [RFC2068]  Fielding, R., Gettys, J., Mogul, J., Frystyk, H., and T.
               Berners-Lee, "Hypertext Transfer Protocol -- HTTP/1.1",
               RFC 2068, DOI 10.17487/RFC2068, January 1997,
               <http://www.rfc-editor.org/info/rfc2068>.
-
-
-
-Nottingham               Expires April 18, 2016                [Page 13]
-
-Internet-Draft                 Web Linking                  October 2015
-
 
    [RFC2616]  Fielding, R., Gettys, J., Mogul, J., Frystyk, H.,
               Masinter, L., Leach, P., and T. Berners-Lee, "Hypertext
@@ -748,22 +719,28 @@ Internet-Draft                 Web Linking                  October 2015
               Syndication Format", RFC 4287, DOI 10.17487/RFC4287,
               December 2005, <http://www.rfc-editor.org/info/rfc4287>.
 
-   [W3C.CR-css3-mediaqueries-20090915]
-              Lie, H., Celik, T., Glazman, D., and A. Kesteren, "Media
-              Queries", World Wide Web Consortium CR CR-css3-
-              mediaqueries-20090915, September 2009,
-              <http://www.w3.org/TR/2009/CR-css3-mediaqueries-20090915>.
+
+
+
+
+
+
+Nottingham               Expires April 18, 2016                [Page 13]
+
+Internet-Draft                 Web Linking                  October 2015
+
 
    [W3C.CR-curie-20090116]
               Birbeck, M. and S. McCarron, "CURIE Syntax 1.0", World
               Wide Web Consortium CR CR-curie-20090116, January 2009,
               <http://www.w3.org/TR/2009/CR-curie-20090116>.
 
-   [W3C.CR-html5-20140731]
-              Berjon, R., Faulkner, S., Leithead, T., Navara, E.,
-              O&#039;Connor, E., and S. Pfeiffer, "HTML5", World Wide
-              Web Consortium CR CR-html5-20140731, July 2014,
-              <http://www.w3.org/TR/2014/CR-html5-20140731>.
+   [W3C.REC-html5-20141028]
+              Hickson, I., Berjon, R., Faulkner, S., Leithead, T.,
+              Navara, E., O&#039;Connor, E., and S. Pfeiffer, "HTML5",
+              World Wide Web Consortium Recommendation REC-
+              html5-20141028, October 2014,
+              <http://www.w3.org/TR/2014/REC-html5-20141028>.
 
    [W3C.REC-rdfa-syntax-20081014]
               Adida, B., Birbeck, M., McCarron, S., and S. Pemberton,
@@ -771,6 +748,29 @@ Internet-Draft                 Web Linking                  October 2015
               Consortium Recommendation REC-rdfa-syntax-20081014,
               October 2008,
               <http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014>.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -922,15 +922,15 @@ Appendix D.  Changes from RFC5988
    o  A convention for assigning a URI to registered relation types was
       defined.
 
+   o  Removed misleading statement that the link header field is
+      semantically equivalent to HTML and Atom links.
+
 Author's Address
 
    Mark Nottingham
 
    EMail: mnot@mnot.net
    URI:   http://www.mnot.net/
-
-
-
 
 
 
