@@ -201,6 +201,9 @@ The registration template is:
 * Reference: 
 * Notes: [optional]
 
+See the registry for examples of the description field; generally, it SHOULD identify the semantics
+in terms of the link's context and target.
+
 Registration requests should be sent to the link-relations@ietf.org mailing list, marked clearly in
 the subject line (e.g., "NEW RELATION - example" to register an "example" relation type).
 
