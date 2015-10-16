@@ -46,7 +46,7 @@ informative:
   RFC4287:
   W3C.CR-curie-20090116:
   W3C.REC-html5-20141028:
-  W3C.REC-rdfa-syntax-20081014:
+  W3C.REC-html-rdfa-20150317:
 
 
 --- abstract
@@ -443,7 +443,7 @@ Note that registered Relation Names are required to be lower-case ASCII letters.
 # Using the Link Header with the HTML Format
 
 HTML motivated the original syntax of the Link header, and many of the design decisions in this
-document are driven by a desire to stay compatible with these uses.
+document are driven by a desire to stay compatible with it.
 
 In HTML, the link element can be mapped to links as specified here by using the "href" attribute
 for the target URI, and "rel" to convey the relation type, as in the Link header. The context of
@@ -451,29 +451,27 @@ the link is the URI associated with the entire HTML document.
 
 All of the link relation types defined by HTML have been included in the Link Relation Type
 registry, so they can be used without modification. However, there are several potential ways to
-serialise extension relation types into HTML, including
+serialise extension relation types into HTML, including:
 		
 * As absolute URIs,
-* using the document-wide "profile" attribute's URI as a prefix for relation
-  types, or
-* using the RDFa {{W3C.REC-rdfa-syntax-20081014}} convention of mapping token
+* using the RDFa {{W3C.REC-html-rdfa-20150317}} convention of mapping token
   prefixes to URIs (in a manner similar to XML name spaces).
-
 
 Individual applications of linking will therefore need to define how their extension links should
 be serialised into HTML.
 
 Surveys of existing HTML content have shown that unregistered link relation types that are not URIs
-are (perhaps inevitably) common. Consuming HTML implementations should not consider such
+are (perhaps inevitably) common. Consuming HTML implementations ought not consider such
 unregistered short links to be errors, but rather relation types with a local scope (i.e., their
 meaning is specific and perhaps private to that document).
 
-HTML also defines several attributes on links that are not explicitly defined by the Link header.
-These attributes can be serialised as link-extensions to maintain fidelity.
+HTML also defines several attributes on links that can be see as target attributes, including
+"media", "hreflang", "type" and "sizes".
 
 Finally, the HTML specification gives a special meaning when the "alternate" and "stylesheet"
-relation types coincide in the same link. Such links should be serialised in the Link header using
-a single list of relation-types (e.g., rel="alternate stylesheet") to preserve this relationship.
+relation types coincide in the same link. Such links ought to be serialised in the Link header
+using a single list of relation-types (e.g., rel="alternate stylesheet") to preserve this
+relationship.
 
 # Using the Link Header with the Atom Format
 
