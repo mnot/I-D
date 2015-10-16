@@ -442,7 +442,7 @@ Note that registered Relation Names are required to be lower-case ASCII letters.
 
 --- back
 
-# Notes on Using the Link Header with the HTML Format
+# Using the Link Header with the HTML Format
 
 HTML motivated the original syntax of the Link header, and many of the design decisions in this
 document are driven by a desire to stay compatible with these uses.
@@ -477,7 +477,7 @@ Finally, the HTML specification gives a special meaning when the "alternate" and
 relation types coincide in the same link. Such links should be serialised in the Link header using
 a single list of relation-types (e.g., rel="alternate stylesheet") to preserve this relationship.
 
-# Notes on Using the Link Header with the Atom Format
+# Using the Link Header with the Atom Format
 
 Atom conveys links in the atom:link element, with the "href" attribute indicating the link target
 and the "rel" attribute containing the relation type. The context of the link is either a feed
