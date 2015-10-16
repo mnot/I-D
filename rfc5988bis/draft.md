@@ -178,6 +178,45 @@ are not considered equivalent to the registered relation types by many processor
 be serialised unless the application using link relations specifically allows them.
 
 
+### Registering New Link Relation Types {#procedure}
+
+Relation types are registered on the advice of a Designated Expert (appointed by the IESG or their
+delegate), with a Specification Required (using terminology from {{RFC5226}}).
+
+The requirements for registered relation types are described in {{registered-relation-types}}.
+
+Registration requests consist of the completed registration template below, typically published in
+an RFC or Open Standard (in the sense described by {{RFC2026}}, Section 7). However, to allow for
+the allocation of values prior to publication, the Designated Expert may approve registration once
+they are satisfied that a specification will be published.
+
+Note that relation types can be registered by third parties, if the Designated Expert determines
+that an unregistered relation type is widely deployed and not likely to be registered in a timely
+manner.
+
+The registration template is:
+
+* Relation Name: 
+* Description:
+* Reference: 
+* Notes: [optional]
+
+Registration requests should be sent to the link-relations@ietf.org mailing list, marked clearly in
+the subject line (e.g., "NEW RELATION - example" to register an "example" relation type).
+
+Within at most 14 days of the request, the Designated Expert(s) will either approve or deny the
+registration request, communicating this decision to the review list and IANA. Denials should
+include an explanation and, if applicable, suggestions as to how to make the request successful.
+
+Decisions (or lack thereof) made by the Designated Expert can be first appealed to Application Area
+Directors (contactable using app-ads@tools.ietf.org email address or directly by looking up their
+email addresses on http://www.iesg.org/ website) and, if the appellant is not satisfied with the
+response, to the full IESG (using the iesg@iesg.org mailing list).
+
+IANA should only accept registry updates from the Designated Expert(s), and should direct all
+requests for registration to the review mailing list.
+
+
 ## Extension Relation Types
 
 Applications that don't wish to register a relation type can use an extension relation type, which
@@ -368,50 +407,11 @@ refer to this document.
 
 ## Link Relation Type Registry
 
-This specification establishes the Link Relation Type registry, and updates Atom {{RFC4287}} to
-refer to it in place of the "Registry of Link Relations".
+This specification updates the procedures for the Link Relation Type registry; see {{procedure}}.
 		
 The underlying registry data (e.g., the XML file) must include Simplified BSD License text as
 described in Section 4.e of the Trust Legal Provisions (<eref
 target="http://trustee.ietf.org/license-info"/>).
-
-### Registering New Link Relation Types
-
-Relation types are registered on the advice of a Designated Expert (appointed by the IESG or their
-delegate), with a Specification Required (using terminology from {{RFC5226}}).
-
-The requirements for registered relation types are described in {{registered-relation-types}}.
-
-Registration requests consist of the completed registration template below, typically published in
-an RFC or Open Standard (in the sense described by {{RFC2026}}, Section 7). However, to allow for
-the allocation of values prior to publication, the Designated Expert may approve registration once
-they are satisfied that a specification will be published.
-
-Note that relation types can be registered by third parties, if the Designated Expert determines
-that an unregistered relation type is widely deployed and not likely to be registered in a timely
-manner.
-
-The registration template is:
-
-* Relation Name: 
-* Description:
-* Reference: 
-* Notes: [optional]
-
-Registration requests should be sent to the link-relations@ietf.org mailing list, marked clearly in
-the subject line (e.g., "NEW RELATION - example" to register an "example" relation type).
-
-Within at most 14 days of the request, the Designated Expert(s) will either approve or deny the
-registration request, communicating this decision to the review list and IANA. Denials should
-include an explanation and, if applicable, suggestions as to how to make the request successful.
-
-Decisions (or lack thereof) made by the Designated Expert can be first appealed to Application Area
-Directors (contactable using app-ads@tools.ietf.org email address or directly by looking up their
-email addresses on http://www.iesg.org/ website) and, if the appellant is not satisfied with the
-response, to the full IESG (using the iesg@iesg.org mailing list).
-
-IANA should only accept registry updates from the Designated Expert(s), and should direct all
-requests for registration to the review mailing list.
 
 
 # Security Considerations
