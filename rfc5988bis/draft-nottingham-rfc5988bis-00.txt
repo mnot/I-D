@@ -94,17 +94,17 @@ Table of Contents
      4.1.  Registered Relation Types . . . . . . . . . . . . . . . .   5
      4.2.  Extension Relation Types  . . . . . . . . . . . . . . . .   5
    5.  The Link Header Field . . . . . . . . . . . . . . . . . . . .   6
-     5.1.  Link Target . . . . . . . . . . . . . . . . . . . . . . .   6
+     5.1.  Link Target . . . . . . . . . . . . . . . . . . . . . . .   7
      5.2.  Link Context  . . . . . . . . . . . . . . . . . . . . . .   7
-     5.3.  Relation Type . . . . . . . . . . . . . . . . . . . . . .   7
-     5.4.  Target Attributes . . . . . . . . . . . . . . . . . . . .   7
-     5.5.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   8
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
-     6.1.  Link HTTP Header Registration . . . . . . . . . . . . . .   9
+     5.3.  Relation Type . . . . . . . . . . . . . . . . . . . . . .   8
+     5.4.  Target Attributes . . . . . . . . . . . . . . . . . . . .   8
+     5.5.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   9
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  10
+     6.1.  Link HTTP Header Registration . . . . . . . . . . . . . .  10
      6.2.  Link Relation Type Registry . . . . . . . . . . . . . . .  10
-       6.2.1.  Registering New Link Relation Types . . . . . . . . .  10
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
-   8.  Internationalisation Considerations . . . . . . . . . . . . .  11
+       6.2.1.  Registering New Link Relation Types . . . . . . . . .  11
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  12
+   8.  Internationalisation Considerations . . . . . . . . . . . . .  12
    9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
 
 
@@ -114,8 +114,8 @@ Nottingham               Expires April 18, 2016                 [Page 2]
 Internet-Draft                 Web Linking                  October 2015
 
 
-     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
-     9.2.  Informative References  . . . . . . . . . . . . . . . . .  13
+     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  13
+     9.2.  Informative References  . . . . . . . . . . . . . . . . .  14
    Appendix A.  Notes on Using the Link Header with the HTML Format   15
    Appendix B.  Notes on Using the Link Header with the Atom Format   16
    Appendix C.  Acknowledgements . . . . . . . . . . . . . . . . . .  16
@@ -260,12 +260,28 @@ Internet-Draft                 Web Linking                  October 2015
    HTTP methods, request and response media types that must be
    supported).
 
+   Applications that wish to refer to a registered relation type with a
+   URI [RFC3986] MAY do so by prepending
+   "http://www.iana.org/assignments/relation/" to its name.  Note that
+   the resulting strings are not considered equivalent to the registered
+   relation types by many processors, and SHOULD NOT be serialised
+   unless the application using link relations specifically allows them.
+
 4.2.  Extension Relation Types
 
    Applications that don't wish to register a relation type can use an
    extension relation type, which is a URI [RFC3986] that uniquely
    identifies the relation type.  Although the URI can point to a
    resource that contains a definition of the semantics of the relation
+
+
+
+
+Nottingham               Expires April 18, 2016                 [Page 5]
+
+Internet-Draft                 Web Linking                  October 2015
+
+
    type, clients SHOULD NOT automatically access that resource to avoid
    overburdening its server.
 
@@ -274,13 +290,6 @@ Internet-Draft                 Web Linking                  October 2015
    format, such as a Curie [W3C.CR-curie-20090116]) in a case-
    insensitive fashion, character-by-character.  Because of this, all-
    lowercase URIs SHOULD be used for extension relations.
-
-
-
-Nottingham               Expires April 18, 2016                 [Page 5]
-
-Internet-Draft                 Web Linking                  October 2015
-
 
    Note that while extension relation types are required to be URIs, a
    serialisation of links can specify that they are expressed in another
@@ -292,6 +301,42 @@ Internet-Draft                 Web Linking                  October 2015
    more links in HTTP headers.  It is semantically equivalent to the
    <LINK> element in HTML, as well as the atom:link feed-level element
    in Atom [RFC4287].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham               Expires April 18, 2016                 [Page 6]
+
+Internet-Draft                 Web Linking                  October 2015
+
 
    Link           = "Link" ":" #link-value
    link-value     = "<" URI-Reference ">" *( ";" link-param )
@@ -331,13 +376,6 @@ Internet-Draft                 Web Linking                  October 2015
    MUST resolve it as per [RFC3986], Section 5.  Note that any base IRI
    from the message's content is not applied.
 
-
-
-Nottingham               Expires April 18, 2016                 [Page 6]
-
-Internet-Draft                 Web Linking                  October 2015
-
-
 5.2.  Link Context
 
    By default, the context of a link conveyed in the Link header field
@@ -347,6 +385,15 @@ Internet-Draft                 Web Linking                  October 2015
    such as a fragment of this resource, or a third resource (i.e., when
    the anchor value is an absolute URI).  If the anchor parameter's
    value is a relative URI, parsers MUST resolve it as per [RFC3986],
+
+
+
+
+Nottingham               Expires April 18, 2016                 [Page 7]
+
+Internet-Draft                 Web Linking                  October 2015
+
+
    Section 5.  Note that any base URI from the body's content is not
    applied.
 
@@ -385,15 +432,6 @@ Internet-Draft                 Web Linking                  October 2015
    extension link-params are considered to be target attributes for the
    link.
 
-
-
-
-
-Nottingham               Expires April 18, 2016                 [Page 7]
-
-Internet-Draft                 Web Linking                  October 2015
-
-
    The "hreflang" parameter, when present, is a hint indicating what the
    language of the result of dereferencing the link should be.  Note
    that this is only a hint; for example, it does not override the
@@ -404,6 +442,14 @@ Internet-Draft                 Web Linking                  October 2015
 
    The "media" parameter, when present, is used to indicate intended
    destination medium or media for style information (see
+
+
+
+Nottingham               Expires April 18, 2016                 [Page 8]
+
+Internet-Draft                 Web Linking                  October 2015
+
+
    [W3C.CR-html5-20140731], Section 6.13).  Note that this may be
    updated by [W3C.CR-css3-mediaqueries-20090915]).  Its value MUST be
    quoted if it contains a semicolon (";") or comma (","), and there
@@ -441,15 +487,6 @@ Internet-Draft                 Web Linking                  October 2015
    Link: <http://example.com/TheBook/chapter2>; rel="previous";
          title="previous chapter"
 
-
-
-
-
-Nottingham               Expires April 18, 2016                 [Page 8]
-
-Internet-Draft                 Web Linking                  October 2015
-
-
    indicates that "chapter2" is previous to this resource in a logical
    navigation path.
 
@@ -459,6 +496,15 @@ Internet-Draft                 Web Linking                  October 2015
 
    indicates that the root resource ("/") is related to this resource
    with the extension relation type "http://example.net/foo".
+
+
+
+
+
+Nottingham               Expires April 18, 2016                 [Page 9]
+
+Internet-Draft                 Web Linking                  October 2015
+
 
    The example below shows an instance of the Link header encoding
    multiple links, and also the use of RFC 5987 encoding to encode both
@@ -494,18 +540,6 @@ Internet-Draft                 Web Linking                  October 2015
    This specification updates the Message Header registry entry for
    "Link" in HTTP [RFC3864] to refer to this document.
 
-
-
-
-
-
-
-
-Nottingham               Expires April 18, 2016                 [Page 9]
-
-Internet-Draft                 Web Linking                  October 2015
-
-
    Header field: Link
    Applicable protocol: http
    Status: standard
@@ -520,6 +554,13 @@ Internet-Draft                 Web Linking                  October 2015
    This specification establishes the Link Relation Type registry, and
    updates Atom [RFC4287] to refer to it in place of the "Registry of
    Link Relations".
+
+
+
+Nottingham               Expires April 18, 2016                [Page 10]
+
+Internet-Draft                 Web Linking                  October 2015
+
 
    The underlying registry data (e.g., the XML file) must include
    Simplified BSD License text as described in Section 4.e of the Trust
@@ -555,13 +596,6 @@ Internet-Draft                 Web Linking                  October 2015
 
    o  Notes: [optional]
 
-
-
-Nottingham               Expires April 18, 2016                [Page 10]
-
-Internet-Draft                 Web Linking                  October 2015
-
-
    Registration requests should be sent to the link-relations@ietf.org
    mailing list, marked clearly in the subject line (e.g., "NEW RELATION
    - example" to register an "example" relation type).
@@ -576,6 +610,14 @@ Internet-Draft                 Web Linking                  October 2015
    first appealed to Application Area Directors (contactable using app-
    ads@tools.ietf.org email address or directly by looking up their
    email addresses on http://www.iesg.org/ website) and, if the
+
+
+
+Nottingham               Expires April 18, 2016                [Page 11]
+
+Internet-Draft                 Web Linking                  October 2015
+
+
    appellant is not satisfied with the response, to the full IESG (using
    the iesg@iesg.org mailing list).
 
@@ -608,16 +650,6 @@ Internet-Draft                 Web Linking                  October 2015
    them in serialisations that do not support IRIs.  This includes the
    Link HTTP header.
 
-
-
-
-
-
-Nottingham               Expires April 18, 2016                [Page 11]
-
-Internet-Draft                 Web Linking                  October 2015
-
-
    Similarly, the anchor parameter of the Link header does not support
    IRIs, and therefore IRIs must be converted to URIs before inclusion
    there.
@@ -630,6 +662,17 @@ Internet-Draft                 Web Linking                  October 2015
    ASCII letters.
 
 9.  References
+
+
+
+
+
+
+
+Nottingham               Expires April 18, 2016                [Page 12]
+
+Internet-Draft                 Web Linking                  October 2015
+
 
 9.1.  Normative References
 
@@ -666,14 +709,6 @@ Internet-Draft                 Web Linking                  October 2015
               DOI 10.17487/RFC5226, May 2008,
               <http://www.rfc-editor.org/info/rfc5226>.
 
-
-
-
-Nottingham               Expires April 18, 2016                [Page 12]
-
-Internet-Draft                 Web Linking                  October 2015
-
-
    [RFC5646]  Phillips, A., Ed. and M. Davis, Ed., "Tags for Identifying
               Languages", BCP 47, RFC 5646, DOI 10.17487/RFC5646,
               September 2009, <http://www.rfc-editor.org/info/rfc5646>.
@@ -687,6 +722,13 @@ Internet-Draft                 Web Linking                  October 2015
               Protocol (HTTP/1.1): Message Syntax and Routing", RFC
               7230, DOI 10.17487/RFC7230, June 2014,
               <http://www.rfc-editor.org/info/rfc7230>.
+
+
+
+Nottingham               Expires April 18, 2016                [Page 13]
+
+Internet-Draft                 Web Linking                  October 2015
+
 
 9.2.  Informative References
 
@@ -719,17 +761,6 @@ Internet-Draft                 Web Linking                  October 2015
               mediaqueries-20090915, September 2009,
               <http://www.w3.org/TR/2009/CR-css3-mediaqueries-20090915>.
 
-
-
-
-
-
-
-Nottingham               Expires April 18, 2016                [Page 13]
-
-Internet-Draft                 Web Linking                  October 2015
-
-
    [W3C.CR-curie-20090116]
               Birbeck, M. and S. McCarron, "CURIE Syntax 1.0", World
               Wide Web Consortium CR CR-curie-20090116, January 2009,
@@ -747,37 +778,6 @@ Internet-Draft                 Web Linking                  October 2015
               Consortium Recommendation REC-rdfa-syntax-20081014,
               October 2008,
               <http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014>.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -919,15 +919,15 @@ Appendix D.  Changes from RFC5988
    o  Terminology was changed from "target IRI" and "context IRI" to
       "link target" and "link context" respectively.
 
+   o  A convention for assigning a URI to registered relation types was
+      defined.
+
 Author's Address
 
    Mark Nottingham
 
    EMail: mnot@mnot.net
    URI:   http://www.mnot.net/
-
-
-
 
 
 
