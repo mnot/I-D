@@ -35,6 +35,7 @@ normative:
   RFC5226:
   RFC5646:
   RFC7230:
+  W3C.CR-css3-mediaqueries-20090915:
   I-D.ietf-httpbis-rfc5987bis:
   
 informative:
@@ -43,9 +44,8 @@ informative:
   RFC2817:
   RFC2818:
   RFC4287:
-  W3C.CR-css3-mediaqueries-20090915:
   W3C.CR-curie-20090116:
-  W3C.CR-html5-20140731:
+  W3C.REC-html5-20141028:
   W3C.REC-rdfa-syntax-20081014:
 
 
@@ -76,7 +76,7 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/rfc59
 This specification defines a way to indicate the relationships between resources on the Web
 ("links") and the type of those relationships ("link relation types").
 
-HTML {{W3C.CR-html5-20140731}} and Atom {{RFC4287}} both have well-defined concepts of linking;
+HTML {{W3C.REC-html5-20141028}} and Atom {{RFC4287}} both have well-defined concepts of linking;
 this specification generalises this into a framework that encompasses linking in these formats and
 (potentially) elsewhere.
 
@@ -95,8 +95,9 @@ This document uses the Augmented Backus-Naur Form (ABNF) notation of {{RFC7230}}
 LOALPHA, DIGIT.
 
 Additionally, the following rules are included from {{RFC3986}}: URI and URI-Reference; from
-{{RFC6838}}: type-name and subtype-name; from {{W3C.CR-html5-20140731}}: MediaDesc; from
-{{RFC5646}}: Language-Tag; and from {{I-D.ietf-httpbis-rfc5987bis}}, ext-value and parmname.
+{{RFC6838}}: type-name and subtype-name; from {{W3C.CR-css3-mediaqueries-20090915}}:
+media_query_list; from {{RFC5646}}: Language-Tag; and from {{I-D.ietf-httpbis-rfc5987bis}},
+ext-value and parmname.
 
 
 # Links
@@ -244,7 +245,7 @@ element in Atom {{RFC4287}}.
 	             | ( "anchor" "=" <"> URI-Reference <"> )
 	             | ( "rev" "=" relation-types )
 	             | ( "hreflang" "=" Language-Tag )
-	             | ( "media" "=" ( MediaDesc | ( <"> MediaDesc <"> ) ) )
+	             | ( "media" "=" ( media_query_list | ( <"> media_query_list <"> ) ) )
 	             | ( "title" "=" quoted-string )
 	             | ( "title*" "=" ext-value )
 	             | ( "type" "=" ( media-type | quoted-mt ) )
@@ -324,9 +325,9 @@ the Content-Language header of a HTTP response obtained by actually following th
 the indicated resource.
 
 The "media" parameter, when present, is used to indicate intended destination medium or media for
-style information (see {{W3C.CR-html5-20140731}}, Section 6.13). Note that this may be updated by
-{{W3C.CR-css3-mediaqueries-20090915}}). Its value MUST be quoted if it contains a semicolon (";")
-or comma (","), and there MUST NOT be more than one "media" parameter in a link-value.
+style information (see {{W3C.REC-html5-20141028}}, Section 4.2.4). Its value MUST be quoted if it
+contains a semicolon (";") or comma (","), and there MUST NOT be more than one "media" parameter in
+a link-value.
 
 The "title" parameter, when present, is used to label the destination of a link such that it can be
 used as a human-readable identifier (e.g., a menu entry) in the language indicated by the
