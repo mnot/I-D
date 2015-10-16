@@ -34,8 +34,8 @@ normative:
   RFC6838:
   RFC5226:
   RFC5646:
-  RFC5987:
   RFC7230:
+  I-D.ietf-httpbis-rfc5987bis:
   
 informative:
   RFC2068:
@@ -94,7 +94,7 @@ LOALPHA, DIGIT.
 
 Additionally, the following rules are included from {{RFC3986}}: URI and URI-Reference; from
 {{RFC6838}}: type-name and subtype-name; from {{W3C.CR-html5-20140731}}: MediaDesc; from
-{{RFC5646}}: Language-Tag; and from {{RFC5987}}, ext-value and parmname.
+{{RFC5646}}: Language-Tag; and from {{I-D.ietf-httpbis-rfc5987bis}}, ext-value and parmname.
 
 
 # Links
@@ -289,10 +289,10 @@ Content-Language header (if present). The "title" parameter MUST NOT appear more
 given link-value; occurrences after the first MUST be ignored by parsers.
 
 The "title\*" parameter can be used to encode this label in a different character set, and/or
-contain language information as per {{RFC5987}}. The "title\*" parameter MUST NOT appear more than
-once in a given link-value; occurrences after the first MUST be ignored by parsers. If the
-parameter does not contain language information, its language is indicated by the Content-Language
-header (when present).
+contain language information as per {{I-D.ietf-httpbis-rfc5987bis}}. The "title\*" parameter MUST
+NOT appear more than once in a given link-value; occurrences after the first MUST be ignored by
+parsers. If the parameter does not contain language information, its language is indicated by the
+Content-Language header (when present).
 			
 If both the "title" and "title\*" parameters appear in a link-value, processors SHOULD use the
 "title\*" parameter's value.
