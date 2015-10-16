@@ -285,12 +285,10 @@ parameter's value is a relative URI, parsers MUST resolve it as per {{RFC3986}},
 that any base URI from the body's content is not applied.
 				
 Consuming implementations can choose to ignore links with an anchor parameter. For example, the
-application in use may not allow the link context to be assigned to a different resource. In such
+application in use might not allow the link context to be assigned to a different resource. In such
 cases, the entire link is to be ignored; consuming implementations MUST NOT process the link
 without applying the anchor.
 				
-<!-- probably need to revisit security considerations -->
-
 Note that depending on HTTP status code and response headers, the link context might be "anonymous"
 (i.e., no link context is available). For instance, this is the case on a 404 response to a GET
 request.
