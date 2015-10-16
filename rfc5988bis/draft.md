@@ -170,6 +170,11 @@ constrain the available representation media types of the link target. However, 
 the behaviours and properties of the target resource (e.g., allowable HTTP methods, request and
 response media types that must be supported).
 
+Applications that wish to refer to a registered relation type with a URI {{RFC3986}} MAY do so by
+prepending "http://www.iana.org/assignments/relation/" to its name. Note that the resulting strings
+are not considered equivalent to the registered relation types by many processors, and SHOULD NOT
+be serialised unless the application using link relations specifically allows them.
+
 
 ## Extension Relation Types
 
@@ -531,5 +536,5 @@ This specification has the following differences from its predecessor, RFC5988:
 * Terminology was changed from "target IRI" and "context IRI" to "link target"
   and "link context" respectively.
 
-
+* A convention for assigning a URI to registered relation types was defined.
 
