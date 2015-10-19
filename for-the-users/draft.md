@@ -85,7 +85,7 @@ Internet standards serve and are used by a variety of communities. This document
 guidelines for explicitly identifying them, serving them, and determining how to resolve conflicts
 between their interests, when necessary.
 
-It also mandates end users as the highest priority concern for Internet standards.
+It also motivates end users as the highest priority concern for Internet standards.
 
 --- note_Note_to_Readers
 
@@ -150,11 +150,14 @@ obvious as to dissuade them from using something (e.g., {{RFC6265}}).
 In other words -- because our decisions have ethical implications, we should consider their impact
 and determine whether it is within our core values, and do so in a well-defined, open fashion.
 
-To facilitate that, this document outlines a set of guidelines for identifying the relevant parties
-to an Internet standard. The aim of doing so is to both clarify the decision-making process, and to
-aid external parties when engaging with and judging the results of the standards process.
+To facilitate that, {{identifying}} outlines a set of guidelines for identifying the relevant
+parties to an Internet standard. The aim of doing so is to both clarify the decision-making
+process, and to aid external parties when engaging with and judging the results of the standards
+process.
 
-It also gives end user the highest priority in such considerations.
+In doing so, it becomes clear that Internet standards that give the highest priority to end users
+have the best chance of success, and of helping the IETF to succeed in its mission. As a result,
+{{users}} mandates that other parties cannot have a higher priority.
 
 
 ## Notational Conventions
@@ -164,12 +167,12 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# The Internet is for End Users
+# The Internet is for End Users {#users}
 
-Internet standards MUST give the highest priority to end users.
+Internet standards MUST NOT consider any other party to have higher priority over end users.
 
 While networks need to be managed, employers and equipment vendors need to meet business goals,
-etc., our mission is to "build a better human society" {{RFC3935}} and -- on the Internet --
+etc., the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet --
 society is composed of what we call "end users."
 
 Furthermore, the success of the Internet to date is arguably due largely to its bias towards
@@ -192,7 +195,7 @@ process to help us make decisions, deploy our protocols, and ultimately determin
 failure.
 
 
-# Identifying Relevant Parties
+# Identifying Relevant Parties {#identifying}
 
 The relevant parties to an Internet standard MUST be documented, along with their
 interrelationships.
