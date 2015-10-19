@@ -85,7 +85,7 @@ Internet standards serve and are used by a variety of communities. This document
 guidelines for explicitly identifying them, serving them, and determining how to resolve conflicts
 between their interests, when necessary.
 
-It also motivates end users as the highest priority concern for Internet standards.
+It also motivates considering end users as the highest priority concern for Internet standards.
 
 --- note_Note_to_Readers
 
