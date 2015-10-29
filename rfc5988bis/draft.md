@@ -510,15 +510,6 @@ atom:link does not. In this case, a single link-value may map to several atom:li
 As with HTML, atom:link defines some attributes that are not explicitly mirrored in the Link header
 syntax, but they can also be used as link-extensions to maintain fidelity.
 
-# Acknowledgements
-
-This specification lifts the idea and definition for the Link header from RFC 2068; credit for it
-belongs entirely to the authors of and contributors to that document. The link relation type
-registrations themselves are sourced from several documents; see the applicable references.
-
-The author would like to thank the many people who commented upon, encouraged and gave feedback to
-this specification, especially including Frank Ellermann, Roy Fielding, Eran Hammer-Lahav, and
-Julian Reschke.
 
 
 # Changes from RFC5988
