@@ -555,3 +555,5 @@ This specification has the following differences from its predecessor, RFC5988:
 
 * Removed misleading statement that the link header field is semantically equivalent to HTML and
   Atom links.
+  
+* More carefully defined how the Experts and IANA should interact.
