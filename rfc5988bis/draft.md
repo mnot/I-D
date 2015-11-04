@@ -236,7 +236,9 @@ The Link entity-header field provides a means for serialising one or more links 
 	             | ( "anchor" "=" <"> URI-Reference <"> )
 	             | ( "rev" "=" relation-types )
 	             | ( "hreflang" "=" Language-Tag )
-	             | ( "media" "=" ( media_query_list | ( <"> media_query_list <"> ) ) )
+	             | ( "media" "="
+                   ( media_query_list | ( <"> media_query_list <"> ) )
+                 )
 	             | ( "title" "=" quoted-string )
 	             | ( "title*" "=" ext-value )
 	             | ( "type" "=" ( media-type | quoted-mt ) )
