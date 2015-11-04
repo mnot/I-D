@@ -3,10 +3,10 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                          October 29, 2015
+Internet-Draft                                          November 4, 2015
 Obsoletes: 5988 (if approved)
 Intended status: Standards Track
-Expires: May 1, 2016
+Expires: May 7, 2016
 
 
                               Web Linking
@@ -49,13 +49,13 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 1, 2016.
+   This Internet-Draft will expire on May 7, 2016.
 
 
 
-Nottingham                 Expires May 1, 2016                  [Page 1]
+Nottingham                 Expires May 7, 2016                  [Page 1]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
 Copyright Notice
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Nottingham                 Expires May 1, 2016                  [Page 2]
+Nottingham                 Expires May 7, 2016                  [Page 2]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
      9.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
@@ -165,9 +165,9 @@ Internet-Draft                 Web Linking                  October 2015
 
 
 
-Nottingham                 Expires May 1, 2016                  [Page 3]
+Nottingham                 Expires May 7, 2016                  [Page 3]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    o  a link target, and
@@ -221,9 +221,9 @@ Internet-Draft                 Web Linking                  October 2015
 
 
 
-Nottingham                 Expires May 1, 2016                  [Page 4]
+Nottingham                 Expires May 7, 2016                  [Page 4]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    Relation types are not to be confused with media types [RFC6838];
@@ -277,9 +277,9 @@ Internet-Draft                 Web Linking                  October 2015
 
 
 
-Nottingham                 Expires May 1, 2016                  [Page 5]
+Nottingham                 Expires May 7, 2016                  [Page 5]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    Registration requests consist of at least the following information:
@@ -333,9 +333,9 @@ Internet-Draft                 Web Linking                  October 2015
 
 
 
-Nottingham                 Expires May 1, 2016                  [Page 6]
+Nottingham                 Expires May 7, 2016                  [Page 6]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    Note that while extension relation types are required to be URIs, a
@@ -347,35 +347,37 @@ Internet-Draft                 Web Linking                  October 2015
    The Link entity-header field provides a means for serialising one or
    more links in HTTP headers.
 
-Link           = "Link" ":" #link-value
-link-value     = "<" URI-Reference ">" *( ";" link-param )
-link-param     = ( ( "rel" "=" relation-types )
-             | ( "anchor" "=" <"> URI-Reference <"> )
-             | ( "rev" "=" relation-types )
-             | ( "hreflang" "=" Language-Tag )
-             | ( "media" "=" ( media_query_list | ( <"> media_query_list <"> ) ) )
-             | ( "title" "=" quoted-string )
-             | ( "title*" "=" ext-value )
-             | ( "type" "=" ( media-type | quoted-mt ) )
-             | ( link-extension ) )
-link-extension = ( parmname [ "=" ( ptoken | quoted-string ) ] )
-             | ( ext-name-star "=" ext-value )
-ext-name-star  = parmname "*" ; reserved for RFC5987-profiled
-                            ; extensions. Whitespace NOT
-                            ; allowed in between.
-ptoken         = 1*ptokenchar
-ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "("
-             | ")" | "*" | "+" | "-" | "." | "/" | DIGIT
-             | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA
-             | "[" | "]" | "^" | "_" | "`" | "{" | "|"
-             | "}" | "~"
-media-type     = type-name "/" subtype-name
-quoted-mt      = <"> media-type <">
-relation-types = relation-type
-             | <"> relation-type *( 1*SP relation-type ) <">
-relation-type  = reg-rel-type | ext-rel-type
-reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
-ext-rel-type   = URI
+   Link           = "Link" ":" #link-value
+   link-value     = "<" URI-Reference ">" *( ";" link-param )
+   link-param     = ( ( "rel" "=" relation-types )
+                | ( "anchor" "=" <"> URI-Reference <"> )
+                | ( "rev" "=" relation-types )
+                | ( "hreflang" "=" Language-Tag )
+                | ( "media" "="
+                  ( media_query_list | ( <"> media_query_list <"> ) )
+                )
+                | ( "title" "=" quoted-string )
+                | ( "title*" "=" ext-value )
+                | ( "type" "=" ( media-type | quoted-mt ) )
+                | ( link-extension ) )
+   link-extension = ( parmname [ "=" ( ptoken | quoted-string ) ] )
+                | ( ext-name-star "=" ext-value )
+   ext-name-star  = parmname "*" ; reserved for RFC5987-profiled
+                               ; extensions. Whitespace NOT
+                               ; allowed in between.
+   ptoken         = 1*ptokenchar
+   ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "("
+                | ")" | "*" | "+" | "-" | "." | "/" | DIGIT
+                | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA
+                | "[" | "]" | "^" | "_" | "`" | "{" | "|"
+                | "}" | "~"
+   media-type     = type-name "/" subtype-name
+   quoted-mt      = <"> media-type <">
+   relation-types = relation-type
+                | <"> relation-type *( 1*SP relation-type ) <">
+   relation-type  = reg-rel-type | ext-rel-type
+   reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+   ext-rel-type   = URI
 
 5.1.  Link Target
 
@@ -387,11 +389,9 @@ ext-rel-type   = URI
 
 
 
-
-
-Nottingham                 Expires May 1, 2016                  [Page 7]
+Nottingham                 Expires May 7, 2016                  [Page 7]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
 5.2.  Link Context
@@ -445,9 +445,9 @@ Internet-Draft                 Web Linking                  October 2015
 
 
 
-Nottingham                 Expires May 1, 2016                  [Page 8]
+Nottingham                 Expires May 7, 2016                  [Page 8]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    The "hreflang" parameter, when present, is a hint indicating what the
@@ -501,9 +501,9 @@ Internet-Draft                 Web Linking                  October 2015
 
 
 
-Nottingham                 Expires May 1, 2016                  [Page 9]
+Nottingham                 Expires May 7, 2016                  [Page 9]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    Similarly,
@@ -557,9 +557,9 @@ Internet-Draft                 Web Linking                  October 2015
 
 
 
-Nottingham                 Expires May 1, 2016                 [Page 10]
+Nottingham                 Expires May 7, 2016                 [Page 10]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    Header field: Link
@@ -613,9 +613,9 @@ Internet-Draft                 Web Linking                  October 2015
 
 
 
-Nottingham                 Expires May 1, 2016                 [Page 11]
+Nottingham                 Expires May 7, 2016                 [Page 11]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    Link headers that use the "anchor" parameter to associate a link's
@@ -669,9 +669,9 @@ Internet-Draft                 Web Linking                  October 2015
 
 
 
-Nottingham                 Expires May 1, 2016                 [Page 12]
+Nottingham                 Expires May 7, 2016                 [Page 12]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
@@ -725,9 +725,9 @@ Internet-Draft                 Web Linking                  October 2015
 
 
 
-Nottingham                 Expires May 1, 2016                 [Page 13]
+Nottingham                 Expires May 7, 2016                 [Page 13]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    [RFC2817]  Khare, R. and S. Lawrence, "Upgrading to TLS Within
@@ -781,9 +781,9 @@ Internet-Draft                 Web Linking                  October 2015
 
 
 
-Nottingham                 Expires May 1, 2016                 [Page 14]
+Nottingham                 Expires May 7, 2016                 [Page 14]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
 Appendix A.  Using the Link Header with the HTML Format
@@ -837,9 +837,9 @@ Appendix B.  Using the Link Header with the Atom Format
 
 
 
-Nottingham                 Expires May 1, 2016                 [Page 15]
+Nottingham                 Expires May 7, 2016                 [Page 15]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    When serialising an atom:link into a Link header, it is necessary to
@@ -893,9 +893,9 @@ Appendix C.  Changes from RFC5988
 
 
 
-Nottingham                 Expires May 1, 2016                 [Page 16]
+Nottingham                 Expires May 7, 2016                 [Page 16]
 
-Internet-Draft                 Web Linking                  October 2015
+Internet-Draft                 Web Linking                 November 2015
 
 
    o  A convention for assigning a URI to registered relation types was
@@ -949,4 +949,4 @@ Author's Address
 
 
 
-Nottingham                 Expires May 1, 2016                 [Page 17]
+Nottingham                 Expires May 7, 2016                 [Page 17]
