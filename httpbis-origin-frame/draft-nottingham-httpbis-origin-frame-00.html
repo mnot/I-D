@@ -1,0 +1,94 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "about:legacy-compat">
+<html lang="en"><head profile="http://dublincore.org/documents/2008/08/04/dc-html/"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>The ORIGIN HTTP/2 Frame</title><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      #rfc\.toc > ul li {
+        list-style: none;
+      }
+      .container .nav-sublist {
+        padding-left: 20px;
+        padding-right: 10px;
+        font-size: 90%;
+      }
+      .container .navbar-brand {
+        padding-top: 0;
+      }
+      .container .nav > li > a {
+        padding: 10px 7px 5px 15px;
+        display: inline-block;
+      }
+      .container .nav > li > a + a {
+        padding: 10px 15px 5px 7px;
+        display: inline-block;
+      }
+      .container .nav > li > a {
+        padding: 5px 10px;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+    </style><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Security Considerations" href="#rfc.section.2"><link rel="Chapter" href="#rfc.section.3" title="3 Normative References"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="Internet-Draft"><link rel="schema.dct" href="http://purl.org/dc/terms/"><meta name="dct.creator" content="Nottingham, M."><meta name="dct.creator" content="Nygren, E."><meta name="dct.identifier" content="urn:ietf:id:draft-nottingham-httpbis-origin-frame-00"><meta name="dct.issued" scheme="ISO8601" content="2015-11-13"><meta name="dct.abstract" content="This document specifies the ORIGIN frame for HTTP/2, to indicate what origins are available on a given connection."><meta name="description" content="This document specifies the ORIGIN frame for HTTP/2, to indicate what origins are available on a given connection."></head><body><div class="container" id="top"><div class="row"><div class="col-md-4 col-md-push-8 hidden-sm hidden-xs" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top">Internet-Draft</a></div><br clear="all"><div class=""><div id="rfc.toc"><ul class="nav"><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1</a>&nbsp;&nbsp;&nbsp;<a href="#notational-conventions">Notational Conventions</a></li><li><a href="#rfc.section.1.2">1.2</a>&nbsp;&nbsp;&nbsp;<a href="#the-origin-http2-frame">The ORIGIN HTTP/2 Frame</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#security-considerations">Security Considerations</a></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">Normative References</a></li><li><a href="#rfc.authors">Authors' Addresses</a></li></ul></div></div></div></div><div class="col-md-8 col-md-pull-4 main" role="main"><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Network Working Group</td><td class="text-right">M. Nottingham</td></tr><tr><td class="text-left">Internet-Draft</td><td class="text-right">E. Nygren</td></tr><tr><td class="text-left">Intended status: Standards Track</td><td class="text-right">Akamai</td></tr><tr><td class="text-left">Expires: May 16, 2016</td><td class="text-right">November 13, 2015</td></tr></tbody></table><div id="rfc.title"><h1>The ORIGIN HTTP/2 Frame</h1><div class="filename">draft-nottingham-httpbis-origin-frame-00</div></div><hr><h2 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h2><div class="lead"><p>This document specifies the ORIGIN frame for HTTP/2, to indicate what origins are available on a given connection.</p></div><div id="rfc.status"><h2><a href="#rfc.status">Status of this Memo</a></h2><p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p><p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF). Note that other groups may also distribute working documents as Internet-Drafts. The list of current Internet-Drafts is at <a href="http://datatracker.ietf.org/drafts/current/">http://datatracker.ietf.org/drafts/current/</a>.</p><p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or to cite them other than as “work in progress”.</p><p>This Internet-Draft will expire on May 16, 2016.</p></div><div id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><p>Copyright © 2015 IETF Trust and the persons identified as the document authors. All rights reserved.</p><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p></div><div id="introduction"><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h2><div id="rfc.section.1.p.1"><p>HTTP/2 <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a> allows clients to coalesce different origins <a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a> onto the same connection when certain conditions are met. In some cases, the server is not authoritative for a coalesced origin, so the 421 (Misdirected Request) status code was defined.</p></div><div id="rfc.section.1.p.2"><p>Using a status code in this manner allows clients to recover from misdirected requests, but at the penalty of adding latency. To address that, this specification defines a new HTTP/2 frame type, “ORIGIN”, to allow servers to indicate what origins a connection is authoritative for.</p></div><div id="notational-conventions"><h3 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1</a>&nbsp;<a href="#notational-conventions">Notational Conventions</a></h3><div id="rfc.section.1.1.p.1"><p>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a>.</p></div></div><div id="the-origin-http2-frame"><h3 id="rfc.section.1.2"><a href="#rfc.section.1.2">1.2</a>&nbsp;<a href="#the-origin-http2-frame">The ORIGIN HTTP/2 Frame</a></h3><div id="rfc.section.1.2.p.1"><p>The ORIGIN HTTP/2 frame (<a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a>, Section 4) indicates what origin(s) <a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a> the sender considers this connection authoritative for (in the sense of <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a>, Section 10.1).</p></div><div id="rfc.section.1.2.p.2"><p>The ORIGIN frame is a non-critical extension to HTTP/2. Endpoints that do not support this frame can safely ignore it.</p></div><div id="rfc.section.1.2.p.3"><p>It MUST occur on stream 0; an ORIGIN frame on any other stream is invalid and MUST be ignored.</p></div><div id="rfc.section.1.2.p.4"><p>When received by a client, it can be used to inform HTTP/2 connection coalescing (see <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a>, Section 9.1.1), but does not relax the requirement there that the server is authoritative.</p></div><div id="rfc.section.1.2.p.5"><p>If multiple ORIGIN frames are received on the same connection, only the most recent is to be considered current.</p></div><div id="rfc.section.1.2.p.6"><p>Once an ORIGIN frame has been received and processed, clients that implement this specification SHOULD NOT use that connection for a given origin if it did not appear within the current ORIGIN frame.</p></div><div id="rfc.section.1.2.p.7"><p>The ORIGIN frame type is 0xb (decimal 11).</p></div><div id="rfc.figure.u.1"><pre>
++-------------------------------+-------------------------------+
+|         Origin-Len (16)       | Origin? (*)                 ...
++-------------------------------+-------------------------------+
+</pre></div><div id="rfc.section.1.2.p.8" class="avoidbreakafter"><p>The ORIGIN frame contains the following fields, sets of which may be repeated within the frame to indicate multiple origins:</p></div><div id="rfc.section.1.2.p.9"><p>Origin-Len: An unsigned, 16-bit integer indicating the length, in octets, of the Origin field. Origin: An optional sequence of characters containing the ASCII serialization of an origin (<a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a>, Section 6.2) that the sender believes this connection is authoritative for.</p></div><div id="rfc.section.1.2.p.10"><p>The ORIGIN frame does not define any flags. It can contain one or more Origin-Len/Origin pairs.</p></div><div id="rfc.section.1.2.p.11"><p>The ORIGIN frame is processed hop-by-hop. An intermediary must not forward ORIGIN frames.</p></div><div id="rfc.section.1.2.p.12"><p>Clients configured to use a proxy MUST ignore any ORIGIN frames received from it.</p></div></div></div><div id="security-considerations"><h2 id="rfc.section.2"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#security-considerations">Security Considerations</a></h2><div id="rfc.section.2.p.1"><p>Clients that blindly trust the ORIGIN frame’s contents will be vulnerable to a large number of attacks; hence the reinforcement that this specification does not relax the requirement for server authority in <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a>, Section 10.1.</p></div></div><h2 id="rfc.references"><a href="#rfc.section.3" id="rfc.section.3">3.</a> Normative References</h2><dl class="reference"><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="http://www.rfc-editor.org/info/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP&nbsp;14, RFC&nbsp;2119, <a href="http://dx.doi.org/10.17487/RFC2119">DOI&nbsp;10.17487/RFC2119</a>, March&nbsp;1997, &lt;<a href="http://www.rfc-editor.org/info/rfc2119">http://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC6454">[RFC6454]</dt><dd>Barth, A., “<a href="http://www.rfc-editor.org/info/rfc6454">The Web Origin Concept</a>”, RFC&nbsp;6454, <a href="http://dx.doi.org/10.17487/RFC6454">DOI&nbsp;10.17487/RFC6454</a>, December&nbsp;2011, &lt;<a href="http://www.rfc-editor.org/info/rfc6454">http://www.rfc-editor.org/info/rfc6454</a>&gt;.</dd><dt id="RFC7540">[RFC7540]</dt><dd>Belshe, M., Peon, R., and M. Thomson, Ed., “<a href="http://www.rfc-editor.org/info/rfc7540">Hypertext Transfer Protocol Version 2 (HTTP/2)</a>”, RFC&nbsp;7540, <a href="http://dx.doi.org/10.17487/RFC7540">DOI&nbsp;10.17487/RFC7540</a>, May&nbsp;2015, &lt;<a href="http://www.rfc-editor.org/info/rfc7540">http://www.rfc-editor.org/info/rfc7540</a>&gt;.</dd></dl><div class="avoidbreakinside"><h2 id="rfc.authors"><a href="#rfc.authors">Authors' Addresses</a></h2><p><b>Mark Nottingham</b><br>Akamai<br>EMail: <a href="mailto:mnot@mnot.net">mnot@mnot.net</a><br>URI: <a href="http://www.mnot.net/">http://www.mnot.net/</a></p><p><b>Erik Nygren</b><br>Akamai<br>EMail: <a href="mailto:nygren@akamai.com">nygren@akamai.com</a></p></div></div></div></div><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script></body></html>
