@@ -2,7 +2,6 @@
 layout: front
 ---
 
-* [_site](_site) 
 * [dnsop-onion-tld](dnsop-onion-tld) 
 * [for-the-users](for-the-users) 
 * [h2-vpn](h2-vpn) 

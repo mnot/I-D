@@ -3,7 +3,7 @@
 # Usage: make [draft-short-name]
 
 files = $(wildcard *)
-reserved = Abandoned Published Tools Makefile index.md README.md _includes _layouts
+reserved = Abandoned Published Tools Makefile index.md README.md _includes _layouts _site
 drafts = $(filter-out $(reserved), $(files))
 
 %::
