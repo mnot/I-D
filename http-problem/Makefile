@@ -1,54 +1,52 @@
-# Base directory for I-D
-ID_BASE = ..
 
-saxpath = "/usr/local/share/saxon-b/saxon9.jar"
-saxon = java -classpath $(saxpath) net.sf.saxon.Transform -novw -l
-stylesheet = "$(ID_BASE)/Tools/rfc2629xslt/rfc2629.xslt"
+id_base = ..
 xml2rfc ?= xml2rfc
-rfc2629dir = "..\\/Tools\\/rfc2629xslt\\/"
+saxpath ?= /usr/local/share/saxon-b/saxon9.jar
+kramdown-rfc2629 ?= kramdown-rfc2629
+bootstrap ?= ../../rfcbootstrap/rfcbootstrap.xslt
+idnits ?= idnits
 
-TITLE = ietf-appsawg-$(shell basename ${CURDIR})
-LATEST = $(shell (ls draft-${TITLE}-*.xml || echo "draft-${TITLE}-00.xml") | sort | tail -1)
-VERSION = $(shell basename ${LATEST} .xml | awk -F- '{print $$NF}')
+title = ietf-appsawg-$(shell basename ${CURDIR})
+latest = $(shell (ls draft-${title}-*.xml || echo "draft-${title}-00.xml") | sort | tail -1)
+version = $(shell basename ${latest} .xml | awk -F- '{print $$NF}')
 
-TARGET_XML = draft-$(TITLE)-$(VERSION).xml
-PREV_TXT = draft-$(TITLE)-$(shell printf "%.2d" `echo ${VERSION}-1 | bc`).txt
-NEXT_XML = draft-$(TITLE)-$(shell printf "%.2d" `echo ${VERSION}+1 | bc`).xml
+target = draft-$(title)-$(version)
+prev = draft-$(title)-$(shell printf "%.2d" `echo ${version}-1 | bc`)
+next = draft-$(title)-$(shell printf "%.2d" `echo ${version}+1 | bc`)
 
-TARGET_HTML = $(TARGET_XML:.xml=.html)
-TARGET_TXT = $(TARGET_XML:.xml=.txt)
-TARGETS = $(TARGET_HTML) \
-          $(TARGET_TXT)
+.PHONY: latest clean next diff idnits update
 
-.PHONY: all
-all: $(TARGETS)
+latest: $(target).html $(target).txt index.html index.txt
 
-.PHONY: clean
 clean:
-	rm -f $(TARGETS)
+	rm -f $(target).html $(target).txt
 
-.PHONY: next
 next: 
-	cp $(TARGET_XML) $(NEXT_XML)
+	cp $(target).xml $(next).xml
+	sed -i '' -e"s/$(target)/$(next)/" draft.md
 
-.PHONY: diff
 diff: 
-	rfcdiff $(PREV_TXT) $(TARGET_TXT)
+	rfcdiff $(prev).txt $(target).txt
 
-.PHONY: idnits
-idnits: $(TARGET_TXT)
-	idnits $<
+idnits: $(target).txt
+	$(idnits) $<
 
+%.xml: draft.md
+	$(kramdown-rfc2629) $< > $@
+	
 %.html: %.xml
-	$(saxon) $< $(stylesheet) > $@
+	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
+	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) > $@
+#	$(xml2rfc) --html $< $@
 
 %.txt: %.xml
 	$(xml2rfc) $< $@
 
-.PHONY: kramdown
-kramdown: draft.md
-	kramdown-rfc2629 draft.md > $(TARGET_XML)
-	xmllint --format $(TARGET_XML) > tmp
-	mv tmp $(TARGET_XML)
-	sed -i '' -e"s/rfc2629\.xslt/$(rfc2629dir)rfc2629.xslt/" $(TARGET_XML)
-	sed -i '' -e"s/rfc2629\.dtd/$(rfc2629dir)rfc2629.dtd/" $(TARGET_XML)
+index.html: $(target).html
+	cp $< $@
+
+index.txt: $(target).txt
+	cp $< $@
+
+update:
+	cp $(id_base)/Tools/skel/Makefile .
