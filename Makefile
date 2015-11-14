@@ -16,5 +16,5 @@ drafts = $(filter-out $(reserved), $(files))
 
 .PHONY: index.md
 index.md: $(drafts)
-	echo "---\nlayout:front\n---" > $@
+	echo "---\nlayout: front\n---" > $@
 	echo '$(foreach draft,$(drafts),\n* [$(draft)]($(draft)))' >> $@
