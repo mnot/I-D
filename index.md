@@ -12,7 +12,6 @@ layout: front
 * [httpbis-origin-frame](httpbis-origin-frame) - The ORIGIN HTTP/2 Frame 
 * [json-home](json-home) - Home Documents for HTTP APIs 
 * [link-hint](link-hint) - HTTP Link Hints 
-* [link-template](link-template)  
 * [linked-cache-inv](linked-cache-inv)  
 * [rfc3864bis](rfc3864bis) - Registration Procedures for Message Header Fields 
 * [rfc5988bis](rfc5988bis) - Web Linking 
