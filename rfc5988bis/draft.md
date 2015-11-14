@@ -25,7 +25,7 @@ author:
     email: mnot@mnot.net
     uri: http://www.mnot.net/
 
-normative:	
+normative:
   RFC2026:
   RFC2119:
   RFC3864:
