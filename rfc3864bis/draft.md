@@ -2,7 +2,7 @@
 title: Registration Procedures for Message Header Fields
 abbrev: rfc3864bis
 docname: draft-nottingham-rfc3864bis-00
-date: 2014
+date: 2015
 category: bcp
 obsoletes: 3864
 
@@ -98,7 +98,7 @@ procedures for creating entries in them.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14,
-{{RFC 2119}}.
+{{RFC2119}}.
 
 
 # Message Header Fields
