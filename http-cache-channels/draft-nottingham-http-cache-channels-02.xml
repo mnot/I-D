@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "http://xml.resource.org/authoring/rfc2629.dtd" [
+<!ENTITY rfc2119 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>   
+<!ENTITY rfc2234 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2234.xml'>   
+<!ENTITY rfc2616 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2616.xml'>  
+<!ENTITY rfc3986 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml'>  
+<!ENTITY rfc4287 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4287.xml'>
+<!ENTITY rfc5005 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5005.xml'>
+<!ENTITY xmlns SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xml-names-19990114.xml'>  
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="no" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+<rfc ipr="trust200902" docName="draft-nottingham-http-cache-channels-02" category="info">
+    <front>        
+      <title abbrev="Cache Channels">HTTP Cache Channels</title>		
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+	<organization>Yahoo! Inc.</organization>
+	<address>		
+	  <email>mnot@yahoo-inc.com</email>	
+	  <uri>http://www.mnot.net/</uri>		
+	</address>
+      </author>
+     <date year="2015"/>
+      <abstract>
+<t>This specification defines "cache channels" to propagate out-of-band events from HTTP origin servers (or their delegates) to subscribing caches. It also defines an event payload that gives finer-grained control over cache freshness.</t>
+     </abstract>
+</front>
+
+  <middle>
+
+<section title="Introduction">
+<t>This specification defines "cache channels" that propagate out-of-band events from <xref target="RFC2616">HTTP</xref> origin servers (or their delegates) to subscribing caches. It also defines an event payload that gives finer-grained control over cache freshness.</t>
+
+<t>Typically, a cache will discover channels of interest by examining  Cache-Control response headers for the "channel" extension; when present, it indicates that the response is associated with that channel. Upon subscription, caches will receive all events in that channel.</t>
+
+<t>To allow use of a variety of underlying protocols, the process of subscription and the means of propagating events in the channel are specific to the transport in use. This specification does define one such channel transport, using the <xref target="RFC4287">Atom Syndication Format</xref>.</t>
+
+<t>Likewise, channels may be used to convey a variety of events from origin servers to caches. This specification defines one such payload, the 'stale' event, that affords finer-grained control over freshness than available in HTTP alone.</t>
+
+<t>Together, cache channels and the stale event enable an origin server to maintain control over the content of a set of caches while increasing their efficiency. For example, "reverse proxies" are often used to accelerate HTTP servers by caching their content; cache channels and stale events can be used to more closely control their behaviour.</t>
+
+<t>This use of cache channels is similar to an invalidation protocol, except that the protocol described here operates by extending cached responses' freshness lifetime, rather than invalidating them. This preserves the semantics of the HTTP caching model and assures that the failure modes are safe.</t>
+
+<t>Additionally, the 'group' functionality of cache channels enables stale events to apply to several cached responses, thereby offering control over freshness of responses whose request-URIs may not be known. For example, a HTTP search interface may have given several responses containing the same information; if they are grouped together, it is possible to force them to become stale without knowing their request-URIs.</t>
+
+</section>
+
+<section title="Notational Conventions">
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document
+are to be interpreted as described in BCP 14 <xref target="RFC2119"/>, as
+scoped to those conformance targets.</t>
+	
+<t>This specification uses the augmented Backus-Naur Form of RFC2616 <xref target="RFC2616"/>, and includes the delta-seconds rule from that specification,  and the absolute-URI rule from RFC3986 <xref target="RFC3986"/>.</t>
+
+<t>Elements defined by this specification use the <xref target="W3C.REC-xml-names-19990114">XML namespace</xref> URI "http://purl.org/syndication/cache-channel". In this specification, that URI is assumed to be bound to the prefix "cc".</t>
+
+
+</section>
+
+<section title="Cache Channels">
+
+<t>A cache channel is an out-of-band path from an origin server (or its delegate) to one or more interested caches. It is identified by a URI <xref target="RFC3986"/>.</t>
+
+<t>A channel contains events, each of which may be associated with one or more URIs. The payload of each event is applied to its associated URIs when it is received.</t>
+
+<t>Typically, a cache channel will convey events applicable to a variety of URIs in an administrative domain; for example, it might carry all events that apply to a single origin server, or a group of origin servers.</t>
+
+<t>From the perspective of a cache, a channel has several interesting states;</t>
+
+<t><list style="symbols">
+<t>unsubscribed: The channel is not being monitored.</t>
+<t>connected: The channel is being monitored, and events are able to be propagated.</t>
+<t>disconnected: The channel is being monitored, but events are not able to be propagated.</t>
+</list></t>
+
+<t>Channels MUST make the events that they contain available for an advertised amount of time, known as the lifetime of the channel. This allows clients that have been disconnected to re-synchronise themselves with the contents of the channel upon becoming re-connected.</t>
+
+<t>Channels SHOULD also advertise the desired maximum propagation delay for events, known as their precision.</t>
+
+<t>Two general processes facilitate the operation of cache channels; subscription and event application.</t>
+
+<section title="Channel Subscription">
+
+<t>Channels are advertised using the "channel" HTTP response cache-control extension.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+channel-extension = "channel" "=" <"> channel-URI <">
+      channel-URI = absolute-URI
+]]></artwork>
+</figure>
+
+<t>A recipient of this cache-control extension can subscribe to the channel-URI when interested in receiving events associated with the response.</t>
+
+<t>The specific mechanism for subscription is determined by the channel-URI's scheme and other factors (e.g., the media type of the representation obtained by dereferencing that URI).</t>
+
+<t>If a subsequent response has a different channel-URI, or no channel-URI, and there are no other responses associated with the same channel-URI, a subscriber MAY unsubscribe from the channel.</t>
+
+<t>A response MUST NOT have more than one channel-extension.</t>
+
+<t>For example,</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  Cache-Control: max-age=300, channel="http://example.org/channels/a"
+]]></artwork>
+</figure>
+
+
+</section>
+
+
+<section title="Event Application">
+
+<t>An event carries one or more event-URIs, which are used to determine what cached responses the event applies to. This includes responses whose request-URI matches an event-URI, and those with a group-URI matching an event-URI.</t>
+
+<t>Responses can be associated with a group-URI using the "group" response Cache-Control extension;</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+ group-extension = "group" "=" <"> group-URI <">
+       group-URI = absolute-URI
+]]></artwork>
+</figure>
+
+<t>A response MAY have any number of group-extensions.</t>
+
+<t>For example, a response carrying the following Cache-Control header;</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  Cache-Control: max=age=600, channel="http://example.com/channels/a",
+                 group="urn:uuid:30A909D9-BC7A-4257-BE09-6F781AD6471F"
+]]></artwork>
+</figure>
+
+<t>will not only have those events which match the response's request-URI applied, but also events who match the URI "urn:uuid:30A909D9-BC7A-4257-BE09-6F781AD6471F".
+</t>
+
+<t>This mechanism allows application of events to arbitrary sets of responses using a synthetic identifier.</t>
+
+<t>For example, if "http://example.com/", "http://example.com/top.html" and "http://example.com/index.html" are all associated with the group identified by "urn:uuid:30A909D9-BC7A-4257-BE09-6F781AD6471F", an event with that group-URI will be applied to all three.</t>
+
+<t>By default, an event will apply to a matching response regardless of the headers used to select it (as indicated by the Vary response header). However, a particular event type can be specified to override this behaviour.</t>
+
+<t>Note that an event MUST NOT be applied to responses whose channel-extension does not indicate that the response is associated with the channel that the event occurred in.</t>
+
+</section>
+
+
+<section title="Atom Cache Channels">
+
+<t>The <xref target="RFC4287">Atom Syndication Format</xref> -- when used with channel-specific extensions in a specific pattern over HTTP -- is one suitable cache channel transport.</t>
+
+<t>A channel is subscribed to by commencing regular polling of the channel-URI. Polling MUST be attempted at least as often as the channel's precision, as indicted by the cc:precision feed extension.</t>
+
+<t>The feed's 'current' link relation value MUST contain the channel-URI, which MUST be a HTTP URI.</t>
+
+<t>The channel is considered disconnected when the last successful poll occurred more than channel-precision seconds ago, or a successful poll has not yet occurred. A successful poll is defined as one that results in a fresh (according to the HTTP caching model) copy of a well-formed, valid feed document with a 'self' link relation whose value is character-for-character identical to the channel-URI.</t> 
+
+<t>The feed SHOULD be <xref target="RFC5005">archived</xref> to allow the full state of the channel to be reconstructed, while minimising the amount of bandwidth that polling the channel consumes. If a feed is archived, the channel is only considered connected when the entire contents of the logical feed.</t>
+
+<t>The cc:lifetime feed extension indicates the minimum span of time that events are available in the logical feed for.</t>
+
+<t>Entries in the feed represent events, in reverse-chronological order. The atom:link element(s) with the "alternate" relation determines the URI(s) that an event is applicable to.</t>
+
+
+<section title="The 'cc:precision' Feed Extension">
+
+<t>An Atom cache channel's precision is indicated by the cc:precision element. This is an feed-level extension element whose content indicates the precision in seconds.</t>
+
+<t>For example;</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  <cc:precision>60</cc:precision>
+]]></artwork>
+</figure>
+
+<t>indicates that the precision of the channel it occurs in is one minute.</t>
+
+</section>
+
+<section title="The 'cc:lifetime' Feed Extension">
+
+<t>An Atom cache channel's lifetime is indicated by the cc:lifetime element. This is an feed-level extension element whose content indicates the lifetime in seconds.</t>
+
+<t>For example;</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  <cc:lifetime>2592000</cc:lifetime>
+]]></artwork>
+</figure>
+
+<t>indicates that the lifetime of the channel it occurs in is 30 days.</t>
+
+</section>
+
+<section title="Example">
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+<feed xmlns="http://www.w3.org/2005/Atom"
+ xmlns:cc="http://purl.org/syndication/cache-channel">
+  <title>Invalidations for www.example.org</title>
+  <id>http://admin.example.org/events/</id>
+  <link rel="self" 
+   href="http://admin.example.org/events/current"/>
+  <link rel="prev-archive" 
+   href="http://admin.example.org/events/archive/1234"/>
+  <updated>2007-04-13T11:23:42Z</updated>
+  <author>
+     <name>Administrator</name>
+     <email>web-admin@example.org</email>
+  </author>
+  <cc:precision>60</cc:precision>
+  <cc:lifetime>2592000</cc:lifetime>
+  <entry>
+    <title>stale</title>
+    <id>http://admin.example.org/events/1124</id>
+    <updated>2007-04-13T11:23:42Z</updated>
+    <link href="urn:uuid:50D3565C-97A8-40E1-A5C8-CFA070166FEF"/>
+    <cc:stale/>
+  </entry>
+  <entry>
+    <title>stale</title>
+    <id>http://admin.example.org/events/1125</id>
+    <updated>2007-04-13T10:31:01Z</updated>
+    <link href="http://www.example.org/img/123.gif" type="image/gif"/>
+    <link href="http://www.example.org/img/123.png" type="image/png"/>
+    <cc:stale/>
+  </entry>
+</feed>
+]]></artwork>
+</figure>
+
+<t>This feed document contains two events, the most recent applying to the URI "urn:uuid:50D3565C-97A8-40E1-A5C8-CFA070166FEF" and the other to "http://www.example.org/img/123.gif" and "http://www.example.org/img/123.png". The previous archive document is located at "http://admin.example.org/events/archive/1234", to allow the client to reconstruct missed events if necessary. The channel it represents has a precision of 60 seconds (thereby telling clients that they need to poll at least that often), and a lifetime of 30 days.</t>
+
+</section>
+
+</section>
+
+</section>
+
+<section title="Manging Freshness with Cache Channels">
+
+<t>One use of cache channels is the management of cached responses' freshness lifetime. This is achieved through use of the 'channel-maxage' response Cache-Control extension, which allows subscribed caches to extend the freshness of a response until an applicable 'stale' cache channel event is received.</t>
+
+<section title="The 'channel-maxage' Response Cache-Control Extension">
+
+<t>The channel-maxage response cache-control extension allows controlled extension of the freshness lifetime of a cached response.</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  channel-maxage = "channel-maxage" [ "=" delta-seconds ]
+]]></artwork>
+</figure>
+
+<t>A response containing this extension MAY be considered fresh when all of the following conditions are true;</t>
+
+<t><list style="symbols">
+
+<t>The cache is connected to the channel indicated by the channel-URI.</t>
+<t>The channel does not contain a 'stale' event applicable to the cached response.</t>
+<t>The response's current_age (as per HTTP <xref target="RFC2616"/>, Section 13.2.3) is no more than delta-seconds, if specified.</t>
+
+</list></t>
+
+<t>For example a response with this Cache-Control header;</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  Cache-Control: channel="http://admin.example.org/events/current",
+    channel-maxage=86400, max-age=30
+]]></artwork>
+</figure>
+
+<t>will be considered fresh for 30 seconds by a cache that is not subscribed to the channel "http://admin.example.org/events/current", but can be considered
+fresh for up to a day by one that is, as long as the channel is connected and does not contain an applicable 'stale' event.</t>
+
+<t>Or, if the response contains;</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  Cache-Control: channel="http://admin.example.org/events/current",
+    channel-maxage, max-age=30
+]]></artwork>
+</figure>
+
+<t>then it will be considered fresh for up to the channels' lifetime, provided that the channel is connected and does not contain a 'stale' event.</t>
+
+</section>
+
+<section title="The 'stale' Cache Channel Event">
+
+<t>Cache channels can indicate that all cached responses associated with a URI are to be considered stale with the 'stale' event. In Atom channels, this event is indicated by the cc:stale entry-level extension;</t>
+
+<figure>
+<artwork xml:space="preserve"><![CDATA[
+  <cc:stale/>
+]]></artwork>
+</figure>
+
+<t>When received, this event indicates that any cached response associated with the event's URI(s) MUST be considered stale (for purposes of extension by channel-maxage) within channel-precision seconds.</t>
+
+</section>
+
+</section>
+
+
+<section title="Security Considerations">
+
+<t>Subscribing to a cache channel may incur more traffic than would otherwise
+be generated by typical operation of a cache. Attackers might use this to
+cause an implementation to subscribe to many channels, reducing their capacity
+or even denying service. As a result, caches that implement this protocol should have some mechanism of limiting or controlling the channels that will be subscribed to.</t>
+
+<t>The information in a cache channel may be considered sensitive by its 
+publisher; in this case, they should require credentials to be presented
+by subscribers.</t>
+
+</section>
+
+	</middle> 
+
+	<back> 	  
+	  <references title="Normative References">
+	   &rfc2119;
+	   &rfc2616;
+       &rfc3986;
+	   &rfc4287;
+       &rfc5005;
+       &xmlns;
+	  </references>
+	  
+    <section title="Acknowledgements">
+    <t>
+    Henrik Nordstrom has given invaluable advice and feedback on the design 
+    of this specification.
+    Thanks also to
+Jeff McCarrell, 
+John Nienart,
+Evan Torrie,
+and 
+Chris Westin
+for their suggestions. The author takes all responsibility for errors and omissions.</t>
+    </section>
+
+<section title="Operational Considerations">
+
+<t>There are a number of aspects to considered when using cache channels;</t>
+
+<t><list style="symbols">
+
+<t>They are most efficient when a small number of channels (ideally, one) is used to convey events about a large number of associated resources (e.g., an entire Web site, or a number of related sites).</t>
+
+<t>In particular, when using Atom channels care should be taken to assure that the additional requests necessary to poll the channel are offset by the load reduction achieved. In doing so, the anticipated number of clients, channel-precision, change rate for cached responses and number of responses being monitored by the channel need to be considered.</t>
+
+<t>Feed documents from Atom-based channels should be cacheable, to allow clusters of caches and cache hierarchies to share them more efficiently.</t>
+
+<t>When using channels to update freshness information, it is critical to assure that any new content is actually available before events are propagated; if the event is too early and stale cached content forces revalidation, it is possible that the updated content will not be loaded into cache.</t>
+
+<t>Responses that use the channel-maxage mechanism should also specify a max-age, both to allow channel-naive caches to store them in a limited fashion, and also to allow some types of channel implementations to initially store the response before subscribing.</t>
+
+</list></t>
+
+</section>
+
+    <section title="Implementation Notes">
+
+<t>Handling of the 'stale' event in order to extend freshness can often be effected in an existing cache implementation with only small changes.</t>
+
+<t>In particular, most caches can be easily modified to call a function (whether in-process or in a separate process) when a stale response is found, before the decision to validate it on the origin server is made. Using the request-URI, the stored Cache-Control response header and the age of the cached response as input, such a function should return either STALE, which indicates that the cached response is in fact stale, or FRESH, along with an indication of how much the freshness lifetime should be extended by.</t>
+
+<t>This function determines its response based upon its application of the following rules to the state that is collected about the channel in question;</t>
+
+<t>
+<list style="symbols">
+    <t>If there is no channel-maxage directive in the Cache-Control response header, STALE can be returned immediately.</t>
+	<t>If the channel-URI is missing from the Cache-Control response header, the response is assumed to not be associated with any channel, and a STALE can immediately be returned.</t>
+	<t>If the channel is unsubscribed, it should be scheduled for subscription, and STALE returned.</t>
+	<t>If the channel is disconnected, return STALE.</t>
+	<t>If there is a 'stale' event in the channel that applies to the request-URI or group-URI (if present), and cached response's age is greater than the age of the of that event, return STALE.</t>
+	<t>If the cached response's age is greater than channel-maxage, return STALE.</t>
+	<t>If the cached response's age is greater than the channel's lifetime, return STALE.</t>
+	<t>Otherwise, return FRESH freshness=[channel-precision].</t>
+</list>
+</t>	
+
+
+    </section>
+
+
+     </back>
+</rfc>
