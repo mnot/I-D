@@ -7,7 +7,6 @@ layout: front
 * [h2-vpn](h2-vpn) - Virtual Private Networking over HTTP/2 
 * [http-cache-channels](http-cache-channels)  
 * [http-patch-status](http-patch-status) - The 2NN Patch HTTP Status Code 
-* [http-poe](http-poe)  
 * [http-problem](http-problem)  
 * [httpbis-origin-frame](httpbis-origin-frame) - The ORIGIN HTTP/2 Frame 
 * [json-home](json-home) - Home Documents for HTTP APIs 
