@@ -130,16 +130,16 @@ To compute a digest-value for a given set of URLs, N and P:
 1. Let 'hash-values' be an empty array.
 2. Let 'digest-value' be an empty bit array.
 3. For each URL, follow these steps:
-  a. Convert URL to an ascii string by percent-encoding as appropriate {{RFC3986}}.
-  b. Let 'key' be the SHA-256 message digest {{RFC6234}} of URL, expressed as an integer.
-  c. Append key modulo ( N * P ) to hash-values.
+  1. Convert URL to an ascii string by percent-encoding as appropriate {{RFC3986}}.
+  2. Let 'key' be the SHA-256 message digest {{RFC6234}} of URL, expressed as an integer.
+  3. Append key modulo ( N * P ) to hash-values.
 4. Sort hash-values in ascending order.
 5. For each hash-value V:
-  a. Let 'Q' be the integer result of V / N.
-  b. Let 'R' be the result of V modulo N.
-  c. Write Q '1' bits to digest-value.
-  d. Write 1 '0' bit to digest-value.
-  e. Write R to digest-value as binary.
+  1. Let 'Q' be the integer result of V / N.
+  2. Let 'R' be the result of V modulo N.
+  3. Write Q '1' bits to digest-value.
+  4. Write 1 '0' bit to digest-value.
+  5. Write R to digest-value as binary.
 6. Return digest-value.
 
 
