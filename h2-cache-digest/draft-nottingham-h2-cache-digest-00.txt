@@ -74,7 +74,7 @@ Table of Contents
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The CACHE_DIGEST Frame  . . . . . . . . . . . . . . . . . . .   3
      2.1.  Computing the Digest-Value  . . . . . . . . . . . . . . .   4
-   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
+   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
    5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
      5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
@@ -193,31 +193,31 @@ Internet-Draft          Cache Digests for HTTP/2           November 2015
 
    To compute a digest-value for a given set of URLs, N and P:
 
-   1.  Let 'hash-values' be an empty array.
+   1.   Let 'hash-values' be an empty array.
 
-   2.  Let 'digest-value' be an empty bit array.
+   2.   Let 'digest-value' be an empty bit array.
 
-   3.  For each URL, follow these steps: a.  Convert URL to an ascii
-       string by percent-encoding as appropriate [RFC3986].  b.  Let
-       'key' be the SHA-256 message digest [RFC6234] of URL, expressed
-       as an integer.  c.  Append key modulo ( N * P ) to hash-values.
+   3.   For each URL, follow these steps:
 
-   4.  Sort hash-values in ascending order.
+   4.   Convert URL to an ascii string by percent-encoding as
+        appropriate [RFC3986].
 
-   5.  For each hash-value V: a.  Let 'Q' be the integer result of V /
-       N.  b.  Let 'R' be the result of V modulo N.  c.  Write Q '1'
-       bits to digest-value.  d.  Write 1 '0' bit to digest-value.  e.
-       Write R to digest-value as binary.
+   5.   Let 'key' be the SHA-256 message digest [RFC6234] of URL,
+        expressed as an integer.
 
-   6.  Return digest-value.
+   6.   Append key modulo ( N * P ) to hash-values.
 
-3.  IANA Considerations
+   7.   Sort hash-values in ascending order.
 
-   This draft currently has no requirements for IANA.  If the
-   CACHE_DIGEST frame is standardised, it will need to be assigned a
-   frame type.
+   8.   For each hash-value V:
 
+   9.   Let 'Q' be the integer result of V / N.
 
+   10.  Let 'R' be the result of V modulo N.
+
+   11.  Write Q '1' bits to digest-value.
+
+   12.  Write 1 '0' bit to digest-value.
 
 
 
@@ -225,6 +225,16 @@ Nottingham                Expires May 19, 2016                  [Page 4]
 
 Internet-Draft          Cache Digests for HTTP/2           November 2015
 
+
+   13.  Write R to digest-value as binary.
+
+   14.  Return digest-value.
+
+3.  IANA Considerations
+
+   This draft currently has no requirements for IANA.  If the
+   CACHE_DIGEST frame is standardised, it will need to be assigned a
+   frame type.
 
 4.  Security Considerations
 
@@ -262,16 +272,6 @@ Internet-Draft          Cache Digests for HTTP/2           November 2015
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
               <http://www.rfc-editor.org/info/rfc3986>.
 
-   [RFC6234]  Eastlake 3rd, D. and T. Hansen, "US Secure Hash Algorithms
-              (SHA and SHA-based HMAC and HKDF)", RFC 6234,
-              DOI 10.17487/RFC6234, May 2011,
-              <http://www.rfc-editor.org/info/rfc6234>.
-
-   [RFC6454]  Barth, A., "The Web Origin Concept", RFC 6454,
-              DOI 10.17487/RFC6454, December 2011,
-              <http://www.rfc-editor.org/info/rfc6454>.
-
-
 
 
 
@@ -281,6 +281,15 @@ Nottingham                Expires May 19, 2016                  [Page 5]
 
 Internet-Draft          Cache Digests for HTTP/2           November 2015
 
+
+   [RFC6234]  Eastlake 3rd, D. and T. Hansen, "US Secure Hash Algorithms
+              (SHA and SHA-based HMAC and HKDF)", RFC 6234,
+              DOI 10.17487/RFC6234, May 2011,
+              <http://www.rfc-editor.org/info/rfc6234>.
+
+   [RFC6454]  Barth, A., "The Web Origin Concept", RFC 6454,
+              DOI 10.17487/RFC6454, December 2011,
+              <http://www.rfc-editor.org/info/rfc6454>.
 
    [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
               Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
@@ -316,15 +325,6 @@ Author's Address
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
-
-
-
-
-
-
-
-
-
 
 
 
