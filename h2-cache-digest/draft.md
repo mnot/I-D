@@ -15,6 +15,12 @@ pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
 author:
  -
+    ins: K. Oku
+    name: Kazuho Oku
+    organization: DeNA Co, Ltd.
+    email: kazuhooku@gmail.com
+
+ -
     ins: M. Nottingham
     name: Mark Nottingham
     organization: 
