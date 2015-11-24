@@ -108,8 +108,6 @@ CACHE_DIGEST has no defined meaning when sent from servers to clients, and MAY b
 +-------------------------------+-------------------------------+
 |            N (16)             |             P (16)            |
 +---------------------------------------------------------------+
-|          Digest-Len (16)      |
-+-------------------------------+-------------------------------+
 |         Digest-Value? (*)                    ...
 +-------------------------------+-------------------------------+
 ~~~~
@@ -118,7 +116,6 @@ The CACHE_DIGEST frame payload has the following fields:
 
 * N: An unsigned 16-bit integer indicating the number of entries in the digest.
 * P: An unsigned 16-bit integer indicating the false positive probability, expressed as 1/P.
-* Digest-Len: An unsigned, 16-bit integer indicating the length, in octets, of the Digest-Value field.
 * Digest-Value: An optional sequence of octets containing the digest as computed in {{computing}}.
 
 ## Computing the Digest-Value {#computing}
