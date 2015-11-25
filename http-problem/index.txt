@@ -5,22 +5,31 @@
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                    Akamai
 Intended status: Standards Track                                E. Wilde
-Expires: March 10, 2016                                      UC Berkeley
-                                                       September 7, 2015
+Expires: May 29, 2016                                        UC Berkeley
+                                                       November 26, 2015
 
 
                      Problem Details for HTTP APIs
-                   draft-ietf-appsawg-http-problem-01
+                   draft-ietf-appsawg-http-problem-02
 
 Abstract
 
    This document defines a "problem detail" as a way to carry machine-
    readable details of errors in a HTTP response, to avoid the need to
-   invent new error response formats for HTTP APIs.
+   define new error response formats for HTTP APIs.
 
 Note to Readers
 
    This draft should be discussed on the apps-discuss mailing list [1].
+
+   This section is to be removed before publication.
+
+Note to RFC Editor
+
+   Please replace all occurrences of "XXXX" with the final RFC number
+   chosen for this draft.
+
+   This section is to be removed before publication.
 
 Status of This Memo
 
@@ -37,7 +46,17 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on March 10, 2016.
+   This Internet-Draft will expire on May 29, 2016.
+
+
+
+
+
+
+Nottingham & Wilde        Expires May 29, 2016                  [Page 1]
+
+Internet-Draft               Problem Details               November 2015
+
 
 Copyright Notice
 
@@ -50,14 +69,6 @@ Copyright Notice
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
-
-
-
-Nottingham & Wilde       Expires March 10, 2016                 [Page 1]
-
-Internet-Draft               Problem Details              September 2015
-
-
    include Simplified BSD License text as described in Section 4.e of
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
@@ -65,7 +76,7 @@ Internet-Draft               Problem Details              September 2015
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-   2.  Requirements  . . . . . . . . . . . . . . . . . . . . . . . .   3
+   2.  Requirements  . . . . . . . . . . . . . . . . . . . . . . . .   4
    3.  The Problem Details JSON Object . . . . . . . . . . . . . . .   4
      3.1.  Problem Details Object Members  . . . . . . . . . . . . .   5
      3.2.  Extension Members . . . . . . . . . . . . . . . . . . . .   6
@@ -87,13 +98,21 @@ Table of Contents
    HTTP [RFC7230] status codes are sometimes not sufficient to convey
    enough information about an error to be helpful.  While humans behind
    Web browsers can be informed about the nature of the problem with an
-   HTML [W3C.REC-html401-19991224] response body, non-human consumers of
+   HTML [W3C.REC-html5-20141028] response body, non-human consumers of
    so-called "HTTP APIs" are usually not.
 
    This specification defines simple JSON [RFC7159] and XML
    [W3C.REC-xml-20081126] document formats to suit this purpose.  They
    are designed to be reused by HTTP APIs, which can identify distinct
    "problem types" specific to their needs.
+
+
+
+
+Nottingham & Wilde        Expires May 29, 2016                  [Page 2]
+
+Internet-Draft               Problem Details               November 2015
+
 
    Thus, API clients can be informed of both the high-level error class
    (using the status code) and the finer-grained details of the problem
@@ -104,15 +123,6 @@ Table of Contents
    might be deemed most appropriate to use, as it will inform HTTP-
    generic software (such as client libraries, caches and proxies) of
    the general semantics of the response.
-
-
-
-
-
-Nottingham & Wilde       Expires March 10, 2016                 [Page 2]
-
-Internet-Draft               Problem Details              September 2015
-
 
    However, that doesn't give the API client enough information about
    why the request was forbidden, the applicable account balance, or how
@@ -152,23 +162,19 @@ Internet-Draft               Problem Details              September 2015
    guide the design decisions faced when conveying errors in an existing
    format.
 
+
+
+
+Nottingham & Wilde        Expires May 29, 2016                  [Page 3]
+
+Internet-Draft               Problem Details               November 2015
+
+
 2.  Requirements
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in [RFC2119].
-
-
-
-
-
-
-
-
-Nottingham & Wilde       Expires March 10, 2016                 [Page 3]
-
-Internet-Draft               Problem Details              September 2015
-
 
 3.  The Problem Details JSON Object
 
@@ -215,15 +221,9 @@ Internet-Draft               Problem Details              September 2015
 
 
 
-
-
-
-
-
-
-Nottingham & Wilde       Expires March 10, 2016                 [Page 4]
+Nottingham & Wilde        Expires May 29, 2016                  [Page 4]
 
-Internet-Draft               Problem Details              September 2015
+Internet-Draft               Problem Details               November 2015
 
 
     HTTP/1.1 400 Bad Request
@@ -250,17 +250,18 @@ Internet-Draft               Problem Details              September 2015
 
 3.1.  Problem Details Object Members
 
-   A problem details object MAY have the following members:
+   A problem details object can have the following members:
 
    o  "type" (string) - A URI reference [RFC3986] that identifies the
       problem type.  When dereferenced, it is encouraged to provide
       human-readable documentation for the problem type (e.g., using
-      HTML [W3C.REC-html401-19991224]).  When this member is not
-      present, its value is assumed to be "about:blank".
+      HTML [W3C.REC-html5-20141028]).  When this member is not present,
+      its value is assumed to be "about:blank".
 
    o  "title" (string) - A short, human-readable summary of the problem
       type.  It SHOULD NOT change from occurrence to occurrence of the
-      problem, except for purposes of localisation.
+      problem, except for purposes of localisation (e.g., using
+      proactive content negotiation; see [RFC7231], Section 3.4).
 
    o  "status" (number) - The HTTP status code ([RFC7231], Section 6)
       generated by the origin server for this occurrence of the problem.
@@ -272,16 +273,17 @@ Internet-Draft               Problem Details              September 2015
       occurrence of the problem.  It may or may not yield further
       information if dereferenced.
 
+
+
+
+
+Nottingham & Wilde        Expires May 29, 2016                  [Page 5]
+
+Internet-Draft               Problem Details               November 2015
+
+
    Consumers MUST use the type string as the primary identifier for the
    problem type; the title string is advisory, and included only for
-
-
-
-Nottingham & Wilde       Expires March 10, 2016                 [Page 5]
-
-Internet-Draft               Problem Details              September 2015
-
-
    users who are not aware of the semantics of the URI, and don't have
    the ability to discover them (e.g., offline log analysis).  Consumers
    SHOULD NOT automatically dereference the type URI.
@@ -293,7 +295,7 @@ Internet-Draft               Problem Details              September 2015
    behaves correctly.  See Section 5 for further caveats regarding its
    use.
 
-   The detail member, if present, SHOULD focus on helping the client
+   The detail member, if present, ought to focus on helping the client
    correct the problem, rather than giving debugging information.
 
    Consumers SHOULD NOT parse the detail member for information;
@@ -327,16 +329,17 @@ Internet-Draft               Problem Details              September 2015
    condition, it might be appropriate to do so by defining a new problem
    type.
 
+
+
+
+
+Nottingham & Wilde        Expires May 29, 2016                  [Page 6]
+
+Internet-Draft               Problem Details               November 2015
+
+
    Before doing so, it's important to understand what they are good for,
    and what's better left to other mechanisms.
-
-
-
-
-Nottingham & Wilde       Expires March 10, 2016                 [Page 6]
-
-Internet-Draft               Problem Details              September 2015
-
 
    Problem details are not a debugging tool for the underlying
    implementation; rather, they are a way to expose greater detail about
@@ -351,7 +354,7 @@ Internet-Draft               Problem Details              September 2015
    disallowed" problem is probably unnecessary, since a 403 Forbidden
    status code in response to a PUT request is self-explanatory.
 
-   Finally, an application may have a more appropriate way to carry an
+   Finally, an application might have a more appropriate way to carry an
    error in a format that it already defines.  Problem details are
    intended to avoid the necessity of establishing new "fault" or
    "error" document formats, not to replace existing domain-specific
@@ -359,7 +362,8 @@ Internet-Draft               Problem Details              September 2015
 
    That said, it is possible to add support for problem details to
    existing HTTP APIs using HTTP content negotiation (e.g., using the
-   Accept request header to indicate a preference for this format).
+   Accept request header to indicate a preference for this format; see
+   [RFC7231], Section 5.3.2).
 
    New problem type definitions MUST document:
 
@@ -369,30 +373,32 @@ Internet-Draft               Problem Details              September 2015
 
    3.  The HTTP status code for it to be used with.
 
-   Problem types MAY specify the use of the Retry-After response header
-   in appropriate circumstances.
+   Problem type definitions MAY specify the use of the Retry-After
+   response header ([RFC7231], Section 7.1.3) in appropriate
+   circumstances.
 
-   A problem's type URI SHOULD resolve to HTML
-   [W3C.REC-html401-19991224] documentation that explains how to resolve
-   the problem.
+   A problem's type URI SHOULD resolve to HTML [W3C.REC-html5-20141028]
+   documentation that explains how to resolve the problem.
 
    A problem type definition MAY specify additional members on the
    Problem Details object.  For example, an extension might use typed
    links [RFC5988] to another resource that can be used by machines to
    resolve the problem.
 
-   If such additional members are defined, their names SHOULD start with
-   a letter (ALPHA, as per [RFC5234]) and SHOULD consist of characters
-   from ALPHA, DIGIT, and "_" (so that it can be serialized in formats
-   other than JSON), and SHOULD be three characters or longer.
 
 
 
 
-Nottingham & Wilde       Expires March 10, 2016                 [Page 7]
+Nottingham & Wilde        Expires May 29, 2016                  [Page 7]
 
-Internet-Draft               Problem Details              September 2015
+Internet-Draft               Problem Details               November 2015
 
+
+   If such additional members are defined, their names SHOULD start with
+   a letter (ALPHA, as per [RFC5234], Appendix B.1) and SHOULD consist
+   of characters from ALPHA, DIGIT (Ibid.), and "_" (so that it can be
+   serialized in formats other than JSON), and SHOULD be three
+   characters or longer.
 
 4.1.  Example
 
@@ -435,20 +441,17 @@ Internet-Draft               Problem Details              September 2015
 
    Please note that according to how the "type" member is defined
    (Section 3.1), the "about:blank" URI is the default value for that
+
+
+
+
+Nottingham & Wilde        Expires May 29, 2016                  [Page 8]
+
+Internet-Draft               Problem Details               November 2015
+
+
    member.  Consequently, any problem details object not carrying an
    explicit "type" member implicitly uses this URI.
-
-
-
-
-
-
-
-
-Nottingham & Wilde       Expires March 10, 2016                 [Page 8]
-
-Internet-Draft               Problem Details              September 2015
-
 
 5.  Security Considerations
 
@@ -498,12 +501,9 @@ Internet-Draft               Problem Details              September 2015
 
 
 
-
-
-
-Nottingham & Wilde       Expires March 10, 2016                 [Page 9]
+Nottingham & Wilde        Expires May 29, 2016                  [Page 9]
 
-Internet-Draft               Problem Details              September 2015
+Internet-Draft               Problem Details               November 2015
 
 
       Type name: application
@@ -557,9 +557,9 @@ Internet-Draft               Problem Details              September 2015
 
 
 
-Nottingham & Wilde       Expires March 10, 2016                [Page 10]
+Nottingham & Wilde        Expires May 29, 2016                 [Page 10]
 
-Internet-Draft               Problem Details              September 2015
+Internet-Draft               Problem Details               November 2015
 
 
 8.  References
@@ -567,18 +567,18 @@ Internet-Draft               Problem Details              September 2015
 8.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/
-              RFC2119, March 1997,
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
 
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
-              Resource Identifier (URI): Generic Syntax", STD 66, RFC
-              3986, DOI 10.17487/RFC3986, January 2005,
+              Resource Identifier (URI): Generic Syntax", STD 66,
+              RFC 3986, DOI 10.17487/RFC3986, January 2005,
               <http://www.rfc-editor.org/info/rfc3986>.
 
    [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
-              Specifications: ABNF", STD 68, RFC 5234, DOI 10.17487/
-              RFC5234, January 2008,
+              Specifications: ABNF", STD 68, RFC 5234,
+              DOI 10.17487/RFC5234, January 2008,
               <http://www.rfc-editor.org/info/rfc5234>.
 
    [RFC7159]  Bray, T., Ed., "The JavaScript Object Notation (JSON) Data
@@ -586,14 +586,21 @@ Internet-Draft               Problem Details              September 2015
               2014, <http://www.rfc-editor.org/info/rfc7159>.
 
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing", RFC
-              7230, DOI 10.17487/RFC7230, June 2014,
+              Protocol (HTTP/1.1): Message Syntax and Routing",
+              RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <http://www.rfc-editor.org/info/rfc7230>.
 
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Semantics and Content", RFC 7231, DOI
-              10.17487/RFC7231, June 2014,
+              Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
+              DOI 10.17487/RFC7231, June 2014,
               <http://www.rfc-editor.org/info/rfc7231>.
+
+   [W3C.REC-xml-20081126]
+              Bray, T., Paoli, J., Sperberg-McQueen, M., Maler, E., and
+              F. Yergeau, "Extensible Markup Language (XML) 1.0 (Fifth
+              Edition)", World Wide Web Consortium Recommendation REC-
+              xml-20081126, November 2008,
+              <http://www.w3.org/TR/2008/REC-xml-20081126>.
 
 8.2.  Informative References
 
@@ -603,23 +610,21 @@ Internet-Draft               Problem Details              September 2015
               Languages (DSDL) --- Part 2: Grammar-based Validation ---
               RELAX NG", ISO/IEC 19757-2, 2003.
 
+
+
+
+Nottingham & Wilde        Expires May 29, 2016                 [Page 11]
+
+Internet-Draft               Problem Details               November 2015
+
+
    [RFC4918]  Dusseault, L., Ed., "HTTP Extensions for Web Distributed
-              Authoring and Versioning (WebDAV)", RFC 4918, DOI
-              10.17487/RFC4918, June 2007,
+              Authoring and Versioning (WebDAV)", RFC 4918,
+              DOI 10.17487/RFC4918, June 2007,
               <http://www.rfc-editor.org/info/rfc4918>.
 
-
-
-
-
-
-Nottingham & Wilde       Expires March 10, 2016                [Page 11]
-
-Internet-Draft               Problem Details              September 2015
-
-
-   [RFC5988]  Nottingham, M., "Web Linking", RFC 5988, DOI 10.17487/
-              RFC5988, October 2010,
+   [RFC5988]  Nottingham, M., "Web Linking", RFC 5988,
+              DOI 10.17487/RFC5988, October 2010,
               <http://www.rfc-editor.org/info/rfc5988>.
 
    [RFC6694]  Moonesamy, S., Ed., "The "about" URI Scheme", RFC 6694,
@@ -627,19 +632,20 @@ Internet-Draft               Problem Details              September 2015
               <http://www.rfc-editor.org/info/rfc6694>.
 
    [RFC6838]  Freed, N., Klensin, J., and T. Hansen, "Media Type
-              Specifications and Registration Procedures", BCP 13, RFC
-              6838, DOI 10.17487/RFC6838, January 2013,
+              Specifications and Registration Procedures", BCP 13,
+              RFC 6838, DOI 10.17487/RFC6838, January 2013,
               <http://www.rfc-editor.org/info/rfc6838>.
 
    [RFC7303]  Thompson, H. and C. Lilley, "XML Media Types", RFC 7303,
               DOI 10.17487/RFC7303, July 2014,
               <http://www.rfc-editor.org/info/rfc7303>.
 
-   [W3C.REC-html401-19991224]
-              Raggett, D., Hors, A., and I. Jacobs, "HTML 4.01
-              Specification", World Wide Web Consortium Recommendation
-              REC-html401-19991224, December 1999,
-              <http://www.w3.org/TR/1999/REC-html401-19991224>.
+   [W3C.REC-html5-20141028]
+              Hickson, I., Berjon, R., Faulkner, S., Leithead, T.,
+              Navara, E., O&#039;Connor, E., and S. Pfeiffer, "HTML5",
+              World Wide Web Consortium Recommendation REC-
+              html5-20141028, October 2014,
+              <http://www.w3.org/TR/2014/REC-html5-20141028>.
 
    [W3C.REC-rdfa-core-20120607]
               Adida, B., Birbeck, M., McCarron, S., and I. Herman, "RDFa
@@ -647,17 +653,10 @@ Internet-Draft               Problem Details              September 2015
               rdfa-core-20120607, June 2012,
               <http://www.w3.org/TR/2012/REC-rdfa-core-20120607>.
 
-   [W3C.REC-xml-20081126]
-              Bray, T., Paoli, J., Sperberg-McQueen, M., Maler, E., and
-              F. Yergeau, "Extensible Markup Language (XML) 1.0 (Fifth
-              Edition)", World Wide Web Consortium Recommendation REC-
-              xml-20081126, November 2008,
-              <http://www.w3.org/TR/2008/REC-xml-20081126>.
-
 Appendix A.  HTTP Problems and XML
 
    Some HTTP-based APIs use XML [W3C.REC-xml-20081126] as their primary
-   format convention.  Such APIs MAY express problem details using the
+   format convention.  Such APIs can express problem details using the
    format defined in this appendix.
 
    The OPTIONAL RELAX NG schema [ISO-19757-2] for the XML format is:
@@ -669,9 +668,10 @@ Appendix A.  HTTP Problems and XML
 
 
 
-Nottingham & Wilde       Expires March 10, 2016                [Page 12]
+
+Nottingham & Wilde        Expires May 29, 2016                 [Page 12]
 
-Internet-Draft               Problem Details              September 2015
+Internet-Draft               Problem Details               November 2015
 
 
    default namespace ns = "urn:ietf:rfc:XXXX"
@@ -725,9 +725,9 @@ Internet-Draft               Problem Details              September 2015
 
 
 
-Nottingham & Wilde       Expires March 10, 2016                [Page 13]
+Nottingham & Wilde        Expires May 29, 2016                 [Page 13]
 
-Internet-Draft               Problem Details              September 2015
+Internet-Draft               Problem Details               November 2015
 
 
    other namespaces.  The RELAX NG schema explicitly only allows
@@ -739,7 +739,7 @@ Appendix B.  Using Problem Details with Other Formats
 
    In some situations, it can be advantageous to embed Problem Details
    in formats other than those described here.  For example, an API that
-   uses HTML [W3C.REC-html401-19991224] might want to also use HTML for
+   uses HTML [W3C.REC-html5-20141028] might want to also use HTML for
    expressing its problem details.
 
    Problem details can be embedded in other formats by either
@@ -781,9 +781,9 @@ Authors' Addresses
 
 
 
-Nottingham & Wilde       Expires March 10, 2016                [Page 14]
+Nottingham & Wilde        Expires May 29, 2016                 [Page 14]
 
-Internet-Draft               Problem Details              September 2015
+Internet-Draft               Problem Details               November 2015
 
 
    Erik Wilde
@@ -837,4 +837,4 @@ Internet-Draft               Problem Details              September 2015
 
 
 
-Nottingham & Wilde       Expires March 10, 2016                [Page 15]
+Nottingham & Wilde        Expires May 29, 2016                 [Page 15]
