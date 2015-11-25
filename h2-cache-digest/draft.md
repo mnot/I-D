@@ -176,10 +176,6 @@ Additionally, User Agents SHOULD NOT send CACHE_DIGEST when in "privacy mode."
 
 # Acknowledgements
 
-Many thanks to Kazuho Oku, who prototyped the ideas presented here and talked about them at the
-HTTP Study Group (Japan) in October 2015. See:
-<http://www.slideshare.net/kazuho/cache-awareserverpush-in-h2o-version-15>.
-
 Thanks to Adam Langley and Giovanni Bajo for their explorations of Golumb-coded sets. In
 particular, see
 <http://giovanni.bajo.it/post/47119962313/golomb-coded-sets-smaller-than-bloom-filters>, which
