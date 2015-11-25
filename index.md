@@ -2,7 +2,6 @@
 layout: front
 ---
 
-* [dnsop-onion-tld](dnsop-onion-tld) - The .onion Special-Use Domain Name 
 * [for-the-users](for-the-users) - The Internet is for End Users 
 * [h2-cache-digest](h2-cache-digest) - Cache Digests for HTTP/2 
 * [h2-vpn](h2-vpn) - Virtual Private Networking over HTTP/2 
