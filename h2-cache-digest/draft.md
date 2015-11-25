@@ -1,7 +1,7 @@
 ---
 title: Cache Digests for HTTP/2
 abbrev:
-docname: draft-nottingham-h2-cache-digest-00
+docname: draft-kazuho-h2-cache-digest-00
 date: 2015
 category: info
 
