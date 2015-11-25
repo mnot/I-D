@@ -82,9 +82,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # The CACHE_DIGEST Frame
 
-The CACHE_DIGEST frame type is 0xf1. 
-
-NOTE: This is an experimental value; if standardised, a permanent value will be assigned.
+The CACHE_DIGEST frame type is 0xf1. NOTE: This is an experimental value; if standardised, a permanent value will be assigned.
 
 A CACHE_DIGEST frame can be sent from a client to a server on any stream in the "open" state, and
 conveys a digest of the contents of the cache associated with that stream, as explained in
