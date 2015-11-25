@@ -105,45 +105,49 @@ treat an empty Digest-Value as effectively clearing all stored digests for that 
 CACHE_DIGEST has no defined meaning when sent from servers to clients, and MAY be ignored.
 
 ~~~~
-+-------------------------------+-------------------------------+
-|            N (16)             |             P (16)            |
 +---------------------------------------------------------------+
 |         Digest-Value? (*)                    ...
-+-------------------------------+-------------------------------+
++---------------------------------------------------------------+
 ~~~~
 
 The CACHE_DIGEST frame payload has the following fields:
 
-* N: An unsigned 16-bit integer indicating the number of entries in the digest.
-* P: An unsigned 16-bit integer indicating the false positive probability, expressed as 1/P.
 * Digest-Value: An optional sequence of octets containing the digest as computed in {{computing}}.
 
 ## Computing the Digest-Value {#computing}
 
 The set of URLs that is used to compute Digest-Value MUST only include URLs that share origins
-{{RFC6454}} with the stream that CACHE_DIGEST is sent on, and their cached responses MUST be fresh
-{{RFC7234}}.
+{{RFC6454}} with the stream that CACHE_DIGEST is sent on, and they MUST be fresh {{RFC7234}}.
 
-A client MAY choose appropriate values for N and P, based upon available bandwidth and other
-resources. Specifically, it MAY choose to only include some cached responses in the digest.
-However, P MUST be a power of 2.
+A client MAY choose a subset of the available stored responses to include in the set. Additionally,
+it MUST choose a parameter, `P`, that indicates the probability of a false positive it is willing
+to tolerate, expressed as `1/P`.
 
-To compute a digest-value for a given set of URLs, N and P:
+`P` MUST be a power of 2.
 
-1. Let 'hash-values' be an empty array.
-2. Let 'digest-value' be an empty bit array.
-3. For each URL, follow these steps:
-    1. Convert URL to an ascii string by percent-encoding as appropriate {{RFC3986}}.
-    2. Let 'key' be the SHA-256 message digest {{RFC6234}} of URL, expressed as an integer.
-    3. Append key modulo ( N * P ) to hash-values.
-4. Sort hash-values in ascending order.
-5. For each hash-value V:
-    1. Let 'Q' be the integer result of V / N.
-    2. Let 'R' be the result of V modulo N.
-    3. Write Q '1' bits to digest-value.
-    4. Write 1 '0' bit to digest-value.
-    5. Write R to digest-value as binary.
-6. Return digest-value.
+To compute a digest-value for the set `URLs` and `P`:
+
+1. Let N be the count of `URLs`' members.
+2. Let `hash-values` be an empty array of integers.
+3. Append 0 to `hash-values`.
+4. For each `URL` in URLs, follow these steps:
+    1. Convert `URL` to an ASCII string by percent-encoding as appropriate {{RFC3986}}.
+    2. Let `key` be the SHA-256 message digest {{RFC6234}} of URL, expressed as an integer.
+    3. Append `key` modulo ( `N` * `P` ) to `hash-values`.
+5. Sort `hash-values` in ascending order.
+6. Let `digest` be an empty array of bits.
+7. Write `N` and `P` to `digest` as unsigned long integers.
+8. For each `V` in `hash-values`:
+    1. Let `W` be the value following `V` in `hash-values`.
+    2. Let `D` be the result of `W - V`.
+    3. If `D` is 0, continue to the next `V`.
+    4. Let `Q` be the integer result of `D / P`.
+    5. Let `R` be the result of `D modulo P`.
+    6. Write `Q` '1' bits to `digest`.
+    7. Write 1 '0' bit to `digest`.
+    8. Write `R` to `digest` as binary, using log2(P) bits.
+    9. If `V` is the second-to-last member of `hash-values`, stop iterating through `hash-values` and continue to the next step.
+9. If the length of `digest` is not a multiple of 8, pad it with 0s until it is.
 
 
 # IANA Considerations
