@@ -2,14 +2,14 @@
 
 
 
-Network Working Group                                      M. Nottingham
-Internet-Draft                                         November 16, 2015
-Intended status: Informational
-Expires: May 19, 2016
+Network Working Group                                             K. Oku
+Internet-Draft                                             DeNA Co, Ltd.
+Intended status: Informational                             M. Nottingham
+Expires: May 28, 2016                                  November 25, 2015
 
 
                         Cache Digests for HTTP/2
-                  draft-nottingham-h2-cache-digest-00
+                    draft-kazuho-h2-cache-digest-00
 
 Abstract
 
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 19, 2016.
+   This Internet-Draft will expire on May 28, 2016.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Nottingham                Expires May 19, 2016                  [Page 1]
+Oku & Nottingham          Expires May 28, 2016                  [Page 1]
 
 Internet-Draft          Cache Digests for HTTP/2           November 2015
 
@@ -73,14 +73,14 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The CACHE_DIGEST Frame  . . . . . . . . . . . . . . . . . . .   3
-     2.1.  Computing the Digest-Value  . . . . . . . . . . . . . . .   4
+     2.1.  Computing the Digest-Value  . . . . . . . . . . . . . . .   3
    3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
    5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
      5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
      5.2.  Informative References  . . . . . . . . . . . . . . . . .   6
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   6
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   6
 
 1.  Introduction
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Nottingham                Expires May 19, 2016                  [Page 2]
+Oku & Nottingham          Expires May 28, 2016                  [Page 2]
 
 Internet-Draft          Cache Digests for HTTP/2           November 2015
 
@@ -122,10 +122,8 @@ Internet-Draft          Cache Digests for HTTP/2           November 2015
 
 2.  The CACHE_DIGEST Frame
 
-   The CACHE_DIGEST frame type is 0xf1.
-
-   NOTE: This is an experimental value; if standardised, a permanent
-   value will be assigned.
+   The CACHE_DIGEST frame type is 0xf1.  NOTE: This is an experimental
+   value; if standardised, a permanent value will be assigned.
 
    A CACHE_DIGEST frame can be sent from a client to a server on any
    stream in the "open" state, and conveys a digest of the contents of
@@ -150,31 +148,11 @@ Internet-Draft          Cache Digests for HTTP/2           November 2015
    CACHE_DIGEST has no defined meaning when sent from servers to
    clients, and MAY be ignored.
 
-   +-------------------------------+-------------------------------+
-   |            N (16)             |             P (16)            |
    +---------------------------------------------------------------+
-   |          Digest-Len (16)      |
-   +-------------------------------+-------------------------------+
    |         Digest-Value? (*)                    ...
-   +-------------------------------+-------------------------------+
+   +---------------------------------------------------------------+
 
    The CACHE_DIGEST frame payload has the following fields:
-
-   o  N: An unsigned 16-bit integer indicating the number of entries in
-      the digest.
-
-
-
-Nottingham                Expires May 19, 2016                  [Page 3]
-
-Internet-Draft          Cache Digests for HTTP/2           November 2015
-
-
-   o  P: An unsigned 16-bit integer indicating the false positive
-      probability, expressed as 1/P.
-
-   o  Digest-Len: An unsigned, 16-bit integer indicating the length, in
-      octets, of the Digest-Value field.
 
    o  Digest-Value: An optional sequence of octets containing the digest
       as computed in Section 2.1.
@@ -183,52 +161,77 @@ Internet-Draft          Cache Digests for HTTP/2           November 2015
 
    The set of URLs that is used to compute Digest-Value MUST only
    include URLs that share origins [RFC6454] with the stream that
-   CACHE_DIGEST is sent on, and their cached responses MUST be fresh
-   [RFC7234].
-
-   A client MAY choose appropriate values for N and P, based upon
-   available bandwidth and other resources.  Specifically, it MAY choose
-   to only include some cached responses in the digest.  However, P MUST
-   be a power of 2.
-
-   To compute a digest-value for a given set of URLs, N and P:
-
-   1.  Let 'hash-values' be an empty array.
-
-   2.  Let 'digest-value' be an empty bit array.
-
-   3.  For each URL, follow these steps:
-
-       1.  Convert URL to an ascii string by percent-encoding as
-           appropriate [RFC3986].
-
-       2.  Let 'key' be the SHA-256 message digest [RFC6234] of URL,
-           expressed as an integer.
-
-       3.  Append key modulo ( N * P ) to hash-values.
-
-   4.  Sort hash-values in ascending order.
-
-   5.  For each hash-value V:
-
-       1.  Let 'Q' be the integer result of V / N.
-
-       2.  Let 'R' be the result of V modulo N.
-
-       3.  Write Q '1' bits to digest-value.
-
-       4.  Write 1 '0' bit to digest-value.
+   CACHE_DIGEST is sent on, and they MUST be fresh [RFC7234].
 
 
 
-Nottingham                Expires May 19, 2016                  [Page 4]
+Oku & Nottingham          Expires May 28, 2016                  [Page 3]
 
 Internet-Draft          Cache Digests for HTTP/2           November 2015
 
 
-       5.  Write R to digest-value as binary.
+   A client MAY choose a subset of the available stored responses to
+   include in the set.  Additionally, it MUST choose a parameter, "P",
+   that indicates the probability of a false positive it is willing to
+   tolerate, expressed as "1/P".
 
-   6.  Return digest-value.
+   "P" MUST be a power of 2.
+
+   To compute a digest-value for the set "URLs" and "P":
+
+   1.  Let N be the count of "URLs"' members.
+
+   2.  Let "hash-values" be an empty array of integers.
+
+   3.  Append 0 to "hash-values".
+
+   4.  For each "URL" in URLs, follow these steps:
+
+       1.  Convert "URL" to an ASCII string by percent-encoding as
+           appropriate [RFC3986].
+
+       2.  Let "key" be the SHA-256 message digest [RFC6234] of URL,
+           expressed as an integer.
+
+       3.  Append "key" modulo ( "N" * "P" ) to "hash-values".
+
+   5.  Sort "hash-values" in ascending order.
+
+   6.  Let "digest" be an empty array of bits.
+
+   7.  Write "N" and "P" to "digest" as unsigned long integers.
+
+   8.  For each "V" in "hash-values":
+
+       1.  Let "W" be the value following "V" in "hash-values".
+
+       2.  Let "D" be the result of "W - V".
+
+       3.  If "D" is 0, continue to the next "V".
+
+       4.  Let "Q" be the integer result of "D / P".
+
+       5.  Let "R" be the result of "D modulo P".
+
+       6.  Write "Q" '1' bits to "digest".
+
+       7.  Write 1 '0' bit to "digest".
+
+       8.  Write "R" to "digest" as binary, using log2(P) bits.
+
+
+
+Oku & Nottingham          Expires May 28, 2016                  [Page 4]
+
+Internet-Draft          Cache Digests for HTTP/2           November 2015
+
+
+       9.  If "V" is the second-to-last member of "hash-values", stop
+           iterating through "hash-values" and continue to the next
+           step.
+
+   9.  If the length of "digest" is not a multiple of 8, pad it with 0s
+       until it is.
 
 3.  IANA Considerations
 
@@ -274,10 +277,7 @@ Internet-Draft          Cache Digests for HTTP/2           November 2015
 
 
 
-
-
-
-Nottingham                Expires May 19, 2016                  [Page 5]
+Oku & Nottingham          Expires May 28, 2016                  [Page 5]
 
 Internet-Draft          Cache Digests for HTTP/2           November 2015
 
@@ -319,7 +319,24 @@ Appendix A.  Acknowledgements
    http://giovanni.bajo.it/post/47119962313/golomb-coded-sets-smaller-
    than-bloom-filters , which refers to sample code.
 
-Author's Address
+Authors' Addresses
+
+   Kazuho Oku
+   DeNA Co, Ltd.
+
+   Email: kazuhooku@gmail.com
+
+
+
+
+
+
+
+
+Oku & Nottingham          Expires May 28, 2016                  [Page 6]
+
+Internet-Draft          Cache Digests for HTTP/2           November 2015
+
 
    Mark Nottingham
 
@@ -333,4 +350,43 @@ Author's Address
 
 
 
-Nottingham                Expires May 19, 2016                  [Page 6]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Oku & Nottingham          Expires May 28, 2016                  [Page 7]

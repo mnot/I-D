@@ -14,11 +14,17 @@
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
 
-<rfc ipr="trust200902" docName="draft-nottingham-h2-cache-digest-00" category="info">
+<rfc ipr="trust200902" docName="draft-kazuho-h2-cache-digest-00" category="info">
 
   <front>
     <title>Cache Digests for HTTP/2</title>
 
+    <author initials="K." surname="Oku" fullname="Kazuho Oku">
+      <organization>DeNA Co, Ltd.</organization>
+      <address>
+        <email>kazuhooku@gmail.com</email>
+      </address>
+    </author>
     <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
       <organization></organization>
       <address>
@@ -88,9 +94,7 @@ of what to push to clients.</t>
 </section>
 <section anchor="the-cachedigest-frame" title="The CACHE_DIGEST Frame">
 
-<t>The CACHE_DIGEST frame type is 0xf1.</t>
-
-<t>NOTE: This is an experimental value; if standardised, a permanent value will be assigned.</t>
+<t>The CACHE_DIGEST frame type is 0xf1. NOTE: This is an experimental value; if standardised, a permanent value will be assigned.</t>
 
 <t>A CACHE_DIGEST frame can be sent from a client to a server on any stream in the “open” state, and
 conveys a digest of the contents of the cache associated with that stream, as explained in
@@ -111,55 +115,56 @@ treat an empty Digest-Value as effectively clearing all stored digests for that 
 <t>CACHE_DIGEST has no defined meaning when sent from servers to clients, and MAY be ignored.</t>
 
 <figure><artwork><![CDATA[
-+-------------------------------+-------------------------------+
-|            N (16)             |             P (16)            |
 +---------------------------------------------------------------+
-|          Digest-Len (16)      |
-+-------------------------------+-------------------------------+
 |         Digest-Value? (*)                    ...
-+-------------------------------+-------------------------------+
++---------------------------------------------------------------+
 ]]></artwork></figure>
 
 <t>The CACHE_DIGEST frame payload has the following fields:</t>
 
 <t><list style="symbols">
-  <t>N: An unsigned 16-bit integer indicating the number of entries in the digest.</t>
-  <t>P: An unsigned 16-bit integer indicating the false positive probability, expressed as 1/P.</t>
-  <t>Digest-Len: An unsigned, 16-bit integer indicating the length, in octets, of the Digest-Value field.</t>
   <t>Digest-Value: An optional sequence of octets containing the digest as computed in <xref target="computing"/>.</t>
 </list></t>
 
 <section anchor="computing" title="Computing the Digest-Value">
 
 <t>The set of URLs that is used to compute Digest-Value MUST only include URLs that share origins
-<xref target="RFC6454"/> with the stream that CACHE_DIGEST is sent on, and their cached responses MUST be fresh
-<xref target="RFC7234"/>.</t>
+<xref target="RFC6454"/> with the stream that CACHE_DIGEST is sent on, and they MUST be fresh <xref target="RFC7234"/>.</t>
 
-<t>A client MAY choose appropriate values for N and P, based upon available bandwidth and other
-resources. Specifically, it MAY choose to only include some cached responses in the digest.
-However, P MUST be a power of 2.</t>
+<t>A client MAY choose a subset of the available stored responses to include in the set. Additionally,
+it MUST choose a parameter, <spanx style="verb">P</spanx>, that indicates the probability of a false positive it is willing
+to tolerate, expressed as <spanx style="verb">1/P</spanx>.</t>
 
-<t>To compute a digest-value for a given set of URLs, N and P:</t>
+<t><spanx style="verb">P</spanx> MUST be a power of 2.</t>
+
+<t>To compute a digest-value for the set <spanx style="verb">URLs</spanx> and <spanx style="verb">P</spanx>:</t>
 
 <t><list style="numbers">
-  <t>Let ‘hash-values’ be an empty array.</t>
-  <t>Let ‘digest-value’ be an empty bit array.</t>
-  <t>For each URL, follow these steps:
+  <t>Let N be the count of <spanx style="verb">URLs</spanx>’ members.</t>
+  <t>Let <spanx style="verb">hash-values</spanx> be an empty array of integers.</t>
+  <t>Append 0 to <spanx style="verb">hash-values</spanx>.</t>
+  <t>For each <spanx style="verb">URL</spanx> in URLs, follow these steps:
   <list style="numbers">
-      <t>Convert URL to an ascii string by percent-encoding as appropriate <xref target="RFC3986"/>.</t>
-      <t>Let ‘key’ be the SHA-256 message digest <xref target="RFC6234"/> of URL, expressed as an integer.</t>
-      <t>Append key modulo ( N * P ) to hash-values.</t>
+      <t>Convert <spanx style="verb">URL</spanx> to an ASCII string by percent-encoding as appropriate <xref target="RFC3986"/>.</t>
+      <t>Let <spanx style="verb">key</spanx> be the SHA-256 message digest <xref target="RFC6234"/> of URL, expressed as an integer.</t>
+      <t>Append <spanx style="verb">key</spanx> modulo ( <spanx style="verb">N</spanx> * <spanx style="verb">P</spanx> ) to <spanx style="verb">hash-values</spanx>.</t>
     </list></t>
-  <t>Sort hash-values in ascending order.</t>
-  <t>For each hash-value V:
+  <t>Sort <spanx style="verb">hash-values</spanx> in ascending order.</t>
+  <t>Let <spanx style="verb">digest</spanx> be an empty array of bits.</t>
+  <t>Write <spanx style="verb">N</spanx> and <spanx style="verb">P</spanx> to <spanx style="verb">digest</spanx> as unsigned long integers.</t>
+  <t>For each <spanx style="verb">V</spanx> in <spanx style="verb">hash-values</spanx>:
   <list style="numbers">
-      <t>Let ‘Q’ be the integer result of V / N.</t>
-      <t>Let ‘R’ be the result of V modulo N.</t>
-      <t>Write Q ‘1’ bits to digest-value.</t>
-      <t>Write 1 ‘0’ bit to digest-value.</t>
-      <t>Write R to digest-value as binary.</t>
+      <t>Let <spanx style="verb">W</spanx> be the value following <spanx style="verb">V</spanx> in <spanx style="verb">hash-values</spanx>.</t>
+      <t>Let <spanx style="verb">D</spanx> be the result of <spanx style="verb">W - V</spanx>.</t>
+      <t>If <spanx style="verb">D</spanx> is 0, continue to the next <spanx style="verb">V</spanx>.</t>
+      <t>Let <spanx style="verb">Q</spanx> be the integer result of <spanx style="verb">D / P</spanx>.</t>
+      <t>Let <spanx style="verb">R</spanx> be the result of <spanx style="verb">D modulo P</spanx>.</t>
+      <t>Write <spanx style="verb">Q</spanx> ‘1’ bits to <spanx style="verb">digest</spanx>.</t>
+      <t>Write 1 ‘0’ bit to <spanx style="verb">digest</spanx>.</t>
+      <t>Write <spanx style="verb">R</spanx> to <spanx style="verb">digest</spanx> as binary, using log2(P) bits.</t>
+      <t>If <spanx style="verb">V</spanx> is the second-to-last member of <spanx style="verb">hash-values</spanx>, stop iterating through <spanx style="verb">hash-values</spanx> and continue to the next step.</t>
     </list></t>
-  <t>Return digest-value.</t>
+  <t>If the length of <spanx style="verb">digest</spanx> is not a multiple of 8, pad it with 0s until it is.</t>
 </list></t>
 
 </section>
