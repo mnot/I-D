@@ -38,6 +38,16 @@ This document defines a well-known URI that "http://" and "https://" origin serv
 assign distinct URLs for their OPTIONS responses, thereby making them fully available as resources
 on the Web, as well as cacheable.
 
+
+--- note_Note_to_Readers
+
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/http-options-resources>.
+
+The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/http-options-resources/>.
+
+Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/http-options-resources>.
+
+
 --- middle
 
 # Introduction

@@ -18,6 +18,17 @@ Abstract
    responses, thereby making them fully available as resources on the
    Web, as well as cacheable.
 
+Note to Readers
+
+   The issues list for this draft can be found at
+   https://github.com/mnot/I-D/labels/http-options-resources .
+
+   The most recent (often, unpublished) draft is at
+   https://mnot.github.io/I-D/http-options-resources/ .
+
+   Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
+   pages/http-options-resources .
+
 Status of This Memo
 
    This Internet-Draft is submitted in full conformance with the
@@ -35,6 +46,18 @@ Status of This Memo
 
    This Internet-Draft will expire on May 30, 2016.
 
+
+
+
+
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 1]
+
+Internet-Draft           HTTP Options Resources            November 2015
+
+
 Copyright Notice
 
    Copyright (c) 2015 IETF Trust and the persons identified as the
@@ -50,29 +73,21 @@ Copyright Notice
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
 
-
-
-
-Nottingham                Expires May 30, 2016                  [Page 1]
-
-Internet-Draft           HTTP Options Resources            November 2015
-
-
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The "options" well-known URI  . . . . . . . . . . . . . . . .   3
-     2.1.  Client Operation  . . . . . . . . . . . . . . . . . . . .   3
+     2.1.  Client Operation  . . . . . . . . . . . . . . . . . . . .   4
      2.2.  Origin Server Operation . . . . . . . . . . . . . . . . .   4
      2.3.  Intermediary Operation  . . . . . . . . . . . . . . . . .   5
    3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
      5.2.  Informative References  . . . . . . . . . . . . . . . . .   6
      5.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   6
-   Appendix A.  Deployment . . . . . . . . . . . . . . . . . . . . .   6
+   Appendix A.  Deployment . . . . . . . . . . . . . . . . . . . . .   7
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Introduction
@@ -90,6 +105,15 @@ Table of Contents
    because OPTIONS is not cacheable, an intermediary will forward each
    and every pre-flight request to the origin server, adding potentially
    substantial delay to interaction.  For high-volume services, the
+
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 2]
+
+Internet-Draft           HTTP Options Resources            November 2015
+
+
    bandwidth overhead can be more than trivial, since OPTIONS does not
    support conditional requests [RFC7232].
 
@@ -102,17 +126,6 @@ Table of Contents
    "https://" origin servers can use to assign distinct URLs for their
    OPTIONS responses, thereby making them fully available as resources
    on the Web, as well as cacheable.
-
-
-
-
-
-
-
-Nottingham                Expires May 30, 2016                  [Page 2]
-
-Internet-Draft           HTTP Options Resources            November 2015
-
 
 1.1.  Notational Conventions
 
@@ -149,6 +162,14 @@ Internet-Draft           HTTP Options Resources            November 2015
    The well-known URI "/.well-known/options" (note the lack of a
    trailing "/") itself is used as a resource for "OPTIONS *".
 
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 3]
+
+Internet-Draft           HTTP Options Resources            November 2015
+
+
 2.1.  Client Operation
 
    A HTTP client that implements this specification can probe the origin
@@ -162,14 +183,6 @@ Internet-Draft           HTTP Options Resources            November 2015
    retry the request using the OPTIONS method on the target resource.
    Clients SHOULD negatively cache the availability of OPTIONS resources
    for a given origin server; if the 404 or 410 response lacks explicit
-
-
-
-Nottingham                Expires May 30, 2016                  [Page 3]
-
-Internet-Draft           HTTP Options Resources            November 2015
-
-
    freshness information, they SHOULD use a heuristic freshness lifetime
    (e.g., one day).
 
@@ -205,6 +218,14 @@ Internet-Draft           HTTP Options Resources            November 2015
    are not intended to be cached, the need to include appropriate
    metadata (e.g., Cache-Control: no-store).
 
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 4]
+
+Internet-Draft           HTTP Options Resources            November 2015
+
+
    Origin servers that implement this specification MUST do so for all
    resources they are authoritative for; i.e., implementation is origin-
    wide, and cannot be selectively applied to specific resources.
@@ -213,18 +234,6 @@ Internet-Draft           HTTP Options Resources            November 2015
    specification MUST continue to respond to OPTIONS requests as they
    would have otherwise.  These responses SHOULD have an appropriate
    Content-Location header field [RFC7231].
-
-
-
-
-
-
-
-
-Nottingham                Expires May 30, 2016                  [Page 4]
-
-Internet-Draft           HTTP Options Resources            November 2015
-
 
 2.3.  Intermediary Operation
 
@@ -250,7 +259,7 @@ Internet-Draft           HTTP Options Resources            November 2015
 
    o  URI suffix: options
 
-   o  Change controller: Mark Nottingham mnot@mnot.net [1]
+   o  Change controller: Mark Nottingham mnot@mnot.net [4]
 
    o  Specification document(s): [this document]
 
@@ -263,15 +272,6 @@ Internet-Draft           HTTP Options Resources            November 2015
    target URLs.  However, because they can be cached, servers need to be
    careful to set appropriate caching policy.
 
-5.  References
-
-5.1.  Normative References
-
-   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997,
-              <http://www.rfc-editor.org/info/rfc2119>.
-
 
 
 
@@ -281,6 +281,15 @@ Nottingham                Expires May 30, 2016                  [Page 5]
 
 Internet-Draft           HTTP Options Resources            November 2015
 
+
+5.  References
+
+5.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <http://www.rfc-editor.org/info/rfc2119>.
 
    [RFC5785]  Nottingham, M. and E. Hammer-Lahav, "Defining Well-Known
               Uniform Resource Identifiers (URIs)", RFC 5785,
@@ -318,15 +327,6 @@ Internet-Draft           HTTP Options Resources            November 2015
 
    [1] mailto:mnot@mnot.net
 
-Appendix A.  Deployment
-
-   The obvious benefit of deploying this specification is that it allows
-   HTTP "reverse" proxies and Content Delivery Networks to cache and
-   serve OPTIONS responses.  However, this requires OPTIONS requests to
-   be transformed into options URLs at some point.
-
-   This transformation can be done in user agents, intermediaries and
-   origin servers.
 
 
 
@@ -337,6 +337,16 @@ Nottingham                Expires May 30, 2016                  [Page 6]
 
 Internet-Draft           HTTP Options Resources            November 2015
 
+
+Appendix A.  Deployment
+
+   The obvious benefit of deploying this specification is that it allows
+   HTTP "reverse" proxies and Content Delivery Networks to cache and
+   serve OPTIONS responses.  However, this requires OPTIONS requests to
+   be transformed into options URLs at some point.
+
+   This transformation can be done in user agents, intermediaries and
+   origin servers.
 
    For example, user agents can decide to use options URLs for internal
    caching purposes, and emit requests for them when they know the
@@ -360,16 +370,6 @@ Author's Address
 
    Email: mnot@mnot.net
    URI:   http://www.mnot.net/
-
-
-
-
-
-
-
-
-
-
 
 
 
