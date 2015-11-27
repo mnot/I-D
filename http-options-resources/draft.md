@@ -98,7 +98,7 @@ Host: example.com
 The well-known URI "/.well-known/options" (note the lack of a trailing "/") itself is used as a
 resource for "OPTIONS *".
 
-## Client Operation
+## Client Operation {#clients}
 
 A HTTP client that implements this specification can probe the origin server for support by
 optimistically making a GET request for either the root options URL "/.well-known/options" (note
@@ -135,6 +135,10 @@ In particular, origin servers should note that 200 (OK) responses from options U
 by default {{RFC7234}}, and so if they are not intended to be cached, the need to include
 appropriate metadata (e.g., Cache-Control: no-store).
 
+Origin servers that implement this specification MUST do so for all resources they are
+authoritative for; i.e., implementation is origin-wide, and cannot be selectively applied to
+specific resources.
+
 For backwards compatibility, origin servers that implement this specification MUST continue to
 respond to OPTIONS requests as they would have otherwise. These responses SHOULD have an
 appropriate Content-Location header field {{RFC7231}}.
@@ -170,3 +174,23 @@ they can be cached, servers need to be careful to set appropriate caching policy
 
 
 --- back
+
+# Deployment
+
+The obvious benefit of deploying this specification is that it allows HTTP "reverse" proxies and
+Content Delivery Networks to cache and serve OPTIONS responses. However, this requires OPTIONS
+requests to be transformed into options URLs at some point.
+
+This transformation can be done in user agents, intermediaries and origin servers.
+
+For example, user agents can decide to use options URLs for internal caching purposes, and emit
+requests for them when they know the server supports this specification.
+
+Intermediaries can translate incoming OPTIONS requests into options URLs when they know the origin
+server supports them, and can reason about OPTIONS requests using them internally.
+
+Origin servers can translate options URLs into OPTIONS requests internally with a fairly simple
+modification.
+
+These transformations need not be coordinated, and can happen concurrently as long as clients
+conform to the requirements upon them in {{clients}}.

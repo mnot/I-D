@@ -65,14 +65,15 @@ Table of Contents
    2.  The "options" well-known URI  . . . . . . . . . . . . . . . .   3
      2.1.  Client Operation  . . . . . . . . . . . . . . . . . . . .   3
      2.2.  Origin Server Operation . . . . . . . . . . . . . . . . .   4
-     2.3.  Intermediary Operation  . . . . . . . . . . . . . . . . .   4
+     2.3.  Intermediary Operation  . . . . . . . . . . . . . . . . .   5
    3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
    5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
      5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
      5.2.  Informative References  . . . . . . . . . . . . . . . . .   6
      5.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   6
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
+   Appendix A.  Deployment . . . . . . . . . . . . . . . . . . . . .   6
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Introduction
 
@@ -101,7 +102,6 @@ Table of Contents
    "https://" origin servers can use to assign distinct URLs for their
    OPTIONS responses, thereby making them fully available as resources
    on the Web, as well as cacheable.
-
 
 
 
@@ -205,17 +205,17 @@ Internet-Draft           HTTP Options Resources            November 2015
    are not intended to be cached, the need to include appropriate
    metadata (e.g., Cache-Control: no-store).
 
+   Origin servers that implement this specification MUST do so for all
+   resources they are authoritative for; i.e., implementation is origin-
+   wide, and cannot be selectively applied to specific resources.
+
    For backwards compatibility, origin servers that implement this
    specification MUST continue to respond to OPTIONS requests as they
    would have otherwise.  These responses SHOULD have an appropriate
    Content-Location header field [RFC7231].
 
-2.3.  Intermediary Operation
 
-   An intermediary MAY optimistically translate OPTIONS requests into
-   GET requests on options URLs, provided that they fall back to making
-   OPTIONS requests if the origin server does not implement this
-   specification.
+
 
 
 
@@ -225,6 +225,13 @@ Nottingham                Expires May 30, 2016                  [Page 4]
 
 Internet-Draft           HTTP Options Resources            November 2015
 
+
+2.3.  Intermediary Operation
+
+   An intermediary MAY optimistically translate OPTIONS requests into
+   GET requests on options URLs, provided that they fall back to making
+   OPTIONS requests if the origin server does not implement this
+   specification.
 
    Such intermediaries are required to respect the max-forwards header,
    as per [RFC7232].
@@ -265,13 +272,6 @@ Internet-Draft           HTTP Options Resources            November 2015
               DOI 10.17487/RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
 
-   [RFC5785]  Nottingham, M. and E. Hammer-Lahav, "Defining Well-Known
-              Uniform Resource Identifiers (URIs)", RFC 5785,
-              DOI 10.17487/RFC5785, April 2010,
-              <http://www.rfc-editor.org/info/rfc5785>.
-
-
-
 
 
 
@@ -281,6 +281,11 @@ Nottingham                Expires May 30, 2016                  [Page 5]
 
 Internet-Draft           HTTP Options Resources            November 2015
 
+
+   [RFC5785]  Nottingham, M. and E. Hammer-Lahav, "Defining Well-Known
+              Uniform Resource Identifiers (URIs)", RFC 5785,
+              DOI 10.17487/RFC5785, April 2010,
+              <http://www.rfc-editor.org/info/rfc5785>.
 
 5.2.  Informative References
 
@@ -313,6 +318,41 @@ Internet-Draft           HTTP Options Resources            November 2015
 
    [1] mailto:mnot@mnot.net
 
+Appendix A.  Deployment
+
+   The obvious benefit of deploying this specification is that it allows
+   HTTP "reverse" proxies and Content Delivery Networks to cache and
+   serve OPTIONS responses.  However, this requires OPTIONS requests to
+   be transformed into options URLs at some point.
+
+   This transformation can be done in user agents, intermediaries and
+   origin servers.
+
+
+
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 6]
+
+Internet-Draft           HTTP Options Resources            November 2015
+
+
+   For example, user agents can decide to use options URLs for internal
+   caching purposes, and emit requests for them when they know the
+   server supports this specification.
+
+   Intermediaries can translate incoming OPTIONS requests into options
+   URLs when they know the origin server supports them, and can reason
+   about OPTIONS requests using them internally.
+
+   Origin servers can translate options URLs into OPTIONS requests
+   internally with a fairly simple modification.
+
+   These transformations need not be coordinated, and can happen
+   concurrently as long as clients conform to the requirements upon them
+   in Section 2.1.
+
 Author's Address
 
    Mark Nottingham
@@ -333,4 +373,20 @@ Author's Address
 
 
 
-Nottingham                Expires May 30, 2016                  [Page 6]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 7]
