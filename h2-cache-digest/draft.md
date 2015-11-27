@@ -145,7 +145,7 @@ To compute a digest-value for the set `URLs` and `P`:
     7. Write 1 '0' bit to `digest`.
     8. Write `R` to `digest` as binary, using log2(P) bits.
     9. If `V` is the second-to-last member of `hash-values`, stop iterating through `hash-values` and continue to the next step.
-9. If the length of `digest` is not a multiple of 8, pad it with 0s until it is.
+9. If the length of `digest` is not a multiple of 8, pad it with 1s until it is.
 
 
 # IANA Considerations
