@@ -125,7 +125,7 @@ to tolerate, expressed as `1/P`.
 
 To compute a digest-value for the set `URLs` and `P`:
 
-1. Let N be the count of `URLs`' members.
+1. Let N be the count of `URLs`' members, rounded up to power of 2.
 2. Let `hash-values` be an empty array of integers.
 3. Append 0 to `hash-values`.
 4. For each `URL` in URLs, follow these steps:
@@ -134,7 +134,7 @@ To compute a digest-value for the set `URLs` and `P`:
     3. Append `key` modulo ( `N` * `P` ) to `hash-values`.
 5. Sort `hash-values` in ascending order.
 6. Let `digest` be an empty array of bits.
-7. Write `N` and `P` to `digest` as unsigned long integers.
+7. Write log base 2 of `N` and `P` to `digest` as octets.
 8. For each `V` in `hash-values`:
     1. Let `W` be the value following `V` in `hash-values`.
     2. If `W` and `V` are equal, continue to the next `V`.
