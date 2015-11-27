@@ -137,8 +137,8 @@ To compute a digest-value for the set `URLs` and `P`:
 7. Write `N` and `P` to `digest` as unsigned long integers.
 8. For each `V` in `hash-values`:
     1. Let `W` be the value following `V` in `hash-values`.
-    2. Let `D` be the result of `W - V`.
-    3. If `D` is 0, continue to the next `V`.
+    2. If `W` and `V` are equal, continue to the next `V`.
+    3. Let `D` be the result of `W - V - 1`.
     4. Let `Q` be the integer result of `D / P`.
     5. Let `R` be the result of `D modulo P`.
     6. Write `Q` '1' bits to `digest`.
