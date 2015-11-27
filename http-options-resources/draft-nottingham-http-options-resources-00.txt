@@ -1,0 +1,336 @@
+
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                       Akamai Technologies
+Intended status: Informational                         November 27, 2015
+Expires: May 30, 2016
+
+
+                 Well-Known Resources for HTTP OPTIONS
+               draft-nottingham-http-options-resources-00
+
+Abstract
+
+   This document defines a well-known URI that "http://" and "https://"
+   origin servers can use to assign distinct URLs for their OPTIONS
+   responses, thereby making them fully available as resources on the
+   Web, as well as cacheable.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on May 30, 2016.
+
+Copyright Notice
+
+   Copyright (c) 2015 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 1]
+
+Internet-Draft           HTTP Options Resources            November 2015
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+   2.  The "options" well-known URI  . . . . . . . . . . . . . . . .   3
+     2.1.  Client Operation  . . . . . . . . . . . . . . . . . . . .   3
+     2.2.  Origin Server Operation . . . . . . . . . . . . . . . . .   4
+     2.3.  Intermediary Operation  . . . . . . . . . . . . . . . . .   4
+   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
+     5.2.  Informative References  . . . . . . . . . . . . . . . . .   6
+     5.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   6
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
+
+1.  Introduction
+
+   HTTP says the OPTIONS method "allows a client to determine the
+   options and/or requirements associated with a resource, or the
+   capabilities of a server, without implying a resource action."
+   [RFC7231]
+
+   CORS [W3C.REC-cors-20140116] uses OPTIONS to perform a "pre-flight"
+   request to determine whether a given resource will allow a state-
+   changing cross-origin request.
+
+   This has some unfortunate deployment characteristics.  In particular,
+   because OPTIONS is not cacheable, an intermediary will forward each
+   and every pre-flight request to the origin server, adding potentially
+   substantial delay to interaction.  For high-volume services, the
+   bandwidth overhead can be more than trivial, since OPTIONS does not
+   support conditional requests [RFC7232].
+
+   Furthermore, because OPTIONS responses don't have distinct URLs, it's
+   difficult to incorporate them into the Web; for example, if they were
+   to be cached, a cache invalidation mechanism would have to convey the
+   method as well as the URL to be able to invalidate them separately.
+
+   This document defines a well-known URI [RFC5785] that "http://" and
+   "https://" origin servers can use to assign distinct URLs for their
+   OPTIONS responses, thereby making them fully available as resources
+   on the Web, as well as cacheable.
+
+
+
+
+
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 2]
+
+Internet-Draft           HTTP Options Resources            November 2015
+
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+2.  The "options" well-known URI
+
+   The 'options' well-known URI [RFC5785] defines a space whereby an
+   origin server exposes a set of options resources, each which operates
+   in an identical fashion to the corresponding target resource on the
+   origin server, except that they respond to GET requests as if the
+   method had been OPTIONS.
+
+   A given options URL can be calculated for a target URL by appending
+   the well-known URI.  Examples of paired target URLs and options URLs
+   follow:
+
+  http://example.com/ -> http://example.com/.well-known/options/
+  https://example.com/ -> https://example.com/.well-known/options/
+  http://example.org/foo -> http://example.org/.well-known/options/foo
+  http://example.org/?bar -> http://example.org/.well-known/options/?bar
+
+   This means that the following HTTP/1.1 requests will return the same
+   representation:
+
+   OPTIONS /foo HTTP/1.1
+   Host: example.com
+
+   GET /.well-known/options/foo HTTP/1.1
+   Host: example.com
+
+   The well-known URI "/.well-known/options" (note the lack of a
+   trailing "/") itself is used as a resource for "OPTIONS *".
+
+2.1.  Client Operation
+
+   A HTTP client that implements this specification can probe the origin
+   server for support by optimistically making a GET request for either
+   the root options URL "/.well-known/options" (note the lack of a
+   trailing "/"), or the options URL for the specific resource to be
+   queried (e.g,.  "/.well-known/options/example/").
+
+   A 404 (Not Found) or 410 (Gone) response indicates that the origin
+   server does not support this specification, and the client SHOULD
+   retry the request using the OPTIONS method on the target resource.
+   Clients SHOULD negatively cache the availability of OPTIONS resources
+   for a given origin server; if the 404 or 410 response lacks explicit
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 3]
+
+Internet-Draft           HTTP Options Resources            November 2015
+
+
+   freshness information, they SHOULD use a heuristic freshness lifetime
+   (e.g., one day).
+
+   Alternatively, clients can discover support for this specification by
+   examining the Content-Location header field on responses to OPTIONS
+   requests; if it is present and contains a value beginning with
+   "/.well-known/options", the client MAY assume that the origin server
+   supports it.
+
+   Clients MAY cache responses to options URLs [RFC7234], MAY send
+   conditional requests for them [RFC7232], and MAY request partial
+   content [RFC7233].  Clients SHOULD follow redirects from options URLs
+   [RFC7231].
+
+2.2.  Origin Server Operation
+
+   A HTTP origin server that implements this specification MUST respond
+   to requests for options URLs as if the client had performed the same
+   request using the OPTIONS method upon the target resource, except
+   that:
+
+   o  The origin server SHOULD send appropriate caching metadata
+      [RFC7234]
+
+   o  The origin server SHOULD respond to conditional requests
+      appropriately [RFC7232]
+
+   o  The origin server MAY respond to range requests with partial
+      content [RFC7233]
+
+   In particular, origin servers should note that 200 (OK) responses
+   from options URLs are cacheable by default [RFC7234], and so if they
+   are not intended to be cached, the need to include appropriate
+   metadata (e.g., Cache-Control: no-store).
+
+   For backwards compatibility, origin servers that implement this
+   specification MUST continue to respond to OPTIONS requests as they
+   would have otherwise.  These responses SHOULD have an appropriate
+   Content-Location header field [RFC7231].
+
+2.3.  Intermediary Operation
+
+   An intermediary MAY optimistically translate OPTIONS requests into
+   GET requests on options URLs, provided that they fall back to making
+   OPTIONS requests if the origin server does not implement this
+   specification.
+
+
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 4]
+
+Internet-Draft           HTTP Options Resources            November 2015
+
+
+   Such intermediaries are required to respect the max-forwards header,
+   as per [RFC7232].
+
+   Note that an intermediary MAY use options URLs entirely for internal
+   purposes; i.e., client might make OPTIONS requests, and they might be
+   forwarded as OPTIONS requests due to lack of server-side support, but
+   the intermediary can still use options URLs internally to effect
+   caching, offer additional services such as cache invalidation using
+   those URLs, etc.
+
+3.  IANA Considerations
+
+   This document registers the value "options" in the Well-Known URI
+   Registry [RFC5785].
+
+   o  URI suffix: options
+
+   o  Change controller: Mark Nottingham mnot@mnot.net [1]
+
+   o  Specification document(s): [this document]
+
+   o  Related information: Registered for "http" and "https" URI
+      schemes.
+
+4.  Security Considerations
+
+   Options URLs have similar security considerations to using OPTIONS on
+   target URLs.  However, because they can be cached, servers need to be
+   careful to set appropriate caching policy.
+
+5.  References
+
+5.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <http://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC5785]  Nottingham, M. and E. Hammer-Lahav, "Defining Well-Known
+              Uniform Resource Identifiers (URIs)", RFC 5785,
+              DOI 10.17487/RFC5785, April 2010,
+              <http://www.rfc-editor.org/info/rfc5785>.
+
+
+
+
+
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 5]
+
+Internet-Draft           HTTP Options Resources            November 2015
+
+
+5.2.  Informative References
+
+   [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
+              DOI 10.17487/RFC7231, June 2014,
+              <http://www.rfc-editor.org/info/rfc7231>.
+
+   [RFC7232]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Conditional Requests", RFC 7232,
+              DOI 10.17487/RFC7232, June 2014,
+              <http://www.rfc-editor.org/info/rfc7232>.
+
+   [RFC7233]  Fielding, R., Ed., Lafon, Y., Ed., and J. Reschke, Ed.,
+              "Hypertext Transfer Protocol (HTTP/1.1): Range Requests",
+              RFC 7233, DOI 10.17487/RFC7233, June 2014,
+              <http://www.rfc-editor.org/info/rfc7233>.
+
+   [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
+              RFC 7234, DOI 10.17487/RFC7234, June 2014,
+              <http://www.rfc-editor.org/info/rfc7234>.
+
+   [W3C.REC-cors-20140116]
+              Kesteren, A., "Cross-Origin Resource Sharing", World Wide
+              Web Consortium Recommendation REC-cors-20140116, January
+              2014, <http://www.w3.org/TR/2014/REC-cors-20140116>.
+
+5.3.  URIs
+
+   [1] mailto:mnot@mnot.net
+
+Author's Address
+
+   Mark Nottingham
+   Akamai Technologies
+
+   Email: mnot@mnot.net
+   URI:   http://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham                Expires May 30, 2016                  [Page 6]
