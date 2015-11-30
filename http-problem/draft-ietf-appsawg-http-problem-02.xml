@@ -163,7 +163,7 @@
       
       <t>For example, a HTTP response carrying JSON problem details:</t>
 
-     <figure><artwork><![CDATA[
+     <figure><artwork type="message/http; msgtype=&#34;response&#34;"><![CDATA[
 HTTP/1.1 403 Forbidden
 Content-Type: application/problem+json
 Content-Language: en
@@ -188,23 +188,23 @@ Content-Language: en
       <t>The ability to convey problem-specific extensions allows more than 
         one problem to be conveyed. For example:</t>
         
-        <figure><artwork><![CDATA[
-   HTTP/1.1 400 Bad Request
-   Content-Type: application/problem+json
-   Content-Language: en
+      <figure><artwork type="message/http; msgtype=&#34;response&#34;"><![CDATA[
+HTTP/1.1 400 Bad Request
+Content-Type: application/problem+json
+Content-Language: en
 
-   {
-    "type": "https://example.net/validation-error",
-    "title": "Your request parameters didn't validate.",
-    "invalid-params": [ { 
-                          "name": "age", 
-                          "reason": "must be a positive integer"
-                        },
-                        { 
-                          "name": "color",
-                          "reason": "must be 'green', 'red' or 'blue'"}
-                      ]
-   }]]></artwork></figure>
+{
+"type": "https://example.net/validation-error",
+"title": "Your request parameters didn't validate.",
+"invalid-params": [ { 
+                      "name": "age", 
+                      "reason": "must be a positive integer"
+                    },
+                    { 
+                      "name": "color",
+                      "reason": "must be 'green', 'red' or 'blue'"}
+                  ]
+}]]></artwork></figure>
 
      <t>Note that this requires each of the sub-problems to be similar enough
      to use the same HTTP status code. If they do not, the 207 (Multi-Status)
@@ -538,7 +538,7 @@ Content-Language: en
    <t>The OPTIONAL RELAX NG schema <xref target="ISO-19757-2"/>
    for the XML format is:</t>
       
-<figure><artwork>&problem-schema;</artwork></figure>
+<figure><artwork type="application/relax-ng-compact-syntax">&problem-schema;</artwork></figure>
 
    <t>The media type for this format is "application/problem+xml".</t>
    
@@ -548,7 +548,7 @@ Content-Language: en
    which are considered arrays. For example, an alternate version of the
    example above would appear in XML as:</t>
       
-     <figure><artwork><![CDATA[
+     <figure><artwork type="message/http; msgtype=&#34;response&#34;"><![CDATA[
 HTTP/1.1 403 Forbidden
 Content-Type: application/problem+xml
 Content-Language: en
@@ -592,7 +592,7 @@ Content-Language: en
      <t>For example, in HTML, a problem could be embedded by encapsulating
      JSON in a script tag:</t>
 
-     <figure><artwork><![CDATA[
+     <figure><artwork type="example"><![CDATA[
        <script type="application/problem+json">
          {
           "type": "https://example.com/probs/out-of-credit",
