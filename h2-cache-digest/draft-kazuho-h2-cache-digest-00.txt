@@ -5,7 +5,7 @@
 Network Working Group                                             K. Oku
 Internet-Draft                                             DeNA Co, Ltd.
 Intended status: Informational                             M. Nottingham
-Expires: May 28, 2016                                  November 25, 2015
+Expires: June 5, 2016                                   December 3, 2015
 
 
                         Cache Digests for HTTP/2
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 28, 2016.
+   This Internet-Draft will expire on June 5, 2016.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Oku & Nottingham          Expires May 28, 2016                  [Page 1]
+Oku & Nottingham          Expires June 5, 2016                  [Page 1]
 
-Internet-Draft          Cache Digests for HTTP/2           November 2015
+Internet-Draft          Cache Digests for HTTP/2           December 2015
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Oku & Nottingham          Expires May 28, 2016                  [Page 2]
+Oku & Nottingham          Expires June 5, 2016                  [Page 2]
 
-Internet-Draft          Cache Digests for HTTP/2           November 2015
+Internet-Draft          Cache Digests for HTTP/2           December 2015
 
 
 1.1.  Notational Conventions
@@ -165,9 +165,9 @@ Internet-Draft          Cache Digests for HTTP/2           November 2015
 
 
 
-Oku & Nottingham          Expires May 28, 2016                  [Page 3]
+Oku & Nottingham          Expires June 5, 2016                  [Page 3]
 
-Internet-Draft          Cache Digests for HTTP/2           November 2015
+Internet-Draft          Cache Digests for HTTP/2           December 2015
 
 
    A client MAY choose a subset of the available stored responses to
@@ -179,7 +179,7 @@ Internet-Draft          Cache Digests for HTTP/2           November 2015
 
    To compute a digest-value for the set "URLs" and "P":
 
-   1.  Let N be the count of "URLs"' members.
+   1.  Let N be the count of "URLs"' members, rounded up to power of 2.
 
    2.  Let "hash-values" be an empty array of integers.
 
@@ -199,15 +199,15 @@ Internet-Draft          Cache Digests for HTTP/2           November 2015
 
    6.  Let "digest" be an empty array of bits.
 
-   7.  Write "N" and "P" to "digest" as unsigned long integers.
+   7.  Write log base 2 of "N" and "P" to "digest" as octets.
 
    8.  For each "V" in "hash-values":
 
        1.  Let "W" be the value following "V" in "hash-values".
 
-       2.  Let "D" be the result of "W - V".
+       2.  If "W" and "V" are equal, continue to the next "V".
 
-       3.  If "D" is 0, continue to the next "V".
+       3.  Let "D" be the result of "W - V - 1".
 
        4.  Let "Q" be the integer result of "D / P".
 
@@ -221,16 +221,16 @@ Internet-Draft          Cache Digests for HTTP/2           November 2015
 
 
 
-Oku & Nottingham          Expires May 28, 2016                  [Page 4]
+Oku & Nottingham          Expires June 5, 2016                  [Page 4]
 
-Internet-Draft          Cache Digests for HTTP/2           November 2015
+Internet-Draft          Cache Digests for HTTP/2           December 2015
 
 
        9.  If "V" is the second-to-last member of "hash-values", stop
            iterating through "hash-values" and continue to the next
            step.
 
-   9.  If the length of "digest" is not a multiple of 8, pad it with 0s
+   9.  If the length of "digest" is not a multiple of 8, pad it with 1s
        until it is.
 
 3.  IANA Considerations
@@ -277,9 +277,9 @@ Internet-Draft          Cache Digests for HTTP/2           November 2015
 
 
 
-Oku & Nottingham          Expires May 28, 2016                  [Page 5]
+Oku & Nottingham          Expires June 5, 2016                  [Page 5]
 
-Internet-Draft          Cache Digests for HTTP/2           November 2015
+Internet-Draft          Cache Digests for HTTP/2           December 2015
 
 
    [RFC6234]  Eastlake 3rd, D. and T. Hansen, "US Secure Hash Algorithms
@@ -333,4 +333,4 @@ Authors' Addresses
 
 
 
-Oku & Nottingham          Expires May 28, 2016                  [Page 6]
+Oku & Nottingham          Expires June 5, 2016                  [Page 6]

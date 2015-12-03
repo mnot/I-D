@@ -140,7 +140,7 @@ to tolerate, expressed as <spanx style="verb">1/P</spanx>.</t>
 <t>To compute a digest-value for the set <spanx style="verb">URLs</spanx> and <spanx style="verb">P</spanx>:</t>
 
 <t><list style="numbers">
-  <t>Let N be the count of <spanx style="verb">URLs</spanx>’ members.</t>
+  <t>Let N be the count of <spanx style="verb">URLs</spanx>’ members, rounded up to power of 2.</t>
   <t>Let <spanx style="verb">hash-values</spanx> be an empty array of integers.</t>
   <t>Append 0 to <spanx style="verb">hash-values</spanx>.</t>
   <t>For each <spanx style="verb">URL</spanx> in URLs, follow these steps:
@@ -151,12 +151,12 @@ to tolerate, expressed as <spanx style="verb">1/P</spanx>.</t>
     </list></t>
   <t>Sort <spanx style="verb">hash-values</spanx> in ascending order.</t>
   <t>Let <spanx style="verb">digest</spanx> be an empty array of bits.</t>
-  <t>Write <spanx style="verb">N</spanx> and <spanx style="verb">P</spanx> to <spanx style="verb">digest</spanx> as unsigned long integers.</t>
+  <t>Write log base 2 of <spanx style="verb">N</spanx> and <spanx style="verb">P</spanx> to <spanx style="verb">digest</spanx> as octets.</t>
   <t>For each <spanx style="verb">V</spanx> in <spanx style="verb">hash-values</spanx>:
   <list style="numbers">
       <t>Let <spanx style="verb">W</spanx> be the value following <spanx style="verb">V</spanx> in <spanx style="verb">hash-values</spanx>.</t>
-      <t>Let <spanx style="verb">D</spanx> be the result of <spanx style="verb">W - V</spanx>.</t>
-      <t>If <spanx style="verb">D</spanx> is 0, continue to the next <spanx style="verb">V</spanx>.</t>
+      <t>If <spanx style="verb">W</spanx> and <spanx style="verb">V</spanx> are equal, continue to the next <spanx style="verb">V</spanx>.</t>
+      <t>Let <spanx style="verb">D</spanx> be the result of <spanx style="verb">W - V - 1</spanx>.</t>
       <t>Let <spanx style="verb">Q</spanx> be the integer result of <spanx style="verb">D / P</spanx>.</t>
       <t>Let <spanx style="verb">R</spanx> be the result of <spanx style="verb">D modulo P</spanx>.</t>
       <t>Write <spanx style="verb">Q</spanx> ‘1’ bits to <spanx style="verb">digest</spanx>.</t>
@@ -164,7 +164,7 @@ to tolerate, expressed as <spanx style="verb">1/P</spanx>.</t>
       <t>Write <spanx style="verb">R</spanx> to <spanx style="verb">digest</spanx> as binary, using log2(P) bits.</t>
       <t>If <spanx style="verb">V</spanx> is the second-to-last member of <spanx style="verb">hash-values</spanx>, stop iterating through <spanx style="verb">hash-values</spanx> and continue to the next step.</t>
     </list></t>
-  <t>If the length of <spanx style="verb">digest</spanx> is not a multiple of 8, pad it with 0s until it is.</t>
+  <t>If the length of <spanx style="verb">digest</spanx> is not a multiple of 8, pad it with 1s until it is.</t>
 </list></t>
 
 </section>
