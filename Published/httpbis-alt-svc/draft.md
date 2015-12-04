@@ -70,7 +70,7 @@ For example:
   
 * An origin server might wish to offer access to its resources using a new
   protocol (such as HTTP/2 {{I-D.ietf-httpbis-http2}}) or one using improved
-  security (such as TLS {{RFC5246}).
+  security (such as TLS {{RFC5246}}).
   
 * An origin server might wish to segment its clients into groups of
   capabilities, such as those supporting SNI (see {{RFC6066}}) and those not

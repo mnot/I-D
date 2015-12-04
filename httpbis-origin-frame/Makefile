@@ -3,6 +3,7 @@ id_base = ..
 xml2rfc ?= xml2rfc
 saxpath ?= /usr/local/share/saxon-b/saxon9.jar
 kramdown-rfc2629 ?= kramdown-rfc2629
+bootstrap ?= ../../rfcbootstrap/rfcbootstrap.xslt
 idnits ?= idnits
 
 title = nottingham-$(shell basename ${CURDIR})
@@ -15,7 +16,7 @@ next = draft-$(title)-$(shell printf "%.2d" `echo ${version}+1 | bc`)
 
 .PHONY: latest clean next diff idnits update
 
-latest: $(target).html $(target).txt
+latest: $(target).html $(target).txt index.html index.txt
 
 clean:
 	rm -f $(target).html $(target).txt
@@ -34,12 +35,18 @@ idnits: $(target).txt
 	$(kramdown-rfc2629) $< > $@
 	
 %.html: %.xml
-	sed -i '' -e"s/rfc2629.dtd/$(id_base)\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
-	java -classpath $(saxpath) net.sf.saxon.Transform -novw -l $< $(id_base)/Tools/rfcbootstrap/rfcbootstrap.xslt > $@
+	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
+	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) > $@
 #	$(xml2rfc) --html $< $@
 
 %.txt: %.xml
 	$(xml2rfc) $< $@
+
+index.html: $(target).html
+	cp $< $@
+
+index.txt: $(target).txt
+	cp $< $@
 
 update:
 	cp $(id_base)/Tools/skel/Makefile .

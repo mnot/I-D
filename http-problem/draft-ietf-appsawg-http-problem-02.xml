@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE rfc SYSTEM "http://xml.resource.org/authoring/rfc2629.dtd" [
+   <!ENTITY rfc2119 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.2119.xml'>  
+   <!ENTITY rfc7303 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7303.xml'>  
+   <!ENTITY rfc3986 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.3986.xml'>  
+   <!ENTITY rfc4918 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.4918.xml'>  
+   <!ENTITY rfc7159 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7159.xml'>  
+   <!ENTITY rfc5234 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5234.xml'>  
+   <!ENTITY rfc5987 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5987.xml'>  
+   <!ENTITY rfc5988 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.5988.xml'>  
+   <!ENTITY rfc6694 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6694.xml'>
+   <!ENTITY rfc6838 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.6838.xml'>
+   <!ENTITY rfc7230 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7230.xml'>  
+   <!ENTITY rfc7231 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7231.xml'>  
+   <!ENTITY xml SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xml-20081126.xml'>  
+   <!ENTITY html SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html5-20141028.xml'>
+   <!ENTITY rdfa SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-rdfa-core-20130822.xml'>
+   <!ENTITY problem-schema SYSTEM 'http-problem-07.rnc'>
+]>
+
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes" ?>
+<?rfc tocdepth="3" ?>
+<?rfc tocindent="yes" ?>
+<?rfc symrefs="yes" ?>
+<?rfc sortrefs="yes"?>
+<?rfc iprnotified="no" ?>
+<?rfc strict="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes" ?>
+
+<rfc ipr="trust200902" docName="draft-ietf-appsawg-http-problem-02" category="std">
+
+	<front>
+		<title abbrev="Problem Details">Problem Details for HTTP APIs</title>
+		<author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+			<organization>Akamai</organization>
+			<address>       
+				<email>mnot@mnot.net</email> 
+				<uri>http://www.mnot.net/</uri>
+			</address>
+		</author>
+    <author initials="E." surname="Wilde" fullname="Erik Wilde">
+	    <organization>UC Berkeley</organization>
+	    <address>
+        <email>dret@berkeley.edu</email>
+        <uri>http://dret.net/netdret/</uri>
+      </address>
+	  </author>
+    <date year="2015"/>
+		<keyword>status</keyword>
+		<keyword>HTTP</keyword>
+		<keyword>error</keyword>
+		<keyword>problem</keyword>
+		<keyword>API</keyword>
+		<keyword>JSON</keyword>
+		<keyword>XML</keyword>
+		<abstract>
+
+			<t>This document defines a "problem detail" as a way to carry
+      machine-readable details of errors in a HTTP response, to avoid the need
+      to define new error response formats for HTTP APIs.</t>
+
+		</abstract>
+
+      <note title="Note to Readers">
+  			<t>This draft should be discussed on the <eref        target="https://www.ietf.org/mailman/listinfo/apps-discuss">apps-discuss
+         mailing list</eref>.</t>
+
+         <t>This section is to be removed before publication.</t>
+      </note>
+      
+      <note title="Note to RFC Editor">
+        <t>Please replace all occurrences of "XXXX" with the final RFC number
+        chosen for this draft.</t>
+        
+        <t>This section is to be removed before publication.</t>
+      </note>
+
+	</front>
+
+	<middle>
+
+		<section title="Introduction">
+		  
+      <t>HTTP <xref target="RFC7230"/> status codes are sometimes not
+      sufficient to convey enough information about an error to be helpful.
+      While humans behind Web browsers can be informed about the nature of the
+      problem with an HTML <xref target="W3C.REC-html5-20141028"/> response
+      body, non-human consumers of so-called "HTTP APIs" are usually not.</t>
+
+      <t>This specification defines simple JSON <xref target="RFC7159"/> and
+      XML <xref target="W3C.REC-xml-20081126"/> document formats to suit this
+      purpose. They are designed to be reused by HTTP APIs, which can identify
+      distinct "problem types" specific to their needs.</t>
+      
+      <t>Thus, API clients can be informed of both the high-level error
+      class (using the status code) and the finer-grained details of the
+      problem (using one of these formats).</t>
+
+      <t>For example, consider a response that indicates that the client's
+      account doesn't have enough credit. The 403 Forbidden status code might
+      be deemed most appropriate to use, as it will inform HTTP-generic
+      software (such as client libraries, caches and proxies) of the general
+      semantics of the response.</t>
+      
+      <t>However, that doesn't give the API client enough information about
+      why the request was forbidden, the applicable account balance, or how to
+      correct the problem. If these details are included in the response body
+      in a machine-readable format, the client can treat it appropriately; 
+      for example, triggering a transfer of more credit into the account.</t>
+      
+      <t>This specification does this by identifying a specific type of
+      problem (e.g., "out of credit") with a URI <xref target="RFC3986"/>;
+      HTTP APIs can do this by nominating new URIs under their control, or by
+      reusing existing ones.</t>
+
+      <t>Additionally, problems can contain other information, such as a URI
+      that identifies the specific occurrence of the problem (effectively
+      giving an identifier to the concept "The time Joe didn't have enough
+      credit last Thursday"), which can be useful for support or forensic
+      purposes.</t>
+      
+      <t>The data model for problem details is a JSON <xref target="RFC7159"/>
+      object; when formatted as a JSON document, it uses the
+      "application/problem+json" media type. <xref target="xml-syntax"/>
+      defines how to express them in an equivalent XML format, which uses
+      the "application/problem+xml" media type.</t>
+      
+      <t>Note that problem details are (naturally) not the only way to convey
+      the details of a problem in HTTP; if the response is still a
+      representation of a resource, for example, it's often preferable to
+      accommodate describing the relevant details in that application's
+      format. Likewise, in many situations, there is an appropriate HTTP
+      status code that does not require extra detail to be conveyed.</t>
+      
+      <t>Instead, the aim of this specification is to define common error
+      formats for those applications that need one, so that they aren't
+      required to define their own, or worse, tempted to re-define the
+      semantics of existing HTTP status codes. Even if an application chooses
+      not to use it to convey errors, reviewing its design can help guide
+      the design decisions faced when conveying errors in an existing format.</t>
+
+		</section>
+
+		<section title="Requirements">
+      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+      "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+      document are to be interpreted as described in <xref
+      target="RFC2119"/>.</t>
+		</section>
+
+
+    <section title="The Problem Details JSON Object" anchor="problem-json">
+
+      <t>The canonical model for problem details is a JSON <xref
+      target="RFC7159"/> object.</t>
+
+      <t>When serialised as a JSON document, that format is identified with
+      the "application/problem+json" media type.</t>
+      
+      <t>For example, a HTTP response carrying JSON problem details:</t>
+
+     <figure><artwork type="message/http; msgtype=&#34;response&#34;"><![CDATA[
+HTTP/1.1 403 Forbidden
+Content-Type: application/problem+json
+Content-Language: en
+
+{
+ "type": "https://example.com/probs/out-of-credit",
+ "title": "You do not have enough credit.",
+ "detail": "Your current balance is 30, but that costs 50.",
+ "instance": "/account/12345/msgs/abc",
+ "balance": 30,
+ "accounts": ["/account/12345",
+              "/account/67890"]
+}]]></artwork></figure>
+
+      <t>Here, the out-of-credit problem (identified by its type URI)
+      indicates the reason for the 403 in "title", gives a reference for the
+      specific problem occurrence with "instance", gives
+      occurrence-specific details in "detail", and adds two extensions;
+      "balance" conveys the account's balance, and "accounts" gives links
+      where the account can be topped up.</t>
+
+      <t>The ability to convey problem-specific extensions allows more than 
+        one problem to be conveyed. For example:</t>
+        
+      <figure><artwork type="message/http; msgtype=&#34;response&#34;"><![CDATA[
+HTTP/1.1 400 Bad Request
+Content-Type: application/problem+json
+Content-Language: en
+
+{
+"type": "https://example.net/validation-error",
+"title": "Your request parameters didn't validate.",
+"invalid-params": [ { 
+                      "name": "age", 
+                      "reason": "must be a positive integer"
+                    },
+                    { 
+                      "name": "color",
+                      "reason": "must be 'green', 'red' or 'blue'"}
+                  ]
+}]]></artwork></figure>
+
+     <t>Note that this requires each of the sub-problems to be similar enough
+     to use the same HTTP status code. If they do not, the 207 (Multi-Status)
+     <xref target="RFC4918"/> code could be used to encapsulate multiple status
+     messages.</t>
+          
+        <section title="Problem Details Object Members" anchor="members">
+
+        <t>A problem details object can have the following members:</t>
+
+        <t><list style='symbols'>
+
+          <t>"type" (string) - A URI reference <xref target="RFC3986"/> that
+          identifies the problem type. When dereferenced, it is encouraged to
+          provide human-readable documentation for the problem type (e.g.,
+          using HTML <xref target="W3C.REC-html5-20141028"/>). When this
+          member is not present, its value is assumed to be "about:blank".</t>
+
+          <t>"title" (string) - A short, human-readable summary of the problem
+          type. It SHOULD NOT change from occurrence to occurrence of the
+          problem, except for purposes of localisation (e.g., using proactive
+          content negotiation; see <xref target="RFC7231"/>, Section 3.4).</t>
+        
+          <t>"status" (number) - The HTTP status code (<xref
+          target="RFC7231"/>, Section 6) generated by the origin server for this
+          occurrence of the problem.</t>
+          
+           <t>"detail" (string) - An human readable explanation specific to
+          this occurrence of the problem.</t>
+          
+           <t>"instance" (string) - A URI reference that identifies the
+          specific occurrence of the problem. It may or may not yield
+          further information if dereferenced.</t>
+        
+         </list></t>
+
+        <t>Consumers MUST use the type string as the primary
+        identifier for the problem type; the title string is advisory, and
+        included only for users who are not aware of the semantics of the
+        URI, and don't have the ability to discover them (e.g., offline log
+        analysis). Consumers SHOULD NOT automatically dereference the
+        type URI.</t>
+
+        <t>The status member, if present, is only advisory; it conveys the
+        HTTP status code used for the convenience of the consumer. Generators
+        MUST use the same status code in the actual HTTP response, to assure
+        that generic HTTP software that does not understand this format still
+        behaves correctly. See <xref target="security-considerations"/> for
+        further caveats regarding its use.</t>
+
+        <t>The detail member, if present, ought to focus on helping the
+        client correct the problem, rather than giving debugging
+        information.</t>
+        
+        <t>Consumers SHOULD NOT parse the detail member for information;
+        extensions are more suitable and less error-prone ways to obtain
+        such information.</t>
+
+        <t>Note that both "type" and "instance" accept relative URIs; this means
+          that they must be resolved relative to the document's base URI, as 
+          per <xref target="RFC3986"/>, Section 5.</t>
+
+      </section>
+      <section title="Extension Members">
+       
+        <t>Problem type definitions MAY extend the problem details
+        object with additional members.</t>
+        
+        <t>For example, our "out of credit" problem above defines two such
+          extensions, "balance" and "accounts" to convey additional, 
+          problem-specific information.</t>
+
+        <t>Clients consuming problem details MUST ignore any such extensions
+        that they don't recognise; this allows problem types to evolve and
+        include additional information in the future.</t>
+        
+        <t>Note that because extensions are effectively name spaced by the
+        problem type, it is not possible to define new "standard" members
+        without defining a new media type.</t>
+
+      </section>
+    </section>
+
+    <section anchor="defining" title="Defining New Problem Types">
+
+      <t>When an HTTP API needs to define a response that indicates an error
+      condition, it might be appropriate to do so by defining a new problem 
+      type.</t>
+
+      <t>Before doing so, it's important to understand what they are good for,
+      and what's better left to other mechanisms.</t>
+
+      <t>Problem details are not a debugging tool for the underlying
+      implementation; rather, they are a way to expose greater detail about
+      the HTTP interface itself. New problem types need to carefully consider
+      the Security Considerations (<xref target="security-considerations"/>);
+      in particular the risk of exposing attack vectors by exposing
+      implementation internals through error messages.</t>
+      
+      <t>Likewise, truly generic problems – i.e., conditions that could
+      potentially apply to any resource on the Web – are usually better
+      expressed as plain status codes. For example, a "write access
+      disallowed" problem is probably unnecessary, since a 403 Forbidden
+      status code in response to a PUT request is self-explanatory.</t>
+
+      <t>Finally, an application might have a more appropriate way to carry
+      an error in a format that it already defines. Problem details
+      are intended to avoid the necessity of establishing new "fault" or
+      "error" document formats, not to replace existing domain-specific
+      formats.</t>
+
+      <t>That said, it is possible to add support for problem details to
+      existing HTTP APIs using HTTP content negotiation (e.g., using the Accept
+      request header to indicate a preference for this format; see <xref
+      target="RFC7231"/>, Section 5.3.2).</t>
+
+      <t>New problem type definitions MUST document:
+
+      <list style="numbers">
+        <t>A type URI (typically, with the "http" scheme),</t>
+        <t>A title that appropriately describes it (think short), and</t>
+        <t>The HTTP status code for it to be used with.</t>
+      </list></t>
+
+      <t>Problem type definitions MAY specify the use of the Retry-After
+      response header (<xref target="RFC7231"/>, Section 7.1.3) in appropriate
+      circumstances.</t>
+
+      <t>A problem's type URI SHOULD resolve to HTML <xref
+      target="W3C.REC-html5-20141028"/> documentation that explains how to
+      resolve the problem.</t>
+
+      <t>A problem type definition MAY specify additional members on the
+      Problem Details object. For example, an extension might use
+      typed links <xref target="RFC5988"/> to another resource that can be
+      used by machines to resolve the problem.</t>
+
+      <t>If such additional members are defined, their names SHOULD start with
+      a letter (ALPHA, as per <xref target="RFC5234"/>, Appendix B.1) and
+      SHOULD consist of characters from ALPHA, DIGIT (Ibid.), and "_" (so that
+      it can be serialized in formats other than JSON), and SHOULD be three
+      characters or longer.</t>
+
+      <section title="Example">
+
+        <t>For example, if you are publishing an HTTP API to your online
+        shopping cart, you might need to indicate that the user is out of
+        credit (our example from above), and therefore cannot make the
+        purchase.</t>
+
+        <t>If you already have an application-specific format that can
+        accommodate this information, it's probably best to do that. However,
+        if you don't, you might consider using one of the problem details
+        formats; JSON if your API is JSON-based, or XML if it uses that
+        format.</t>
+          
+        <t>To do so, you might look for an already-defined type URI that
+        suits your purposes. If one is available, you can reuse that URI.</t>
+        
+        <t>If one isn't available, you could mint and document a new
+        type URI (which ought to be under your control and stable over
+        time), an appropriate title and the HTTP status code that it will be
+        used with, along with what it means and how it should be handled.</t>
+
+        <t>In summary: an instance URI will always identify a specific
+        occurrence of a problem. On the other hand, type URIs can be
+        reused if an appropriate description of a problem type is already
+        available someplace else, or they can be created for new problem
+        types.</t>
+
+      </section>
+
+      <section title="Pre-Defined Problem Types">
+        <t>This specification reserves the use of one URI as a problem type:</t>
+        
+        <t>The "about:blank" URI <xref target="RFC6694"/>, when used as a
+        problem type, indicates that the problem has no additional semantics
+        beyond that of the HTTP status code.</t>
+        
+        <t>When "about:blank" is used, the title SHOULD be the same as the
+        recommended HTTP status phrase for that code (e.g., "Not Found" for
+        404, and so on), although it MAY be localized to suit client
+        preferences (expressed with the Accept-Language request header).</t>
+        
+        <t>Please note that according to how the "type" member is defined
+        (<xref target="members"/>), the "about:blank" URI is the default
+        value for that member. Consequently, any problem details object not
+        carrying an explicit "type" member implicitly uses this URI.</t>
+      </section>
+
+    </section>
+    
+      
+            
+		<section anchor="security-considerations" title="Security Considerations">
+
+        <t>When defining a new problem type, the information included must be
+        carefully vetted. Likewise, when actually generating a problem –
+        however it is serialized – the details given must also be
+        scrutinized.</t>
+         
+        <t>Risks include leaking information that can be exploited to
+        compromise the system, access to the system, or the privacy of users
+        of the system.</t>
+		  
+        <t>Generators providing links to occurrence information are encouraged
+        to avoid making implementation details such as a stack dump available
+        through the HTTP interface, since this can expose sensitive details of
+        the server implementation, its data, and so on.</t>
+            
+        <t>The "status" member duplicates the information available in the
+        HTTP status code itself, thereby bringing the possibility of
+        disagreement between the two. Their relative precedence is not clear,
+        since a disagreement might indicate that (for example) an intermediary
+        has modified the HTTP status code in transit. As such, those defining
+        problem types as well as generators and consumers of problems need to
+        be aware that generic software (such as proxies, load balancers,
+        firewalls, virus scanners) are unlikely to know of or respect the
+        status code conveyed in this member.</t>
+
+		</section>
+
+		<section title="IANA Considerations">
+
+		  <t>This specification defines two new Internet media types
+		    <xref target="RFC6838"/>:</t>
+
+      <t>
+        <list style="hanging">
+          <t hangText="Type name:">
+            application
+          </t>
+          <t hangText="Subtype name:">
+            problem+json
+          </t>
+          <t hangText="Required parameters:">
+            None
+          </t>
+          <t hangText="Optional parameters:">
+            None; unrecognised parameters should be ignored
+          </t>
+          <t hangText="Encoding considerations:">
+            Same as <xref target="RFC7159"/>
+          </t>
+          <t hangText="Security considerations:">
+            see <xref target="security-considerations"/> of this document
+          </t>
+          <t hangText="Interoperability considerations:">
+            None
+          </t>
+          <t hangText="Published specification:">
+            [this document]
+          </t>
+          <t hangText="Applications that use this media type:">
+            HTTP
+          </t>
+          <t hangText="Fragment identifier considerations:">
+            Same as for application/json (<xref target="RFC7159"/>)
+          </t>
+          <t hangText="Additional information:"><list style="hanging">
+              <t hangText="Deprecated alias names for this type:">n/a</t>
+              <t hangText="Magic number(s):">n/a</t>
+              <t hangText="File extension(s):">n/a</t>
+              <t hangText="Macintosh file type code(s):">n/a</t>
+            </list>
+          </t>
+          <t hangText="Person and email address to contact for further information:">
+            Mark Nottingham &lt;mnot@mnot.net>
+          </t>
+          <t hangText="Intended usage:">
+            COMMON
+          </t>
+          <t hangText="Restrictions on usage:">
+            None.
+          </t>
+          <t hangText="Author:">
+            Mark Nottingham &lt;mnot@mnot.net>
+          </t>
+          <t hangText="Change controller:">
+            IESG
+          </t>
+        </list>
+      </t>
+      <t>
+        <list style="hanging">
+          <t hangText="Type name:">
+            application
+          </t>
+          <t hangText="Subtype name:">
+            problem+xml
+          </t>
+          <t hangText="Required parameters:">
+            None
+          </t>
+          <t hangText="Optional parameters:">
+            None; unrecognised parameters should be ignored
+          </t>
+          <t hangText="Encoding considerations:">
+            Same as <xref target="RFC7303"/>
+          </t>
+          <t hangText="Security considerations:">
+            see <xref target="security-considerations"/> of this document
+          </t>
+          <t hangText="Interoperability considerations:">
+            None
+          </t>
+          <t hangText="Published specification:">
+            [this document]
+          </t>
+          <t hangText="Applications that use this media type:">
+            HTTP
+          </t>
+          <t hangText="Fragment identifier considerations:">
+            Same as for application/xml (as specified by Section 5 of <xref target="RFC7303"/>)
+          </t>
+          <t hangText="Additional information:"><list style="hanging">
+              <t hangText="Deprecated alias names for this type:">n/a</t>
+              <t hangText="Magic number(s):">n/a</t>
+              <t hangText="File extension(s):">n/a</t>
+              <t hangText="Macintosh file type code(s):">n/a</t>
+            </list>
+          </t>
+          <t hangText="Person and email address to contact for further information:">
+            Mark Nottingham &lt;mnot@mnot.net>
+          </t>
+          <t hangText="Intended usage:">
+            COMMON
+          </t>
+          <t hangText="Restrictions on usage:">
+            None.
+          </t>
+          <t hangText="Author:">
+            Mark Nottingham &lt;mnot@mnot.net>
+          </t>
+          <t hangText="Change controller:">
+            IESG
+          </t>
+        </list>
+      </t>
+		</section>
+      
+		<section title="Acknowledgements">
+			<t>The authors would like to thank 
+        Jan Algermissen,
+        Mike Amundsen,
+        Subbu Allamaraju,
+        Roy Fielding,
+        Eran Hammer,
+        Sam Johnston,
+        Mike McCall,
+        Julian Reschke, and
+        James Snell
+			for review of this specification.
+			</t>
+		</section>
+
+	</middle>
+
+	<back>
+		<references title="Normative References">
+			&rfc2119;
+			&rfc7230;
+      &rfc7231;
+			&rfc3986;
+			&rfc7159;
+			&rfc5234;
+      &xml;
+		</references>
+
+      <references title="Informative References">
+        <reference anchor="ISO-19757-2">
+          <front>
+            <title>Information Technology --- Document Schema Definition Languages (DSDL) --- Part 2: Grammar-based Validation --- RELAX NG</title>
+            <author>
+              <organization>International Organization for Standardization</organization>
+            </author>
+            <date year="2003"/>
+          </front>
+          <seriesInfo name="ISO/IEC" value="19757-2"/>
+        </reference>
+        &rfc7303;
+        &rfc5988;
+        &rfc4918;
+        &rfc6694;
+        &rfc6838;
+        &html;
+        &rdfa;
+      </references>
+
+<section anchor="xml-syntax" title="HTTP Problems and XML">
+   
+   <t>Some HTTP-based APIs use XML <xref
+   target="W3C.REC-xml-20081126"/> as their primary format convention. Such
+   APIs can express problem details using the format defined in this
+   appendix.</t>
+      
+   <t>The OPTIONAL RELAX NG schema <xref target="ISO-19757-2"/>
+   for the XML format is:</t>
+      
+<figure><artwork type="application/relax-ng-compact-syntax">&problem-schema;</artwork></figure>
+
+   <t>The media type for this format is "application/problem+xml".</t>
+   
+   <t>Extension arrays and objects can be serialized into the XML format by
+   considering an element containing a child or children to represent an
+   object, except for elements that contain only child element(s) named 'i',
+   which are considered arrays. For example, an alternate version of the
+   example above would appear in XML as:</t>
+      
+     <figure><artwork type="message/http; msgtype=&#34;response&#34;"><![CDATA[
+HTTP/1.1 403 Forbidden
+Content-Type: application/problem+xml
+Content-Language: en
+
+<?xml version="1.0" encoding="UTF-8"?>
+<problem xmlns="urn:ietf:rfc:XXXX">
+  <type>https://example.com/probs/out-of-credit</type>
+  <title>You do not have enough credit.</title>
+  <detail>Your current balance is 30, but that costs 50.</detail>
+  <instance>
+    https://example.net/account/12345/msgs/abc
+  </instance>
+  <balance>30</balance>
+  <accounts>
+    <i>https://example.net/account/12345</i>
+    <i>https://example.net/account/67890</i>
+  </accounts>
+</problem>]]></artwork></figure>
+
+  <t>Note that this format uses an XML Namespace. This is primarily to allow
+    embedding it into other XML-based formats; it does not imply that it can or should be extended
+    with elements or attributes in other namespaces. The RELAX NG schema explicitly only
+    allows elements from the one namespace used in the XML format. Any
+    extension arrays and objects MUST be serialized into XML markup using only that
+    namespace.</t>
+
+</section>
+
+   <section title="Using Problem Details with Other Formats">
+     
+     <t>In some situations, it can be advantageous to embed Problem Details in
+     formats other than those described here. For example, an API that uses
+     HTML <xref target="W3C.REC-html5-20141028"/> might want to also use
+     HTML for expressing its problem details.</t>
+
+     <t>Problem details can be embedded in other formats by either
+     encapsulating one of the existing serializations (JSON or XML) into that
+     format, or by translating the model of a Problem Detail (as specified in
+     <xref target="problem-json"/>) into the format's conventions.</t>
+
+     <t>For example, in HTML, a problem could be embedded by encapsulating
+     JSON in a script tag:</t>
+
+     <figure><artwork type="example"><![CDATA[
+       <script type="application/problem+json">
+         {
+          "type": "https://example.com/probs/out-of-credit",
+          "title": "You do not have enough credit.",
+          "detail": "Your current balance is 30, but that costs 50.",
+          "instance": "/account/12345/msgs/abc",
+          "balance": 30,
+          "accounts": ["/account/12345",
+                       "/account/67890"]
+         }
+       </script>
+]]></artwork></figure>
+
+     <t>or by inventing a mapping into RDFa <xref
+     target="W3C.REC-rdfa-core-20130822"/>.</t>
+
+     <t>This specification does not make specific recommendations regarding
+     embedding Problem Details in other formats; the appropriate way to embed
+     them depends both upon the format in use and application of that
+     format.</t>
+     
+   </section>
+	  
+	</back>
+	
+
+</rfc>

@@ -2,7 +2,7 @@
 title: The 2NN Patch HTTP Status Code
 abbrev: 2NN Patch
 docname: draft-nottingham-http-patch-status-01
-date: 2014
+date: 2015
 category: info
 updates: 5789
 
