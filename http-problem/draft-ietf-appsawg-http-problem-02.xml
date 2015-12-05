@@ -14,6 +14,7 @@
    <!ENTITY rfc7230 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7230.xml'>  
    <!ENTITY rfc7231 SYSTEM 'http://xml.resource.org/public/rfc/bibxml/reference.RFC.7231.xml'>  
    <!ENTITY xml SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-xml-20081126.xml'>  
+   <!ENTITY xml-stylesheet SYSTEM 'http://xml2rfc.ietf.org/public/rfc/bibxml4/reference.W3C.REC-xml-stylesheet-20101028.xml'>  
    <!ENTITY html SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-html5-20141028.xml'>
    <!ENTITY rdfa SYSTEM 'http://xml.resource.org/public/rfc/bibxml4/reference.W3C.REC-rdfa-core-20130822.xml'>
    <!ENTITY problem-schema SYSTEM 'http-problem-07.rnc'>
@@ -592,6 +593,7 @@ Content-Language: en
         &rfc6838;
         &html;
         &rdfa;
+        &xml-stylesheet;
       </references>
 
 <section anchor="xml-syntax" title="HTTP Problems and XML">
@@ -601,18 +603,21 @@ Content-Language: en
    APIs can express problem details using the format defined in this
    appendix.</t>
       
-   <t>The OPTIONAL RELAX NG schema <xref target="ISO-19757-2"/>
-   for the XML format is:</t>
+   <t>The RELAX NG schema <xref target="ISO-19757-2"/> for the XML format is as follows.
+   Keep in mind that this schema is only meant as documentation, and not as a normative
+   schema that captures all constraints of the XML format. Also, it would be possible to
+   use other XML schema languages to define a similar set of constraints (depending on
+   the features of the chosen schema language).</t>
       
 <figure><artwork type="application/relax-ng-compact-syntax">&problem-schema;</artwork></figure>
 
    <t>The media type for this format is "application/problem+xml".</t>
    
-   <t>Extension arrays and objects can be serialized into the XML format by
+   <t>Extension arrays and objects are serialized into the XML format by
    considering an element containing a child or children to represent an
-   object, except for elements that contain only child element(s) named 'i',
-   which are considered arrays. For example, an alternate version of the
-   example above would appear in XML as:</t>
+   object, except for elements that contain only child element(s) named
+   'i', which are considered arrays. For example, the XML version of the
+   example above appears in XML as follows:</t>
       
      <figure><artwork type="message/http; msgtype=&#34;response&#34;"><![CDATA[
 HTTP/1.1 403 Forbidden
@@ -624,9 +629,7 @@ Content-Language: en
   <type>https://example.com/probs/out-of-credit</type>
   <title>You do not have enough credit.</title>
   <detail>Your current balance is 30, but that costs 50.</detail>
-  <instance>
-    https://example.net/account/12345/msgs/abc
-  </instance>
+  <instance>https://example.net/account/12345/msgs/abc</instance>
   <balance>30</balance>
   <accounts>
     <i>https://example.net/account/12345</i>
@@ -640,6 +643,15 @@ Content-Language: en
     allows elements from the one namespace used in the XML format. Any
     extension arrays and objects MUST be serialized into XML markup using only that
     namespace.</t>
+  
+  <t>When using the XML format, it is possible to embed an XML Processing Instruction in
+    the XML that instructs clients to transform the XML, using the referenced XSLT code
+    <xref target="W3C.REC-xml-stylesheet-20101028"/>. If this code is transforming the XML
+    into (X)HTML, then it is possible to serve the XML format, and yet have clients capable
+    of performing the transformation display human-friendly (X)HTML that is rendered and
+    displayed at the client. Note that when using this method, it is advisable to use
+    XSLT 1.0, in order to maximize the number of clients capable of executing the XSLT
+    code.</t>
 
 </section>
 
