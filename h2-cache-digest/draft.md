@@ -2,7 +2,7 @@
 title: Cache Digests for HTTP/2
 abbrev:
 docname: draft-kazuho-h2-cache-digest-00
-date: 2015
+date: 2016
 category: info
 
 ipr: trust200902
