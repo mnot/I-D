@@ -29,7 +29,9 @@ author:
 
 normative:
   RFC2119:
+  RFC2818:
   RFC3986:
+  RFC4648:
   RFC6234:
   RFC6454:
   RFC7234:
@@ -41,7 +43,7 @@ informative:
 
 --- abstract
 
-This specification defines a HTTP/2 frame type to allow clients to inform the server of their
+This specification defines a HTTP request header to allow clients to inform the server of their
 cache's contents. Servers can then use this to inform their choices of what to push to clients.
 
 
@@ -68,7 +70,7 @@ represents opportunity cost, because it could be used by other, more relevant re
 allows a stream to be cancelled by a client using a RST_STREAM frame in this situation, but there
 is still at least one round trip of potentially wasted capacity even then.
 
-This specification defines a HTTP/2 frame type to allow clients to inform the server of their
+This specification defines a HTTP request header to allow clients to inform the server of their
 cache's contents using a Golumb-Rice Coded Set. Servers can then use this to inform their choices
 of what to push to clients.
 
@@ -80,42 +82,54 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# The CACHE_DIGEST Frame
+# The Cache-Digest Header Field
 
-The CACHE_DIGEST frame type is 0xf1. NOTE: This is an experimental value; if standardised, a permanent value will be assigned.
-
-A CACHE_DIGEST frame can be sent from a client to a server on any stream in the "open" state, and
-conveys a digest of the contents of the cache associated with that stream, as explained in
+The Cache-Digest HTTP request header field conveys a digest of the contents of the cache
+associated with that request, as explained in
 {{computing}}.
 
-In typical use, a client will send CACHE_DIGEST immediately after the first request on a connection
-for a given origin, on the same stream, because there is usually a short period of inactivity then,
-and servers can benefit most when they understand the state of the cache before they begin pushing
-associated assets (e.g., CSS, JavaScript and images).
-
-Clients MAY send CACHE_DIGEST at other times, but servers ought not expect frequent updates;
-instead, if they wish to continue to utilise the digest, they will need update it with responses
-sent to that client on the connection.
-
-Servers MUST NOT use any but the most recent CACHE_DIGEST for a given origin as current, and MUST
-treat an empty Digest-Value as effectively clearing all stored digests for that origin.
-
-CACHE_DIGEST has no defined meaning when sent from servers to clients, and MAY be ignored.
+In typical use, a server will use the value of the request header to determine which associated
+assets (e.g., CSS, JavaScript and images) should be pushed to the client along with the response
+to the request.
 
 ~~~~
-+---------------------------------------------------------------+
-|         Digest-Value? (*)                    ...
-+---------------------------------------------------------------+
+  cache-digest            = 1#cache-digest-element
+  cache-digest-element    = cache-digest-attribute *(OWS ";" OWS cache-digest-attribute)
+  cache-digest-attribute  = authority-attribute
+                          / fresh-attribute
+                          / extension-attribute
+  authority-attribute     = "authority=" authority-value
+  authority-value         = quoted-string
+
+  fresh-attribute         = "fresh=" fresh-value
+  fresh-value             = quoted-string
+
+  extension-attribute     = token [ "=" extension-value ]
+  extension-value         = token / quoted-string
 ~~~~
 
-The CACHE_DIGEST frame payload has the following fields:
+## The Authority Attribute
 
-* Digest-Value: An optional sequence of octets containing the digest as computed in {{computing}}.
+The authority-value is an optional attribute that specifies the scope of the cache digest.
 
-## Computing the Digest-Value {#computing}
+If present, the value MUST either convey the authority of the target URI, the host of the target
+URI, or the authenticated server identify for the "https" scheme (see {{RFC2818}, Section 3).
 
-The set of URLs that is used to compute Digest-Value MUST only include URLs that share origins
-{{RFC6454}} with the stream that CACHE_DIGEST is sent on, and they MUST be fresh {{RFC7234}}.
+If not present, the scope of the cache digest will be the authority of the target URI.
+
+Typically, a client can use the field to specify that it is sending a cache digest for entire
+host, or for multiple hosts that match against a wildcard certificate provided by a server.
+
+## The Fresh Attribute
+
+Each cache-digest-value MAY contain a fresh-attribute that conveys a base64-encoded {{RFC4648}}
+sequence of octets containing the digest as computed in {{computing}}.
+
+### Computing the Fresh-Value {#computing}
+
+The set of URLs that is used to compute Fresh-Value MUST only include URLs that share the scheme
+with the target URI, that belong to the authority specified by the authority attribute, and they
+MUST be fresh {{RFC7234}}.
 
 A client MAY choose a subset of the available stored responses to include in the set. Additionally,
 it MUST choose a parameter, `P`, that indicates the probability of a false positive it is willing
@@ -147,18 +161,21 @@ To compute a digest-value for the set `URLs` and `P`:
     9. If `V` is the second-to-last member of `hash-values`, stop iterating through `hash-values` and continue to the next step.
 9. If the length of `digest` is not a multiple of 8, pad it with 1s until it is.
 
+## The Extension Attribute
+
+A server SHOULD ignore extension attributes.
 
 # IANA Considerations
 
-This draft currently has no requirements for IANA. If the CACHE_DIGEST frame is standardised, it
-will need to be assigned a frame type.
+This draft currently has no requirements for IANA. If the Cache-Digest header is standardised, it
+will need to be registered to the "Message Headers" registry.
 
 # Security Considerations
 
 The contents of a User Agent's cache can be used to re-identify or "fingerprint" the user over
 time, even when other identifiers (e.g., Cookies {{RFC6265}}) are cleared. 
 
-CACHE_DIGEST allows such cache-based fingerprinting to become passive, since it allows the server
+Cache-Digest header allows such cache-based fingerprinting to become passive, since it allows the server
 to discover the state of the client's cache without any visible change in server behaviour.
 
 As a result, clients MUST mitigate for this threat when the user attempts to remove identifiers
@@ -168,7 +185,7 @@ change its contents.
 
 TODO: discuss how effective the suggested mitigations actually would be.
 
-Additionally, User Agents SHOULD NOT send CACHE_DIGEST when in "privacy mode."
+Additionally, User Agents SHOULD NOT send Cache-Digest header when in "privacy mode."
 
 
 --- back
