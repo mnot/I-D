@@ -248,12 +248,18 @@ Content-Language: en
         analysis). Consumers SHOULD NOT automatically dereference the
         type URI.</t>
 
-        <t>The status member, if present, is only advisory; it conveys the
-        HTTP status code used for the convenience of the consumer. Generators
-        MUST use the same status code in the actual HTTP response, to assure
-        that generic HTTP software that does not understand this format still
+        <t>The status member, if present, is only advisory; it conveys the HTTP
+        status code used for the convenience of the consumer. Generators MUST
+        use the same status code in the actual HTTP response, to assure that
+        generic HTTP software that does not understand this format still
         behaves correctly. See <xref target="security-considerations"/> for
         further caveats regarding its use.</t>
+
+        <t>Consumers can use the status member to determine what the original
+          status code used by the generator was, in cases where it has been 
+          changed (e.g., by an intermediary or cache), and when message bodies
+          are persisted without HTTP information. Generic HTTP software will
+          still use the HTTP status code.</t>
 
         <t>The detail member, if present, ought to focus on helping the
         client correct the problem, rather than giving debugging
@@ -416,15 +422,17 @@ Content-Language: en
         through the HTTP interface, since this can expose sensitive details of
         the server implementation, its data, and so on.</t>
             
-        <t>The "status" member duplicates the information available in the
-        HTTP status code itself, thereby bringing the possibility of
-        disagreement between the two. Their relative precedence is not clear,
-        since a disagreement might indicate that (for example) an intermediary
-        has modified the HTTP status code in transit. As such, those defining
-        problem types as well as generators and consumers of problems need to
-        be aware that generic software (such as proxies, load balancers,
-        firewalls, virus scanners) are unlikely to know of or respect the
-        status code conveyed in this member.</t>
+        <t>The "status" member duplicates the information available in the HTTP
+        status code itself, thereby bringing the possibility of disagreement
+        between the two. Their relative precedence is not clear, since a
+        disagreement might indicate that (for example) an intermediary has
+        modified the HTTP status code in transit (e.g., by a proxy or
+        cache).</t>
+        
+        <t>As such, those defining problem types as well as generators and
+        consumers of problems need to be aware that generic software (such as
+        proxies, load balancers, firewalls, virus scanners) are unlikely to
+        know of or respect the status code conveyed in this member.</t>
 
 		</section>
 
