@@ -94,42 +94,65 @@ to the request.
 
 ~~~~
   cache-digest            = 1#cache-digest-element
-  cache-digest-element    = cache-digest-attribute *(OWS ";" OWS cache-digest-attribute)
-  cache-digest-attribute  = authority-attribute
-                          / fresh-attribute
-                          / extension-attribute
-  authority-attribute     = "authority=" authority-value
-  authority-value         = quoted-string
-
-  fresh-attribute         = "fresh=" fresh-value
-  fresh-value             = quoted-string
-
-  extension-attribute     = token [ "=" extension-value ]
-  extension-value         = token / quoted-string
+  cache-digest-element    = cache-digest-value *(OWS ";" OWS cache-digest-parameter)
+  cache-digest-value      = unreserved
+  cache-digest-parameter  = token "=" (token / quoted-string)
 ~~~~
 
-## The Authority Attribute
+Cache-digest-value contains a digest of the contents of the cache associated with the request
+as computed in {{computing}}.  Scope and Role of the value is defined by the four parameters
+defined by this specification: "type", "codec", "host", "path".  A server MUST ignore unknown
+parameters.
 
-The authority-value is an optional attribute that specifies the scope of the cache digest.
+The only value of the "type" parameter defined in this specification is "fresh".  The only
+value of the "codec" parameter defined in this specification is "gcs-sha256".  A client MAY
+omit the parameters; if not present, the values are assumed to be "fresh" and "gcs-sha256".
 
-If present, the value MUST either convey the authority of the target URI, the host of the target
-URI, or the authenticated server identify for the "https" scheme (see {{RFC2818}, Section 3).
+A server MUST ignore a cache-digest-element with unknown "type" or "codec".
 
-If not present, the scope of the cache digest will be the authority of the target URI.
+The use of "host" parameter and "path" parameter is mutually exclusive; a server MUST ignore
+a cache-digest-element having both parameters set.
+
+As an example, the cache-digest header of the HTTP request below contains a cache digest
+of resources obtained from "example.com", indicating that the "https://example.com/style.css"
+and "https://example.com/script.js" exist as fresh entries in the cache.
+
+~~~~
+  GET / HTTP/1.1
+  Host: example.com
+  Cache-Digest: AQgRSl8
+~~~~
+
+## The Host Parameter
+
+The "host" parameter widens the scope of the cache-digest-value.
+
+If present, the parameter MUST either convey the host of the target URI, or the authenticated
+server identify for the "https" scheme (see {{RFC2818}, Section 3).
+
+If not present, the scope of the cache-digest-value is the authority of the target URI.
 
 Typically, a client can use the field to specify that it is sending a cache digest for entire
 host, or for multiple hosts that match against a wildcard certificate provided by a server.
 
-## The Fresh Attribute
+## The Path Parameter
 
-Each cache-digest-value MAY contain a fresh-attribute that conveys a base64-encoded {{RFC4648}}
-sequence of octets containing the digest as computed in {{computing}}.
+The "path" parameter narrows the scope of the cache-digest-value.
 
-### Computing the Fresh-Value {#computing}
+If present, the scope of the cache-digest-value is the resources of the target authority
+matching to at least one of the following conditions:
 
-The set of URLs that is used to compute Fresh-Value MUST only include URLs that share the scheme
-with the target URI, that belong to the authority specified by the authority attribute, and they
-MUST be fresh {{RFC7234}}.
+* the parameter is identical to the path of the resource
+* the paramater is a prefix of the path of the resource, and the parameter ends with "/"
+* the parameter is a prefix of the path of the resource, and the first character of the path not included in the parameter is "/"
+
+If not present, the scope is governed by the rules described for the "host" parameter.
+
+### Computing the Cache-Digest-Value {#computing}
+
+The set of URLs that is used to compute cache-digest-value MUST only include URLs that share the
+scheme with the target URI, fall into the scopes defined by the "host" and "path" parameters,
+and they MUST be fresh {{RFC7234}}.
 
 A client MAY choose a subset of the available stored responses to include in the set. Additionally,
 it MUST choose a parameter, `P`, that indicates the probability of a false positive it is willing
@@ -160,10 +183,7 @@ To compute a digest-value for the set `URLs` and `P`:
     8. Write `R` to `digest` as binary, using log2(P) bits.
     9. If `V` is the second-to-last member of `hash-values`, stop iterating through `hash-values` and continue to the next step.
 9. If the length of `digest` is not a multiple of 8, pad it with 1s until it is.
-
-## The Extension Attribute
-
-A server SHOULD ignore extension attributes.
+10. Encode the value of the `digest` using base64url {{RFC4648}} encoding.
 
 # IANA Considerations
 
