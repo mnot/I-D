@@ -93,13 +93,13 @@ assets (e.g., CSS, JavaScript and images) should be pushed to the client along w
 to the request.
 
 ~~~~
-  cache-digest            = 1#cache-digest-element
-  cache-digest-element    = cache-digest-value *(OWS ";" OWS cache-digest-parameter)
-  cache-digest-value      = unreserved
-  cache-digest-parameter  = token "=" (token / quoted-string)
+  cache-digest      = 1#digest-element
+  digest-element    = digest-value *(OWS ";" OWS digest-parameter)
+  digest-value      = unreserved
+  digest-parameter  = token "=" (token / quoted-string)
 ~~~~
 
-Cache-digest-value contains a digest of the contents of the cache associated with the request
+Digest-value contains a digest of the contents of the cache associated with the request
 as computed in {{computing}}.  Scope and Role of the value is defined by the four parameters
 defined by this specification: "type", "codec", "host", "path".  A server MUST ignore unknown
 parameters.
@@ -108,10 +108,10 @@ The only value of the "type" parameter defined in this specification is "fresh".
 value of the "codec" parameter defined in this specification is "gcs-sha256".  A client MAY
 omit the parameters; if not present, the values are assumed to be "fresh" and "gcs-sha256".
 
-A server MUST ignore a cache-digest-element with unknown "type" or "codec".
+A server MUST ignore a digest-element with unknown "type" or "codec".
 
 The use of "host" parameter and "path" parameter is mutually exclusive; a server MUST ignore
-a cache-digest-element having both parameters set.
+a digest-element having both parameters set.
 
 As an example, the cache-digest header of the HTTP request below contains a cache digest
 of resources obtained from "example.com", indicating that the "https://example.com/style.css"
@@ -125,21 +125,21 @@ and "https://example.com/script.js" exist as fresh entries in the cache.
 
 ## The Host Parameter
 
-The "host" parameter widens the scope of the cache-digest-value.
+The "host" parameter widens the scope of the digest-value.
 
 If present, the parameter MUST either convey the host of the target URI, or the authenticated
-server identify for the "https" scheme (see {{RFC2818}, Section 3).
+server identify for the "https" scheme (see {{RFC2818}}, Section 3).
 
-If not present, the scope of the cache-digest-value is the authority of the target URI.
+If not present, the scope of the digest-value is the authority of the target URI.
 
 Typically, a client can use the field to specify that it is sending a cache digest for entire
 host, or for multiple hosts that match against a wildcard certificate provided by a server.
 
 ## The Path Parameter
 
-The "path" parameter narrows the scope of the cache-digest-value.
+The "path" parameter narrows the scope of the digest-value.
 
-If present, the scope of the cache-digest-value is the resources of the target authority
+If present, the scope of the digest-value is the resources of the target authority
 matching to at least one of the following conditions:
 
 * the parameter is identical to the path of the resource
@@ -148,9 +148,9 @@ matching to at least one of the following conditions:
 
 If not present, the scope is governed by the rules described for the "host" parameter.
 
-### Computing the Cache-Digest-Value {#computing}
+### Computing the Digest-Value {#computing}
 
-The set of URLs that is used to compute cache-digest-value MUST only include URLs that share the
+The set of URLs that is used to compute digest-value MUST only include URLs that share the
 scheme with the target URI, fall into the scopes defined by the "host" and "path" parameters,
 and they MUST be fresh {{RFC7234}}.
 
