@@ -39,6 +39,7 @@ normative:
 
 informative:
   RFC6265:
+  RFC7541:
 
 
 --- abstract
@@ -121,6 +122,22 @@ and "https://example.com/script.js" exist as fresh entries in the cache.
   GET / HTTP/1.1
   Host: example.com
   Cache-Digest: CgRSlw
+~~~~
+
+A client MAY express its cache digest using more than one digest-element.  When HPACK {{RFC7541}}
+is used, it is possible for a client to achieve better compression ratio by resubmitting the
+Cache-Digest header included in the previous requests at the same time storing the digests
+for recently-obtained resources in a separate cache-digest header.
+
+The example below uses two "Cache-Digest" headers to indicate that the client is in possesion
+of three fresh resources: "https://example.com/style.css", "https://example.com/script.js",
+"https://example.com/icon.ico".
+
+~~~~
+  GET / HTTP/1.1
+  Host: example.com
+  Cache-Digest: CgRSlw
+  Cache-Digest: Chxf
 ~~~~
 
 ## The Host Parameter
