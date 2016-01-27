@@ -230,6 +230,14 @@ Additionally, User Agents SHOULD NOT send Cache-Digest header when in "privacy m
 --- back
 
 
+# Change Log
+
+## Since draft-kazuho-h2-cache-digest-00
+
+Use a HTTP request header (instead of a HTTP/2 frame) to express the digest.
+
+Change the number of bits required for encoding `N` and `P`.
+
 # Acknowledgements
 
 Thanks to Adam Langley and Giovanni Bajo for their explorations of Golumb-coded sets. In
