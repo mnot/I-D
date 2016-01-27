@@ -120,7 +120,7 @@ and "https://example.com/script.js" exist as fresh entries in the cache.
 ~~~~
   GET / HTTP/1.1
   Host: example.com
-  Cache-Digest: AQgRSl8
+  Cache-Digest: CgRSlw
 ~~~~
 
 ## The Host Parameter
