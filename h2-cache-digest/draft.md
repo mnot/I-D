@@ -111,9 +111,6 @@ omit the parameters; if not present, the values are assumed to be "fresh" and "g
 
 A server MUST ignore a digest-element with unknown "type" or "codec".
 
-The use of "host" parameter and "path" parameter is mutually exclusive; a server MUST ignore
-a digest-element having both parameters set.
-
 As an example, the cache-digest header of the HTTP request below contains a cache digest
 of resources obtained from "example.com", indicating that the "https://example.com/style.css"
 and "https://example.com/script.js" exist as fresh entries in the cache.
@@ -142,10 +139,13 @@ of three fresh resources: "https://example.com/style.css", "https://example.com/
 
 ## The Host Parameter
 
-The "host" parameter widens the scope of the digest-value.
+The "host" parameter modifies the scope of the digest-value.
 
-If present, the parameter MUST either convey the host of the target URI, or the authenticated
-server identify for the "https" scheme (see {{RFC2818}}, Section 3).
+If present, the scope of the digest-value is the resources belonging to the specified host.
+If "https" scheme is used, the parameter MAY contain a wildcard character "*".  In such case,
+the scope of the digest-value is the resources belonging to all the hosts that match against
+the value of the parameter as defined in {{RFC2818}}, Section 3. The value SHOULD be a subset
+of the hosts the server is authoritative of.
 
 If not present, the scope of the digest-value is the authority of the target URI.
 
@@ -156,19 +156,18 @@ host, or for multiple hosts that match against a wildcard certificate provided b
 
 The "path" parameter narrows the scope of the digest-value.
 
-If present, the scope of the digest-value is the resources of the target authority
-matching to at least one of the following conditions:
+If present, the scope of the digest-value is the resources matching to at least one of the following conditions:
 
 * the parameter is identical to the path of the resource
 * the paramater is a prefix of the path of the resource, and the parameter ends with "/"
 * the parameter is a prefix of the path of the resource, and the first character of the path not included in the parameter is "/"
 
-If not present, the scope is governed by the rules described for the "host" parameter.
+If not present, the scope is solely governed by the rules described for the "host" parameter.
 
 ## Computing the Digest-Value {#computing}
 
 The set of URLs that is used to compute digest-value MUST only include URLs that share the
-scheme with the target URI, fall into the scopes defined by the "host" and "path" parameters,
+scheme with the target URI, fall into the scopes defined by both of the "host" and "path" parameters,
 and they MUST be fresh {{RFC7234}}.
 
 A client MAY choose a subset of the available stored responses to include in the set. Additionally,
