@@ -148,7 +148,7 @@ matching to at least one of the following conditions:
 
 If not present, the scope is governed by the rules described for the "host" parameter.
 
-### Computing the Digest-Value {#computing}
+## Computing the Digest-Value {#computing}
 
 The set of URLs that is used to compute digest-value MUST only include URLs that share the
 scheme with the target URI, fall into the scopes defined by the "host" and "path" parameters,
