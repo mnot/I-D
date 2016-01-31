@@ -1,8 +1,8 @@
 ---
 title: The ORIGIN HTTP/2 Frame
 abbrev: ORIGIN Frames
-docname: draft-nottingham-httpbis-origin-frame-00
-date: 2015
+docname: draft-nottingham-httpbis-origin-frame-01
+date: 2016
 category: std
 
 ipr: trust200902
