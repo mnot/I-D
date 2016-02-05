@@ -182,3 +182,5 @@ Thanks to Adam Langley and Giovanni Bajo for their explorations of Golumb-coded 
 particular, see
 <http://giovanni.bajo.it/post/47119962313/golomb-coded-sets-smaller-than-bloom-filters>, which
 refers to sample code.
+
+Thanks to Stefan Eissing for his suggestions.
