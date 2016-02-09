@@ -103,6 +103,7 @@ When a network imposes a captive portal, it can cause a variety of issues, both 
 
 * **Non-Browser Clients** - It is becoming more common for Internet devices without the ability to run a browser to be used, thanks to the "Internet of Things." These devices cannot easily use most networks that interpose a captive portal.
 
+* **Connectivity Interruption** - For a device with multiple network interfaces (e.g., cellular and WiFi), connecting to a network can require dropping access to alternative network interfaces.  If such a device connects to a network with a captive portal, it loses network connectivity until the captive portal requirements are satisfied.
 
 
 # Issues Caused by Captive Portal Detection {#issues-detection}
