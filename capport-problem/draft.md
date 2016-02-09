@@ -89,7 +89,7 @@ When a network imposes a captive portal, it can cause a variety of issues, both 
 
 * **Interoperability Issues** - Captive portals often depend on specific operating system and browser capabilities and behaviours. Client systems that do not share those quirks often have difficulty connecting to captive portals.
 
-* **Confusion** - Because captive portals are effective a man-in-the-middle attack, they can confuse users as well as user agents (e.g., caches). For example, when the portal's TLS certificate doesn't match that of the requested site, or the captive portal's /favicon.ico gets used as that of the originally requested site.
+* **Confusion** - Because captive portals are effectively a man-in-the-middle attack, they can confuse users as well as user agents (e.g., caches). For example, when the portal's TLS certificate doesn't match that of the requested site, or the captive portal's /favicon.ico gets used as that of the originally requested site.
 
 * **DNS**/**DNSSEC** - When portals respond with forged DNS answers, they confuse DNS resolvers and  interoperate poorly with host-validating DNSSEC resolvers and applications.
 
