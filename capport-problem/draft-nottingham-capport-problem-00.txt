@@ -76,12 +76,13 @@ Table of Contents
      2.1.  Why Captive Portals Are Used  . . . . . . . . . . . . . .   3
    3.  Issues Caused by Captive Portals  . . . . . . . . . . . . . .   3
    4.  Issues Caused by Captive Portal Detection . . . . . . . . . .   4
+     4.1.  Issues Caused by Defeating Captive Portal Detection . . .   5
    5.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
    6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
      6.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
      6.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   5
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   5
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   6
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
 
 1.  Introduction
 
@@ -97,14 +98,13 @@ Table of Contents
 
 2.  Defining Captive Portals
 
-   A captive portal is a mechanism whereby a network forces a user to
+   A captive portal is a mechanism whereby a network requires a user to
    interact with a specific Web site before allowing broader (but not
    necessarily complete) Internet access.
 
    This is achieved by directing requests for "normal" Web access to the
    nominated server, through variety of techniques, including DNS
    poisoning, TCP interception, and/or HTTP redirection.
-
 
 
 
@@ -170,8 +170,8 @@ Nottingham               Expires August 12, 2016                [Page 3]
 Internet-Draft          CAPPORT Problem Statement          February 2016
 
 
-   o  *Confusion* - Because captive portals are effective a man-in-the-
-      middle attack, they can confuse users as well as user agents
+   o  *Confusion* - Because captive portals are effectively a man-in-
+      the-middle attack, they can confuse users as well as user agents
       (e.g., caches).  For example, when the portal's TLS certificate
       doesn't match that of the requested site, or the captive portal's
       /favicon.ico gets used as that of the originally requested site.
@@ -206,18 +206,18 @@ Internet-Draft          CAPPORT Problem Statement          February 2016
       the "Internet of Things."  These devices cannot easily use most
       networks that interpose a captive portal.
 
+   o  *Connectivity Interruption* - For a device with multiple network
+      interfaces (e.g., cellular and WiFi), connecting to a network can
+      require dropping access to alternative network interfaces.  If
+      such a device connects to a network with a captive portal, it
+      loses network connectivity until the captive portal requirements
+      are satisfied.
+
 4.  Issues Caused by Captive Portal Detection
 
    Many operating systems attempt to detect when they are on a captive
-   network.  This can cause issues in some networks; for example:
-
-   o  *False Positives* - Some networks don't use a Web browser
-      interface to log in; e.g., they require a VPN to access the
-      network [6], so captive portal detection relying on HTTP is
-      counterproductive.
-
-
-
+   network.  Detection aims to minimize the negative effects caused by
+   captive portals in several ways.
 
 
 
@@ -226,9 +226,34 @@ Nottingham               Expires August 12, 2016                [Page 4]
 Internet-Draft          CAPPORT Problem Statement          February 2016
 
 
+   Captive portal detection can cause issues in some networks; for
+   example:
+
+   o  *False Positives* - Some networks don't use a Web browser
+      interface to log in; e.g., they require a VPN to access the
+      network [6], so captive portal detection relying on HTTP is
+      counterproductive.
+
    o  *Non-Internet Networks* - Some applications [7] and/or networks
       don't assume Internet access, but captive portal detection often
       conflates "network access" with "Internet access".
+
+   o  *Sandboxing* - When a captive portal is detected, some operating
+      systems access the captive portal in a highly sandboxed
+      environment.  This might have reduced capabilities, such as
+      limited access to browser APIs.  In addition, this environment is
+      separate from a user's normal browsing environment and therefore
+      does not include state.
+
+4.1.  Issues Caused by Defeating Captive Portal Detection
+
+   Many captive portal devices provide optional mechanisms that aim to
+   defeat captive portal detection.
+
+   Such defeat mechanisms aim to avoid the problems caused by captive
+   portal detection (see Section 4), with the consequence that they also
+   cause the same problems that detection was intended to avoid (see
+   Section 3).
 
 5.  Security Considerations
 
@@ -249,6 +274,13 @@ Internet-Draft          CAPPORT Problem Statement          February 2016
 
    [2] https://community.aerohive.com/aerohive/topics/
        ios_7_captive_portal_issues
+
+
+
+Nottingham               Expires August 12, 2016                [Page 5]
+
+Internet-Draft          CAPPORT Problem Statement          February 2016
+
 
    [3] http://stackoverflow.com/questions/14606131/using-captive-
        network-assistant-on-macosx-to-connect-to-vpn
@@ -277,4 +309,28 @@ Author's Address
 
 
 
-Nottingham               Expires August 12, 2016                [Page 5]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham               Expires August 12, 2016                [Page 6]
