@@ -7,7 +7,7 @@ category: info
 
 ipr: trust200902
 area: General
-workgroup: 
+workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
@@ -17,7 +17,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
@@ -79,7 +79,7 @@ Captive portals are deployed in a variety of situations, but the most common mot
 In all of these cases, using a Web browser is attractive, because it gives the network the ability to tailor the user's interface and experience, as well as the ability to integrate third-party payment, advertising, authentication and other services.
 
 
-# Issues Caused by Captive Portals
+# Issues Caused by Captive Portals {#issues}
 
 When a network imposes a captive portal, it can cause a variety of issues, both for applications and end users.
 
@@ -104,7 +104,8 @@ When a network imposes a captive portal, it can cause a variety of issues, both 
 * **Non-Browser Clients** - It is becoming more common for Internet devices without the ability to run a browser to be used, thanks to the "Internet of Things." These devices cannot easily use most networks that interpose a captive portal.
 
 
-# Issues Caused by Captive Portal Detection
+
+# Issues Caused by Captive Portal Detection {#issues-detection}
 
 Many operating systems attempt to detect when they are on a captive network. This can cause issues in some networks; for example:
 
@@ -124,4 +125,3 @@ TBD
 # Acknowledgements
 
 This draft was seeded from the [HTTP Working Group Wiki Page on Captive Portals](https://github.com/httpwg/wiki/wiki/Captive-Portals); thanks to all who contributed there.
-
