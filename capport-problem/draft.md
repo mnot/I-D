@@ -99,7 +99,7 @@ When a network imposes a captive portal, it can cause a variety of issues, both 
 
 * **Stealing Access** - because captive portals most often associate a user with a MAC address, it is possible for an attacker to impersonate an authenticated client (e.g., one that has paid for Internet access).
 
-* **Access to Privileged Information** - Some captive portals want to utilise external information about the user, such as social media account logins and/or advertising tracking/targeting services. However, because the captive portal is effectively acting as a man-in-the-middle, providing these capabilities can put the user at risk. 
+* **Access to Privileged Information** - Some captive portals want to utilise external information about the user, such as social media account logins and/or advertising tracking/targeting services. However, because the captive portal is effectively acting as a man-in-the-middle, providing these capabilities can put the user at risk.
 
 * **Non-Browser Clients** - It is becoming more common for Internet devices without the ability to run a browser to be used, thanks to the "Internet of Things." These devices cannot easily use most networks that interpose a captive portal.
 
