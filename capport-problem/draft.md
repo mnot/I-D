@@ -119,6 +119,13 @@ Captive portal detection can cause issues in some networks; for example:
 * **Sandboxing** - When a captive portal is detected, some operating systems access the captive portal in a highly sandboxed environment.  This might have reduced capabilities, such as limited access to browser APIs.  In addition, this environment is separate from a user's normal browsing environment and therefore does not include state.
 
 
+## Issues Caused by Defeating Captive Portal Detection
+
+Many captive portal devices provide optional mechanisms that aim to defeat captive portal detection.
+
+Such defeat mechanisms aim to avoid the problems caused by captive portal detection (see {{issues-detection}}), with the consequence that they also cause the same problems that detection was intended to avoid (see {{issues}}).
+
+
 # Security Considerations
 
 TBD
