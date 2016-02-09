@@ -108,7 +108,9 @@ When a network imposes a captive portal, it can cause a variety of issues, both 
 
 # Issues Caused by Captive Portal Detection {#issues-detection}
 
-Many operating systems attempt to detect when they are on a captive network. This can cause issues in some networks; for example:
+Many operating systems attempt to detect when they are on a captive network. Detection aims to minimize the negative effects caused by captive portals in several ways.
+
+Captive portal detection can cause issues in some networks; for example:
 
 * **False Positives** - Some networks don't use a Web browser interface to log in; e.g., they [require a VPN to access the network](http://stackoverflow.com/questions/14606131/using-captive-network-assistant-on-macosx-to-connect-to-vpn), so captive portal detection relying on HTTP is counterproductive.
 
