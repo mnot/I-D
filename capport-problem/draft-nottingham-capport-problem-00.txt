@@ -1,0 +1,280 @@
+
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                          February 9, 2016
+Intended status: Informational
+Expires: August 12, 2016
+
+
+      Before You Log In, Here's A Brief Message From Our Sponsors!
+                  draft-nottingham-capport-problem-00
+
+Abstract
+
+   This draft attempts to establish a problem statement for "Captive
+   Portals", in order to inform discussions of improving their
+   operation.
+
+Note to Readers
+
+   The issues list for this draft can be found at
+   https://github.com/mnot/I-D/labels/capport-problem .
+
+   The most recent (often, unpublished) draft is at
+   https://mnot.github.io/I-D/capport-problem/ .
+
+   Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
+   pages/capport-problem .
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on August 12, 2016.
+
+Copyright Notice
+
+   Copyright (c) 2016 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+
+Nottingham               Expires August 12, 2016                [Page 1]
+
+Internet-Draft          CAPPORT Problem Statement          February 2016
+
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   2
+   2.  Defining Captive Portals  . . . . . . . . . . . . . . . . . .   2
+     2.1.  Why Captive Portals Are Used  . . . . . . . . . . . . . .   3
+   3.  Issues Caused by Captive Portals  . . . . . . . . . . . . . .   3
+   4.  Issues Caused by Captive Portal Detection . . . . . . . . . .   4
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     6.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
+     6.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   5
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   5
+
+1.  Introduction
+
+   This draft attempts to establish a problem statement for "Captive
+   Portals", in order to inform discussions of improving their
+   operation.
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+2.  Defining Captive Portals
+
+   A captive portal is a mechanism whereby a network forces a user to
+   interact with a specific Web site before allowing broader (but not
+   necessarily complete) Internet access.
+
+   This is achieved by directing requests for "normal" Web access to the
+   nominated server, through variety of techniques, including DNS
+   poisoning, TCP interception, and/or HTTP redirection.
+
+
+
+
+
+Nottingham               Expires August 12, 2016                [Page 2]
+
+Internet-Draft          CAPPORT Problem Statement          February 2016
+
+
+   Once the captive portal's goals (see below) are met, the network
+   "remembers" that the user is allowed network access, usually by MAC
+   address.
+
+2.1.  Why Captive Portals Are Used
+
+   Captive portals are deployed in a variety of situations, but the most
+   common motivations are:
+
+   o  *Authentication* - Obtaining user credentials before authorising
+      network access
+
+   o  *Payment* - Obtaining payment for using the network.
+
+   o  *Information* - Presenting information to the user.  This might
+      include legal notices, details about the network provider and/or
+      its location, advertisements, etc.
+
+   o  *Notifications* - Some networks use the same mechanisms as captive
+      portals to notify users of account status, network downtime,
+      emergency alerts, etc.
+
+   In all of these cases, using a Web browser is attractive, because it
+   gives the network the ability to tailor the user's interface and
+   experience, as well as the ability to integrate third-party payment,
+   advertising, authentication and other services.
+
+3.  Issues Caused by Captive Portals
+
+   When a network imposes a captive portal, it can cause a variety of
+   issues, both for applications and end users.
+
+   o  *False Negatives* - Because so many different heuristics are used
+      to detect a captive portal, it's common for an OS or browser to
+      think it's on an open network, when in fact there is a captive
+      portal [4] in place.
+
+   o  *Longevity* - Often, it's necessary to repeatedly log into a
+      captive portal [5], thanks to timeout issues.  The effects of this
+      range from annoyance to inability to complete tasks, depending on
+      the timeout and the task at hand.
+
+   o  *Interoperability Issues* - Captive portals often depend on
+      specific operating system and browser capabilities and behaviours.
+      Client systems that do not share those quirks often have
+      difficulty connecting to captive portals.
+
+
+
+
+
+Nottingham               Expires August 12, 2016                [Page 3]
+
+Internet-Draft          CAPPORT Problem Statement          February 2016
+
+
+   o  *Confusion* - Because captive portals are effective a man-in-the-
+      middle attack, they can confuse users as well as user agents
+      (e.g., caches).  For example, when the portal's TLS certificate
+      doesn't match that of the requested site, or the captive portal's
+      /favicon.ico gets used as that of the originally requested site.
+
+   o  *DNS*/*DNSSEC* - When portals respond with forged DNS answers,
+      they confuse DNS resolvers and interoperate poorly with host-
+      validating DNSSEC resolvers and applications.
+
+   o  *TLS* - Portals that attempt to intercept TLS sessions (HTTPS,
+      IMAPS, or other) can cause certificate error messages on clients,
+      encouraging bad practice to click through such errors.
+
+   o  *Unexpected Configuration* - Some captive portals rely upon DNS
+      interception to direct users to the portal; however, this doesn't
+      work when the user has configured their own DNS server in
+      preference to that provided by DHCP (e.g., 8.8.8.8).
+
+   o  *Stealing Access* - because captive portals most often associate a
+      user with a MAC address, it is possible for an attacker to
+      impersonate an authenticated client (e.g., one that has paid for
+      Internet access).
+
+   o  *Access to Privileged Information* - Some captive portals want to
+      utilise external information about the user, such as social media
+      account logins and/or advertising tracking/targeting services.
+      However, because the captive portal is effectively acting as a
+      man-in-the-middle, providing these capabilities can put the user
+      at risk.
+
+   o  *Non-Browser Clients* - It is becoming more common for Internet
+      devices without the ability to run a browser to be used, thanks to
+      the "Internet of Things."  These devices cannot easily use most
+      networks that interpose a captive portal.
+
+4.  Issues Caused by Captive Portal Detection
+
+   Many operating systems attempt to detect when they are on a captive
+   network.  This can cause issues in some networks; for example:
+
+   o  *False Positives* - Some networks don't use a Web browser
+      interface to log in; e.g., they require a VPN to access the
+      network [6], so captive portal detection relying on HTTP is
+      counterproductive.
+
+
+
+
+
+
+Nottingham               Expires August 12, 2016                [Page 4]
+
+Internet-Draft          CAPPORT Problem Statement          February 2016
+
+
+   o  *Non-Internet Networks* - Some applications [7] and/or networks
+      don't assume Internet access, but captive portal detection often
+      conflates "network access" with "Internet access".
+
+5.  Security Considerations
+
+   TBD
+
+6.  References
+
+6.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <http://www.rfc-editor.org/info/rfc2119>.
+
+6.2.  URIs
+
+   [1] https://discussions.apple.com/thread/6251349
+
+   [2] https://community.aerohive.com/aerohive/topics/
+       ios_7_captive_portal_issues
+
+   [3] http://stackoverflow.com/questions/14606131/using-captive-
+       network-assistant-on-macosx-to-connect-to-vpn
+
+   [4] http://forum.piratebox.cc/read.php?9,8879
+
+   [5] https://github.com/httpwg/wiki/wiki/Captive-Portals
+
+Appendix A.  Acknowledgements
+
+   This draft was seeded from the HTTP Working Group Wiki Page on
+   Captive Portals [8]; thanks to all who contributed there.
+
+Author's Address
+
+   Mark Nottingham
+
+   Email: mnot@mnot.net
+   URI:   https://www.mnot.net/
+
+
+
+
+
+
+
+
+
+Nottingham               Expires August 12, 2016                [Page 5]
