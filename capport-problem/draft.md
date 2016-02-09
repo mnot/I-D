@@ -57,7 +57,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # Defining Captive Portals
 
-A captive portal is a mechanism whereby a network forces a user to interact with a specific Web site before allowing broader (but not necessarily complete) Internet access.
+A captive portal is a mechanism whereby a network requires a user to interact with a specific Web site before allowing broader (but not necessarily complete) Internet access.
 
 This is achieved by directing requests for "normal" Web access to the nominated server, through variety of techniques, including DNS poisoning, TCP interception, and/or HTTP redirection.
 
