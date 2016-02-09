@@ -50,13 +50,13 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/proxy
 
 # Introduction
 
-HTTP proxies {{RFC7230}} refuse requests for a variety of reasons; the request itself might violate a policy, or the requested content might be deemed unacceptable (e.g., it contains a virus, or itself violate a policy being imposed by the proxy).
+HTTP requests {{RFC7230}} to a proxy might not succeed variety of reasons; the request itself might violate a policy, or the requested content might be deemed unacceptable (e.g., it contains a virus, or itself violate a policy being imposed by the proxy).
 
-For HTTP URLs, information about why it has been rejected is often injected into the HTTP response, so that the user understands what has happened, even if the message is only an HTML "Access Denied." This practice is problematic, because both users and non-browser clients can become confused about the source of the information, mistaking content from the proxy as being from the origin.
+For HTTP URLs, information about the reason is often injected into the HTTP response, so that the user understands what has happened, even if the message is only an HTML "Access Denied." This practice is problematic, because both users and non-browser clients can become confused about the source of the information, mistaking content from the proxy as being from the origin.
 
 Furthermore, for HTTPS URLs, there is no way for the proxy to inform the end user about its actions. Proxies could provide HTML content in a 403 (Forbidden) response, but browsers are unwilling to show this to end users, since doing so would subject them to a potential man-in-the-middle attack.
 
-This specification defines a new response format with a constrained vocabulary, so that proxies can communicate basic information about why a request has been refused, and browsers can provide that information to users without risking it being mistaken for an authoritative response from the origin server.
+This specification defines a new response format with a constrained vocabulary, so that proxies can communicate basic information about why a request has not succeeded, and browsers can provide that information to users without risking it being mistaken for an authoritative response from the origin server.
 
 
 ## Notational Conventions
