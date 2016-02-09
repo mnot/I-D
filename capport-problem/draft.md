@@ -116,6 +116,7 @@ Captive portal detection can cause issues in some networks; for example:
 
 * **Non-Internet Networks** - [Some applications](http://forum.piratebox.cc/read.php?9,8879) and/or networks don't assume Internet access, but captive portal detection often conflates "network access" with "Internet access".
 
+* **Sandboxing** - When a captive portal is detected, some operating systems access the captive portal in a highly sandboxed environment.  This might have reduced capabilities, such as limited access to browser APIs.  In addition, this environment is separate from a user's normal browsing environment and therefore does not include state.
 
 
 # Security Considerations
