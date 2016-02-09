@@ -17,4 +17,4 @@ drafts = $(filter-out $(reserved), $(files))
 .PHONY: index.md
 index.md: $(drafts)
 	echo "---\nlayout: front\n---" > $@
-	echo '$(foreach draft,$(drafts),\n* [$(draft)]($(draft)) $(shell Tools/index.py $(draft)/draft.md))' >> $@
+	echo "$(foreach draft,$(drafts),\n* [$(draft)]($(draft)) $(shell Tools/index.py $(draft)/draft.md))" >> $@
