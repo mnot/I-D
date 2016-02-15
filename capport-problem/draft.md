@@ -136,3 +136,6 @@ TBD
 # Acknowledgements
 
 This draft was seeded from the [HTTP Working Group Wiki Page on Captive Portals](https://github.com/httpwg/wiki/wiki/Captive-Portals); thanks to all who contributed there.
+
+Thanks to Martin Thomson for his suggestions.
+
