@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                          February 9, 2016
+Internet-Draft                                         February 17, 2016
 Intended status: Informational
-Expires: August 12, 2016
+Expires: August 20, 2016
 
 
            The application/proxy-explanation+json media type
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on August 12, 2016.
+   This Internet-Draft will expire on August 20, 2016.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Nottingham               Expires August 12, 2016                [Page 1]
+Nottingham               Expires August 20, 2016                [Page 1]
 
 Internet-Draft             Proxy Explanations              February 2016
 
@@ -76,10 +76,11 @@ Table of Contents
      2.1.  Example . . . . . . . . . . . . . . . . . . . . . . . . .   4
    3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
-     5.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   6
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
+     5.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   7
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   7
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Introduction
 
@@ -104,15 +105,17 @@ Table of Contents
    This specification defines a new response format with a constrained
    vocabulary, so that proxies can communicate basic information about
    why a request has not succeeded, and browsers can provide that
-   information to users without risking it being mistaken for an
-   authoritative response from the origin server.
 
 
 
-Nottingham               Expires August 12, 2016                [Page 2]
+
+Nottingham               Expires August 20, 2016                [Page 2]
 
 Internet-Draft             Proxy Explanations              February 2016
 
+
+   information to users without risking it being mistaken for an
+   authoritative response from the origin server.
 
 1.1.  Notational Conventions
 
@@ -147,8 +150,8 @@ Internet-Draft             Proxy Explanations              February 2016
 
    It MUST NOT be used with a 2xx or 3xx status code, and clients MUST
    ignore its presence on them.  Typical status codes that it will be
-   used with include 403 (Forbidden), 502 (Bad Gateway), and 504
-   (Gateway Timeout).
+   used with include 403 (Forbidden), 451 (Unavailable For Legal
+   Reasons), 502 (Bad Gateway), and 504 (Gateway Timeout).
 
    Proxies SHOULD carefully consider what caching metadata [RFC7234] is
    appropriate to include in such responses.
@@ -157,18 +160,19 @@ Internet-Draft             Proxy Explanations              February 2016
    implementation might deem it only useful (or safe) in CONNECT
    requests.
 
-   Clients SHOULD indicate that they support this media type by
-   including it in the field-value of the Accept request header field
-   [RFC7231] of all supported requests.
 
 
 
 
 
-Nottingham               Expires August 12, 2016                [Page 3]
+Nottingham               Expires August 20, 2016                [Page 3]
 
 Internet-Draft             Proxy Explanations              February 2016
 
+
+   Clients SHOULD indicate that they support this media type by
+   including it in the field-value of the Accept request header field
+   [RFC7231] of all supported requests.
 
 2.1.  Example
 
@@ -208,23 +212,23 @@ Internet-Draft             Proxy Explanations              February 2016
 
    o  Type name: application
 
-   o  Subtype name: proxy-explanation
+   o  Subtype name: proxy-explanation+json
 
    o  Required parameters: None
 
    o  Optional parameters: None; unrecognised parameters should be
       ignored
 
-   o  Encoding considerations: Same as [RFC7159]
-
-   o  Security considerations: See Section 4
 
 
-
-Nottingham               Expires August 12, 2016                [Page 4]
+Nottingham               Expires August 20, 2016                [Page 4]
 
 Internet-Draft             Proxy Explanations              February 2016
 
+
+   o  Encoding considerations: Same as [RFC7159]
+
+   o  Security considerations: See Section 4
 
    o  Interoperability considerations: None
 
@@ -265,22 +269,52 @@ Internet-Draft             Proxy Explanations              February 2016
    a the proxy, in cases where the client supports the media type on
    requests other than CONNECT.
 
+   Likewise, it does not prevent a man-in-the-middle from presenting
+   itself as a proxy, in cases where the connection is unencrypted.
+
+   Because the payload can contain a URL, it could be used by an
+   attacker (either a hostile origin or MitM, as above) to direct users
+
+
+
+Nottingham               Expires August 20, 2016                [Page 5]
+
+Internet-Draft             Proxy Explanations              February 2016
+
+
+   to an origin under their control.  For example, an attacker could
+   convince users that they need to provide payment before the network
+   is available.
+
+   An attacker could also include a URL in the textual content of its
+   message (e.g., in the "description" member), to encourage the user to
+   copy the link and follow it.
+
+   However, both origins and cleartext MitMs can misrepresent their
+   identities on the Web currently, without the benefit of this
+   mechanism.  These risks are introduced only when users trust the
+   "proxy" interface more than they would trust a "normal" Web site.
+
+   They can be mitigated in a few ways:
+
+   o  Not displaying the "moreinfo" member in situations when this is
+      possible (i.e., on any response other than that to a CONNECT on an
+      encrypted connection).
+
+   o  Not supporting the "application/proxy-connection+json" media type
+      when the method is not CONNECT and the connection is not
+      encrypted.
+
+   o  Cautioning the user that the content might not be trustworthy.
+
 5.  References
 
 5.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119, March 1997.
-
-
-
-
-
-
-Nottingham               Expires August 12, 2016                [Page 5]
-
-Internet-Draft             Proxy Explanations              February 2016
-
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <http://www.rfc-editor.org/info/rfc2119>.
 
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
               Resource Identifier (URI): Generic Syntax", STD 66,
@@ -295,6 +329,14 @@ Internet-Draft             Proxy Explanations              February 2016
    [RFC7159]  Bray, T., Ed., "The JavaScript Object Notation (JSON) Data
               Interchange Format", RFC 7159, DOI 10.17487/RFC7159, March
               2014, <http://www.rfc-editor.org/info/rfc7159>.
+
+
+
+
+Nottingham               Expires August 20, 2016                [Page 6]
+
+Internet-Draft             Proxy Explanations              February 2016
+
 
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
@@ -317,6 +359,10 @@ Internet-Draft             Proxy Explanations              February 2016
 
    [2] mailto:mnot@mnot.net
 
+Appendix A.  Acknowledgements
+
+   Thanks to Thomas Mangin for his suggestions.
+
 Author's Address
 
    Mark Nottingham
@@ -333,4 +379,14 @@ Author's Address
 
 
 
-Nottingham               Expires August 12, 2016                [Page 6]
+
+
+
+
+
+
+
+
+
+
+Nottingham               Expires August 20, 2016                [Page 7]
