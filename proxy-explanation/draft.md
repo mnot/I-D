@@ -1,7 +1,7 @@
 ---
 title: The application/proxy-explanation+json media type
 abbrev: Proxy Explanations
-docname: draft-nottingham-proxy-explanation-00
+docname: draft-nottingham-proxy-explanation-01
 date: 2016
 category: info
 
@@ -105,7 +105,7 @@ For example:
       "name": "Acme Networks"
       "title": "Policy Violation"
       "description": "This content is above your pay grade."
-      "moreinfo": "https://acme.example.com/why"
+      "moreinfo": "https://acme.example.com/why?https://www.example.net"
     }
 ~~~
 
