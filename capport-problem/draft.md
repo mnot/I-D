@@ -23,6 +23,7 @@ author:
 
 normative:
   RFC2119:
+  RFC6108:
 
 informative:
 
@@ -57,9 +58,9 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # Defining Captive Portals
 
-A captive portal is a mechanism whereby a network requires a user to interact with a specific Web site before allowing broader (but not necessarily complete) Internet access.
+A captive portal is a mechanism whereby a network requires a user to interact with a specific Web site before allowing broader (but not necessarily complete) Internet access, or for other purposes.
 
-This is achieved by directing requests for "normal" Web access to the nominated server, through variety of techniques, including DNS poisoning, TCP interception, and/or HTTP redirection.
+This is achieved by directing requests for "normal" Web access to the nominated server, through variety of techniques, including DNS poisoning, TCP interception, HTTP response modification and/or HTTP redirection.
 
 Once the captive portal's goals (see below) are met, the network "remembers" that the user is allowed network access, usually by MAC address.
 
@@ -74,7 +75,7 @@ Captive portals are deployed in a variety of situations, but the most common mot
 
 * **Information** - Presenting information to the user. This might include displaying legal notices, details about the network provider and/or its location, advertisements, policies, etc., and obtaining user consent.
 
-* **Notifications** - Some networks use the same mechanisms as captive portals to notify users of account status, network downtime, emergency alerts, etc.
+* **Notifications** - Some networks use the same mechanisms as captive portals to notify users of account status, network downtime, emergency alerts, etc. See {{RFC6108}} for an example of one way this is done.
 
 In all of these cases, using a Web browser is attractive, because it gives the network the ability to tailor the user's interface and experience, as well as the ability to integrate third-party payment, advertising, authentication and other services.
 
@@ -137,5 +138,5 @@ TBD
 
 This draft was seeded from the [HTTP Working Group Wiki Page on Captive Portals](https://github.com/httpwg/wiki/wiki/Captive-Portals); thanks to all who contributed there.
 
-Thanks to Martin Thomson and Yaron Sheffer for their suggestions.
+Thanks to Martin Thomson, Yaron Sheffer and Jason Livingood for their suggestions.
 
