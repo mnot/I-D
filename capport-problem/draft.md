@@ -1,5 +1,5 @@
 ---
-title: Before You Log In, Here's A Brief Message From Our Sponsors!
+title: We Are All Just Prisoners Here, of Our Own Device(s)
 abbrev: CAPPORT Problem Statement
 docname: draft-nottingham-capport-problem-01
 date: 2016
@@ -66,7 +66,7 @@ Once the captive network's goals are met, the network "remembers" that the user 
 
 
 
-## Why Captive Portals Are Used
+## Why Captive Portals Are Used {#why}
 
 Captive portals are deployed in a variety of situations, but the most common motivations are:
 
