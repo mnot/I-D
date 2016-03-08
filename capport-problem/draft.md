@@ -56,13 +56,14 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# Defining Captive Portals
+# Defining Captive Portals and Networks
 
-A captive portal is a mechanism whereby a network requires a user to interact with a specific Web site before allowing broader (but not necessarily complete) Internet access, or for other purposes.
+A "captive network" is a network that employs a captive portal for a variety of purposes; see {{why}}. A "captive portal" is a Web site that captive networks direct users to.
 
-This is achieved by directing requests for "normal" Web access to the nominated server, through variety of techniques, including DNS poisoning, TCP interception, HTTP response modification and/or HTTP redirection.
+This is achieved by directing requests for "normal" Web access to the captive portal, through variety of techniques, including DNS poisoning, TCP interception, HTTP response modification and/or HTTP redirection.
 
-Once the captive portal's goals (see below) are met, the network "remembers" that the user is allowed network access, usually by MAC address.
+Once the captive network's goals are met, the network "remembers" that the user is allowed network access, usually by MAC address, although there is a significant amount of variance between implementations.
+
 
 
 ## Why Captive Portals Are Used
@@ -96,28 +97,24 @@ When a network imposes a captive portal, it can cause a variety of issues, both 
 
 * **TLS** - Portals that attempt to intercept TLS sessions (HTTPS, IMAPS, or other) can cause certificate error messages on clients, encouraging bad practice to click through such errors.
 
-* **Unexpected Configuration** - Some captive portals rely upon DNS interception to direct users to the portal; however, this doesn't work when the user has configured their own DNS server in preference to that provided by DHCP (e.g., 8.8.8.8).
+* **Unexpected Configuration** - Some captive portals do not work with clients using unexpected configurations, for example clients using static IP, custom DNS servers, or HTTP proxies.
 
-* **Stealing Access** - because captive portals most often associate a user with a MAC address, it is possible for an attacker to impersonate an authenticated client (e.g., one that has paid for Internet access).
-
-* **Access to Privileged Information** - Some captive portals want to utilise external information about the user, such as social media account logins and/or advertising tracking/targeting services. However, because the captive portal is effectively acting as a man-in-the-middle, providing these capabilities can put the user at risk.
+* **Stealing Access** - because captive portals often associate a user with a MAC address, it is possible for an attacker to impersonate an authenticated client (e.g., one that has paid for Internet access). Note that this is specific to open Wifi, and can be prevented by using a secure wireless medium. However, configuration of secure wireless is often deemed to be too complex for captive networks.
 
 * **Non-Browser Clients** - It is becoming more common for Internet devices without the ability to run a browser to be used, thanks to the "Internet of Things." These devices cannot easily use most networks that interpose a captive portal.
 
-* **Connectivity Interruption** - For a device with multiple network interfaces (e.g., cellular and WiFi), connecting to a network can require dropping access to alternative network interfaces.  If such a device connects to a network with a captive portal, it loses network connectivity until the captive portal requirements are satisfied.
+* **Connectivity Interruption** - For a device with multiple network interfaces (e.g., cellular and WiFi), connecting to a network can require dropping access to alternative network interfaces.  If such a device connects to a network with a captive portal, it can lose network connectivity until the captive portal requirements are satisfied.
 
 
 # Issues Caused by Captive Portal Detection {#issues-detection}
 
-Many operating systems attempt to detect when they are on a captive network. Detection aims to minimize the negative effects caused by captive portals in several ways.
-
-Captive portal detection can cause issues in some networks; for example:
+Many operating systems attempt to detect when they are on a captive network. Detection aims to minimize the negative effects caused by interposition of captive portals, but can cause different issues, including:
 
 * **False Positives** - Some networks don't use a Web browser interface to log in; e.g., they [require a VPN to access the network](http://stackoverflow.com/questions/14606131/using-captive-network-assistant-on-macosx-to-connect-to-vpn), so captive portal detection relying on HTTP is counterproductive.
 
 * **Non-Internet Networks** - [Some applications](http://forum.piratebox.cc/read.php?9,8879) and/or networks don't assume Internet access, but captive portal detection often conflates "network access" with "Internet access".
 
-* **Sandboxing** - When a captive portal is detected, some operating systems access the captive portal in a highly sandboxed environment.  This might have reduced capabilities, such as limited access to browser APIs.  In addition, this environment is separate from a user's normal browsing environment and therefore does not include state.
+* **Sandboxing** - When a captive portal is detected, some operating systems access the captive portal in a highly sandboxed environment.  This might have reduced capabilities, such as limited access to browser APIs.  In addition, this environment is separate from a user's normal browsing environment and therefore does not include state. While sandboxing seems a good idea to protect user data (particularly on Open WiFi), it is implemented differently on various platforms and often causes a (severely) broken user experience on the captive portal (even when the operator is protecting user data end-to-end with HTTPS). To offer a consistent and rich experience on the captive portal, some operators actively try to defeat operating system captive portal detection.
 
 
 ## Issues Caused by Defeating Captive Portal Detection
@@ -138,5 +135,5 @@ TBD
 
 This draft was seeded from the [HTTP Working Group Wiki Page on Captive Portals](https://github.com/httpwg/wiki/wiki/Captive-Portals); thanks to all who contributed there.
 
-Thanks to Martin Thomson, Yaron Sheffer and Jason Livingood for their suggestions.
+Thanks to Martin Thomson, Yaron Sheffer, David Bird and Jason Livingood for their suggestions.
 
