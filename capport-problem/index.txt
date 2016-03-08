@@ -3,12 +3,12 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                             March 3, 2016
+Internet-Draft                                             March 8, 2016
 Intended status: Informational
-Expires: September 4, 2016
+Expires: September 9, 2016
 
 
-      Before You Log In, Here's A Brief Message From Our Sponsors!
+          We Are All Just Prisoners Here, of Our Own Device(s)
                   draft-nottingham-capport-problem-01
 
 Abstract
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 4, 2016.
+   This Internet-Draft will expire on September 9, 2016.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Nottingham              Expires September 4, 2016               [Page 1]
+Nottingham              Expires September 9, 2016               [Page 1]
 
 Internet-Draft          CAPPORT Problem Statement             March 2016
 
@@ -72,7 +72,7 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   2
-   2.  Defining Captive Portals  . . . . . . . . . . . . . . . . . .   2
+   2.  Defining Captive Portals and Networks . . . . . . . . . . . .   2
      2.1.  Why Captive Portals Are Used  . . . . . . . . . . . . . .   3
    3.  Issues Caused by Captive Portals  . . . . . . . . . . . . . .   3
    4.  Issues Caused by Captive Portal Detection . . . . . . . . . .   4
@@ -96,27 +96,28 @@ Table of Contents
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in [RFC2119].
 
-2.  Defining Captive Portals
+2.  Defining Captive Portals and Networks
 
-   A captive portal is a mechanism whereby a network requires a user to
-   interact with a specific Web site before allowing broader (but not
-   necessarily complete) Internet access, or for other purposes.
+   A "captive network" is a network that employs a captive portal for a
+   variety of purposes; see Section 2.1.  A "captive portal" is a Web
+   site that captive networks direct users to.
 
    This is achieved by directing requests for "normal" Web access to the
-   nominated server, through variety of techniques, including DNS
+   captive portal, through variety of techniques, including DNS
    poisoning, TCP interception, HTTP response modification and/or HTTP
    redirection.
 
 
 
-Nottingham              Expires September 4, 2016               [Page 2]
+Nottingham              Expires September 9, 2016               [Page 2]
 
 Internet-Draft          CAPPORT Problem Statement             March 2016
 
 
-   Once the captive portal's goals (see below) are met, the network
-   "remembers" that the user is allowed network access, usually by MAC
-   address.
+   Once the captive network's goals are met, the network "remembers"
+   that the user is allowed network access, usually by MAC address,
+   although there is a significant amount of variance between
+   implementations.
 
 2.1.  Why Captive Portals Are Used
 
@@ -160,15 +161,17 @@ Internet-Draft          CAPPORT Problem Statement             March 2016
 
    o  *Interoperability Issues* - Captive portals often depend on
       specific operating system and browser capabilities and behaviours.
-      Client systems that do not share those quirks often have
-      difficulty connecting to captive portals.
 
 
 
-Nottingham              Expires September 4, 2016               [Page 3]
+
+Nottingham              Expires September 9, 2016               [Page 3]
 
 Internet-Draft          CAPPORT Problem Statement             March 2016
 
+
+      Client systems that do not share those quirks often have
+      difficulty connecting to captive portals.
 
    o  *Confusion* - Because captive portals are effectively a man-in-
       the-middle attack, they can confuse users as well as user agents
@@ -184,22 +187,17 @@ Internet-Draft          CAPPORT Problem Statement             March 2016
       IMAPS, or other) can cause certificate error messages on clients,
       encouraging bad practice to click through such errors.
 
-   o  *Unexpected Configuration* - Some captive portals rely upon DNS
-      interception to direct users to the portal; however, this doesn't
-      work when the user has configured their own DNS server in
-      preference to that provided by DHCP (e.g., 8.8.8.8).
+   o  *Unexpected Configuration* - Some captive portals do not work with
+      clients using unexpected configurations, for example clients using
+      static IP, custom DNS servers, or HTTP proxies.
 
-   o  *Stealing Access* - because captive portals most often associate a
-      user with a MAC address, it is possible for an attacker to
-      impersonate an authenticated client (e.g., one that has paid for
-      Internet access).
-
-   o  *Access to Privileged Information* - Some captive portals want to
-      utilise external information about the user, such as social media
-      account logins and/or advertising tracking/targeting services.
-      However, because the captive portal is effectively acting as a
-      man-in-the-middle, providing these capabilities can put the user
-      at risk.
+   o  *Stealing Access* - because captive portals often associate a user
+      with a MAC address, it is possible for an attacker to impersonate
+      an authenticated client (e.g., one that has paid for Internet
+      access).  Note that this is specific to open Wifi, and can be
+      prevented by using a secure wireless medium.  However,
+      configuration of secure wireless is often deemed to be too complex
+      for captive networks.
 
    o  *Non-Browser Clients* - It is becoming more common for Internet
       devices without the ability to run a browser to be used, thanks to
@@ -209,25 +207,24 @@ Internet-Draft          CAPPORT Problem Statement             March 2016
    o  *Connectivity Interruption* - For a device with multiple network
       interfaces (e.g., cellular and WiFi), connecting to a network can
       require dropping access to alternative network interfaces.  If
-      such a device connects to a network with a captive portal, it
-      loses network connectivity until the captive portal requirements
+      such a device connects to a network with a captive portal, it can
+      lose network connectivity until the captive portal requirements
       are satisfied.
 
 4.  Issues Caused by Captive Portal Detection
 
    Many operating systems attempt to detect when they are on a captive
    network.  Detection aims to minimize the negative effects caused by
-   captive portals in several ways.
+   interposition of captive portals, but can cause different issues,
+   including:
 
 
 
-Nottingham              Expires September 4, 2016               [Page 4]
+
+Nottingham              Expires September 9, 2016               [Page 4]
 
 Internet-Draft          CAPPORT Problem Statement             March 2016
 
-
-   Captive portal detection can cause issues in some networks; for
-   example:
 
    o  *False Positives* - Some networks don't use a Web browser
       interface to log in; e.g., they require a VPN to access the
@@ -243,7 +240,14 @@ Internet-Draft          CAPPORT Problem Statement             March 2016
       environment.  This might have reduced capabilities, such as
       limited access to browser APIs.  In addition, this environment is
       separate from a user's normal browsing environment and therefore
-      does not include state.
+      does not include state.  While sandboxing seems a good idea to
+      protect user data (particularly on Open WiFi), it is implemented
+      differently on various platforms and often causes a (severely)
+      broken user experience on the captive portal (even when the
+      operator is protecting user data end-to-end with HTTPS).  To offer
+      a consistent and rich experience on the captive portal, some
+      operators actively try to defeat operating system captive portal
+      detection.
 
 4.1.  Issues Caused by Defeating Captive Portal Detection
 
@@ -268,19 +272,20 @@ Internet-Draft          CAPPORT Problem Statement             March 2016
               DOI 10.17487/RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
 
+
+
+
+
+
+Nottingham              Expires September 9, 2016               [Page 5]
+
+Internet-Draft          CAPPORT Problem Statement             March 2016
+
+
    [RFC6108]  Chung, C., Kasyanov, A., Livingood, J., Mody, N., and B.
               Van Lieu, "Comcast's Web Notification System Design",
               RFC 6108, DOI 10.17487/RFC6108, February 2011,
               <http://www.rfc-editor.org/info/rfc6108>.
-
-
-
-
-
-Nottingham              Expires September 4, 2016               [Page 5]
-
-Internet-Draft          CAPPORT Problem Statement             March 2016
-
 
 6.2.  URIs
 
@@ -301,8 +306,8 @@ Appendix A.  Acknowledgements
    This draft was seeded from the HTTP Working Group Wiki Page on
    Captive Portals [8]; thanks to all who contributed there.
 
-   Thanks to Martin Thomson, Yaron Sheffer and Jason Livingood for their
-   suggestions.
+   Thanks to Martin Thomson, Yaron Sheffer, David Bird and Jason
+   Livingood for their suggestions.
 
 Author's Address
 
@@ -328,9 +333,4 @@ Author's Address
 
 
 
-
-
-
-
-
-Nottingham              Expires September 4, 2016               [Page 6]
+Nottingham              Expires September 9, 2016               [Page 6]
