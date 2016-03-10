@@ -10,7 +10,6 @@ layout: front
 * [http-options-resources](http-options-resources) - Well-Known Resources for HTTP OPTIONS 
 * [http-patch-status](http-patch-status) - The 2NN Patch HTTP Status Code 
 * [http-problem](http-problem)  
-* [httpbis-h2-fixed-frame](httpbis-h2-fixed-frame) - HTTP/2 Fixed-Size Frames 
 * [httpbis-origin-frame](httpbis-origin-frame) - The ORIGIN HTTP/2 Frame 
 * [json-home](json-home) - Home Documents for HTTP APIs 
 * [link-hint](link-hint) - HTTP Link Hints 
