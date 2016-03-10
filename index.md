@@ -2,7 +2,7 @@
 layout: front
 ---
 
-* [capport-problem](capport-problem) - Before You Log In, Here's A Brief Message From Our Sponsors! 
+* [capport-problem](capport-problem) - Captive Portals Problem Statement 
 * [for-the-users](for-the-users) - The Internet is for End Users 
 * [h2-cache-digest](h2-cache-digest) - Cache Digests for HTTP/2 
 * [h2-vpn](h2-vpn) - Virtual Private Networking over HTTP/2 
