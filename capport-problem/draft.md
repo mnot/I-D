@@ -58,12 +58,13 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # Defining Captive Portals and Networks
 
-A "captive network" is a network that employs a captive portal for a variety of purposes; see {{why}}. A "captive portal" is a Web site that captive networks direct users to.
+A "_captive network_" is a network that employs a captive portal for a variety of purposes; see {{why}}. A "_captive portal_" is a Web site that captive networks direct users to. 
 
 This is achieved by directing requests for "normal" Web access to the captive portal, through variety of techniques, including DNS poisoning, TCP interception, HTTP response modification and/or HTTP redirection.
 
 Once the captive network's goals are met, the network "remembers" that the user is allowed network access, usually by MAC address, although there is a significant amount of variance between implementations.
 
+Over time, operating systems have developed "_captive portal detection_" processes to discover captive networks, and to assist users through the process of obtaining full network access. They often involve specialised "_captive portal browsers_" which only allow the captive portal to use a subset of the full capabilities of a Web browser, and have a different user experience.
 
 
 ## Why Captive Portals Are Used {#why}
@@ -114,7 +115,7 @@ Many operating systems attempt to detect when they are on a captive network. Det
 
 * **Non-Internet Networks** - [Some applications](http://forum.piratebox.cc/read.php?9,8879) and/or networks don't assume Internet access, but captive portal detection often conflates "network access" with "Internet access".
 
-* **Sandboxing** - When a captive portal is detected, some operating systems access the captive portal in a highly sandboxed environment.  This might have reduced capabilities, such as limited access to browser APIs.  In addition, this environment is separate from a user's normal browsing environment and therefore does not include state. While sandboxing seems a good idea to protect user data (particularly on Open WiFi), it is implemented differently on various platforms and often causes a (severely) broken user experience on the captive portal (even when the operator is protecting user data end-to-end with HTTPS). To offer a consistent and rich experience on the captive portal, some operators actively try to defeat operating system captive portal detection.
+* **Sandboxing** - When a captive portal is detected, some operating systems access the captive portal in a highly sandboxed captive portal browser.  This might have reduced capabilities, such as limited access to browser APIs.  In addition, this environment is separate from a user's normal browsing environment and therefore does not include state. While sandboxing seems a good idea to protect user data (particularly on Open WiFi), it is implemented differently on various platforms and often causes a (severely) broken user experience on the captive portal (even when the operator is protecting user data end-to-end with HTTPS). To offer a consistent and rich experience on the captive portal, some operators actively try to defeat operating system captive portal detection.
 
 
 ## Issues Caused by Defeating Captive Portal Detection
