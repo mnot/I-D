@@ -1,5 +1,5 @@
 ---
-title: We Are All Just Prisoners Here, of Our Own Device(s)
+title: Captive Portals Problem Statement
 abbrev: CAPPORT Problem Statement
 docname: draft-nottingham-capport-problem-01
 date: 2016
