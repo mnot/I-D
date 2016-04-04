@@ -1,7 +1,7 @@
 ---
 title: Captive Portals Problem Statement
 abbrev: CAPPORT Problem Statement
-docname: draft-nottingham-capport-problem-01
+docname: draft-nottingham-capport-problem-02
 date: 2016
 category: info
 
