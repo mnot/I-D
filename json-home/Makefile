@@ -1,5 +1,6 @@
 
-id_base = ..
+id_base = $(shell dirname $(realpath $(shell pwd)))
+
 xml2rfc ?= xml2rfc
 saxpath ?= /usr/local/share/saxon-b/saxon9.jar
 kramdown-rfc2629 ?= kramdown-rfc2629
@@ -13,6 +14,7 @@ version = $(shell basename ${latest} .xml | awk -F- '{print $$NF}')
 target = draft-$(title)-$(version)
 prev = draft-$(title)-$(shell printf "%.2d" `echo ${version}-1 | bc`)
 next = draft-$(title)-$(shell printf "%.2d" `echo ${version}+1 | bc`)
+
 
 .PHONY: latest clean next diff idnits update
 
@@ -35,8 +37,13 @@ idnits: $(target).txt
 	$(kramdown-rfc2629) $< > $@
 	
 %.html: %.xml
-	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
-	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) > $@
+	sed -i '' -e"s/\"rfc2629.dtd/\"..\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
+	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) \
+	bootstrapJsUrl='../Tools/bower_components/bootstrap/dist/js/bootstrap.min.js' \
+	bootstrapCssUrl='../Tools/bower_components/bootstrap/dist/css/bootstrap.min.css' \
+	jqueryJsUrl='../Tools/bower_components/jquery/dist/jquery.min.js' \
+	navbar="$(id_base)/Tools/navbar.html" \
+	> $@
 #	$(xml2rfc) --html $< $@
 
 %.txt: %.xml
