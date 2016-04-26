@@ -104,10 +104,10 @@ ext-value and parmname.
 
 In this specification, a link is a typed connection between two resources, and is comprised of:
 
-* A link context,
-* a link relation type ({{link-relation-types}}),
-* a link target, and
-* optionally, target attributes.
+* A *link context*,
+* a *link relation type* ({{link-relation-types}}),
+* a *link target*, and
+* optionally, *target attributes*.
       
 A link can be viewed as a statement of the form "{link context} has a {link relation type} resource
 at {link target}, which has {target attributes}".
@@ -129,10 +129,16 @@ Target attributes are a set of key/value pairs that describe the link or its tar
 media type hint. This specification does not attempt to coordinate their names or use, but does
 provide common target attributes for use in the Link HTTP header.
 
-Finally, this specification does not define a general syntax for expressing links, nor does it
-mandate a specific context for any given link; it is expected that serialisations of links will
+Links are conveyed in *link serialisations*; they are the "bytes on the wire", and can occur in
+various forms. This specification does not define a general syntax for links, nor does
+it mandate a specific context for any given link; it is expected that serialisations of links will
 specify both aspects. One such serialisation is communication of links through HTTP headers,
 specified in {{header}}.
+
+Finally, links are consumed by *link applications*. Generally, an application will define the link
+relation types it uses, along with the serialisations that they might occur within. For example,
+the application "Web browsing" looks for the "stylesheet" link relation type in the HTML link
+serialisation.
 
 
 # Link Relation Types
@@ -228,7 +234,7 @@ specify that they are expressed in another form, as long as they can be converte
 
 # The Link Header Field {#header}
 
-The Link entity-header field provides a means for serialising one or more links in HTTP headers.
+The Link entity-header field provides a means for serialising one or more links into HTTP headers.
 
 	Link           = "Link" ":" #link-value  
 	link-value     = "<" URI-Reference ">" *( ";" link-param )
@@ -427,10 +433,10 @@ The content of the Link header field is not secure, private or integrity-guarant
 caution should be exercised when using it. Use of Transport Layer Security (TLS) with HTTP
 ({{RFC2818}} and {{RFC2817}}) is currently the only end-to-end way to provide such protection.
 
-Applications that take advantage of typed links should consider the attack vectors opened by
-automatically following, trusting, or otherwise using links gathered from HTTP headers. In
-particular, Link headers that use the "anchor" parameter to associate a link's context with another
-resource should be treated with due caution.
+Link applications ought to consider the attack vectors opened by automatically following, trusting,
+or otherwise using links gathered from HTTP headers. In particular, Link headers that use the
+"anchor" parameter to associate a link's context with another resource should be treated with due
+caution.
 
 The Link entity-header field makes extensive use of IRIs and URIs. See {{RFC3987}} for security
 considerations relating to IRIs. See {{RFC3986}} for security considerations relating to URIs. See
@@ -451,10 +457,10 @@ Note that registered Relation Names are required to be lower-case ASCII letters.
 
 --- back
 
-# Using the Link Header with the HTML Format
+# HTML Serialisation of Links
 
-HTML motivated the original syntax of the Link header, and many of the design decisions in this
-document are driven by a desire to stay compatible with it.
+HTML {{W3C.REC-html5-20141028}} motivated the original syntax of the Link header, and many of the
+design decisions in this document are driven by a desire to stay compatible with it.
 
 In HTML, the link element can be mapped to links as specified here by using the "href" attribute
 for the target URI, and "rel" to convey the relation type, as in the Link header. The context of
@@ -484,12 +490,12 @@ relation types coincide in the same link. Such links ought to be serialised in t
 using a single list of relation-types (e.g., rel="alternate stylesheet") to preserve this
 relationship.
 
-# Using the Link Header with the Atom Format
+# Atom Serialisation of Links
 
-Atom conveys links in the atom:link element, with the "href" attribute indicating the link target
-and the "rel" attribute containing the relation type. The context of the link is either a feed
-locator or an entry ID, depending on where it appears; generally, feed-level links are obvious
-candidates for transmission as a Link header.
+Atom {{RFC4287}} conveys links in the atom:link element, with the "href" attribute indicating the
+link target and the "rel" attribute containing the relation type. The context of the link is either
+a feed locator or an entry ID, depending on where it appears; generally, feed-level links are
+obvious candidates for transmission as a Link header.
 
 When serialising an atom:link into a Link header, it is necessary to convert link targets (if used)
 to URIs.
@@ -540,3 +546,5 @@ This specification has the following differences from its predecessor, RFC5988:
   Atom links.
   
 * More carefully defined how the Experts and IANA should interact.
+
+* More carefully defined and used "link serialisations" and "link applications."
