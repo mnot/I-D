@@ -346,8 +346,9 @@ If both the "title" and "title\*" parameters appear in a link-value, processors 
 
 The "type" parameter, when present, is a hint indicating what the media type of the result of
 dereferencing the link should be. Note that this is only a hint; for example, it does not override
-the Content-Type header field of a HTTP response obtained by actually following the link. There
-MUST NOT be more than one type parameter in a link-value.
+the Content-Type header field of a HTTP response obtained by actually following the link. The
+"type" parameter MUST NOT appear more than once in a given link-value; occurrences after the first
+MUST be ignored by parsers.
 
 
 ## Examples
