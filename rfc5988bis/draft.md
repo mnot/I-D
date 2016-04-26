@@ -35,6 +35,7 @@ normative:
   RFC5226:
   RFC5646:
   RFC7230:
+  RFC7231:
   W3C.CR-css3-mediaqueries-20090915:
   I-D.ietf-httpbis-rfc5987bis:
   
@@ -282,8 +283,9 @@ content is not applied.
 		
 ## Link Context
 
-By default, the context of a link conveyed in the Link header field is the IRI of the requested
-resource.
+By default, the context of a link conveyed in the Link header field is identity of the
+representation it is associated with, as defined in {{RFC7231}}, Section 3.1.4.1, serialised as a
+URI.
 				
 When present, the anchor parameter overrides this with another URI, such as a fragment of this
 resource, or a third resource (i.e., when the anchor value is an absolute URI). If the anchor
@@ -555,3 +557,5 @@ This specification has the following differences from its predecessor, RFC5988:
 * More carefully defined and used "link serialisations" and "link applications."
 
 * Clarified the cardinality of target attributes (generically and for "type").
+
+* Corrected the default link context for the Link header field, to be dependent upon the identity of the representation (as per RFC7231).
