@@ -121,13 +121,13 @@ in {{header}}).
 This specification does not place restrictions on the cardinality of links; there can be multiple
 links to and from a particular target, and multiple links of the same or different types between a
 given context and target. Likewise, the relative ordering of links in any particular
-serialisation, or between serialisations (e.g., the Link header and in-content links) is not
+serialisation, or between serialisations (e.g., the Link header field and in-content links) is not
 specified or significant in this specification; applications that wish to consider ordering
 significant can do so.
 
 Target attributes are a set of key/value pairs that describe the link or its target; for example, a
 media type hint. This specification does not attempt to coordinate their names or use, but does
-provide common target attributes for use in the Link HTTP header.
+provide common target attributes for use in the Link HTTP header field.
 
 Links are conveyed in *link serialisations*; they are the "bytes on the wire", and can occur in
 various forms. This specification does not define a general syntax for links, nor does
@@ -234,7 +234,7 @@ specify that they are expressed in another form, as long as they can be converte
 
 # The Link Header Field {#header}
 
-The Link entity-header field provides a means for serialising one or more links into HTTP headers.
+The Link header field provides a means for serialising one or more links into HTTP headers.
 
 	Link           = "Link" ":" #link-value  
 	link-value     = "<" URI-Reference ">" *( ";" link-param )
@@ -307,7 +307,7 @@ it often confuses authors and readers; in most cases, using a separate relation 
 		
 Note that extension relation types are REQUIRED to be absolute URIs in Link headers, and MUST be
 quoted if they contain a semicolon (";") or comma (",") (as these characters are used as delimiters
-in the header itself).
+in the header field itself).
 	
 
 ## Target Attributes
@@ -317,9 +317,9 @@ considered to be target attributes for the link.
 
 The "hreflang" parameter, when present, is a hint indicating what the language of the result of
 dereferencing the link should be. Note that this is only a hint; for example, it does not override
-the Content-Language header of a HTTP response obtained by actually following the link. Multiple
-"hreflang" parameters on a single link-value indicate that multiple languages are available from
-the indicated resource.
+the Content-Language header field of a HTTP response obtained by actually following the link.
+Multiple "hreflang" parameters on a single link-value indicate that multiple languages are
+available from the indicated resource.
 
 The "media" parameter, when present, is used to indicate intended destination medium or media for
 style information (see {{W3C.REC-html5-20141028}}, Section 4.2.4). Its value MUST be quoted if it
@@ -328,22 +328,22 @@ a link-value.
 
 The "title" parameter, when present, is used to label the destination of a link such that it can be
 used as a human-readable identifier (e.g., a menu entry) in the language indicated by the
-Content-Language header (if present). The "title" parameter MUST NOT appear more than once in a
-given link-value; occurrences after the first MUST be ignored by parsers.
+Content-Language header field (if present). The "title" parameter MUST NOT appear more than once in
+a given link-value; occurrences after the first MUST be ignored by parsers.
 
 The "title\*" parameter can be used to encode this label in a different character set, and/or
 contain language information as per {{I-D.ietf-httpbis-rfc5987bis}}. The "title\*" parameter MUST
 NOT appear more than once in a given link-value; occurrences after the first MUST be ignored by
 parsers. If the parameter does not contain language information, its language is indicated by the
-Content-Language header (when present).
+Content-Language header field (when present).
 			
 If both the "title" and "title\*" parameters appear in a link-value, processors SHOULD use the
 "title\*" parameter's value.
 
 The "type" parameter, when present, is a hint indicating what the media type of the result of
 dereferencing the link should be. Note that this is only a hint; for example, it does not override
-the Content-Type header of a HTTP response obtained by actually following the link. There MUST NOT
-be more than one type parameter in a link-value.
+the Content-Type header field of a HTTP response obtained by actually following the link. There
+MUST NOT be more than one type parameter in a link-value.
 
 
 ## Examples
@@ -362,8 +362,8 @@ Similarly,
 indicates that the root resource ("/") is related to this resource with the extension relation type
 "http://example.net/foo".
 
-The example below shows an instance of the Link header encoding multiple links, and also the use of
-RFC 5987 encoding to encode both non-ASCII characters and language information.
+The example below shows an instance of the Link header field encoding multiple links, and also the
+use of RFC 5987 encoding to encode both non-ASCII characters and language information.
 
 	Link: </TheBook/chapter2>;
 	      rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
@@ -388,7 +388,7 @@ In addition to the actions below, IANA should terminate the Link Relation Applic
 Registry, as it has not been used, and future use is not anticipated.
 
 
-## Link HTTP Header Registration
+## Link HTTP Header Field Registration
 
 This specification updates the Message Header registry entry for "Link" in HTTP {{RFC3864}} to
 refer to this document.
@@ -434,21 +434,21 @@ caution should be exercised when using it. Use of Transport Layer Security (TLS)
 ({{RFC2818}} and {{RFC2817}}) is currently the only end-to-end way to provide such protection.
 
 Link applications ought to consider the attack vectors opened by automatically following, trusting,
-or otherwise using links gathered from HTTP headers. In particular, Link headers that use the
+or otherwise using links gathered from HTTP headers. In particular, Link header fields that use the
 "anchor" parameter to associate a link's context with another resource should be treated with due
 caution.
 
-The Link entity-header field makes extensive use of IRIs and URIs. See {{RFC3987}} for security
+The Link header field makes extensive use of IRIs and URIs. See {{RFC3987}} for security
 considerations relating to IRIs. See {{RFC3986}} for security considerations relating to URIs. See
 {{RFC7230}} for security considerations relating to HTTP headers.
 
 # Internationalisation Considerations
 
 Link targets may need to be converted to URIs in order to express them in serialisations that do
-not support IRIs. This includes the Link HTTP header.
+not support IRIs. This includes the Link HTTP header field.
 
-Similarly, the anchor parameter of the Link header does not support IRIs, and therefore IRIs must
-be converted to URIs before inclusion there.
+Similarly, the anchor parameter of the Link header field does not support IRIs, and therefore IRIs
+must be converted to URIs before inclusion there.
 
 Relation types are defined as URIs, not IRIs, to aid in their comparison. It is not expected that
 they will be displayed to end users.
@@ -459,12 +459,12 @@ Note that registered Relation Names are required to be lower-case ASCII letters.
 
 # HTML Serialisation of Links
 
-HTML {{W3C.REC-html5-20141028}} motivated the original syntax of the Link header, and many of the
-design decisions in this document are driven by a desire to stay compatible with it.
+HTML {{W3C.REC-html5-20141028}} motivated the original syntax of the Link header field, and many of
+the design decisions in this document are driven by a desire to stay compatible with it.
 
 In HTML, the link element can be mapped to links as specified here by using the "href" attribute
-for the target URI, and "rel" to convey the relation type, as in the Link header. The context of
-the link is the URI associated with the entire HTML document.
+for the target URI, and "rel" to convey the relation type, as in the Link header field. The context
+of the link is the URI associated with the entire HTML document.
 
 All of the link relation types defined by HTML have been included in the Link Relation Type
 registry, so they can be used without modification. However, there are several potential ways to
@@ -486,7 +486,7 @@ HTML also defines several attributes on links that can be see as target attribut
 "media", "hreflang", "type" and "sizes".
 
 Finally, the HTML specification gives a special meaning when the "alternate" and "stylesheet"
-relation types coincide in the same link. Such links ought to be serialised in the Link header
+relation types coincide in the same link. Such links ought to be serialised in the Link header field
 using a single list of relation-types (e.g., rel="alternate stylesheet") to preserve this
 relationship.
 
@@ -495,10 +495,10 @@ relationship.
 Atom {{RFC4287}} conveys links in the atom:link element, with the "href" attribute indicating the
 link target and the "rel" attribute containing the relation type. The context of the link is either
 a feed locator or an entry ID, depending on where it appears; generally, feed-level links are
-obvious candidates for transmission as a Link header.
+obvious candidates for transmission as a Link header field.
 
-When serialising an atom:link into a Link header, it is necessary to convert link targets (if used)
-to URIs.
+When serialising an atom:link into a Link header field, it is necessary to convert link targets (if
+used) to URIs.
 
 Atom defines extension relation types in terms of IRIs. This specification re-defines them as URIs,
 to simplify and reduce errors in their comparison.
@@ -512,11 +512,11 @@ Furthermore, Atom link relation types are always compared in a case-sensitive fa
 registered link relation types SHOULD be converted to their registered form (usually, lowercase)
 when serialised in an Atom document.
 
-Note also that while the Link header allows multiple relations to be serialised in a single link,
-atom:link does not. In this case, a single link-value may map to several atom:link elements.
+Note also that while the Link header field allows multiple relations to be serialised in a single
+link, atom:link does not. In this case, a single link-value may map to several atom:link elements.
 
 As with HTML, atom:link defines some attributes that are not explicitly mirrored in the Link header
-syntax, but they can also be used as link-extensions to maintain fidelity.
+field syntax, but they can also be used as link-extensions to maintain fidelity.
 
 
 
