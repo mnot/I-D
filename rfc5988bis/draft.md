@@ -179,9 +179,9 @@ the behaviours and properties of the target resource (e.g., allowable HTTP metho
 response media types that must be supported).
 
 Applications that wish to refer to a registered relation type with a URI {{RFC3986}} MAY do so by
-prepending "http://www.iana.org/assignments/relation/" to its name. Note that the resulting strings
-are not considered equivalent to the registered relation types by many processors, and SHOULD NOT
-be serialised unless the application using link relations specifically allows them.
+prepending an application-specific base URI to its name. Note that the resulting strings will not
+be considered equivalent to the registered relation types by other processors, and SHOULD NOT be
+serialised unless the link application specifically allows them.
 
 
 ### Registering Link Relation Types {#procedure}
@@ -232,7 +232,7 @@ Note that while extension relation types are required to be URIs, a serialisatio
 specify that they are expressed in another form, as long as they can be converted to URIs.
 
 
-# The Link Header Field {#header}
+# Link Serialisation in the Link HTTP Header Field {#header}
 
 The Link header field provides a means for serialising one or more links into HTTP headers.
 
@@ -457,7 +457,7 @@ Note that registered Relation Names are required to be lower-case ASCII letters.
 
 --- back
 
-# HTML Serialisation of Links
+# Link Serialisation in HTML
 
 HTML {{W3C.REC-html5-20141028}} motivated the original syntax of the Link header field, and many of
 the design decisions in this document are driven by a desire to stay compatible with it.
@@ -490,7 +490,7 @@ relation types coincide in the same link. Such links ought to be serialised in t
 using a single list of relation-types (e.g., rel="alternate stylesheet") to preserve this
 relationship.
 
-# Atom Serialisation of Links
+# Link Serialisation in Atom
 
 Atom {{RFC4287}} conveys links in the atom:link element, with the "href" attribute indicating the
 link target and the "rel" attribute containing the relation type. The context of the link is either
@@ -503,10 +503,9 @@ used) to URIs.
 Atom defines extension relation types in terms of IRIs. This specification re-defines them as URIs,
 to simplify and reduce errors in their comparison.
 
-Atom allows registered link relation types to be serialised as absolute URIs. Such relation types
-SHOULD be converted to the appropriate registered form (e.g.,
-"http://www.iana.org/assignments/relation/self" to "self") so that they are not mistaken for
-extension relation types.
+Atom allows registered link relation types to be serialised as absolute URIs using a prefix,
+"http://www.iana.org/assignments/relation/". This prefix is specific to Atom as an application of
+linking.
 
 Furthermore, Atom link relation types are always compared in a case-sensitive fashion; therefore,
 registered link relation types SHOULD be converted to their registered form (usually, lowercase)
