@@ -123,9 +123,10 @@ serialisation, or between serialisations (e.g., the Link header field and in-con
 specified or significant in this specification; applications that wish to consider ordering
 significant can do so.</t>
 
-<t>Target attributes are a set of key/value pairs that describe the link or its target; for example, a
-media type hint. This specification does not attempt to coordinate their names or use, but does
-provide common target attributes for use in the Link HTTP header field.</t>
+<t><spanx style="emph">Target attributes</spanx> are a set of key/value pairs that describe the link or its target; for example,
+a media type hint. This specification does not attempt to coordinate their names, cardinality or
+use, but individual link relations, link serialisations and link applications can do so. This
+specification does provide common target attributes for use in the Link HTTP header field.</t>
 
 <t>Links are conveyed in <spanx style="emph">link serialisations</spanx>; they are the “bytes on the wire”, and can occur in
 various forms. This specification does not define a general syntax for links, nor does
@@ -160,7 +161,7 @@ meaning in HTML for historical reasons.</t>
 
 <t>There are two kinds of relation types: registered and extension.</t>
 
-<section anchor="registered-relation-types" title="Registered Relation Types">
+<section anchor="registered" title="Registered Relation Types">
 
 <t>Well-defined relation types can be registered as tokens for convenience and/or to promote reuse by
 other applications, using the procedure in <xref target="procedure"/>.</t>
@@ -198,7 +199,7 @@ the registry page.</t>
 
 <t>The Expert(s) MAY define additional fields to be collected in the registry.</t>
 
-<t>General requirements for registered relation types are described in <xref target="registered-relation-types"/>.</t>
+<t>General requirements for registered relation types are described in <xref target="registered"/>.</t>
 
 <t>See the registry for examples of the description field; generally, it SHOULD identify the semantics
 in terms of the link’s context and target.</t>
@@ -221,6 +222,10 @@ response, to the full IESG (using the iesg@iesg.org mailing list).</t>
 is a URI <xref target="RFC3986"/> that uniquely identifies the relation type. Although the URI can point to a
 resource that contains a definition of the semantics of the relation type, clients SHOULD NOT
 automatically access that resource to avoid overburdening its server.</t>
+
+<t>The URI used for an extension relation type SHOULD be under the control of the person or party
+defining it, or be delegated to them. These URIs also SHOULD NOT use the base URI defined by an
+application for registered relation types (as per <xref target="registered"/>).</t>
 
 <t>When extension relation types are compared, they MUST be compared as strings (after converting to
 URIs if serialised in a different format, such as a XML QNames <xref target="W3C.REC-xml-names-20091208"/>) in a
@@ -280,8 +285,9 @@ content is not applied.</t>
 </section>
 <section anchor="link-context" title="Link Context">
 
-<t>By default, the context of a link conveyed in the Link header field is the IRI of the requested
-resource.</t>
+<t>By default, the context of a link conveyed in the Link header field is identity of the
+representation it is associated with, as defined in <xref target="RFC7231"/>, Section 3.1.4.1, serialised as a
+URI.</t>
 
 <t>When present, the anchor parameter overrides this with another URI, such as a fragment of this
 resource, or a third resource (i.e., when the anchor value is an absolute URI). If the anchor
@@ -346,8 +352,9 @@ Content-Language header field (when present).</t>
 
 <t>The “type” parameter, when present, is a hint indicating what the media type of the result of
 dereferencing the link should be. Note that this is only a hint; for example, it does not override
-the Content-Type header field of a HTTP response obtained by actually following the link. There
-MUST NOT be more than one type parameter in a link-value.</t>
+the Content-Type header field of a HTTP response obtained by actually following the link. The
+“type” parameter MUST NOT appear more than once in a given link-value; occurrences after the first
+MUST be ignored by parsers.</t>
 
 </section>
 <section anchor="examples" title="Examples">
@@ -616,6 +623,20 @@ they will be displayed to end users.</t>
 </front>
 <seriesInfo name='RFC' value='7230'/>
 <seriesInfo name='DOI' value='10.17487/RFC7230'/>
+</reference>
+
+
+
+<reference  anchor='RFC7231' target='http://www.rfc-editor.org/info/rfc7231'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7231'/>
+<seriesInfo name='DOI' value='10.17487/RFC7231'/>
 </reference>
 
 
@@ -938,6 +959,8 @@ respectively.</t>
 Atom links.</t>
   <t>More carefully defined how the Experts and IANA should interact.</t>
   <t>More carefully defined and used “link serialisations” and “link applications.”</t>
+  <t>Clarified the cardinality of target attributes (generically and for “type”).</t>
+  <t>Corrected the default link context for the Link header field, to be dependent upon the identity of the representation (as per RFC7231).</t>
 </list></t>
 
 </section>
