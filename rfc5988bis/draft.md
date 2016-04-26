@@ -553,3 +553,5 @@ This specification has the following differences from its predecessor, RFC5988:
 * More carefully defined how the Experts and IANA should interact.
 
 * More carefully defined and used "link serialisations" and "link applications."
+
+* Clarified the cardinality of target attributes (generically and for "type").
