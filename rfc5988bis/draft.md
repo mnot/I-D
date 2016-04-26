@@ -202,7 +202,7 @@ Registration requests consist of at least the following information:
 
 The Expert(s) MAY define additional fields to be collected in the registry.
 
-General requirements for registered relation types are described in {{registered-relation-types}}.
+General requirements for registered relation types are described in {{registered}}.
 
 See the registry for examples of the description field; generally, it SHOULD identify the semantics
 in terms of the link's context and target.
