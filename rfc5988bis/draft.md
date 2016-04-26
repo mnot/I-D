@@ -547,7 +547,7 @@ This specification has the following differences from its predecessor, RFC5988:
 * Terminology was changed from "target IRI" and "context IRI" to "link target" and "link context"
   respectively.
 
-* A convention for assigning a URI to registered relation types was defined.
+* Made assigning a URI to registered relation types application-specific.
 
 * Removed misleading statement that the link header field is semantically equivalent to HTML and
   Atom links.
