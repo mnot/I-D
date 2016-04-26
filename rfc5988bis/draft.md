@@ -163,7 +163,7 @@ meaning in HTML for historical reasons.
 There are two kinds of relation types: registered and extension.
 
 
-## Registered Relation Types
+## Registered Relation Types {#registered}
 
 Well-defined relation types can be registered as tokens for convenience and/or to promote reuse by
 other applications, using the procedure in {{procedure}}.
@@ -222,6 +222,10 @@ Applications that don't wish to register a relation type can use an extension re
 is a URI {{RFC3986}} that uniquely identifies the relation type. Although the URI can point to a
 resource that contains a definition of the semantics of the relation type, clients SHOULD NOT
 automatically access that resource to avoid overburdening its server.
+
+The URI used for an extension relation type SHOULD be under the control of the person or party
+defining it, or be delegated to them. These URIs also SHOULD NOT use the base URI defined by an
+application for registered relation types (as per {{registered}}).
 
 When extension relation types are compared, they MUST be compared as strings (after converting to
 URIs if serialised in a different format, such as a XML QNames {{W3C.REC-xml-names-20091208}}) in a
