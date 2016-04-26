@@ -125,9 +125,10 @@ serialisation, or between serialisations (e.g., the Link header field and in-con
 specified or significant in this specification; applications that wish to consider ordering
 significant can do so.
 
-Target attributes are a set of key/value pairs that describe the link or its target; for example, a
-media type hint. This specification does not attempt to coordinate their names or use, but does
-provide common target attributes for use in the Link HTTP header field.
+*Target attributes* are a set of key/value pairs that describe the link or its target; for example,
+a media type hint. This specification does not attempt to coordinate their names, cardinality or
+use, but individual link relations, link serialisations and link applications can do so. This
+specification does provide common target attributes for use in the Link HTTP header field.
 
 Links are conveyed in *link serialisations*; they are the "bytes on the wire", and can occur in
 various forms. This specification does not define a general syntax for links, nor does
