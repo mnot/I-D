@@ -180,10 +180,11 @@ constrain the available representation media types of the link target. However, 
 the behaviours and properties of the target resource (e.g., allowable HTTP methods, request and
 response media types that must be supported).
 
-Applications that wish to refer to a registered relation type with a URI {{RFC3986}} MAY do so by
-prepending an application-specific base URI to its name. Note that the resulting strings will not
-be considered equivalent to the registered relation types by other processors, and SHOULD NOT be
-serialised unless the link application specifically allows them.
+Historically, applications have sometimes referred to registered relation types with a URI
+{{RFC3986}} (e.g., {{atom}}) by prefixing their names with an application-defined base URI. This
+practice is NOT RECOMMENDED, because the resulting strings will not be considered equivalent to the
+registered relation types by other processors. Applications that do use such URIs internally MUST
+NOT use them in link serialisations that do not explicitly accommodate them.
 
 
 ### Registering Link Relation Types {#procedure}
@@ -465,7 +466,7 @@ Note that registered Relation Names are required to be lower-case ASCII letters.
 
 --- back
 
-# Link Serialisation in HTML
+# Link Serialisation in HTML {#html}
 
 HTML {{W3C.REC-html5-20141028}} motivated the original syntax of the Link header field, and many of
 the design decisions in this document are driven by a desire to stay compatible with it.
@@ -498,12 +499,12 @@ relation types coincide in the same link. Such links ought to be serialised in t
 using a single list of relation-types (e.g., rel="alternate stylesheet") to preserve this
 relationship.
 
-# Link Serialisation in Atom
+# Link Serialisation in Atom {#atom}
 
-Atom {{RFC4287}} conveys links in the atom:link element, with the "href" attribute indicating the
-link target and the "rel" attribute containing the relation type. The context of the link is either
-a feed locator or an entry ID, depending on where it appears; generally, feed-level links are
-obvious candidates for transmission as a Link header field.
+Atom {{RFC4287}} is a link serialisation that conveys links in the atom:link element, with the
+"href" attribute indicating the link target and the "rel" attribute containing the relation type.
+The context of the link is either a feed locator or an entry ID, depending on where it appears;
+generally, feed-level links are obvious candidates for transmission as a Link header field.
 
 When serialising an atom:link into a Link header field, it is necessary to convert link targets (if
 used) to URIs.
@@ -512,10 +513,9 @@ Atom defines extension relation types in terms of IRIs. This specification re-de
 to simplify and reduce errors in their comparison.
 
 Atom allows registered link relation types to be serialised as absolute URIs using a prefix,
-"http://www.iana.org/assignments/relation/". This prefix is specific to Atom as an application of
-linking.
+"http://www.iana.org/assignments/relation/". This prefix is specific to the Atom serialisation.
 
-Furthermore, Atom link relation types are always compared in a case-sensitive fashion; therefore,
+Furthermore, link relation types are always compared in a case-sensitive fashion; therefore,
 registered link relation types SHOULD be converted to their registered form (usually, lowercase)
 when serialised in an Atom document.
 
