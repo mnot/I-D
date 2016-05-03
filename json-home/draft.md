@@ -24,19 +24,19 @@ author:
 normative:
   RFC2119:
   RFC3986:
-  RFC4627:
   RFC5226:
   RFC5988:
   RFC6570:
-  I-D.ietf-httpbis-p6-cache:
+  RFC7159:
+  RFC7234:
 
 informative:
   RFC5789:
   RFC6838:
-  I-D.ietf-httpbis-p4-conditional:
-  I-D.ietf-httpbis-p5-range:
-  I-D.ietf-httpbis-p7-auth:
-  I-D.snell-http-prefer:
+  RFC7232:
+  RFC7233:
+  RFC7235:
+  RFC7240:
   WADL:
     target: http://www.w3.org/Submission/wadl/
     title: Web Application Description Language
@@ -158,7 +158,7 @@ variable for use in that template.
 It also gives several hints about interacting with the latter "widget"
 resources, including the HTTP methods usable with them, the patch formats they
 accept, and the fact that they support partial requests
-{{I-D.ietf-httpbis-p5-range}} using the "bytes" range-specifier.
+{{RFC7233}} using the "bytes" range-specifier.
 
 It gives no such hints about the "widgets" resource. This does not mean that
 it (for example) doesn't support any HTTP methods; it means that the client
@@ -319,7 +319,7 @@ When this hint is present, "POST" SHOULD be listed in the "allow" hint.
 * Resource Hint Name: accept-ranges
 * Description: Hints the range-specifiers available to the client for this
   resource; equivalent to the Accept-Ranges HTTP response header
-  {{I-D.ietf-httpbis-p5-range}}.
+  {{RFC7233}}.
 * Specification: [this document]
 
 Content MUST be an array of strings, containing HTTP range-specifiers.
@@ -327,7 +327,7 @@ Content MUST be an array of strings, containing HTTP range-specifiers.
 ## accept-prefer
 
 * Resource Hint Name: accept-prefer
-* Description: Hints the preferences {{I-D.snell-http-prefer}} supported by the
+* Description: Hints the preferences {{RFC7240}} supported by the
   resource. Note that, as per that specifications, a preference can be ignored
   by the server.
 * Specification: [this document]
@@ -349,7 +349,7 @@ documentation that SHOULD be in HTML format.
 * Resource Hint Name: precondition-req
 * Description: Hints that the resource requires state-changing requests (e.g.,
   PUT, PATCH) to include a precondition, as per
-  {{I-D.ietf-httpbis-p4-conditional}}, to avoid conflicts due to concurrent
+  {{RFC7232}}, to avoid conflicts due to concurrent
   updates.
 * Specification: [this document]
 
@@ -360,7 +360,7 @@ Content MUST be an array of strings, with possible values "etag" and
 
 * Resource Hint Name: auth-req
 * Description: Hints that the resource requires authentication using the HTTP
-  Authentication Framework {{I-D.ietf-httpbis-p7-auth}}.
+  Authentication Framework {{RFC7235}}.
 * Specification: [this document]
 
 Content MUST be an array of objects, each with a "scheme" property containing
@@ -471,10 +471,10 @@ Note that the home document is a "living" document; it does not represent a
 "contract", but rather is expected to be inspected before each interaction. In
 particular, links from the home document MUST NOT be assumed to be valid
 beyond the freshness lifetime of the home document, as per HTTP's caching
-model {{I-D.ietf-httpbis-p6-cache}}.
+model {{RFC7234}}.
 
 As a result, clients SHOULD cache the home document (as per
-{{I-D.ietf-httpbis-p6-cache}}), to avoid fetching it before every interaction
+{{RFC7234}}), to avoid fetching it before every interaction
 (which would otherwise be required).
 
 Likewise, a client encountering a 404 Not Found on a link SHOULD obtain a
@@ -503,7 +503,7 @@ be discoverable by interacting with the resource.
 Hint names MUST be composed of the lowercase letters (a-z), digits (0-9),
 underscores ("_") and hyphens ("-"), and MUST begin with a lowercase letter.
 
-Hint content SHOULD be described in terms of JSON {{RFC4627}} constructs.
+Hint content SHOULD be described in terms of JSON {{RFC7159}} constructs.
 
 New hints are registered using the Expert Review process described in
 {{RFC5226}} to enforce the criteria above. Requests for registration of new
