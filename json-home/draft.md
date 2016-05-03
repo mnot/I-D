@@ -48,11 +48,6 @@ informative:
     title: Microformats
     author:
       - organization: microformats.org
-  apps-discuss:
-    target: https://www.ietf.org/mailman/listinfo/apps-discuss
-    title: IETF Apps-Discuss Mailing List
-    author:
-      - organization: IETF
 
 --- abstract
 
@@ -96,7 +91,7 @@ interact with the server. Just as with a human-targeted "home page" for a site, 
 
 Of course, an HTTP API might use any format to do so; however, there are advantages to having a
 standard home document format. This specification suggests one for consideration, using t
-he JSON format {{RFC4627}}.
+he JSON format {{RFC7159}}.
 
 
 ## Notational Conventions
@@ -108,7 +103,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # JSON Home Documents
 
-A JSON Home Document uses the format described in {{RFC4627}} and has the media type
+A JSON Home Document uses the format described in {{RFC7159}} and has the media type
 "application/json-home".
 
 Its content consists of a root object with a "resources" property, whose member names are link
