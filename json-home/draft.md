@@ -164,12 +164,12 @@ type. This means that several link relations might apply to a common base URL; e
 ~~~
 {
   "resources": {
-  	"http://example.org/rel/search-by-id": {
-    	"href-template": "/search?id={widget_id}",
-  		"href-vars": {
-  		  "widget_id": "http://example.org/param/widget"
-  		}
-  	},
+    "http://example.org/rel/search-by-id": {
+      "href-template": "/search?id={widget_id}",
+      "href-vars": {
+        "widget_id": "http://example.org/param/widget"
+      }
+    },
     "http://example.org/rel/search-by-name": {
       "href-template": "/search?name={widget_name}",
       "href-vars": {
