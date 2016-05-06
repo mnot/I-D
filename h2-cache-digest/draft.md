@@ -29,7 +29,9 @@ author:
 
 normative:
   RFC2119:
+  RFC2818:
   RFC3986:
+  RFC4648:
   RFC6234:
   RFC6454:
   RFC7234:
@@ -37,11 +39,12 @@ normative:
 
 informative:
   RFC6265:
+  RFC7541:
 
 
 --- abstract
 
-This specification defines a HTTP/2 frame type to allow clients to inform the server of their
+This specification defines a HTTP request header to allow clients to inform the server of their
 cache's contents. Servers can then use this to inform their choices of what to push to clients.
 
 
@@ -68,7 +71,7 @@ represents opportunity cost, because it could be used by other, more relevant re
 allows a stream to be cancelled by a client using a RST_STREAM frame in this situation, but there
 is still at least one round trip of potentially wasted capacity even then.
 
-This specification defines a HTTP/2 frame type to allow clients to inform the server of their
+This specification defines a HTTP request header to allow clients to inform the server of their
 cache's contents using a Golumb-Rice Coded Set. Servers can then use this to inform their choices
 of what to push to clients.
 
@@ -80,42 +83,92 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# The CACHE_DIGEST Frame
+# The Cache-Digest Header Field
 
-The CACHE_DIGEST frame type is 0xf1. NOTE: This is an experimental value; if standardised, a permanent value will be assigned.
-
-A CACHE_DIGEST frame can be sent from a client to a server on any stream in the "open" state, and
-conveys a digest of the contents of the cache associated with that stream, as explained in
+The Cache-Digest HTTP request header field conveys a digest of the contents of the cache
+associated with that request, as explained in
 {{computing}}.
 
-In typical use, a client will send CACHE_DIGEST immediately after the first request on a connection
-for a given origin, on the same stream, because there is usually a short period of inactivity then,
-and servers can benefit most when they understand the state of the cache before they begin pushing
-associated assets (e.g., CSS, JavaScript and images).
-
-Clients MAY send CACHE_DIGEST at other times, but servers ought not expect frequent updates;
-instead, if they wish to continue to utilise the digest, they will need update it with responses
-sent to that client on the connection.
-
-Servers MUST NOT use any but the most recent CACHE_DIGEST for a given origin as current, and MUST
-treat an empty Digest-Value as effectively clearing all stored digests for that origin.
-
-CACHE_DIGEST has no defined meaning when sent from servers to clients, and MAY be ignored.
+In typical use, a server will use the value of the request header to determine which associated
+assets (e.g., CSS, JavaScript and images) should be pushed to the client along with the response
+to the request.
 
 ~~~~
-+---------------------------------------------------------------+
-|         Digest-Value? (*)                    ...
-+---------------------------------------------------------------+
+  cache-digest      = 1#digest-element
+  digest-element    = digest-value *(OWS ";" OWS digest-parameter)
+  digest-value      = unreserved
+  digest-parameter  = token "=" (token / quoted-string)
 ~~~~
 
-The CACHE_DIGEST frame payload has the following fields:
+Digest-value contains a digest of the contents of the cache associated with the request
+as computed in {{computing}}.  Scope and Role of the value is defined by the four parameters
+defined by this specification: "type", "codec", "host", "path".  A server MUST ignore unknown
+parameters.
 
-* Digest-Value: An optional sequence of octets containing the digest as computed in {{computing}}.
+The only value of the "type" parameter defined in this specification is "fresh".  The only
+value of the "codec" parameter defined in this specification is "gcs-sha256".  A client MAY
+omit the parameters; if not present, the values are assumed to be "fresh" and "gcs-sha256".
+
+A server MUST ignore a digest-element with unknown "type" or "codec".
+
+As an example, the cache-digest header of the HTTP request below contains a cache digest
+of resources obtained from "example.com", indicating that the "https://example.com/style.css"
+and "https://example.com/script.js" exist as fresh entries in the cache.
+
+~~~~
+  GET / HTTP/1.1
+  Host: example.com
+  Cache-Digest: CgRSlw
+~~~~
+
+A client MAY express its cache digest using more than one digest-element.  When HPACK {{RFC7541}}
+is used, it is possible for a client to achieve better compression ratio by resubmitting the
+Cache-Digest header included in the previous requests at the same time storing the digests
+for recently-obtained resources in a separate cache-digest header.
+
+The example below uses two "Cache-Digest" headers to indicate that the client is in possesion
+of three fresh resources: "https://example.com/style.css", "https://example.com/script.js",
+"https://example.com/icon.ico".
+
+~~~~
+  GET / HTTP/1.1
+  Host: example.com
+  Cache-Digest: CgRSlw
+  Cache-Digest: Chxf
+~~~~
+
+## The Host Parameter
+
+The "host" parameter modifies the scope of the digest-value.
+
+If present, the scope of the digest-value is the resources belonging to the specified host.
+If "https" scheme is used, the parameter MAY contain a wildcard character "*".  In such case,
+the scope of the digest-value is the resources belonging to all the hosts that match against
+the value of the parameter as defined in {{RFC2818}}, Section 3. The value SHOULD be a subset
+of the hosts the server is authoritative of.
+
+If not present, the scope of the digest-value is the authority of the target URI.
+
+Typically, a client can use the field to specify that it is sending a cache digest for entire
+host, or for multiple hosts that match against a wildcard certificate provided by a server.
+
+## The Path Parameter
+
+The "path" parameter narrows the scope of the digest-value.
+
+If present, the scope of the digest-value is the resources matching to at least one of the following conditions:
+
+* the parameter is identical to the path of the resource
+* the paramater is a prefix of the path of the resource, and the parameter ends with "/"
+* the parameter is a prefix of the path of the resource, and the first character of the path not included in the parameter is "/"
+
+If not present, the scope is solely governed by the rules described for the "host" parameter.
 
 ## Computing the Digest-Value {#computing}
 
-The set of URLs that is used to compute Digest-Value MUST only include URLs that share origins
-{{RFC6454}} with the stream that CACHE_DIGEST is sent on, and they MUST be fresh {{RFC7234}}.
+The set of URLs that is used to compute digest-value MUST only include URLs that share the
+scheme with the target URI, fall into the scopes defined by both of the "host" and "path" parameters,
+and they MUST be fresh {{RFC7234}}.
 
 A client MAY choose a subset of the available stored responses to include in the set. Additionally,
 it MUST choose a parameter, `P`, that indicates the probability of a false positive it is willing
@@ -148,19 +201,19 @@ To compute a digest-value for the set `URLs` and `P`:
     8. Write `R` to `digest` as binary, using log2(P) bits.
     9. If `V` is the second-to-last member of `hash-values`, stop iterating through `hash-values` and continue to the next step.
 10. If the length of `digest` is not a multiple of 8, pad it with 1s until it is.
-
+11. Encode the value of the `digest` using base64url {{RFC4648}} encoding.
 
 # IANA Considerations
 
-This draft currently has no requirements for IANA. If the CACHE_DIGEST frame is standardised, it
-will need to be assigned a frame type.
+This draft currently has no requirements for IANA. If the Cache-Digest header is standardised, it
+will need to be registered to the "Message Headers" registry.
 
 # Security Considerations
 
 The contents of a User Agent's cache can be used to re-identify or "fingerprint" the user over
 time, even when other identifiers (e.g., Cookies {{RFC6265}}) are cleared. 
 
-CACHE_DIGEST allows such cache-based fingerprinting to become passive, since it allows the server
+Cache-Digest header allows such cache-based fingerprinting to become passive, since it allows the server
 to discover the state of the client's cache without any visible change in server behaviour.
 
 As a result, clients MUST mitigate for this threat when the user attempts to remove identifiers
@@ -170,11 +223,19 @@ change its contents.
 
 TODO: discuss how effective the suggested mitigations actually would be.
 
-Additionally, User Agents SHOULD NOT send CACHE_DIGEST when in "privacy mode."
+Additionally, User Agents SHOULD NOT send Cache-Digest header when in "privacy mode."
 
 
 --- back
 
+
+# Change Log
+
+## Since draft-kazuho-h2-cache-digest-00
+
+Use a HTTP request header (instead of a HTTP/2 frame) to express the digest.
+
+Change the number of bits required for encoding `N` and `P`.
 
 # Acknowledgements
 
