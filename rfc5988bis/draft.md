@@ -180,11 +180,11 @@ constrain the available representation media types of the link target. However, 
 the behaviours and properties of the target resource (e.g., allowable HTTP methods, request and
 response media types that must be supported).
 
-Historically, applications have sometimes referred to registered relation types with a URI
-{{RFC3986}} (e.g., {{atom}}) by prefixing their names with an application-defined base URI. This
-practice is NOT RECOMMENDED, because the resulting strings will not be considered equivalent to the
-registered relation types by other processors. Applications that do use such URIs internally MUST
-NOT use them in link serialisations that do not explicitly accommodate them.
+Historically, registered relation types have been identified with a URI {{RFC3986}} by prefixing
+their names with an application-defined base URI (e.g., see {{atom}}). This practice is NOT
+RECOMMENDED, because the resulting strings will not be considered equivalent to the registered
+relation types by other processors. Applications that do use such URIs internally MUST NOT use them
+in link serialisations that do not explicitly accommodate them.
 
 
 ### Registering Link Relation Types {#procedure}
