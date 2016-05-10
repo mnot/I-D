@@ -123,10 +123,10 @@ For example:
 
   {
     "resources": {
-      "http://example.org/rel/widgets": {
+      "tag:me@example.com,2016:widgets": {
         "href": "/widgets/"
       },
-      "http://example.org/rel/widget": {
+      "tag:me@example.com,2016:widget": {
         "href-template": "/widgets/{widget_id}",
         "href-vars": {
           "widget_id": "http://example.org/param/widget"
@@ -146,8 +146,8 @@ For example:
 ~~~
 
 Here, we have a home document that links to a resource, "/widgets/" with the relation
-"http://example.org/rel/widgets". It also links to an unknown number of resources with the relation
-type "http://example.org/rel/widget" using a URI Template {{RFC6570}}, along with a mapping of
+"tag:me@example.com,2016:widgets". It also links to an unknown number of resources with the relation
+type "tag:me@example.com,2016:widget" using a URI Template {{RFC6570}}, along with a mapping of
 identifiers to a variable for use in that template.
 
 It also gives several hints about interacting with the latter "widget" resources, including the
@@ -164,13 +164,13 @@ type. This means that several link relations might apply to a common base URL; e
 ~~~
 {
   "resources": {
-    "http://example.org/rel/search-by-id": {
+    "tag:me@example.com,2016:search-by-id": {
       "href-template": "/search?id={widget_id}",
       "href-vars": {
-        "widget_id": "http://example.org/param/widget"
+        "widget_id": "http://example.org/param/widget_id"
       }
     },
-    "http://example.org/rel/search-by-name": {
+    "tag:me@example.com,2016:search-by-name": {
       "href-template": "/search?name={widget_name}",
       "href-vars": {
         "widget_name": "http://example.org/param/widget_name"
@@ -179,6 +179,9 @@ type. This means that several link relations might apply to a common base URL; e
   }
 }
 ~~~
+
+Note that the examples above use both tag {{?RFC4151}} and http {{?RFC7230}} URIs; any URI scheme can be used to identify link relations and other artefacts in home documents.
+
 
 # Resource Objects
 
@@ -229,10 +232,10 @@ For example, given the following Resource Object:
   }
 ~~~
 
-If you understand that "http://example.org/param/widget" is an numeric identifier for a widget
-(perhaps by dereferencing that URL and reading the documentation), you can then find the resource
-corresponding to widget number 12345 at "http://example.org/widgets/12345" (assuming that the Home
-Document is located at "http://example.org/").
+If you understand that "http://example.org/param/widget" is an numeric identifier for a widget, you
+can then find the resource corresponding to widget number 12345 at
+"http://example.org/widgets/12345" (assuming that the Home Document is located at
+"http://example.org/").
 
 
 # Resource Hints {#resource_hints}
@@ -494,7 +497,7 @@ TBD
 # Acknowledgements
 
 Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Sven Dietze, Graham Klyne, Leif Hedstrom,
-Jeni Tennison, Erik Wilde and Jorge Williams for their suggestions and feedback.
+Joe Hildebrand, Jeni Tennison, Erik Wilde and Jorge Williams for their suggestions and feedback.
 
 
 # Frequently Asked Questions
