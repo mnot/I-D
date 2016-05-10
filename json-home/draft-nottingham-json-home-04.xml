@@ -121,10 +121,10 @@ relation types (as defined by <xref target="RFC5988"/>), and values are Resource
 
   {
     "resources": {
-      "http://example.org/rel/widgets": {
+      "tag:me@example.com,2016:widgets": {
         "href": "/widgets/"
       },
-      "http://example.org/rel/widget": {
+      "tag:me@example.com,2016:widget": {
         "href-template": "/widgets/{widget_id}",
         "href-vars": {
           "widget_id": "http://example.org/param/widget"
@@ -144,8 +144,8 @@ relation types (as defined by <xref target="RFC5988"/>), and values are Resource
 ]]></artwork></figure>
 
 <t>Here, we have a home document that links to a resource, “/widgets/” with the relation
-“http://example.org/rel/widgets”. It also links to an unknown number of resources with the relation
-type “http://example.org/rel/widget” using a URI Template <xref target="RFC6570"/>, along with a mapping of
+“tag:me@example.com,2016:widgets”. It also links to an unknown number of resources with the relation
+type “tag:me@example.com,2016:widget” using a URI Template <xref target="RFC6570"/>, along with a mapping of
 identifiers to a variable for use in that template.</t>
 
 <t>It also gives several hints about interacting with the latter “widget” resources, including the
@@ -162,13 +162,13 @@ type. This means that several link relations might apply to a common base URL; e
 <figure><artwork><![CDATA[
 {
   "resources": {
-    "http://example.org/rel/search-by-id": {
+    "tag:me@example.com,2016:search-by-id": {
       "href-template": "/search?id={widget_id}",
       "href-vars": {
-        "widget_id": "http://example.org/param/widget"
+        "widget_id": "http://example.org/param/widget_id"
       }
     },
-    "http://example.org/rel/search-by-name": {
+    "tag:me@example.com,2016:search-by-name": {
       "href-template": "/search?name={widget_name}",
       "href-vars": {
         "widget_name": "http://example.org/param/widget_name"
@@ -177,6 +177,8 @@ type. This means that several link relations might apply to a common base URL; e
   }
 }
 ]]></artwork></figure>
+
+<t>Note that the examples above use both tag <xref target="RFC4151"/> and http <xref target="RFC7230"/> URIs; any URI scheme can be used to identify link relations and other artefacts in home documents.</t>
 
 </section>
 <section anchor="resource-objects" title="Resource Objects">
@@ -228,10 +230,10 @@ and syntax of those variables.</t>
   }
 ]]></artwork></figure>
 
-<t>If you understand that “http://example.org/param/widget” is an numeric identifier for a widget
-(perhaps by dereferencing that URL and reading the documentation), you can then find the resource
-corresponding to widget number 12345 at “http://example.org/widgets/12345” (assuming that the Home
-Document is located at “http://example.org/”).</t>
+<t>If you understand that “http://example.org/param/widget” is an numeric identifier for a widget, you
+can then find the resource corresponding to widget number 12345 at
+“http://example.org/widgets/12345” (assuming that the Home Document is located at
+“http://example.org/”).</t>
 
 </section>
 </section>
@@ -763,13 +765,44 @@ criteria above. Requests for registration of new resource hints are to use the f
 </reference>
 
 
+
+
+<reference  anchor='RFC4151' target='http://www.rfc-editor.org/info/rfc4151'>
+<front>
+<title>The 'tag' URI Scheme</title>
+<author initials='T.' surname='Kindberg' fullname='T. Kindberg'><organization /></author>
+<author initials='S.' surname='Hawke' fullname='S. Hawke'><organization /></author>
+<date year='2005' month='October' />
+<abstract><t>This document describes the &quot;tag&quot; Uniform Resource Identifier (URI) scheme.  Tag URIs (also known as &quot;tags&quot;) are designed to be unique across space and time while being tractable to humans.  They are distinct from most other URIs in that they have no authoritative resolution mechanism.  A tag may be used purely as an entity identifier.  Furthermore, using tags has some advantages over the common practice of using &quot;http&quot; URIs as identifiers for non-HTTP-accessible resources.  This memo provides information for the Internet community.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='4151'/>
+<seriesInfo name='DOI' value='10.17487/RFC4151'/>
+</reference>
+
+
+
+<reference  anchor='RFC7230' target='http://www.rfc-editor.org/info/rfc7230'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the &quot;http&quot; and &quot;https&quot; Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7230'/>
+<seriesInfo name='DOI' value='10.17487/RFC7230'/>
+</reference>
+
+
+
+
     </references>
 
 
 <section anchor="acknowledgements" title="Acknowledgements">
 
 <t>Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Sven Dietze, Graham Klyne, Leif Hedstrom,
-Jeni Tennison, Erik Wilde and Jorge Williams for their suggestions and feedback.</t>
+Joe Hildebrand, Jeni Tennison, Erik Wilde and Jorge Williams for their suggestions and feedback.</t>
 
 </section>
 <section anchor="frequently-asked-questions" title="Frequently Asked Questions">
