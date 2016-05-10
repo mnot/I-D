@@ -227,8 +227,7 @@ resource that contains a definition of the semantics of the relation type, clien
 automatically access that resource to avoid overburdening its server.
 
 The URI used for an extension relation type SHOULD be under the control of the person or party
-defining it, or be delegated to them. These URIs also SHOULD NOT use the base URI defined by an
-application for registered relation types (as per {{registered}}).
+defining it, or be delegated to them.
 
 When extension relation types are compared, they MUST be compared as strings (after converting to
 URIs if serialised in a different format, such as a XML QNames {{W3C.REC-xml-names-20091208}}) in a
