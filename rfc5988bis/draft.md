@@ -525,6 +525,85 @@ As with HTML, atom:link defines some attributes that are not explicitly mirrored
 field syntax, but they can also be used as link-extensions to maintain fidelity.
 
 
+# Suggested Algorithm for Parsing Link Header Values {#parse}
+
+Given a HTTP header field-value `field_value` as a string assuming ASCII encoding, the following
+algorithm can be used to parse it into the model described by this specification:
+
+1. Let `links` be an empty list.
+
+2. Create `link_strings` by splitting `field_value` on "," characters, excepting "," characters
+within quoted strings as per {{RFC7230}}, Section 3.2.6.
+
+3. For each `link_string` in `link_strings`:
+
+   1. Let `target_string` be the string between the first "<" and first ">" characters in
+     `link_string`. If they do not appear, or do not appear in that order, fail parsing.
+
+   2. Let `rest` be the remaining characters (if any) after the first ">" character in
+     `link_string`.
+
+   3. Split `rest` into an array of strings `parameter_strings`, on the ";" character, excepting
+     ";" characters within quoted strings as per {{RFC7230}}, Section 3.2.6.
+
+   4. Let `link_parameters` be an empty array.
+
+   5. For each item `parameter` in `parameter_strings`:
+
+      1. Remove whitespace from the beginning and end of `parameter`.
+
+      2. Split `parameter` into `param_name` and `param_value` on the first "=" character. If
+        `parameter` does not contain "=", let `param_name` be `parameter` and `param_value` be null.
+
+      3. Remove whitespace from the end of `param_name` and the beginning of `param_value`.
+
+      4. Case-normalise `param_name` to lowercase.
+
+      5. If the first and last characters of `param_value` are both DQUOTE:
+
+         1. Remove the first and last characters of `param_value`.
+
+         2. Replace quoted-pairs within `param_value` with the octet following the backslash, as
+            per {{RFC7230}}, Section 3.2.6.
+
+      6. Append the tuple (`param_name`, `param_value`) to `link_parameters`.
+
+   6. Let `target` be the result of relatively resolving (as per {{RFC3986}}, Section 5.2)
+     `target_string`. Note that any base URI carried in the payload body is NOT used.
+
+   7. Let `relations_string` be the first tuple of `link_parameters` whose first item matches the
+     string "rel", or the empty string ("") if it is not present.
+
+   8. Split `relations_string` into an array of strings `relation_types`, on whitespace (removing
+     all whitespace in the process).
+
+   9. Let `context_string` be the first tuple of `link_parameters` whose first item matches the
+     string "anchor". If it is not present, `context_string` is the identity of the representation
+     carrying the Link header {{RFC7231}}, Section 3.1.4.1, serialised as a URI.
+
+   0. Let `context` be the result of relatively resolving (as per {{RFC3986}}, Section 5.2)
+      `context_string`. Note that any base URI carried in the payload body is NOT used.
+
+   1. Let `target_attributes` be an empty array.
+
+   2. For each tuple (`param_name`, `param_value`) of `link_parameters`:
+
+      1. If `param_name` matches "rel" or "anchor", skip this tuple.
+
+      2. If the last character of `param_name` is "\*", decode `param_value` according to
+         {{I-D.ietf-httpbis-rfc5987bis}}.
+
+      3. Append (`param_name`, `param_value`) to `target_attributes`.
+
+   3. For each `relation_type` in `relation_types`:
+
+      1. Case-normalise `relation_type` to lowercase.
+
+      2. Append a link object to `links` with the target `target`, relation type of
+         `relation_type`, context of `context`, and target attributes `target_attributes`.
+
+4. Return `links`.
+
 
 # Changes from RFC5988
 
@@ -558,3 +637,6 @@ This specification has the following differences from its predecessor, RFC5988:
 * Clarified the cardinality of target attributes (generically and for "type").
 
 * Corrected the default link context for the Link header field, to be dependent upon the identity of the representation (as per RFC7231).
+
+* Defined a suggested parsing algorithm for the Link header.
+

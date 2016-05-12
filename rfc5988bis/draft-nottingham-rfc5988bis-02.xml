@@ -176,11 +176,11 @@ constrain the available representation media types of the link target. However, 
 the behaviours and properties of the target resource (e.g., allowable HTTP methods, request and
 response media types that must be supported).</t>
 
-<t>Historically, applications have sometimes referred to registered relation types with a URI
-<xref target="RFC3986"/> (e.g., <xref target="atom"/>) by prefixing their names with an application-defined base URI. This
-practice is NOT RECOMMENDED, because the resulting strings will not be considered equivalent to the
-registered relation types by other processors. Applications that do use such URIs internally MUST
-NOT use them in link serialisations that do not explicitly accommodate them.</t>
+<t>Historically, registered relation types have been identified with a URI <xref target="RFC3986"/> by prefixing
+their names with an application-defined base URI (e.g., see <xref target="atom"/>). This practice is NOT
+RECOMMENDED, because the resulting strings will not be considered equivalent to the registered
+relation types by other processors. Applications that do use such URIs internally MUST NOT use them
+in link serialisations that do not explicitly accommodate them.</t>
 
 <section anchor="procedure" title="Registering Link Relation Types">
 
@@ -939,6 +939,64 @@ link, atom:link does not. In this case, a single link-value may map to several a
 field syntax, but they can also be used as link-extensions to maintain fidelity.</t>
 
 </section>
+<section anchor="parse" title="Suggested Algorithm for Parsing Link Header Values">
+
+<t>Given a HTTP header field-value <spanx style="verb">field_value</spanx> as a string assuming ASCII encoding, the following
+algorithm can be used to parse it into the model described by this specification:</t>
+
+<t><list style="numbers">
+  <t>Let <spanx style="verb">links</spanx> be an empty list.</t>
+  <t>Create <spanx style="verb">link_strings</spanx> by splitting <spanx style="verb">field_value</spanx> on “,” characters, excepting “,” characters
+within quoted strings as per <xref target="RFC7230"/>, Section 3.2.6.</t>
+  <t>For each <spanx style="verb">link_string</spanx> in <spanx style="verb">link_strings</spanx>:  <list style="numbers">
+      <t>Let <spanx style="verb">target_string</spanx> be the string between the first “&lt;” and first “&gt;” characters in
+  <spanx style="verb">link_string</spanx>. If they do not appear, or do not appear in that order, fail parsing.</t>
+      <t>Let <spanx style="verb">rest</spanx> be the remaining characters (if any) after the first “&gt;” character in
+  <spanx style="verb">link_string</spanx>.</t>
+      <t>Split <spanx style="verb">rest</spanx> into an array of strings <spanx style="verb">parameter_strings</spanx>, on the “;” character, excepting
+  “;” characters within quoted strings as per <xref target="RFC7230"/>, Section 3.2.6.</t>
+      <t>Let <spanx style="verb">link_parameters</spanx> be an empty array.</t>
+      <t>For each item <spanx style="verb">parameter</spanx> in <spanx style="verb">parameter_strings</spanx>:      <list style="numbers">
+          <t>Remove whitespace from the beginning and end of <spanx style="verb">parameter</spanx>.</t>
+          <t>Split <spanx style="verb">parameter</spanx> into <spanx style="verb">param_name</spanx> and <spanx style="verb">param_value</spanx> on the first “=” character. If
+  <spanx style="verb">parameter</spanx> does not contain “=”, let <spanx style="verb">param_name</spanx> be <spanx style="verb">parameter</spanx> and <spanx style="verb">param_value</spanx> be null.</t>
+          <t>Remove whitespace from the end of <spanx style="verb">param_name</spanx> and the beginning of <spanx style="verb">param_value</spanx>.</t>
+          <t>Case-normalise <spanx style="verb">param_name</spanx> to lowercase.</t>
+          <t>If the first and last characters of <spanx style="verb">param_value</spanx> are both DQUOTE:          <list style="numbers">
+              <t>Remove the first and last characters of <spanx style="verb">param_value</spanx>.</t>
+              <t>Replace quoted-pairs within <spanx style="verb">param_value</spanx> with the octet following the backslash, as
+per <xref target="RFC7230"/>, Section 3.2.6.</t>
+            </list></t>
+          <t>Append the tuple (<spanx style="verb">param_name</spanx>, <spanx style="verb">param_value</spanx>) to <spanx style="verb">link_parameters</spanx>.</t>
+        </list></t>
+      <t>Let <spanx style="verb">target</spanx> be the result of relatively resolving (as per <xref target="RFC3986"/>, Section 5.2)
+  <spanx style="verb">target_string</spanx>. Note that any base URI carried in the payload body is NOT used.</t>
+      <t>Let <spanx style="verb">relations_string</spanx> be the first tuple of <spanx style="verb">link_parameters</spanx> whose first item matches the
+  string “rel”, or the empty string (“”) if it is not present.</t>
+      <t>Split <spanx style="verb">relations_string</spanx> into an array of strings <spanx style="verb">relation_types</spanx>, on whitespace (removing
+  all whitespace in the process).</t>
+      <t>Let <spanx style="verb">context_string</spanx> be the first tuple of <spanx style="verb">link_parameters</spanx> whose first item matches the
+  string “anchor”. If it is not present, <spanx style="verb">context_string</spanx> is the identity of the representation
+  carrying the Link header <xref target="RFC7231"/>, Section 3.1.4.1, serialised as a URI.</t>
+      <t>Let <spanx style="verb">context</spanx> be the result of relatively resolving (as per <xref target="RFC3986"/>, Section 5.2)
+<spanx style="verb">context_string</spanx>. Note that any base URI carried in the payload body is NOT used.</t>
+      <t>Let <spanx style="verb">target_attributes</spanx> be an empty array.</t>
+      <t>For each tuple (<spanx style="verb">param_name</spanx>, <spanx style="verb">param_value</spanx>) of <spanx style="verb">link_parameters</spanx>:      <list style="numbers">
+          <t>If <spanx style="verb">param_name</spanx> matches “rel” or “anchor”, skip this tuple.</t>
+          <t>If the last character of <spanx style="verb">param_name</spanx> is “*”, decode <spanx style="verb">param_value</spanx> according to
+<xref target="I-D.ietf-httpbis-rfc5987bis"/>.</t>
+          <t>Append (<spanx style="verb">param_name</spanx>, <spanx style="verb">param_value</spanx>) to <spanx style="verb">target_attributes</spanx>.</t>
+        </list></t>
+      <t>For each <spanx style="verb">relation_type</spanx> in <spanx style="verb">relation_types</spanx>:      <list style="numbers">
+          <t>Case-normalise <spanx style="verb">relation_type</spanx> to lowercase.</t>
+          <t>Append a link object to <spanx style="verb">links</spanx> with the target <spanx style="verb">target</spanx>, relation type of
+<spanx style="verb">relation_type</spanx>, context of <spanx style="verb">context</spanx>, and target attributes <spanx style="verb">target_attributes</spanx>.</t>
+        </list></t>
+    </list></t>
+  <t>Return <spanx style="verb">links</spanx>.</t>
+</list></t>
+
+</section>
 <section anchor="changes-from-rfc5988" title="Changes from RFC5988">
 
 <t>This specification has the following differences from its predecessor, RFC5988:</t>
@@ -960,6 +1018,7 @@ Atom links.</t>
   <t>More carefully defined and used “link serialisations” and “link applications.”</t>
   <t>Clarified the cardinality of target attributes (generically and for “type”).</t>
   <t>Corrected the default link context for the Link header field, to be dependent upon the identity of the representation (as per RFC7231).</t>
+  <t>Defined a suggested parsing algorithm for the Link header.</t>
 </list></t>
 
 </section>
