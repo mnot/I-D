@@ -303,9 +303,9 @@ request.
 
 ## Relation Type
 
-The relation type of a link is conveyed in the "rel" parameter's value. The "rel" parameter MUST
-NOT appear more than once in a given link-value; occurrences after the first MUST be ignored by
-parsers.
+The relation type of a link conveyed in the Link header field is conveyed in the "rel" parameter's
+value. The "rel" parameter MUST NOT appear more than once in a given link-value; occurrences after
+the first MUST be ignored by parsers.
 	
 The "rev" parameter has been used in the past to indicate that the semantics of the relationship
 are in the reverse direction. That is, a link from A to B with REL="X" expresses the same
@@ -319,8 +319,8 @@ in the header field itself).
 
 ## Target Attributes
 
-The "hreflang", "media", "title", "title\*", "type", and any link-extension link-params are
-considered to be target attributes for the link.
+The "hreflang", "media", "title", "title\*", "type", and any link-extension link-params of a Link
+header field are considered to be target attributes for the link.
 
 The "hreflang" attribute, when present, is a hint indicating what the language of the result of
 dereferencing the link should be. Note that this is only a hint; for example, it does not override
