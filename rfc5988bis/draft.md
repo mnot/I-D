@@ -21,7 +21,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: http://www.mnot.net/
 
@@ -38,7 +38,7 @@ normative:
   RFC7231:
   W3C.CR-css3-mediaqueries-20090915:
   I-D.ietf-httpbis-rfc5987bis:
-  
+
 informative:
   RFC2068:
   RFC2616:
@@ -109,7 +109,7 @@ In this specification, a link is a typed connection between two resources, and i
 * a *link relation type* ({{link-relation-types}}),
 * a *link target*, and
 * optionally, *target attributes*.
-      
+
 A link can be viewed as a statement of the form "{link context} has a {link relation type} resource
 at {link target}, which has {target attributes}".
 
@@ -174,7 +174,7 @@ Registered relation type names MUST conform to the reg-rel-type rule, and MUST b
 character-by-character in a case-insensitive fashion. They SHOULD be appropriate to the specificity
 of the relation type; i.e., if the semantics are highly specific to a particular application, the
 name should reflect that, so that more general names are available for less specific use.
-			
+
 Registered relation types MUST NOT constrain the media type of the link context, and MUST NOT
 constrain the available representation media types of the link target. However, they can specify
 the behaviours and properties of the target resource (e.g., allowable HTTP methods, request and
@@ -193,13 +193,13 @@ Relation types are registered on the advice of a Designated Expert (appointed by
 delegate), with a Specification Required (using terminology from {{RFC5226}}).
 
 The Expert(s) will establish procedures for requesting registrations, and make them available from
-the registry page. 
+the registry page.
 
 Registration requests consist of at least the following information:
 
-* Relation Name: 
+* Relation Name:
 * Description:
-* Reference: 
+* Reference:
 
 The Expert(s) MAY define additional fields to be collected in the registry.
 
@@ -242,7 +242,7 @@ specify that they are expressed in another form, as long as they can be converte
 
 The Link header field provides a means for serialising one or more links into HTTP headers.
 
-	Link           = "Link" ":" #link-value  
+	Link           = "Link" ":" #link-value
 	link-value     = "<" URI-Reference ">" *( ";" link-param )
 	link-param     = ( ( "rel" "=" relation-types )
 	             | ( "anchor" "=" <"> URI-Reference <"> )
@@ -261,10 +261,10 @@ The Link header field provides a means for serialising one or more links into HT
 	                            ; extensions. Whitespace NOT
 	                            ; allowed in between.
 	ptoken         = 1*ptokenchar
-	ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "(" 
-	             | ")" | "*" | "+" | "-" | "." | "/" | DIGIT 
-	             | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA 
-	             | "[" | "]" | "^" | "_" | "`" | "{" | "|" 
+	ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "("
+	             | ")" | "*" | "+" | "-" | "." | "/" | DIGIT
+	             | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA
+	             | "[" | "]" | "^" | "_" | "`" | "{" | "|"
 	             | "}" | "~"
 	media-type     = type-name "/" subtype-name
 	quoted-mt      = <"> media-type <">
@@ -280,23 +280,23 @@ Each link-value conveys one target IRI as a URI-Reference (after conversion to o
 see {{RFC3987}}, Section 3.1) inside angle brackets ("&lt;&gt;"). If the URI-Reference is relative,
 parsers MUST resolve it as per {{RFC3986}}, Section 5. Note that any base IRI from the message's
 content is not applied.
-		
+
 ## Link Context
 
 By default, the context of a link conveyed in the Link header field is identity of the
 representation it is associated with, as defined in {{RFC7231}}, Section 3.1.4.1, serialised as a
 URI.
-				
+
 When present, the anchor parameter overrides this with another URI, such as a fragment of this
 resource, or a third resource (i.e., when the anchor value is an absolute URI). If the anchor
 parameter's value is a relative URI, parsers MUST resolve it as per {{RFC3986}}, Section 5. Note
 that any base URI from the body's content is not applied.
-				
+
 Consuming implementations can choose to ignore links with an anchor parameter. For example, the
 application in use might not allow the link context to be assigned to a different resource. In such
 cases, the entire link is to be ignored; consuming implementations MUST NOT process the link
 without applying the anchor.
-				
+
 Note that depending on HTTP status code and response headers, the link context might be "anonymous"
 (i.e., no link context is available). For instance, this is the case on a 404 response to a GET
 request.
@@ -306,16 +306,15 @@ request.
 The relation type of a link conveyed in the Link header field is conveyed in the "rel" parameter's
 value. The "rel" parameter MUST NOT appear more than once in a given link-value; occurrences after
 the first MUST be ignored by parsers.
-	
+
 The "rev" parameter has been used in the past to indicate that the semantics of the relationship
 are in the reverse direction. That is, a link from A to B with REL="X" expresses the same
 relationship as a link from B to A with REV="X". "rev" is deprecated by this specification because
 it often confuses authors and readers; in most cases, using a separate relation type is preferable.
-		
+
 Note that extension relation types are REQUIRED to be absolute URIs in Link headers, and MUST be
 quoted if they contain a semicolon (";") or comma (",") (as these characters are used as delimiters
 in the header field itself).
-	
 
 ## Target Attributes
 
@@ -343,7 +342,7 @@ contain language information as per {{I-D.ietf-httpbis-rfc5987bis}}. The "title\
 NOT appear more than once in a given link-value; occurrences after the first MUST be ignored by
 parsers. If the attribute does not contain language information, its language is indicated by the
 Content-Language header field (when present).
-			
+
 If both the "title" and "title\*" attributes appear in a link-value, processors SHOULD use the
 "title\*" attribute's value.
 
@@ -362,7 +361,7 @@ For example:
 	      title="previous chapter"
 
 indicates that "chapter2" is previous to this resource in a logical navigation path.
-		
+
 Similarly,
 
 	Link: </>; rel="http://example.net/foo"
@@ -384,7 +383,7 @@ contains the Unicode code point U+00E4 ("LATIN SMALL LETTER A WITH DIAERESIS").
 Note that link-values can convey multiple links between the same link target and link context; for
 example:
 
-	Link: <http://example.org/>; 
+	Link: <http://example.org/>;
 	      rel="start http://example.net/relation/other"
 
 Here, the link to "http://example.org/" has the registered relation type "start" and the extension
@@ -423,7 +422,7 @@ IANA will publish:
   * The raw registry data
   * The registry data, transformed into HTML
   * The registry data in any alternative formats provided by the Expert(s)
-  
+
 Each published document will be at a URL agreed to by IANA and the Expert(s), and IANA will
 set HTTP response headers on them as (reasonably) requested by the Expert(s).
 
@@ -477,7 +476,7 @@ of the link is the URI associated with the entire HTML document.
 All of the link relation types defined by HTML have been included in the Link Relation Type
 registry, so they can be used without modification. However, there are several potential ways to
 serialise extension relation types into HTML, including:
-		
+
 * As absolute URIs,
 * using the RDFa {{W3C.REC-html-rdfa-20150317}} convention of mapping token
   prefixes to URIs (in a manner similar to XML name spaces).
@@ -611,7 +610,7 @@ This specification has the following differences from its predecessor, RFC5988:
 
 * The initial relation type registrations were removed, since they've already been registered by
   5988.
-  
+
 * The introduction has been shortened.
 
 * The Link Relation Application Data Registry has been removed.
@@ -629,7 +628,7 @@ This specification has the following differences from its predecessor, RFC5988:
 
 * Removed misleading statement that the link header field is semantically equivalent to HTML and
   Atom links.
-  
+
 * More carefully defined how the Experts and IANA should interact.
 
 * More carefully defined and used "link serialisations" and "link applications."
