@@ -55,7 +55,7 @@ informative:
 This specification defines a way to indicate the relationships between resources on the Web
 ("links") and the type of those relationships ("link relation types").
 
-It also defines the use of such links in HTTP headers with the Link header field.
+It also defines the serialisation of such links in HTTP headers with the Link header field.
 
 
 --- note_Note_to_Readers
