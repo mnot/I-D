@@ -322,35 +322,35 @@ in the header field itself).
 The "hreflang", "media", "title", "title\*", "type", and any link-extension link-params are
 considered to be target attributes for the link.
 
-The "hreflang" parameter, when present, is a hint indicating what the language of the result of
+The "hreflang" attribute, when present, is a hint indicating what the language of the result of
 dereferencing the link should be. Note that this is only a hint; for example, it does not override
 the Content-Language header field of a HTTP response obtained by actually following the link.
-Multiple "hreflang" parameters on a single link-value indicate that multiple languages are
+Multiple "hreflang" attributes on a single link-value indicate that multiple languages are
 available from the indicated resource.
 
-The "media" parameter, when present, is used to indicate intended destination medium or media for
+The "media" attribute, when present, is used to indicate intended destination medium or media for
 style information (see {{W3C.REC-html5-20141028}}, Section 4.2.4). Its value MUST be quoted if it
-contains a semicolon (";") or comma (","), and there MUST NOT be more than one "media" parameter in
+contains a semicolon (";") or comma (","), and there MUST NOT be more than one "media" attribute in
 a link-value.
 
-The "title" parameter, when present, is used to label the destination of a link such that it can be
+The "title" attribute, when present, is used to label the destination of a link such that it can be
 used as a human-readable identifier (e.g., a menu entry) in the language indicated by the
-Content-Language header field (if present). The "title" parameter MUST NOT appear more than once in
+Content-Language header field (if present). The "title" attribute MUST NOT appear more than once in
 a given link-value; occurrences after the first MUST be ignored by parsers.
 
-The "title\*" parameter can be used to encode this label in a different character set, and/or
-contain language information as per {{I-D.ietf-httpbis-rfc5987bis}}. The "title\*" parameter MUST
+The "title\*" attribute can be used to encode this label in a different character set, and/or
+contain language information as per {{I-D.ietf-httpbis-rfc5987bis}}. The "title\*" attribute MUST
 NOT appear more than once in a given link-value; occurrences after the first MUST be ignored by
-parsers. If the parameter does not contain language information, its language is indicated by the
+parsers. If the attribute does not contain language information, its language is indicated by the
 Content-Language header field (when present).
 			
-If both the "title" and "title\*" parameters appear in a link-value, processors SHOULD use the
-"title\*" parameter's value.
+If both the "title" and "title\*" attributes appear in a link-value, processors SHOULD use the
+"title\*" attribute's value.
 
-The "type" parameter, when present, is a hint indicating what the media type of the result of
+The "type" attribute, when present, is a hint indicating what the media type of the result of
 dereferencing the link should be. Note that this is only a hint; for example, it does not override
 the Content-Type header field of a HTTP response obtained by actually following the link. The
-"type" parameter MUST NOT appear more than once in a given link-value; occurrences after the first
+"type" attribute MUST NOT appear more than once in a given link-value; occurrences after the first
 MUST be ignored by parsers.
 
 
