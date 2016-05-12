@@ -238,7 +238,7 @@ Note that while extension relation types are required to be URIs, a serialisatio
 specify that they are expressed in another form, as long as they can be converted to URIs.
 
 
-# Link Serialisation in the Link HTTP Header Field {#header}
+# Link Serialisation in HTTP Headers {#header}
 
 The Link header field provides a means for serialising one or more links into HTTP headers.
 
