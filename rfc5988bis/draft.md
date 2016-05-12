@@ -330,8 +330,8 @@ available from the indicated resource.
 
 The "media" attribute, when present, is used to indicate intended destination medium or media for
 style information (see {{W3C.REC-html5-20141028}}, Section 4.2.4). Its value MUST be quoted if it
-contains a semicolon (";") or comma (","), and there MUST NOT be more than one "media" attribute in
-a link-value.
+contains a semicolon (";") or comma (","). There MUST NOT be more than one "media" attribute in
+a link-value; occurrences after the first MUST be ignored by parsers.
 
 The "title" attribute, when present, is used to label the destination of a link such that it can be
 used as a human-readable identifier (e.g., a menu entry) in the language indicated by the
