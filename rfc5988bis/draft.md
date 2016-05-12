@@ -525,7 +525,7 @@ As with HTML, atom:link defines some attributes that are not explicitly mirrored
 field syntax, but they can also be used as link-extensions to maintain fidelity.
 
 
-# Algorithm for Parsing Link Header Values {#parse}
+# Algorithm for Parsing Link Headers {#parse}
 
 Given a HTTP header field-value `field_value` as a string assuming ASCII encoding, the following
 algorithm can be used to parse it into the model described by this specification:
