@@ -415,7 +415,7 @@ This specification updates the registration procedures for the Link Relation Typ
 {{procedure}}. The Expert(s) and IANA will interact as outlined below.
 
 IANA will direct any incoming requests regarding the registry to the processes established by the
-Expert(s); typically, this will mean referring them to the registry HTML page.
+Expert(s); typically, this will mean referring them to the registry Web page.
 
 The Expert(s) will provide registry data to IANA in an agreed form (e.g. a specific XML format).
 IANA will publish:
