@@ -108,7 +108,7 @@ In this specification, a link is a typed connection between two resources, and i
 * A *link context*,
 * a *link relation type* ({{link-relation-types}}),
 * a *link target*, and
-* optionally, *target attributes*.
+* optionally, *target attributes* ({{attributes}}).
 
 A link can be viewed as a statement of the form "{link context} has a {link relation type} resource
 at {link target}, which has {target attributes}".
@@ -125,11 +125,6 @@ given context and target. Likewise, the relative ordering of links in any partic
 serialisation, or between serialisations (e.g., the Link header field and in-content links) is not
 specified or significant in this specification; applications that wish to consider ordering
 significant can do so.
-
-*Target attributes* are a set of key/value pairs that describe the link or its target; for example,
-a media type hint. This specification does not attempt to coordinate their names, cardinality or
-use; individual link relations and link serialisations can define them. This specification does
-provide common target attributes for use in the Link HTTP header field.
 
 Links are conveyed in *link serialisations*; they are the "bytes on the wire", and can occur in
 various forms. This specification does not define a general syntax for links, nor does
@@ -238,6 +233,31 @@ Note that while extension relation types are required to be URIs, a serialisatio
 specify that they are expressed in another form, as long as they can be converted to URIs.
 
 
+# Target Attributes {#attributes}
+
+*Target attributes* are a set of key/value pairs that describe the link or its target; for example,
+a media type hint. 
+
+This specification does not attempt to coordinate the name of target attributes, their cardinality
+or use; they are defined both by individual link relations and by link serialisations. 
+
+Serialisations SHOULD coordinate their target attributes to avoid conflicts in semantics
+or syntax. Relation types MAY define additional target attributes specific to them.
+
+The names of target attributes SHOULD conform to the parmname rule for portability across
+serializations, and MUST be compared in a case-insensitive fashion.
+
+Target attribute definitions SHOULD specify:
+
+* Their serialisation into UTF-8 or a subset thereof, to maximise their chances of portability
+  across link serialisations.
+   
+* The semantics and error handling of multiple occurrences of the attribute on a given link.
+
+This specification does define target attributes for use in the Link HTTP header field in
+{{header-attrs}}.
+
+
 # Link Serialisation in HTTP Headers {#header}
 
 The Link header field provides a means for serialising one or more links into HTTP headers.
@@ -316,7 +336,7 @@ Note that extension relation types are REQUIRED to be absolute URIs in Link head
 quoted if they contain a semicolon (";") or comma (",") (as these characters are used as delimiters
 in the header field itself).
 
-## Target Attributes
+## Target Attributes {#header-attrs}
 
 The "hreflang", "media", "title", "title\*", "type", and any link-extension link-params of a Link
 header field are considered to be target attributes for the link.
