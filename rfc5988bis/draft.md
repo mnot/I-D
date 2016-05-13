@@ -294,6 +294,7 @@ The Link header field provides a means for serialising one or more links into HT
 	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
 	ext-rel-type   = URI
 
+
 ## Link Target
 
 Each link-value conveys one target IRI as a URI-Reference (after conversion to one, if necessary;
@@ -338,8 +339,13 @@ in the header field itself).
 
 ## Target Attributes {#header-attrs}
 
-The "hreflang", "media", "title", "title\*", "type", and any link-extension link-params of a Link
-header field are considered to be target attributes for the link.
+The Link header field defines several attributes specific to this serialisation, and also allows
+extension attributes.
+
+### Serialisation-Defined Attributes
+
+The "hreflang", "media", "title", "title\*", and "type" link-params can be translated to
+serialisation-defined target attributes for the link.
 
 The "hreflang" attribute, when present, is a hint indicating what the language of the result of
 dereferencing the link should be. Note that this is only a hint; for example, it does not override
@@ -355,22 +361,31 @@ a link-value; occurrences after the first MUST be ignored by parsers.
 The "title" attribute, when present, is used to label the destination of a link such that it can be
 used as a human-readable identifier (e.g., a menu entry) in the language indicated by the
 Content-Language header field (if present). The "title" attribute MUST NOT appear more than once in
-a given link-value; occurrences after the first MUST be ignored by parsers.
+a given link; occurrences after the first MUST be ignored by parsers.
 
-The "title\*" attribute can be used to encode this label in a different character set, and/or
-contain language information as per {{I-D.ietf-httpbis-rfc5987bis}}. The "title\*" attribute MUST
+The "title\*" link-param can be used to encode this attribute in a different character set, and/or
+contain language information as per {{I-D.ietf-httpbis-rfc5987bis}}. The "title\*" link-param MUST
 NOT appear more than once in a given link-value; occurrences after the first MUST be ignored by
 parsers. If the attribute does not contain language information, its language is indicated by the
 Content-Language header field (when present).
 
-If both the "title" and "title\*" attributes appear in a link-value, processors SHOULD use the
-"title\*" attribute's value.
+If both the "title" and "title\*" link-param appear in a link, processors SHOULD use the
+"title\*" link-param's value for the "title" attribute.
 
 The "type" attribute, when present, is a hint indicating what the media type of the result of
 dereferencing the link should be. Note that this is only a hint; for example, it does not override
 the Content-Type header field of a HTTP response obtained by actually following the link. The
 "type" attribute MUST NOT appear more than once in a given link-value; occurrences after the first
 MUST be ignored by parsers.
+
+### Extension Attributes
+
+Other link-params are link-extensions, and are to be considered as target attributes.
+
+When link-extensions contain both a parmname and a corresponding ext-name-star (e.g., "example" and
+"example*"), they SHOULD be considered to be the same target attribute; processors SHOULD use the
+ext-name-star form (after {{RFC59897}} decoding), but MAY fall back to the parmname value if there
+is an error in decoding it, or if they do not support decoding.
 
 
 ## Examples
