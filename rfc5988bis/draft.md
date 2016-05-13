@@ -464,7 +464,11 @@ Note that registered Relation Names are required to be lower-case ASCII letters.
 
 --- back
 
-# Link Serialisation in HTML {#html}
+# Notes on Other Link Serialisations
+
+Header fields ({{header}}) are only one serialisation of links; other specifications have defined alternative serialisations.
+
+## Link Serialisation in HTML {#html}
 
 HTML {{W3C.REC-html5-20141028}} motivated the original syntax of the Link header field, and many of
 the design decisions in this document are driven by a desire to stay compatible with it.
@@ -489,7 +493,7 @@ are (perhaps inevitably) common. Consuming HTML implementations ought not consid
 unregistered short links to be errors, but rather relation types with a local scope (i.e., their
 meaning is specific and perhaps private to that document).
 
-HTML also defines several attributes on links that can be see as target attributes, including
+HTML also defines several attributes on links that can be seen as target attributes, including
 "media", "hreflang", "type" and "sizes".
 
 Finally, the HTML specification gives a special meaning when the "alternate" and "stylesheet"
@@ -497,7 +501,7 @@ relation types coincide in the same link. Such links ought to be serialised in t
 using a single list of relation-types (e.g., rel="alternate stylesheet") to preserve this
 relationship.
 
-# Link Serialisation in Atom {#atom}
+## Link Serialisation in Atom {#atom}
 
 Atom {{RFC4287}} is a link serialisation that conveys links in the atom:link element, with the
 "href" attribute indicating the link target and the "rel" attribute containing the relation type.
