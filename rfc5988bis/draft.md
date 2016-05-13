@@ -678,3 +678,5 @@ This specification has the following differences from its predecessor, RFC5988:
 
 * Defined a suggested parsing algorithm for the Link header.
 
+* The value space of target attributes and their definition has been specified.
+
