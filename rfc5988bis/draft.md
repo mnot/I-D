@@ -384,8 +384,8 @@ Other link-params are link-extensions, and are to be considered as target attrib
 
 When link-extensions contain both a parmname and a corresponding ext-name-star (e.g., "example" and
 "example*"), they SHOULD be considered to be the same target attribute; processors SHOULD use the
-ext-name-star form (after {{RFC59897}} decoding), but MAY fall back to the parmname value if there
-is an error in decoding it, or if they do not support decoding.
+ext-name-star form (after {{I-D.ietf-httpbis-rfc5987bis}} decoding), but MAY fall back to the
+parmname value if there is an error in decoding it, or if they do not support decoding.
 
 
 ## Examples
