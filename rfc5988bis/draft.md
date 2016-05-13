@@ -93,7 +93,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 This document uses the Augmented Backus-Naur Form (ABNF) notation of {{RFC7230}}, including the
  #rule, and explicitly includes the following rules from it: quoted-string, token, SP (space),
-LOALPHA, DIGIT.
+OWS (optional whitespace), RWS (required whitespace) LOALPHA, DIGIT.
 
 Additionally, the following rules are included from {{RFC3986}}: URI and URI-Reference; from
 {{RFC6838}}: type-name and subtype-name; from {{W3C.CR-css3-mediaqueries-20090915}}:
@@ -549,12 +549,12 @@ within quoted strings as per {{RFC7230}}, Section 3.2.6.
 
    5. For each item `parameter` in `parameter_strings`:
 
-      1. Remove whitespace from the beginning and end of `parameter`.
+      1. Remove OWS from the beginning and end of `parameter`.
 
       2. Split `parameter` into `param_name` and `param_value` on the first "=" character. If
         `parameter` does not contain "=", let `param_name` be `parameter` and `param_value` be null.
 
-      3. Remove whitespace from the end of `param_name` and the beginning of `param_value`.
+      3. Remove OWS from the end of `param_name` and the beginning of `param_value`.
 
       4. Case-normalise `param_name` to lowercase.
 
@@ -573,7 +573,7 @@ within quoted strings as per {{RFC7230}}, Section 3.2.6.
    7. Let `relations_string` be the first tuple of `link_parameters` whose first item matches the
      string "rel", or the empty string ("") if it is not present.
 
-   8. Split `relations_string` into an array of strings `relation_types`, on whitespace (removing
+   8. Split `relations_string` into an array of strings `relation_types`, on RWS (removing
      all whitespace in the process).
 
    9. Let `context_string` be the first tuple of `link_parameters` whose first item matches the
