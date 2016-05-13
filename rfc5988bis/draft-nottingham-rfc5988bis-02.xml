@@ -40,7 +40,7 @@
 <t>This specification defines a way to indicate the relationships between resources on the Web
 (“links”) and the type of those relationships (“link relation types”).</t>
 
-<t>It also defines the use of such links in HTTP headers with the Link header field.</t>
+<t>It also defines the serialisation of such links in HTTP headers with the Link header field.</t>
 
 
 
@@ -88,7 +88,7 @@ been originally defined in Section 19.6.2.4 of <xref target="RFC2068"/>, but rem
 
 <t>This document uses the Augmented Backus-Naur Form (ABNF) notation of <xref target="RFC7230"/>, including the
  #rule, and explicitly includes the following rules from it: quoted-string, token, SP (space),
-LOALPHA, DIGIT.</t>
+OWS (optional whitespace), RWS (required whitespace) LOALPHA, DIGIT.</t>
 
 <t>Additionally, the following rules are included from <xref target="RFC3986"/>: URI and URI-Reference; from
 <xref target="RFC6838"/>: type-name and subtype-name; from <xref target="W3C.CR-css3-mediaqueries-20090915"/>:
@@ -104,7 +104,7 @@ ext-value and parmname.</t>
   <t>A <spanx style="emph">link context</spanx>,</t>
   <t>a <spanx style="emph">link relation type</spanx> (<xref target="link-relation-types"/>),</t>
   <t>a <spanx style="emph">link target</spanx>, and</t>
-  <t>optionally, <spanx style="emph">target attributes</spanx>.</t>
+  <t>optionally, <spanx style="emph">target attributes</spanx> (<xref target="attributes"/>).</t>
 </list></t>
 
 <t>A link can be viewed as a statement of the form “{link context} has a {link relation type} resource
@@ -122,11 +122,6 @@ given context and target. Likewise, the relative ordering of links in any partic
 serialisation, or between serialisations (e.g., the Link header field and in-content links) is not
 specified or significant in this specification; applications that wish to consider ordering
 significant can do so.</t>
-
-<t><spanx style="emph">Target attributes</spanx> are a set of key/value pairs that describe the link or its target; for example,
-a media type hint. This specification does not attempt to coordinate their names, cardinality or
-use, but individual link relations, link serialisations and link applications can do so. This
-specification does provide common target attributes for use in the Link HTTP header field.</t>
 
 <t>Links are conveyed in <spanx style="emph">link serialisations</spanx>; they are the “bytes on the wire”, and can occur in
 various forms. This specification does not define a general syntax for links, nor does
@@ -237,12 +232,38 @@ specify that they are expressed in another form, as long as they can be converte
 
 </section>
 </section>
+<section anchor="attributes" title="Target Attributes">
+
+<t><spanx style="emph">Target attributes</spanx> are a set of key/value pairs that describe the link or its target; for example,
+a media type hint.</t>
+
+<t>This specification does not attempt to coordinate the name of target attributes, their cardinality
+or use; they are defined both by individual link relations and by link serialisations.</t>
+
+<t>Serialisations SHOULD coordinate their target attributes to avoid conflicts in semantics
+or syntax. Relation types MAY define additional target attributes specific to them.</t>
+
+<t>The names of target attributes SHOULD conform to the parmname rule for portability across
+serializations, and MUST be compared in a case-insensitive fashion.</t>
+
+<t>Target attribute definitions SHOULD specify:</t>
+
+<t><list style="symbols">
+  <t>Their serialisation into UTF-8 or a subset thereof, to maximise their chances of portability
+across link serialisations.</t>
+  <t>The semantics and error handling of multiple occurrences of the attribute on a given link.</t>
+</list></t>
+
+<t>This specification does define target attributes for use in the Link HTTP header field in
+<xref target="header-attrs"/>.</t>
+
+</section>
 <section anchor="header" title="Link Serialisation in HTTP Headers">
 
 <t>The Link header field provides a means for serialising one or more links into HTTP headers.</t>
 
 <figure><artwork><![CDATA[
-Link           = "Link" ":" #link-value  
+Link           = "Link" ":" #link-value
 link-value     = "<" URI-Reference ">" *( ";" link-param )
 link-param     = ( ( "rel" "=" relation-types )
              | ( "anchor" "=" <"> URI-Reference <"> )
@@ -261,10 +282,10 @@ ext-name-star  = parmname "*" ; reserved for RFC5987-profiled
                             ; extensions. Whitespace NOT
                             ; allowed in between.
 ptoken         = 1*ptokenchar
-ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "(" 
-             | ")" | "*" | "+" | "-" | "." | "/" | DIGIT 
-             | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA 
-             | "[" | "]" | "^" | "_" | "`" | "{" | "|" 
+ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "("
+             | ")" | "*" | "+" | "-" | "." | "/" | DIGIT
+             | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA
+             | "[" | "]" | "^" | "_" | "`" | "{" | "|"
              | "}" | "~"
 media-type     = type-name "/" subtype-name
 quoted-mt      = <"> media-type <">
@@ -306,9 +327,9 @@ request.</t>
 </section>
 <section anchor="relation-type" title="Relation Type">
 
-<t>The relation type of a link is conveyed in the “rel” parameter’s value. The “rel” parameter MUST
-NOT appear more than once in a given link-value; occurrences after the first MUST be ignored by
-parsers.</t>
+<t>The relation type of a link conveyed in the Link header field is conveyed in the “rel” parameter’s
+value. The “rel” parameter MUST NOT appear more than once in a given link-value; occurrences after
+the first MUST be ignored by parsers.</t>
 
 <t>The “rev” parameter has been used in the past to indicate that the semantics of the relationship
 are in the reverse direction. That is, a link from A to B with REL=”X” expresses the same
@@ -320,42 +341,58 @@ quoted if they contain a semicolon (“;”) or comma (“,”) (as these charac
 in the header field itself).</t>
 
 </section>
-<section anchor="target-attributes" title="Target Attributes">
+<section anchor="header-attrs" title="Target Attributes">
 
-<t>The “hreflang”, “media”, “title”, “title*”, “type”, and any link-extension link-params are
-considered to be target attributes for the link.</t>
+<t>The Link header field defines several attributes specific to this serialisation, and also allows
+extension attributes.</t>
 
-<t>The “hreflang” parameter, when present, is a hint indicating what the language of the result of
+<section anchor="serialisation-defined-attributes" title="Serialisation-Defined Attributes">
+
+<t>The “hreflang”, “media”, “title”, “title*”, and “type” link-params can be translated to
+serialisation-defined target attributes for the link.</t>
+
+<t>The “hreflang” attribute, when present, is a hint indicating what the language of the result of
 dereferencing the link should be. Note that this is only a hint; for example, it does not override
 the Content-Language header field of a HTTP response obtained by actually following the link.
-Multiple “hreflang” parameters on a single link-value indicate that multiple languages are
+Multiple “hreflang” attributes on a single link-value indicate that multiple languages are
 available from the indicated resource.</t>
 
-<t>The “media” parameter, when present, is used to indicate intended destination medium or media for
+<t>The “media” attribute, when present, is used to indicate intended destination medium or media for
 style information (see <xref target="W3C.REC-html5-20141028"/>, Section 4.2.4). Its value MUST be quoted if it
-contains a semicolon (“;”) or comma (“,”), and there MUST NOT be more than one “media” parameter in
-a link-value.</t>
+contains a semicolon (“;”) or comma (“,”). There MUST NOT be more than one “media” attribute in
+a link-value; occurrences after the first MUST be ignored by parsers.</t>
 
-<t>The “title” parameter, when present, is used to label the destination of a link such that it can be
+<t>The “title” attribute, when present, is used to label the destination of a link such that it can be
 used as a human-readable identifier (e.g., a menu entry) in the language indicated by the
-Content-Language header field (if present). The “title” parameter MUST NOT appear more than once in
-a given link-value; occurrences after the first MUST be ignored by parsers.</t>
+Content-Language header field (if present). The “title” attribute MUST NOT appear more than once in
+a given link; occurrences after the first MUST be ignored by parsers.</t>
 
-<t>The “title*” parameter can be used to encode this label in a different character set, and/or
-contain language information as per <xref target="I-D.ietf-httpbis-rfc5987bis"/>. The “title*” parameter MUST
+<t>The “title*” link-param can be used to encode this attribute in a different character set, and/or
+contain language information as per <xref target="I-D.ietf-httpbis-rfc5987bis"/>. The “title*” link-param MUST
 NOT appear more than once in a given link-value; occurrences after the first MUST be ignored by
-parsers. If the parameter does not contain language information, its language is indicated by the
+parsers. If the attribute does not contain language information, its language is indicated by the
 Content-Language header field (when present).</t>
 
-<t>If both the “title” and “title*” parameters appear in a link-value, processors SHOULD use the
-“title*” parameter’s value.</t>
+<t>If both the “title” and “title*” link-param appear in a link, processors SHOULD use the
+“title*” link-param’s value for the “title” attribute.</t>
 
-<t>The “type” parameter, when present, is a hint indicating what the media type of the result of
+<t>The “type” attribute, when present, is a hint indicating what the media type of the result of
 dereferencing the link should be. Note that this is only a hint; for example, it does not override
 the Content-Type header field of a HTTP response obtained by actually following the link. The
-“type” parameter MUST NOT appear more than once in a given link-value; occurrences after the first
+“type” attribute MUST NOT appear more than once in a given link-value; occurrences after the first
 MUST be ignored by parsers.</t>
 
+</section>
+<section anchor="extension-attributes" title="Extension Attributes">
+
+<t>Other link-params are link-extensions, and are to be considered as target attributes.</t>
+
+<t>When link-extensions contain both a parmname and a corresponding ext-name-star (e.g., “example” and
+“example*”), they SHOULD be considered to be the same target attribute; processors SHOULD use the
+ext-name-star form (after <xref target="I-D.ietf-httpbis-rfc5987bis"/> decoding), but MAY fall back to the
+parmname value if there is an error in decoding it, or if they do not support decoding.</t>
+
+</section>
 </section>
 <section anchor="examples" title="Examples">
 
@@ -394,7 +431,7 @@ contains the Unicode code point U+00E4 (“LATIN SMALL LETTER A WITH DIAERESIS�
 example:</t>
 
 <figure><artwork><![CDATA[
-Link: <http://example.org/>; 
+Link: <http://example.org/>;
       rel="start http://example.net/relation/other"
 ]]></artwork></figure>
 
@@ -431,7 +468,7 @@ Specification document(s):
 <xref target="procedure"/>. The Expert(s) and IANA will interact as outlined below.</t>
 
 <t>IANA will direct any incoming requests regarding the registry to the processes established by the
-Expert(s); typically, this will mean referring them to the registry HTML page.</t>
+Expert(s); typically, this will mean referring them to the registry Web page.</t>
 
 <t>The Expert(s) will provide registry data to IANA in an agreed form (e.g. a specific XML format).
 IANA will publish:
@@ -876,6 +913,10 @@ they will be displayed to end users.</t>
     </references>
 
 
+<section anchor="notes-on-other-link-serialisations" title="Notes on Other Link Serialisations">
+
+<t>Header fields (<xref target="header"/>) are only one serialisation of links; other specifications have defined alternative serialisations.</t>
+
 <section anchor="html" title="Link Serialisation in HTML">
 
 <t>HTML <xref target="W3C.REC-html5-20141028"/> motivated the original syntax of the Link header field, and many of
@@ -903,7 +944,7 @@ are (perhaps inevitably) common. Consuming HTML implementations ought not consid
 unregistered short links to be errors, but rather relation types with a local scope (i.e., their
 meaning is specific and perhaps private to that document).</t>
 
-<t>HTML also defines several attributes on links that can be see as target attributes, including
+<t>HTML also defines several attributes on links that can be seen as target attributes, including
 “media”, “hreflang”, “type” and “sizes”.</t>
 
 <t>Finally, the HTML specification gives a special meaning when the “alternate” and “stylesheet”
@@ -939,6 +980,7 @@ link, atom:link does not. In this case, a single link-value may map to several a
 field syntax, but they can also be used as link-extensions to maintain fidelity.</t>
 
 </section>
+</section>
 <section anchor="parse" title="Algorithm for Parsing Link Headers">
 
 <t>Given a HTTP header field-value <spanx style="verb">field_value</spanx> as a string assuming ASCII encoding, the following
@@ -957,10 +999,10 @@ within quoted strings as per <xref target="RFC7230"/>, Section 3.2.6.</t>
   “;” characters within quoted strings as per <xref target="RFC7230"/>, Section 3.2.6.</t>
       <t>Let <spanx style="verb">link_parameters</spanx> be an empty array.</t>
       <t>For each item <spanx style="verb">parameter</spanx> in <spanx style="verb">parameter_strings</spanx>:      <list style="numbers">
-          <t>Remove whitespace from the beginning and end of <spanx style="verb">parameter</spanx>.</t>
+          <t>Remove OWS from the beginning and end of <spanx style="verb">parameter</spanx>.</t>
           <t>Split <spanx style="verb">parameter</spanx> into <spanx style="verb">param_name</spanx> and <spanx style="verb">param_value</spanx> on the first “=” character. If
   <spanx style="verb">parameter</spanx> does not contain “=”, let <spanx style="verb">param_name</spanx> be <spanx style="verb">parameter</spanx> and <spanx style="verb">param_value</spanx> be null.</t>
-          <t>Remove whitespace from the end of <spanx style="verb">param_name</spanx> and the beginning of <spanx style="verb">param_value</spanx>.</t>
+          <t>Remove OWS from the end of <spanx style="verb">param_name</spanx> and the beginning of <spanx style="verb">param_value</spanx>.</t>
           <t>Case-normalise <spanx style="verb">param_name</spanx> to lowercase.</t>
           <t>If the first and last characters of <spanx style="verb">param_value</spanx> are both DQUOTE:          <list style="numbers">
               <t>Remove the first and last characters of <spanx style="verb">param_value</spanx>.</t>
@@ -973,7 +1015,7 @@ per <xref target="RFC7230"/>, Section 3.2.6.</t>
   <spanx style="verb">target_string</spanx>. Note that any base URI carried in the payload body is NOT used.</t>
       <t>Let <spanx style="verb">relations_string</spanx> be the first tuple of <spanx style="verb">link_parameters</spanx> whose first item matches the
   string “rel”, or the empty string (“”) if it is not present.</t>
-      <t>Split <spanx style="verb">relations_string</spanx> into an array of strings <spanx style="verb">relation_types</spanx>, on whitespace (removing
+      <t>Split <spanx style="verb">relations_string</spanx> into an array of strings <spanx style="verb">relation_types</spanx>, on RWS (removing
   all whitespace in the process).</t>
       <t>Let <spanx style="verb">context_string</spanx> be the first tuple of <spanx style="verb">link_parameters</spanx> whose first item matches the
   string “anchor”. If it is not present, <spanx style="verb">context_string</spanx> is the identity of the representation
@@ -1019,6 +1061,7 @@ Atom links.</t>
   <t>Clarified the cardinality of target attributes (generically and for “type”).</t>
   <t>Corrected the default link context for the Link header field, to be dependent upon the identity of the representation (as per RFC7231).</t>
   <t>Defined a suggested parsing algorithm for the Link header.</t>
+  <t>The value space of target attributes and their definition has been specified.</t>
 </list></t>
 
 </section>

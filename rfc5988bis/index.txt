@@ -3,10 +3,10 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                              May 12, 2016
+Internet-Draft                                              May 13, 2016
 Obsoletes: 5988 (if approved)
 Intended status: Standards Track
-Expires: November 13, 2016
+Expires: November 14, 2016
 
 
                               Web Linking
@@ -18,8 +18,8 @@ Abstract
    between resources on the Web ("links") and the type of those
    relationships ("link relation types").
 
-   It also defines the use of such links in HTTP headers with the Link
-   header field.
+   It also defines the serialisation of such links in HTTP headers with
+   the Link header field.
 
 Note to Readers
 
@@ -49,11 +49,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 13, 2016.
+   This Internet-Draft will expire on November 14, 2016.
 
 
 
-Nottingham              Expires November 13, 2016               [Page 1]
+Nottingham              Expires November 14, 2016               [Page 1]
 
 Internet-Draft                 Web Linking                      May 2016
 
@@ -89,38 +89,42 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
    2.  Notational Conventions  . . . . . . . . . . . . . . . . . . .   3
-   3.  Links . . . . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   3.  Links . . . . . . . . . . . . . . . . . . . . . . . . . . . .   4
    4.  Link Relation Types . . . . . . . . . . . . . . . . . . . . .   5
      4.1.  Registered Relation Types . . . . . . . . . . . . . . . .   5
        4.1.1.  Registering Link Relation Types . . . . . . . . . . .   6
      4.2.  Extension Relation Types  . . . . . . . . . . . . . . . .   7
-   5.  Link Serialisation in HTTP Headers  . . . . . . . . . . . . .   7
-     5.1.  Link Target . . . . . . . . . . . . . . . . . . . . . . .   8
-     5.2.  Link Context  . . . . . . . . . . . . . . . . . . . . . .   8
-     5.3.  Relation Type . . . . . . . . . . . . . . . . . . . . . .   9
-     5.4.  Target Attributes . . . . . . . . . . . . . . . . . . . .   9
-     5.5.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  10
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  11
-     6.1.  Link HTTP Header Field Registration . . . . . . . . . . .  11
-     6.2.  Link Relation Type Registry . . . . . . . . . . . . . . .  11
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  12
-   8.  Internationalisation Considerations . . . . . . . . . . . . .  12
-   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
+   5.  Target Attributes . . . . . . . . . . . . . . . . . . . . . .   7
+   6.  Link Serialisation in HTTP Headers  . . . . . . . . . . . . .   8
+     6.1.  Link Target . . . . . . . . . . . . . . . . . . . . . . .   8
+     6.2.  Link Context  . . . . . . . . . . . . . . . . . . . . . .   9
+     6.3.  Relation Type . . . . . . . . . . . . . . . . . . . . . .   9
+     6.4.  Target Attributes . . . . . . . . . . . . . . . . . . . .   9
+       6.4.1.  Serialisation-Defined Attributes  . . . . . . . . . .  10
+       6.4.2.  Extension Attributes  . . . . . . . . . . . . . . . .  11
+     6.5.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  11
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
+     7.1.  Link HTTP Header Field Registration . . . . . . . . . . .  12
+     7.2.  Link Relation Type Registry . . . . . . . . . . . . . . .  12
 
 
 
-Nottingham              Expires November 13, 2016               [Page 2]
+Nottingham              Expires November 14, 2016               [Page 2]
 
 Internet-Draft                 Web Linking                      May 2016
 
 
-     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  13
-     9.2.  Informative References  . . . . . . . . . . . . . . . . .  14
-   Appendix A.  Link Serialisation in HTML . . . . . . . . . . . . .  16
-   Appendix B.  Link Serialisation in Atom . . . . . . . . . . . . .  16
-   Appendix C.  Algorithm for Parsing Link Headers . . . . . . . . .  17
-   Appendix D.  Changes from RFC5988 . . . . . . . . . . . . . . . .  19
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  20
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
+   9.  Internationalisation Considerations . . . . . . . . . . . . .  13
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .  13
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  15
+   Appendix A.  Notes on Other Link Serialisations . . . . . . . . .  17
+     A.1.  Link Serialisation in HTML  . . . . . . . . . . . . . . .  17
+     A.2.  Link Serialisation in Atom  . . . . . . . . . . . . . . .  18
+   Appendix B.  Algorithm for Parsing Link Headers . . . . . . . . .  18
+   Appendix C.  Changes from RFC5988 . . . . . . . . . . . . . . . .  20
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  21
 
 1.  Introduction
 
@@ -146,13 +150,25 @@ Internet-Draft                 Web Linking                      May 2016
 
    This document uses the Augmented Backus-Naur Form (ABNF) notation of
    [RFC7230], including the #rule, and explicitly includes the following
-   rules from it: quoted-string, token, SP (space), LOALPHA, DIGIT.
+   rules from it: quoted-string, token, SP (space), OWS (optional
+   whitespace), RWS (required whitespace) LOALPHA, DIGIT.
 
    Additionally, the following rules are included from [RFC3986]: URI
    and URI-Reference; from [RFC6838]: type-name and subtype-name; from
    [W3C.CR-css3-mediaqueries-20090915]: media_query_list; from
    [RFC5646]: Language-Tag; and from [I-D.ietf-httpbis-rfc5987bis], ext-
    value and parmname.
+
+
+
+
+
+
+
+Nottingham              Expires November 14, 2016               [Page 3]
+
+Internet-Draft                 Web Linking                      May 2016
+
 
 3.  Links
 
@@ -163,16 +179,9 @@ Internet-Draft                 Web Linking                      May 2016
 
    o  a _link relation type_ (Section 4),
 
-
-
-Nottingham              Expires November 13, 2016               [Page 3]
-
-Internet-Draft                 Web Linking                      May 2016
-
-
    o  a _link target_, and
 
-   o  optionally, _target attributes_.
+   o  optionally, _target attributes_ (Section 5).
 
    A link can be viewed as a statement of the form "{link context} has a
    {link relation type} resource at {link target}, which has {target
@@ -183,7 +192,7 @@ Internet-Draft                 Web Linking                      May 2016
    because many protocols (such as HTTP) do not support dereferencing
    IRIs.  Likewise, the link target will be sometimes be converted to a
    URI (see [RFC3987], Section 3.1) in places that do not support IRIs
-   (such as the Link header field defined in Section 5).
+   (such as the Link header field defined in Section 6).
 
    This specification does not place restrictions on the cardinality of
    links; there can be multiple links to and from a particular target,
@@ -194,19 +203,12 @@ Internet-Draft                 Web Linking                      May 2016
    this specification; applications that wish to consider ordering
    significant can do so.
 
-   _Target attributes_ are a set of key/value pairs that describe the
-   link or its target; for example, a media type hint.  This
-   specification does not attempt to coordinate their names, cardinality
-   or use, but individual link relations, link serialisations and link
-   applications can do so.  This specification does provide common
-   target attributes for use in the Link HTTP header field.
-
    Links are conveyed in _link serialisations_; they are the "bytes on
    the wire", and can occur in various forms.  This specification does
    not define a general syntax for links, nor does it mandate a specific
    context for any given link; it is expected that serialisations of
    links will specify both aspects.  One such serialisation is
-   communication of links through HTTP headers, specified in Section 5.
+   communication of links through HTTP headers, specified in Section 6.
 
    Finally, links are consumed by _link applications_. Generally, an
    application will define the link relation types it uses, along with
@@ -219,9 +221,7 @@ Internet-Draft                 Web Linking                      May 2016
 
 
 
-
-
-Nottingham              Expires November 13, 2016               [Page 4]
+Nottingham              Expires November 14, 2016               [Page 4]
 
 Internet-Draft                 Web Linking                      May 2016
 
@@ -277,14 +277,14 @@ Internet-Draft                 Web Linking                      May 2016
 
 
 
-Nottingham              Expires November 13, 2016               [Page 5]
+Nottingham              Expires November 14, 2016               [Page 5]
 
 Internet-Draft                 Web Linking                      May 2016
 
 
    Historically, registered relation types have been identified with a
    URI [RFC3986] by prefixing their names with an application-defined
-   base URI (e.g., see Appendix B).  This practice is NOT RECOMMENDED,
+   base URI (e.g., see Appendix A.2).  This practice is NOT RECOMMENDED,
    because the resulting strings will not be considered equivalent to
    the registered relation types by other processors.  Applications that
    do use such URIs internally MUST NOT use them in link serialisations
@@ -333,7 +333,7 @@ Internet-Draft                 Web Linking                      May 2016
 
 
 
-Nottingham              Expires November 13, 2016               [Page 6]
+Nottingham              Expires November 14, 2016               [Page 6]
 
 Internet-Draft                 Web Linking                      May 2016
 
@@ -360,39 +360,47 @@ Internet-Draft                 Web Linking                      May 2016
    serialisation of links can specify that they are expressed in another
    form, as long as they can be converted to URIs.
 
-5.  Link Serialisation in HTTP Headers
+5.  Target Attributes
 
-   The Link header field provides a means for serialising one or more
-   links into HTTP headers.
+   _Target attributes_ are a set of key/value pairs that describe the
+   link or its target; for example, a media type hint.
 
+   This specification does not attempt to coordinate the name of target
+   attributes, their cardinality or use; they are defined both by
+   individual link relations and by link serialisations.
 
+   Serialisations SHOULD coordinate their target attributes to avoid
+   conflicts in semantics or syntax.  Relation types MAY define
+   additional target attributes specific to them.
 
+   The names of target attributes SHOULD conform to the parmname rule
+   for portability across serializations, and MUST be compared in a
+   case-insensitive fashion.
 
+   Target attribute definitions SHOULD specify:
 
+   o  Their serialisation into UTF-8 or a subset thereof, to maximise
+      their chances of portability across link serialisations.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   o  The semantics and error handling of multiple occurrences of the
+      attribute on a given link.
 
 
 
-Nottingham              Expires November 13, 2016               [Page 7]
+
+
+Nottingham              Expires November 14, 2016               [Page 7]
 
 Internet-Draft                 Web Linking                      May 2016
 
+
+   This specification does define target attributes for use in the Link
+   HTTP header field in Section 6.4.
+
+6.  Link Serialisation in HTTP Headers
+
+   The Link header field provides a means for serialising one or more
+   links into HTTP headers.
 
    Link           = "Link" ":" #link-value
    link-value     = "<" URI-Reference ">" *( ";" link-param )
@@ -426,7 +434,7 @@ Internet-Draft                 Web Linking                      May 2016
    reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
    ext-rel-type   = URI
 
-5.1.  Link Target
+6.1.  Link Target
 
    Each link-value conveys one target IRI as a URI-Reference (after
    conversion to one, if necessary; see [RFC3987], Section 3.1) inside
@@ -434,7 +442,15 @@ Internet-Draft                 Web Linking                      May 2016
    MUST resolve it as per [RFC3986], Section 5.  Note that any base IRI
    from the message's content is not applied.
 
-5.2.  Link Context
+
+
+
+Nottingham              Expires November 14, 2016               [Page 8]
+
+Internet-Draft                 Web Linking                      May 2016
+
+
+6.2.  Link Context
 
    By default, the context of a link conveyed in the Link header field
    is identity of the representation it is associated with, as defined
@@ -442,14 +458,6 @@ Internet-Draft                 Web Linking                      May 2016
 
    When present, the anchor parameter overrides this with another URI,
    such as a fragment of this resource, or a third resource (i.e., when
-
-
-
-Nottingham              Expires November 13, 2016               [Page 8]
-
-Internet-Draft                 Web Linking                      May 2016
-
-
    the anchor value is an absolute URI).  If the anchor parameter's
    value is a relative URI, parsers MUST resolve it as per [RFC3986],
    Section 5.  Note that any base URI from the body's content is not
@@ -466,11 +474,12 @@ Internet-Draft                 Web Linking                      May 2016
    available).  For instance, this is the case on a 404 response to a
    GET request.
 
-5.3.  Relation Type
+6.3.  Relation Type
 
-   The relation type of a link is conveyed in the "rel" parameter's
-   value.  The "rel" parameter MUST NOT appear more than once in a given
-   link-value; occurrences after the first MUST be ignored by parsers.
+   The relation type of a link conveyed in the Link header field is
+   conveyed in the "rel" parameter's value.  The "rel" parameter MUST
+   NOT appear more than once in a given link-value; occurrences after
+   the first MUST be ignored by parsers.
 
    The "rev" parameter has been used in the past to indicate that the
    semantics of the relationship are in the reverse direction.  That is,
@@ -484,61 +493,88 @@ Internet-Draft                 Web Linking                      May 2016
    or comma (",") (as these characters are used as delimiters in the
    header field itself).
 
-5.4.  Target Attributes
+6.4.  Target Attributes
 
-   The "hreflang", "media", "title", "title*", "type", and any link-
-   extension link-params are considered to be target attributes for the
-   link.
-
-   The "hreflang" parameter, when present, is a hint indicating what the
-   language of the result of dereferencing the link should be.  Note
-   that this is only a hint; for example, it does not override the
-   Content-Language header field of a HTTP response obtained by actually
-   following the link.  Multiple "hreflang" parameters on a single link-
-   value indicate that multiple languages are available from the
-   indicated resource.
+   The Link header field defines several attributes specific to this
+   serialisation, and also allows extension attributes.
 
 
 
 
-Nottingham              Expires November 13, 2016               [Page 9]
+Nottingham              Expires November 14, 2016               [Page 9]
 
 Internet-Draft                 Web Linking                      May 2016
 
 
-   The "media" parameter, when present, is used to indicate intended
+6.4.1.  Serialisation-Defined Attributes
+
+   The "hreflang", "media", "title", "title*", and "type" link-params
+   can be translated to serialisation-defined target attributes for the
+   link.
+
+   The "hreflang" attribute, when present, is a hint indicating what the
+   language of the result of dereferencing the link should be.  Note
+   that this is only a hint; for example, it does not override the
+   Content-Language header field of a HTTP response obtained by actually
+   following the link.  Multiple "hreflang" attributes on a single link-
+   value indicate that multiple languages are available from the
+   indicated resource.
+
+   The "media" attribute, when present, is used to indicate intended
    destination medium or media for style information (see
    [W3C.REC-html5-20141028], Section 4.2.4).  Its value MUST be quoted
-   if it contains a semicolon (";") or comma (","), and there MUST NOT
-   be more than one "media" parameter in a link-value.
+   if it contains a semicolon (";") or comma (",").  There MUST NOT be
+   more than one "media" attribute in a link-value; occurrences after
+   the first MUST be ignored by parsers.
 
-   The "title" parameter, when present, is used to label the destination
+   The "title" attribute, when present, is used to label the destination
    of a link such that it can be used as a human-readable identifier
    (e.g., a menu entry) in the language indicated by the Content-
-   Language header field (if present).  The "title" parameter MUST NOT
-   appear more than once in a given link-value; occurrences after the
-   first MUST be ignored by parsers.
+   Language header field (if present).  The "title" attribute MUST NOT
+   appear more than once in a given link; occurrences after the first
+   MUST be ignored by parsers.
 
-   The "title*" parameter can be used to encode this label in a
+   The "title*" link-param can be used to encode this attribute in a
    different character set, and/or contain language information as per
-   [I-D.ietf-httpbis-rfc5987bis].  The "title*" parameter MUST NOT
+   [I-D.ietf-httpbis-rfc5987bis].  The "title*" link-param MUST NOT
    appear more than once in a given link-value; occurrences after the
-   first MUST be ignored by parsers.  If the parameter does not contain
+   first MUST be ignored by parsers.  If the attribute does not contain
    language information, its language is indicated by the Content-
    Language header field (when present).
 
-   If both the "title" and "title*" parameters appear in a link-value,
-   processors SHOULD use the "title*" parameter's value.
+   If both the "title" and "title*" link-param appear in a link,
+   processors SHOULD use the "title*" link-param's value for the "title"
+   attribute.
 
-   The "type" parameter, when present, is a hint indicating what the
+   The "type" attribute, when present, is a hint indicating what the
    media type of the result of dereferencing the link should be.  Note
    that this is only a hint; for example, it does not override the
    Content-Type header field of a HTTP response obtained by actually
-   following the link.  The "type" parameter MUST NOT appear more than
+   following the link.  The "type" attribute MUST NOT appear more than
    once in a given link-value; occurrences after the first MUST be
    ignored by parsers.
 
-5.5.  Examples
+
+
+
+Nottingham              Expires November 14, 2016              [Page 10]
+
+Internet-Draft                 Web Linking                      May 2016
+
+
+6.4.2.  Extension Attributes
+
+   Other link-params are link-extensions, and are to be considered as
+   target attributes.
+
+   When link-extensions contain both a parmname and a corresponding ext-
+   name-star (e.g., "example" and "example*"), they SHOULD be considered
+   to be the same target attribute; processors SHOULD use the ext-name-
+   star form (after [I-D.ietf-httpbis-rfc5987bis] decoding), but MAY
+   fall back to the parmname value if there is an error in decoding it,
+   or if they do not support decoding.
+
+6.5.  Examples
 
    For example:
 
@@ -554,13 +590,6 @@ Internet-Draft                 Web Linking                      May 2016
 
    indicates that the root resource ("/") is related to this resource
    with the extension relation type "http://example.net/foo".
-
-
-
-Nottingham              Expires November 13, 2016              [Page 10]
-
-Internet-Draft                 Web Linking                      May 2016
-
 
    The example below shows an instance of the Link header field encoding
    multiple links, and also the use of RFC 5987 encoding to encode both
@@ -581,17 +610,25 @@ Internet-Draft                 Web Linking                      May 2016
    Link: <http://example.org/>;
          rel="start http://example.net/relation/other"
 
+
+
+
+Nottingham              Expires November 14, 2016              [Page 11]
+
+Internet-Draft                 Web Linking                      May 2016
+
+
    Here, the link to "http://example.org/" has the registered relation
    type "start" and the extension relation type
    "http://example.net/relation/other".
 
-6.  IANA Considerations
+7.  IANA Considerations
 
    In addition to the actions below, IANA should terminate the Link
    Relation Application Data Registry, as it has not been used, and
    future use is not anticipated.
 
-6.1.  Link HTTP Header Field Registration
+7.1.  Link HTTP Header Field Registration
 
    This specification updates the Message Header registry entry for
    "Link" in HTTP [RFC3864] to refer to this document.
@@ -605,22 +642,15 @@ Internet-Draft                 Web Linking                      May 2016
    Specification document(s):
        [RFC&rfc.number;]
 
-6.2.  Link Relation Type Registry
+7.2.  Link Relation Type Registry
 
    This specification updates the registration procedures for the Link
    Relation Type registry; see Section 4.1.1.  The Expert(s) and IANA
    will interact as outlined below.
 
-
-
-Nottingham              Expires November 13, 2016              [Page 11]
-
-Internet-Draft                 Web Linking                      May 2016
-
-
    IANA will direct any incoming requests regarding the registry to the
    processes established by the Expert(s); typically, this will mean
-   referring them to the registry HTML page.
+   referring them to the registry Web page.
 
    The Expert(s) will provide registry data to IANA in an agreed form
    (e.g. a specific XML format).  IANA will publish: * The raw registry
@@ -636,11 +666,19 @@ Internet-Draft                 Web Linking                      May 2016
    and markup * Include a stable HTML fragment identifier for each
    registered link relation
 
+
+
+
+Nottingham              Expires November 14, 2016              [Page 12]
+
+Internet-Draft                 Web Linking                      May 2016
+
+
    All registry data documents MUST include Simplified BSD License text
    as described in Section 4.e of the Trust Legal Provisions
    (<http://trustee.ietf.org/license-info>).
 
-7.  Security Considerations
+8.  Security Considerations
 
    The content of the Link header field is not secure, private or
    integrity-guaranteed, and due caution should be exercised when using
@@ -659,20 +697,11 @@ Internet-Draft                 Web Linking                      May 2016
    [RFC3986] for security considerations relating to URIs.  See
    [RFC7230] for security considerations relating to HTTP headers.
 
-8.  Internationalisation Considerations
+9.  Internationalisation Considerations
 
    Link targets may need to be converted to URIs in order to express
    them in serialisations that do not support IRIs.  This includes the
    Link HTTP header field.
-
-
-
-
-
-Nottingham              Expires November 13, 2016              [Page 12]
-
-Internet-Draft                 Web Linking                      May 2016
-
 
    Similarly, the anchor parameter of the Link header field does not
    support IRIs, and therefore IRIs must be converted to URIs before
@@ -685,14 +714,21 @@ Internet-Draft                 Web Linking                      May 2016
    Note that registered Relation Names are required to be lower-case
    ASCII letters.
 
-9.  References
+10.  References
 
-9.1.  Normative References
+10.1.  Normative References
 
    [I-D.ietf-httpbis-rfc5987bis]
               Reschke, J., "Indicating Character Encoding and Language
               for HTTP Header Field Parameters", draft-ietf-httpbis-
               rfc5987bis-01 (work in progress), March 2016.
+
+
+
+Nottingham              Expires November 14, 2016              [Page 13]
+
+Internet-Draft                 Web Linking                      May 2016
+
 
    [RFC2026]  Bradner, S., "The Internet Standards Process -- Revision
               3", BCP 9, RFC 2026, DOI 10.17487/RFC2026, October 1996,
@@ -722,14 +758,6 @@ Internet-Draft                 Web Linking                      May 2016
               DOI 10.17487/RFC5226, May 2008,
               <http://www.rfc-editor.org/info/rfc5226>.
 
-
-
-
-Nottingham              Expires November 13, 2016              [Page 13]
-
-Internet-Draft                 Web Linking                      May 2016
-
-
    [RFC5646]  Phillips, A., Ed. and M. Davis, Ed., "Tags for Identifying
               Languages", BCP 47, RFC 5646, DOI 10.17487/RFC5646,
               September 2009, <http://www.rfc-editor.org/info/rfc5646>.
@@ -749,13 +777,22 @@ Internet-Draft                 Web Linking                      May 2016
               DOI 10.17487/RFC7231, June 2014,
               <http://www.rfc-editor.org/info/rfc7231>.
 
+
+
+
+
+Nottingham              Expires November 14, 2016              [Page 14]
+
+Internet-Draft                 Web Linking                      May 2016
+
+
    [W3C.CR-css3-mediaqueries-20090915]
               Lie, H., Celik, T., Glazman, D., and A. Kesteren, "Media
               Queries", World Wide Web Consortium CR CR-css3-
               mediaqueries-20090915, September 2009,
               <http://www.w3.org/TR/2009/CR-css3-mediaqueries-20090915>.
 
-9.2.  Informative References
+10.2.  Informative References
 
    [RFC2068]  Fielding, R., Gettys, J., Mogul, J., Frystyk, H., and T.
               Berners-Lee, "Hypertext Transfer Protocol -- HTTP/1.1",
@@ -776,16 +813,6 @@ Internet-Draft                 Web Linking                      May 2016
               DOI 10.17487/RFC2818, May 2000,
               <http://www.rfc-editor.org/info/rfc2818>.
 
-
-
-
-
-
-Nottingham              Expires November 13, 2016              [Page 14]
-
-Internet-Draft                 Web Linking                      May 2016
-
-
    [RFC4287]  Nottingham, M., Ed. and R. Sayre, Ed., "The Atom
               Syndication Format", RFC 4287, DOI 10.17487/RFC4287,
               December 2005, <http://www.rfc-editor.org/info/rfc4287>.
@@ -802,6 +829,18 @@ Internet-Draft                 Web Linking                      May 2016
               World Wide Web Consortium Recommendation REC-
               html5-20141028, October 2014,
               <http://www.w3.org/TR/2014/REC-html5-20141028>.
+
+
+
+
+
+
+
+
+Nottingham              Expires November 14, 2016              [Page 15]
+
+Internet-Draft                 Web Linking                      May 2016
+
 
    [W3C.REC-xml-names-20091208]
               Bray, T., Hollander, D., Layman, A., Tobin, R., and H.
@@ -837,12 +876,34 @@ Internet-Draft                 Web Linking                      May 2016
 
 
 
-Nottingham              Expires November 13, 2016              [Page 15]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires November 14, 2016              [Page 16]
 
 Internet-Draft                 Web Linking                      May 2016
 
 
-Appendix A.  Link Serialisation in HTML
+Appendix A.  Notes on Other Link Serialisations
+
+   Header fields (Section 6) are only one serialisation of links; other
+   specifications have defined alternative serialisations.
+
+A.1.  Link Serialisation in HTML
 
    HTML [W3C.REC-html5-20141028] motivated the original syntax of the
    Link header field, and many of the design decisions in this document
@@ -873,7 +934,7 @@ Appendix A.  Link Serialisation in HTML
    scope (i.e., their meaning is specific and perhaps private to that
    document).
 
-   HTML also defines several attributes on links that can be see as
+   HTML also defines several attributes on links that can be seen as
    target attributes, including "media", "hreflang", "type" and "sizes".
 
    Finally, the HTML specification gives a special meaning when the
@@ -882,7 +943,18 @@ Appendix A.  Link Serialisation in HTML
    using a single list of relation-types (e.g., rel="alternate
    stylesheet") to preserve this relationship.
 
-Appendix B.  Link Serialisation in Atom
+
+
+
+
+
+
+Nottingham              Expires November 14, 2016              [Page 17]
+
+Internet-Draft                 Web Linking                      May 2016
+
+
+A.2.  Link Serialisation in Atom
 
    Atom [RFC4287] is a link serialisation that conveys links in the
    atom:link element, with the "href" attribute indicating the link
@@ -890,13 +962,6 @@ Appendix B.  Link Serialisation in Atom
    context of the link is either a feed locator or an entry ID,
    depending on where it appears; generally, feed-level links are
    obvious candidates for transmission as a Link header field.
-
-
-
-Nottingham              Expires November 13, 2016              [Page 16]
-
-Internet-Draft                 Web Linking                      May 2016
-
 
    When serialising an atom:link into a Link header field, it is
    necessary to convert link targets (if used) to URIs.
@@ -922,7 +987,7 @@ Internet-Draft                 Web Linking                      May 2016
    explicitly mirrored in the Link header field syntax, but they can
    also be used as link-extensions to maintain fidelity.
 
-Appendix C.  Algorithm for Parsing Link Headers
+Appendix B.  Algorithm for Parsing Link Headers
 
    Given a HTTP header field-value "field_value" as a string assuming
    ASCII encoding, the following algorithm can be used to parse it into
@@ -936,6 +1001,15 @@ Appendix C.  Algorithm for Parsing Link Headers
 
    3.  For each "link_string" in "link_strings":
 
+
+
+
+
+Nottingham              Expires November 14, 2016              [Page 18]
+
+Internet-Draft                 Web Linking                      May 2016
+
+
        1.   Let "target_string" be the string between the first "<" and
             first ">" characters in "link_string".  If they do not
             appear, or do not appear in that order, fail parsing.
@@ -947,26 +1021,18 @@ Appendix C.  Algorithm for Parsing Link Headers
             on the ";" character, excepting ";" characters within quoted
             strings as per [RFC7230], Section 3.2.6.
 
-
-
-Nottingham              Expires November 13, 2016              [Page 17]
-
-Internet-Draft                 Web Linking                      May 2016
-
-
        4.   Let "link_parameters" be an empty array.
 
        5.   For each item "parameter" in "parameter_strings":
 
-            1.  Remove whitespace from the beginning and end of
-                "parameter".
+            1.  Remove OWS from the beginning and end of "parameter".
 
             2.  Split "parameter" into "param_name" and "param_value" on
                 the first "=" character.  If "parameter" does not
                 contain "=", let "param_name" be "parameter" and
                 "param_value" be null.
 
-            3.  Remove whitespace from the end of "param_name" and the
+            3.  Remove OWS from the end of "param_name" and the
                 beginning of "param_value".
 
             4.  Case-normalise "param_name" to lowercase.
@@ -992,23 +1058,23 @@ Internet-Draft                 Web Linking                      May 2016
             "link_parameters" whose first item matches the string "rel",
             or the empty string ("") if it is not present.
 
+
+
+
+Nottingham              Expires November 14, 2016              [Page 19]
+
+Internet-Draft                 Web Linking                      May 2016
+
+
        8.   Split "relations_string" into an array of strings
-            "relation_types", on whitespace (removing all whitespace in
-            the process).
+            "relation_types", on RWS (removing all whitespace in the
+            process).
 
        9.   Let "context_string" be the first tuple of "link_parameters"
             whose first item matches the string "anchor".  If it is not
             present, "context_string" is the identity of the
             representation carrying the Link header [RFC7231],
             Section 3.1.4.1, serialised as a URI.
-
-
-
-
-Nottingham              Expires November 13, 2016              [Page 18]
-
-Internet-Draft                 Web Linking                      May 2016
-
 
        10.  Let "context" be the result of relatively resolving (as per
             [RFC3986], Section 5.2) "context_string".  Note that any
@@ -1039,7 +1105,7 @@ Internet-Draft                 Web Linking                      May 2016
 
    4.  Return "links".
 
-Appendix D.  Changes from RFC5988
+Appendix C.  Changes from RFC5988
 
    This specification has the following differences from its
    predecessor, RFC5988:
@@ -1049,6 +1115,13 @@ Appendix D.  Changes from RFC5988
 
    o  The introduction has been shortened.
 
+
+
+Nottingham              Expires November 14, 2016              [Page 20]
+
+Internet-Draft                 Web Linking                      May 2016
+
+
    o  The Link Relation Application Data Registry has been removed.
 
    o  Incorporated errata.
@@ -1056,15 +1129,6 @@ Appendix D.  Changes from RFC5988
    o  Updated references.
 
    o  Link cardinality was clarified.
-
-
-
-
-
-Nottingham              Expires November 13, 2016              [Page 19]
-
-Internet-Draft                 Web Linking                      May 2016
-
 
    o  Terminology was changed from "target IRI" and "context IRI" to
       "link target" and "link context" respectively.
@@ -1089,6 +1153,9 @@ Internet-Draft                 Web Linking                      May 2016
 
    o  Defined a suggested parsing algorithm for the Link header.
 
+   o  The value space of target attributes and their definition has been
+      specified.
+
 Author's Address
 
    Mark Nottingham
@@ -1106,15 +1173,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-Nottingham              Expires November 13, 2016              [Page 20]
+Nottingham              Expires November 14, 2016              [Page 21]
