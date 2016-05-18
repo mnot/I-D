@@ -73,11 +73,11 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The CACHE_DIGEST Frame  . . . . . . . . . . . . . . . . . . .   3
-     2.1.  Computing the Digest-Value  . . . . . . . . . . . . . . .   3
+     2.1.  Computing the Digest-Value  . . . . . . . . . . . . . . .   4
    3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
      5.2.  Informative References  . . . . . . . . . . . . . . . . .   6
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   6
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
@@ -148,20 +148,20 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
    CACHE_DIGEST has no defined meaning when sent from servers to
    clients, and MAY be ignored.
 
-   +---------------------------------------------------------------+
-   |         Digest-Value? (*)                    ...
-   +---------------------------------------------------------------+
+   +-----------------------------------------------+
+   |              Digest-Length (24)               |
+   +-----------------------------------------------+
+   |              Digest-Value? (*)              ...
+   +-----------------------------------------------+
 
    The CACHE_DIGEST frame payload has the following fields:
 
-   o  Digest-Value: An optional sequence of octets containing the digest
-      as computed in Section 2.1.
+   o  Digest-Length: The length of Digest-Value, expressed as an
+      unsigned 24-bit integer.  Values greater than the
+      SETTINGS_MAX_FRAME_SIZE in effect MUST not be sent.
 
-2.1.  Computing the Digest-Value
-
-   The set of URLs that is used to compute Digest-Value MUST only
-   include URLs that share origins [RFC6454] with the stream that
-   CACHE_DIGEST is sent on, and they MUST be fresh [RFC7234].
+   o  Digest-Value: A sequence of octets containing the digest as
+      computed in Section 2.1.
 
 
 
@@ -169,6 +169,15 @@ Oku & Nottingham        Expires November 19, 2016               [Page 3]
 
 Internet-Draft          Cache Digests for HTTP/2                May 2016
 
+
+   If Digest-Length is smaller than the frame size, the remaining data
+   in the frame SHOULD be ignored.
+
+2.1.  Computing the Digest-Value
+
+   The set of URLs that is used to compute Digest-Value MUST only
+   include URLs that share origins [RFC6454] with the stream that
+   CACHE_DIGEST is sent on, and they MUST be fresh [RFC7234].
 
    A client MAY choose a subset of the available stored responses to
    include in the set.  Additionally, it MUST choose a parameter, "P",
@@ -210,6 +219,13 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
 
         1.  Let "W" be the value following "V" in "hash-values".
 
+
+
+Oku & Nottingham        Expires November 19, 2016               [Page 4]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
+
+
         2.  If "W" and "V" are equal, continue to the next "V".
 
         3.  Let "D" be the result of "W - V - 1".
@@ -217,14 +233,6 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
         4.  Let "Q" be the integer result of "D / P".
 
         5.  Let "R" be the result of "D modulo P".
-
-
-
-
-Oku & Nottingham        Expires November 19, 2016               [Page 4]
-
-Internet-Draft          Cache Digests for HTTP/2                May 2016
-
 
         6.  Write "Q" '1' bits to "digest-value".
 
@@ -267,20 +275,16 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
    Additionally, User Agents SHOULD NOT send CACHE_DIGEST when in
    "privacy mode."
 
-5.  References
-
-5.1.  Normative References
-
-
-
-
-
 
 
 Oku & Nottingham        Expires November 19, 2016               [Page 5]
 
 Internet-Draft          Cache Digests for HTTP/2                May 2016
 
+
+5.  References
+
+5.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -325,10 +329,6 @@ Appendix A.  Acknowledgements
    than-bloom-filters , which refers to sample code.
 
    Thanks to Stefan Eissing for his suggestions.
-
-
-
-
 
 
 
