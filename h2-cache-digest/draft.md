@@ -103,14 +103,20 @@ treat an empty Digest-Value as effectively clearing all stored digests for that 
 CACHE_DIGEST has no defined meaning when sent from servers to clients, and MAY be ignored.
 
 ~~~~
-+---------------------------------------------------------------+
-|         Digest-Value? (*)                    ...
-+---------------------------------------------------------------+
++-----------------------------------------------+
+|              Digest-Length (24)               |
++-----------------------------------------------+
+|              Digest-Value? (*)              ...
++-----------------------------------------------+
 ~~~~
 
 The CACHE_DIGEST frame payload has the following fields:
 
-* Digest-Value: An optional sequence of octets containing the digest as computed in {{computing}}.
+* Digest-Length: The length of Digest-Value, expressed as an unsigned 24-bit integer. Values greater than the SETTINGS_MAX_FRAME_SIZE in effect MUST not be sent.
+* Digest-Value: A sequence of octets containing the digest as computed in {{computing}}.
+
+If Digest-Length is smaller than the frame size, the remaining data in the frame SHOULD be ignored.
+
 
 ## Computing the Digest-Value {#computing}
 
