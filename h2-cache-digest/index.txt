@@ -5,7 +5,7 @@
 Network Working Group                                             K. Oku
 Internet-Draft                                             DeNA Co, Ltd.
 Intended status: Informational                             M. Nottingham
-Expires: July 10, 2016                                   January 7, 2016
+Expires: November 19, 2016                                  May 18, 2016
 
 
                         Cache Digests for HTTP/2
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on July 10, 2016.
+   This Internet-Draft will expire on November 19, 2016.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Oku & Nottingham          Expires July 10, 2016                 [Page 1]
+Oku & Nottingham        Expires November 19, 2016               [Page 1]
 
-Internet-Draft          Cache Digests for HTTP/2            January 2016
+Internet-Draft          Cache Digests for HTTP/2                May 2016
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -80,7 +80,7 @@ Table of Contents
      5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
      5.2.  Informative References  . . . . . . . . . . . . . . . . .   6
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   6
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   6
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Introduction
 
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Oku & Nottingham          Expires July 10, 2016                 [Page 2]
+Oku & Nottingham        Expires November 19, 2016               [Page 2]
 
-Internet-Draft          Cache Digests for HTTP/2            January 2016
+Internet-Draft          Cache Digests for HTTP/2                May 2016
 
 
 1.1.  Notational Conventions
@@ -165,9 +165,9 @@ Internet-Draft          Cache Digests for HTTP/2            January 2016
 
 
 
-Oku & Nottingham          Expires July 10, 2016                 [Page 3]
+Oku & Nottingham        Expires November 19, 2016               [Page 3]
 
-Internet-Draft          Cache Digests for HTTP/2            January 2016
+Internet-Draft          Cache Digests for HTTP/2                May 2016
 
 
    A client MAY choose a subset of the available stored responses to
@@ -175,63 +175,69 @@ Internet-Draft          Cache Digests for HTTP/2            January 2016
    that indicates the probability of a false positive it is willing to
    tolerate, expressed as "1/P".
 
-   "P" MUST be a power of 2.
+   "P" MUST be a power of 2, smaller than 2**32.
 
-   To compute a digest-value for the set "URLs" and "P":
+   To compute a "digest-value" for the set "URLs" and "P":
 
-   1.  Let N be the count of "URLs"' members, rounded up to power of 2.
+   1.   Let N be the count of "URLs"' members, rounded up to power of 2.
+        If N is above 2**32, then let N be 2**31.
 
-   2.  Let "hash-values" be an empty array of integers.
+   2.   Let "hash-values" be an empty array of integers.
 
-   3.  Append 0 to "hash-values".
+   3.   Append 0 to "hash-values".
 
-   4.  For each "URL" in URLs, follow these steps:
+   4.   For each "URL" in URLs, follow these steps:
 
-       1.  Convert "URL" to an ASCII string by percent-encoding as
-           appropriate [RFC3986].
+        1.  Convert "URL" to an ASCII string by percent-encoding as
+            appropriate [RFC3986].
 
-       2.  Let "key" be the SHA-256 message digest [RFC6234] of URL,
-           expressed as an integer.
+        2.  Let "key" be the SHA-256 message digest [RFC6234] of URL,
+            expressed as an integer.
 
-       3.  Append "key" modulo ( "N" * "P" ) to "hash-values".
+        3.  Truncate "key" to log2( "N" * "P" ) bits.
 
-   5.  Sort "hash-values" in ascending order.
+        4.  Append "key" to "hash-values".
 
-   6.  Let "digest" be an empty array of bits.
+   5.   Sort "hash-values" in ascending order.
 
-   7.  Write log base 2 of "N" and "P" to "digest" as octets.
+   6.   Let "digest-value" be an empty array of bits.
 
-   8.  For each "V" in "hash-values":
+   7.   Write log base 2 of "N" to "digest-value" using 5 bits.
 
-       1.  Let "W" be the value following "V" in "hash-values".
+   8.   Write log base 2 of "P" to "digest-value" using 5 bits.
 
-       2.  If "W" and "V" are equal, continue to the next "V".
+   9.   For each "V" in "hash-values":
 
-       3.  Let "D" be the result of "W - V - 1".
+        1.  Let "W" be the value following "V" in "hash-values".
 
-       4.  Let "Q" be the integer result of "D / P".
+        2.  If "W" and "V" are equal, continue to the next "V".
 
-       5.  Let "R" be the result of "D modulo P".
+        3.  Let "D" be the result of "W - V - 1".
 
-       6.  Write "Q" '1' bits to "digest".
+        4.  Let "Q" be the integer result of "D / P".
 
-       7.  Write 1 '0' bit to "digest".
-
-       8.  Write "R" to "digest" as binary, using log2(P) bits.
-
+        5.  Let "R" be the result of "D modulo P".
 
 
-Oku & Nottingham          Expires July 10, 2016                 [Page 4]
+
+
+Oku & Nottingham        Expires November 19, 2016               [Page 4]
 
-Internet-Draft          Cache Digests for HTTP/2            January 2016
+Internet-Draft          Cache Digests for HTTP/2                May 2016
 
 
-       9.  If "V" is the second-to-last member of "hash-values", stop
-           iterating through "hash-values" and continue to the next
-           step.
+        6.  Write "Q" '1' bits to "digest-value".
 
-   9.  If the length of "digest" is not a multiple of 8, pad it with 1s
-       until it is.
+        7.  Write 1 '0' bit to "digest-value".
+
+        8.  Write "R" to "digest-value" as binary, using log2(P) bits.
+
+        9.  If "V" is the second-to-last member of "hash-values", stop
+            iterating through "hash-values" and continue to the next
+            step.
+
+   10.  If the length of "digest-value" is not a multiple of 8, pad it
+        with 1s until it is.
 
 3.  IANA Considerations
 
@@ -265,6 +271,17 @@ Internet-Draft          Cache Digests for HTTP/2            January 2016
 
 5.1.  Normative References
 
+
+
+
+
+
+
+Oku & Nottingham        Expires November 19, 2016               [Page 5]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
+
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
@@ -274,13 +291,6 @@ Internet-Draft          Cache Digests for HTTP/2            January 2016
               Resource Identifier (URI): Generic Syntax", STD 66,
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
               <http://www.rfc-editor.org/info/rfc3986>.
-
-
-
-Oku & Nottingham          Expires July 10, 2016                 [Page 5]
-
-Internet-Draft          Cache Digests for HTTP/2            January 2016
-
 
    [RFC6234]  Eastlake 3rd, D. and T. Hansen, "US Secure Hash Algorithms
               (SHA and SHA-based HMAC and HKDF)", RFC 6234,
@@ -314,6 +324,20 @@ Appendix A.  Acknowledgements
    http://giovanni.bajo.it/post/47119962313/golomb-coded-sets-smaller-
    than-bloom-filters , which refers to sample code.
 
+   Thanks to Stefan Eissing for his suggestions.
+
+
+
+
+
+
+
+
+Oku & Nottingham        Expires November 19, 2016               [Page 6]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
+
+
 Authors' Addresses
 
    Kazuho Oku
@@ -333,4 +357,36 @@ Authors' Addresses
 
 
 
-Oku & Nottingham          Expires July 10, 2016                 [Page 6]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Oku & Nottingham        Expires November 19, 2016               [Page 7]
