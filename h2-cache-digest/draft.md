@@ -106,7 +106,7 @@ CACHE_DIGEST has no defined meaning when sent from servers to clients, and MAY b
 +-----------------------------------------------+
 |              Digest-Length (24)               |
 +-----------------------------------------------+
-|              Digest-Value? (*)              ...
+|              Digest-Value? (\*)              ...
 +-----------------------------------------------+
 ~~~~
 
@@ -127,7 +127,7 @@ A client MAY choose a subset of the available stored responses to include in the
 it MUST choose a parameter, `P`, that indicates the probability of a false positive it is willing
 to tolerate, expressed as `1/P`.
 
-`P` MUST be a power of 2, smaller than 2**32.
+`P` MUST be a power of 2, smaller than 2\*\*32.
 
 To compute a `digest-value` for the set `URLs` and `P`:
 
