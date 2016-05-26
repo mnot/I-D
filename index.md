@@ -9,7 +9,6 @@ layout: front
 * [http-cache-channels](http-cache-channels)  
 * [http-options-resources](http-options-resources) - Well-Known Resources for HTTP OPTIONS 
 * [http-patch-status](http-patch-status) - The 2NN Patch HTTP Status Code 
-* [http-problem](http-problem)  
 * [json-home](json-home) - Home Documents for HTTP APIs 
 * [link-hint](link-hint) - HTTP Link Hints 
 * [linked-cache-inv](linked-cache-inv)  
