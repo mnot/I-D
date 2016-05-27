@@ -94,66 +94,80 @@ of what to push to clients.</t>
 </section>
 <section anchor="the-cachedigest-frame" title="The CACHE_DIGEST Frame">
 
-<t>The CACHE_DIGEST frame type is 0xf1. NOTE: This is an experimental value; if standardised, a permanent value will be assigned.</t>
+<t>The CACHE_DIGEST frame type is 0xf1. NOTE: This is an experimental value; if standardised, a
+permanent value will be assigned.</t>
 
 <t>A CACHE_DIGEST frame can be sent from a client to a server on any stream in the “open” state, and
-conveys a digest of the contents of the cache associated with that stream, as explained in
-<xref target="computing"/>.</t>
+conveys a digest of the contents of the client’s cache for associated stream.</t>
 
-<t>In typical use, a client will send CACHE_DIGEST immediately after the first request on a connection
-for a given origin, on the same stream, because there is usually a short period of inactivity then,
-and servers can benefit most when they understand the state of the cache before they begin pushing
-associated assets (e.g., CSS, JavaScript and images).</t>
+<t>CACHE_DIGEST MUST NOT include cached responses whose URLs do not share origins <xref target="RFC6454"/> with the
+request of the stream that the frame is sent upon.</t>
+
+<t>A client MAY choose a subset of the suitable stored responses to include in a CACHE_DIGEST
+frame.</t>
+
+<t>In typical use, a client will send one or more CACHE_DIGESTs immediately after the first request on
+a connection for a given origin, on the same stream, because there is usually a short period of
+inactivity then, and servers can benefit most when they understand the state of the cache before
+they begin pushing associated assets (e.g., CSS, JavaScript and images).</t>
 
 <t>Clients MAY send CACHE_DIGEST at other times, but servers ought not expect frequent updates;
-instead, if they wish to continue to utilise the digest, they will need update it with responses
-sent to that client on the connection.</t>
+instead, if they wish to continue to utilise the digest, they will need to remember responses
+sent to that client on the connection, using that knowledge in conjunction with it.</t>
 
-<t>Servers MUST NOT use any but the most recent CACHE_DIGEST for a given origin as current, and MUST
-treat an empty Digest-Value as effectively clearing all stored digests for that origin.</t>
+<t>Servers MAY use all CACHE_DIGESTS received for a given origin as current, as long as they do not
+have the RESET flag set; a CACHE_DIGEST frame with the RESET flag set MUST clear any previously
+stored CACHE_DIGESTs for its origin. Servers MUST treat an empty Digest-Value with a RESET flag set
+as effectively clearing all stored digests for that origin.</t>
 
 <t>CACHE_DIGEST has no defined meaning when sent from servers to clients, and MAY be ignored.</t>
 
 <figure><artwork><![CDATA[
 +-----------------------------------------------+
-|              Digest-Length (24)               |
-+-----------------------------------------------+
-|              Digest-Value? (*)              ...
+|              Digest-Value? (\*)              ...
 +-----------------------------------------------+
 ]]></artwork></figure>
 
 <t>The CACHE_DIGEST frame payload has the following fields:</t>
 
 <t><list style="symbols">
-  <t>Digest-Length: The length of Digest-Value, expressed as an unsigned 24-bit integer. Values greater than the SETTINGS_MAX_FRAME_SIZE in effect MUST not be sent.</t>
-  <t>Digest-Value: A sequence of octets containing the digest as computed in <xref target="computing"/>.</t>
+  <t><spanx style="strong">Digest-Value</spanx>: A sequence of octets containing the digest as computed in <xref target="computing"/>.</t>
 </list></t>
 
-<t>If Digest-Length is smaller than the frame size, the remaining data in the frame SHOULD be ignored.</t>
+<t>The CACHE_DIGEST frame defines the following flags:</t>
+
+<t><list style="symbols">
+  <t><spanx style="strong">RESET</spanx> (0x1): When set, indicates that any and all cache digests for the applicable origin held by the recipient MUST be considered invalid.</t>
+  <t><spanx style="strong">VALIDATORS</spanx> (0x2): When set, indicates that the <spanx style="verb">validators</spanx> boolean in <xref target="computing"/> is true.</t>
+  <t><spanx style="strong">STALE</spanx> (0x3): When set, indicates that all cached responses represented in the digest-value are stale <xref target="RFC7234"/> at the point in them that the digest was generated; otherwise, all are fresh.</t>
+</list></t>
 
 <section anchor="computing" title="Computing the Digest-Value">
 
-<t>The set of URLs that is used to compute Digest-Value MUST only include URLs that share origins
-<xref target="RFC6454"/> with the stream that CACHE_DIGEST is sent on, and they MUST be fresh <xref target="RFC7234"/>.</t>
+<t>Given the following inputs:</t>
 
-<t>A client MAY choose a subset of the available stored responses to include in the set. Additionally,
-it MUST choose a parameter, <spanx style="verb">P</spanx>, that indicates the probability of a false positive it is willing
-to tolerate, expressed as <spanx style="verb">1/P</spanx>.</t>
+<t><list style="symbols">
+  <t><spanx style="verb">validators</spanx>, a boolean indicating whether validators (<xref target="RFC7232"/>) are to be included in the digest;</t>
+  <t><spanx style="verb">URLs'</spanx>, an array of (string <spanx style="verb">URL</spanx>, string <spanx style="verb">ETag</spanx>) tuples, each corresponding to the Effective Request URI (<xref target="RFC7230"/>, Section 5.5) of a cached response <xref target="RFC7234"/> and its entity-tag <xref target="RFC7232"/> (if <spanx style="verb">validators</spanx> is true and if the ETag is available; otherwise, null);</t>
+  <t><spanx style="verb">P</spanx>, an integer that MUST be a power of 2 smaller than 2**32, that indicates the probability of a false positive that is acceptable, expressed as <spanx style="verb">1/P</spanx>.</t>
+</list></t>
 
-<t><spanx style="verb">P</spanx> MUST be a power of 2, smaller than 2**32.</t>
-
-<t>To compute a <spanx style="verb">digest-value</spanx> for the set <spanx style="verb">URLs</spanx> and <spanx style="verb">P</spanx>:</t>
+<t><spanx style="verb">digest-value</spanx> can be computed using the following algorithm:</t>
 
 <t><list style="numbers">
-  <t>Let N be the count of <spanx style="verb">URLs</spanx>’ members, rounded up to power of 2.  If N is above 2**32, then let N be 2**31.</t>
+  <t>Let N be the count of <spanx style="verb">URLs</spanx>’ members, rounded up to power of 2.  If N is greater than 2**32, then let N be 2**31.</t>
   <t>Let <spanx style="verb">hash-values</spanx> be an empty array of integers.</t>
   <t>Append 0 to <spanx style="verb">hash-values</spanx>.</t>
-  <t>For each <spanx style="verb">URL</spanx> in URLs, follow these steps:
+  <t>For each (<spanx style="verb">URL</spanx>, <spanx style="verb">ETag</spanx>) in <spanx style="verb">URLs</spanx>:
   <list style="numbers">
-      <t>Convert <spanx style="verb">URL</spanx> to an ASCII string by percent-encoding as appropriate <xref target="RFC3986"/>.</t>
-      <t>Let <spanx style="verb">key</spanx> be the SHA-256 message digest <xref target="RFC6234"/> of URL, expressed as an integer.</t>
-      <t>Truncate <spanx style="verb">key</spanx> to log2( <spanx style="verb">N</spanx> * <spanx style="verb">P</spanx> ) bits.</t>
-      <t>Append <spanx style="verb">key</spanx> to <spanx style="verb">hash-values</spanx>.</t>
+      <t>Let <spanx style="verb">key</spanx> be <spanx style="verb">URL</spanx> converted to an ASCII string by percent-encoding as appropriate <xref target="RFC3986"/>.</t>
+      <t>If <spanx style="verb">validators</spanx> is true and <spanx style="verb">ETag</spanx> is not null:
+      <list style="numbers">
+          <t>Append <spanx style="verb">ETag</spanx> to <spanx style="verb">key</spanx> as an ASCII string, including both the <spanx style="verb">weak</spanx> indicator (if present) and double quotes, as per <xref target="RFC7232"/> Section 2.3.</t>
+        </list></t>
+      <t>Let <spanx style="verb">hash</spanx> be the SHA-256 message digest <xref target="RFC6234"/> of <spanx style="verb">key</spanx>, expressed as an integer.</t>
+      <t>Truncate <spanx style="verb">hash</spanx> to log2( <spanx style="verb">N</spanx> * <spanx style="verb">P</spanx> ) bits.</t>
+      <t>Append <spanx style="verb">hash</spanx> to <spanx style="verb">hash-values</spanx>.</t>
     </list></t>
   <t>Sort <spanx style="verb">hash-values</spanx> in ascending order.</t>
   <t>Let <spanx style="verb">digest-value</spanx> be an empty array of bits.</t>
@@ -265,6 +279,34 @@ change its contents.</t>
 </front>
 <seriesInfo name='RFC' value='6454'/>
 <seriesInfo name='DOI' value='10.17487/RFC6454'/>
+</reference>
+
+
+
+<reference  anchor='RFC7230' target='http://www.rfc-editor.org/info/rfc7230'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the &quot;http&quot; and &quot;https&quot; Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7230'/>
+<seriesInfo name='DOI' value='10.17487/RFC7230'/>
+</reference>
+
+
+
+<reference  anchor='RFC7232' target='http://www.rfc-editor.org/info/rfc7232'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Conditional Requests</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application- level protocol for distributed, collaborative, hypertext information systems.  This document defines HTTP/1.1 conditional requests, including metadata header fields for indicating state changes, request header fields for making preconditions on such state, and rules for constructing the responses to a conditional request when one or more preconditions evaluate to false.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7232'/>
+<seriesInfo name='DOI' value='10.17487/RFC7232'/>
 </reference>
 
 

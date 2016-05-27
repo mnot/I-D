@@ -5,7 +5,7 @@
 Network Working Group                                             K. Oku
 Internet-Draft                                             DeNA Co, Ltd.
 Intended status: Informational                             M. Nottingham
-Expires: November 19, 2016                                  May 18, 2016
+Expires: November 28, 2016                                  May 27, 2016
 
 
                         Cache Digests for HTTP/2
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 19, 2016.
+   This Internet-Draft will expire on November 28, 2016.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Oku & Nottingham        Expires November 19, 2016               [Page 1]
+Oku & Nottingham        Expires November 28, 2016               [Page 1]
 
 Internet-Draft          Cache Digests for HTTP/2                May 2016
 
@@ -74,12 +74,12 @@ Table of Contents
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The CACHE_DIGEST Frame  . . . . . . . . . . . . . . . . . . .   3
      2.1.  Computing the Digest-Value  . . . . . . . . . . . . . . .   4
-   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
    5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
      5.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
-     5.2.  Informative References  . . . . . . . . . . . . . . . . .   6
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   6
+     5.2.  Informative References  . . . . . . . . . . . . . . . . .   7
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   7
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Introduction
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Oku & Nottingham        Expires November 19, 2016               [Page 2]
+Oku & Nottingham        Expires November 28, 2016               [Page 2]
 
 Internet-Draft          Cache Digests for HTTP/2                May 2016
 
@@ -127,85 +127,117 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
 
    A CACHE_DIGEST frame can be sent from a client to a server on any
    stream in the "open" state, and conveys a digest of the contents of
-   the cache associated with that stream, as explained in Section 2.1.
+   the client's cache for associated stream.
 
-   In typical use, a client will send CACHE_DIGEST immediately after the
-   first request on a connection for a given origin, on the same stream,
-   because there is usually a short period of inactivity then, and
-   servers can benefit most when they understand the state of the cache
-   before they begin pushing associated assets (e.g., CSS, JavaScript
-   and images).
+   CACHE_DIGEST MUST NOT include cached responses whose URLs do not
+   share origins [RFC6454] with the request of the stream that the frame
+   is sent upon.
+
+   A client MAY choose a subset of the suitable stored responses to
+   include in a CACHE_DIGEST frame.
+
+   In typical use, a client will send one or more CACHE_DIGESTs
+   immediately after the first request on a connection for a given
+   origin, on the same stream, because there is usually a short period
+   of inactivity then, and servers can benefit most when they understand
+   the state of the cache before they begin pushing associated assets
+   (e.g., CSS, JavaScript and images).
 
    Clients MAY send CACHE_DIGEST at other times, but servers ought not
    expect frequent updates; instead, if they wish to continue to utilise
-   the digest, they will need update it with responses sent to that
-   client on the connection.
+   the digest, they will need to remember responses sent to that client
+   on the connection, using that knowledge in conjunction with it.
 
-   Servers MUST NOT use any but the most recent CACHE_DIGEST for a given
-   origin as current, and MUST treat an empty Digest-Value as
-   effectively clearing all stored digests for that origin.
+   Servers MAY use all CACHE_DIGESTS received for a given origin as
+   current, as long as they do not have the RESET flag set; a
+   CACHE_DIGEST frame with the RESET flag set MUST clear any previously
+   stored CACHE_DIGESTs for its origin.  Servers MUST treat an empty
+   Digest-Value with a RESET flag set as effectively clearing all stored
+   digests for that origin.
 
    CACHE_DIGEST has no defined meaning when sent from servers to
    clients, and MAY be ignored.
 
    +-----------------------------------------------+
-   |              Digest-Length (24)               |
-   +-----------------------------------------------+
-   |              Digest-Value? (*)              ...
+   |              Digest-Value? (\*)              ...
    +-----------------------------------------------+
 
-   The CACHE_DIGEST frame payload has the following fields:
-
-   o  Digest-Length: The length of Digest-Value, expressed as an
-      unsigned 24-bit integer.  Values greater than the
-      SETTINGS_MAX_FRAME_SIZE in effect MUST not be sent.
-
-   o  Digest-Value: A sequence of octets containing the digest as
-      computed in Section 2.1.
 
 
 
-Oku & Nottingham        Expires November 19, 2016               [Page 3]
+Oku & Nottingham        Expires November 28, 2016               [Page 3]
 
 Internet-Draft          Cache Digests for HTTP/2                May 2016
 
 
-   If Digest-Length is smaller than the frame size, the remaining data
-   in the frame SHOULD be ignored.
+   The CACHE_DIGEST frame payload has the following fields:
+
+   o  *Digest-Value*: A sequence of octets containing the digest as
+      computed in Section 2.1.
+
+   The CACHE_DIGEST frame defines the following flags:
+
+   o  *RESET* (0x1): When set, indicates that any and all cache digests
+      for the applicable origin held by the recipient MUST be considered
+      invalid.
+
+   o  *VALIDATORS* (0x2): When set, indicates that the "validators"
+      boolean in Section 2.1 is true.
+
+   o  *STALE* (0x3): When set, indicates that all cached responses
+      represented in the digest-value are stale [RFC7234] at the point
+      in them that the digest was generated; otherwise, all are fresh.
 
 2.1.  Computing the Digest-Value
 
-   The set of URLs that is used to compute Digest-Value MUST only
-   include URLs that share origins [RFC6454] with the stream that
-   CACHE_DIGEST is sent on, and they MUST be fresh [RFC7234].
+   Given the following inputs:
 
-   A client MAY choose a subset of the available stored responses to
-   include in the set.  Additionally, it MUST choose a parameter, "P",
-   that indicates the probability of a false positive it is willing to
-   tolerate, expressed as "1/P".
+   o  "validators", a boolean indicating whether validators ([RFC7232])
+      are to be included in the digest;
 
-   "P" MUST be a power of 2, smaller than 2**32.
+   o  "URLs'", an array of (string "URL", string "ETag") tuples, each
+      corresponding to the Effective Request URI ([RFC7230],
+      Section 5.5) of a cached response [RFC7234] and its entity-tag
+      [RFC7232] (if "validators" is true and if the ETag is available;
+      otherwise, null);
 
-   To compute a "digest-value" for the set "URLs" and "P":
+   o  "P", an integer that MUST be a power of 2 smaller than 2**32, that
+      indicates the probability of a false positive that is acceptable,
+      expressed as "1/P".
+
+   "digest-value" can be computed using the following algorithm:
 
    1.   Let N be the count of "URLs"' members, rounded up to power of 2.
-        If N is above 2**32, then let N be 2**31.
+        If N is greater than 2**32, then let N be 2**31.
 
    2.   Let "hash-values" be an empty array of integers.
 
    3.   Append 0 to "hash-values".
 
-   4.   For each "URL" in URLs, follow these steps:
+   4.   For each ("URL", "ETag") in "URLs":
 
-        1.  Convert "URL" to an ASCII string by percent-encoding as
-            appropriate [RFC3986].
+        1.  Let "key" be "URL" converted to an ASCII string by percent-
+            encoding as appropriate [RFC3986].
 
-        2.  Let "key" be the SHA-256 message digest [RFC6234] of URL,
+
+
+Oku & Nottingham        Expires November 28, 2016               [Page 4]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
+
+
+        2.  If "validators" is true and "ETag" is not null:
+
+            1.  Append "ETag" to "key" as an ASCII string, including
+                both the "weak" indicator (if present) and double
+                quotes, as per [RFC7232] Section 2.3.
+
+        3.  Let "hash" be the SHA-256 message digest [RFC6234] of "key",
             expressed as an integer.
 
-        3.  Truncate "key" to log2( "N" * "P" ) bits.
+        4.  Truncate "hash" to log2( "N" * "P" ) bits.
 
-        4.  Append "key" to "hash-values".
+        5.  Append "hash" to "hash-values".
 
    5.   Sort "hash-values" in ascending order.
 
@@ -218,13 +250,6 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
    9.   For each "V" in "hash-values":
 
         1.  Let "W" be the value following "V" in "hash-values".
-
-
-
-Oku & Nottingham        Expires November 19, 2016               [Page 4]
-
-Internet-Draft          Cache Digests for HTTP/2                May 2016
-
 
         2.  If "W" and "V" are equal, continue to the next "V".
 
@@ -246,6 +271,16 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
 
    10.  If the length of "digest-value" is not a multiple of 8, pad it
         with 1s until it is.
+
+
+
+
+
+
+Oku & Nottingham        Expires November 28, 2016               [Page 5]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
+
 
 3.  IANA Considerations
 
@@ -275,13 +310,6 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
    Additionally, User Agents SHOULD NOT send CACHE_DIGEST when in
    "privacy mode."
 
-
-
-Oku & Nottingham        Expires November 19, 2016               [Page 5]
-
-Internet-Draft          Cache Digests for HTTP/2                May 2016
-
-
 5.  References
 
 5.1.  Normative References
@@ -301,9 +329,28 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
               DOI 10.17487/RFC6234, May 2011,
               <http://www.rfc-editor.org/info/rfc6234>.
 
+
+
+
+
+Oku & Nottingham        Expires November 28, 2016               [Page 6]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
+
+
    [RFC6454]  Barth, A., "The Web Origin Concept", RFC 6454,
               DOI 10.17487/RFC6454, December 2011,
               <http://www.rfc-editor.org/info/rfc6454>.
+
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing",
+              RFC 7230, DOI 10.17487/RFC7230, June 2014,
+              <http://www.rfc-editor.org/info/rfc7230>.
+
+   [RFC7232]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Conditional Requests", RFC 7232,
+              DOI 10.17487/RFC7232, June 2014,
+              <http://www.rfc-editor.org/info/rfc7232>.
 
    [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
               Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
@@ -330,20 +377,21 @@ Appendix A.  Acknowledgements
 
    Thanks to Stefan Eissing for his suggestions.
 
-
-
-
-Oku & Nottingham        Expires November 19, 2016               [Page 6]
-
-Internet-Draft          Cache Digests for HTTP/2                May 2016
-
-
 Authors' Addresses
 
    Kazuho Oku
    DeNA Co, Ltd.
 
    Email: kazuhooku@gmail.com
+
+
+
+
+
+
+Oku & Nottingham        Expires November 28, 2016               [Page 7]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
 
 
    Mark Nottingham
@@ -389,4 +437,12 @@ Authors' Addresses
 
 
 
-Oku & Nottingham        Expires November 19, 2016               [Page 7]
+
+
+
+
+
+
+
+
+Oku & Nottingham        Expires November 28, 2016               [Page 8]
