@@ -120,6 +120,25 @@ have the RESET flag set; a CACHE_DIGEST frame with the RESET flag set MUST clear
 stored CACHE_DIGESTs for its origin. Servers MUST treat an empty Digest-Value with a RESET flag set
 as effectively clearing all stored digests for that origin.</t>
 
+<t>A client can indicate what responses it has fresh in cache by sending one or more CACHE_DIGESTs
+with the STALE flag unset. when all such CACHE_DIGESTs sent since the start of the connection (or
+the last CACHE_DIGEST of any kind with a RESET flag) represent the complete state of fresh cached
+responses for the origin, the client SHOULD indicate that with the COMPLETE flag on the last STALE
+CACHE_DIGEST. Note that this does not need to include any responses cached since the beginning of
+the connection or sending of the RESET flag, as appropriate.</t>
+
+<t>Likewise, a client can indicate what responses it has stale in cache by sending one or more
+CACHE_DIGESTs with the STALE flag set. When all such CACHE_DIGESTs sent since the start of the
+connection (or since the last CACHE_DIGEST of any kind with a RESET flag) represent the complete
+state of stale cached responses for the origin, the client SHOULD indicate that with the COMPLETE
+flag on the last STALE CACHE_DIGEST, with the same caveats as above.</t>
+
+<t>CACHE_DIGEST can be computed to include cached responses’ ETags, as indicated by the VALIDATORS
+flag. This information can be used by servers to decide what kinds of responses to push to clients;
+for example, a stale response that hasn’t changed could be refreshed with a 304 (Not Modified)
+response; one that has changed can be replaced with a 200 (OK) response, whether the cached
+response was fresh or stale.</t>
+
 <t>CACHE_DIGEST has no defined meaning when sent from servers to clients, and MAY be ignored.</t>
 
 <figure><artwork><![CDATA[
@@ -138,8 +157,9 @@ as effectively clearing all stored digests for that origin.</t>
 
 <t><list style="symbols">
   <t><spanx style="strong">RESET</spanx> (0x1): When set, indicates that any and all cache digests for the applicable origin held by the recipient MUST be considered invalid.</t>
-  <t><spanx style="strong">VALIDATORS</spanx> (0x2): When set, indicates that the <spanx style="verb">validators</spanx> boolean in <xref target="computing"/> is true.</t>
-  <t><spanx style="strong">STALE</spanx> (0x3): When set, indicates that all cached responses represented in the digest-value are stale <xref target="RFC7234"/> at the point in them that the digest was generated; otherwise, all are fresh.</t>
+  <t><spanx style="strong">COMPLETE</spanx> (0x2): When set, indicates that the currently valid set of cache digests held by the server constitutes a complete representation of the cache’s state regarding that origin, for the type of cached response indicated by the <spanx style="verb">STALE</spanx> flag.</t>
+  <t><spanx style="strong">VALIDATORS</spanx> (0x3): When set, indicates that the <spanx style="verb">validators</spanx> boolean in <xref target="computing"/> is true.</t>
+  <t><spanx style="strong">STALE</spanx> (0x4): When set, indicates that all cached responses represented in the digest-value are stale <xref target="RFC7234"/> at the point in them that the digest was generated; otherwise, all are fresh.</t>
 </list></t>
 
 <section anchor="computing" title="Computing the Digest-Value">
@@ -180,8 +200,8 @@ as effectively clearing all stored digests for that origin.</t>
       <t>Let <spanx style="verb">D</spanx> be the result of <spanx style="verb">W - V - 1</spanx>.</t>
       <t>Let <spanx style="verb">Q</spanx> be the integer result of <spanx style="verb">D / P</spanx>.</t>
       <t>Let <spanx style="verb">R</spanx> be the result of <spanx style="verb">D modulo P</spanx>.</t>
-      <t>Write <spanx style="verb">Q</spanx> ‘1’ bits to <spanx style="verb">digest-value</spanx>.</t>
-      <t>Write 1 ‘0’ bit to <spanx style="verb">digest-value</spanx>.</t>
+      <t>Write <spanx style="verb">Q</spanx> ‘0’ bits to <spanx style="verb">digest-value</spanx>.</t>
+      <t>Write 1 ‘1’ bit to <spanx style="verb">digest-value</spanx>.</t>
       <t>Write <spanx style="verb">R</spanx> to <spanx style="verb">digest-value</spanx> as binary, using log2(P) bits.</t>
       <t>If <spanx style="verb">V</spanx> is the second-to-last member of <spanx style="verb">hash-values</spanx>, stop iterating through <spanx style="verb">hash-values</spanx> and continue to the next step.</t>
     </list></t>

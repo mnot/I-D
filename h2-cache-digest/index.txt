@@ -5,7 +5,7 @@
 Network Working Group                                             K. Oku
 Internet-Draft                                             DeNA Co, Ltd.
 Intended status: Informational                             M. Nottingham
-Expires: November 28, 2016                                  May 27, 2016
+Expires: December 2, 2016                                   May 31, 2016
 
 
                         Cache Digests for HTTP/2
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on November 28, 2016.
+   This Internet-Draft will expire on December 2, 2016.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Oku & Nottingham        Expires November 28, 2016               [Page 1]
+Oku & Nottingham        Expires December 2, 2016                [Page 1]
 
 Internet-Draft          Cache Digests for HTTP/2                May 2016
 
@@ -73,14 +73,14 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The CACHE_DIGEST Frame  . . . . . . . . . . . . . . . . . . .   3
-     2.1.  Computing the Digest-Value  . . . . . . . . . . . . . . .   4
+     2.1.  Computing the Digest-Value  . . . . . . . . . . . . . . .   5
    3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
-     5.2.  Informative References  . . . . . . . . . . . . . . . . .   7
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   7
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   7
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   7
+     5.2.  Informative References  . . . . . . . . . . . . . . . . .   8
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   8
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   8
 
 1.  Introduction
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Oku & Nottingham        Expires November 28, 2016               [Page 2]
+Oku & Nottingham        Expires December 2, 2016                [Page 2]
 
 Internet-Draft          Cache Digests for HTTP/2                May 2016
 
@@ -155,20 +155,46 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
    Digest-Value with a RESET flag set as effectively clearing all stored
    digests for that origin.
 
+   A client can indicate what responses it has fresh in cache by sending
+   one or more CACHE_DIGESTs with the STALE flag unset. when all such
+   CACHE_DIGESTs sent since the start of the connection (or the last
+   CACHE_DIGEST of any kind with a RESET flag) represent the complete
+   state of fresh cached responses for the origin, the client SHOULD
+   indicate that with the COMPLETE flag on the last STALE CACHE_DIGEST.
+   Note that this does not need to include any responses cached since
+
+
+
+Oku & Nottingham        Expires December 2, 2016                [Page 3]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
+
+
+   the beginning of the connection or sending of the RESET flag, as
+   appropriate.
+
+   Likewise, a client can indicate what responses it has stale in cache
+   by sending one or more CACHE_DIGESTs with the STALE flag set.  When
+   all such CACHE_DIGESTs sent since the start of the connection (or
+   since the last CACHE_DIGEST of any kind with a RESET flag) represent
+   the complete state of stale cached responses for the origin, the
+   client SHOULD indicate that with the COMPLETE flag on the last STALE
+   CACHE_DIGEST, with the same caveats as above.
+
+   CACHE_DIGEST can be computed to include cached responses' ETags, as
+   indicated by the VALIDATORS flag.  This information can be used by
+   servers to decide what kinds of responses to push to clients; for
+   example, a stale response that hasn't changed could be refreshed with
+   a 304 (Not Modified) response; one that has changed can be replaced
+   with a 200 (OK) response, whether the cached response was fresh or
+   stale.
+
    CACHE_DIGEST has no defined meaning when sent from servers to
    clients, and MAY be ignored.
 
    +-----------------------------------------------+
    |              Digest-Value? (\*)              ...
    +-----------------------------------------------+
-
-
-
-
-Oku & Nottingham        Expires November 28, 2016               [Page 3]
-
-Internet-Draft          Cache Digests for HTTP/2                May 2016
-
 
    The CACHE_DIGEST frame payload has the following fields:
 
@@ -181,12 +207,24 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
       for the applicable origin held by the recipient MUST be considered
       invalid.
 
-   o  *VALIDATORS* (0x2): When set, indicates that the "validators"
+   o  *COMPLETE* (0x2): When set, indicates that the currently valid set
+      of cache digests held by the server constitutes a complete
+      representation of the cache's state regarding that origin, for the
+      type of cached response indicated by the "STALE" flag.
+
+   o  *VALIDATORS* (0x3): When set, indicates that the "validators"
       boolean in Section 2.1 is true.
 
-   o  *STALE* (0x3): When set, indicates that all cached responses
+   o  *STALE* (0x4): When set, indicates that all cached responses
       represented in the digest-value are stale [RFC7234] at the point
       in them that the digest was generated; otherwise, all are fresh.
+
+
+
+Oku & Nottingham        Expires December 2, 2016                [Page 4]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
+
 
 2.1.  Computing the Digest-Value
 
@@ -219,13 +257,6 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
         1.  Let "key" be "URL" converted to an ASCII string by percent-
             encoding as appropriate [RFC3986].
 
-
-
-Oku & Nottingham        Expires November 28, 2016               [Page 4]
-
-Internet-Draft          Cache Digests for HTTP/2                May 2016
-
-
         2.  If "validators" is true and "ETag" is not null:
 
             1.  Append "ETag" to "key" as an ASCII string, including
@@ -243,6 +274,14 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
 
    6.   Let "digest-value" be an empty array of bits.
 
+
+
+
+Oku & Nottingham        Expires December 2, 2016                [Page 5]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
+
+
    7.   Write log base 2 of "N" to "digest-value" using 5 bits.
 
    8.   Write log base 2 of "P" to "digest-value" using 5 bits.
@@ -259,9 +298,9 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
 
         5.  Let "R" be the result of "D modulo P".
 
-        6.  Write "Q" '1' bits to "digest-value".
+        6.  Write "Q" '0' bits to "digest-value".
 
-        7.  Write 1 '0' bit to "digest-value".
+        7.  Write 1 '1' bit to "digest-value".
 
         8.  Write "R" to "digest-value" as binary, using log2(P) bits.
 
@@ -271,16 +310,6 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
 
    10.  If the length of "digest-value" is not a multiple of 8, pad it
         with 1s until it is.
-
-
-
-
-
-
-Oku & Nottingham        Expires November 28, 2016               [Page 5]
-
-Internet-Draft          Cache Digests for HTTP/2                May 2016
-
 
 3.  IANA Considerations
 
@@ -301,6 +330,14 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
    As a result, clients MUST mitigate for this threat when the user
    attempts to remove identifiers (e.g., "clearing cookies").  This
    could be achieved in a number of ways; for example: by clearing the
+
+
+
+Oku & Nottingham        Expires December 2, 2016                [Page 6]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
+
+
    cache, by changing one or both of N and P, or by adding new,
    synthetic entries to the digest to change its contents.
 
@@ -329,15 +366,6 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
               DOI 10.17487/RFC6234, May 2011,
               <http://www.rfc-editor.org/info/rfc6234>.
 
-
-
-
-
-Oku & Nottingham        Expires November 28, 2016               [Page 6]
-
-Internet-Draft          Cache Digests for HTTP/2                May 2016
-
-
    [RFC6454]  Barth, A., "The Web Origin Concept", RFC 6454,
               DOI 10.17487/RFC6454, December 2011,
               <http://www.rfc-editor.org/info/rfc6454>.
@@ -356,6 +384,15 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
               Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
               RFC 7234, DOI 10.17487/RFC7234, June 2014,
               <http://www.rfc-editor.org/info/rfc7234>.
+
+
+
+
+
+Oku & Nottingham        Expires December 2, 2016                [Page 7]
+
+Internet-Draft          Cache Digests for HTTP/2                May 2016
+
 
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
@@ -385,15 +422,6 @@ Authors' Addresses
    Email: kazuhooku@gmail.com
 
 
-
-
-
-
-Oku & Nottingham        Expires November 28, 2016               [Page 7]
-
-Internet-Draft          Cache Digests for HTTP/2                May 2016
-
-
    Mark Nottingham
 
    Email: mnot@mnot.net
@@ -417,32 +445,4 @@ Internet-Draft          Cache Digests for HTTP/2                May 2016
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Oku & Nottingham        Expires November 28, 2016               [Page 8]
+Oku & Nottingham        Expires December 2, 2016                [Page 8]
