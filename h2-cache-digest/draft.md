@@ -110,6 +110,25 @@ have the RESET flag set; a CACHE_DIGEST frame with the RESET flag set MUST clear
 stored CACHE_DIGESTs for its origin. Servers MUST treat an empty Digest-Value with a RESET flag set
 as effectively clearing all stored digests for that origin.
 
+A client can indicate what responses it has fresh in cache by sending one or more CACHE_DIGESTs
+with the STALE flag unset. when all such CACHE_DIGESTs sent since the start of the connection (or
+the last CACHE_DIGEST of any kind with a RESET flag) represent the complete state of fresh cached
+responses for the origin, the client SHOULD indicate that with the COMPLETE flag on the last STALE
+CACHE_DIGEST. Note that this does not need to include any responses cached since the beginning of
+the connection or sending of the RESET flag, as appropriate.
+
+Likewise, a client can indicate what responses it has stale in cache by sending one or more
+CACHE_DIGESTs with the STALE flag set. When all such CACHE_DIGESTs sent since the start of the
+connection (or since the last CACHE_DIGEST of any kind with a RESET flag) represent the complete
+state of stale cached responses for the origin, the client SHOULD indicate that with the COMPLETE
+flag on the last STALE CACHE_DIGEST, with the same caveats as above.
+
+CACHE_DIGEST can be computed to include cached responses' ETags, as indicated by the VALIDATORS
+flag. This information can be used by servers to decide what kinds of responses to push to clients;
+for example, a stale response that hasn't changed could be refreshed with a 304 (Not Modified)
+response; one that has changed can be replaced with a 200 (OK) response, whether the cached
+response was fresh or stale.
+
 CACHE_DIGEST has no defined meaning when sent from servers to clients, and MAY be ignored.
 
 ~~~~
@@ -126,10 +145,11 @@ The CACHE_DIGEST frame defines the following flags:
 
 * **RESET** (0x1): When set, indicates that any and all cache digests for the applicable origin held by the recipient MUST be considered invalid.
 
-* **VALIDATORS** (0x2): When set, indicates that the `validators` boolean in {{computing}} is true.
+* **COMPLETE** (0x2): When set, indicates that the currently valid set of cache digests held by the server constitutes a complete representation of the cache's state regarding that origin, for the type of cached response indicated by the `STALE` flag.
 
-* **STALE** (0x3): When set, indicates that all cached responses represented in the digest-value are stale {{RFC7234}} at the point in them that the digest was generated; otherwise, all are fresh.
+* **VALIDATORS** (0x3): When set, indicates that the `validators` boolean in {{computing}} is true.
 
+* **STALE** (0x4): When set, indicates that all cached responses represented in the digest-value are stale {{RFC7234}} at the point in them that the digest was generated; otherwise, all are fresh.
 
 
 ## Computing the Digest-Value {#computing}
