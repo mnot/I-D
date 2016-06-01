@@ -162,7 +162,7 @@ Given the following inputs:
 
 `digest-value` can be computed using the following algorithm:
 
-1. Let N be the count of `URLs`' members, rounded up to power of 2.  If N is greater than 2\*\*32, then round N to the nearest power of 2 smaller than 2\*\*32.
+1. Let N be the count of `URLs`' members, rounded to the nearest power of 2 smaller than 2\*\*32.
 2. Let `hash-values` be an empty array of integers.
 3. Append 0 to `hash-values`.
 4. For each (`URL`, `ETag`) in `URLs`:
