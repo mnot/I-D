@@ -81,9 +81,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
 {{RFC2119}}.
 
-A CACHE_DIGEST frame can be sent from a client to a server on any stream in the "open" state, and
-conveys a digest of the contents of the client's cache for associated stream.
-
 
 # The CACHE_DIGEST Frame
 
@@ -111,6 +108,9 @@ The CACHE_DIGEST frame defines the following flags:
 * **STALE** (0x8): When set, indicates that all cached responses represented in the digest-value are stale {{RFC7234}} at the point in them that the digest was generated; otherwise, all are fresh.
 
 ## Client Behavior
+
+A CACHE_DIGEST frame can be sent from a client to a server on any stream in the "open" state, and
+conveys a digest of the contents of the client's cache for associated stream.
 
 In typical use, a client will send one or more CACHE_DIGESTs immediately after the first request on
 a connection for a given origin, on the same stream, because there is usually a short period of
