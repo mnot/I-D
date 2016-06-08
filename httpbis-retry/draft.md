@@ -267,6 +267,8 @@ nsHttpRequestHead::IsSafeMethod() const
 
 ([source](http://mxr.mozilla.org/mozilla-release/source/netwerk/protocol/http/nsHttpRequestHead.cpp#67))
 
+Note that `connReused` is tested; if a connection has been used before, Firefox will retry *any* request, safe or not. A recent change attempted to remove this behaviour, but it caused [compatibility problems](https://www.fxsitecompat.com/en-CA/docs/2016/post-request-fails-on-certain-sites-showing-connection-reset-page/), and is being backed out.
+
 
 ## Chromium
 
@@ -311,7 +313,7 @@ Yep.
 
 # Acknowledgements
 
-Thanks to Amos Jeffries and Leif Hedstrom for their feedback.
+Thanks to Amos Jeffries, Patrick McManus and Leif Hedstrom for their feedback.
 
 
 --- back
