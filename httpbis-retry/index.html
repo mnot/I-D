@@ -1,0 +1,278 @@
+<!DOCTYPE html
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Retrying HTTP Requests</title><script type="application/javascript">
+function anchorRewrite() {
+  map = { };
+  if (window.location.hash.length >= 1) {
+    var fragid = window.location.hash.substr(1);
+    if (fragid) {
+      if (! document.getElementById(fragid)) {
+        var prefix = "rfc.";
+        var mapped = map[fragid];
+        if (mapped) {
+          window.location.hash = mapped;
+        } else if (fragid.indexOf("section-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(8);
+        } else if (fragid.indexOf("appendix-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(9);
+        } else if (fragid.indexOf("s-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(2);
+        } else if (fragid.indexOf("p-") == 0) {
+          var r = fragid.substring(2);
+          var p = r.indexOf("-");
+          if (p >= 0) {
+            window.location.hash = prefix + "section." + r.substring(0, p) + ".p." + r.substring(p + 1);
+          }
+        }
+      }
+    }  
+  }
+}
+window.addEventListener('hashchange', anchorRewrite);
+window.addEventListener('DOMContentLoaded', anchorRewrite);
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      #rfc\.toc > ul li {
+        list-style: none;
+      }
+      .container .nav-sublist {
+        padding-left: 20px;
+        padding-right: 10px;
+        font-size: 90%;
+      }
+      .container .navbar-brand {
+        padding-top: 0;
+      }
+      .container .nav > li > a {
+        padding: 10px 7px 5px 15px;
+        display: inline-block;
+      }
+      .container .nav > li > a + a {
+        padding: 10px 15px 5px 7px;
+        display: inline-block;
+      }
+      .container .nav > li > a {
+        padding: 5px 10px;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+      span.tt {
+        font: 11pt consolas, monospace;
+        font-size-adjust: none;
+      }
+    </style><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 When Clients Retry" href="#rfc.section.2"><link rel="Chapter" title="3 Retrying GET: Do We Have a Problem?" href="#rfc.section.3"><link rel="Chapter" title="4 Protocol Extensions to Improve Retry Detection" href="#rfc.section.4"><link rel="Chapter" title="5 Updating HTTP Requirements for Retries" href="#rfc.section.5"><link rel="Chapter" title="6 Security Considerations" href="#rfc.section.6"><link rel="Chapter" href="#rfc.section.7" title="7 References"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="Internet-Draft"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Nottingham, M."><meta name="dcterms.identifier" content="urn:ietf:id:draft-nottingham-httpbis-retry-00"><meta name="dcterms.issued" content="2016-06-08"><meta name="dcterms.abstract" content="HTTP allows requests to be automatically retried under certain circumstances. This draft explores how this is implemented, requirements for similar functionality from other parts of the stack, and potential future improvements."><meta name="description" content="HTTP allows requests to be automatically retried under certain circumstances. This draft explores how this is implemented, requirements for similar functionality from other parts of the stack, and potential future improvements."></head><body><div class="container" id="top"><div class="row"><div class="col-md-4 col-md-push-8 hidden-sm hidden-xs" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top">Internet-Draft</a></div><br clear="all"><div class=""><div id="rfc..toc"><ul class="nav"><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1</a>&nbsp;&nbsp;&nbsp;<a href="#notational-conventions">Notational Conventions</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#current">When Clients Retry</a><ul><li><a href="#rfc.section.2.1">2.1</a>&nbsp;&nbsp;&nbsp;<a href="#squid">Squid</a></li><li><a href="#rfc.section.2.2">2.2</a>&nbsp;&nbsp;&nbsp;<a href="#traffic-server">Traffic Server</a></li><li><a href="#rfc.section.2.3">2.3</a>&nbsp;&nbsp;&nbsp;<a href="#firefox">Firefox</a></li><li><a href="#rfc.section.2.4">2.4</a>&nbsp;&nbsp;&nbsp;<a href="#chromium">Chromium</a></li></ul></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#retry_get">Retrying GET: Do We Have a Problem?</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#detect">Protocol Extensions to Improve Retry Detection</a></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#update">Updating HTTP Requirements for Retries</a></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#security-considerations">Security Considerations</a></li><li><a href="#rfc.section.7">7.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.7.1">7.1</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.1">Normative References</a></li><li><a href="#rfc.section.7.2">7.2</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Informative References</a></li></ul></li><li><a href="#rfc.authors">Author's Address</a></li></ul></div></div></div></div><div class="col-md-8 col-md-pull-4 main" role="main"><header><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Network Working Group</td><td class="text-right">M. Nottingham</td></tr><tr><td class="text-left">Internet-Draft</td><td class="text-right">June 8, 2016</td></tr><tr><td class="text-left">Intended status: Informational</td><td class="text-right"></td></tr><tr><td class="text-left">Expires: December 10, 2016</td><td class="text-right"></td></tr></tbody></table><div id="rfc.title"><h1>Retrying HTTP Requests</h1><div class="filename">draft-nottingham-httpbis-retry-00</div></div></header><hr><h2 id="rfc..abstract"><a href="#rfc..abstract">Abstract</a></h2><div class="lead"><p>HTTP allows requests to be automatically retried under certain circumstances. This draft explores how this is implemented, requirements for similar functionality from other parts of the stack, and potential future improvements.</p></div><section id="rfc.note.1"><h2><a href="#rfc.note.1">Note to Readers</a></h2><p>The issues list for this draft can be found at <a href="https://github.com/mnot/I-D/labels/httpbis-retry">https://github.com/mnot/I-D/labels/httpbis-retry</a>.</p><p>The most recent (often, unpublished) draft is at <a href="https://mnot.github.io/I-D/httpbis-retry/">https://mnot.github.io/I-D/httpbis-retry/</a>.</p><p>Recent changes are listed at <a href="https://github.com/mnot/I-D/commits/gh-pages/httpbis-retry">https://github.com/mnot/I-D/commits/gh-pages/httpbis-retry</a>.</p></section><section id="rfc.status"><h2><a href="#rfc.status">Status of this Memo</a></h2><p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p><p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF). Note that other groups may also distribute working documents as Internet-Drafts. The list of current Internet-Drafts is at <a href="http://datatracker.ietf.org/drafts/current/">http://datatracker.ietf.org/drafts/current/</a>.</p><p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or to cite them other than as “work in progress”.</p><p>This Internet-Draft will expire on December 10, 2016.</p></section><section id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><p>Copyright © 2016 IETF Trust and the persons identified as the document authors. All rights reserved.</p><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p></section><section id="introduction"><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h2><div id="rfc.section.1.p.1" class="avoidbreakafter"><p>One of the benefits of HTTP’s well-defined method semantics is that they allow failed requests to be retried, under certain circumstances. From <a href="#RFC7230"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing">[RFC7230]</cite></a>, Section 6.3.1:</p></div><div id="rfc.section.1.p.2"><ul class="empty"><li>When an inbound connection is closed prematurely, a client MAY open a new connection and automatically retransmit an aborted sequence of requests if all of those requests have idempotent methods (Section 4.2.2 of <a href="#RFC7231"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content">[RFC7231]</cite></a>). A proxy MUST NOT automatically retry non-idempotent requests.</li></ul></div><div id="rfc.section.1.p.3"><ul class="empty"><li>A user agent MUST NOT automatically retry a request with a non-idempotent method unless it has some means to know that the request semantics are actually idempotent, regardless of the method, or some means to detect that the original request was never applied. For example, a user agent that knows (through design or configuration) that a POST request to a given resource is safe can repeat that request automatically. Likewise, a user agent designed specifically to operate on a version control repository might be able to recover from partial failure conditions by checking the target resource revision(s) after a failed connection, reverting or fixing any changes that were partially applied, and then automatically retrying the requests that failed.</li></ul></div><div id="rfc.section.1.p.4"><ul class="empty"><li>A client SHOULD NOT automatically retry a failed automatic retry.</li></ul></div><div id="rfc.section.1.p.5"><p>In practice, it has been observed (see <a href="#current" title="When Clients Retry">Section&nbsp;2</a>) that some implementations do retry requests, but they don’t conform to these requirements.</p></div><div id="rfc.section.1.p.6"><p>Furthermore, it has also been observed that content on the Web doesn’t always honour HTTP semantics; for example, GET requests with side effects.</p></div><div id="rfc.section.1.p.7"><p>Generally, the ill effects of both types of variances from specified semantics have been contained to date (with <a href="https://signalvnoise.com/archives2/google_web_accelerator_hey_not_so_fast_an_alert_for_web_app_designers.php">notable exceptions</a>).</p></div><div id="rfc.section.1.p.8" class="avoidbreakafter"><p>However, interest in extending HTTP’s retry semantics is increasing, for a number of reasons:</p></div><div id="rfc.section.1.p.9"><ul><li>Since HTTP/1.1’s requirements were written, there has been a substantial amount of experience deploying and using HTTP, leading implementations to refine their behaviour.</li><li>Likewise, changes such as HTTP/2 <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a> might change the underlying assumptions that these requirements were based upon.</li><li>Emerging lower-layer developments such as TCP Fast Open <a href="#RFC7413"><cite title="TCP Fast Open">[RFC7413]</cite></a>, TLS/1.3 <a href="#I-D.ietf-tls-tls13"><cite title="The Transport Layer Security (TLS) Protocol Version 1.3">[I-D.ietf-tls-tls13]</cite></a> and QUIC <a href="#I-D.tsvwg-quic-protocol"><cite title="QUIC: A UDP-Based Secure and Reliable Transport for HTTP/2">[I-D.tsvwg-quic-protocol]</cite></a> require knowledge of idempotency to realise their security and/or performance goals; the semantic questions now affect decisions greater than just HTTP-layer retrying.</li><li>Applications sometimes want requests to be retried, but can’t easily express them in a non-idempotent request (such as GET).</li></ul></div><div id="rfc.section.1.p.10"><p>This draft attempts to move that discussion forward by identifying current client retry behaviours in <a href="#current" title="When Clients Retry">Section&nbsp;2</a>, discussing how problematic retrying GET requests is in <a href="#retry_get" title="Retrying GET: Do We Have a Problem?">Section&nbsp;3</a>, suggesting protocol extensions to improve retry detection in <a href="#detect" title="Protocol Extensions to Improve Retry Detection">Section&nbsp;4</a>, and suggesting updates to HTTP’s requirements for retries in <a href="#update" title="Updating HTTP Requirements for Retries">Section&nbsp;5</a>.</p></div><section id="notational-conventions"><h3 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1</a>&nbsp;<a href="#notational-conventions">Notational Conventions</a></h3><div id="rfc.section.1.1.p.1"><p>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a>.</p></div></section></section><section id="current"><h2 id="rfc.section.2"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#current">When Clients Retry</a></h2><div id="rfc.section.2.p.1"><p>In implementations, clients have been observed to retry requests in a number of circumstances.</p></div><div id="rfc.section.2.p.2"><p><em>Note: If you have relevant information about these or other implementations (open or closed), please get in touch.</em></p></div><section id="squid"><h3 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1</a>&nbsp;<a href="#squid">Squid</a></h3><div id="rfc.section.2.1.p.1" class="avoidbreakafter"><p>Squid is a caching proxy server that retries requests that it considers safe <strong>or</strong> idempotent:</p></div><div id="rfc.figure.u.1"><pre>
+/// Whether we may try sending this request again after a failure.
+bool
+FwdState::checkRetriable()
+{
+    // Optimize: A compliant proxy may retry PUTs, but Squid lacks the [rather
+    // complicated] code required to protect the PUT request body from being
+    // nibbled during the first try. Thus, Squid cannot retry some PUTs today.
+    if (request-&gt;body_pipe != NULL)
+        return false;
+
+    // RFC2616 9.1 Safe and Idempotent Methods
+    return (request-&gt;method.isHttpSafe() || request-&gt;method.isIdempotent());
+}
+</pre></div><div id="rfc.section.2.1.p.2"><p>(<a href="http://bazaar.launchpad.net/~squid/squid/trunk/view/head:/src/FwdState.cc#L594">source</a>)</p></div><div id="rfc.section.2.1.p.3"><p>Currently, it considers GET, HEAD, OPTIONS, REPORT, PROPFIND, SEARCH and PRI to be safe, and GET, HEAD, PUT, DELETE, OPTIONS, TRACE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, UNLOCK, and PRI to be idempotent.</p></div></section><section id="traffic-server"><h3 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2</a>&nbsp;<a href="#traffic-server">Traffic Server</a></h3><div id="rfc.section.2.2.p.1"><p>Apache Traffic Server, a caching proxy server, ties retriability to whether the request required a “tunnel” – i.e., forward to the next server. This is indicated by <span class="tt">request_body_start</span>, which is set when a POST tunnel is used.</p></div><div id="rfc.figure.u.2"><pre>
+// bool HttpTransact::is_request_retryable
+//
+//   If we started a POST/PUT tunnel then we can
+//    not retry failed requests
+//
+bool
+HttpTransact::is_request_retryable(State *s)
+{
+  if (s-&gt;hdr_info.request_body_start == true) {
+    return false;
+  }
+
+  if (s-&gt;state_machine-&gt;plugin_tunnel_type != HTTP_NO_PLUGIN_TUNNEL) {
+    // API can override
+    if (s-&gt;state_machine-&gt;plugin_tunnel_type == HTTP_PLUGIN_AS_SERVER &amp;&amp; 
+        s-&gt;api_info.retry_intercept_failures == true) {
+      // This used to be an == comparison, which made no sense. Changed
+      // to be an assignment, hoping the state is correct.
+      s-&gt;state_machine-&gt;plugin_tunnel_type = HTTP_NO_PLUGIN_TUNNEL;
+    } else {
+      return false;
+    }
+  }
+
+  return true;
+}
+</pre></div><div id="rfc.section.2.2.p.2"><p>(<a href="https://git-wip-us.apache.org/repos/asf?p=trafficserver.git;a=blob;f=proxy/http/HttpTransact.cc;h=8a1f5364d47654b118296a07a2a95284f119d84b;hb=HEAD#l6408">source</a>)</p></div><div id="rfc.section.2.2.p.3" class="avoidbreakafter"><p>When connected to an origin server, Traffic Server attempts to retry under a number of failure conditions:</p></div><div id="rfc.figure.u.3"><pre>
+/////////////////////////////////////////////////////////////////////////
+// Name       : handle_response_from_server
+// Description: response is from the origin server
+//
+// Details    :
+//
+//   response from the origin server. one of three things can happen now.
+//   if the response is bad, then we can either retry (by first downgrading
+//   the request, maybe making it non-keepalive, etc.), or we can give up.
+//   the latter case is handled by handle_server_connection_not_open and
+//   sends an error response back to the client. if the response is good
+//   handle_forward_server_connection_open is called.
+//
+//
+// Possible Next States From Here:
+//
+/////////////////////////////////////////////////////////////////////////
+void
+HttpTransact::handle_response_from_server(State *s)
+{
+
+[...]
+
+  switch (s-&gt;current.state) {
+  case CONNECTION_ALIVE:
+    DebugTxn("http_trans", "[hrfs] connection alive");
+    SET_VIA_STRING(VIA_DETAIL_SERVER_CONNECT, VIA_DETAIL_SERVER_SUCCESS);
+    s-&gt;current.server-&gt;clear_connect_fail();
+    handle_forward_server_connection_open(s);
+    break;
+
+[...]
+
+  case OPEN_RAW_ERROR:
+  /* fall through */
+  case CONNECTION_ERROR:
+  /* fall through */
+  case STATE_UNDEFINED:
+  /* fall through */
+  case INACTIVE_TIMEOUT:
+    // Set to generic I/O error if not already set specifically.
+    if (!s-&gt;current.server-&gt;had_connect_fail())
+      s-&gt;current.server-&gt;set_connect_fail(EIO);
+
+    if (is_server_negative_cached(s)) {
+      max_connect_retries = s-&gt;txn_conf-&gt;connect_attempts_max_retries_dead_server;
+    } else {
+      // server not yet negative cached - use default number of retries
+      max_connect_retries = s-&gt;txn_conf-&gt;connect_attempts_max_retries;
+    }
+    if (s-&gt;pCongestionEntry != NULL)
+      max_connect_retries = s-&gt;pCongestionEntry-&gt;connect_retries();
+
+    if (is_request_retryable(s) &amp;&amp; s-&gt;current.attempts &lt; max_connect_retries) {
+</pre></div><div id="rfc.section.2.2.p.4"><p>(<a href="https://git-wip-us.apache.org/repos/asf?p=trafficserver.git;a=blob;f=proxy/http/HttpTransact.cc;hb=48d7b25ba8a8229b0471d37cdaa6ef24cc634bb0#l3634">source</a>)</p></div></section><section id="firefox"><h3 id="rfc.section.2.3"><a href="#rfc.section.2.3">2.3</a>&nbsp;<a href="#firefox">Firefox</a></h3><div id="rfc.section.2.3.p.1" class="avoidbreakafter"><p>Firefox is a Web browser that retries under the following conditions:</p></div><div id="rfc.figure.u.4"><pre>
+// if the connection was reset or closed before we wrote any part of the
+// request or if we wrote the request but didn't receive any part of the
+// response and the connection was being reused, then we can (and really
+// should) assume that we wrote to a stale connection and we must therefore
+// repeat the request over a new connection.
+//
+// We have decided to retry not only in case of the reused connections, but
+// all safe methods(bug 1236277).
+//
+// NOTE: the conditions under which we will automatically retry the HTTP
+// request have to be carefully selected to avoid duplication of the
+// request from the point-of-view of the server.  such duplication could
+// have dire consequences including repeated purchases, etc.
+//
+// NOTE: because of the way SSL proxy CONNECT is implemented, it is
+// possible that the transaction may have received data without having
+// sent any data.  for this reason, mSendData == FALSE does not imply
+// mReceivedData == FALSE.  (see bug 203057 for more info.)
+//
+
+[...]
+
+   if (!mReceivedData &amp;&amp;
+       ((mRequestHead &amp;&amp; mRequestHead-&gt;IsSafeMethod()) ||
+        !reallySentData || connReused)) {
+       // if restarting fails, then we must proceed to close the pipe,
+       // which will notify the channel that the transaction failed.
+</pre></div><div id="rfc.section.2.3.p.2"><p>(<a href="http://mxr.mozilla.org/mozilla-release/source/netwerk/protocol/http/nsHttpTransaction.cpp#938">source</a>)</p></div><div id="rfc.section.2.3.p.3" class="avoidbreakafter"><p>… and it considers GET, HEAD, OPTIONS, TRACE, PROPFIND, REPORT, and SEARCH to be safe:</p></div><div id="rfc.figure.u.5"><pre>
+bool
+nsHttpRequestHead::IsSafeMethod() const
+{
+  // This code will need to be extended for new safe methods, otherwise
+  // they'll default to "not safe".
+    if (IsGet() || IsHead() || IsOptions() || IsTrace()) {
+        return true;
+    }
+
+    if (mParsedMethod != kMethod_Custom) {
+        return false;
+    }
+
+    return (!strcmp(mMethod.get(), "PROPFIND") ||
+            !strcmp(mMethod.get(), "REPORT") ||
+            !strcmp(mMethod.get(), "SEARCH"));
+}
+</pre></div><div id="rfc.section.2.3.p.4"><p>(<a href="http://mxr.mozilla.org/mozilla-release/source/netwerk/protocol/http/nsHttpRequestHead.cpp#67">source</a>)</p></div></section><section id="chromium"><h3 id="rfc.section.2.4"><a href="#rfc.section.2.4">2.4</a>&nbsp;<a href="#chromium">Chromium</a></h3><div id="rfc.section.2.4.p.1" class="avoidbreakafter"><p>Chromium is a Web browser that appears to retry any request when a connection is broken, as long as it’s successfully used the connection before, and hasn’t received any response headers yet:</p></div><div id="rfc.figure.u.6"><pre>
+bool HttpNetworkTransaction::ShouldResendRequest() const {
+  bool connection_is_proven = stream_-&gt;IsConnectionReused();
+  bool has_received_headers = GetResponseHeaders() != NULL;
+
+  // NOTE: we resend a request only if we reused a keep-alive connection.
+  // This automatically prevents an infinite resend loop because we'll run
+  // out of the cached keep-alive connections eventually.
+  if (connection_is_proven &amp;&amp; !has_received_headers)
+    return true;
+  return false;
+}
+</pre></div><div id="rfc.section.2.4.p.2"><p>(<a href="https://chromium.googlesource.com/chromium/src.git/+/master/net/http/http_network_transaction.cc#1657">source</a>)</p></div></section></section><section id="retry_get"><h2 id="rfc.section.3"><a href="#rfc.section.3">3.</a>&nbsp;<a href="#retry_get">Retrying GET: Do We Have a Problem?</a></h2><div id="rfc.section.3.p.1"><p>TBD.</p></div></section><section id="detect"><h2 id="rfc.section.4"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#detect">Protocol Extensions to Improve Retry Detection</a></h2><div id="rfc.section.4.p.1"><p>TBD.</p></div></section><section id="update"><h2 id="rfc.section.5"><a href="#rfc.section.5">5.</a>&nbsp;<a href="#update">Updating HTTP Requirements for Retries</a></h2><div id="rfc.section.5.p.1"><p>TBD.</p></div></section><section id="security-considerations"><h2 id="rfc.section.6"><a href="#rfc.section.6">6.</a>&nbsp;<a href="#security-considerations">Security Considerations</a></h2><div id="rfc.section.6.p.1"><p>Yep.</p></div></section><section id="rfc.references"><h2 id="rfc.section.7"><a href="#rfc.section.7">7.</a> References</h2><section id="rfc.references.1"><h3 id="rfc.section.7.1"><a href="#rfc.section.7.1">7.1</a> Normative References</h3><dl class="dl-horizontal"><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP&nbsp;14, RFC&nbsp;2119, <a href="http://dx.doi.org/10.17487/RFC2119">DOI&nbsp;10.17487/RFC2119</a>, March&nbsp;1997, &lt;<a href="http://www.rfc-editor.org/info/rfc2119">http://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC7230">[RFC7230]</dt><dd>Fielding, R., Ed. and J. Reschke, Ed., “<a href="https://tools.ietf.org/html/rfc7230">Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</a>”, RFC&nbsp;7230, <a href="http://dx.doi.org/10.17487/RFC7230">DOI&nbsp;10.17487/RFC7230</a>, June&nbsp;2014, &lt;<a href="http://www.rfc-editor.org/info/rfc7230">http://www.rfc-editor.org/info/rfc7230</a>&gt;.</dd><dt id="RFC7231">[RFC7231]</dt><dd>Fielding, R., Ed. and J. Reschke, Ed., “<a href="https://tools.ietf.org/html/rfc7231">Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</a>”, RFC&nbsp;7231, <a href="http://dx.doi.org/10.17487/RFC7231">DOI&nbsp;10.17487/RFC7231</a>, June&nbsp;2014, &lt;<a href="http://www.rfc-editor.org/info/rfc7231">http://www.rfc-editor.org/info/rfc7231</a>&gt;.</dd></dl></section><section id="rfc.references.2"><h3 id="rfc.section.7.2"><a href="#rfc.section.7.2">7.2</a> Informative References</h3><dl class="dl-horizontal"><dt id="I-D.ietf-tls-tls13">[I-D.ietf-tls-tls13]</dt><dd>Rescorla, E., “<a href="https://tools.ietf.org/html/draft-ietf-tls-tls13-13">The Transport Layer Security (TLS) Protocol Version 1.3</a>”, Internet-Draft&nbsp;draft-ietf-tls-tls13-13 (work in progress), May&nbsp;2016.</dd><dt id="I-D.tsvwg-quic-protocol">[I-D.tsvwg-quic-protocol]</dt><dd>Hamilton, R., Iyengar, J., Swett, I., and A. Wilk, “<a href="https://tools.ietf.org/html/draft-tsvwg-quic-protocol-02">QUIC: A UDP-Based Secure and Reliable Transport for HTTP/2</a>”, Internet-Draft&nbsp;draft-tsvwg-quic-protocol-02 (work in progress), January&nbsp;2016.</dd><dt id="RFC7413">[RFC7413]</dt><dd>Cheng, Y., Chu, J., Radhakrishnan, S., and A. Jain, “<a href="https://tools.ietf.org/html/rfc7413">TCP Fast Open</a>”, RFC&nbsp;7413, <a href="http://dx.doi.org/10.17487/RFC7413">DOI&nbsp;10.17487/RFC7413</a>, December&nbsp;2014, &lt;<a href="http://www.rfc-editor.org/info/rfc7413">http://www.rfc-editor.org/info/rfc7413</a>&gt;.</dd><dt id="RFC7540">[RFC7540]</dt><dd>Belshe, M., Peon, R., and M. Thomson, Ed., “<a href="https://tools.ietf.org/html/rfc7540">Hypertext Transfer Protocol Version 2 (HTTP/2)</a>”, RFC&nbsp;7540, <a href="http://dx.doi.org/10.17487/RFC7540">DOI&nbsp;10.17487/RFC7540</a>, May&nbsp;2015, &lt;<a href="http://www.rfc-editor.org/info/rfc7540">http://www.rfc-editor.org/info/rfc7540</a>&gt;.</dd></dl></section></section><section id="rfc.authors" class="avoidbreakinside"><h2><a href="#rfc.authors">Author's Address</a></h2><p><b>Mark Nottingham</b><br>EMail: <a href="mailto:mnot@mnot.net">mnot@mnot.net</a><br>URI: <a href="https://www.mnot.net/">https://www.mnot.net/</a></p></section></div></div></div><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script></body></html>
