@@ -5,7 +5,6 @@ layout: front
 * [capport-problem](capport-problem) - Captive Portals Problem Statement 
 * [for-the-users](for-the-users) - The Internet is for End Users 
 * [h2-cache-digest](h2-cache-digest) - Cache Digests for HTTP/2 
-* [h2-vpn](h2-vpn) - Virtual Private Networking over HTTP/2 
 * [http-cache-channels](http-cache-channels)  
 * [http-options-resources](http-options-resources) - Well-Known Resources for HTTP OPTIONS 
 * [http-patch-status](http-patch-status) - The 2NN Patch HTTP Status Code 
