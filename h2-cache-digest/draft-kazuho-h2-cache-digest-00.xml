@@ -90,9 +90,6 @@ of what to push to clients.</t>
 “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in
 <xref target="RFC2119"/>.</t>
 
-<t>A CACHE_DIGEST frame can be sent from a client to a server on any stream in the “open” state, and
-conveys a digest of the contents of the client’s cache for associated stream.</t>
-
 </section>
 </section>
 <section anchor="the-cachedigest-frame" title="The CACHE_DIGEST Frame">
@@ -122,6 +119,9 @@ permanent value will be assigned.</t>
 </list></t>
 
 <section anchor="client-behavior" title="Client Behavior">
+
+<t>A CACHE_DIGEST frame can be sent from a client to a server on any stream in the “open” state, and
+conveys a digest of the contents of the client’s cache for associated stream.</t>
 
 <t>In typical use, a client will send one or more CACHE_DIGESTs immediately after the first request on
 a connection for a given origin, on the same stream, because there is usually a short period of
@@ -194,12 +194,15 @@ response was fresh or stale.</t>
 </section>
 <section anchor="hash" title="Computing a Hash Value">
 
-<t>Given:
-* <spanx style="verb">URL</spanx>, an array of characters
-* <spanx style="verb">ETag</spanx>, an array of characters
-* <spanx style="verb">validators</spanx>, a boolean
-* <spanx style="verb">N</spanx>, an integer
-* <spanx style="verb">P</spanx>, an integer</t>
+<t>Given:</t>
+
+<t><list style="symbols">
+  <t><spanx style="verb">URL</spanx>, an array of characters</t>
+  <t><spanx style="verb">ETag</spanx>, an array of characters</t>
+  <t><spanx style="verb">validators</spanx>, a boolean</t>
+  <t><spanx style="verb">N</spanx>, an integer</t>
+  <t><spanx style="verb">P</spanx>, an integer</t>
+</list></t>
 
 <t><spanx style="verb">hash-value</spanx> can be computed using the following algorithm:</t>
 
@@ -218,7 +221,7 @@ response was fresh or stale.</t>
 <section anchor="server-behavior" title="Server Behavior">
 
 <t>In typical use, a server will query (as per <xref target="querying"/>) the CACHE_DIGESTs received on a given
-connect to inform what it pushes to that client;</t>
+connection to inform what it pushes to that client;</t>
 
 <t><list style="symbols">
   <t>If a given URL has a match in a current CACHE_DIGEST with the STALE flag unset, it need not be pushed, because it is fresh in cache;</t>
@@ -237,11 +240,14 @@ the same connection, using that knowledge in conjunction with that provided by C
 
 <section anchor="querying" title="Querying the Digest for a Value">
 
-<t>Given:
-* <spanx style="verb">digest-value</spanx>, an array of bits
-* <spanx style="verb">URL</spanx>, an array of characters
-* <spanx style="verb">ETag</spanx>, an array of characters
-* <spanx style="verb">validators</spanx>, a boolean</t>
+<t>Given:</t>
+
+<t><list style="symbols">
+  <t><spanx style="verb">digest-value</spanx>, an array of bits</t>
+  <t><spanx style="verb">URL</spanx>, an array of characters</t>
+  <t><spanx style="verb">ETag</spanx>, an array of characters</t>
+  <t><spanx style="verb">validators</spanx>, a boolean</t>
+</list></t>
 
 <t>we can determine whether there is a match in the digest using the following algorithm:</t>
 

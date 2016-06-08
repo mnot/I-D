@@ -81,10 +81,10 @@ Table of Contents
    3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
    5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   8
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
      5.2.  Informative References  . . . . . . . . . . . . . . . . .   9
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   9
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   9
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  10
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  10
 
 1.  Introduction
 
@@ -120,10 +120,6 @@ Internet-Draft          Cache Digests for HTTP/2               June 2016
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in [RFC2119].
 
-   A CACHE_DIGEST frame can be sent from a client to a server on any
-   stream in the "open" state, and conveys a digest of the contents of
-   the client's cache for associated stream.
-
 2.  The CACHE_DIGEST Frame
 
    The CACHE_DIGEST frame type is 0xf1.  NOTE: This is an experimental
@@ -157,6 +153,10 @@ Internet-Draft          Cache Digests for HTTP/2               June 2016
       in them that the digest was generated; otherwise, all are fresh.
 
 2.1.  Client Behavior
+
+   A CACHE_DIGEST frame can be sent from a client to a server on any
+   stream in the "open" state, and conveys a digest of the contents of
+   the client's cache for associated stream.
 
    In typical use, a client will send one or more CACHE_DIGESTs
    immediately after the first request on a connection for a given
@@ -291,9 +291,17 @@ Internet-Draft          Cache Digests for HTTP/2               June 2016
 
 2.1.2.  Computing a Hash Value
 
-   Given: * "URL", an array of characters * "ETag", an array of
-   characters * "validators", a boolean * "N", an integer * "P", an
-   integer
+   Given:
+
+   o  "URL", an array of characters
+
+   o  "ETag", an array of characters
+
+   o  "validators", a boolean
+
+   o  "N", an integer
+
+   o  "P", an integer
 
    "hash-value" can be computed using the following algorithm:
 
@@ -314,20 +322,12 @@ Internet-Draft          Cache Digests for HTTP/2               June 2016
 2.2.  Server Behavior
 
    In typical use, a server will query (as per Section 2.2.1) the
-   CACHE_DIGESTs received on a given connect to inform what it pushes to
-   that client;
+   CACHE_DIGESTs received on a given connection to inform what it pushes
+   to that client;
 
    o  If a given URL has a match in a current CACHE_DIGEST with the
       STALE flag unset, it need not be pushed, because it is fresh in
       cache;
-
-   o  If a given URL and ETag combination has a match in a current
-      CACHE_DIGEST with the STALE flag set, the client has a stale copy
-      in cache, and a validating response can be pushed;
-
-   o  If a given URL has no match in any current CACHE_DIGEST, the
-      client does not have a cached copy, and a complete response can be
-      pushed.
 
 
 
@@ -337,6 +337,14 @@ Oku & Nottingham        Expires December 10, 2016               [Page 6]
 
 Internet-Draft          Cache Digests for HTTP/2               June 2016
 
+
+   o  If a given URL and ETag combination has a match in a current
+      CACHE_DIGEST with the STALE flag set, the client has a stale copy
+      in cache, and a validating response can be pushed;
+
+   o  If a given URL has no match in any current CACHE_DIGEST, the
+      client does not have a cached copy, and a complete response can be
+      pushed.
 
    Servers MAY use all CACHE_DIGESTs received for a given origin as
    current, as long as they do not have the RESET flag set; a
@@ -353,8 +361,15 @@ Internet-Draft          Cache Digests for HTTP/2               June 2016
 
 2.2.1.  Querying the Digest for a Value
 
-   Given: * "digest-value", an array of bits * "URL", an array of
-   characters * "ETag", an array of characters * "validators", a boolean
+   Given:
+
+   o  "digest-value", an array of bits
+
+   o  "URL", an array of characters
+
+   o  "ETag", an array of characters
+
+   o  "validators", a boolean
 
    we can determine whether there is a match in the digest using the
    following algorithm:
@@ -370,6 +385,15 @@ Internet-Draft          Cache Digests for HTTP/2               June 2016
 
    4.   Let "C" be -1.
 
+
+
+
+
+Oku & Nottingham        Expires December 10, 2016               [Page 7]
+
+Internet-Draft          Cache Digests for HTTP/2               June 2016
+
+
    5.   Read '0' bits from "digest-value" until a '1' bit is found; let
         "Q" bit the number of '0' bits.  Discard the '1'.
 
@@ -384,15 +408,6 @@ Internet-Draft          Cache Digests for HTTP/2               June 2016
 
    10.  Otherwise, return to step 5 and continue processing; if no match
         is found before "digest-value" is exhausted, return 'false'.
-
-
-
-
-
-Oku & Nottingham        Expires December 10, 2016               [Page 7]
-
-Internet-Draft          Cache Digests for HTTP/2               June 2016
-
 
 3.  IANA Considerations
 
@@ -424,6 +439,17 @@ Internet-Draft          Cache Digests for HTTP/2               June 2016
 
 5.  References
 
+
+
+
+
+
+
+Oku & Nottingham        Expires December 10, 2016               [Page 8]
+
+Internet-Draft          Cache Digests for HTTP/2               June 2016
+
+
 5.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
@@ -440,15 +466,6 @@ Internet-Draft          Cache Digests for HTTP/2               June 2016
               (SHA and SHA-based HMAC and HKDF)", RFC 6234,
               DOI 10.17487/RFC6234, May 2011,
               <http://www.rfc-editor.org/info/rfc6234>.
-
-
-
-
-
-Oku & Nottingham        Expires December 10, 2016               [Page 8]
-
-Internet-Draft          Cache Digests for HTTP/2               June 2016
-
 
    [RFC6454]  Barth, A., "The Web Origin Concept", RFC 6454,
               DOI 10.17487/RFC6454, December 2011,
@@ -480,6 +497,15 @@ Internet-Draft          Cache Digests for HTTP/2               June 2016
               DOI 10.17487/RFC6265, April 2011,
               <http://www.rfc-editor.org/info/rfc6265>.
 
+
+
+
+
+Oku & Nottingham        Expires December 10, 2016               [Page 9]
+
+Internet-Draft          Cache Digests for HTTP/2               June 2016
+
+
 Appendix A.  Acknowledgements
 
    Thanks to Adam Langley and Giovanni Bajo for their explorations of
@@ -497,36 +523,10 @@ Authors' Addresses
    Email: kazuhooku@gmail.com
 
 
-
-
-
-
-Oku & Nottingham        Expires December 10, 2016               [Page 9]
-
-Internet-Draft          Cache Digests for HTTP/2               June 2016
-
-
    Mark Nottingham
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
