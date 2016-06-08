@@ -48,6 +48,8 @@ One of the benefits of HTTP's well-defined method semantics is that they allow f
 
 > A client SHOULD NOT automatically retry a failed automatic retry.
 
+Note that the complete list of idempotent methods is maintained in the [IANA HTTP Method Registry](https://www.iana.org/assignments/http-methods/http-methods.xhtml).
+
 In practice, it has been observed (see {{current}}) that some implementations do retry requests, but they don't conform to these requirements.
 
 Furthermore, it has also been observed that content on the Web doesn't always honour HTTP semantics; for example, GET requests with side effects.
