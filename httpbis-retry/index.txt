@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                              June 8, 2016
+Internet-Draft                                              June 9, 2016
 Intended status: Informational
-Expires: December 10, 2016
+Expires: December 11, 2016
 
 
                          Retrying HTTP Requests
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 10, 2016.
+   This Internet-Draft will expire on December 11, 2016.
 
 
 
@@ -53,7 +53,7 @@ Status of This Memo
 
 
 
-Nottingham              Expires December 10, 2016               [Page 1]
+Nottingham              Expires December 11, 2016               [Page 1]
 
 Internet-Draft           Retrying HTTP Requests                June 2016
 
@@ -82,7 +82,7 @@ Table of Contents
      2.2.  Traffic Server  . . . . . . . . . . . . . . . . . . . . .   5
      2.3.  Firefox . . . . . . . . . . . . . . . . . . . . . . . . .   7
      2.4.  Chromium  . . . . . . . . . . . . . . . . . . . . . . . .   8
-   3.  Retrying GET: Do We Have a Problem? . . . . . . . . . . . . .   8
+   3.  Retrying GET: Do We Have a Problem? . . . . . . . . . . . . .   9
    4.  Protocol Extensions to Improve Retry Detection  . . . . . . .   9
    5.  Updating HTTP Requirements for Retries  . . . . . . . . . . .   9
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
@@ -91,7 +91,7 @@ Table of Contents
      8.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
      8.2.  Informative References  . . . . . . . . . . . . . . . . .   9
      8.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  10
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
 
 1.  Introduction
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Nottingham              Expires December 10, 2016               [Page 2]
+Nottingham              Expires December 11, 2016               [Page 2]
 
 Internet-Draft           Retrying HTTP Requests                June 2016
 
@@ -165,7 +165,7 @@ Internet-Draft           Retrying HTTP Requests                June 2016
 
 
 
-Nottingham              Expires December 10, 2016               [Page 3]
+Nottingham              Expires December 11, 2016               [Page 3]
 
 Internet-Draft           Retrying HTTP Requests                June 2016
 
@@ -221,7 +221,7 @@ FwdState::checkRetriable()
 
 
 
-Nottingham              Expires December 10, 2016               [Page 4]
+Nottingham              Expires December 11, 2016               [Page 4]
 
 Internet-Draft           Retrying HTTP Requests                June 2016
 
@@ -277,7 +277,7 @@ HttpTransact::is_request_retryable(State *s)
 
 
 
-Nottingham              Expires December 10, 2016               [Page 5]
+Nottingham              Expires December 11, 2016               [Page 5]
 
 Internet-Draft           Retrying HTTP Requests                June 2016
 
@@ -333,7 +333,7 @@ HttpTransact::handle_response_from_server(State *s)
 
 
 
-Nottingham              Expires December 10, 2016               [Page 6]
+Nottingham              Expires December 11, 2016               [Page 6]
 
 Internet-Draft           Retrying HTTP Requests                June 2016
 
@@ -389,7 +389,7 @@ Internet-Draft           Retrying HTTP Requests                June 2016
 
 
 
-Nottingham              Expires December 10, 2016               [Page 7]
+Nottingham              Expires December 11, 2016               [Page 7]
 
 Internet-Draft           Retrying HTTP Requests                June 2016
 
@@ -414,6 +414,11 @@ Internet-Draft           Retrying HTTP Requests                June 2016
 
    (source [10])
 
+   Note that "connReused" is tested; if a connection has been used
+   before, Firefox will retry _any_ request, safe or not.  A recent
+   change attempted to remove this behaviour, but it caused
+   compatibility problems [11], and is being backed out.
+
 2.4.  Chromium
 
    Chromium is a Web browser that appears to retry any request when a
@@ -432,23 +437,22 @@ bool HttpNetworkTransaction::ShouldResendRequest() const {
   return false;
 }
 
-   (source [11])
+   (source [12])
+
+
+
+
+
+
+
+Nottingham              Expires December 11, 2016               [Page 8]
+
+Internet-Draft           Retrying HTTP Requests                June 2016
+
 
 3.  Retrying GET: Do We Have a Problem?
 
    TBD.
-
-
-
-
-
-
-
-
-Nottingham              Expires December 10, 2016               [Page 8]
-
-Internet-Draft           Retrying HTTP Requests                June 2016
-
 
 4.  Protocol Extensions to Improve Retry Detection
 
@@ -464,7 +468,8 @@ Internet-Draft           Retrying HTTP Requests                June 2016
 
 7.  Acknowledgements
 
-   Thanks to Amos Jeffries for his feedback.
+   Thanks to Amos Jeffries, Patrick McManus and Leif Hedstrom for their
+   feedback.
 
 8.  References
 
@@ -492,19 +497,20 @@ Internet-Draft           Retrying HTTP Requests                June 2016
               Version 1.3", draft-ietf-tls-tls13-13 (work in progress),
               May 2016.
 
+
+
+
+
+Nottingham              Expires December 11, 2016               [Page 9]
+
+Internet-Draft           Retrying HTTP Requests                June 2016
+
+
    [I-D.tsvwg-quic-protocol]
               Hamilton, R., Iyengar, J., Swett, I., and A. Wilk, "QUIC:
               A UDP-Based Secure and Reliable Transport for HTTP/2",
               draft-tsvwg-quic-protocol-02 (work in progress), January
               2016.
-
-
-
-
-Nottingham              Expires December 10, 2016               [Page 9]
-
-Internet-Draft           Retrying HTTP Requests                June 2016
-
 
    [RFC7413]  Cheng, Y., Chu, J., Radhakrishnan, S., and A. Jain, "TCP
               Fast Open", RFC 7413, DOI 10.17487/RFC7413, December 2014,
@@ -540,8 +546,21 @@ Internet-Draft           Retrying HTTP Requests                June 2016
    [7] http://mxr.mozilla.org/mozilla-
        release/source/netwerk/protocol/http/nsHttpRequestHead.cpp#67
 
-   [8] https://chromium.googlesource.com/chromium/src.git/+/master/net/
+   [8] https://www.fxsitecompat.com/en-CA/docs/2016/post-request-fails-
+       on-certain-sites-showing-connection-reset-page/
+
+   [9] https://chromium.googlesource.com/chromium/src.git/+/master/net/
        http/http_network_transaction.cc#1657
+
+
+
+
+
+
+Nottingham              Expires December 11, 2016              [Page 10]
+
+Internet-Draft           Retrying HTTP Requests                June 2016
+
 
 Author's Address
 
@@ -557,4 +576,41 @@ Author's Address
 
 
 
-Nottingham              Expires December 10, 2016              [Page 10]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires December 11, 2016              [Page 11]
