@@ -86,10 +86,11 @@ Table of Contents
    4.  Protocol Extensions to Improve Retry Detection  . . . . . . .   9
    5.  Updating HTTP Requirements for Retries  . . . . . . . . . . .   9
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .   9
-     7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
+   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   9
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .   9
+     8.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  10
 
 1.  Introduction
@@ -104,8 +105,7 @@ Table of Contents
       methods (Section 4.2.2 of [RFC7231]).  A proxy MUST NOT
       automatically retry non-idempotent requests.
 
-      A user agent MUST NOT automatically retry a request with a non-
-      idempotent method unless it has some means to know that the
+
 
 
 
@@ -114,6 +114,8 @@ Nottingham              Expires December 10, 2016               [Page 2]
 Internet-Draft           Retrying HTTP Requests                June 2016
 
 
+      A user agent MUST NOT automatically retry a request with a non-
+      idempotent method unless it has some means to know that the
       request semantics are actually idempotent, regardless of the
       method, or some means to detect that the original request was
       never applied.  For example, a user agent that knows (through
@@ -163,8 +165,6 @@ Internet-Draft           Retrying HTTP Requests                June 2016
 
 
 
-
-
 Nottingham              Expires December 10, 2016               [Page 3]
 
 Internet-Draft           Retrying HTTP Requests                June 2016
@@ -193,7 +193,8 @@ Internet-Draft           Retrying HTTP Requests                June 2016
 2.1.  Squid
 
    Squid is a caching proxy server that retries requests that it
-   considers safe *or* idempotent:
+   considers safe *or* idempotent, as long as there is not a request
+   body:
 
 /// Whether we may try sending this request again after a failure.
 bool
@@ -215,7 +216,6 @@ FwdState::checkRetriable()
    and PRI to be safe, and GET, HEAD, PUT, DELETE, OPTIONS, TRACE,
    PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, UNLOCK, and PRI to be
    idempotent.
-
 
 
 
@@ -462,9 +462,13 @@ Internet-Draft           Retrying HTTP Requests                June 2016
 
    Yep.
 
-7.  References
+7.  Acknowledgements
 
-7.1.  Normative References
+   Thanks to Amos Jeffries for his feedback.
+
+8.  References
+
+8.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -481,7 +485,7 @@ Internet-Draft           Retrying HTTP Requests                June 2016
               DOI 10.17487/RFC7231, June 2014,
               <http://www.rfc-editor.org/info/rfc7231>.
 
-7.2.  Informative References
+8.2.  Informative References
 
    [I-D.ietf-tls-tls13]
               Rescorla, E., "The Transport Layer Security (TLS) Protocol
@@ -494,10 +498,6 @@ Internet-Draft           Retrying HTTP Requests                June 2016
               draft-tsvwg-quic-protocol-02 (work in progress), January
               2016.
 
-   [RFC7413]  Cheng, Y., Chu, J., Radhakrishnan, S., and A. Jain, "TCP
-              Fast Open", RFC 7413, DOI 10.17487/RFC7413, December 2014,
-              <http://www.rfc-editor.org/info/rfc7413>.
-
 
 
 
@@ -506,12 +506,16 @@ Nottingham              Expires December 10, 2016               [Page 9]
 Internet-Draft           Retrying HTTP Requests                June 2016
 
 
+   [RFC7413]  Cheng, Y., Chu, J., Radhakrishnan, S., and A. Jain, "TCP
+              Fast Open", RFC 7413, DOI 10.17487/RFC7413, December 2014,
+              <http://www.rfc-editor.org/info/rfc7413>.
+
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
               DOI 10.17487/RFC7540, May 2015,
               <http://www.rfc-editor.org/info/rfc7540>.
 
-7.3.  URIs
+8.3.  URIs
 
    [1] https://www.iana.org/assignments/http-methods/http-methods.xhtml
 
@@ -545,10 +549,6 @@ Author's Address
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
-
-
-
-
 
 
 
