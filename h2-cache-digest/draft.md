@@ -165,13 +165,7 @@ Given the following inputs:
 1. Let N be the count of `URLs`' members, rounded to the nearest power of 2 smaller than 2\*\*32.
 2. Let `hash-values` be an empty array of integers.
 3. Append 0 to `hash-values`.
-4. For each (`URL`, `ETag`) in `URLs`:
-    1. Let `key` be `URL` converted to an ASCII string by percent-encoding as appropriate {{RFC3986}}.
-    2. If `validators` is true and `ETag` is not null:
-       1. Append `ETag` to `key` as an ASCII string, including both the `weak` indicator (if present) and double quotes, as per {{RFC7232}} Section 2.3.
-    3. Let `hash` be the SHA-256 message digest {{RFC6234}} of `key`, expressed as an integer.
-    4. Truncate `hash` to log2( `N` \* `P` ) bits.
-    5. Append `hash` to `hash-values`.
+4. For each (`URL`, `ETag`) in `URLs`, compute a hash value ({{hash}}) and append the result to `hash-values`.
 5. Sort `hash-values` in ascending order.
 6. Let `digest-value` be an empty array of bits.
 7. Write log base 2 of `N` to `digest-value` using 5 bits.
@@ -184,9 +178,49 @@ Given the following inputs:
     5. Let `R` be the result of `D modulo P`.
     6. Write `Q` '0' bits to `digest-value`.
     7. Write 1 '1' bit to `digest-value`.
-    8. Write `R` to `digest-value` as binary, using log2(P) bits.
+    8. Write `R` to `digest-value` as binary, using log2(`P`5) bits.
     9. If `V` is the second-to-last member of `hash-values`, stop iterating through `hash-values` and continue to the next step.
 10. If the length of `digest-value` is not a multiple of 8, pad it with 0s until it is.
+
+
+## Querying the Digest for a Value {#querying}
+
+Given:
+* `digest-value`, an array of bits
+* `URL`, an array of characters
+* `ETag`, an array of characters
+* `validators`, a boolean
+
+we can determine whether there is a match in the digest using the following algorithm:
+
+1. Read the first 5 bits of `digest-value` as an integer; let `N` be two raised to the power of that value.
+2. Read the next 5 bits of `digest-value` as an integer; let `P` be two raised to the power of that value.
+3. Let `hash-value` be the result of computing a hash value ({{hash}}).
+4. Let `C` be -1.
+5. Read '0' bits from `digest-value` until a '1' bit is found; let `Q` bit the number of '0' bits. Discard the '1'.
+6. Read log2(`P`) bits from `digest-value` after the '1' as an integer; let `R` be its value.
+7. Let `D` be `Q` * `P` + `R`.
+8. Increment `C` by `D` + 1.
+9. If `C` is equal to `hash-value`, return 'true'.
+10. Otherwise, return to step 5 and continue processing; if no match is found before `digest-value` is exhausted, return 'false'.
+
+
+## Computing a Hash Value {#hash}
+
+Given:
+* `URL`, an array of characters
+* `ETag`, an array of characters
+* `validators`, a boolean
+* `N`, an integer
+* `P`, an integer
+
+`hash-value` can be computed using the following algorithm:
+
+1. Let `key` be `URL` converted to an ASCII string by percent-encoding as appropriate {{RFC3986}}.
+2. If `validators` is true and `ETag` is not null:
+   1. Append `ETag` to `key` as an ASCII string, including both the `weak` indicator (if present) and double quotes, as per {{RFC7232}} Section 2.3.
+3. Let `hash-value` be the SHA-256 message digest {{RFC6234}} of `key`, expressed as an integer.
+4. Truncate `hash-value` to log2( `N` \* `P` ) bits.
 
 
 
