@@ -81,55 +81,14 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
 {{RFC2119}}.
 
+A CACHE_DIGEST frame can be sent from a client to a server on any stream in the "open" state, and
+conveys a digest of the contents of the client's cache for associated stream.
+
 
 # The CACHE_DIGEST Frame
 
 The CACHE_DIGEST frame type is 0xf1. NOTE: This is an experimental value; if standardised, a
 permanent value will be assigned.
-
-A CACHE_DIGEST frame can be sent from a client to a server on any stream in the "open" state, and
-conveys a digest of the contents of the client's cache for associated stream.
-
-CACHE_DIGEST MUST NOT include cached responses whose URLs do not share origins {{RFC6454}} with the
-request of the stream that the frame is sent upon.
-
-A client MAY choose a subset of the suitable stored responses to include in a CACHE_DIGEST
-frame.
-
-In typical use, a client will send one or more CACHE_DIGESTs immediately after the first request on
-a connection for a given origin, on the same stream, because there is usually a short period of
-inactivity then, and servers can benefit most when they understand the state of the cache before
-they begin pushing associated assets (e.g., CSS, JavaScript and images).
-
-Clients MAY send CACHE_DIGEST at other times, but servers ought not expect frequent updates;
-instead, if they wish to continue to utilise the digest, they will need to remember responses
-sent to that client on the connection, using that knowledge in conjunction with it.
-
-Servers MAY use all CACHE_DIGESTS received for a given origin as current, as long as they do not
-have the RESET flag set; a CACHE_DIGEST frame with the RESET flag set MUST clear any previously
-stored CACHE_DIGESTs for its origin. Servers MUST treat an empty Digest-Value with a RESET flag set
-as effectively clearing all stored digests for that origin.
-
-A client can indicate what responses it has fresh in cache by sending one or more CACHE_DIGESTs
-with the STALE flag unset. when all such CACHE_DIGESTs sent since the start of the connection (or
-the last CACHE_DIGEST of any kind with a RESET flag) represent the complete state of fresh cached
-responses for the origin, the client SHOULD indicate that with the COMPLETE flag on the last fresh
-CACHE_DIGEST. Note that this does not need to include any responses cached since the beginning of
-the connection or sending of the RESET flag, as appropriate.
-
-Likewise, a client can indicate what responses it has stale in cache by sending one or more
-CACHE_DIGESTs with the STALE flag set. When all such CACHE_DIGESTs sent since the start of the
-connection (or since the last CACHE_DIGEST of any kind with a RESET flag) represent the complete
-state of stale cached responses for the origin, the client SHOULD indicate that with the COMPLETE
-flag on the last stale CACHE_DIGEST, with the same caveats as above.
-
-CACHE_DIGEST can be computed to include cached responses' ETags, as indicated by the VALIDATORS
-flag. This information can be used by servers to decide what kinds of responses to push to clients;
-for example, a stale response that hasn't changed could be refreshed with a 304 (Not Modified)
-response; one that has changed can be replaced with a 200 (OK) response, whether the cached
-response was fresh or stale.
-
-CACHE_DIGEST has no defined meaning when sent from servers to clients, and MAY be ignored.
 
 ~~~~
 +-----------------------------------------------+
@@ -151,8 +110,42 @@ The CACHE_DIGEST frame defines the following flags:
 
 * **STALE** (0x4): When set, indicates that all cached responses represented in the digest-value are stale {{RFC7234}} at the point in them that the digest was generated; otherwise, all are fresh.
 
+## Client Behavior
 
-## Computing the Digest-Value {#computing}
+In typical use, a client will send one or more CACHE_DIGESTs immediately after the first request on
+a connection for a given origin, on the same stream, because there is usually a short period of
+inactivity then, and servers can benefit most when they understand the state of the cache before
+they begin pushing associated assets (e.g., CSS, JavaScript and images). Clients MAY send
+CACHE_DIGEST at other times.
+
+If the cache's state is cleared, lost, or the client otherwise wishes the server to stop using
+previously sent CACHE_DIGESTs, it can send a CACHE_DIGEST with the RESET flag set.
+
+When generating CACHE_DIGEST, a client MUST NOT include cached responses whose URLs do not share
+origins {{RFC6454}} with the request of the stream that the frame is sent upon.
+
+CACHE_DIGEST allows the client to indicate whether the set of URLs used to compute the digest
+represent fresh or stale stored responses, using the STALE flag. Clients MAY decide whether to only
+sent CACHE_DIGEST frames representing their fresh stored responses, their stale stored responses,
+or both.
+
+Clients can choose to only send a subset of the suitable stored responses of each type (fresh or
+stale). However, when the CACHE_DIGEST frames sent represent the complete set of stored responses
+of a given type, the last such frame SHOULD have a COMPLETE flag set, to indicate to the server
+that it has all relevant state of that type. Note that for the purposes of COMPLETE, responses
+cached since the beginning of the connection or the last RESET flag on a CACHE_DIGEST frame need
+not be included.
+
+CACHE_DIGEST can be computed to include cached responses' ETags, as indicated by the VALIDATORS
+flag. This information can be used by servers to decide what kinds of responses to push to clients;
+for example, a stale response that hasn't changed could be refreshed with a 304 (Not Modified)
+response; one that has changed can be replaced with a 200 (OK) response, whether the cached
+response was fresh or stale.
+
+CACHE_DIGEST has no defined meaning when sent from servers, and SHOULD be ignored by clients.
+
+
+### Computing the Digest-Value {#computing}
 
 Given the following inputs:
 
@@ -183,7 +176,45 @@ Given the following inputs:
 10. If the length of `digest-value` is not a multiple of 8, pad it with 0s until it is.
 
 
-## Querying the Digest for a Value {#querying}
+### Computing a Hash Value {#hash}
+
+Given:
+* `URL`, an array of characters
+* `ETag`, an array of characters
+* `validators`, a boolean
+* `N`, an integer
+* `P`, an integer
+
+`hash-value` can be computed using the following algorithm:
+
+1. Let `key` be `URL` converted to an ASCII string by percent-encoding as appropriate {{RFC3986}}.
+2. If `validators` is true and `ETag` is not null:
+   1. Append `ETag` to `key` as an ASCII string, including both the `weak` indicator (if present) and double quotes, as per {{RFC7232}} Section 2.3.
+3. Let `hash-value` be the SHA-256 message digest {{RFC6234}} of `key`, expressed as an integer.
+4. Truncate `hash-value` to log2( `N` \* `P` ) bits.
+
+
+
+## Server Behavior
+
+In typical use, a server will query (as per {{querying}}) the CACHE_DIGESTs received on a given
+connect to inform what it pushes to that client;
+
+ * If a given URL has a match in a current CACHE_DIGEST with the STALE flag unset, it need not be pushed, because it is fresh in cache;
+ * If a given URL and ETag combination has a match in a current CACHE_DIGEST with the STALE flag set, the client has a stale copy in cache, and a validating response can be pushed;
+ * If a given URL has no match in any current CACHE_DIGEST, the client does not have a cached copy, and a complete response can be pushed.
+
+Servers MAY use all CACHE_DIGESTs received for a given origin as current, as long as they do not
+have the RESET flag set; a CACHE_DIGEST frame with the RESET flag set MUST clear any
+previously stored CACHE_DIGESTs for its origin. Servers MUST treat an empty Digest-Value with a
+RESET flag set as effectively clearing all stored digests for that origin.
+
+Clients are not likely to send updates to CACHE_DIGEST over the lifetime of a connection; it is
+expected that servers will separately track what cacheable responses have been sent previously on
+the same connection, using that knowledge in conjunction with that provided by CACHE_DIGEST.
+
+
+### Querying the Digest for a Value {#querying}
 
 Given:
 * `digest-value`, an array of bits
@@ -205,22 +236,6 @@ we can determine whether there is a match in the digest using the following algo
 10. Otherwise, return to step 5 and continue processing; if no match is found before `digest-value` is exhausted, return 'false'.
 
 
-## Computing a Hash Value {#hash}
-
-Given:
-* `URL`, an array of characters
-* `ETag`, an array of characters
-* `validators`, a boolean
-* `N`, an integer
-* `P`, an integer
-
-`hash-value` can be computed using the following algorithm:
-
-1. Let `key` be `URL` converted to an ASCII string by percent-encoding as appropriate {{RFC3986}}.
-2. If `validators` is true and `ETag` is not null:
-   1. Append `ETag` to `key` as an ASCII string, including both the `weak` indicator (if present) and double quotes, as per {{RFC7232}} Section 2.3.
-3. Let `hash-value` be the SHA-256 message digest {{RFC6234}} of `key`, expressed as an integer.
-4. Truncate `hash-value` to log2( `N` \* `P` ) bits.
 
 
 
