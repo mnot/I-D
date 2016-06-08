@@ -311,7 +311,7 @@ Yep.
 
 # Acknowledgements
 
-Thanks to Amos Jeffries for his feedback.
+Thanks to Amos Jeffries and Leif Hedstrom for their feedback.
 
 
 --- back
