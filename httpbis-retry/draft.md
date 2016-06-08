@@ -1,8 +1,8 @@
 ---
-title: Retrying HTTP Requests: Current Practice
+title: Retrying HTTP Requests
 abbrev: 
 docname: draft-nottingham-httpbis-retry-00
-date: 2015
+date: 2016
 category: info
 
 ipr: trust200902
@@ -21,13 +21,10 @@ author:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
-normative:
-  RFC2119:
-
-informative:
-
 
 --- abstract
+
+HTTP allows requests to be automatically retried under certain circumstances. This draft explores how this is implemented, requirements for similar functionality from other parts of the stack, and potential future improvements.
 
 
 --- note_Note_to_Readers
@@ -43,59 +40,271 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/httpb
 
 # Introduction
 
+One of the benefits of HTTP's well-defined method semantics is that they allow failed requests to be retried, under certain circumstances. From {{!RFC7230}}, Section 6.3.1:
 
-## Notational Conventions
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
-"RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
-{{RFC2119}}.
-
-
-# When Clients Retry
-
-{{RFC7230}} explicitly allows clients to retry requests under specific conditions, in section 6.3.1:
-
-> When an inbound connection is closed prematurely, a client MAY open a new connection and automatically retransmit an aborted sequence of requests if all of those requests have idempotent methods (Section 4.2.2 of [RFC7231]). A proxy MUST NOT automatically retry non-idempotent requests.
+> When an inbound connection is closed prematurely, a client MAY open a new connection and automatically retransmit an aborted sequence of requests if all of those requests have idempotent methods (Section 4.2.2 of {{!RFC7231}}). A proxy MUST NOT automatically retry non-idempotent requests.
 
 > A user agent MUST NOT automatically retry a request with a non-idempotent method unless it has some means to know that the request semantics are actually idempotent, regardless of the method, or some means to detect that the original request was never applied. For example, a user agent that knows (through design or configuration) that a POST request to a given resource is safe can repeat that request automatically. Likewise, a user agent designed specifically to operate on a version control repository might be able to recover from partial failure conditions by checking the target resource revision(s) after a failed connection, reverting or fixing any changes that were partially applied, and then automatically retrying the requests that failed.
 
 > A client SHOULD NOT automatically retry a failed automatic retry.
 
+In practice, it has been observed (see {{current}}) that some implementations do retry requests, but they don't conform to these requirements.
 
-# Current Implementation Behaviours
+Furthermore, it has also been observed that content on the Web doesn't always honour HTTP semantics; for example, GET requests with side effects.
+
+Generally, the ill effects of both types of variances from specified semantics have been contained to date (with [notable exceptions](https://signalvnoise.com/archives2/google_web_accelerator_hey_not_so_fast_an_alert_for_web_app_designers.php)). 
+
+However, interest in extending HTTP's retry semantics is increasing, for a number of reasons:
+
+* Since HTTP/1.1's requirements were written, there has been a substantial amount of experience deploying and using HTTP, leading implementations to refine their behaviour.
+
+* Likewise, changes such as HTTP/2 {{?RFC7540}} might change the underlying assumptions that these requirements were based upon. 
+
+* Emerging lower-layer developments such as TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.tsvwg-quic-protocol}} require knowledge of idempotency to realise their security and/or performance goals; the semantic questions now affect decisions greater than just HTTP-layer retrying.
+
+* Applications sometimes want requests to be retried, but can't easily express them in a non-idempotent request (such as GET). 
+
+This draft attempts to move that discussion forward by identifying current client retry behaviours in {{current}}, discussing how problematic retrying GET requests is in {{retry_get}}, suggesting protocol extensions to improve retry detection in {{detect}}, and suggesting updates to HTTP's requirements for retries in {{update}}.
+
+
+## Notational Conventions
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
+"RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
+{{!RFC2119}}.
+
+
+
+# When Clients Retry {#current}
 
 In implementations, clients have been observed to retry requests in a number of circumstances.
 
+_Note: If you have relevant information about these or other implementations (open or closed), please get in touch._
+
 ## Squid
 
-The Squid caching proxy server
+Squid is a caching proxy server that retries requests that it considers safe **or** idempotent:
 
-[squid](http://bazaar.launchpad.net/~squid/squid/trunk/view/head:/src/FwdState.cc#L594)
+~~~ C++
+/// Whether we may try sending this request again after a failure.
+bool
+FwdState::checkRetriable()
+{
+    // Optimize: A compliant proxy may retry PUTs, but Squid lacks the [rather
+    // complicated] code required to protect the PUT request body from being
+    // nibbled during the first try. Thus, Squid cannot retry some PUTs today.
+    if (request->body_pipe != NULL)
+        return false;
+
+    // RFC2616 9.1 Safe and Idempotent Methods
+    return (request->method.isHttpSafe() || request->method.isIdempotent());
+}
+~~~
+
+([source](http://bazaar.launchpad.net/~squid/squid/trunk/view/head:/src/FwdState.cc#L594))
+
+Currently, it considers GET, HEAD, OPTIONS, REPORT, PROPFIND, SEARCH and PRI to be safe, and GET, HEAD, PUT, DELETE, OPTIONS, TRACE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, UNLOCK, and PRI to be idempotent.
+
 
 
 ## Traffic Server
 
-Apache Traffic Server, a caching proxy server, 
+Apache Traffic Server, a caching proxy server, ties retriability to whether the request required a "tunnel" -- i.e., forward to the next server. This is indicated by `request_body_start`, which is set when a POST tunnel is used.
 
-[Traffic Server](https://git-wip-us.apache.org/repos/asf?p=trafficserver.git;a=blob;f=proxy/http/HttpTransact.cc;h=8a1f5364d47654b118296a07a2a95284f119d84b;hb=HEAD#l6408)
+~~~ C++
+// bool HttpTransact::is_request_retryable
+//
+//   If we started a POST/PUT tunnel then we can
+//    not retry failed requests
+//
+bool
+HttpTransact::is_request_retryable(State *s)
+{
+  if (s->hdr_info.request_body_start == true) {
+    return false;
+  }
+
+  if (s->state_machine->plugin_tunnel_type != HTTP_NO_PLUGIN_TUNNEL) {
+    // API can override
+    if (s->state_machine->plugin_tunnel_type == HTTP_PLUGIN_AS_SERVER && 
+        s->api_info.retry_intercept_failures == true) {
+      // This used to be an == comparison, which made no sense. Changed
+      // to be an assignment, hoping the state is correct.
+      s->state_machine->plugin_tunnel_type = HTTP_NO_PLUGIN_TUNNEL;
+    } else {
+      return false;
+    }
+  }
+
+  return true;
+}
+~~~
+
+([source](https://git-wip-us.apache.org/repos/asf?p=trafficserver.git;a=blob;f=proxy/http/HttpTransact.cc;h=8a1f5364d47654b118296a07a2a95284f119d84b;hb=HEAD#l6408))
+
+
+When connected to an origin server, Traffic Server attempts to retry under a number of failure conditions:
+
+~~~ C++
+/////////////////////////////////////////////////////////////////////////
+// Name       : handle_response_from_server
+// Description: response is from the origin server
+//
+// Details    :
+//
+//   response from the origin server. one of three things can happen now.
+//   if the response is bad, then we can either retry (by first downgrading
+//   the request, maybe making it non-keepalive, etc.), or we can give up.
+//   the latter case is handled by handle_server_connection_not_open and
+//   sends an error response back to the client. if the response is good
+//   handle_forward_server_connection_open is called.
+//
+//
+// Possible Next States From Here:
+//
+/////////////////////////////////////////////////////////////////////////
+void
+HttpTransact::handle_response_from_server(State *s)
+{
+
+[...]
+
+  switch (s->current.state) {
+  case CONNECTION_ALIVE:
+    DebugTxn("http_trans", "[hrfs] connection alive");
+    SET_VIA_STRING(VIA_DETAIL_SERVER_CONNECT, VIA_DETAIL_SERVER_SUCCESS);
+    s->current.server->clear_connect_fail();
+    handle_forward_server_connection_open(s);
+    break;
+
+[...]
+
+  case OPEN_RAW_ERROR:
+  /* fall through */
+  case CONNECTION_ERROR:
+  /* fall through */
+  case STATE_UNDEFINED:
+  /* fall through */
+  case INACTIVE_TIMEOUT:
+    // Set to generic I/O error if not already set specifically.
+    if (!s->current.server->had_connect_fail())
+      s->current.server->set_connect_fail(EIO);
+
+    if (is_server_negative_cached(s)) {
+      max_connect_retries = s->txn_conf->connect_attempts_max_retries_dead_server;
+    } else {
+      // server not yet negative cached - use default number of retries
+      max_connect_retries = s->txn_conf->connect_attempts_max_retries;
+    }
+    if (s->pCongestionEntry != NULL)
+      max_connect_retries = s->pCongestionEntry->connect_retries();
+
+    if (is_request_retryable(s) && s->current.attempts < max_connect_retries) {
+~~~
+
+([source](https://git-wip-us.apache.org/repos/asf?p=trafficserver.git;a=blob;f=proxy/http/HttpTransact.cc;hb=48d7b25ba8a8229b0471d37cdaa6ef24cc634bb0#l3634))
+
 
 ## Firefox
 
-http://mxr.mozilla.org/mozilla-release/source/netwerk/protocol/http/nsHttpTransaction.cpp#886
-http://mxr.mozilla.org/mozilla-release/source/netwerk/protocol/http/nsHttpTransaction.cpp#1600
+Firefox is a Web browser that retries under the following conditions:
 
-## Chrome
+~~~ C++
+// if the connection was reset or closed before we wrote any part of the
+// request or if we wrote the request but didn't receive any part of the
+// response and the connection was being reused, then we can (and really
+// should) assume that we wrote to a stale connection and we must therefore
+// repeat the request over a new connection.
+//
+// We have decided to retry not only in case of the reused connections, but
+// all safe methods(bug 1236277).
+//
+// NOTE: the conditions under which we will automatically retry the HTTP
+// request have to be carefully selected to avoid duplication of the
+// request from the point-of-view of the server.  such duplication could
+// have dire consequences including repeated purchases, etc.
+//
+// NOTE: because of the way SSL proxy CONNECT is implemented, it is
+// possible that the transaction may have received data without having
+// sent any data.  for this reason, mSendData == FALSE does not imply
+// mReceivedData == FALSE.  (see bug 203057 for more info.)
+//
+
+[...]
+
+   if (!mReceivedData &&
+       ((mRequestHead && mRequestHead->IsSafeMethod()) ||
+        !reallySentData || connReused)) {
+       // if restarting fails, then we must proceed to close the pipe,
+       // which will notify the channel that the transaction failed.
+~~~
+
+([source](http://mxr.mozilla.org/mozilla-release/source/netwerk/protocol/http/nsHttpTransaction.cpp#938))
+
+... and it considers GET, HEAD, OPTIONS, TRACE, PROPFIND, REPORT, and SEARCH to be safe:
+
+~~~ C++
+bool
+nsHttpRequestHead::IsSafeMethod() const
+{
+  // This code will need to be extended for new safe methods, otherwise
+  // they'll default to "not safe".
+    if (IsGet() || IsHead() || IsOptions() || IsTrace()) {
+        return true;
+    }
+
+    if (mParsedMethod != kMethod_Custom) {
+        return false;
+    }
+
+    return (!strcmp(mMethod.get(), "PROPFIND") ||
+            !strcmp(mMethod.get(), "REPORT") ||
+            !strcmp(mMethod.get(), "SEARCH"));
+}
+~~~
+
+([source](http://mxr.mozilla.org/mozilla-release/source/netwerk/protocol/http/nsHttpRequestHead.cpp#67))
+
+
+## Chromium
+
+Chromium is a Web browser that appears to retry any request when a connection is broken, as long as it's successfully used the connection before, and hasn't received any response headers yet:
+
+~~~ C++
+bool HttpNetworkTransaction::ShouldResendRequest() const {
+  bool connection_is_proven = stream_->IsConnectionReused();
+  bool has_received_headers = GetResponseHeaders() != NULL;
+
+  // NOTE: we resend a request only if we reused a keep-alive connection.
+  // This automatically prevents an infinite resend loop because we'll run
+  // out of the cached keep-alive connections eventually.
+  if (connection_is_proven && !has_received_headers)
+    return true;
+  return false;
+}
+~~~
+
+([source](https://chromium.googlesource.com/chromium/src.git/+/master/net/http/http_network_transaction.cc#1657))
+
+# Retrying GET: Do We Have a Problem? {#retry_get}
+
+TBD.
 
 
 
+# Protocol Extensions to Improve Retry Detection {#detect}
 
-# TCP Fast Open
+TBD.
 
+# Updating HTTP Requirements for Retries {#update}
 
+TBD.
 
 
 
 # Security Considerations
+
+Yep.
 
 
 --- back
