@@ -79,7 +79,7 @@ Table of Contents
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   4
    2.  When Clients Retry  . . . . . . . . . . . . . . . . . . . . .   4
      2.1.  Squid . . . . . . . . . . . . . . . . . . . . . . . . . .   4
-     2.2.  Traffic Server  . . . . . . . . . . . . . . . . . . . . .   4
+     2.2.  Traffic Server  . . . . . . . . . . . . . . . . . . . . .   5
      2.3.  Firefox . . . . . . . . . . . . . . . . . . . . . . . . .   7
      2.4.  Chromium  . . . . . . . . . . . . . . . . . . . . . . . .   8
    3.  Retrying GET: Do We Have a Problem? . . . . . . . . . . . . .   8
@@ -128,6 +128,9 @@ Internet-Draft           Retrying HTTP Requests                June 2016
 
       A client SHOULD NOT automatically retry a failed automatic retry.
 
+   Note that the complete list of idempotent methods is maintained in
+   the IANA HTTP Method Registry [4].
+
    In practice, it has been observed (see Section 2) that some
    implementations do retry requests, but they don't conform to these
    requirements.
@@ -137,7 +140,7 @@ Internet-Draft           Retrying HTTP Requests                June 2016
    side effects.
 
    Generally, the ill effects of both types of variances from specified
-   semantics have been contained to date (with notable exceptions [4]).
+   semantics have been contained to date (with notable exceptions [5]).
 
    However, interest in extending HTTP's retry semantics is increasing,
    for a number of reasons:
@@ -158,9 +161,6 @@ Internet-Draft           Retrying HTTP Requests                June 2016
    o  Applications sometimes want requests to be retried, but can't
       easily express them in a non-idempotent request (such as GET).
 
-   This draft attempts to move that discussion forward by identifying
-   current client retry behaviours in Section 2, discussing how
-   problematic retrying GET requests is in Section 3, suggesting
 
 
 
@@ -170,6 +170,9 @@ Nottingham              Expires December 10, 2016               [Page 3]
 Internet-Draft           Retrying HTTP Requests                June 2016
 
 
+   This draft attempts to move that discussion forward by identifying
+   current client retry behaviours in Section 2, discussing how
+   problematic retrying GET requests is in Section 3, suggesting
    protocol extensions to improve retry detection in Section 4, and
    suggesting updates to HTTP's requirements for retries in Section 5.
 
@@ -206,17 +209,14 @@ FwdState::checkRetriable()
     return (request->method.isHttpSafe() || request->method.isIdempotent());
 }
 
-   (source [5])
+   (source [6])
 
    Currently, it considers GET, HEAD, OPTIONS, REPORT, PROPFIND, SEARCH
    and PRI to be safe, and GET, HEAD, PUT, DELETE, OPTIONS, TRACE,
    PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, UNLOCK, and PRI to be
    idempotent.
 
-2.2.  Traffic Server
 
-   Apache Traffic Server, a caching proxy server, ties retriability to
-   whether the request required a "tunnel" - i.e., forward to the next
 
 
 
@@ -226,6 +226,10 @@ Nottingham              Expires December 10, 2016               [Page 4]
 Internet-Draft           Retrying HTTP Requests                June 2016
 
 
+2.2.  Traffic Server
+
+   Apache Traffic Server, a caching proxy server, ties retriability to
+   whether the request required a "tunnel" - i.e., forward to the next
    server.  This is indicated by "request_body_start", which is set when
    a POST tunnel is used.
 
@@ -256,7 +260,7 @@ HttpTransact::is_request_retryable(State *s)
   return true;
 }
 
-   (source [6])
+   (source [7])
 
    When connected to an origin server, Traffic Server attempts to retry
    under a number of failure conditions:
@@ -270,10 +274,6 @@ HttpTransact::is_request_retryable(State *s)
 //   response from the origin server. one of three things can happen now.
 //   if the response is bad, then we can either retry (by first downgrading
 //   the request, maybe making it non-keepalive, etc.), or we can give up.
-//   the latter case is handled by handle_server_connection_not_open and
-//   sends an error response back to the client. if the response is good
-//   handle_forward_server_connection_open is called.
-//
 
 
 
@@ -282,6 +282,10 @@ Nottingham              Expires December 10, 2016               [Page 5]
 Internet-Draft           Retrying HTTP Requests                June 2016
 
 
+//   the latter case is handled by handle_server_connection_not_open and
+//   sends an error response back to the client. if the response is good
+//   handle_forward_server_connection_open is called.
+//
 //
 // Possible Next States From Here:
 //
@@ -324,11 +328,7 @@ HttpTransact::handle_response_from_server(State *s)
 
     if (is_request_retryable(s) && s->current.attempts < max_connect_retries) {
 
-   (source [7])
-
-
-
-
+   (source [8])
 
 
 
@@ -370,7 +370,7 @@ Internet-Draft           Retrying HTTP Requests                June 2016
        // if restarting fails, then we must proceed to close the pipe,
        // which will notify the channel that the transaction failed.
 
-   (source [8])
+   (source [9])
 
    ... and it considers GET, HEAD, OPTIONS, TRACE, PROPFIND, REPORT, and
    SEARCH to be safe:
@@ -412,7 +412,7 @@ Internet-Draft           Retrying HTTP Requests                June 2016
              !strcmp(mMethod.get(), "SEARCH"));
  }
 
-   (source [9])
+   (source [10])
 
 2.4.  Chromium
 
@@ -432,7 +432,7 @@ bool HttpNetworkTransaction::ShouldResendRequest() const {
   return false;
 }
 
-   (source [10])
+   (source [11])
 
 3.  Retrying GET: Do We Have a Problem?
 
@@ -513,28 +513,30 @@ Internet-Draft           Retrying HTTP Requests                June 2016
 
 7.3.  URIs
 
-   [1] https://signalvnoise.com/archives2/google_web_accelerator_hey_not
+   [1] https://www.iana.org/assignments/http-methods/http-methods.xhtml
+
+   [2] https://signalvnoise.com/archives2/google_web_accelerator_hey_not
        _so_fast_an_alert_for_web_app_designers.php
 
-   [2] http://bazaar.launchpad.net/~squid/squid/trunk/view/head:/src/
+   [3] http://bazaar.launchpad.net/~squid/squid/trunk/view/head:/src/
        FwdState.cc#L594
 
-   [3] https://git-wip-
+   [4] https://git-wip-
        us.apache.org/repos/asf?p=trafficserver.git;a=blob;f=proxy/http/H
        ttpTransact.cc;h=8a1f5364d47654b118296a07a2a95284f119d84b;hb=HEAD
        #l6408
 
-   [4] https://git-wip-
+   [5] https://git-wip-
        us.apache.org/repos/asf?p=trafficserver.git;a=blob;f=proxy/http/
        HttpTransact.cc;hb=48d7b25ba8a8229b0471d37cdaa6ef24cc634bb0#l3634
 
-   [5] http://mxr.mozilla.org/mozilla-
+   [6] http://mxr.mozilla.org/mozilla-
        release/source/netwerk/protocol/http/nsHttpTransaction.cpp#938
 
-   [6] http://mxr.mozilla.org/mozilla-
+   [7] http://mxr.mozilla.org/mozilla-
        release/source/netwerk/protocol/http/nsHttpRequestHead.cpp#67
 
-   [7] https://chromium.googlesource.com/chromium/src.git/+/master/net/
+   [8] https://chromium.googlesource.com/chromium/src.git/+/master/net/
        http/http_network_transaction.cc#1657
 
 Author's Address
@@ -543,8 +545,6 @@ Author's Address
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
-
-
 
 
 
