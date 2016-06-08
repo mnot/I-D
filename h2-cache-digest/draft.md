@@ -179,6 +179,7 @@ Given the following inputs:
 ### Computing a Hash Value {#hash}
 
 Given:
+
 * `URL`, an array of characters
 * `ETag`, an array of characters
 * `validators`, a boolean
@@ -217,6 +218,7 @@ the same connection, using that knowledge in conjunction with that provided by C
 ### Querying the Digest for a Value {#querying}
 
 Given:
+
 * `digest-value`, an array of bits
 * `URL`, an array of characters
 * `ETag`, an array of characters
