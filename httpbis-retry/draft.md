@@ -85,7 +85,7 @@ _Note: If you have relevant information about these or other implementations (op
 
 ## Squid
 
-Squid is a caching proxy server that retries requests that it considers safe **or** idempotent:
+Squid is a caching proxy server that retries requests that it considers safe **or** idempotent, as long as there is not a request body:
 
 ~~~ C++
 /// Whether we may try sending this request again after a failure.
@@ -307,6 +307,11 @@ TBD.
 # Security Considerations
 
 Yep.
+
+
+# Acknowledgements
+
+Thanks to Amos Jeffries for his feedback.
 
 
 --- back
