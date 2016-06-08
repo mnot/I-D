@@ -199,7 +199,7 @@ Given:
 ## Server Behavior
 
 In typical use, a server will query (as per {{querying}}) the CACHE_DIGESTs received on a given
-connect to inform what it pushes to that client;
+connection to inform what it pushes to that client;
 
  * If a given URL has a match in a current CACHE_DIGEST with the STALE flag unset, it need not be pushed, because it is fresh in cache;
  * If a given URL and ETag combination has a match in a current CACHE_DIGEST with the STALE flag set, the client has a stale copy in cache, and a validating response can be pushed;
