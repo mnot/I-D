@@ -81,7 +81,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 In implementations, clients have been observed to retry requests in a number of circumstances.
 
-_Note: If you have relevant information about these or other implementations (open or closed), please get in touch._
+_Note: This section is intended to inform the discussion, not to be published as a standard. If you have relevant information about these or other implementations (open or closed), please get in touch._
 
 ## Squid
 
