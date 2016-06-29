@@ -157,7 +157,7 @@ Given the following inputs:
 
 1. Let N be the count of `URLs`' members, rounded to the nearest power of 2 smaller than 2\*\*32.
 2. Let `hash-values` be an empty array of integers.
-3. Append 0 to `hash-values`.
+3. Append -1 to `hash-values`.
 4. For each (`URL`, `ETag`) in `URLs`, compute a hash value ({{hash}}) and append the result to `hash-values`.
 5. Sort `hash-values` in ascending order.
 6. Let `digest-value` be an empty array of bits.
