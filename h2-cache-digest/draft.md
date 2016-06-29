@@ -171,7 +171,7 @@ Given the following inputs:
     5. Let `R` be the result of `D modulo P`.
     6. Write `Q` '0' bits to `digest-value`.
     7. Write 1 '1' bit to `digest-value`.
-    8. Write `R` to `digest-value` as binary, using log2(`P`5) bits.
+    8. Write `R` to `digest-value` as binary, using log2(`P`) bits.
     9. If `V` is the second-to-last member of `hash-values`, stop iterating through `hash-values` and continue to the next step.
 10. If the length of `digest-value` is not a multiple of 8, pad it with 0s until it is.
 
