@@ -157,22 +157,21 @@ Given the following inputs:
 
 1. Let N be the count of `URLs`' members, rounded to the nearest power of 2 smaller than 2\*\*32.
 2. Let `hash-values` be an empty array of integers.
-3. Append -1 to `hash-values`.
-4. For each (`URL`, `ETag`) in `URLs`, compute a hash value ({{hash}}) and append the result to `hash-values`.
-5. Sort `hash-values` in ascending order.
-6. Let `digest-value` be an empty array of bits.
-7. Write log base 2 of `N` to `digest-value` using 5 bits.
-8. Write log base 2 of `P` to `digest-value` using 5 bits.
+3. For each (`URL`, `ETag`) in `URLs`, compute a hash value ({{hash}}) and append the result to `hash-values`.
+4. Sort `hash-values` in ascending order.
+5. Let `digest-value` be an empty array of bits.
+6. Write log base 2 of `N` to `digest-value` using 5 bits.
+7. Write log base 2 of `P` to `digest-value` using 5 bits.
+8. Let `C` be -1.
 9. For each `V` in `hash-values`:
-    1. Let `W` be the value following `V` in `hash-values`.
-    2. If `W` and `V` are equal, continue to the next `V`.
-    3. Let `D` be the result of `W - V - 1`.
-    4. Let `Q` be the integer result of `D / P`.
-    5. Let `R` be the result of `D modulo P`.
-    6. Write `Q` '0' bits to `digest-value`.
-    7. Write 1 '1' bit to `digest-value`.
-    8. Write `R` to `digest-value` as binary, using log2(`P`) bits.
-    9. If `V` is the second-to-last member of `hash-values`, stop iterating through `hash-values` and continue to the next step.
+    1. If `V` is equal to `C`, continue to the next `V`.
+    2. Let `D` be the result of `W - C - 1`.
+    3. Let `Q` be the integer result of `D / P`.
+    4. Let `R` be the result of `D modulo P`.
+    5. Write `Q` '0' bits to `digest-value`.
+    6. Write 1 '1' bit to `digest-value`.
+    7. Write `R` to `digest-value` as binary, using log2(`P`) bits.
+    8. Let `C` be `V`
 10. If the length of `digest-value` is not a multiple of 8, pad it with 0s until it is.
 
 
