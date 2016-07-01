@@ -165,7 +165,7 @@ Given the following inputs:
 8. Let `C` be -1.
 9. For each `V` in `hash-values`:
     1. If `V` is equal to `C`, continue to the next `V`.
-    2. Let `D` be the result of `W - C - 1`.
+    2. Let `D` be the result of `V - C - 1`.
     3. Let `Q` be the integer result of `D / P`.
     4. Let `R` be the result of `D modulo P`.
     5. Write `Q` '0' bits to `digest-value`.
