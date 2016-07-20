@@ -1,0 +1,173 @@
+<!DOCTYPE html
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Site-Wide HTTP Headers</title><script type="application/javascript">
+function anchorRewrite() {
+  map = { };
+  if (window.location.hash.length >= 1) {
+    var fragid = window.location.hash.substr(1);
+    if (fragid) {
+      if (! document.getElementById(fragid)) {
+        var prefix = "rfc.";
+        var mapped = map[fragid];
+        if (mapped) {
+          window.location.hash = mapped;
+        } else if (fragid.indexOf("section-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(8);
+        } else if (fragid.indexOf("appendix-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(9);
+        } else if (fragid.indexOf("s-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(2);
+        } else if (fragid.indexOf("p-") == 0) {
+          var r = fragid.substring(2);
+          var p = r.indexOf("-");
+          if (p >= 0) {
+            window.location.hash = prefix + "section." + r.substring(0, p) + ".p." + r.substring(p + 1);
+          }
+        }
+      }
+    }  
+  }
+}
+window.addEventListener('hashchange', anchorRewrite);
+window.addEventListener('DOMContentLoaded', anchorRewrite);
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" type="text/css" href="../Tools/bower_components/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      #rfc\.toc > ul li {
+        list-style: none;
+      }
+      .container .nav-sublist {
+        padding-left: 20px;
+        padding-right: 10px;
+        font-size: 90%;
+      }
+      .container .navbar-brand {
+        padding-top: 0;
+      }
+      .container .nav > li > a {
+        padding: 10px 7px 5px 15px;
+        display: inline-block;
+      }
+      .container .nav > li > a + a {
+        padding: 10px 15px 5px 7px;
+        display: inline-block;
+      }
+      .container .nav > li > a {
+        padding: 5px 10px;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+      span.tt {
+        font: 11pt consolas, monospace;
+        font-size-adjust: none;
+      }
+    </style><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Site-Wide HTTP Headers" href="#rfc.section.2"><link rel="Chapter" title="3 IANA Considerations" href="#rfc.section.3"><link rel="Chapter" title="4 Security Considerations" href="#rfc.section.4"><link rel="Chapter" href="#rfc.section.5" title="5 References"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="Internet-Draft"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Nottingham, M."><meta name="dcterms.identifier" content="urn:ietf:id:draft-nottingham-site-wide-headers-00"><meta name="dcterms.issued" content="2016-07-20"><meta name="dcterms.abstract" content="This document specifies a mechanism for Web sites to send HTTP header fields that apply to the entire origin via a different, more efficient mechanism, rather than including them in every response."><meta name="description" content="This document specifies a mechanism for Web sites to send HTTP header fields that apply to the entire origin via a different, more efficient mechanism, rather than including them in every response."></head><body><div class="container" id="top"><div class="row"><div class="col-md-4 col-md-push-8 hidden-sm hidden-xs" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top">Internet-Draft</a></div><br clear="all"><div class=""><div id="rfc..toc"><ul class="nav"><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1</a>&nbsp;&nbsp;&nbsp;<a href="#notational-conventions">Notational Conventions</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#site-wide">Site-Wide HTTP Headers</a><ul><li><a href="#rfc.section.2.1">2.1</a>&nbsp;&nbsp;&nbsp;<a href="#type">The “text/http-headers” Media Type</a></li><li><a href="#rfc.section.2.2">2.2</a>&nbsp;&nbsp;&nbsp;<a href="#well-known">The “site-metadata” well-known URI</a></li><li><a href="#rfc.section.2.3">2.3</a>&nbsp;&nbsp;&nbsp;<a href="#sm">The “SM” HTTP Request Header Field</a></li></ul></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#iana-considerations">IANA Considerations</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#security-considerations">Security Considerations</a><ul><li><a href="#rfc.section.4.1">4.1</a>&nbsp;&nbsp;&nbsp;<a href="#combining-headers">Combining Headers</a></li></ul></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.5.1">5.1</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.1">Normative References</a></li><li><a href="#rfc.section.5.2">5.2</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Informative References</a></li></ul></li><li><a href="#rfc.authors">Author's Address</a></li></ul></div></div></div></div><div class="col-md-8 col-md-pull-4 main" role="main"><header><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Network Working Group</td><td class="text-right">M. Nottingham</td></tr><tr><td class="text-left">Internet-Draft</td><td class="text-right">July 20, 2016</td></tr><tr><td class="text-left">Intended status: Informational</td><td class="text-right"></td></tr><tr><td class="text-left">Expires: January 21, 2017</td><td class="text-right"></td></tr></tbody></table><div id="rfc.title"><h1>Site-Wide HTTP Headers</h1><div class="filename">draft-nottingham-site-wide-headers-00</div></div></header><hr><h2 id="rfc..abstract"><a href="#rfc..abstract">Abstract</a></h2><div class="lead"><p>This document specifies a mechanism for Web sites to send HTTP header fields that apply to the entire origin via a different, more efficient mechanism, rather than including them in every response.</p></div><section id="rfc.status"><h2><a href="#rfc.status">Status of this Memo</a></h2><p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p><p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF). Note that other groups may also distribute working documents as Internet-Drafts. The list of current Internet-Drafts is at <a href="http://datatracker.ietf.org/drafts/current/">http://datatracker.ietf.org/drafts/current/</a>.</p><p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or to cite them other than as “work in progress”.</p><p>This Internet-Draft will expire on January 21, 2017.</p></section><section id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><p>Copyright © 2016 IETF Trust and the persons identified as the document authors. All rights reserved.</p><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p></section><section id="introduction"><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h2><div id="rfc.section.1.p.1"><p>A variety of metadata about Web sites is being conveyed in new HTTP response headers. In particular, it is becoming more common for metadata that applies to an entire Web site to be conveyed in a header field that is included on every response for that site.</p></div><div id="rfc.section.1.p.2"><p>For example, <span class="tt">Strict-Transport-Security</span> <a href="#RFC6797"><cite title="HTTP Strict Transport Security (HSTS)">[RFC6797]</cite></a> and <span class="tt">Public-Key-Pins</span> <a href="#RFC7469"><cite title="Public Key Pinning Extension for HTTP">[RFC7469]</cite></a> both define headers that are explicitly scoped to an entire origin <a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a>, and number of similar headers are under consideration.</p></div><div id="rfc.section.1.p.3"><p>Likewise, some HTTP header fields only sensibly have a single value per origin; for example, <span class="tt">Server</span>.</p></div><div id="rfc.section.1.p.4"><p>Furthermore, some headers are resource-specific, but in some deployments, are uniform across an origin. For example, some sites will have a <span class="tt">CSP</span> <a href="#W3C.CR-CSP2-20150721"><cite title="Content Security Policy Level 2">[W3C.CR-CSP2-20150721]</cite></a> header that doesn’t vary across the site.</p></div><div id="rfc.section.1.p.5"><p>This is inefficient. Besides the obvious bandwidth waste due to redundancy in HTTP/1, it also impacts HTTP/2’s HPACK <a href="#RFC7541"><cite title="HPACK: Header Compression for HTTP/2">[RFC7541]</cite></a> header compression; since the amount of space of available for state is limited (by default, 4K), verbose, repeating headers can greatly reduce the effectiveness of HPACK.</p></div><div id="rfc.section.1.p.6"><p>However, when the metadata affects processing of the response, and the application is latency-sensitive (as uses of HTTP so often are), it’s not pratical to separate the metadata from the response; it needs to be sent on every response so that it is available.</p></div><div id="rfc.section.1.p.7"><p>One way to mitigate this problem is to remove these site-wide header fields from responses, and keep them in a separate resource. When clients have fetched that resource and guarantee that they will consider its contents to be included in all responses for that domain, they can indicate this to the server with a small request header; when servers see it, they can safely omit those headers in responses.</p></div><div id="rfc.section.1.p.8"><p>In this manner, such headers are sent on responses until they are loaded from a separate resource; once the client indicates it has done so, they can be omitted from responses, reducing network and compression context usage.</p></div><div id="rfc.section.1.p.9"><p>This document specifies how to do this by using a well-known URI <a href="#RFC5785"><cite title="Defining Well-Known Uniform Resource Identifiers (URIs)">[RFC5785]</cite></a> to store these headers in a format specified in <a href="#type" title="The “text/http-headers” Media Type">Section&nbsp;2.1</a>. In typical use, a server can use HTTP/2 Server Push (<a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a>, Section 8.2) to proactively send this content upon the first request from the client. Then, it can add the headers therein to responses when the corresponding requests do not contain the <span class="tt">SM</span> header field.</p></div><section id="notational-conventions"><h3 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1</a>&nbsp;<a href="#notational-conventions">Notational Conventions</a></h3><div id="rfc.section.1.1.p.1"><p>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a>.</p></div></section></section><section id="site-wide"><h2 id="rfc.section.2"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#site-wide">Site-Wide HTTP Headers</a></h2><div id="rfc.section.2.p.1"><p>When a server wishes to use site-wide HTTP headers, it places a file in the <span class="tt">text/http-headers</span> format (<a href="#type" title="The “text/http-headers” Media Type">Section&nbsp;2.1</a>) at the <span class="tt">site-headers</span> well-known URI (<a href="#well-known" title="The “site-metadata” well-known URI">Section&nbsp;2.2</a>).</p></div><div id="rfc.section.2.p.2"><p>Then, when requests have a <span class="tt">SM</span> request header field <a href="#sm" title="The “SM” HTTP Request Header Field">Section&nbsp;2.3</a>, the header field values within are omitted from the corresponding responses. Typically, this can be implemented by appending the headers contained therein when the request doesn’t contain the SM header field.</p></div><div id="rfc.section.2.p.3"><p>Servers SHOULD include <span class="tt">SM</span> in the field-value of the Vary response header field when the response is cacheable (as per <a href="#RFC7234"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Caching">[RFC7234]</cite></a>).</p></div><div id="rfc.section.2.p.4" class="avoidbreakafter"><p>For example, if a request to the well-known URI returns:</p></div><div id="rfc.figure.u.1"><pre>
+HTTP/1.1 200 OK
+Content-Type: text/http-headers
+Cache-Control: max-age=3600
+Content-Length: 334
+
+Strict-Transport-Security: max-age=15768000 ; includeSubDomains
+Server: Apache/2.4.7 (Ubuntu)
+Public-Key-Pins: max-age=604800; 
+  pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
+  pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
+  report-uri="/lib/key-pin.cgi"
+Cache-Control: max-age=3600
+Vary: Accept-Encoding
+</pre></div><div id="rfc.section.2.p.5" class="avoidbreakafter"><p>and a client that has loaded that resource makes the request:</p></div><div id="rfc.figure.u.2"><pre>
+GET /images/foo.jpg HTTP/1.1
+Host: www.example.com
+SM: 1
+</pre></div><div id="rfc.section.2.p.6" class="avoidbreakafter"><p>this indicates that the client has processed the site-metatadata resource, and therefore that the server can omit the response header fields contained within it on the wire:</p></div><div id="rfc.figure.u.3"><pre>
+HTTP/1.1 200 OK
+Content-Type: image/jpeg
+Vary: SM
+Transfer-Encoding: chunked
+</pre></div><div id="rfc.section.2.p.7" class="avoidbreakafter"><p>Upon receipt of that response, the client will consider it equivalent to:</p></div><div id="rfc.figure.u.4"><pre>
+HTTP/1.1 200 OK
+Content-Type: image/jpeg
+Vary: SM
+Connection: close
+Strict-Transport-Security: max-age=15768000 ; includeSubDomains
+Server: Apache/2.4.7 (Ubuntu)
+Public-Key-Pins: max-age=604800; 
+  pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
+  pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
+  report-uri="/lib/key-pin.cgi"
+Cache-Control: max-age=3600
+Vary: Accept-Encoding
+</pre></div><div id="rfc.section.2.p.8"><p>If a request omits the <span class="tt">SM</span> header field, all of the header fields above will be sent by the server in the response.</p></div><div id="rfc.section.2.p.9"><p>Note that in these examples, the <span class="tt">Vary</span> header field has two values. Because the field values in the well-known resource are appended to the header set occurring on the wire, clients will combine them as per the rules in <a href="#RFC7230"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing">[RFC7230]</cite></a>, Section 3.2.2.</p></div><section id="type"><h3 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1</a>&nbsp;<a href="#type">The “text/http-headers” Media Type</a></h3><div id="rfc.section.2.1.p.1"><p>The text/http-headers media type is used to indicate that a file contains a set of HTTP header fields, as defined in <a href="#RFC7230"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing">[RFC7230]</cite></a>, Section 3; i.e.,</p></div><div id="rfc.figure.u.5"><pre>
+OWS *( header-field CRLF ) OWS
+</pre></div><div id="rfc.section.2.1.p.2"><p>Whitespace at the beginning and end of the file MUST be stripped. As in HTTP itself, implementations need to be forgiving about line endings; specifically, bare CR MUST be considered to be a line ending.</p></div><div id="rfc.section.2.1.p.3" class="avoidbreakafter"><p>For example:</p></div><div id="rfc.figure.u.6"><pre>
+Strict-Transport-Security: max-age=15768000 ; includeSubDomains
+Server: Apache/2.4.7 (Ubuntu)
+Public-Key-Pins: max-age=604800;
+  pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
+  pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
+  report-uri="/lib/key-pin.cgi"
+Cache-Control: max-age=3600
+Vary: Accept-Encoding
+</pre></div></section><section id="well-known"><h3 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2</a>&nbsp;<a href="#well-known">The “site-metadata” well-known URI</a></h3><div id="rfc.section.2.2.p.1"><p>The well-known URI <a href="#RFC5785"><cite title="Defining Well-Known Uniform Resource Identifiers (URIs)">[RFC5785]</cite></a> “site-metadata” is a resource that, when fetched, returns a file in the “text/http-headers” <a href="#type" title="The “text/http-headers” Media Type">Section&nbsp;2.1</a> format.</p></div><div id="rfc.section.2.2.p.2"><p>Its media type SHOULD be generated as <span class="tt">text/http-headers</span>, although clients SHOULD NOT reject responses with other types (particularly, <span class="tt">application/octet-stream</span> and <span class="tt">text/plain</span>).</p></div><div id="rfc.section.2.2.p.3"><p>Clients SHOULD consider it to be valid for its freshness lifetime (as per <a href="#RFC7234"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Caching">[RFC7234]</cite></a>). If it does not have an explicit freshness lifetime, they SHOULD consider it to have a heuristic freshness lifetime of 60 seconds.</p></div></section><section id="sm"><h3 id="rfc.section.2.3"><a href="#rfc.section.2.3">2.3</a>&nbsp;<a href="#sm">The “SM” HTTP Request Header Field</a></h3><div id="rfc.section.2.3.p.1"><p>The “SM” HTTP request header field indicates that the client has a fresh (as per <a href="#RFC7234"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Caching">[RFC7234]</cite></a>) copy of the “site-metadata” URI <a href="#well-known" title="The “site-metadata” well-known URI">Section&nbsp;2.2</a> for the request’s origin (<a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a>), and will consider the corresponding response to contain the header field(s) contained within.</p></div><div id="rfc.section.2.3.p.2"><p>Clients MUST generate its field value as “1”.</p></div><div id="rfc.section.2.3.p.3" class="avoidbreakafter"><p>For example:</p></div><div id="rfc.figure.u.7"><pre>
+SM: 1
+</pre></div><div id="rfc.section.2.3.p.4"><p>Servers MUST consider it to be present when the field name <span class="tt">SM</span> is present in the set of request header fields; i.e., the value is not relevant.</p></div></section></section><section id="iana-considerations"><h2 id="rfc.section.3"><a href="#rfc.section.3">3.</a>&nbsp;<a href="#iana-considerations">IANA Considerations</a></h2><div id="rfc.section.3.p.1"><p>TBD</p></div></section><section id="security-considerations"><h2 id="rfc.section.4"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#security-considerations">Security Considerations</a></h2><section id="combining-headers"><h3 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1</a>&nbsp;<a href="#combining-headers">Combining Headers</a></h3></section></section><section id="rfc.references"><h2 id="rfc.section.5"><a href="#rfc.section.5">5.</a> References</h2><section id="rfc.references.1"><h3 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1</a> Normative References</h3><dl class="dl-horizontal"><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP&nbsp;14, RFC&nbsp;2119, <a href="http://dx.doi.org/10.17487/RFC2119">DOI&nbsp;10.17487/RFC2119</a>, March&nbsp;1997, &lt;<a href="http://www.rfc-editor.org/info/rfc2119">http://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC5785">[RFC5785]</dt><dd>Nottingham, M. and E. Hammer-Lahav, “<a href="https://tools.ietf.org/html/rfc5785">Defining Well-Known Uniform Resource Identifiers (URIs)</a>”, RFC&nbsp;5785, <a href="http://dx.doi.org/10.17487/RFC5785">DOI&nbsp;10.17487/RFC5785</a>, April&nbsp;2010, &lt;<a href="http://www.rfc-editor.org/info/rfc5785">http://www.rfc-editor.org/info/rfc5785</a>&gt;.</dd><dt id="RFC6454">[RFC6454]</dt><dd>Barth, A., “<a href="https://tools.ietf.org/html/rfc6454">The Web Origin Concept</a>”, RFC&nbsp;6454, <a href="http://dx.doi.org/10.17487/RFC6454">DOI&nbsp;10.17487/RFC6454</a>, December&nbsp;2011, &lt;<a href="http://www.rfc-editor.org/info/rfc6454">http://www.rfc-editor.org/info/rfc6454</a>&gt;.</dd><dt id="RFC7230">[RFC7230]</dt><dd>Fielding, R., Ed. and J. Reschke, Ed., “<a href="https://tools.ietf.org/html/rfc7230">Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</a>”, RFC&nbsp;7230, <a href="http://dx.doi.org/10.17487/RFC7230">DOI&nbsp;10.17487/RFC7230</a>, June&nbsp;2014, &lt;<a href="http://www.rfc-editor.org/info/rfc7230">http://www.rfc-editor.org/info/rfc7230</a>&gt;.</dd><dt id="RFC7234">[RFC7234]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://tools.ietf.org/html/rfc7234">Hypertext Transfer Protocol (HTTP/1.1): Caching</a>”, RFC&nbsp;7234, <a href="http://dx.doi.org/10.17487/RFC7234">DOI&nbsp;10.17487/RFC7234</a>, June&nbsp;2014, &lt;<a href="http://www.rfc-editor.org/info/rfc7234">http://www.rfc-editor.org/info/rfc7234</a>&gt;.</dd><dt id="RFC7540">[RFC7540]</dt><dd>Belshe, M., Peon, R., and M. Thomson, Ed., “<a href="https://tools.ietf.org/html/rfc7540">Hypertext Transfer Protocol Version 2 (HTTP/2)</a>”, RFC&nbsp;7540, <a href="http://dx.doi.org/10.17487/RFC7540">DOI&nbsp;10.17487/RFC7540</a>, May&nbsp;2015, &lt;<a href="http://www.rfc-editor.org/info/rfc7540">http://www.rfc-editor.org/info/rfc7540</a>&gt;.</dd></dl></section><section id="rfc.references.2"><h3 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2</a> Informative References</h3><dl class="dl-horizontal"><dt id="RFC6797">[RFC6797]</dt><dd>Hodges, J., Jackson, C., and A. Barth, “<a href="https://tools.ietf.org/html/rfc6797">HTTP Strict Transport Security (HSTS)</a>”, RFC&nbsp;6797, <a href="http://dx.doi.org/10.17487/RFC6797">DOI&nbsp;10.17487/RFC6797</a>, November&nbsp;2012, &lt;<a href="http://www.rfc-editor.org/info/rfc6797">http://www.rfc-editor.org/info/rfc6797</a>&gt;.</dd><dt id="RFC7469">[RFC7469]</dt><dd>Evans, C., Palmer, C., and R. Sleevi, “<a href="https://tools.ietf.org/html/rfc7469">Public Key Pinning Extension for HTTP</a>”, RFC&nbsp;7469, <a href="http://dx.doi.org/10.17487/RFC7469">DOI&nbsp;10.17487/RFC7469</a>, April&nbsp;2015, &lt;<a href="http://www.rfc-editor.org/info/rfc7469">http://www.rfc-editor.org/info/rfc7469</a>&gt;.</dd><dt id="RFC7541">[RFC7541]</dt><dd>Peon, R. and H. Ruellan, “<a href="https://tools.ietf.org/html/rfc7541">HPACK: Header Compression for HTTP/2</a>”, RFC&nbsp;7541, <a href="http://dx.doi.org/10.17487/RFC7541">DOI&nbsp;10.17487/RFC7541</a>, May&nbsp;2015, &lt;<a href="http://www.rfc-editor.org/info/rfc7541">http://www.rfc-editor.org/info/rfc7541</a>&gt;.</dd><dt id="W3C.CR-CSP2-20150721">[W3C.CR-CSP2-20150721]</dt><dd>West, M., Barth, A., and D. Veditz, “<a href="http://www.w3.org/TR/2015/CR-CSP2-20150721">Content Security Policy Level 2</a>”, World Wide Web Consortium CR&nbsp;CR-CSP2-20150721, July&nbsp;2015, &lt;<a href="http://www.w3.org/TR/2015/CR-CSP2-20150721">http://www.w3.org/TR/2015/CR-CSP2-20150721</a>&gt;.</dd></dl></section></section><section id="rfc.authors" class="avoidbreakinside"><h2><a href="#rfc.authors">Author's Address</a></h2><p><b>Mark Nottingham</b><br>EMail: <a href="mailto:mnot@mnot.net">mnot@mnot.net</a><br>URI: <a href="http://www.mnot.net/">http://www.mnot.net/</a></p></section></div></div></div><script src="../Tools/bower_components/jquery/dist/jquery.min.js"></script><script src="../Tools/bower_components/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
