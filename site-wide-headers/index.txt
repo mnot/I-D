@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                             July 20, 2016
+Internet-Draft                                            August 2, 2016
 Intended status: Informational
-Expires: January 21, 2017
+Expires: February 3, 2017
 
 
                          Site-Wide HTTP Headers
@@ -14,8 +14,9 @@ Expires: January 21, 2017
 Abstract
 
    This document specifies a mechanism for Web sites to send HTTP header
-   fields that apply to the entire origin via a different, more
-   efficient mechanism, rather than including them in every response.
+   fields that apply to large numbers of resources on an origin via a
+   different, more efficient mechanism, rather than including them in
+   every response.
 
 Status of This Memo
 
@@ -32,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 21, 2017.
+   This Internet-Draft will expire on February 3, 2017.
 
 Copyright Notice
 
@@ -52,27 +53,29 @@ Copyright Notice
 
 
 
-
-Nottingham              Expires January 21, 2017                [Page 1]
+Nottingham              Expires February 3, 2017                [Page 1]
 
-Internet-Draft           Site-Wide HTTP Headers                July 2016
+Internet-Draft           Site-Wide HTTP Headers              August 2016
 
 
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
-   2.  Site-Wide HTTP Headers  . . . . . . . . . . . . . . . . . . .   3
-     2.1.  The "text/http-headers" Media Type  . . . . . . . . . . .   5
-     2.2.  The "site-metadata" well-known URI  . . . . . . . . . . .   5
-     2.3.  The "SM" HTTP Request Header Field  . . . . . . . . . . .   6
-   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
-     4.1.  Combining Headers . . . . . . . . . . . . . . . . . . . .   6
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
-     5.2.  Informative References  . . . . . . . . . . . . . . . . .   7
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   7
+     1.1.  Example . . . . . . . . . . . . . . . . . . . . . . . . .   3
+     1.2.  Notational Conventions  . . . . . . . . . . . . . . . . .   4
+   2.  Server Operation  . . . . . . . . . . . . . . . . . . . . . .   4
+     2.1.  The "HS" HTTP Response Header Field . . . . . . . . . . .   5
+   3.  Client Operation  . . . . . . . . . . . . . . . . . . . . . .   5
+     3.1.  The "SM" HTTP Request Header Field  . . . . . . . . . . .   6
+   4.  The "site-metadata" well-known URI  . . . . . . . . . . . . .   6
+     4.1.  The "text/site-headers" Media Type  . . . . . . . . . . .   6
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
+     6.1.  Combining Headers . . . . . . . . . . . . . . . . . . . .   7
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   7
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   7
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .   8
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   9
 
 1.  Introduction
 
@@ -92,7 +95,7 @@ Table of Contents
    Furthermore, some headers are resource-specific, but in some
    deployments, are uniform across an origin.  For example, some sites
    will have a "CSP" [W3C.CR-CSP2-20150721] header that doesn't vary
-   across the site.
+   across the site, or only varies slightly from resource to resource.
 
    This is inefficient.  Besides the obvious bandwidth waste due to
    redundancy in HTTP/1, it also impacts HTTP/2's HPACK [RFC7541] header
@@ -102,79 +105,40 @@ Table of Contents
 
    However, when the metadata affects processing of the response, and
    the application is latency-sensitive (as uses of HTTP so often are),
-   it's not pratical to separate the metadata from the response; it
+
+
+
+
+Nottingham              Expires February 3, 2017                [Page 2]
+
+Internet-Draft           Site-Wide HTTP Headers              August 2016
+
+
+   it's not practical to separate the metadata from the response; it
    needs to be sent on every response so that it is available.
 
-
-
-
-
-Nottingham              Expires January 21, 2017                [Page 2]
-
-Internet-Draft           Site-Wide HTTP Headers                July 2016
-
-
-   One way to mitigate this problem is to remove these site-wide header
+   One way to mitigate this problem is to remove these common header
    fields from responses, and keep them in a separate resource.  When
-   clients have fetched that resource and guarantee that they will
-   consider its contents to be included in all responses for that
-   domain, they can indicate this to the server with a small request
-   header; when servers see it, they can safely omit those headers in
-   responses.
+   clients have fetched that resource and guarantee that they will apply
+   its contents to all responses for that domain, they can indicate this
+   to the server with a small request header; when servers see it, they
+   can safely omit those headers in responses.
 
-   In this manner, such headers are sent on responses until they are
-   loaded from a separate resource; once the client indicates it has
-   done so, they can be omitted from responses, reducing network and
-   compression context usage.
+   This document defines how to do this by using a well-known URI
+   (specified in Section 4) to store these headers in a format specified
+   in Section 4.1.
 
-   This document specifies how to do this by using a well-known URI
-   [RFC5785] to store these headers in a format specified in
-   Section 2.1.  In typical use, a server can use HTTP/2 Server Push
-   ([RFC7540], Section 8.2) to proactively send this content upon the
-   first request from the client.  Then, it can add the headers therein
-   to responses when the corresponding requests do not contain the "SM"
-   header field.
+1.1.  Example
 
-1.1.  Notational Conventions
-
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-   document are to be interpreted as described in [RFC2119].
-
-2.  Site-Wide HTTP Headers
-
-   When a server wishes to use site-wide HTTP headers, it places a file
-   in the "text/http-headers" format (Section 2.1) at the "site-headers"
-   well-known URI (Section 2.2).
-
-   Then, when requests have a "SM" request header field Section 2.3, the
-   header field values within are omitted from the corresponding
-   responses.  Typically, this can be implemented by appending the
-   headers contained therein when the request doesn't contain the SM
-   header field.
-
-   Servers SHOULD include "SM" in the field-value of the Vary response
-   header field when the response is cacheable (as per [RFC7234]).
-
-   For example, if a request to the well-known URI returns:
-
-
-
-
-
-
-
-
-Nottingham              Expires January 21, 2017                [Page 3]
-
-Internet-Draft           Site-Wide HTTP Headers                July 2016
-
+   If a request to the well-known URI (see Section 4) returns:
 
    HTTP/1.1 200 OK
-   Content-Type: text/http-headers
+   Content-Type: text/site-headers
    Cache-Control: max-age=3600
-   Content-Length: 334
+   ETag: "abc123"
+   Content-Length: 1234
 
+   # a
    Strict-Transport-Security: max-age=15768000 ; includeSubDomains
    Server: Apache/2.4.7 (Ubuntu)
    Public-Key-Pins: max-age=604800;
@@ -183,20 +147,33 @@ Internet-Draft           Site-Wide HTTP Headers                July 2016
      report-uri="/lib/key-pin.cgi"
    Cache-Control: max-age=3600
    Vary: Accept-Encoding
+   # b
+   Server: Apache/2.7.4 (Ubuntu)
+   Cache-Control: max-age=0
 
    and a client that has loaded that resource makes the request:
 
    GET /images/foo.jpg HTTP/1.1
    Host: www.example.com
-   SM: 1
+   SM: "abc123"
 
    this indicates that the client has processed the site-metatadata
-   resource, and therefore that the server can omit the response header
-   fields contained within it on the wire:
+   resource, and therefore that the server can omit the nominated
+   response header fields on the wire, instead referring to them with
+   the "HS" response header field:
+
+
+
+
+Nottingham              Expires February 3, 2017                [Page 3]
+
+Internet-Draft           Site-Wide HTTP Headers              August 2016
+
 
    HTTP/1.1 200 OK
    Content-Type: image/jpeg
    Vary: SM
+   HS: "a"
    Transfer-Encoding: chunked
 
    Upon receipt of that response, the client will consider it equivalent
@@ -215,37 +192,162 @@ Internet-Draft           Site-Wide HTTP Headers                July 2016
    Cache-Control: max-age=3600
    Vary: Accept-Encoding
 
-   If a request omits the "SM" header field, all of the header fields
-   above will be sent by the server in the response.
-
-
-
-
-Nottingham              Expires January 21, 2017                [Page 4]
-
-Internet-Draft           Site-Wide HTTP Headers                July 2016
-
+   If a request omits the "SM" header field, or its field-value does not
+   match the current ETag of the well-known resource, all of the header
+   fields above will be sent by the server in the response.
 
    Note that in these examples, the "Vary" header field has two values.
    Because the field values in the well-known resource are appended to
    the header set occurring on the wire, clients will combine them as
    per the rules in [RFC7230], Section 3.2.2.
 
-2.1.  The "text/http-headers" Media Type
+1.2.  Notational Conventions
 
-   The text/http-headers media type is used to indicate that a file
-   contains a set of HTTP header fields, as defined in [RFC7230],
-   Section 3; i.e.,
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
 
-   OWS *( header-field CRLF ) OWS
+2.  Server Operation
 
-   Whitespace at the beginning and end of the file MUST be stripped.  As
-   in HTTP itself, implementations need to be forgiving about line
+   When a server wishes to use site-wide HTTP headers, it places a file
+   in the format specified in Section 4.1 at the well-known URI
+   specified in Section 4.
+
+   Then, when requests have a "SM" request header field (as per
+   Section 3.1) that matches the current ETag of the well-known
+   resource, the set of response header fields in that nominated by the
+   "HS" response header field (see Section 2.1) for that resource are
+   omitted from the corresponding responses.
+
+
+
+Nottingham              Expires February 3, 2017                [Page 4]
+
+Internet-Draft           Site-Wide HTTP Headers              August 2016
+
+
+   Servers SHOULD include "SM" in the field-value of the "Vary" response
+   header field for all cacheable (as per [RFC7234]) responses of
+   resources that behave in this manner, whether or not headers have
+   been actually appended.  This assures correct cache operation, and
+   also advertises support for this specification.
+
+   Servers MAY use HTTP/2 Server Push ([RFC7540], Section 8.2) to
+   proactively send the well-known resource to clients (e.g., if they
+   emit "SM: *", indicating that they do not have a fresh copy of the
+   well-known resource).
+
+2.1.  The "HS" HTTP Response Header Field
+
+   The "HS" HTTP response header field indicates the header set in the
+   well-known location file (see Section 4.1) that should be applied to
+   the response it occurs in.
+
+   HS = DQUOTE 1*ALPHA DQUOTE
+
+3.  Client Operation
+
+   Clients that support this specification SHOULD always emit a "SM"
+   header field in requests, carrying either the "ETag" of the well-
+   known resource currently held for the origin, or "*" to indicate that
+   they support this specification, but do not have a fresh (as per
+   [RFC7234]) copy of it.
+
+   Clients might discover that an origin supports this specification
+   when it returns a response containing the "HS" response header field,
+   or they might learn of it when the well-known location's current
+   contents are sent via a HTTP/2 Server Push.
+
+   In either case, clients SHOULD send a "SM" request header field on
+   all requests to such an origin.
+
+   Upon receiving a response to such a request containing the "HS"
+   response header field, clients MUST locate the header-set referred to
+   by its field-value in the stored well-known response, remove any
+   surrounding white space, and append it to the response headers,
+   stripping the "HS" response header field.
+
+   If the corresponding header-set cannot be found in the well-known
+   location, the response MUST be considered invalid and MUST NOT be
+   used; the client MAY retry the request without the "SM" request
+   header field if its method was safe, or may take alternative recovery
+   strategies.
+
+
+
+
+
+Nottingham              Expires February 3, 2017                [Page 5]
+
+Internet-Draft           Site-Wide HTTP Headers              August 2016
+
+
+3.1.  The "SM" HTTP Request Header Field
+
+   The "SM" HTTP request header field indicates that the client has a
+   fresh (as per [RFC7234]) copy of the "site-metadata" URI Section 4
+   for the request's origin ([RFC6454]).
+
+   SM = "*" / entity-tag
+
+   Its value is the "entity-tag" [RFC7232] of the freshest valid well-
+   known location response held by the client.  If none is held, it
+   should be "*" (without quotes).
+
+   For example:
+
+   SM: "abc123"
+   SM: *
+
+4.  The "site-metadata" well-known URI
+
+   The well-known URI [RFC5785] "site-metadata" is a resource that, when
+   fetched, returns a file in the "text/site-headers" Section 4.1
+   format.
+
+   Its media type SHOULD be generated as "text/site-headers", although
+   clients SHOULD NOT reject responses with other types (particularly,
+   "application/octet-stream" and "text/plain").
+
+   Its representation MUST contain an "ETag" response header [RFC7232].
+
+   Clients SHOULD consider it to be valid for its freshness lifetime (as
+   per [RFC7234]).  If it does not have an explicit freshness lifetime,
+   they SHOULD consider it to have a heuristic freshness lifetime of 60
+   seconds.
+
+4.1.  The "text/site-headers" Media Type
+
+   The "text/site-headers" media type is used to indicate that a file
+   contains one or more sets of HTTP header fields, as defined in
+   [RFC7230], Section 3.
+
+   site-headers = 1*( header-header header-set )
+   header-header = "#" 1*RWS set-name OWS CRLF
+   set-name = 1*ALPHA
+   header-set = OWS *( header-field CRLF ) OWS
+
+   Each set of HTTP header fields is started by a header-header, which
+   is indicated by an octothorp ("#") followed by the name of the header
+   set.  The following lines, up until the next line beginning with an
+
+
+
+Nottingham              Expires February 3, 2017                [Page 6]
+
+Internet-Draft           Site-Wide HTTP Headers              August 2016
+
+
+   octothorp or the end of the file are considered to be the header-
+   set's contents.
+
+   As in HTTP itself, implementations need to be forgiving about line
    endings; specifically, bare CR MUST be considered to be a line
    ending.
 
    For example:
 
+   # a
    Strict-Transport-Security: max-age=15768000 ; includeSubDomains
    Server: Apache/2.4.7 (Ubuntu)
    Public-Key-Pins: max-age=604800;
@@ -254,63 +356,26 @@ Internet-Draft           Site-Wide HTTP Headers                July 2016
      report-uri="/lib/key-pin.cgi"
    Cache-Control: max-age=3600
    Vary: Accept-Encoding
+   # b
+   Server: Apache/2.7.4 (Ubuntu)
+   Cache-Control: max-age=0
 
-2.2.  The "site-metadata" well-known URI
+   This file specifies two sets of HTTP headers, "a" and "b".  Note that
+   the "Public-Key-Pins" header field in "a" is line-folded; as in HTTP,
+   this form of header is deprecated in this format, and SHOULD NOT be
+   used (except in documentation, as we see here).
 
-   The well-known URI [RFC5785] "site-metadata" is a resource that, when
-   fetched, returns a file in the "text/http-headers" Section 2.1
-   format.
-
-   Its media type SHOULD be generated as "text/http-headers", although
-   clients SHOULD NOT reject responses with other types (particularly,
-   "application/octet-stream" and "text/plain").
-
-   Clients SHOULD consider it to be valid for its freshness lifetime (as
-   per [RFC7234]).  If it does not have an explicit freshness lifetime,
-   they SHOULD consider it to have a heuristic freshness lifetime of 60
-   seconds.
-
-
-
-
-
-
-
-
-Nottingham              Expires January 21, 2017                [Page 5]
-
-Internet-Draft           Site-Wide HTTP Headers                July 2016
-
-
-2.3.  The "SM" HTTP Request Header Field
-
-   The "SM" HTTP request header field indicates that the client has a
-   fresh (as per [RFC7234]) copy of the "site-metadata" URI Section 2.2
-   for the request's origin ([RFC6454]), and will consider the
-   corresponding response to contain the header field(s) contained
-   within.
-
-   Clients MUST generate its field value as "1".
-
-   For example:
-
-   SM: 1
-
-   Servers MUST consider it to be present when the field name "SM" is
-   present in the set of request header fields; i.e., the value is not
-   relevant.
-
-3.  IANA Considerations
+5.  IANA Considerations
 
    TBD
 
-4.  Security Considerations
+6.  Security Considerations
 
-4.1.  Combining Headers
+6.1.  Combining Headers
 
-5.  References
+7.  References
 
-5.1.  Normative References
+7.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/
@@ -322,6 +387,13 @@ Internet-Draft           Site-Wide HTTP Headers                July 2016
               10.17487/RFC5785, April 2010,
               <http://www.rfc-editor.org/info/rfc5785>.
 
+
+
+Nottingham              Expires February 3, 2017                [Page 7]
+
+Internet-Draft           Site-Wide HTTP Headers              August 2016
+
+
    [RFC6454]  Barth, A., "The Web Origin Concept", RFC 6454, DOI
               10.17487/RFC6454, December 2011,
               <http://www.rfc-editor.org/info/rfc6454>.
@@ -331,24 +403,17 @@ Internet-Draft           Site-Wide HTTP Headers                July 2016
               7230, DOI 10.17487/RFC7230, June 2014,
               <http://www.rfc-editor.org/info/rfc7230>.
 
-
-
-Nottingham              Expires January 21, 2017                [Page 6]
-
-Internet-Draft           Site-Wide HTTP Headers                July 2016
-
+   [RFC7232]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Conditional Requests", RFC 7232, DOI
+              10.17487/RFC7232, June 2014,
+              <http://www.rfc-editor.org/info/rfc7232>.
 
    [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
               Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
               RFC 7234, DOI 10.17487/RFC7234, June 2014,
               <http://www.rfc-editor.org/info/rfc7234>.
 
-   [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
-              Transfer Protocol Version 2 (HTTP/2)", RFC 7540, DOI
-              10.17487/RFC7540, May 2015,
-              <http://www.rfc-editor.org/info/rfc7540>.
-
-5.2.  Informative References
+7.2.  Informative References
 
    [RFC6797]  Hodges, J., Jackson, C., and A. Barth, "HTTP Strict
               Transport Security (HSTS)", RFC 6797, DOI 10.17487/
@@ -359,6 +424,11 @@ Internet-Draft           Site-Wide HTTP Headers                July 2016
               Extension for HTTP", RFC 7469, DOI 10.17487/RFC7469, April
               2015, <http://www.rfc-editor.org/info/rfc7469>.
 
+   [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
+              Transfer Protocol Version 2 (HTTP/2)", RFC 7540, DOI
+              10.17487/RFC7540, May 2015,
+              <http://www.rfc-editor.org/info/rfc7540>.
+
    [RFC7541]  Peon, R. and H. Ruellan, "HPACK: Header Compression for
               HTTP/2", RFC 7541, DOI 10.17487/RFC7541, May 2015,
               <http://www.rfc-editor.org/info/rfc7541>.
@@ -368,6 +438,17 @@ Internet-Draft           Site-Wide HTTP Headers                July 2016
               Policy Level 2", World Wide Web Consortium CR CR-
               CSP2-20150721, July 2015,
               <http://www.w3.org/TR/2015/CR-CSP2-20150721>.
+
+
+
+
+
+
+
+Nottingham              Expires February 3, 2017                [Page 8]
+
+Internet-Draft           Site-Wide HTTP Headers              August 2016
+
 
 Author's Address
 
@@ -389,4 +470,35 @@ Author's Address
 
 
 
-Nottingham              Expires January 21, 2017                [Page 7]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 3, 2017                [Page 9]
