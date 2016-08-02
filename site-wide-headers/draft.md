@@ -51,7 +51,7 @@ One way to mitigate this problem is to remove these site-wide header fields from
 
 In this manner, such headers are sent on responses until they are loaded from a separate resource; once the client indicates it has done so, they can be omitted from responses, reducing network and compression context usage.
 
-This document specifies how to do this by using a well-known URI {{!RFC5785}} to store these headers in a format specified in {{type}}. In typical use, a server can use HTTP/2 Server Push ({{!RFC7540}}, Section 8.2) to proactively send this content upon the first request from the client. Then, it can add the headers therein to responses when the corresponding requests do not contain the `SM` header field.
+This document specifies how to do this by using a well-known URI {{!RFC5785}} to store these headers in a format specified in {{type}}. In typical use, a server can use HTTP/2 Server Push ({{!RFC7540}}, Section 8.2) to proactively send this content upon the first request from the client. Then, it can add the headers therein to responses when the corresponding requests do not contain the `SM` header field, or when the `SM` header field value does not contain the well-known resource's ETag.
 
 
 ## Notational Conventions
@@ -76,6 +76,7 @@ For example, if a request to the well-known URI returns:
 HTTP/1.1 200 OK
 Content-Type: text/http-headers
 Cache-Control: max-age=3600
+ETag: "abc123"
 Content-Length: 334
 
 Strict-Transport-Security: max-age=15768000 ; includeSubDomains
@@ -93,7 +94,7 @@ and a client that has loaded that resource makes the request:
 ~~~~
 GET /images/foo.jpg HTTP/1.1
 Host: www.example.com
-SM: 1
+SM: "abc123"
 ~~~~
 
 this indicates that the client has processed the site-metatadata resource, and therefore that the server can omit the response header fields contained within it on the wire:
@@ -122,7 +123,7 @@ Cache-Control: max-age=3600
 Vary: Accept-Encoding
 ~~~~
 
-If a request omits the `SM` header field, all of the header fields above will be sent by the server in the response.
+If a request omits the `SM` header field, or its field-value does not match the current ETag of the well-known resource, all of the header fields above will be sent by the server in the response.
 
 Note that in these examples, the `Vary` header field has two values. Because the field values in the well-known resource are appended to the header set occurring on the wire, clients will combine them as per the rules in {{!RFC7230}}, Section 3.2.2.
 
@@ -157,6 +158,8 @@ The well-known URI {{!RFC5785}} "site-metadata" is a resource that, when fetched
 
 Its media type SHOULD be generated as `text/http-headers`, although clients SHOULD NOT reject responses with other types (particularly, `application/octet-stream` and `text/plain`).
 
+Its representation MUST contain an `ETag` response header {{!RFC7232}}.
+
 Clients SHOULD consider it to be valid for its freshness lifetime (as per {{!RFC7234}}). If it does not have an explicit freshness lifetime, they SHOULD consider it to have a heuristic freshness lifetime of 60 seconds.
 
 
@@ -164,15 +167,14 @@ Clients SHOULD consider it to be valid for its freshness lifetime (as per {{!RFC
 
 The "SM" HTTP request header field indicates that the client has a fresh (as per {{!RFC7234}}) copy of the "site-metadata" URI {{well-known}} for the request's origin ({{!RFC6454}}), and will consider the corresponding response to contain the header field(s) contained within.
 
-Clients MUST generate its field value as "1".
+Clients MUST generate its field value as a strong `entity-tag` {{!RFC7232}}.
 
 For example:
 
 ~~~
-SM: 1
+SM: "abc123"
 ~~~
 
-Servers MUST consider it to be present when the field name `SM` is present in the set of request header fields; i.e., the value is not relevant.
 
 
 # IANA Considerations
