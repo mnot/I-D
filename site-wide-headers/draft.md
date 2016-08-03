@@ -150,7 +150,7 @@ HS = DQUOTE 1*ALPHA DQUOTE
 For example:
 
 ~~~
-HS: "12345678"
+HS: "foo"
 ~~~
 
 
