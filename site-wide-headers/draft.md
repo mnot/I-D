@@ -116,6 +116,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
 {{RFC2119}}.
 
+This document uses the following ABNF rules from {{!RFC5234}}: `DQUOTE`, `ALPHA`. From {{!RFC7230}}: `OWS`, `RWS`, `CRLF`, `header-field`. From {{!RFC7232}}: `entity-tag`.
+
 
 # Server Operation {#server}
 
