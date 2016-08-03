@@ -56,19 +56,19 @@
 
 <t>Likewise, some HTTP header fields only sensibly have a single value per origin; for example, <spanx style="verb">Server</spanx>.</t>
 
-<t>Furthermore, some headers are used uniformly across an origin. For example, a site might have a <spanx style="verb">CSP</spanx> <xref target="W3C.CR-CSP2-20150721"/> header that doesn’t vary across the site, or only varies slightly from resource to resource.</t>
+<t>Furthermore, some headers are used uniformly across an origin. For example, a site might have a <spanx style="verb">Content-Security-Policy</spanx> <xref target="W3C.CR-CSP2-20150721"/> header that doesn’t vary across the site, or only varies slightly from resource to resource.</t>
 
 <t>HTTP/2’s HPACK <xref target="RFC7541"/> header compression mechanism was designed to reduce bandwidth usage for often-repeated headers, both in responses and requests. However, it limits the amount of compression contents usable for a connection (by default, 4K), which sites are beginning to exceed, thereby reducing the efficiency of HPACK itself.</t>
 
 <t>For example, it is not uncommon for a CSP response header field to exceed 1K (and has been observed to be greater than 3K on popular sites). This forces site administrators to make an awkward choice; put the large header in the HPACK table, thereby crowding out other headers, or omit it, requiring its full content to be sent on every applicable response.</t>
 
-<t>This document defines a way to specify one or more sets of HTTP response header fields that, when their use is negotiated, are appended to HTTP responses by the recipient. This allows common response headers to be omitted both from on-the-wire responses and the HPACK compression table, making both more efficient.</t>
+<t>This document defines a way to specify one or more sets of HTTP response header fields in a well-known resource <xref target="RFC5785"/> that, when their use is negotiated, are appended to HTTP responses by the user agent. This allows common response headers to be omitted both from on-the-wire responses and the HPACK compression table, making both more efficient.</t>
 
 <t>This approach is preferable to increasing the HTTP/2 SETTINGS_HEADER_TABLE_SIZE (<xref target="RFC7540"/>, Section 6.5.2), because increasing that setting incurs a per-connection overhead on the server, whereas using the technique documented here does not.</t>
 
 <section anchor="example" title="Example">
 
-<t>If a request to the well-known resource for an origin (see <xref target="well-known"/>) returns:</t>
+<t>If a GET request to the well-known resource for an origin (see <xref target="well-known"/>) returns:</t>
 
 <figure><artwork><![CDATA[
 HTTP/1.1 200 OK
@@ -86,7 +86,7 @@ Public-Key-Pins: max-age=604800;
   report-uri="/lib/key-pin.cgi"
 ]]></artwork></figure>
 
-<t>and a client that has loaded that resource makes the request:</t>
+<t>and a user agent that has loaded that resource makes the request:</t>
 
 <figure><artwork><![CDATA[
 GET /images/foo.jpg HTTP/1.1
@@ -94,7 +94,7 @@ Host: www.example.com
 SM: "abc123"
 ]]></artwork></figure>
 
-<t>this indicates that the client has processed the site-metatadata resource, and therefore that the server can omit the nominated response header fields on the wire, instead referring to them with the <spanx style="verb">HS</spanx> response header field:</t>
+<t>this indicates that the user agent has processed the well-known resource, and therefore that the server can omit the nominated response header fields on the wire, instead referring to them with the <spanx style="verb">HS</spanx> response header field:</t>
 
 <figure><artwork><![CDATA[
 HTTP/1.1 200 OK
@@ -105,7 +105,7 @@ HS: "a"
 Transfer-Encoding: chunked
 ]]></artwork></figure>
 
-<t>Upon receipt of that response, the client will consider it equivalent to:</t>
+<t>Upon receipt of that response, the user agent will consider it equivalent to:</t>
 
 <figure><artwork><![CDATA[
 HTTP/1.1 200 OK
@@ -140,7 +140,7 @@ Public-Key-Pins: max-age=604800;
 
 <t>Servers SHOULD include <spanx style="verb">SM</spanx> in the field-value of the <spanx style="verb">Vary</spanx> response header field for all cacheable (as per <xref target="RFC7234"/>) responses of resources that behave in this manner, whether or not headers have been actually appended. This assures correct cache operation, and also advertises support for this specification.</t>
 
-<t>Servers MAY use HTTP/2 Server Push (<xref target="RFC7540"/>, Section 8.2) to proactively send the well-known resource to clients (e.g., if they emit <spanx style="verb">SM: *</spanx>, indicating that they do not have a fresh copy of the well-known resource).</t>
+<t>Servers MAY use HTTP/2 Server Push (<xref target="RFC7540"/>, Section 8.2) to proactively send the well-known resource to user agents (e.g., if they emit <spanx style="verb">SM: *</spanx>, indicating that they do not have a fresh copy of the well-known resource).</t>
 
 <section anchor="selecting-headers" title="Selecting Headers">
 
@@ -161,27 +161,27 @@ HS = DQUOTE 1*ALPHA DQUOTE
 
 </section>
 </section>
-<section anchor="client" title="Client Operation">
+<section anchor="client" title="User Agent Operation">
 
-<t>Clients that support this specification SHOULD always emit a <spanx style="verb">SM</spanx> header field in requests, carrying either the <spanx style="verb">ETag</spanx> of the well-known resource currently held for the origin, or <spanx style="verb">*</spanx> to indicate that they support this specification, but do not have a fresh (as per <xref target="RFC7234"/>) copy of it.</t>
+<t>User agents that support this specification SHOULD always emit a <spanx style="verb">SM</spanx> header field in requests, carrying either the <spanx style="verb">ETag</spanx> of the well-known resource currently held for the origin, or <spanx style="verb">*</spanx> to indicate that they support this specification, but do not have a fresh (as per <xref target="RFC7234"/>) copy of it.</t>
 
-<t>Clients might discover that an origin supports this specification when it returns a response containing the <spanx style="verb">HS</spanx> response header field, or they might learn of it when the well-known location’s current contents are sent via a HTTP/2 Server Push.</t>
+<t>User agents might discover that an origin supports this specification when it returns a response containing the <spanx style="verb">HS</spanx> response header field, or they might learn of it when the well-known location’s current contents are sent via a HTTP/2 Server Push.</t>
 
-<t>In either case, clients SHOULD send a <spanx style="verb">SM</spanx> request header field on all requests to such an origin.</t>
+<t>In either case, user agents SHOULD send a <spanx style="verb">SM</spanx> request header field on all requests to such an origin.</t>
 
-<t>Upon receiving a response to such a request containing the <spanx style="verb">HS</spanx> response header field, clients MUST locate the header-set referred to by its field-value in the stored well-known response, remove any surrounding white space, and append it to the response headers, stripping the <spanx style="verb">HS</spanx> response header field.</t>
+<t>Upon receiving a response to such a request containing the <spanx style="verb">HS</spanx> response header field, user agents MUST locate the header-set referred to by its field-value in the stored well-known response, remove any surrounding white space, and append it to the response headers, stripping the <spanx style="verb">HS</spanx> response header field.</t>
 
-<t>If the corresponding header-set cannot be found in the well-known location, the response MUST be considered invalid and MUST NOT be used; the client MAY retry the request without the <spanx style="verb">SM</spanx> request header field if its method was safe, or may take alternative recovery strategies.</t>
+<t>If the corresponding header-set cannot be found in the well-known location, the response MUST be considered invalid and MUST NOT be used; the user agent MAY retry the request without the <spanx style="verb">SM</spanx> request header field if its method was safe, or may take alternative recovery strategies.</t>
 
 <section anchor="sm" title="The “SM” HTTP Request Header Field">
 
-<t>The <spanx style="verb">SM</spanx> HTTP request header field indicates that the client has a fresh (as per <xref target="RFC7234"/>) copy of the “site-metadata” URI <xref target="well-known"/> for the request’s origin (<xref target="RFC6454"/>).</t>
+<t>The <spanx style="verb">SM</spanx> HTTP request header field indicates that the user agent has a fresh (as per <xref target="RFC7234"/>) copy of the well-known resource (see <xref target="well-known"/>) for the request’s origin (<xref target="RFC6454"/>).</t>
 
 <figure><artwork><![CDATA[
 SM = "*" / entity-tag
 ]]></artwork></figure>
 
-<t>Its value is the <spanx style="verb">entity-tag</spanx> <xref target="RFC7232"/> of the freshest valid well-known location response held by the client. If none is held, it should be <spanx style="verb">*</spanx> (without quotes).</t>
+<t>Its value is the <spanx style="verb">entity-tag</spanx> <xref target="RFC7232"/> of the freshest valid well-known location response held by the user agent. If none is held, it should be <spanx style="verb">*</spanx> (without quotes).</t>
 
 <t>For example:</t>
 
@@ -192,15 +192,15 @@ SM: *
 
 </section>
 </section>
-<section anchor="well-known" title="The “site-metadata” well-known URI">
+<section anchor="well-known" title="The “site-headers” well-known URI">
 
-<t>The well-known URI <xref target="RFC5785"/> “site-metadata” is a resource that, when fetched, returns a file in the “text/site-headers” <xref target="type"/> format.</t>
+<t>The well-known URI <xref target="RFC5785"/> “site-headers” is a resource that, when fetched, returns a file in the “text/site-headers” format (see <xref target="type"/>).</t>
 
-<t>Its media type SHOULD be generated as <spanx style="verb">text/site-headers</spanx>, although clients SHOULD NOT reject responses with other types (particularly, <spanx style="verb">application/octet-stream</spanx> and <spanx style="verb">text/plain</spanx>).</t>
+<t>Its media type SHOULD be generated as <spanx style="verb">text/site-headers</spanx>, although user agents SHOULD NOT reject responses with other types (particularly, <spanx style="verb">application/octet-stream</spanx> and <spanx style="verb">text/plain</spanx>).</t>
 
 <t>Its representation MUST contain an <spanx style="verb">ETag</spanx> response header <xref target="RFC7232"/>.</t>
 
-<t>Clients SHOULD consider it to be valid for its freshness lifetime (as per <xref target="RFC7234"/>). If it does not have an explicit freshness lifetime, they SHOULD consider it to have a heuristic freshness lifetime of 60 seconds.</t>
+<t>User agents SHOULD consider it to be valid for its freshness lifetime (as per <xref target="RFC7234"/>). If it does not have an explicit freshness lifetime, they SHOULD consider it to have a heuristic freshness lifetime of 60 seconds.</t>
 
 <section anchor="type" title="The “text/site-headers” Media Type">
 
@@ -228,15 +228,18 @@ Public-Key-Pins: max-age=604800;
   pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
   report-uri="/lib/key-pin.cgi"
 # bar
-Server: Apache/2.7.4 (Ubuntu)
-# baz
-Server: Apache/2.7.4 (Ubuntu)
+Strict-Transport-Security: max-age=15768000 ; includeSubDomains
+Server: Apache/2.4.7 (Ubuntu)
+Public-Key-Pins: max-age=604800;
+  pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
+  pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
+  report-uri="/lib/key-pin.cgi"
 Content-Security-Policy: default-src 'self'; img-src 'self'
   *.staticflickr.com; frame-ancestors 'none';
   report-uri https://mnot.report-uri.io/r/default/csp/enforce
 ]]></artwork></figure>
 
-<t>This file specifies three sets of HTTP headers, “foo”, “bar” and “baz”. Note that the <spanx style="verb">Public-Key-Pins</spanx> header field in “foo” and the <spanx style="verb">Content-Security-Policy</spanx> header field in “baz” are line-folded; as in HTTP, this form of header is deprecated in this format, and SHOULD NOT be used (except in documentation, as we see here).</t>
+<t>This file specifies two sets of HTTP headers, “foo” and “bar”. Note that the <spanx style="verb">Public-Key-Pins</spanx> and <spanx style="verb">Content-Security-Policy</spanx> header fields are line-folded; as in HTTP, this form of header is deprecated in this format, and SHOULD NOT be used (except in documentation, as we see here).</t>
 
 <section anchor="parsing-textsite-headers" title="Parsing “text/site-headers”">
 
@@ -301,6 +304,20 @@ Content-Security-Policy: default-src 'self'; img-src 'self'
 
 
 
+<reference  anchor='RFC5785' target='http://www.rfc-editor.org/info/rfc5785'>
+<front>
+<title>Defining Well-Known Uniform Resource Identifiers (URIs)</title>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'><organization /></author>
+<author initials='E.' surname='Hammer-Lahav' fullname='E. Hammer-Lahav'><organization /></author>
+<date year='2010' month='April' />
+<abstract><t>This memo defines a path prefix for &quot;well-known locations&quot;, &quot;/.well-known/&quot;, in selected Uniform Resource Identifier (URI) schemes.   [STANDARDS-TRACK]</t></abstract>
+</front>
+<seriesInfo name='RFC' value='5785'/>
+<seriesInfo name='DOI' value='10.17487/RFC5785'/>
+</reference>
+
+
+
 <reference  anchor='RFC7234' target='http://www.rfc-editor.org/info/rfc7234'>
 <front>
 <title>Hypertext Transfer Protocol (HTTP/1.1): Caching</title>
@@ -326,20 +343,6 @@ Content-Security-Policy: default-src 'self'; img-src 'self'
 </front>
 <seriesInfo name='RFC' value='7232'/>
 <seriesInfo name='DOI' value='10.17487/RFC7232'/>
-</reference>
-
-
-
-<reference  anchor='RFC5785' target='http://www.rfc-editor.org/info/rfc5785'>
-<front>
-<title>Defining Well-Known Uniform Resource Identifiers (URIs)</title>
-<author initials='M.' surname='Nottingham' fullname='M. Nottingham'><organization /></author>
-<author initials='E.' surname='Hammer-Lahav' fullname='E. Hammer-Lahav'><organization /></author>
-<date year='2010' month='April' />
-<abstract><t>This memo defines a path prefix for &quot;well-known locations&quot;, &quot;/.well-known/&quot;, in selected Uniform Resource Identifier (URI) schemes.   [STANDARDS-TRACK]</t></abstract>
-</front>
-<seriesInfo name='RFC' value='5785'/>
-<seriesInfo name='DOI' value='10.17487/RFC5785'/>
 </reference>
 
 

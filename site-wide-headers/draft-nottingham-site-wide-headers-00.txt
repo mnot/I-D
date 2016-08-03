@@ -66,9 +66,9 @@ Table of Contents
    2.  Server Operation  . . . . . . . . . . . . . . . . . . . . . .   4
      2.1.  Selecting Headers . . . . . . . . . . . . . . . . . . . .   5
      2.2.  The "HS" HTTP Response Header Field . . . . . . . . . . .   5
-   3.  Client Operation  . . . . . . . . . . . . . . . . . . . . . .   5
+   3.  User Agent Operation  . . . . . . . . . . . . . . . . . . . .   5
      3.1.  The "SM" HTTP Request Header Field  . . . . . . . . . . .   6
-   4.  The "site-metadata" well-known URI  . . . . . . . . . . . . .   6
+   4.  The "site-headers" well-known URI . . . . . . . . . . . . . .   6
      4.1.  The "text/site-headers" Media Type  . . . . . . . . . . .   7
        4.1.1.  Parsing "text/site-headers" . . . . . . . . . . . . .   8
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
@@ -95,9 +95,9 @@ Table of Contents
    per origin; for example, "Server".
 
    Furthermore, some headers are used uniformly across an origin.  For
-   example, a site might have a "CSP" [W3C.CR-CSP2-20150721] header that
-   doesn't vary across the site, or only varies slightly from resource
-   to resource.
+   example, a site might have a "Content-Security-Policy"
+   [W3C.CR-CSP2-20150721] header that doesn't vary across the site, or
+   only varies slightly from resource to resource.
 
    HTTP/2's HPACK [RFC7541] header compression mechanism was designed to
    reduce bandwidth usage for often-repeated headers, both in responses
@@ -122,10 +122,11 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
    applicable response.
 
    This document defines a way to specify one or more sets of HTTP
-   response header fields that, when their use is negotiated, are
-   appended to HTTP responses by the recipient.  This allows common
-   response headers to be omitted both from on-the-wire responses and
-   the HPACK compression table, making both more efficient.
+   response header fields in a well-known resource [RFC5785] that, when
+   their use is negotiated, are appended to HTTP responses by the user
+   agent.  This allows common response headers to be omitted both from
+   on-the-wire responses and the HPACK compression table, making both
+   more efficient.
 
    This approach is preferable to increasing the HTTP/2
    SETTINGS_HEADER_TABLE_SIZE ([RFC7540], Section 6.5.2), because
@@ -134,8 +135,8 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
 
 1.1.  Example
 
-   If a request to the well-known resource for an origin (see Section 4)
-   returns:
+   If a GET request to the well-known resource for an origin (see
+   Section 4) returns:
 
    HTTP/1.1 200 OK
    Content-Type: text/site-headers
@@ -151,17 +152,16 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
      pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w=";
      report-uri="/lib/key-pin.cgi"
 
-   and a client that has loaded that resource makes the request:
+   and a user agent that has loaded that resource makes the request:
 
    GET /images/foo.jpg HTTP/1.1
    Host: www.example.com
    SM: "abc123"
 
-   this indicates that the client has processed the site-metatadata
+   this indicates that the user agent has processed the well-known
    resource, and therefore that the server can omit the nominated
    response header fields on the wire, instead referring to them with
    the "HS" response header field:
-
 
 
 
@@ -177,8 +177,8 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
    HS: "a"
    Transfer-Encoding: chunked
 
-   Upon receipt of that response, the client will consider it equivalent
-   to:
+   Upon receipt of that response, the user agent will consider it
+   equivalent to:
 
    HTTP/1.1 200 OK
    Content-Type: image/jpeg
@@ -230,9 +230,9 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
    also advertises support for this specification.
 
    Servers MAY use HTTP/2 Server Push ([RFC7540], Section 8.2) to
-   proactively send the well-known resource to clients (e.g., if they
-   emit "SM: *", indicating that they do not have a fresh copy of the
-   well-known resource).
+   proactively send the well-known resource to user agents (e.g., if
+   they emit "SM: *", indicating that they do not have a fresh copy of
+   the well-known resource).
 
 2.1.  Selecting Headers
 
@@ -256,24 +256,24 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
 
    HS = DQUOTE 1*ALPHA DQUOTE
 
-3.  Client Operation
+3.  User Agent Operation
 
-   Clients that support this specification SHOULD always emit a "SM"
+   User agents that support this specification SHOULD always emit a "SM"
    header field in requests, carrying either the "ETag" of the well-
    known resource currently held for the origin, or "*" to indicate that
    they support this specification, but do not have a fresh (as per
    [RFC7234]) copy of it.
 
-   Clients might discover that an origin supports this specification
+   User agents might discover that an origin supports this specification
    when it returns a response containing the "HS" response header field,
    or they might learn of it when the well-known location's current
    contents are sent via a HTTP/2 Server Push.
 
-   In either case, clients SHOULD send a "SM" request header field on
-   all requests to such an origin.
+   In either case, user agents SHOULD send a "SM" request header field
+   on all requests to such an origin.
 
    Upon receiving a response to such a request containing the "HS"
-   response header field, clients MUST locate the header-set referred to
+   response header field, user agents MUST locate the header-set
 
 
 
@@ -282,26 +282,26 @@ Nottingham              Expires February 4, 2017                [Page 5]
 Internet-Draft           Site-Wide HTTP Headers              August 2016
 
 
-   by its field-value in the stored well-known response, remove any
-   surrounding white space, and append it to the response headers,
-   stripping the "HS" response header field.
+   referred to by its field-value in the stored well-known response,
+   remove any surrounding white space, and append it to the response
+   headers, stripping the "HS" response header field.
 
    If the corresponding header-set cannot be found in the well-known
    location, the response MUST be considered invalid and MUST NOT be
-   used; the client MAY retry the request without the "SM" request
+   used; the user agent MAY retry the request without the "SM" request
    header field if its method was safe, or may take alternative recovery
    strategies.
 
 3.1.  The "SM" HTTP Request Header Field
 
-   The "SM" HTTP request header field indicates that the client has a
-   fresh (as per [RFC7234]) copy of the "site-metadata" URI Section 4
-   for the request's origin ([RFC6454]).
+   The "SM" HTTP request header field indicates that the user agent has
+   a fresh (as per [RFC7234]) copy of the well-known resource (see
+   Section 4) for the request's origin ([RFC6454]).
 
    SM = "*" / entity-tag
 
    Its value is the "entity-tag" [RFC7232] of the freshest valid well-
-   known location response held by the client.  If none is held, it
+   known location response held by the user agent.  If none is held, it
    should be "*" (without quotes).
 
    For example:
@@ -309,22 +309,22 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
    SM: "abc123"
    SM: *
 
-4.  The "site-metadata" well-known URI
+4.  The "site-headers" well-known URI
 
-   The well-known URI [RFC5785] "site-metadata" is a resource that, when
-   fetched, returns a file in the "text/site-headers" Section 4.1
-   format.
+   The well-known URI [RFC5785] "site-headers" is a resource that, when
+   fetched, returns a file in the "text/site-headers" format (see
+   Section 4.1).
 
    Its media type SHOULD be generated as "text/site-headers", although
-   clients SHOULD NOT reject responses with other types (particularly,
-   "application/octet-stream" and "text/plain").
+   user agents SHOULD NOT reject responses with other types
+   (particularly, "application/octet-stream" and "text/plain").
 
    Its representation MUST contain an "ETag" response header [RFC7232].
 
-   Clients SHOULD consider it to be valid for its freshness lifetime (as
-   per [RFC7234]).  If it does not have an explicit freshness lifetime,
-   they SHOULD consider it to have a heuristic freshness lifetime of 60
-   seconds.
+   User agents SHOULD consider it to be valid for its freshness lifetime
+   (as per [RFC7234]).  If it does not have an explicit freshness
+   lifetime, they SHOULD consider it to have a heuristic freshness
+   lifetime of 60 seconds.
 
 
 
@@ -369,21 +369,21 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
      pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w=";
      report-uri="/lib/key-pin.cgi"
    # bar
-   Server: Apache/2.7.4 (Ubuntu)
-   # baz
-   Server: Apache/2.7.4 (Ubuntu)
+   Strict-Transport-Security: max-age=15768000 ; includeSubDomains
+   Server: Apache/2.4.7 (Ubuntu)
+   Public-Key-Pins: max-age=604800;
+     pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
+     pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w=";
+     report-uri="/lib/key-pin.cgi"
    Content-Security-Policy: default-src 'self'; img-src 'self'
      *.staticflickr.com; frame-ancestors 'none';
      report-uri https://mnot.report-uri.io/r/default/csp/enforce
 
-   This file specifies three sets of HTTP headers, "foo", "bar" and
-   "baz".  Note that the "Public-Key-Pins" header field in "foo" and the
-   "Content-Security-Policy" header field in "baz" are line-folded; as
-   in HTTP, this form of header is deprecated in this format, and SHOULD
-   NOT be used (except in documentation, as we see here).
-
-
-
+   This file specifies two sets of HTTP headers, "foo" and "bar".  Note
+   that the "Public-Key-Pins" and "Content-Security-Policy" header
+   fields are line-folded; as in HTTP, this form of header is deprecated
+   in this format, and SHOULD NOT be used (except in documentation, as
+   we see here).
 
 
 
