@@ -47,14 +47,14 @@ HTTP/2's HPACK {{?RFC7541}} header compression mechanism was designed to reduce 
 
 For example, it is not uncommon for a CSP response header field to exceed 1K (and has been observed to be greater than 3K on popular sites). This forces site administrators to make an awkward choice; put the large header in the HPACK table, thereby crowding out other headers, or omit it, requiring its full content to be sent on every applicable response.
 
-This document defines a way to specify one or more sets of HTTP response header fields that, when their use is negotiated, are appended to HTTP responses by the recipient. This allows common response headers to be omitted both from on-the-wire responses and the HPACK compression table, making both more efficient.
+This document defines a way to specify one or more sets of HTTP response header fields in a well-known resource {{!RFC5785}} that, when their use is negotiated, are appended to HTTP responses by the user agent. This allows common response headers to be omitted both from on-the-wire responses and the HPACK compression table, making both more efficient.
 
 This approach is preferable to increasing the HTTP/2 SETTINGS_HEADER_TABLE_SIZE ({{?RFC7540}}, Section 6.5.2), because increasing that setting incurs a per-connection overhead on the server, whereas using the technique documented here does not.
 
 
 ## Example {#example}
 
-If a request to the well-known resource for an origin (see {{well-known}}) returns:
+If a GET request to the well-known resource for an origin (see {{well-known}}) returns:
 
 ~~~
 HTTP/1.1 200 OK
@@ -72,7 +72,7 @@ Public-Key-Pins: max-age=604800;
   report-uri="/lib/key-pin.cgi"
 ~~~
 
-and a client that has loaded that resource makes the request:
+and a user agent that has loaded that resource makes the request:
 
 ~~~~
 GET /images/foo.jpg HTTP/1.1
@@ -80,7 +80,7 @@ Host: www.example.com
 SM: "abc123"
 ~~~~
 
-this indicates that the client has processed the site-metatadata resource, and therefore that the server can omit the nominated response header fields on the wire, instead referring to them with the `HS` response header field:
+this indicates that the user agent has processed the well-known resource, and therefore that the server can omit the nominated response header fields on the wire, instead referring to them with the `HS` response header field:
 
 ~~~~
 HTTP/1.1 200 OK
@@ -91,7 +91,7 @@ HS: "a"
 Transfer-Encoding: chunked
 ~~~~
 
-Upon receipt of that response, the client will consider it equivalent to:
+Upon receipt of that response, the user agent will consider it equivalent to:
 
 ~~~~
 HTTP/1.1 200 OK
@@ -125,7 +125,7 @@ Then, when a request has a `SM` request header field (as per {{sm}}) that matche
 
 Servers SHOULD include `SM` in the field-value of the `Vary` response header field for all cacheable (as per {{!RFC7234}}) responses of resources that behave in this manner, whether or not headers have been actually appended. This assures correct cache operation, and also advertises support for this specification.
 
-Servers MAY use HTTP/2 Server Push ({{?RFC7540}}, Section 8.2) to proactively send the well-known resource to clients (e.g., if they emit `SM: *`, indicating that they do not have a fresh copy of the well-known resource).
+Servers MAY use HTTP/2 Server Push ({{?RFC7540}}, Section 8.2) to proactively send the well-known resource to user agents (e.g., if they emit `SM: *`, indicating that they do not have a fresh copy of the well-known resource).
 
 
 ## Selecting Headers
@@ -146,28 +146,28 @@ HS = DQUOTE 1*ALPHA DQUOTE
 ~~~
 
 
-# Client Operation {#client}
+# User Agent Operation {#client}
 
-Clients that support this specification SHOULD always emit a `SM` header field in requests, carrying either the `ETag` of the well-known resource currently held for the origin, or `*` to indicate that they support this specification, but do not have a fresh (as per {{RFC7234}}) copy of it.
+User agents that support this specification SHOULD always emit a `SM` header field in requests, carrying either the `ETag` of the well-known resource currently held for the origin, or `*` to indicate that they support this specification, but do not have a fresh (as per {{RFC7234}}) copy of it.
 
-Clients might discover that an origin supports this specification when it returns a response containing the `HS` response header field, or they might learn of it when the well-known location's current contents are sent via a HTTP/2 Server Push.
+User agents might discover that an origin supports this specification when it returns a response containing the `HS` response header field, or they might learn of it when the well-known location's current contents are sent via a HTTP/2 Server Push.
 
-In either case, clients SHOULD send a `SM` request header field on all requests to such an origin.
+In either case, user agents SHOULD send a `SM` request header field on all requests to such an origin.
 
-Upon receiving a response to such a request containing the `HS` response header field, clients MUST locate the header-set referred to by its field-value in the stored well-known response, remove any surrounding white space, and append it to the response headers, stripping the `HS` response header field.
+Upon receiving a response to such a request containing the `HS` response header field, user agents MUST locate the header-set referred to by its field-value in the stored well-known response, remove any surrounding white space, and append it to the response headers, stripping the `HS` response header field.
 
-If the corresponding header-set cannot be found in the well-known location, the response MUST be considered invalid and MUST NOT be used; the client MAY retry the request without the `SM` request header field if its method was safe, or may take alternative recovery strategies.
+If the corresponding header-set cannot be found in the well-known location, the response MUST be considered invalid and MUST NOT be used; the user agent MAY retry the request without the `SM` request header field if its method was safe, or may take alternative recovery strategies.
 
 
 ## The "SM" HTTP Request Header Field {#sm}
 
-The `SM` HTTP request header field indicates that the client has a fresh (as per {{!RFC7234}}) copy of the "site-metadata" URI {{well-known}} for the request's origin ({{!RFC6454}}).
+The `SM` HTTP request header field indicates that the user agent has a fresh (as per {{!RFC7234}}) copy of the well-known resource (see {{well-known}}) for the request's origin ({{!RFC6454}}).
 
 ~~~
 SM = "*" / entity-tag
 ~~~
 
-Its value is the `entity-tag` {{!RFC7232}} of the freshest valid well-known location response held by the client. If none is held, it should be `*` (without quotes).
+Its value is the `entity-tag` {{!RFC7232}} of the freshest valid well-known location response held by the user agent. If none is held, it should be `*` (without quotes).
 
 For example:
 
@@ -177,15 +177,15 @@ SM: *
 ~~~
 
 
-# The "site-metadata" well-known URI {#well-known}
+# The "site-headers" well-known URI {#well-known}
 
-The well-known URI {{!RFC5785}} "site-metadata" is a resource that, when fetched, returns a file in the "text/site-headers" {{type}} format.
+The well-known URI {{!RFC5785}} "site-headers" is a resource that, when fetched, returns a file in the "text/site-headers" format (see {{type}}).
 
-Its media type SHOULD be generated as `text/site-headers`, although clients SHOULD NOT reject responses with other types (particularly, `application/octet-stream` and `text/plain`).
+Its media type SHOULD be generated as `text/site-headers`, although user agents SHOULD NOT reject responses with other types (particularly, `application/octet-stream` and `text/plain`).
 
 Its representation MUST contain an `ETag` response header {{!RFC7232}}.
 
-Clients SHOULD consider it to be valid for its freshness lifetime (as per {{!RFC7234}}). If it does not have an explicit freshness lifetime, they SHOULD consider it to have a heuristic freshness lifetime of 60 seconds.
+User agents SHOULD consider it to be valid for its freshness lifetime (as per {{!RFC7234}}). If it does not have an explicit freshness lifetime, they SHOULD consider it to have a heuristic freshness lifetime of 60 seconds.
 
 
 ## The "text/site-headers" Media Type {#type}
