@@ -54,7 +54,7 @@ This approach is preferable to increasing the HTTP/2 SETTINGS_HEADER_TABLE_SIZE 
 
 ## Example {#example}
 
-If a GET request to the well-known resource for an origin (see {{well-known}}) returns:
+If a user agent has a fresh copy of the well-known resource for an origin (see {{well-known}}), either because it performed a GET, or HTTP/2 Server Push was used:
 
 ~~~
 HTTP/1.1 200 OK
@@ -72,7 +72,7 @@ Public-Key-Pins: max-age=604800;
   report-uri="/lib/key-pin.cgi"
 ~~~
 
-and a user agent that has loaded that resource makes the request:
+and the user agent makes the request:
 
 ~~~~
 GET /images/foo.jpg HTTP/1.1
