@@ -23,7 +23,7 @@
       <organization></organization>
       <address>
         <email>mnot@mnot.net</email>
-        <uri>http://www.mnot.net/</uri>
+        <uri>https://www.mnot.net/</uri>
       </address>
     </author>
 
@@ -36,7 +36,7 @@
     <abstract>
 
 
-<t>This document specifies a mechanism for Web sites to send HTTP header fields that apply to large numbers of resources on an origin via a different, more efficient mechanism, rather than including them in every response.</t>
+<t>This document specifies an alternative way for Web sites to send HTTP response header fields that apply to large numbers of resources, to improve efficiency.</t>
 
 
 
@@ -50,25 +50,25 @@
 
 <section anchor="introduction" title="Introduction">
 
-<t>A variety of metadata about Web sites is being conveyed in new HTTP response headers. In particular, it is becoming more common for metadata that applies to an entire Web site to be conveyed in a header field that is included on every response for that site.</t>
+<t>HTTP response headers are being used for an increasing amount of metadata that applies to an entire site, or large portions of it.</t>
 
 <t>For example, <spanx style="verb">Strict-Transport-Security</spanx> <xref target="RFC6797"/> and <spanx style="verb">Public-Key-Pins</spanx> <xref target="RFC7469"/> both define headers that are explicitly scoped to an entire origin <xref target="RFC6454"/>, and number of similar headers are under consideration.</t>
 
 <t>Likewise, some HTTP header fields only sensibly have a single value per origin; for example, <spanx style="verb">Server</spanx>.</t>
 
-<t>Furthermore, some headers are resource-specific, but in some deployments, are uniform across an origin. For example, some sites will have a <spanx style="verb">CSP</spanx> <xref target="W3C.CR-CSP2-20150721"/> header that doesn’t vary across the site, or only varies slightly from resource to resource.</t>
+<t>Furthermore, some headers are used uniformly across an origin. For example, a site might have a <spanx style="verb">CSP</spanx> <xref target="W3C.CR-CSP2-20150721"/> header that doesn’t vary across the site, or only varies slightly from resource to resource.</t>
 
-<t>This is inefficient. Besides the obvious bandwidth waste due to redundancy in HTTP/1, it also impacts HTTP/2’s HPACK <xref target="RFC7541"/> header compression; since the amount of space of available for state is limited (by default, 4K), verbose, repeating headers can greatly reduce the effectiveness of HPACK.</t>
+<t>HTTP/2’s HPACK <xref target="RFC7541"/> header compression mechanism was designed to reduce bandwidth usage for often-repeated headers, both in responses and requests. However, it limits the amount of compression contents usable for a connection (by default, 4K), which sites are beginning to exceed, thereby reducing the efficiency of HPACK itself.</t>
 
-<t>However, when the metadata affects processing of the response, and the application is latency-sensitive (as uses of HTTP so often are), it’s not practical to separate the metadata from the response; it needs to be sent on every response so that it is available.</t>
+<t>For example, it is not uncommon for a CSP response header field to exceed 1K (and has been observed to be greater than 3K on popular sites). This forces site administrators to make an awkward choice; put the large header in the HPACK table, thereby crowding out other headers, or omit it, requiring its full content to be sent on every applicable response.</t>
 
-<t>One way to mitigate this problem is to remove these common header fields from responses, and keep them in a separate resource. When clients have fetched that resource and guarantee that they will apply its contents to all responses for that domain, they can indicate this to the server with a small request header; when servers see it, they can safely omit those headers in responses.</t>
+<t>This document defines a way to specify one or more sets of HTTP response header fields that, when their use is negotiated, are appended to HTTP responses by the recipient. This allows common response headers to be omitted both from on-the-wire responses and the HPACK compression table, making both more efficient.</t>
 
-<t>This document defines how to do this by using a well-known URI (specified in <xref target="well-known"/>) to store these headers in a format specified in <xref target="type"/>.</t>
+<t>This approach is preferable to increasing the HTTP/2 SETTINGS_HEADER_TABLE_SIZE (<xref target="RFC7540"/>, Section 6.5.2), because increasing that setting incurs a per-connection overhead on the server, whereas using the technique documented here does not.</t>
 
 <section anchor="example" title="Example">
 
-<t>If a request to the well-known URI (see <xref target="well-known"/>) returns:</t>
+<t>If a request to the well-known resource for an origin (see <xref target="well-known"/>) returns:</t>
 
 <figure><artwork><![CDATA[
 HTTP/1.1 200 OK
@@ -84,11 +84,6 @@ Public-Key-Pins: max-age=604800;
   pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
   pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
   report-uri="/lib/key-pin.cgi"
-Cache-Control: max-age=3600
-Vary: Accept-Encoding
-# b
-Server: Apache/2.7.4 (Ubuntu)
-Cache-Control: max-age=0
 ]]></artwork></figure>
 
 <t>and a client that has loaded that resource makes the request:</t>
@@ -104,7 +99,8 @@ SM: "abc123"
 <figure><artwork><![CDATA[
 HTTP/1.1 200 OK
 Content-Type: image/jpeg
-Vary: SM
+Vary: SM, Accept-Encoding
+Cache-Control: max-age=3600
 HS: "a"
 Transfer-Encoding: chunked
 ]]></artwork></figure>
@@ -114,7 +110,8 @@ Transfer-Encoding: chunked
 <figure><artwork><![CDATA[
 HTTP/1.1 200 OK
 Content-Type: image/jpeg
-Vary: SM
+Vary: SM, Accept-Encoding
+Cache-Control: max-age=3600
 Connection: close
 Strict-Transport-Security: max-age=15768000 ; includeSubDomains
 Server: Apache/2.4.7 (Ubuntu)
@@ -122,13 +119,9 @@ Public-Key-Pins: max-age=604800;
   pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
   pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
   report-uri="/lib/key-pin.cgi"
-Cache-Control: max-age=3600
-Vary: Accept-Encoding
 ]]></artwork></figure>
 
 <t>If a request omits the <spanx style="verb">SM</spanx> header field, or its field-value does not match the current ETag of the well-known resource, all of the header fields above will be sent by the server in the response.</t>
-
-<t>Note that in these examples, the <spanx style="verb">Vary</spanx> header field has two values. Because the field values in the well-known resource are appended to the header set occurring on the wire, clients will combine them as per the rules in <xref target="RFC7230"/>, Section 3.2.2.</t>
 
 </section>
 <section anchor="notational-conventions" title="Notational Conventions">
@@ -143,15 +136,24 @@ Vary: Accept-Encoding
 
 <t>When a server wishes to use site-wide HTTP headers, it places a file in the format specified in <xref target="type"/> at the well-known URI specified in <xref target="well-known"/>.</t>
 
-<t>Then, when requests have a <spanx style="verb">SM</spanx> request header field (as per <xref target="sm"/>) that matches the current ETag of the well-known resource, the set of response header fields in that nominated by the <spanx style="verb">HS</spanx> response header field (see <xref target="hs"/>) for that resource are omitted from the corresponding responses.</t>
+<t>Then, when a request has a <spanx style="verb">SM</spanx> request header field (as per <xref target="sm"/>) that matches the current ETag of the well-known resource, the set of response header fields referred to by the <spanx style="verb">HS</spanx> response header field (see <xref target="hs"/>) for the requested resource are omitted from the corresponding response.</t>
 
 <t>Servers SHOULD include <spanx style="verb">SM</spanx> in the field-value of the <spanx style="verb">Vary</spanx> response header field for all cacheable (as per <xref target="RFC7234"/>) responses of resources that behave in this manner, whether or not headers have been actually appended. This assures correct cache operation, and also advertises support for this specification.</t>
 
 <t>Servers MAY use HTTP/2 Server Push (<xref target="RFC7540"/>, Section 8.2) to proactively send the well-known resource to clients (e.g., if they emit <spanx style="verb">SM: *</spanx>, indicating that they do not have a fresh copy of the well-known resource).</t>
 
+<section anchor="selecting-headers" title="Selecting Headers">
+
+<t>Because this mechanism effectively hides response header fields from intermediaries that do not implement it, care ought to be take in selecting the headers to use it upon.</t>
+
+<t>For example, the <spanx style="verb">Cache-Control</spanx> and <spanx style="verb">Vary</spanx> headers are poor candidates, because they are often used by intermediaries for HTTP caching <xref target="RFC7234"/>.</t>
+
+<t>Likewise, HTTP/1 headers that affect message framing and connection behaviour (e.g., <spanx style="verb">Content-Length</spanx>, <spanx style="verb">Transfer-Encoding</spanx>, <spanx style="verb">Connection</spanx>) MUST NOT be included in the well-known resource.</t>
+
+</section>
 <section anchor="hs" title="The “HS” HTTP Response Header Field">
 
-<t>The <spanx style="verb">HS</spanx> HTTP response header field indicates the header set in the well-known location file (see <xref target="type"/>) that should be applied to the response it occurs in.</t>
+<t>The <spanx style="verb">HS</spanx> HTTP response header field indicates the header set in the well-known location file (see <xref target="type"/>) that should be applied to the response it occurs within.</t>
 
 <figure><artwork><![CDATA[
 HS = DQUOTE 1*ALPHA DQUOTE
@@ -218,22 +220,29 @@ header-set = OWS *( header-field CRLF ) OWS
 <t>For example:</t>
 
 <figure><artwork><![CDATA[
-# a
+# foo
 Strict-Transport-Security: max-age=15768000 ; includeSubDomains
 Server: Apache/2.4.7 (Ubuntu)
 Public-Key-Pins: max-age=604800;
   pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
   pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
   report-uri="/lib/key-pin.cgi"
-Cache-Control: max-age=3600
-Vary: Accept-Encoding
-# b
+# bar
 Server: Apache/2.7.4 (Ubuntu)
-Cache-Control: max-age=0
+# baz
+Server: Apache/2.7.4 (Ubuntu)
+Content-Security-Policy: default-src 'self'; img-src 'self'
+  *.staticflickr.com; frame-ancestors 'none';
+  report-uri https://mnot.report-uri.io/r/default/csp/enforce
 ]]></artwork></figure>
 
-<t>This file specifies two sets of HTTP headers, “a” and “b”. Note that the <spanx style="verb">Public-Key-Pins</spanx> header field in “a” is line-folded; as in HTTP, this form of header is deprecated in this format, and SHOULD NOT be used (except in documentation, as we see here).</t>
+<t>This file specifies three sets of HTTP headers, “foo”, “bar” and “baz”. Note that the <spanx style="verb">Public-Key-Pins</spanx> header field in “foo” and the <spanx style="verb">Content-Security-Policy</spanx> header field in “baz” are line-folded; as in HTTP, this form of header is deprecated in this format, and SHOULD NOT be used (except in documentation, as we see here).</t>
 
+<section anchor="parsing-textsite-headers" title="Parsing “text/site-headers”">
+
+<t>TBD</t>
+
+</section>
 </section>
 </section>
 <section anchor="iana-considerations" title="IANA Considerations">
@@ -244,6 +253,12 @@ Cache-Control: max-age=0
 <section anchor="security-considerations" title="Security Considerations">
 
 <section anchor="combining-headers" title="Combining Headers">
+
+</section>
+<section anchor="inappropriate-headers" title="Inappropriate Headers">
+
+</section>
+<section anchor="differing-views-of-headers" title="Differing Views of Headers">
 
 </section>
 </section>
@@ -282,20 +297,6 @@ Cache-Control: max-age=0
 </front>
 <seriesInfo name='RFC' value='6454'/>
 <seriesInfo name='DOI' value='10.17487/RFC6454'/>
-</reference>
-
-
-
-<reference  anchor='RFC7230' target='http://www.rfc-editor.org/info/rfc7230'>
-<front>
-<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
-<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
-<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
-<date year='2014' month='June' />
-<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the &quot;http&quot; and &quot;https&quot; Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract>
-</front>
-<seriesInfo name='RFC' value='7230'/>
-<seriesInfo name='DOI' value='10.17487/RFC7230'/>
 </reference>
 
 
@@ -339,6 +340,20 @@ Cache-Control: max-age=0
 </front>
 <seriesInfo name='RFC' value='5785'/>
 <seriesInfo name='DOI' value='10.17487/RFC5785'/>
+</reference>
+
+
+
+<reference  anchor='RFC7230' target='http://www.rfc-editor.org/info/rfc7230'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the &quot;http&quot; and &quot;https&quot; Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7230'/>
+<seriesInfo name='DOI' value='10.17487/RFC7230'/>
 </reference>
 
 
