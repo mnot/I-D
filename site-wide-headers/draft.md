@@ -70,11 +70,6 @@ Public-Key-Pins: max-age=604800;
   pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
   pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
   report-uri="/lib/key-pin.cgi"
-Cache-Control: max-age=3600
-Vary: Accept-Encoding
-# b
-Server: Apache/2.7.4 (Ubuntu)
-Cache-Control: max-age=0
 ~~~
 
 and a client that has loaded that resource makes the request:
@@ -90,7 +85,8 @@ this indicates that the client has processed the site-metatadata resource, and t
 ~~~~
 HTTP/1.1 200 OK
 Content-Type: image/jpeg
-Vary: SM
+Vary: SM, Accept-Encoding
+Cache-Control: max-age=3600
 HS: "a"
 Transfer-Encoding: chunked
 ~~~~
@@ -100,7 +96,8 @@ Upon receipt of that response, the client will consider it equivalent to:
 ~~~~
 HTTP/1.1 200 OK
 Content-Type: image/jpeg
-Vary: SM
+Vary: SM, Accept-Encoding
+Cache-Control: max-age=3600
 Connection: close
 Strict-Transport-Security: max-age=15768000 ; includeSubDomains
 Server: Apache/2.4.7 (Ubuntu)
@@ -108,13 +105,9 @@ Public-Key-Pins: max-age=604800;
   pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
   pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
   report-uri="/lib/key-pin.cgi"
-Cache-Control: max-age=3600
-Vary: Accept-Encoding
 ~~~~
 
 If a request omits the `SM` header field, or its field-value does not match the current ETag of the well-known resource, all of the header fields above will be sent by the server in the response.
-
-Note that in these examples, the `Vary` header field has two values. Because the field values in the well-known resource are appended to the header set occurring on the wire, clients will combine them as per the rules in {{!RFC7230}}, Section 3.2.2.
 
 
 ## Notational Conventions
@@ -128,16 +121,25 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 When a server wishes to use site-wide HTTP headers, it places a file in the format specified in {{type}} at the well-known URI specified in {{well-known}}.
 
-Then, when requests have a `SM` request header field (as per {{sm}}) that matches the current ETag of the well-known resource, the set of response header fields in that nominated by the `HS` response header field (see {{hs}}) for that resource are omitted from the corresponding responses.
+Then, when a request has a `SM` request header field (as per {{sm}}) that matches the current ETag of the well-known resource, the set of response header fields referred to by the `HS` response header field (see {{hs}}) for the requested resource are omitted from the corresponding response.
 
 Servers SHOULD include `SM` in the field-value of the `Vary` response header field for all cacheable (as per {{!RFC7234}}) responses of resources that behave in this manner, whether or not headers have been actually appended. This assures correct cache operation, and also advertises support for this specification.
 
 Servers MAY use HTTP/2 Server Push ({{?RFC7540}}, Section 8.2) to proactively send the well-known resource to clients (e.g., if they emit `SM: *`, indicating that they do not have a fresh copy of the well-known resource).
 
 
+## Selecting Headers
+
+Because this mechanism effectively hides response header fields from intermediaries that do not implement it, care ought to be take in selecting the headers to use it upon.
+
+For example, the `Cache-Control` and `Vary` headers are poor candidates, because they are often used by intermediaries for HTTP caching {{?RFC7234}}. 
+
+Likewise, HTTP/1 headers that affect message framing and connection behaviour (e.g., `Content-Length`, `Transfer-Encoding`, `Connection`) MUST NOT be included in the well-known resource.
+
+
 ## The "HS" HTTP Response Header Field {#hs}
 
-The `HS` HTTP response header field indicates the header set in the well-known location file (see {{type}}) that should be applied to the response it occurs in.
+The `HS` HTTP response header field indicates the header set in the well-known location file (see {{type}}) that should be applied to the response it occurs within.
 
 ~~~
 HS = DQUOTE 1*ALPHA DQUOTE
@@ -204,21 +206,28 @@ As in HTTP itself, implementations need to be forgiving about line endings; spec
 For example:
 
 ~~~~
-# a
+# foo
 Strict-Transport-Security: max-age=15768000 ; includeSubDomains
 Server: Apache/2.4.7 (Ubuntu)
 Public-Key-Pins: max-age=604800;
   pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
   pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
   report-uri="/lib/key-pin.cgi"
-Cache-Control: max-age=3600
-Vary: Accept-Encoding
-# b
+# bar
 Server: Apache/2.7.4 (Ubuntu)
-Cache-Control: max-age=0
+# baz
+Server: Apache/2.7.4 (Ubuntu)
+Content-Security-Policy: default-src 'self'; img-src 'self'
+  *.staticflickr.com; frame-ancestors 'none';
+  report-uri https://mnot.report-uri.io/r/default/csp/enforce
 ~~~~
 
-This file specifies two sets of HTTP headers, "a" and "b". Note that the `Public-Key-Pins` header field in "a" is line-folded; as in HTTP, this form of header is deprecated in this format, and SHOULD NOT be used (except in documentation, as we see here).
+This file specifies three sets of HTTP headers, "foo", "bar" and "baz". Note that the `Public-Key-Pins` header field in "foo" and the `Content-Security-Policy` header field in "baz" are line-folded; as in HTTP, this form of header is deprecated in this format, and SHOULD NOT be used (except in documentation, as we see here).
+
+### Parsing "text/site-headers"
+
+TBD
+
 
 # IANA Considerations
 
@@ -228,6 +237,10 @@ TBD
 
 
 ## Combining Headers
+
+## Inappropriate Headers
+
+## Differing Views of Headers
 
 
 --- back
