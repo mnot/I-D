@@ -54,7 +54,7 @@ This approach is preferable to increasing the HTTP/2 SETTINGS_HEADER_TABLE_SIZE 
 
 ## Example {#example}
 
-If a user agent has a fresh copy of the well-known resource for an origin (see {{well-known}}), either because it performed a GET, or HTTP/2 Server Push was used:
+If a user agent has a fresh copy of the well-known resource for an origin (see {{well-known}}), because either it performed a GET, or HTTP/2 Server Push was used:
 
 ~~~
 HTTP/1.1 200 OK
