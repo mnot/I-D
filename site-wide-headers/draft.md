@@ -214,15 +214,18 @@ Public-Key-Pins: max-age=604800;
   pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
   report-uri="/lib/key-pin.cgi"
 # bar
-Server: Apache/2.7.4 (Ubuntu)
-# baz
-Server: Apache/2.7.4 (Ubuntu)
+Strict-Transport-Security: max-age=15768000 ; includeSubDomains
+Server: Apache/2.4.7 (Ubuntu)
+Public-Key-Pins: max-age=604800;
+  pin-sha256="ZitlqPmA9wodcxkwOW/c7ehlNFk8qJ9FsocodG6GzdjNM=";
+  pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w="; 
+  report-uri="/lib/key-pin.cgi"
 Content-Security-Policy: default-src 'self'; img-src 'self'
   *.staticflickr.com; frame-ancestors 'none';
   report-uri https://mnot.report-uri.io/r/default/csp/enforce
 ~~~~
 
-This file specifies three sets of HTTP headers, "foo", "bar" and "baz". Note that the `Public-Key-Pins` header field in "foo" and the `Content-Security-Policy` header field in "baz" are line-folded; as in HTTP, this form of header is deprecated in this format, and SHOULD NOT be used (except in documentation, as we see here).
+This file specifies two sets of HTTP headers, "foo" and "bar". Note that the `Public-Key-Pins` and `Content-Security-Policy` header fields are line-folded; as in HTTP, this form of header is deprecated in this format, and SHOULD NOT be used (except in documentation, as we see here).
 
 ### Parsing "text/site-headers"
 
