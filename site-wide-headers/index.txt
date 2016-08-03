@@ -135,8 +135,9 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
 
 1.1.  Example
 
-   If a GET request to the well-known resource for an origin (see
-   Section 4) returns:
+   If a user agent has a fresh copy of the well-known resource for an
+   origin (see Section 4), either because it performed a GET, or HTTP/2
+   Server Push was used:
 
    HTTP/1.1 200 OK
    Content-Type: text/site-headers
@@ -152,7 +153,7 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
      pin-sha256="XRXP987nz4rd1/gS2fJSNVfyrZbqa00T7PeRXUPd15w=";
      report-uri="/lib/key-pin.cgi"
 
-   and a user agent that has loaded that resource makes the request:
+   and the user agent makes the request:
 
    GET /images/foo.jpg HTTP/1.1
    Host: www.example.com
@@ -160,8 +161,7 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
 
    this indicates that the user agent has processed the well-known
    resource, and therefore that the server can omit the nominated
-   response header fields on the wire, instead referring to them with
-   the "HS" response header field:
+
 
 
 
@@ -169,6 +169,9 @@ Nottingham              Expires February 4, 2017                [Page 3]
 
 Internet-Draft           Site-Wide HTTP Headers              August 2016
 
+
+   response header fields on the wire, instead referring to them with
+   the "HS" response header field:
 
    HTTP/1.1 200 OK
    Content-Type: image/jpeg
@@ -215,9 +218,6 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
    Then, when a request has a "SM" request header field (as per
    Section 3.1) that matches the current ETag of the well-known
    resource, the set of response header fields referred to by the "HS"
-   response header field (see Section 2.2) for the requested resource
-   are omitted from the corresponding response.
-
 
 
 
@@ -225,6 +225,9 @@ Nottingham              Expires February 4, 2017                [Page 4]
 
 Internet-Draft           Site-Wide HTTP Headers              August 2016
 
+
+   response header field (see Section 2.2) for the requested resource
+   are omitted from the corresponding response.
 
    Servers SHOULD include "SM" in the field-value of the "Vary" response
    header field for all cacheable (as per [RFC7234]) responses of
@@ -271,9 +274,6 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
    they support this specification, but do not have a fresh (as per
    [RFC7234]) copy of it.
 
-   User agents might discover that an origin supports this specification
-   when it returns a response containing the "HS" response header field,
-
 
 
 
@@ -282,6 +282,8 @@ Nottingham              Expires February 4, 2017                [Page 5]
 Internet-Draft           Site-Wide HTTP Headers              August 2016
 
 
+   User agents might discover that an origin supports this specification
+   when it returns a response containing the "HS" response header field,
    or they might learn of it when the well-known location's current
    contents are sent via a HTTP/2 Server Push.
 
@@ -328,8 +330,6 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
    (particularly, "application/octet-stream" and "text/plain").
 
    Its representation MUST contain an "ETag" response header [RFC7232].
-
-
 
 
 
