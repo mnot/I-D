@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                             June 10, 2016
+Internet-Draft                                            August 3, 2016
 Intended status: Informational
-Expires: December 12, 2016
+Expires: February 4, 2017
 
 
                          Retrying HTTP Requests
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 12, 2016.
+   This Internet-Draft will expire on February 4, 2017.
 
 
 
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Nottingham              Expires December 12, 2016               [Page 1]
+Nottingham              Expires February 4, 2017                [Page 1]
 
-Internet-Draft           Retrying HTTP Requests                June 2016
+Internet-Draft           Retrying HTTP Requests              August 2016
 
 
 Copyright Notice
@@ -76,43 +76,83 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   4
-   2.  When Clients Retry  . . . . . . . . . . . . . . . . . . . . .   4
-     2.1.  Squid . . . . . . . . . . . . . . . . . . . . . . . . . .   4
-     2.2.  Traffic Server  . . . . . . . . . . . . . . . . . . . . .   5
-     2.3.  Firefox . . . . . . . . . . . . . . . . . . . . . . . . .   7
-     2.4.  Chromium  . . . . . . . . . . . . . . . . . . . . . . . .   8
-   3.  Retrying GET: Do We Have a Problem? . . . . . . . . . . . . .   9
-   4.  Protocol Extensions to Improve Retry Detection  . . . . . . .   9
-   5.  Updating HTTP Requirements for Retries  . . . . . . . . . . .   9
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
-   7.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   9
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .   9
-     8.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+     1.2.  Discussion  . . . . . . . . . . . . . . . . . . . . . . .   3
+     1.3.  What the Spec Says  . . . . . . . . . . . . . . . . . . .   3
+     1.4.  Retries and Replays: A Taxonomy of Repetition . . . . . .   4
+     1.5.  Automatic Retries In Practice . . . . . . . . . . . . . .   4
+     1.6.  Replays Are Different . . . . . . . . . . . . . . . . . .   5
+   2.  Possible Areas of Work  . . . . . . . . . . . . . . . . . . .   6
+     2.1.  Protocol Extensions to Improve Retry Detection  . . . . .   6
+     2.2.  Updating HTTP's Requirements for Retries  . . . . . . . .   6
+   3.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
+   4.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   6
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   7
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   7
+     5.2.  Informative References  . . . . . . . . . . . . . . . . .   7
+     5.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   7
+   Appendix A.  When Clients Retry . . . . . . . . . . . . . . . . .   8
+     A.1.  Squid . . . . . . . . . . . . . . . . . . . . . . . . . .   8
+     A.2.  Traffic Server  . . . . . . . . . . . . . . . . . . . . .   9
+     A.3.  Firefox . . . . . . . . . . . . . . . . . . . . . . . . .  11
+     A.4.  Chromium  . . . . . . . . . . . . . . . . . . . . . . . .  13
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  14
 
 1.  Introduction
 
    One of the benefits of HTTP's well-defined method semantics is that
    they allow failed requests to be retried, under certain
-   circumstances.  From [RFC7230], Section 6.3.1:
+   circumstances.
+
+   However, interest in extending, redefining or just clarifying HTTP's
+   retry semantics is increasing, for a number of reasons:
+
+
+
+Nottingham              Expires February 4, 2017                [Page 2]
+
+Internet-Draft           Retrying HTTP Requests              August 2016
+
+
+   o  Since HTTP/1.1's requirements were written, there has been a
+      substantial amount of experience deploying and using HTTP, leading
+      implementations to refine their behaviour, often diverging from
+      the specification.
+
+   o  Likewise, changes such as HTTP/2 [RFC7540] might change the
+      underlying assumptions that these requirements were based upon.
+
+   o  Emerging lower-layer developments such as TCP Fast Open [RFC7413],
+      TLS/1.3 [I-D.ietf-tls-tls13] and QUIC [I-D.tsvwg-quic-protocol]
+      introduce the possibility of replayed requests in the beginning of
+      a connection, thanks to Zero Round Trip (0RT) modes.  In some
+      ways, these are similar to retries - but not completely.
+
+   o  Applications sometimes want requests to be retried by
+      infrastructure, but can't easily express them in a non-idempotent
+      request (such as GET).
+
+   This draft discusses aspects of these issues in Section 1.2,
+   suggesting possible areas of work in Section 2, and cataloguing
+   current implementation behaviours in Appendix A.
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+1.2.  Discussion
+
+1.3.  What the Spec Says
+
+   [RFC7230], Section 6.3.1 defines HTTP retries:
 
       When an inbound connection is closed prematurely, a client MAY
       open a new connection and automatically retransmit an aborted
       sequence of requests if all of those requests have idempotent
       methods (Section 4.2.2 of [RFC7231]).  A proxy MUST NOT
       automatically retry non-idempotent requests.
-
-
-
-
-
-Nottingham              Expires December 12, 2016               [Page 2]
-
-Internet-Draft           Retrying HTTP Requests                June 2016
-
 
       A user agent MUST NOT automatically retry a request with a non-
       idempotent method unless it has some means to know that the
@@ -122,6 +162,14 @@ Internet-Draft           Retrying HTTP Requests                June 2016
       design or configuration) that a POST request to a given resource
       is safe can repeat that request automatically.  Likewise, a user
       agent designed specifically to operate on a version control
+
+
+
+Nottingham              Expires February 4, 2017                [Page 3]
+
+Internet-Draft           Retrying HTTP Requests              August 2016
+
+
       repository might be able to recover from partial failure
       conditions by checking the target resource revision(s) after a
       failed connection, reverting or fixing any changes that were
@@ -133,56 +181,244 @@ Internet-Draft           Retrying HTTP Requests                June 2016
    Note that the complete list of idempotent methods is maintained in
    the IANA HTTP Method Registry [4].
 
-   In practice, it has been observed (see Section 2) that some
-   implementations do retry requests, but they don't conform to these
-   requirements.
+1.4.  Retries and Replays: A Taxonomy of Repetition
 
-   Furthermore, it has also been observed that content on the Web
-   doesn't always honour HTTP semantics; for example, GET requests with
-   side effects.
+   In HTTP, there are three similar but separate phenomena that deserve
+   consideration for the purposes of this document:
 
-   Generally, the ill effects of both types of variances from specified
-   semantics have been contained to date (with notable exceptions [5]).
+   1.  *User Retries* happen when a user initiates an action that
+       results in a duplicate request being emitted.  For example, a
+       user retry might occur when a "reload" button is pressed, a URL
+       is typed in again, "return" is pressed in the URL bar again, or a
+       navigation link or form button is pressed twice while still on
+       screen.
 
-   However, interest in extending HTTP's retry semantics is increasing,
-   for a number of reasons:
+   2.  *Automatic Retries* happen when an HTTP client implementation
+       resends a previous request without user intervention or
+       initiation.  This might happen when a GET request fails to return
+       a complete response, or when a connection drops before the
+       request is sent.  Note that automatic retries can (and are)
+       performed both by user agents and intermediary clients.
 
-   o  Since HTTP/1.1's requirements were written, there has been a
-      substantial amount of experience deploying and using HTTP, leading
-      implementations to refine their behaviour.
+   3.  *Replays* happen when the packet(s) containing a request are re-
+       sent on the network, either automatically as part of transport
+       protocol operation, or by an attacker.  The closest upstream HTTP
+       client might not have any indication that a replay has occurred.
 
-   o  Likewise, changes such as HTTP/2 [RFC7540] might change the
-      underlying assumptions that these requirements were based upon.
+   Note that retries initiated by code shipped to the client by the
+   server (e.g., in JavaScript) occupy a grey area here; however,
+   because they are not initiated by the generic HTTP client
+   implementation itself, we will consider them user retries for the
+   time being.
 
-   o  Emerging lower-layer developments such as TCP Fast Open [RFC7413],
-      TLS/1.3 [I-D.ietf-tls-tls13] and QUIC [I-D.tsvwg-quic-protocol]
-      require knowledge of idempotency to realise their security and/or
-      performance goals; the semantic questions now affect decisions
-      greater than just HTTP-layer retrying.
+1.5.  Automatic Retries In Practice
 
-   o  Applications sometimes want requests to be retried, but can't
-      easily express them in a non-idempotent request (such as GET).
-
+   In practice, it has been observed (see Appendix A) that some client
+   (both user agent and intermediary) implementations do automatically
+   retry requests.  However, they do not do so consistently, and
+   arguably not in the spirit of the specification, unless this vague
+   catch-all:
 
 
-Nottingham              Expires December 12, 2016               [Page 3]
+
+Nottingham              Expires February 4, 2017                [Page 4]
 
-Internet-Draft           Retrying HTTP Requests                June 2016
+Internet-Draft           Retrying HTTP Requests              August 2016
 
 
-   This draft attempts to move that discussion forward by identifying
-   current client retry behaviours in Section 2, discussing how
-   problematic retrying GET requests is in Section 3, suggesting
-   protocol extensions to improve retry detection in Section 4, and
-   suggesting updates to HTTP's requirements for retries in Section 5.
+      some means to detect that the original request was never applied
 
-1.1.  Notational Conventions
+   is interpreted very broadly.
 
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-   document are to be interpreted as described in [RFC2119].
+   On the server side, it has been widely observed that content on the
+   Web doesn't always honour HTTP idemotency semantics, with many GET
+   requests incurring side effects, and with some sites even requiring
+   browsers to retry POST requests in order to properly interoperate.
+   (TODO: refs / details from Patrick and Artur).
 
-2.  When Clients Retry
+   Despite this situation, the Web seems to work reasonably well to date
+   (with notable exceptions [5]).
+
+   The status quo, therefore, is that no Web application can take HTTP's
+   retry requirements as a guarantee that any given request won't be
+   retried, despite its idempotency.  As a result, applications that
+   care about avoiding duplicate requests need to build a way to detect
+   user retries and automatic retries into the application "above" HTTP
+   itself.
+
+1.6.  Replays Are Different
+
+   TCP Fast Open [RFC7413], TLS/1.3 [I-D.ietf-tls-tls13] and QUIC
+   [I-D.tsvwg-quic-protocol] all have mechanisms to carry application
+   data on the first packet sent by a client, to avoid the latency of
+   connection setup.
+
+   The request(s) in this first packet might be _replayed_, either
+   because the first packet is lost and retransmitted by the transport
+   protocol in use, or because an attacker observes the packet and sends
+   a duplicate at some point in the future.
+
+   At first glance, it seems as if the idempotency semantics of HTTP
+   request methods could be used to determine what requests are suitable
+   for inclusion in the first packet of various 0RT mechanisms being
+   discussed.
+
+   Upon reflection, though, the observations above lead us to believe
+   that since any request might be retried, applications will need to
+   have a means of detecting duplicate requests, thereby preventing side
+   effects from replays as well as retries.  Thus, any HTTP request can
+   be included in the first packet of a 0RT, despite the risk of replay.
+
+   Two types of attack specific to replayed HTTP requests need to be
+   taken into account, however:
+
+   1.  A replay is a potential Denial of Service vector.  An attacker
+       that can replay a request many times and cause the server to
+
+
+
+Nottingham              Expires February 4, 2017                [Page 5]
+
+Internet-Draft           Retrying HTTP Requests              August 2016
+
+
+       process each request can bring a server that needs to do any
+       substantial processing down.
+
+   2.  An attacker might use a replayed request to leak information
+       about the response over time.  If they can observe the encrypted
+       payload on the wire, they can infer the size of the response
+       (e.g., it might get bigger if the user's bank account has more in
+       it).
+
+   The first attack cannot be mitigated by HTTP; the 0RT mechanism
+   itself needs some transport-layer means of scoping the usability of
+   the first packet on a connection so that it cannot be reused broadly.
+   For example, this might be by time, network location.
+
+   The second attack is more difficult to mitigate; scoping the
+   usability of the first packet helps, but does not completely prevent
+   the attack.  If the replayed request is state-changing, the
+   application's retry detection should kick in and prevent information
+   leakage (since the response will likely contain an error, instead of
+   the desired information).
+
+   If it is not (e.g., a GET), the information being targeted is
+   vulnerable as long as both the first packet and the credentials in
+   the request (if any) are valid.  Padding such responses might be one
+   further mitigation, in this case.
+
+2.  Possible Areas of Work
+
+2.1.  Protocol Extensions to Improve Retry Detection
+
+   TBD.
+
+2.2.  Updating HTTP's Requirements for Retries
+
+   TBD.
+
+3.  Security Considerations
+
+   Yep.
+
+4.  Acknowledgements
+
+   Thanks to Amos Jeffries, Patrick McManus and Leif Hedstrom for their
+   feedback.
+
+   Thanks to the participants in the 2016 HTTP Workshop for their lively
+   discussion of this topic.
+
+
+
+
+Nottingham              Expires February 4, 2017                [Page 6]
+
+Internet-Draft           Retrying HTTP Requests              August 2016
+
+
+5.  References
+
+5.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/
+              RFC2119, March 1997,
+              <http://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing", RFC
+              7230, DOI 10.17487/RFC7230, June 2014,
+              <http://www.rfc-editor.org/info/rfc7230>.
+
+   [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Semantics and Content", RFC 7231, DOI
+              10.17487/RFC7231, June 2014,
+              <http://www.rfc-editor.org/info/rfc7231>.
+
+5.2.  Informative References
+
+   [I-D.ietf-tls-tls13]
+              Rescorla, E., "The Transport Layer Security (TLS) Protocol
+              Version 1.3", draft-ietf-tls-tls13-14 (work in progress),
+              July 2016.
+
+   [I-D.tsvwg-quic-protocol]
+              Hamilton, R., Iyengar, J., Swett, I., and A. Wilk, "QUIC:
+              A UDP-Based Secure and Reliable Transport for HTTP/2",
+              draft-tsvwg-quic-protocol-02 (work in progress), January
+              2016.
+
+   [RFC7413]  Cheng, Y., Chu, J., Radhakrishnan, S., and A. Jain, "TCP
+              Fast Open", RFC 7413, DOI 10.17487/RFC7413, December 2014,
+              <http://www.rfc-editor.org/info/rfc7413>.
+
+   [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
+              Transfer Protocol Version 2 (HTTP/2)", RFC 7540, DOI
+              10.17487/RFC7540, May 2015,
+              <http://www.rfc-editor.org/info/rfc7540>.
+
+5.3.  URIs
+
+   [1] https://www.iana.org/assignments/http-methods/http-methods.xhtml
+
+   [2] https://signalvnoise.com/archives2/google_web_accelerator_hey_not
+       _so_fast_an_alert_for_web_app_designers.php
+
+
+
+
+Nottingham              Expires February 4, 2017                [Page 7]
+
+Internet-Draft           Retrying HTTP Requests              August 2016
+
+
+   [3] http://bazaar.launchpad.net/~squid/squid/trunk/view/head:/src/
+       FwdState.cc#L594
+
+   [4] https://git-wip-
+       us.apache.org/repos/asf?p=trafficserver.git;a=blob;f=proxy/http/H
+       ttpTransact.cc;h=8a1f5364d47654b118296a07a2a95284f119d84b;hb=HEAD
+       #l6408
+
+   [5] https://git-wip-
+       us.apache.org/repos/asf?p=trafficserver.git;a=blob;f=proxy/http/
+       HttpTransact.cc;hb=48d7b25ba8a8229b0471d37cdaa6ef24cc634bb0#l3634
+
+   [6] http://mxr.mozilla.org/mozilla-
+       release/source/netwerk/protocol/http/nsHttpTransaction.cpp#938
+
+   [7] http://mxr.mozilla.org/mozilla-
+       release/source/netwerk/protocol/http/nsHttpRequestHead.cpp#67
+
+   [8] https://www.fxsitecompat.com/en-CA/docs/2016/post-request-fails-
+       on-certain-sites-showing-connection-reset-page/
+
+   [9] https://chromium.googlesource.com/chromium/src.git/+/master/net/
+       http/http_network_transaction.cc#1657
+
+Appendix A.  When Clients Retry
 
    In implementations, clients have been observed to retry requests in a
    number of circumstances.
@@ -192,11 +428,27 @@ Internet-Draft           Retrying HTTP Requests                June 2016
    these or other implementations (open or closed), please get in
    touch._
 
-2.1.  Squid
+A.1.  Squid
 
    Squid is a caching proxy server that retries requests that it
    considers safe *or* idempotent, as long as there is not a request
    body:
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 4, 2017                [Page 8]
+
+Internet-Draft           Retrying HTTP Requests              August 2016
+
 
 /// Whether we may try sending this request again after a failure.
 bool
@@ -219,19 +471,40 @@ FwdState::checkRetriable()
    PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, UNLOCK, and PRI to be
    idempotent.
 
+A.2.  Traffic Server
 
-
-Nottingham              Expires December 12, 2016               [Page 4]
-
-Internet-Draft           Retrying HTTP Requests                June 2016
-
-
-2.2.  Traffic Server
-
-   Apache Traffic Server, a caching proxy server, ties retriability to
+   Apache Traffic Server, a caching proxy server, ties retry-ability to
    whether the request required a "tunnel" - i.e., forward to the next
    server.  This is indicated by "request_body_start", which is set when
    a POST tunnel is used.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 4, 2017                [Page 9]
+
+Internet-Draft           Retrying HTTP Requests              August 2016
+
 
 // bool HttpTransact::is_request_retryable
 //
@@ -274,14 +547,6 @@ HttpTransact::is_request_retryable(State *s)
 //   response from the origin server. one of three things can happen now.
 //   if the response is bad, then we can either retry (by first downgrading
 //   the request, maybe making it non-keepalive, etc.), or we can give up.
-
-
-
-Nottingham              Expires December 12, 2016               [Page 5]
-
-Internet-Draft           Retrying HTTP Requests                June 2016
-
-
 //   the latter case is handled by handle_server_connection_not_open and
 //   sends an error response back to the client. if the response is good
 //   handle_forward_server_connection_open is called.
@@ -289,6 +554,14 @@ Internet-Draft           Retrying HTTP Requests                June 2016
 //
 // Possible Next States From Here:
 //
+
+
+
+Nottingham              Expires February 4, 2017               [Page 10]
+
+Internet-Draft           Retrying HTTP Requests              August 2016
+
+
 /////////////////////////////////////////////////////////////////////////
 void
 HttpTransact::handle_response_from_server(State *s)
@@ -330,17 +603,20 @@ HttpTransact::handle_response_from_server(State *s)
 
    (source [8])
 
-
-
-
-Nottingham              Expires December 12, 2016               [Page 6]
-
-Internet-Draft           Retrying HTTP Requests                June 2016
-
-
-2.3.  Firefox
+A.3.  Firefox
 
    Firefox is a Web browser that retries under the following conditions:
+
+
+
+
+
+
+
+Nottingham              Expires February 4, 2017               [Page 11]
+
+Internet-Draft           Retrying HTTP Requests              August 2016
+
 
 // if the connection was reset or closed before we wrote any part of the
 // request or if we wrote the request but didn't receive any part of the
@@ -389,9 +665,13 @@ Internet-Draft           Retrying HTTP Requests                June 2016
 
 
 
-Nottingham              Expires December 12, 2016               [Page 7]
+
+
+
+
+Nottingham              Expires February 4, 2017               [Page 12]
 
-Internet-Draft           Retrying HTTP Requests                June 2016
+Internet-Draft           Retrying HTTP Requests              August 2016
 
 
  bool
@@ -419,7 +699,7 @@ Internet-Draft           Retrying HTTP Requests                June 2016
    change attempted to remove this behaviour, but it caused
    compatibility problems [11], and is being backed out.
 
-2.4.  Chromium
+A.4.  Chromium
 
    Chromium is a Web browser that appears to retry any request when a
    connection is broken, as long as it's successfully used the
@@ -445,121 +725,9 @@ bool HttpNetworkTransaction::ShouldResendRequest() const {
 
 
 
-Nottingham              Expires December 12, 2016               [Page 8]
+Nottingham              Expires February 4, 2017               [Page 13]
 
-Internet-Draft           Retrying HTTP Requests                June 2016
-
-
-3.  Retrying GET: Do We Have a Problem?
-
-   TBD.
-
-4.  Protocol Extensions to Improve Retry Detection
-
-   TBD.
-
-5.  Updating HTTP Requirements for Retries
-
-   TBD.
-
-6.  Security Considerations
-
-   Yep.
-
-7.  Acknowledgements
-
-   Thanks to Amos Jeffries, Patrick McManus and Leif Hedstrom for their
-   feedback.
-
-8.  References
-
-8.1.  Normative References
-
-   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997,
-              <http://www.rfc-editor.org/info/rfc2119>.
-
-   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <http://www.rfc-editor.org/info/rfc7230>.
-
-   [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
-              DOI 10.17487/RFC7231, June 2014,
-              <http://www.rfc-editor.org/info/rfc7231>.
-
-8.2.  Informative References
-
-   [I-D.ietf-tls-tls13]
-              Rescorla, E., "The Transport Layer Security (TLS) Protocol
-              Version 1.3", draft-ietf-tls-tls13-13 (work in progress),
-              May 2016.
-
-
-
-
-
-Nottingham              Expires December 12, 2016               [Page 9]
-
-Internet-Draft           Retrying HTTP Requests                June 2016
-
-
-   [I-D.tsvwg-quic-protocol]
-              Hamilton, R., Iyengar, J., Swett, I., and A. Wilk, "QUIC:
-              A UDP-Based Secure and Reliable Transport for HTTP/2",
-              draft-tsvwg-quic-protocol-02 (work in progress), January
-              2016.
-
-   [RFC7413]  Cheng, Y., Chu, J., Radhakrishnan, S., and A. Jain, "TCP
-              Fast Open", RFC 7413, DOI 10.17487/RFC7413, December 2014,
-              <http://www.rfc-editor.org/info/rfc7413>.
-
-   [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
-              Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
-              DOI 10.17487/RFC7540, May 2015,
-              <http://www.rfc-editor.org/info/rfc7540>.
-
-8.3.  URIs
-
-   [1] https://www.iana.org/assignments/http-methods/http-methods.xhtml
-
-   [2] https://signalvnoise.com/archives2/google_web_accelerator_hey_not
-       _so_fast_an_alert_for_web_app_designers.php
-
-   [3] http://bazaar.launchpad.net/~squid/squid/trunk/view/head:/src/
-       FwdState.cc#L594
-
-   [4] https://git-wip-
-       us.apache.org/repos/asf?p=trafficserver.git;a=blob;f=proxy/http/H
-       ttpTransact.cc;h=8a1f5364d47654b118296a07a2a95284f119d84b;hb=HEAD
-       #l6408
-
-   [5] https://git-wip-
-       us.apache.org/repos/asf?p=trafficserver.git;a=blob;f=proxy/http/
-       HttpTransact.cc;hb=48d7b25ba8a8229b0471d37cdaa6ef24cc634bb0#l3634
-
-   [6] http://mxr.mozilla.org/mozilla-
-       release/source/netwerk/protocol/http/nsHttpTransaction.cpp#938
-
-   [7] http://mxr.mozilla.org/mozilla-
-       release/source/netwerk/protocol/http/nsHttpRequestHead.cpp#67
-
-   [8] https://www.fxsitecompat.com/en-CA/docs/2016/post-request-fails-
-       on-certain-sites-showing-connection-reset-page/
-
-   [9] https://chromium.googlesource.com/chromium/src.git/+/master/net/
-       http/http_network_transaction.cc#1657
-
-
-
-
-
-
-Nottingham              Expires December 12, 2016              [Page 10]
-
-Internet-Draft           Retrying HTTP Requests                June 2016
+Internet-Draft           Retrying HTTP Requests              August 2016
 
 
 Author's Address
@@ -613,4 +781,4 @@ Author's Address
 
 
 
-Nottingham              Expires December 12, 2016              [Page 11]
+Nottingham              Expires February 4, 2017               [Page 14]

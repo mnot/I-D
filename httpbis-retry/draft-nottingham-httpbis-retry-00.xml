@@ -63,7 +63,32 @@
 
 <section anchor="introduction" title="Introduction">
 
-<t>One of the benefits of HTTP’s well-defined method semantics is that they allow failed requests to be retried, under certain circumstances. From <xref target="RFC7230"/>, Section 6.3.1:</t>
+<t>One of the benefits of HTTP’s well-defined method semantics is that they allow failed requests to be retried, under certain circumstances.</t>
+
+<t>However, interest in extending, redefining or just clarifying HTTP’s retry semantics is increasing, for a number of reasons:</t>
+
+<t><list style="symbols">
+  <t>Since HTTP/1.1’s requirements were written, there has been a substantial amount of experience deploying and using HTTP, leading implementations to refine their behaviour, often diverging from the specification.</t>
+  <t>Likewise, changes such as HTTP/2 <xref target="RFC7540"/> might change the underlying assumptions that these requirements were based upon.</t>
+  <t>Emerging lower-layer developments such as TCP Fast Open <xref target="RFC7413"/>, TLS/1.3 <xref target="I-D.ietf-tls-tls13"/> and QUIC <xref target="I-D.tsvwg-quic-protocol"/> introduce the possibility of replayed requests in the beginning of a connection, thanks to Zero Round Trip (0RT) modes. In some ways, these are similar to retries – but not completely.</t>
+  <t>Applications sometimes want requests to be retried by infrastructure, but can’t easily express them in a non-idempotent request (such as GET).</t>
+</list></t>
+
+<t>This draft discusses aspects of these issues in <xref target="discussion"/>, suggesting possible areas of work in <xref target="work"/>, and cataloguing current implementation behaviours in <xref target="current"/>.</t>
+
+<section anchor="notational-conventions" title="Notational Conventions">
+
+<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”,
+“RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in
+<xref target="RFC2119"/>.</t>
+
+</section>
+<section anchor="discussion" title="Discussion">
+
+</section>
+<section anchor="spec" title="What the Spec Says">
+
+<t><xref target="RFC7230"/>, Section 6.3.1 defines HTTP retries:</t>
 
 <t><list style='empty'>
   <t>When an inbound connection is closed prematurely, a client MAY open a new connection and automatically retransmit an aborted sequence of requests if all of those requests have idempotent methods (Section 4.2.2 of <xref target="RFC7231"/>). A proxy MUST NOT automatically retry non-idempotent requests.</t>
@@ -79,31 +104,239 @@
 
 <t>Note that the complete list of idempotent methods is maintained in the <eref target="https://www.iana.org/assignments/http-methods/http-methods.xhtml">IANA HTTP Method Registry</eref>.</t>
 
-<t>In practice, it has been observed (see <xref target="current"/>) that some implementations do retry requests, but they don’t conform to these requirements.</t>
+</section>
+<section anchor="retry_replay" title="Retries and Replays: A Taxonomy of Repetition">
 
-<t>Furthermore, it has also been observed that content on the Web doesn’t always honour HTTP semantics; for example, GET requests with side effects.</t>
+<t>In HTTP, there are three similar but separate phenomena that deserve consideration for the purposes of this document:</t>
 
-<t>Generally, the ill effects of both types of variances from specified semantics have been contained to date (with <eref target="https://signalvnoise.com/archives2/google_web_accelerator_hey_not_so_fast_an_alert_for_web_app_designers.php">notable exceptions</eref>).</t>
-
-<t>However, interest in extending HTTP’s retry semantics is increasing, for a number of reasons:</t>
-
-<t><list style="symbols">
-  <t>Since HTTP/1.1’s requirements were written, there has been a substantial amount of experience deploying and using HTTP, leading implementations to refine their behaviour.</t>
-  <t>Likewise, changes such as HTTP/2 <xref target="RFC7540"/> might change the underlying assumptions that these requirements were based upon.</t>
-  <t>Emerging lower-layer developments such as TCP Fast Open <xref target="RFC7413"/>, TLS/1.3 <xref target="I-D.ietf-tls-tls13"/> and QUIC <xref target="I-D.tsvwg-quic-protocol"/> require knowledge of idempotency to realise their security and/or performance goals; the semantic questions now affect decisions greater than just HTTP-layer retrying.</t>
-  <t>Applications sometimes want requests to be retried, but can’t easily express them in a non-idempotent request (such as GET).</t>
+<t><list style="numbers">
+  <t><spanx style="strong">User Retries</spanx> happen when a user initiates an action that results in a duplicate request being emitted. For example, a user retry might occur when a “reload” button is pressed, a URL is typed in again, “return” is pressed in the URL bar again, or a navigation link or form button is pressed twice while still on screen.</t>
+  <t><spanx style="strong">Automatic Retries</spanx> happen when an HTTP client implementation resends a previous request without user intervention or initiation. This might happen when a GET request fails to return a complete response, or when a connection drops before the request is sent. Note that automatic retries can (and are) performed both by user agents and intermediary clients.</t>
+  <t><spanx style="strong">Replays</spanx> happen when the packet(s) containing a request are re-sent on the network, either automatically as part of transport protocol operation, or by an attacker. The closest upstream HTTP client might not have any indication that a replay has occurred.</t>
 </list></t>
 
-<t>This draft attempts to move that discussion forward by identifying current client retry behaviours in <xref target="current"/>, discussing how problematic retrying GET requests is in <xref target="retry_get"/>, suggesting protocol extensions to improve retry detection in <xref target="detect"/>, and suggesting updates to HTTP’s requirements for retries in <xref target="update"/>.</t>
+<t>Note that retries initiated by code shipped to the client by the server (e.g., in JavaScript) occupy a grey area here; however, because they are not initiated by the generic HTTP client implementation itself, we will consider them user retries for the time being.</t>
 
-<section anchor="notational-conventions" title="Notational Conventions">
+</section>
+<section anchor="auto_retry" title="Automatic Retries In Practice">
 
-<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”,
-“RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in
-<xref target="RFC2119"/>.</t>
+<t>In practice, it has been observed (see <xref target="current"/>) that some client (both user agent and intermediary) implementations do automatically retry requests. However, they do not do so consistently, and arguably not in the spirit of the specification, unless this vague catch-all:</t>
+
+<t><list style='empty'>
+  <t>some means to detect that the original request was never applied</t>
+</list></t>
+
+<t>is interpreted very broadly.</t>
+
+<t>On the server side, it has been widely observed that content on the Web doesn’t always honour HTTP idemotency semantics, with many GET requests incurring side effects, and with some sites even requiring browsers to retry POST requests in order to properly interoperate. (TODO: refs / details from Patrick and Artur).</t>
+
+<t>Despite this situation, the Web seems to work reasonably well to date (with <eref target="https://signalvnoise.com/archives2/google_web_accelerator_hey_not_so_fast_an_alert_for_web_app_designers.php">notable exceptions</eref>).</t>
+
+<t>The status quo, therefore, is that no Web application can take HTTP’s retry requirements as a guarantee that any given request won’t be retried, despite its idempotency. As a result, applications that care about avoiding duplicate requests need to build a way to detect user retries and automatic retries into the application “above” HTTP itself.</t>
+
+</section>
+<section anchor="replay" title="Replays Are Different">
+
+<t>TCP Fast Open <xref target="RFC7413"/>, TLS/1.3 <xref target="I-D.ietf-tls-tls13"/> and QUIC <xref target="I-D.tsvwg-quic-protocol"/> all have mechanisms to carry application data on the first packet sent by a client, to avoid the latency of connection setup.</t>
+
+<t>The request(s) in this first packet might be <spanx style="emph">replayed</spanx>, either because the first packet is lost and retransmitted by the transport protocol in use, or because an attacker observes the packet and sends a duplicate at some point in the future.</t>
+
+<t>At first glance, it seems as if the idempotency semantics of HTTP request methods could be used to determine what requests are suitable for inclusion in the first packet of various 0RT mechanisms being discussed.</t>
+
+<t>Upon reflection, though, the observations above lead us to believe that since any request might be retried, applications will need to have a means of detecting duplicate requests, thereby preventing side effects from replays as well as retries. Thus, any HTTP request can be included in the first packet of a 0RT, despite the risk of replay.</t>
+
+<t>Two types of attack specific to replayed HTTP requests need to be taken into account, however:</t>
+
+<t><list style="numbers">
+  <t>A replay is a potential Denial of Service vector. An attacker that can replay a request many times and cause the server to process each request can bring a server that needs to do any substantial processing down.</t>
+  <t>An attacker might use a replayed request to leak information about the response over time. If they can observe the encrypted payload on the wire, they can infer the size of the response (e.g., it might get bigger if the user’s bank account has more in it).</t>
+</list></t>
+
+<t>The first attack cannot be mitigated by HTTP; the 0RT mechanism itself needs some transport-layer means of scoping the usability of the first packet on a connection so that it cannot be reused broadly. For example, this might be by time, network location.</t>
+
+<t>The second attack is more difficult to mitigate; scoping the usability of the first packet helps, but does not completely prevent the attack. If the replayed request is state-changing, the application’s retry detection should kick in and prevent information leakage (since the response will likely contain an error, instead of the desired information).</t>
+
+<t>If it is not (e.g., a GET), the information being targeted is vulnerable as long as both the first packet and the credentials in the request (if any) are valid. Padding such responses might be one further mitigation, in this case.</t>
 
 </section>
 </section>
+<section anchor="work" title="Possible Areas of Work">
+
+<section anchor="detect" title="Protocol Extensions to Improve Retry Detection">
+
+<t>TBD.</t>
+
+</section>
+<section anchor="update" title="Updating HTTP’s Requirements for Retries">
+
+<t>TBD.</t>
+
+</section>
+</section>
+<section anchor="security-considerations" title="Security Considerations">
+
+<t>Yep.</t>
+
+</section>
+<section anchor="acknowledgements" title="Acknowledgements">
+
+<t>Thanks to Amos Jeffries, Patrick McManus and Leif Hedstrom for their feedback.</t>
+
+<t>Thanks to the participants in the 2016 HTTP Workshop for their lively discussion of this topic.</t>
+
+</section>
+
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+
+
+
+
+
+<reference  anchor='RFC2119' target='http://www.rfc-editor.org/info/rfc2119'>
+<front>
+<title>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='S. Bradner'><organization /></author>
+<date year='1997' month='March' />
+<abstract><t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract>
+</front>
+<seriesInfo name='BCP' value='14'/>
+<seriesInfo name='RFC' value='2119'/>
+<seriesInfo name='DOI' value='10.17487/RFC2119'/>
+</reference>
+
+
+
+<reference  anchor='RFC7230' target='http://www.rfc-editor.org/info/rfc7230'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the &quot;http&quot; and &quot;https&quot; Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7230'/>
+<seriesInfo name='DOI' value='10.17487/RFC7230'/>
+</reference>
+
+
+
+<reference  anchor='RFC7231' target='http://www.rfc-editor.org/info/rfc7231'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7231'/>
+<seriesInfo name='DOI' value='10.17487/RFC7231'/>
+</reference>
+
+
+
+
+    </references>
+
+    <references title='Informative References'>
+
+
+
+
+
+<reference  anchor='RFC7540' target='http://www.rfc-editor.org/info/rfc7540'>
+<front>
+<title>Hypertext Transfer Protocol Version 2 (HTTP/2)</title>
+<author initials='M.' surname='Belshe' fullname='M. Belshe'><organization /></author>
+<author initials='R.' surname='Peon' fullname='R. Peon'><organization /></author>
+<author initials='M.' surname='Thomson' fullname='M. Thomson' role='editor'><organization /></author>
+<date year='2015' month='May' />
+<abstract><t>This specification describes an optimized expression of the semantics of the Hypertext Transfer Protocol (HTTP), referred to as HTTP version 2 (HTTP/2).  HTTP/2 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent exchanges on the same connection.  It also introduces unsolicited push of representations from servers to clients.</t><t>This specification is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7540'/>
+<seriesInfo name='DOI' value='10.17487/RFC7540'/>
+</reference>
+
+
+
+<reference  anchor='RFC7413' target='http://www.rfc-editor.org/info/rfc7413'>
+<front>
+<title>TCP Fast Open</title>
+<author initials='Y.' surname='Cheng' fullname='Y. Cheng'><organization /></author>
+<author initials='J.' surname='Chu' fullname='J. Chu'><organization /></author>
+<author initials='S.' surname='Radhakrishnan' fullname='S. Radhakrishnan'><organization /></author>
+<author initials='A.' surname='Jain' fullname='A. Jain'><organization /></author>
+<date year='2014' month='December' />
+<abstract><t>This document describes an experimental TCP mechanism called TCP Fast Open (TFO).  TFO allows data to be carried in the SYN and SYN-ACK packets and consumed by the receiving end during the initial connection handshake, and saves up to one full round-trip time (RTT) compared to the standard TCP, which requires a three-way handshake (3WHS) to complete before data can be exchanged.  However, TFO deviates from the standard TCP semantics, since the data in the SYN could be replayed to an application in some rare circumstances.  Applications should not use TFO unless they can tolerate this issue, as detailed in the Applicability section.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7413'/>
+<seriesInfo name='DOI' value='10.17487/RFC7413'/>
+</reference>
+
+
+
+<reference anchor='I-D.ietf-tls-tls13'>
+<front>
+<title>The Transport Layer Security (TLS) Protocol Version 1.3</title>
+
+<author initials='E' surname='Rescorla' fullname='Eric Rescorla'>
+    <organization />
+</author>
+
+<date month='July' day='11' year='2016' />
+
+<abstract><t>This document specifies version 1.3 of the Transport Layer Security (TLS) protocol.  TLS allows client/server applications to communicate over the Internet in a way that is designed to prevent eavesdropping, tampering, and message forgery.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-ietf-tls-tls13-14' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-ietf-tls-tls13-14.txt' />
+</reference>
+
+
+
+<reference anchor='I-D.tsvwg-quic-protocol'>
+<front>
+<title>QUIC: A UDP-Based Secure and Reliable Transport for HTTP/2</title>
+
+<author initials='R' surname='Hamilton' fullname='Ryan Hamilton'>
+    <organization />
+</author>
+
+<author initials='J' surname='Iyengar' fullname='Janardhan Iyengar'>
+    <organization />
+</author>
+
+<author initials='I' surname='Swett' fullname='Ian Swett'>
+    <organization />
+</author>
+
+<author initials='A' surname='Wilk' fullname='Alyssa Wilk'>
+    <organization />
+</author>
+
+<date month='January' day='13' year='2016' />
+
+<abstract><t>QUIC (Quick UDP Internet Connection) is a new multiplexed and secure transport atop UDP, designed from the ground up and optimized for HTTP/2 semantics.  While built with HTTP/2 as the primary application protocol, QUIC builds on decades of transport and security experience, and implements mechanisms that make it attractive as a modern general-purpose transport.  QUIC provides multiplexing and flow control equivalent to HTTP/2, security equivalent to TLS, and connection semantics, reliability, and congestion control equivalent to TCP.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-tsvwg-quic-protocol-02' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-tsvwg-quic-protocol-02.txt' />
+</reference>
+
+
+
+
+    </references>
+
+
 <section anchor="current" title="When Clients Retry">
 
 <t>In implementations, clients have been observed to retry requests in a number of circumstances.</t>
@@ -137,7 +370,7 @@ FwdState::checkRetriable()
 </section>
 <section anchor="traffic-server" title="Traffic Server">
 
-<t>Apache Traffic Server, a caching proxy server, ties retriability to whether the request required a “tunnel” – i.e., forward to the next server. This is indicated by <spanx style="verb">request_body_start</spanx>, which is set when a POST tunnel is used.</t>
+<t>Apache Traffic Server, a caching proxy server, ties retry-ability to whether the request required a “tunnel” – i.e., forward to the next server. This is indicated by <spanx style="verb">request_body_start</spanx>, which is set when a POST tunnel is used.</t>
 
 <figure><artwork type="C++"><![CDATA[
 // bool HttpTransact::is_request_retryable
@@ -317,182 +550,6 @@ bool HttpNetworkTransaction::ShouldResendRequest() const {
 
 </section>
 </section>
-<section anchor="retry_get" title="Retrying GET: Do We Have a Problem?">
-
-<t>TBD.</t>
-
-</section>
-<section anchor="detect" title="Protocol Extensions to Improve Retry Detection">
-
-<t>TBD.</t>
-
-</section>
-<section anchor="update" title="Updating HTTP Requirements for Retries">
-
-<t>TBD.</t>
-
-</section>
-<section anchor="security-considerations" title="Security Considerations">
-
-<t>Yep.</t>
-
-</section>
-<section anchor="acknowledgements" title="Acknowledgements">
-
-<t>Thanks to Amos Jeffries, Patrick McManus and Leif Hedstrom for their feedback.</t>
-
-</section>
-
-
-  </middle>
-
-  <back>
-
-    <references title='Normative References'>
-
-
-
-
-
-<reference  anchor='RFC7230' target='http://www.rfc-editor.org/info/rfc7230'>
-<front>
-<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
-<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
-<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
-<date year='2014' month='June' />
-<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the &quot;http&quot; and &quot;https&quot; Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract>
-</front>
-<seriesInfo name='RFC' value='7230'/>
-<seriesInfo name='DOI' value='10.17487/RFC7230'/>
-</reference>
-
-
-
-<reference  anchor='RFC7231' target='http://www.rfc-editor.org/info/rfc7231'>
-<front>
-<title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
-<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
-<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
-<date year='2014' month='June' />
-<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t></abstract>
-</front>
-<seriesInfo name='RFC' value='7231'/>
-<seriesInfo name='DOI' value='10.17487/RFC7231'/>
-</reference>
-
-
-
-<reference  anchor='RFC2119' target='http://www.rfc-editor.org/info/rfc2119'>
-<front>
-<title>Key words for use in RFCs to Indicate Requirement Levels</title>
-<author initials='S.' surname='Bradner' fullname='S. Bradner'><organization /></author>
-<date year='1997' month='March' />
-<abstract><t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract>
-</front>
-<seriesInfo name='BCP' value='14'/>
-<seriesInfo name='RFC' value='2119'/>
-<seriesInfo name='DOI' value='10.17487/RFC2119'/>
-</reference>
-
-
-
-
-    </references>
-
-    <references title='Informative References'>
-
-
-
-
-
-<reference  anchor='RFC7540' target='http://www.rfc-editor.org/info/rfc7540'>
-<front>
-<title>Hypertext Transfer Protocol Version 2 (HTTP/2)</title>
-<author initials='M.' surname='Belshe' fullname='M. Belshe'><organization /></author>
-<author initials='R.' surname='Peon' fullname='R. Peon'><organization /></author>
-<author initials='M.' surname='Thomson' fullname='M. Thomson' role='editor'><organization /></author>
-<date year='2015' month='May' />
-<abstract><t>This specification describes an optimized expression of the semantics of the Hypertext Transfer Protocol (HTTP), referred to as HTTP version 2 (HTTP/2).  HTTP/2 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent exchanges on the same connection.  It also introduces unsolicited push of representations from servers to clients.</t><t>This specification is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.</t></abstract>
-</front>
-<seriesInfo name='RFC' value='7540'/>
-<seriesInfo name='DOI' value='10.17487/RFC7540'/>
-</reference>
-
-
-
-<reference  anchor='RFC7413' target='http://www.rfc-editor.org/info/rfc7413'>
-<front>
-<title>TCP Fast Open</title>
-<author initials='Y.' surname='Cheng' fullname='Y. Cheng'><organization /></author>
-<author initials='J.' surname='Chu' fullname='J. Chu'><organization /></author>
-<author initials='S.' surname='Radhakrishnan' fullname='S. Radhakrishnan'><organization /></author>
-<author initials='A.' surname='Jain' fullname='A. Jain'><organization /></author>
-<date year='2014' month='December' />
-<abstract><t>This document describes an experimental TCP mechanism called TCP Fast Open (TFO).  TFO allows data to be carried in the SYN and SYN-ACK packets and consumed by the receiving end during the initial connection handshake, and saves up to one full round-trip time (RTT) compared to the standard TCP, which requires a three-way handshake (3WHS) to complete before data can be exchanged.  However, TFO deviates from the standard TCP semantics, since the data in the SYN could be replayed to an application in some rare circumstances.  Applications should not use TFO unless they can tolerate this issue, as detailed in the Applicability section.</t></abstract>
-</front>
-<seriesInfo name='RFC' value='7413'/>
-<seriesInfo name='DOI' value='10.17487/RFC7413'/>
-</reference>
-
-
-
-<reference anchor='I-D.ietf-tls-tls13'>
-<front>
-<title>The Transport Layer Security (TLS) Protocol Version 1.3</title>
-
-<author initials='E' surname='Rescorla' fullname='Eric Rescorla'>
-    <organization />
-</author>
-
-<date month='May' day='22' year='2016' />
-
-<abstract><t>This document specifies Version 1.3 of the Transport Layer Security (TLS) protocol.  The TLS protocol allows client/server applications to communicate over the Internet in a way that is designed to prevent eavesdropping, tampering, and message forgery.</t></abstract>
-
-</front>
-
-<seriesInfo name='Internet-Draft' value='draft-ietf-tls-tls13-13' />
-<format type='TXT'
-        target='http://www.ietf.org/internet-drafts/draft-ietf-tls-tls13-13.txt' />
-</reference>
-
-
-
-<reference anchor='I-D.tsvwg-quic-protocol'>
-<front>
-<title>QUIC: A UDP-Based Secure and Reliable Transport for HTTP/2</title>
-
-<author initials='R' surname='Hamilton' fullname='Ryan Hamilton'>
-    <organization />
-</author>
-
-<author initials='J' surname='Iyengar' fullname='Jana Iyengar'>
-    <organization />
-</author>
-
-<author initials='I' surname='Swett' fullname='Ian Swett'>
-    <organization />
-</author>
-
-<author initials='A' surname='Wilk' fullname='Alyssa Wilk'>
-    <organization />
-</author>
-
-<date month='January' day='13' year='2016' />
-
-<abstract><t>QUIC (Quick UDP Internet Connection) is a new multiplexed and secure transport atop UDP, designed from the ground up and optimized for HTTP/2 semantics.  While built with HTTP/2 as the primary application protocol, QUIC builds on decades of transport and security experience, and implements mechanisms that make it attractive as a modern general-purpose transport.  QUIC provides multiplexing and flow control equivalent to HTTP/2, security equivalent to TLS, and connection semantics, reliability, and congestion control equivalent to TCP.</t></abstract>
-
-</front>
-
-<seriesInfo name='Internet-Draft' value='draft-tsvwg-quic-protocol-02' />
-<format type='TXT'
-        target='http://www.ietf.org/internet-drafts/draft-tsvwg-quic-protocol-02.txt' />
-</reference>
-
-
-
-
-    </references>
-
 
 
   </back>
