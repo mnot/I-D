@@ -128,7 +128,7 @@ Servers SHOULD include `SM` in the field-value of the `Vary` response header fie
 Servers MAY use HTTP/2 Server Push ({{?RFC7540}}, Section 8.2) to proactively send the well-known resource to user agents (e.g., if they emit `SM: *`, indicating that they do not have a fresh copy of the well-known resource).
 
 
-## Selecting Headers
+## Selecting Site-Wide Headers {#selecting}
 
 Because this mechanism effectively hides response header fields from intermediaries that do not implement it, care ought to be take in selecting the headers to use it upon.
 
@@ -143,6 +143,12 @@ The `HS` HTTP response header field indicates the header set in the well-known l
 
 ~~~
 HS = DQUOTE 1*ALPHA DQUOTE
+~~~
+
+For example:
+
+~~~
+HS: "12345678"
 ~~~
 
 
@@ -237,6 +243,9 @@ TBD
 TBD
 
 # Security Considerations
+
+## Injecting Headers
+
 
 
 ## Combining Headers
