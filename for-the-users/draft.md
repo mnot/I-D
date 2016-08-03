@@ -1,7 +1,7 @@
 ---
 title: The Internet is for End Users
 docname: draft-nottingham-for-the-users-03
-date: 2015
+date: 2016
 category: bcp
 
 ipr: trust200902
@@ -81,11 +81,11 @@ informative:
 
 --- abstract
 
-Internet standards serve and are used by a variety of communities. This document contains
-guidelines for explicitly identifying them, serving them, and determining how to resolve conflicts
+Internet standards serve and are used by a variety of communities. This document makes suggestions for explicitly identifying them, serving them, and determining how to resolve conflicts
 between their interests, when necessary.
 
-It also motivates considering end users as the highest priority concern for Internet standards.
+It also requires that Internet Standards consider end users as their highest priority concern.
+
 
 --- note_Note_to_Readers
 
@@ -117,7 +117,7 @@ discouraging others. Or, in the words of Lawrence Lessig {{CODELAW}}:
 
 > Ours is the age of cyberspace. It, too, has a regulator... This regulator is code — the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
 
-All of this raises the question: Who do we go through the pain of rough consensus and write the
+All of this raises the question: Who do we go through the pain of rough consensus and write that
 running code for?
 
 There are a variety of identifiable parties in the larger Internet community that standards can
@@ -192,13 +192,17 @@ mitigate this effect, for those users who desire it).
 This also does not mean that the IETF community has any specific insight into what is "good for end
 users"; as before, we will need to interact with the greater Internet community and apply our
 process to help us make decisions, deploy our protocols, and ultimately determine their success or
-failure.
+failure. 
+
+Finally, this requirement only comes into force when an explicit conflict between the interests of
+users and other relevant parties is explicitly encountered (e.g., by being brought up in the
+Working Group). It does not imply that a standards effort needs to be audited for user impact, or
+every decision weighed against user interests.
 
 
 # Identifying Relevant Parties {#identifying}
 
-The relevant parties to an Internet standard MUST be documented, along with their
-interrelationships.
+Internet standards efforts are encouraged to consider and document relevant parties and their interrelationships.
 
 For example, HTML does so using the "priority of constituencies" in the HTML Design Principles
 {{PRIORITY}}:
@@ -212,11 +216,14 @@ parties, so as to encourage the tussle {{TUSSLE}}.
 Likewise, the responsibilities of, or expectations upon, different parties to a standard can vary
 greatly. For example, end users of Web browsers cannot be reasonably expected to make informed
 decisions about security, and therefore design decisions there are biased towards default security.
-When applicable, the expectations upon a party SHOULD be documented.
 
-Extensions to existing standards MUST consider how they interact with the extended standard's
-relevant parties. If they are not yet documented, this SHOULD be done in coordination with that
-standard's community and the IESG.
+Finally, note "In case of conflict." This wording makes it clear that relevant parties need not be
+considered in every decision, because their interests are not always in conflict; it is only
+important when a direct conflict of their interests is encountered.
+
+Extensions to existing standards out to consider consider how they interact with the extended
+standard's relevant parties. If they are not yet documented, this could be done in coordination
+with that standard's community and the IESG.
 
 The burden of this documentation need not be high; if HTML can do it in a paragraph, so can most
 other standards. While it might be appropriate in a separate document (e.g., a requirements or use
@@ -234,7 +241,7 @@ Changes in the use, deployment patterns, legal context, or other factors of a st
 pressure to re-balance the priorities of existing parties, or insert new ones (usually, when a
 standard is either extended or evolved).
 
-Such changes MUST NOT diminish the priority of existing relevant parties without informed consent.
+Such changes ought not diminish the priority of existing relevant parties without informed consent.
 Note that this may preclude the change completely, as it is often impossible to gain the informed
 consent of a large or diffuse group (e.g., end users).
 
@@ -264,7 +271,7 @@ intermediary to this protocol suite.
 While there might be a good technical reason to interpose such an intermediary, it also introduces
 a new party, and thus needs to be done with due consideration of the impact on other parties.
 
-Therefore, unnecessary parties SHOULD be avoided when possible in Internet standards. 
+Therefore, unnecessary parties ought be avoided when possible in Internet standards. 
 
 
 # IANA Considerations
