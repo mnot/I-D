@@ -235,7 +235,20 @@ This file specifies two sets of HTTP headers, "foo" and "bar". Note that the `Pu
 
 ### Parsing "text/site-headers"
 
-TBD
+Given a stream of Unicode characters:
+
+1. Let `header-sets` be an empty mapping.
+2. Consume all characters from up to and including the first octothorp ("#").
+3. Consume all `WSP` characters.
+4. Let `set-name` be all characters up to but not including the next `WSP`, `CR` or `LF`.
+5. Consume all `WSP`, `CR` and `LF characters`.
+6. Let `header-set` be all characters up to but not including the next `CR` or `LF` character followed by an octothorp ("#"), or the end of the file.
+7. Trim all `WSP` from the end of `header-set`.
+8. Let the value of the `set-name` entry in `header-sets` be `header-set` (removing any existing value).
+9. If there is more `input`, return to step 2.
+10. Otherwise, return `header-sets`.
+
+This returns a mapping of `set-name` to a HTTP `header-set`, as defined in {{RFC7230}}, Section 3. It SHOULD be parsed as defined there.
 
 
 # IANA Considerations
