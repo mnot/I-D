@@ -29,32 +29,32 @@ informative:
 
 --- abstract
 
-This document specifies a mechanism for Web sites to send HTTP header fields that apply to large numbers of resources on an origin via a different, more efficient mechanism, rather than including them in every response.
+This document specifies an alternative way for Web sites to send HTTP response header fields that apply to large numbers of resources, to improve efficiency.
 
 --- middle
 
 # Introduction
 
-A variety of metadata about Web sites is being conveyed in new HTTP response headers. In particular, it is becoming more common for metadata that applies to an entire Web site to be conveyed in a header field that is included on every response for that site.
+HTTP response headers are being used for an increasing amount of metadata that applies to an entire site, or large portions of it.
 
 For example, `Strict-Transport-Security` {{?RFC6797}} and `Public-Key-Pins` {{?RFC7469}} both define headers that are explicitly scoped to an entire origin {{!RFC6454}}, and number of similar headers are under consideration.
 
 Likewise, some HTTP header fields only sensibly have a single value per origin; for example, `Server`.
 
-Furthermore, some headers are resource-specific, but in some deployments, are uniform across an origin. For example, some sites will have a `CSP` {{?W3C.CR-CSP2-20150721}} header that doesn't vary across the site, or only varies slightly from resource to resource.
+Furthermore, some headers are used uniformly across an origin. For example, a site might have a `CSP` {{?W3C.CR-CSP2-20150721}} header that doesn't vary across the site, or only varies slightly from resource to resource.
 
-This is inefficient. Besides the obvious bandwidth waste due to redundancy in HTTP/1, it also impacts HTTP/2's HPACK {{?RFC7541}} header compression; since the amount of space of available for state is limited (by default, 4K), verbose, repeating headers can greatly reduce the effectiveness of HPACK.
+HTTP/2's HPACK {{?RFC7541}} header compression mechanism was designed to reduce bandwidth usage for often-repeated headers, both in responses and requests. However, it limits the amount of compression contents usable for a connection (by default, 4K), which sites are beginning to exceed, thereby reducing the efficiency of HPACK itself.
 
-However, when the metadata affects processing of the response, and the application is latency-sensitive (as uses of HTTP so often are), it's not practical to separate the metadata from the response; it needs to be sent on every response so that it is available.
+For example, it is not uncommon for a CSP response header field to exceed 1K (and has been observed to be greater than 3K on popular sites). This forces site administrators to make an awkward choice; put the large header in the HPACK table, thereby crowding out other headers, or omit it, requiring its full content to be sent on every applicable response.
 
-One way to mitigate this problem is to remove these common header fields from responses, and keep them in a separate resource. When clients have fetched that resource and guarantee that they will apply its contents to all responses for that domain, they can indicate this to the server with a small request header; when servers see it, they can safely omit those headers in responses.
+This document defines a way to specify one or more sets of HTTP response header fields that, when their use is negotiated, are appended to HTTP responses by the recipient. This allows common response headers to be omitted both from on-the-wire responses and the HPACK compression table, making both more efficient.
 
-This document defines how to do this by using a well-known URI (specified in {{well-known}}) to store these headers in a format specified in {{type}}.
+This approach is preferable to increasing the HTTP/2 SETTINGS_HEADER_TABLE_SIZE ({{?RFC7540}}, Section 6.5.2), because increasing that setting incurs a per-connection overhead on the server, whereas using the technique documented here does not.
 
 
 ## Example {#example}
 
-If a request to the well-known URI (see {{well-known}}) returns:
+If a request to the well-known resource for an origin (see {{well-known}}) returns:
 
 ~~~
 HTTP/1.1 200 OK
