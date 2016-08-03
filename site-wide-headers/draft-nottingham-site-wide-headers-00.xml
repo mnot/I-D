@@ -142,7 +142,7 @@ Public-Key-Pins: max-age=604800;
 
 <t>Servers MAY use HTTP/2 Server Push (<xref target="RFC7540"/>, Section 8.2) to proactively send the well-known resource to user agents (e.g., if they emit <spanx style="verb">SM: *</spanx>, indicating that they do not have a fresh copy of the well-known resource).</t>
 
-<section anchor="selecting-headers" title="Selecting Headers">
+<section anchor="selecting" title="Selecting Site-Wide Headers">
 
 <t>Because this mechanism effectively hides response header fields from intermediaries that do not implement it, care ought to be take in selecting the headers to use it upon.</t>
 
@@ -157,6 +157,12 @@ Public-Key-Pins: max-age=604800;
 
 <figure><artwork><![CDATA[
 HS = DQUOTE 1*ALPHA DQUOTE
+]]></artwork></figure>
+
+<t>For example:</t>
+
+<figure><artwork><![CDATA[
+HS: "12345678"
 ]]></artwork></figure>
 
 </section>
@@ -243,7 +249,22 @@ Content-Security-Policy: default-src 'self'; img-src 'self'
 
 <section anchor="parsing-textsite-headers" title="Parsing “text/site-headers”">
 
-<t>TBD</t>
+<t>Given a stream of Unicode characters:</t>
+
+<t><list style="numbers">
+  <t>Let <spanx style="verb">header-sets</spanx> be an empty mapping.</t>
+  <t>Consume all characters from up to and including the first octothorp (“#”).</t>
+  <t>Consume all <spanx style="verb">WSP</spanx> characters.</t>
+  <t>Let <spanx style="verb">set-name</spanx> be all characters up to but not including the next <spanx style="verb">WSP</spanx>, <spanx style="verb">CR</spanx> or <spanx style="verb">LF</spanx>.</t>
+  <t>Consume all <spanx style="verb">WSP</spanx>, <spanx style="verb">CR</spanx> and <spanx style="verb">LF characters</spanx>.</t>
+  <t>Let <spanx style="verb">header-set</spanx> be all characters up to but not including the next <spanx style="verb">CR</spanx> or <spanx style="verb">LF</spanx> character followed by an octothorp (“#”), or the end of the file.</t>
+  <t>Trim all <spanx style="verb">WSP</spanx> from the end of <spanx style="verb">header-set</spanx>.</t>
+  <t>Let the value of the <spanx style="verb">set-name</spanx> entry in <spanx style="verb">header-sets</spanx> be <spanx style="verb">header-set</spanx> (removing any existing value).</t>
+  <t>If there is more <spanx style="verb">input</spanx>, return to step 2.</t>
+  <t>Otherwise, return <spanx style="verb">header-sets</spanx>.</t>
+</list></t>
+
+<t>This returns a mapping of <spanx style="verb">set-name</spanx> to a HTTP <spanx style="verb">header-set</spanx>, as defined in <xref target="RFC7230"/>, Section 3. It SHOULD be parsed as defined there.</t>
 
 </section>
 </section>
@@ -255,13 +276,19 @@ Content-Security-Policy: default-src 'self'; img-src 'self'
 </section>
 <section anchor="security-considerations" title="Security Considerations">
 
-<section anchor="combining-headers" title="Combining Headers">
+<section anchor="injecting-headers" title="Injecting Headers">
+
+<t>Site-wide headers allow a single resource to inject HTTP response headers for an entire origin. Accordingly, the ability to write to that resource needs to be carefully controlled by the origin server.</t>
 
 </section>
 <section anchor="inappropriate-headers" title="Inappropriate Headers">
 
+<t>As noted in <xref target="selecting"/>, there are a variety of HTTP response headers which are inappropriate for use as site-wide headers, and some (e.g., <spanx style="verb">Content-Length</spanx>) can cause both interoperability and security issues.</t>
+
 </section>
 <section anchor="differing-views-of-headers" title="Differing Views of Headers">
+
+<t>Because headers sent via this mechanism will not be seen by user agents and intermediaries that do not implement this specification, they will potentially have a different view of the response headers.</t>
 
 </section>
 </section>

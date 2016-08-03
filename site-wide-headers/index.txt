@@ -64,7 +64,7 @@ Table of Contents
      1.1.  Example . . . . . . . . . . . . . . . . . . . . . . . . .   3
      1.2.  Notational Conventions  . . . . . . . . . . . . . . . . .   4
    2.  Server Operation  . . . . . . . . . . . . . . . . . . . . . .   4
-     2.1.  Selecting Headers . . . . . . . . . . . . . . . . . . . .   5
+     2.1.  Selecting Site-Wide Headers . . . . . . . . . . . . . . .   5
      2.2.  The "HS" HTTP Response Header Field . . . . . . . . . . .   5
    3.  User Agent Operation  . . . . . . . . . . . . . . . . . . . .   5
      3.1.  The "SM" HTTP Request Header Field  . . . . . . . . . . .   6
@@ -73,13 +73,13 @@ Table of Contents
        4.1.1.  Parsing "text/site-headers" . . . . . . . . . . . . .   8
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
-     6.1.  Combining Headers . . . . . . . . . . . . . . . . . . . .   8
-     6.2.  Inappropriate Headers . . . . . . . . . . . . . . . . . .   8
-     6.3.  Differing Views of Headers  . . . . . . . . . . . . . . .   8
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   8
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .   9
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   9
+     6.1.  Injecting Headers . . . . . . . . . . . . . . . . . . . .   8
+     6.2.  Inappropriate Headers . . . . . . . . . . . . . . . . . .   9
+     6.3.  Differing Views of Headers  . . . . . . . . . . . . . . .   9
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   9
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   9
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  10
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  10
 
 1.  Introduction
 
@@ -234,7 +234,7 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
    they emit "SM: *", indicating that they do not have a fresh copy of
    the well-known resource).
 
-2.1.  Selecting Headers
+2.1.  Selecting Site-Wide Headers
 
    Because this mechanism effectively hides response header fields from
    intermediaries that do not implement it, care ought to be take in
@@ -256,6 +256,10 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
 
    HS = DQUOTE 1*ALPHA DQUOTE
 
+   For example:
+
+   HS: "12345678"
+
 3.  User Agent Operation
 
    User agents that support this specification SHOULD always emit a "SM"
@@ -269,11 +273,7 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
    or they might learn of it when the well-known location's current
    contents are sent via a HTTP/2 Server Push.
 
-   In either case, user agents SHOULD send a "SM" request header field
-   on all requests to such an origin.
 
-   Upon receiving a response to such a request containing the "HS"
-   response header field, user agents MUST locate the header-set
 
 
 
@@ -282,6 +282,11 @@ Nottingham              Expires February 4, 2017                [Page 5]
 Internet-Draft           Site-Wide HTTP Headers              August 2016
 
 
+   In either case, user agents SHOULD send a "SM" request header field
+   on all requests to such an origin.
+
+   Upon receiving a response to such a request containing the "HS"
+   response header field, user agents MUST locate the header-set
    referred to by its field-value in the stored well-known response,
    remove any surrounding white space, and append it to the response
    headers, stripping the "HS" response header field.
@@ -325,11 +330,6 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
    (as per [RFC7234]).  If it does not have an explicit freshness
    lifetime, they SHOULD consider it to have a heuristic freshness
    lifetime of 60 seconds.
-
-
-
-
-
 
 
 
@@ -396,7 +396,36 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
 
 4.1.1.  Parsing "text/site-headers"
 
-   TBD
+   Given a stream of Unicode characters:
+
+   1.   Let "header-sets" be an empty mapping.
+
+   2.   Consume all characters from up to and including the first
+        octothorp ("#").
+
+   3.   Consume all "WSP" characters.
+
+   4.   Let "set-name" be all characters up to but not including the
+        next "WSP", "CR" or "LF".
+
+   5.   Consume all "WSP", "CR" and "LF characters".
+
+   6.   Let "header-set" be all characters up to but not including the
+        next "CR" or "LF" character followed by an octothorp ("#"), or
+        the end of the file.
+
+   7.   Trim all "WSP" from the end of "header-set".
+
+   8.   Let the value of the "set-name" entry in "header-sets" be
+        "header-set" (removing any existing value).
+
+   9.   If there is more "input", return to step 2.
+
+   10.  Otherwise, return "header-sets".
+
+   This returns a mapping of "set-name" to a HTTP "header-set", as
+   defined in [RFC7230], Section 3.  It SHOULD be parsed as defined
+   there.
 
 5.  IANA Considerations
 
@@ -404,11 +433,35 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
 
 6.  Security Considerations
 
-6.1.  Combining Headers
+6.1.  Injecting Headers
+
+   Site-wide headers allow a single resource to inject HTTP response
+   headers for an entire origin.  Accordingly, the ability to write to
+   that resource needs to be carefully controlled by the origin server.
+
+
+
+
+
+
+
+Nottingham              Expires February 4, 2017                [Page 8]
+
+Internet-Draft           Site-Wide HTTP Headers              August 2016
+
 
 6.2.  Inappropriate Headers
 
+   As noted in Section 2.1, there are a variety of HTTP response headers
+   which are inappropriate for use as site-wide headers, and some (e.g.,
+   "Content-Length") can cause both interoperability and security
+   issues.
+
 6.3.  Differing Views of Headers
+
+   Because headers sent via this mechanism will not be seen by user
+   agents and intermediaries that do not implement this specification,
+   they will potentially have a different view of the response headers.
 
 7.  References
 
@@ -445,7 +498,10 @@ Internet-Draft           Site-Wide HTTP Headers              August 2016
 
 
 
-Nottingham              Expires February 4, 2017                [Page 8]
+
+
+
+Nottingham              Expires February 4, 2017                [Page 9]
 
 Internet-Draft           Site-Wide HTTP Headers              August 2016
 
@@ -501,4 +557,4 @@ Author's Address
 
 
 
-Nottingham              Expires February 4, 2017                [Page 9]
+Nottingham              Expires February 4, 2017               [Page 10]
