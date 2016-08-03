@@ -41,7 +41,7 @@ For example, `Strict-Transport-Security` {{?RFC6797}} and `Public-Key-Pins` {{?R
 
 Likewise, some HTTP header fields only sensibly have a single value per origin; for example, `Server`.
 
-Furthermore, some headers are used uniformly across an origin. For example, a site might have a `CSP` {{?W3C.CR-CSP2-20150721}} header that doesn't vary across the site, or only varies slightly from resource to resource.
+Furthermore, some headers are used uniformly across an origin. For example, a site might have a `Content-Security-Policy` {{?W3C.CR-CSP2-20150721}} header that doesn't vary across the site, or only varies slightly from resource to resource.
 
 HTTP/2's HPACK {{?RFC7541}} header compression mechanism was designed to reduce bandwidth usage for often-repeated headers, both in responses and requests. However, it limits the amount of compression contents usable for a connection (by default, 4K), which sites are beginning to exceed, thereby reducing the efficiency of HPACK itself.
 
