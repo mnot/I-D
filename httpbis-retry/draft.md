@@ -62,7 +62,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{!RFC2119}}.
 
 
-## Discussion {#discussion}
+# Discussion {#discussion}
 
 ## What the Spec Says {#spec}
 
