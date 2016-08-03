@@ -259,13 +259,15 @@ TBD
 
 ## Injecting Headers
 
-
-
-## Combining Headers
+Site-wide headers allow a single resource to inject HTTP response headers for an entire origin. Accordingly, the ability to write to that resource needs to be carefully controlled by the origin server.
 
 ## Inappropriate Headers
 
+As noted in {{selecting}}, there are a variety of HTTP response headers which are inappropriate for use as site-wide headers, and some (e.g., `Content-Length`) can cause both interoperability and security issues.
+
 ## Differing Views of Headers
+
+Because headers sent via this mechanism will not be seen by user agents and intermediaries that do not implement this specification, they will potentially have a different view of the response headers.
 
 
 --- back
