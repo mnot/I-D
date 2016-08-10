@@ -50,7 +50,7 @@ However, interest in extending, redefining or just clarifying HTTP's retry seman
 
 * Likewise, changes such as HTTP/2 {{?RFC7540}} might change the underlying assumptions that these requirements were based upon. 
 
-* Emerging lower-layer developments such as TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.tsvwg-quic-protocol}} introduce the possibility of replayed requests in the beginning of a connection, thanks to Zero Round Trip (0RT) modes. In some ways, these are similar to retries -- but not completely.
+* Emerging lower-layer developments such as TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.hamilton-early-deployment-quic}} introduce the possibility of replayed requests in the beginning of a connection, thanks to Zero Round Trip (0RT) modes. In some ways, these are similar to retries -- but not completely.
 
 * Applications sometimes want requests to be retried by infrastructure, but can't easily express them in a non-idempotent request (such as GET).
 
@@ -109,7 +109,7 @@ The status quo, therefore, is that no Web application can take HTTP's retry requ
 
 ## Replays Are Different {#replay}
 
-TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.tsvwg-quic-protocol}} all have mechanisms to carry application data on the first packet sent by a client, to avoid the latency of connection setup.
+TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.hamilton-early-deployment-quic}} all have mechanisms to carry application data on the first packet sent by a client, to avoid the latency of connection setup.
 
 The request(s) in this first packet might be _replayed_, either because the first packet is lost and retransmitted by the transport protocol in use, or because an attacker observes the packet and sends a duplicate at some point in the future.
 
