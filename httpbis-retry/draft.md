@@ -110,7 +110,7 @@ The same specification addresses HTTP over TLS in Section 6.3.2:
 
 ### TLS 1.3
 
-{{I-D.draft-ietf-tls-tls13}}, Section 2.3 explains the properties of Zero-RTT Data in TLS 1.3:
+{{I-D.ietf-tls-tls13}}, Section 2.3 explains the properties of Zero-RTT Data in TLS 1.3:
 
 > IMPORTANT NOTE: The security properties for 0-RTT data (regardless of the cipher suite) are 
 weaker than those for other kinds of TLS data.
