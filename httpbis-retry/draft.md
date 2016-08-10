@@ -79,6 +79,8 @@ In HTTP, there are three similar but separate phenomena that deserve considerati
 
 Note that retries initiated by code shipped to the client by the server (e.g., in JavaScript) occupy a grey area here; however, because they are not initiated by the generic HTTP client implementation itself, we will consider them user retries for the time being.
 
+Also, this document doesn't include TCP-layer loss recovery (i.e., retransmission).
+
 
 ## What the Spec Says: Automatic Retries {#spec}
 
@@ -117,7 +119,6 @@ weaker than those for other kinds of TLS data.
 > Specifically:
 
 > 1.  This data is not forward secret, because it is encrypted solely with the PSK.
-
 > 2.  There are no guarantees of non-replay between connections. Unless the server takes special measures outside those provided by TLS, the server has no guarantee that the same 0-RTT data was not transmitted on multiple 0-RTT connections (See Section 4.2.6.2 for more details).  This is especially relevant if the data is authenticated either with TLS client authentication or inside the application layer protocol. However, 0-RTT data cannot be duplicated within a connection (i.e., the server will not process the same data twice for the same connection) and an attacker will not be able to make 0-RTT data appear to be 1-RTT data (because it is protected with different keys.)
 
 Section 4.2.6 defines a mechanism to limit the exposure to replay.
@@ -144,7 +145,7 @@ On the server side, it has been widely observed that content on the Web doesn't 
 
 Despite this situation, the Web seems to work reasonably well to date (with [notable exceptions](https://signalvnoise.com/archives2/google_web_accelerator_hey_not_so_fast_an_alert_for_web_app_designers.php)).
 
-The status quo, therefore, is that no Web application can take HTTP's retry requirements as a guarantee that any given request won't be retried, despite method idempotency. As a result, applications that care about avoiding duplicate requests need to build a way to detect not only user retries but also automatic retries into the application "above" HTTP itself. 
+The status quo, therefore, is that no Web application can read HTTP's retry requirements as a guarantee that any given request won't be retried, even for methods that are not idempotent. As a result, applications that care about avoiding duplicate requests need to build a way to detect not only user retries but also automatic retries into the application "above" HTTP itself. 
 
 
 ## Replays Are Different {#replay}
@@ -153,9 +154,9 @@ TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.hami
 
 The request(s) in this first packet might be _replayed_, either because the first packet is lost and retransmitted by the transport protocol in use, or because an attacker observes the packet and sends a duplicate at some point in the future.
 
-At first glance, it seems as if the idempotency semantics of HTTP request methods could be used to determine what requests are suitable for inclusion in the first packet of various 0RT mechanisms being discussed (as suggested by TCP Fast Open).
+At first glance, it seems as if the idempotency semantics of HTTP request methods could be used to determine what requests are suitable for inclusion in the first packet of various 0RT mechanisms being discussed (as suggested by TCP Fast Open). For example, we could disallow POST (and other non-idempotent methods) in 0RT data. 
 
-Upon reflection, though, the observations above lead us to believe that since any request might be retried, applications will need to have a means of detecting duplicate requests, thereby preventing side effects from replays as well as retries. Thus, any HTTP request can be included in the first packet of a 0RT, despite the risk of replay.
+Upon reflection, though, the observations above lead us to believe that since any request might be retried (automatically or by users), applications will need to have a means of detecting duplicate requests, thereby preventing side effects from replays as well as retries. Thus, any HTTP request can be included in the first packet of a 0RT, despite the risk of replay.
 
 Two types of attack specific to replayed HTTP requests need to be taken into account, however:
 
@@ -201,9 +202,18 @@ Yep.
 
 # Acknowledgements
 
-Thanks to Amos Jeffries, Patrick McManus, Leif Hedstrom, Miroslav Ponec, Brad Fitzpatrick and Matt Menke for their input and feedback.
+Thanks to 
+Brad Fitzpatrick, 
+Leif Hedstrom, 
+Subodh Iyengar, 
+Amos Jeffries, 
+Patrick McManus, 
+Matt Menke,
+Miroslav Ponec and 
+Martin Thomson
+for their input and feedback.
 
-Thanks to the participants in the 2016 HTTP Workshop for their lively discussion of this topic.
+Thanks also to the participants in the 2016 HTTP Workshop for their lively discussion of this topic.
 
 --- back
 
