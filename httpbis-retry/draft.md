@@ -104,7 +104,7 @@ On the server side, it has been widely observed that content on the Web doesn't 
 
 Despite this situation, the Web seems to work reasonably well to date (with [notable exceptions](https://signalvnoise.com/archives2/google_web_accelerator_hey_not_so_fast_an_alert_for_web_app_designers.php)).
 
-The status quo, therefore, is that no Web application can take HTTP's retry requirements as a guarantee that any given request won't be retried, despite method idempotency. As a result, applications that care about avoiding duplicate requests need to build a way to detect user retries and automatic retries into the application "above" HTTP itself. 
+The status quo, therefore, is that no Web application can take HTTP's retry requirements as a guarantee that any given request won't be retried, despite method idempotency. As a result, applications that care about avoiding duplicate requests need to build a way to detect not only user retries but also automatic retries into the application "above" HTTP itself. 
 
 
 ## Replays Are Different {#replay}
