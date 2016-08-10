@@ -29,6 +29,8 @@ HTTP allows requests to be automatically retried under certain circumstances. Th
 
 --- note_Note_to_Readers
 
+This draft is not intended to be published as an RFC.
+
 The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/httpbis-retry>.
 
 The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/httpbis-retry/>.
