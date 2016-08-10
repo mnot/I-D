@@ -46,7 +46,7 @@ One of the benefits of HTTP's well-defined method semantics is that they allow f
 
 However, interest in extending, redefining or just clarifying HTTP's retry semantics is increasing, for a number of reasons:
 
-* Since HTTP/1.1's requirements were written, there has been a substantial amount of experience deploying and using HTTP, leading implementations to refine their behaviour, often diverging from the specification.
+* Since HTTP/1.1's requirements were written, there has been a substantial amount of experience deploying and using HTTP, leading implementations to refine their behaviour, arguably diverging from the specification.
 
 * Likewise, changes such as HTTP/2 {{?RFC7540}} might change the underlying assumptions that these requirements were based upon. 
 
