@@ -54,7 +54,7 @@ However, interest in extending, redefining or just clarifying HTTP's retry seman
 
 * Applications sometimes want requests to be retried by infrastructure, but can't easily express them in a non-idempotent request (such as GET).
 
-This draft discusses aspects of these issues in {{discussion}}, suggesting possible areas of work in {{work}}, and cataloguing current implementation behaviours in {{current}}.
+This draft gives some background in {{background}}, discusses aspects of these issues in {{discussion}}, suggesting possible areas of work in {{work}}, and cataloguing current implementation behaviours in {{current}}.
 
 
 ## Notational Conventions
@@ -64,9 +64,23 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{!RFC2119}}.
 
 
-# Discussion {#discussion}
 
-## What the Spec Says {#spec}
+# Background {#background}
+ 
+## Retries and Replays: A Taxonomy of Repetition {#retry_replay}
+
+In HTTP, there are three similar but separate phenomena that deserve consideration for the purposes of this document:
+
+1. **User Retries** happen when a user initiates an action that results in a duplicate request being emitted. For example, a user retry might occur when a "reload" button is pressed, a URL is typed in again, "return" is pressed in the URL bar again, or a navigation link or form button is pressed twice while still on screen.
+
+2. **Automatic Retries** happen when an HTTP client implementation resends a previous request without user intervention or initiation. This might happen when a GET request fails to return a complete response, or when a connection drops before the request is sent. Note that automatic retries can (and are) performed both by user agents and intermediary clients.
+
+3. **Replays** happen when the packet(s) containing a request are re-sent on the network, either automatically as part of transport protocol operation, or by an attacker. The closest upstream HTTP client might not have any indication that a replay has occurred.
+
+Note that retries initiated by code shipped to the client by the server (e.g., in JavaScript) occupy a grey area here; however, because they are not initiated by the generic HTTP client implementation itself, we will consider them user retries for the time being.
+
+
+## What the Spec Says: Automatic Retries {#spec}
 
 {{!RFC7230}}, Section 6.3.1 allows HTTP requests to be retried in certain circumstances:
 
@@ -79,18 +93,44 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 Note that the complete list of idempotent methods is maintained in the [IANA HTTP Method Registry](https://www.iana.org/assignments/http-methods/http-methods.xhtml).
 
 
-## Retries and Replays: A Taxonomy of Repetition {#retry_replay}
+## What the Specs Say: Replay {#spec-replay}
 
-In HTTP, there are three similar but separate phenomena that deserve consideration for the purposes of this document:
+### TCP Fast Open
 
-1. **User Retries** happen when a user initiates an action that results in a duplicate request being emitted. For example, a user retry might occur when a "reload" button is pressed, a URL is typed in again, "return" is pressed in the URL bar again, or a navigation link or form button is pressed twice while still on screen.
+{{!RFC7413}}, Section 6.3.1 addresses HTTP Request Replay with TCP Fast Open:
 
-2. **Automatic Retries** happen when an HTTP client implementation resends a previous request without user intervention or initiation. This might happen when a GET request fails to return a complete response, or when a connection drops before the request is sent. Note that automatic retries can (and are) performed both by user agents and intermediary clients.
+> While TFO is motivated by Web applications, the browser should not use TFO to send requests in SYNs if those requests cannot tolerate replays.  One example is POST requests without application-layer transaction protection (e.g., a unique identifier in the request header).
 
-3. **Replays** happen when the packet(s) containing a request are re-sent on the network, either automatically as part of transport protocol operation, or by an attacker. The closest upstream HTTP client might not have any indication that a replay has occurred.
+> On the other hand, TFO is particularly useful for GET requests.  GET request replay could happen across striped TCP connections: after a server receives an HTTP request but before the ACKs of the requests reach the browser, the browser may time out and retry the same request on another (possibly new) TCP connection.  This differs from a TFO replay only in that the replay is initiated by the browser, not by the TCP stack.
 
-Note that retries initiated by code shipped to the client by the server (e.g., in JavaScript) occupy a grey area here; however, because they are not initiated by the generic HTTP client implementation itself, we will consider them user retries for the time being.
- 
+The same specification addresses HTTP over TLS in Section 6.3.2:
+
+> For Transport Layer Security (TLS) over TCP, it is safe and useful to include a TLS client_hello in the SYN packet to save one RTT in the TLS handshake.  There is no concern about violating idempotency.  In particular, it can be used alone with the speculative connection above.
+
+
+### TLS 1.3
+
+{{I-D.draft-ietf-tls-tls13}}, Section 2.3 explains the properties of Zero-RTT Data in TLS 1.3:
+
+> IMPORTANT NOTE: The security properties for 0-RTT data (regardless of the cipher suite) are 
+weaker than those for other kinds of TLS data.
+> Specifically:
+
+> 1.  This data is not forward secret, because it is encrypted solely with the PSK.
+
+> 2.  There are no guarantees of non-replay between connections. Unless the server takes special measures outside those provided by TLS, the server has no guarantee that the same 0-RTT data was not transmitted on multiple 0-RTT connections (See Section 4.2.6.2 for more details).  This is especially relevant if the data is authenticated either with TLS client authentication or inside the application layer protocol. However, 0-RTT data cannot be duplicated within a connection (i.e., the server will not process the same data twice for the same connection) and an attacker will not be able to make 0-RTT data appear to be 1-RTT data (because it is protected with different keys.)
+
+Section 4.2.6 defines a mechanism to limit the exposure to replay.
+
+
+### QUIC
+
+The QUIC specifications don't say anything about the replay risk of 0RTT.
+
+        
+
+# Discussion {#discussion}
+
 
 ## Automatic Retries In Practice {#auto_retry}
 
@@ -113,13 +153,13 @@ TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.hami
 
 The request(s) in this first packet might be _replayed_, either because the first packet is lost and retransmitted by the transport protocol in use, or because an attacker observes the packet and sends a duplicate at some point in the future.
 
-At first glance, it seems as if the idempotency semantics of HTTP request methods could be used to determine what requests are suitable for inclusion in the first packet of various 0RT mechanisms being discussed.
+At first glance, it seems as if the idempotency semantics of HTTP request methods could be used to determine what requests are suitable for inclusion in the first packet of various 0RT mechanisms being discussed (as suggested by TCP Fast Open).
 
 Upon reflection, though, the observations above lead us to believe that since any request might be retried, applications will need to have a means of detecting duplicate requests, thereby preventing side effects from replays as well as retries. Thus, any HTTP request can be included in the first packet of a 0RT, despite the risk of replay.
 
 Two types of attack specific to replayed HTTP requests need to be taken into account, however:
 
-1. A replay is a potential Denial of Service vector. An attacker that can replay a request many times and cause the server to process each request can bring a server that needs to do any substantial processing down. 
+1. A replay is a potential Denial of Service vector. An attacker that can replay a request many times can probe for weaknesses in retry protections, and can bring a server that needs to do any substantial processing down.
 
 2. An attacker might use a replayed request to leak information about the response over time. If they can observe the encrypted payload on the wire, they can infer the size of the response (e.g., it might get bigger if the user's bank account has more in it).
 
@@ -127,7 +167,7 @@ The first attack cannot be mitigated by HTTP; the 0RT mechanism itself needs som
 
 The second attack is more difficult to mitigate; scoping the usability of the first packet helps, but does not completely prevent the attack. If the replayed request is state-changing, the application's retry detection should kick in and prevent information leakage (since the response will likely contain an error, instead of the desired information). 
 
-If it is not (e.g., a GET), the information being targeted is vulnerable as long as both the first packet and the credentials in the request (if any) are valid. Padding such responses might be one further mitigation, in this case.
+If it is not (e.g., a GET), the information being targeted is vulnerable as long as both the first packet and the credentials in the request (if any) are valid.
 
 
 # Possible Areas of Work {#work}
