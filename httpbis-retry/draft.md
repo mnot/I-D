@@ -68,7 +68,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 ## What the Spec Says {#spec}
 
-{{!RFC7230}}, Section 6.3.1 defines HTTP retries:
+{{!RFC7230}}, Section 6.3.1 allows HTTP requests to be retried in certain circumstances:
 
 > When an inbound connection is closed prematurely, a client MAY open a new connection and automatically retransmit an aborted sequence of requests if all of those requests have idempotent methods (Section 4.2.2 of {{!RFC7231}}). A proxy MUST NOT automatically retry non-idempotent requests.
 
