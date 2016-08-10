@@ -193,7 +193,7 @@ Yep.
 
 # Acknowledgements
 
-Thanks to Amos Jeffries, Patrick McManus and Leif Hedstrom for their feedback.
+Thanks to Amos Jeffries, Patrick McManus, Leif Hedstrom and Matt Menke for their input and feedback.
 
 Thanks to the participants in the 2016 HTTP Workshop for their lively discussion of this topic.
 
