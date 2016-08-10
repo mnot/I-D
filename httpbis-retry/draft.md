@@ -174,12 +174,20 @@ If it is not (e.g., a GET), the information being targeted is vulnerable as long
 
 ## Updating HTTP's Requirements for Retries {#update}
 
-TBD.
+The currently language in {{RFC7230}} about retries is vague about the conditions under which a request can be retried, leading to significant variance in implementation behaviour. For example, it's been observed that many automated clients fail under circumstances when browsers succeed, because they do not retry in the same way.
+
+As a result, more carefully specifying the conditions under which a request can be retried would be helpful. Such work would need to take into account recent developments such as HTTP/2, TLS/1.3 and TCP Fast Open.
+
+Furthermore, readers might mistake the language in RFC7230 as guaranteeing that some requests (e.g., POST) are never automatically retried; this should be clarified.
 
 
-## Protocol Extensions to Improve Retry Detection {#detect}
+## Protocol Extensions {#detect}
 
-TBD.
+A number of mechanisms have been mooted at various times, e.g.:
+
+* Adding a header to automatically retried requests, to aid de-duplication by servers
+* Defining a request header to by added by intermediaries when they have received a request in a way that could have been replayed
+* Defining a status code to allow servers to indicate that the request needs to be sent in a way that can't be replayed
 
 
 ## Feedback to Transport 0RT Efforts {#feedback}
@@ -193,7 +201,7 @@ Yep.
 
 # Acknowledgements
 
-Thanks to Amos Jeffries, Patrick McManus, Leif Hedstrom and Matt Menke for their input and feedback.
+Thanks to Amos Jeffries, Patrick McManus, Leif Hedstrom, Miroslav Ponec, Brad Fitzpatrick and Matt Menke for their input and feedback.
 
 Thanks to the participants in the 2016 HTTP Workshop for their lively discussion of this topic.
 
