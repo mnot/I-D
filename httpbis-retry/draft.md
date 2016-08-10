@@ -172,17 +172,19 @@ If it is not (e.g., a GET), the information being targeted is vulnerable as long
 
 # Possible Areas of Work {#work}
 
-## Protocol Extensions to Improve Retry Detection {#detect}
-
-TBD.
-
 ## Updating HTTP's Requirements for Retries {#update}
 
 TBD.
 
-## Feedback to Transport 0RT Efforts {#feedback}
+
+## Protocol Extensions to Improve Retry Detection {#detect}
 
 TBD.
+
+
+## Feedback to Transport 0RT Efforts {#feedback}
+
+If the observations above hold, we should disabuse any notion that HTTP method idempotency is a useful way to avoid problems with replay attacks. Instead, we should encourage development of mechanisms to mitigate the aspects of replay that are different than retries (e.g., potential for DOS attacks).
 
 # Security Considerations
 
