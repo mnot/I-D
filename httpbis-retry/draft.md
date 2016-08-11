@@ -177,7 +177,14 @@ If it is not (e.g., a GET), the information being targeted is vulnerable as long
 
 The currently language in {{RFC7230}} about retries is vague about the conditions under which a request can be retried, leading to significant variance in implementation behaviour. For example, it's been observed that many automated clients fail under circumstances when browsers succeed, because they do not retry in the same way.
 
-As a result, more carefully specifying the conditions under which a request can be retried would be helpful. Such work would need to take into account recent developments such as HTTP/2, TLS/1.3 and TCP Fast Open.
+As a result, more carefully specifying the conditions under which a request can be retried would be helpful. Such work would need to take into account varying conditions, such as:
+
+* Connection closes
+* TCP RST
+* Connection timeouts
+* Whether or not any part of the response has been received
+* Whether or not it is the first request on the connection
+* Variance due to use of HTTP/2, TLS/1.3 and TCP Fast Open.
 
 Furthermore, readers might mistake the language in RFC7230 as guaranteeing that some requests (e.g., POST) are never automatically retried; this should be clarified.
 
