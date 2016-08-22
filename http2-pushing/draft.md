@@ -127,10 +127,7 @@ There are a few complications to consider, however.
   ahead" signal. Since HTTP/2 already has protocol-level signalling mechanisms, it's probably best
   to say that 1xx responses SHOULD NOT be sent in Server Push, and MUST be ignored when received.
 
-* 401 (Unauthorized) has the side effect of prompting the user for their credentials. Again, this
-  does not mean that the User Agent ought to do so when receiving the push; rather, this could be
-  seen as a mechanism to avoid the round trip that would otherwise be required -- just as in other
-  intended uses of Server Push.
+* 401 (Unauthenticated) and 407 (Proxy-Authenticate) are covered in {{auth}}.
 
 * Many other 4xx and 5xx status codes don't have any practical use in Server Push; e.g., 405
   (Method Not Allowed), 408 (Request Timeout), 411 (Length Required) and 414 (URI Too Long) are all
@@ -375,6 +372,18 @@ See {{scope}} for a discussion of how widely such a response should be made avai
 Most use cases for pushing partial content ({{!RFC7233}}) seem to 
 
 
+## Authentication {#auth}
+
+401 (Unauthorized) has the side effect of prompting the user for their credentials. Again, this
+does not mean that the User Agent ought to do so when receiving a pushed 401; rather, this could be
+seen as a mechanism to avoid the round trip that would otherwise be required -- just as in other
+intended uses of Server Push.
+
+Presumably, the PUSH_PROMISE for such a request would omit the `Authentication` header field.
+
+407 (Proxy Authenticate) is probably best not to push, since it's confusing authority of the
+network vs. the origin. Clients SHOULD ignore such pushes.
+
 
 ## Other PUSH_PROMISE Headers
 
@@ -475,7 +484,6 @@ This document registers the following entries in the HTTP/2 Error Code registry:
 * Code: 0xNN
 * Description: On a RST_STREAM sent on a pushed stream, indicates that the content-coding of the response is not supported by the client.
 * Specification: [this document]
-
 
 
 # Security Considerations
