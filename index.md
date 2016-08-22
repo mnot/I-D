@@ -8,12 +8,12 @@ layout: front
 * [http-cache-channels](http-cache-channels)  
 * [http-options-resources](http-options-resources) - Well-Known Resources for HTTP OPTIONS 
 * [http-patch-status](http-patch-status) - The 2NN Patch HTTP Status Code 
-* [http2-pushing](http2-pushing) - Defining HTTP/2 Server Push More Carefully 
 * [httpbis-retry](httpbis-retry) - Retrying HTTP Requests 
 * [json-home](json-home) - Home Documents for HTTP APIs 
 * [link-hint](link-hint) - HTTP Link Hints 
 * [linked-cache-inv](linked-cache-inv)  
 * [proxy-explanation](proxy-explanation) - The application/proxy-explanation+json media type 
+* [pushopedia](pushopedia) - Defining HTTP/2 Server Push More Carefully 
 * [rfc3864bis](rfc3864bis) - Registration Procedures for Message Header Fields 
 * [rfc5988bis](rfc5988bis) - Web Linking 
 * [safe-hint](safe-hint) - The safe HTTP Preference 

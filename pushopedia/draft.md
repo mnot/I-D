@@ -1,7 +1,7 @@
 ---
 title: Defining HTTP/2 Server Push More Carefully
 abbrev: HTTP/2 Pushing
-docname: draft-nottingham-http2-pushing-00
+docname: draft-nottingham-pushopedia-00
 date: 2016
 category: info
 
