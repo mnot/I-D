@@ -113,29 +113,32 @@ can be pushed and stored just as a 200 (OK) -- even if this would be of very lim
 
 There are a few complications to consider, however. 
 
-304 (Not Modified) has special interaction with caches and validation that is described in
-{{conditional}}.
+* 304 (Not Modified) has special interaction with caches and validation that is described in 
+  {{conditional}}.
 
-Other 3xx Redirection codes indicate, when pushed, that if the client were to make that request, it
-will be redirected. That does not mean that the `Location` header's URL should be followed
-immediately; it is only upon an actual request from the client that it should be acted upon.
-Therefore, the caching semantics of 3xx redirects take effect.
+* Other 3xx Redirection codes indicate, when pushed, that if the client were to make that request,
+  it will be redirected. That does not mean that the `Location` header's URL should be followed
+  immediately; it is only upon an actual request from the client that it should be acted upon.
+  Therefore, the caching semantics of 3xx redirects take effect.
 
-1xx Informational codes don't make much sense as a Push payload, because the headers they convey
-are lost in most implementations (to be subsumed by the headers in the final response). For
-example, the headers on a 100 (Continue) response are a no-op; effectively, it's a one-bit "go
-ahead" signal. Since HTTP/2 already has protocol-level signalling mechanisms, it's probably best to
-say that 1xx responses SHOULD NOT be sent in Server Push, and MUST be ignored when received.
+* 1xx Informational codes don't make much sense as a Push payload, because the headers they convey
+  are lost in most implementations (to be subsumed by the headers in the final response). For
+  example, the headers on a 100 (Continue) response are a no-op; effectively, it's a one-bit "go
+  ahead" signal. Since HTTP/2 already has protocol-level signalling mechanisms, it's probably best
+  to say that 1xx responses SHOULD NOT be sent in Server Push, and MUST be ignored when received.
 
-401 (Unauthorized) has the side effect of prompting the user for their credentials. Again, this does not mean that the User Agent ought to do so when receiving the push; rather, this could be seen as a mechanism to avoid the round trip that would otherwise be required -- just as in other intended uses of Server Push.
+* 401 (Unauthorized) has the side effect of prompting the user for their credentials. Again, this
+  does not mean that the User Agent ought to do so when receiving the push; rather, this could be
+  seen as a mechanism to avoid the round trip that would otherwise be required -- just as in other
+  intended uses of Server Push.
 
-Many other 4xx and 5xx status codes don't have any practical use in Server Push; e.g., 405 (Method
-Not Allowed), 408 (Request Timeout), 411 (Length Required) and 414 (URI Too Long) are all reactions
-to problems with the request. Since the server has sent that request, their use is somewhat
-self-defeating; however, this does not mean that a client encountering them should generate an
-error, or fail to use the response. At the very least, if the response is available in devtools,
-debugging will be easier; additionally, someone might find a creative, appropriate use for them
-some day.
+* Many other 4xx and 5xx status codes don't have any practical use in Server Push; e.g., 405
+  (Method Not Allowed), 408 (Request Timeout), 411 (Length Required) and 414 (URI Too Long) are all
+  reactions to problems with the request. Since the server has sent that request, their use is
+  somewhat self-defeating; however, this does not mean that a client encountering them should
+  generate an error, or fail to use the response. At the very least, if the response is available
+  in devtools, debugging will be easier; additionally, someone might find a creative, appropriate
+  use for them some day.
 
 
 ## Conditional Requests {#conditional}
