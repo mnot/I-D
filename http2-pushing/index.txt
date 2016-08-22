@@ -71,7 +71,7 @@ Table of Contents
        2.3.3.  304 (Not Modified) without a Conditional  . . . . . .   6
      2.4.  Content Negotiation . . . . . . . . . . . . . . . . . . .   7
      2.5.  Caching . . . . . . . . . . . . . . . . . . . . . . . . .   8
-       2.5.1.  Pushing Uncacheable Content . . . . . . . . . . . . .   8
+       2.5.1.  Pushing Uncacheable Content . . . . . . . . . . . . .   9
        2.5.2.  Pushing Stale Content . . . . . . . . . . . . . . . .   9
        2.5.3.  Pushing with max-age=0, no-cache and similar  . . . .   9
        2.5.4.  Pushing and Invalidation  . . . . . . . . . . . . . .   9
@@ -85,7 +85,7 @@ Table of Contents
    3.  Generating PUSH_PROMISE . . . . . . . . . . . . . . . . . . .  10
      3.1.  Avoiding Push Races . . . . . . . . . . . . . . . . . . .  10
    4.  Using Server Push Well  . . . . . . . . . . . . . . . . . . .  10
-   5.  Client Handling of Server Push  . . . . . . . . . . . . . . .  10
+   5.  Client Handling of Server Push  . . . . . . . . . . . . . . .  11
    6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  11
      6.1.  PUSH_IS_CACHED  . . . . . . . . . . . . . . . . . . . . .  11
      6.2.  PUSH_UNAUTHORITATIVE  . . . . . . . . . . . . . . . . . .  12
@@ -191,33 +191,33 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
    There are a few complications to consider, however.
 
-   304 (Not Modified) has special interaction with caches and validation
-   that is described in Section 2.3.
+   o  304 (Not Modified) has special interaction with caches and
+      validation that is described in Section 2.3.
 
-   Other 3xx Redirection codes indicate, when pushed, that if the client
-   were to make that request, it will be redirected.  That does not mean
-   that the "Location" header's URL should be followed immediately; it
-   is only upon an actual request from the client that it should be
-   acted upon.  Therefore, the caching semantics of 3xx redirects take
-   effect.
+   o  Other 3xx Redirection codes indicate, when pushed, that if the
+      client were to make that request, it will be redirected.  That
+      does not mean that the "Location" header's URL should be followed
+      immediately; it is only upon an actual request from the client
+      that it should be acted upon.  Therefore, the caching semantics of
+      3xx redirects take effect.
 
-   1xx Informational codes don't make much sense as a Push payload,
-   because the headers they convey are lost in most implementations (to
-   be subsumed by the headers in the final response).  For example, the
-   headers on a 100 (Continue) response are a no-op; effectively, it's a
-   one-bit "go ahead" signal.  Since HTTP/2 already has protocol-level
-   signalling mechanisms, it's probably best to say that 1xx responses
-   SHOULD NOT be sent in Server Push, and MUST be ignored when received.
+   o  1xx Informational codes don't make much sense as a Push payload,
+      because the headers they convey are lost in most implementations
+      (to be subsumed by the headers in the final response).  For
+      example, the headers on a 100 (Continue) response are a no-op;
+      effectively, it's a one-bit "go ahead" signal.  Since HTTP/2
+      already has protocol-level signalling mechanisms, it's probably
+      best to say that 1xx responses SHOULD NOT be sent in Server Push,
+      and MUST be ignored when received.
 
-   401 (Unauthorized) has the side effect of prompting the user for
-   their credentials.  Again, this does not mean that the User Agent
-   ought to do so when receiving the push; rather, this could be seen as
-   a mechanism to avoid the round trip that would otherwise be required
-   - just as in other intended uses of Server Push.
+   o  401 (Unauthorized) has the side effect of prompting the user for
+      their credentials.  Again, this does not mean that the User Agent
+      ought to do so when receiving the push; rather, this could be seen
+      as a mechanism to avoid the round trip that would otherwise be
+      required - just as in other intended uses of Server Push.
 
-   Many other 4xx and 5xx status codes don't have any practical use in
-   Server Push; e.g., 405 (Method Not Allowed), 408 (Request Timeout),
-   411 (Length Required) and 414 (URI Too Long) are all reactions to
+   o  Many other 4xx and 5xx status codes don't have any practical use
+      in Server Push; e.g., 405 (Method Not Allowed), 408 (Request
 
 
 
@@ -226,12 +226,14 @@ Nottingham              Expires February 23, 2017               [Page 4]
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
 
-   problems with the request.  Since the server has sent that request,
-   their use is somewhat self-defeating; however, this does not mean
-   that a client encountering them should generate an error, or fail to
-   use the response.  At the very least, if the response is available in
-   devtools, debugging will be easier; additionally, someone might find
-   a creative, appropriate use for them some day.
+      Timeout), 411 (Length Required) and 414 (URI Too Long) are all
+      reactions to problems with the request.  Since the server has sent
+      that request, their use is somewhat self-defeating; however, this
+      does not mean that a client encountering them should generate an
+      error, or fail to use the response.  At the very least, if the
+      response is available in devtools, debugging will be easier;
+      additionally, someone might find a creative, appropriate use for
+      them some day.
 
 2.3.  Conditional Requests
 
@@ -267,12 +269,10 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    does have access to a stale one (in the meaning of [RFC7234]), it can
    "PUSH_PROMISE" with "If-None-Match" and/or "If-Modified-Since":
 
-   :method: GET
-   :scheme: https
-   :authority: www.example.com
-   :path: /images/5678.jpg
-   Host: www.example.com
-   If-None-Match: "lmnop"
+
+
+
+
 
 
 
@@ -281,6 +281,13 @@ Nottingham              Expires February 23, 2017               [Page 5]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+   :method: GET
+   :scheme: https
+   :authority: www.example.com
+   :path: /images/5678.jpg
+   Host: www.example.com
+   If-None-Match: "lmnop"
 
    That way, the client again has an opportunity to send "RST_STREAM" if
    it already has a fresh copy in cache.
@@ -323,13 +330,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    (fresh or stale); however, it MUST include the validators to allow
    the client to confirm this.  For example:
 
-   :status: 304
-   ETag: "abc123"
-   Date: Tue, 3 Sep 2016 04:34:12 GMT
-   Content-Type: image/jpeg
-   Cache-Control: max-age=3600
-
-
 
 
 
@@ -337,6 +337,12 @@ Nottingham              Expires February 23, 2017               [Page 6]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+   :status: 304
+   ETag: "abc123"
+   Date: Tue, 3 Sep 2016 04:34:12 GMT
+   Content-Type: image/jpeg
+   Cache-Control: max-age=3600
 
    In this case, if the client's cached response does not have the same
    "ETag" it SHOULD re-issue the request to obtain a fresh response.
@@ -379,13 +385,7 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
       you're using gzip encoding, "Accept-Encoding" and "Content-
       Encoding" should be pushed with appropriate values.
 
-   o  The pushed response MUST have an appropriate "Vary" header field,
-      if it is cacheable.  This is so that the cache operates properly.
 
-   Additionally, the server needs to know what the base capabilities and
-   preferences of the client are, to allow it to select the appropriate
-   responses to push.  To aid this, we suggest that servers create a
-   response by copying the values of the request header fields mentioned
 
 
 
@@ -394,6 +394,13 @@ Nottingham              Expires February 23, 2017               [Page 7]
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
 
+   o  The pushed response MUST have an appropriate "Vary" header field,
+      if it is cacheable.  This is so that the cache operates properly.
+
+   Additionally, the server needs to know what the base capabilities and
+   preferences of the client are, to allow it to select the appropriate
+   responses to push.  To aid this, we suggest that servers create a
+   response by copying the values of the request header fields mentioned
    in the "Vary" response header field from the request that is
    identified by the "PUSH_PROMISE" frame's Stream ID.
 
@@ -431,13 +438,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
    Server Push has a strong tie to HTTP caching ([RFC7234]).
 
-2.5.1.  Pushing Uncacheable Content
-
-   [RFC7540], Section 8.2 says:
-
-      Pushed responses that are not cacheable MUST NOT be stored by any
-      HTTP cache.  They MAY be made available to the application
-      separately.
 
 
 
@@ -449,6 +449,14 @@ Nottingham              Expires February 23, 2017               [Page 8]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+2.5.1.  Pushing Uncacheable Content
+
+   [RFC7540], Section 8.2 says:
+
+      Pushed responses that are not cacheable MUST NOT be stored by any
+      HTTP cache.  They MAY be made available to the application
+      separately.
 
 2.5.2.  Pushing Stale Content
 
@@ -491,20 +499,18 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
       header field identifies a method that is not safe, it MUST respond
       with a stream error (Section 5.4.2) of type PROTOCOL_ERROR.
 
-   o  host
-
-   o  user agent
-
-   o  cookies
-
-
-
 
 
 Nottingham              Expires February 23, 2017               [Page 9]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+   o  host
+
+   o  user agent
+
+   o  cookies
 
 2.8.  CORS
 
@@ -549,18 +555,18 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
    o  long wait (server think, back end)
 
-5.  Client Handling of Server Push
-
-   o  matching push_promise headers
-
-   o  affinity of push - load group (FF), navigation handle (Edge)
-
 
 
 Nottingham              Expires February 23, 2017              [Page 10]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+5.  Client Handling of Server Push
+
+   o  matching push_promise headers
+
+   o  affinity of push - load group (FF), navigation handle (Edge)
 
    o  canonicalisation when receiving
 
@@ -603,12 +609,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
    o  Code: 0xNN
 
-   o  Description: On a RST_STREAM sent on a pushed stream, indicates
-      that the sender already had a fresh cached response, and did not
-      need to update it.
-
-   o  Specification: [this document]
-
 
 
 
@@ -617,6 +617,12 @@ Nottingham              Expires February 23, 2017              [Page 11]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+   o  Description: On a RST_STREAM sent on a pushed stream, indicates
+      that the sender already had a fresh cached response, and did not
+      need to update it.
+
+   o  Specification: [this document]
 
 6.2.  PUSH_UNAUTHORITATIVE
 
@@ -658,12 +664,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
               RFC 7233, DOI 10.17487/RFC7233, June 2014,
               <http://www.rfc-editor.org/info/rfc7233>.
 
-   [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
-              Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
-              RFC 7234, DOI 10.17487/RFC7234, June 2014,
-              <http://www.rfc-editor.org/info/rfc7234>.
-
-
 
 
 
@@ -673,6 +673,11 @@ Nottingham              Expires February 23, 2017              [Page 12]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+   [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
+              RFC 7234, DOI 10.17487/RFC7234, June 2014,
+              <http://www.rfc-editor.org/info/rfc7234>.
 
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
@@ -696,11 +701,6 @@ Author's Address
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
-
-
-
-
-
 
 
 
