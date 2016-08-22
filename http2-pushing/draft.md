@@ -1,5 +1,5 @@
 ---
-title: Interesting Uses for HTTP/2 Server Push
+title: Defining HTTP/2 Server Push More Carefully
 abbrev: HTTP/2 Pushing
 docname: draft-nottingham-http2-pushing-00
 date: 2016
@@ -28,11 +28,18 @@ normative:
   RFC2119:
 
 informative:
-
+  WHATWG.fetch:
+    target: https://fetch.spec.whatwg.org/
+    title: Fetch
+    author:
+      -
+        organization: WHAT Working Group
+    date: 2016
 
 --- abstract
 
-
+This document explores the use and implementation of HTTP/2 Server Push, in order to forumlate
+recommendations about use and implementation.
 
 --- middle
 
@@ -69,18 +76,27 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# Interactions between Server Push and HTTP
+# Server Push and HTTP Semantics
 
 ## HTTP Methods
 
-{{RFC7230}}, Section 8.2 requires that promised requests be cacheable, safe, and not have a request
+{{!RFC7540}}, Section 8.2 requires that promised requests be cacheable, safe, and not have a request
 body.
 
-In practice, this means that GET and HEAD can be pushed. A few other methods are cacheable and safe, but since a request body is prohibited (both by the HTTP/2 spec and wire format), it's not practical to use them.
+In practice, this means that GET and HEAD can be pushed. A few other methods are cacheable and
+safe, but since a request body is prohibited (both by the HTTP/2 spec and wire format), it's not
+practical to use them.
 
-* GET
-* HEAD
-* Other status codes
+GET operates as we'd expect; it makes a representation available as if it had been previously
+requested and cached, roughly.
+
+In theory, HEAD should operate in a similar fashion; it would be as if the client had performed a
+HEAD and used the pushed response to update the cache, as per {{!RFC7234}}, Section 4.3.5
+("Freshening Responses via HEAD").
+
+Of other status codes, perhaps the most interesting would be OPTIONS, because of its use by CORS
+
+
 
 
 ## HTTP Status Codes
@@ -92,6 +108,7 @@ In principle, any HTTP status code can be pushed.
 * Redirection (300, 301, 302, 303, 307, 308)
 * Not Modified (304) - see {{conditional}}
 * Error (4xx and 5xx) 
+
 
 ## Conditional Requests {#conditional}
 
@@ -121,7 +138,7 @@ If it does not do so, the server will continue to push the successful (`2xx`) re
 ### PUSH_PROMISE with If-None-Match / If-Modified-Since
 
 If the server does not have a fresh local copy of the response, but does have access to a stale one
-(in the meaning of {{RFC2734}}), it can `PUSH_PROMISE` with `If-None-Match` and/or
+(in the meaning of {{!RFC7234}}), it can `PUSH_PROMISE` with `If-None-Match` and/or
 `If-Modified-Since`:
 
 ~~~
@@ -197,6 +214,7 @@ Cache-Control: max-age=3600
 If felt necessary, this can be made explicit, for example by defining a new conditional header
 `If-In-Digest`.
 
+
 ## Content Negotiation
 
 The interaction of Content Negotiation and Server Push is tricky, because it requires the server to
@@ -255,23 +273,60 @@ Vary: Accept-Encoding
 
 ## Caching
 
-uncacheable content
-  - pushing stale
-max-age=0
-invalidation
+Server Push has a strong tie to HTTP caching ({{!RFC7234}}).
+
+### Pushing Uncacheable Content
+
+{{!RFC7540}}, Section 8.2 says:
+
+> Pushed responses that are not cacheable MUST NOT be stored by any HTTP cache. They MAY be made available to the application separately.
+
+
+### Pushing Stale Content
+
+
+
+### Pushing with max-age=0, no-cache and similar
+
+
+{{!RFC7540}}, Section 8.2 says:
+
+> Pushed responses are considered successfully validated on the origin server (e.g., if the "no-cache" cache response directive is present ({{!RFC7234}}, Section 5.2.2)) while the stream identified by the promised stream ID is still open.
+
+
+### Pushing and Invalidation
+
+
+### Pushing and Cache Hits
+
+{{!RFC7540}}, Section 8.2.2 says:
+
+> Once a client receives a PUSH_PROMISE frame and chooses to accept the pushed response, the client SHOULD NOT issue any requests for the promised response until after the promised stream has closed.
+> If the client determines, for any reason, that it does not wish to receive the pushed response from the server or if the server takes too long to begin sending the promised response, the client can send a RST_STREAM frame, using either the CANCEL or REFUSED_STREAM code and referencing the pushed stream's identifier.
+
+
 
 
 ## Partial Content
-  - partial push
+
+Most use cases for pushing partial content ({{!RFC7233}}) seem to 
 
 
 
 ## Other PUSH_PROMISE Headers
 
+{{!RFC7540}}, Section 8.2.1 says:
+
+> If a client receives a PUSH_PROMISE that does not include a complete and valid set of header fields or the :method pseudo-header field identifies a method that is not safe, it MUST respond with a stream error (Section 5.4.2) of type PROTOCOL_ERROR.
+
  - host
  - user agent
  - cookies
 
+
+## CORS
+
+{{!WHATWG.fetch}}
 
 ## Interaction with HTTP/2 Features
 
@@ -281,6 +336,11 @@ invalidation
 
 ### Connection Coalescing
 
+{{!RFC7540}}, Section 8.2 says:
+
+> The server MUST include a value in the :authority pseudo-header field for which the server is authoritative (see Section 10.1). A client MUST treat a PUSH_PROMISE for which the server is not authoritative as a stream error (Section 5.4.2) of type PROTOCOL_ERROR.
+
+
 
 # Generating PUSH_PROMISE
 
@@ -288,6 +348,11 @@ invalidation
   - relative priority
 
 ## Avoiding Push Races {#race}
+
+{{!RFC7540}}, Section 8.2.1 says:
+
+> The server SHOULD send PUSH_PROMISE (Section 6.6) frames prior to sending any frames that reference the promised responses. This avoids a race where clients issue requests prior to receiving any PUSH_PROMISE frames.
+
 
 
 # Using Server Push Well
@@ -327,9 +392,9 @@ invalidation
 
 This document registers the following entries in the HTTP/2 Error Code registry:
 
-## PUSH_TO_CACHED
+## PUSH_IS_CACHED
 
-* Name: PUSH_TO_CACHED
+* Name: PUSH_IS_CACHED
 * Code: 0xNN
 * Description: On a RST_STREAM sent on a pushed stream, indicates that the sender already had a fresh cached response, and did not need to update it.
 * Specification: [this document]
@@ -338,14 +403,14 @@ This document registers the following entries in the HTTP/2 Error Code registry:
 
 * Name: PUSH_UNAUTHORITATIVE
 * Code: 0xNN
-* Description: On a RST_STREAM sent on a pushed stream, indicates
+* Description: On a RST_STREAM sent on a pushed stream, indicates that the server is not considered authoritative for the origin of the pushed request.
 * Specification: [this document]
 
-## PUSH_NOT_MATCH
+## PUSH_CONTENT_ENCODING_NOT_SUPPORTED
 
-* Name: PUSH_NOT_MATCH
+* Name: PUSH_CONTENT_ENCODING_NOT_SUPPORTED
 * Code: 0xNN
-* Description: On a RST_STREAM sent on a pushed stream, indicates
+* Description: On a RST_STREAM sent on a pushed stream, indicates that the content-coding of the response is not supported by the client.
 * Specification: [this document]
 
 
