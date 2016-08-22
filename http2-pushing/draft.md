@@ -56,7 +56,9 @@ pushing far more data that could usefully fill the idle time on the connection.
 To improve this, this document explores how Server Push interacts with various HTTP features, with
 recommendations both for using Server Push in servers, and handling it by clients.
 
-It does not address other use cases for Server Push, such as store-and-forward or
+It's not so much of a specification, for now, as it is a collection of ideas about how Server Push **ought** to work. 
+
+It also does not address other use cases for Server Push, such as store-and-forward or
 publish-and-subscribe.
 
 
@@ -196,6 +198,9 @@ If felt necessary, this can be made explicit, for example by defining a new cond
 `If-In-Digest`.
 
 ## Content Negotiation
+
+The interaction of Content Negotiation and Server Push is tricky, because it requires the server to
+guess what the client would have sent, in order to negotiate upon it.
 
 
 
