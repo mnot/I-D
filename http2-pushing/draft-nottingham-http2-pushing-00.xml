@@ -131,10 +131,7 @@ are lost in most implementations (to be subsumed by the headers in the final res
 example, the headers on a 100 (Continue) response are a no-op; effectively, it’s a one-bit “go
 ahead” signal. Since HTTP/2 already has protocol-level signalling mechanisms, it’s probably best
 to say that 1xx responses SHOULD NOT be sent in Server Push, and MUST be ignored when received.</t>
-  <t>401 (Unauthorized) has the side effect of prompting the user for their credentials. Again, this
-does not mean that the User Agent ought to do so when receiving the push; rather, this could be
-seen as a mechanism to avoid the round trip that would otherwise be required – just as in other
-intended uses of Server Push.</t>
+  <t>401 (Unauthenticated) and 407 (Proxy-Authenticate) are covered in <xref target="auth"/>.</t>
   <t>Many other 4xx and 5xx status codes don’t have any practical use in Server Push; e.g., 405
 (Method Not Allowed), 408 (Request Timeout), 411 (Length Required) and 414 (URI Too Long) are all
 reactions to problems with the request. Since the server has sent that request, their use is
@@ -383,6 +380,19 @@ If the client determines, for any reason, that it does not wish to receive the p
 <section anchor="partial-content" title="Partial Content">
 
 <t>Most use cases for pushing partial content (<xref target="RFC7233"/>) seem to</t>
+
+</section>
+<section anchor="auth" title="Authentication">
+
+<t>401 (Unauthorized) has the side effect of prompting the user for their credentials. Again, this
+does not mean that the User Agent ought to do so when receiving a pushed 401; rather, this could be
+seen as a mechanism to avoid the round trip that would otherwise be required – just as in other
+intended uses of Server Push.</t>
+
+<t>Presumably, the PUSH_PROMISE for such a request would omit the <spanx style="verb">Authentication</spanx> header field.</t>
+
+<t>407 (Proxy Authenticate) is probably best not to push, since it’s confusing authority of the
+network vs. the origin. Clients SHOULD ignore such pushes.</t>
 
 </section>
 <section anchor="other-pushpromise-headers" title="Other PUSH_PROMISE Headers">
