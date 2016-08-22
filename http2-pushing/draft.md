@@ -10,11 +10,8 @@ area: General
 workgroup: 
 keyword: Internet-Draft
 keyword: http2
-keyword: websockets
 keyword: server push
 keyword: push
-keyword: pubsub
-keyword: store and forward
 
 stand_alone: yes
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
@@ -41,173 +38,230 @@ informative:
 
 # Introduction
 
-HTTP/2 {{!RFC7540}} defines Server Push as a mechanism for servers to "push" request/response pairs to clients preemptively.
+HTTP/2 {{!RFC7540}} defines Server Push as a mechanism for servers to "push" request/response pairs
+to clients.
 
-The initial use case for Server Push is saving a round trip of latency when additional content is referenced. For example, when a HTML page references CSS and JavaScript resources, the browser needs to receive the HTML response before it can fetch those resources. Server Push allows the server to proactively send them.
+The initial use case for Server Push was saving a round trip of latency when additional content is
+referenced. For example, when a HTML page references CSS and JavaScript resources, the browser
+needs to receive the HTML response before it can fetch those resources. Server Push allows the
+server to proactively send them, in anticipation of the browser's imminent need.
 
-Server Push is now supported by most Web browsers, and sites are starting to experiment with it. In doing so, it's become apparent that client handling of server push is not well-defined, leading to divergence in browser behaviour.
+Server Push is now supported by most Web browsers, and sites are starting to experiment with it. In
+doing so, it's become apparent that client handling of server push is not well-defined, leading to
+divergence in browser behaviour.
 
-Furthermore, it appears that some deployments tend to treat Server Push like a "magic bullet", pushing far more data that could usefully fill the idle time on the connection.
+Furthermore, it appears that some deployments tend to treat Server Push like a "magic bullet",
+pushing far more data that could usefully fill the idle time on the connection.
 
-To improve this, this document:
+To improve this, this document specifies how Server Push interacts with various HTTP features, with
+recommendations both for using Server Push in servers, and handling it by clients.
 
-* Gathers use cases for Server Push with browser caches
-* Suggests best practices for generating pushes
-* Specifies client behaviours when handling pushes 
-
-It does not contemplate other use cases, such as store-and-forward, 
-
-
-However, the ability to send an unsolicited message from a server to a client
-in HTTP has long been interesting, leading to the development of Comet {{}} as
-well as WebSockets {{}}.
-
-These mechanisms have seen some success in deployment, but do not natively
-offer a way to scale out to a large number of clients, nor to a distributed
-network, because they are relatively low-level protocols (i.e., they do not
-offer semantics such as "store-and-forward" or "publish/subscribe").
-
-Furthermore, Server push is defined in terms of HTTP caching {{p6-caching}}, so
-as to avoid creaing a backwards-incompatible extension to the protocol. In
-other words, it is thought of as "pushing" into the client's cache. Any
-additional uses of server push need to be compatible with this use, so as to
-avoid interoperability problems with deployed software (e.g., intermediary
-caches), unless a new ALPN protocol identifier is used (which would be
-undesireable).
-
-This memo explores how to meet these use cases using Server Push, in a manner
-that is compatible with its existing uses. It identifies ways to use existing
-protocol elements to acheive some goals, while also defining new protocol
-elements where necessary.
+It does not address other use cases for Server Push, such as store-and-forward or
+publish-and-subscribe.
 
 
 ## Notational Conventions
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in {{RFC2119}}.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
+"RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
+{{RFC2119}}.
 
-This document uses the Augmented BNF defined by {{RFC5246}}, and additionally uses the entity-tag rule defined in {{p4-conditional}}.
+
+# Interactions between Server Push and HTTP
+
+## HTTP Methods
+
+{{RFC7230}}, Section 8.2 requires that promised requests be cacheable, safe, and not have a request
+body.
+
+In practice, this means that GET and HEAD can be pushed. A few other methods are cacheable and safe, but since a request body is prohibited (both by the HTTP/2 spec and wire format), it's not practical to use them.
+
+* GET
+* HEAD
+* Other status codes
 
 
-## Push
+## HTTP Status Codes
+
+In principle, any HTTP status code can be pushed. 
+
+* Informational (1xx)
+* Success (2xx)
+* Redirection (300, 301, 302, 303, 307, 308)
+* Not Modified (304) - see {{conditional}}
+* Error (4xx and 5xx) 
+
+## Conditional Requests {#conditional}
+
+### PUSH_PROMISE with If-Match / If-Unmodified-Since
+
+If the server has immediate access to the response being pushed (e.g., if the server is authoritative for it, or it is fresh in cache), it might want to send conditional headers in the `PUSH_PROMISE` request.
+
+For example, a request can be sent with `If-Match` and/or `If-Unmodified-Since` to give the client
+the earliest possible chance to send a `RST_STREAM` on the promise, without the server starting the
+pushed response.
+
+~~~
+:method: GET
+:scheme: https
+:authority: www.example.com
+:path: /images/1234.jpg
+Host: www.example.com
+If-Match: "abcdef"
+~~~
+
+Here, when a client receives these headers in a `PUSH_PROMISE`, it can send a `RST_STREAM` if it
+has a fresh cached response for `https://www.example.com/images/1234.jpg` with the `ETag` "abcdef".
+If it does not do so, the server will continue to push the successful (`2xx`) response (since the
+`ETag` does in fact match what is pushed).
+
+
+### PUSH_PROMISE with If-None-Match / If-Modified-Since
+
+If the server does not have a fresh local copy of the response, but does have access to a stale one
+(in the meaning of {{RFC2734}}), it can `PUSH_PROMISE` with `If-None-Match` and/or
+`If-Modified-Since`:
+
+~~~
+:method: GET
+:scheme: https
+:authority: www.example.com
+:path: /images/5678.jpg
+Host: www.example.com
+If-None-Match: "lmnop"
+~~~
+
+That way, the client again has an opportunity to send `RST_STREAM` if it already has a fresh copy in
+cache. Once the server has a fresh (possibly validated) response locally available, it can either
+push a `304 (Not Modified)` response in the case that the `ETag` hasn't changed, and a successful
+(`2xx`) response if it has.
+
+Note that if the client has a fresh copy in cache, but the server does not, the client here can
+still use the fresh copy; it has not been invalidated just because the server has not kept its copy
+fresh.
+
+
+### Generating 304 (Not Modified) without a Conditional in PUSH_PROMISE
+
+If the server believes that the client does have a stale but valid copy in its cache (e.g., through
+the use of a cache digest; see {{?I-D.ietf-httpbis-cache-digest}}), it can send a `PUSH_PROMISE`
+followed by a pushed `304 (Not Modified)` response to revalidate that cached response, thereby
+making it fresh in the client's cache.
+
+If the server has a local copy of the response that it wishes to use, it can send the PUSH_PROMISE
+with an `If-None-Match` and/or `If-Modified-Since` conditional, as above. 
+
+However, if it does not, it will still be desirable to generate the `PUSH_PROMISE` as soon as
+possible, so as to avoid the race described in {race}.
+
+To allow this, a request without a conditional can be sent:
+
+~~~
+:method: GET
+:scheme: https
+:authority: www.example.com
+:path: /images/9012.jpg
+Host: www.example.com
+~~~
+
+When the response body is available to the server, it can send a `304 (Not Modified)` if it
+believes that the client already holds a copy (fresh or stale); however, it MUST include the
+validators to allow the client to confirm this. For example:
+
+~~~
+:status: 304
+ETag: "abc123"
+Date: Tue, 3 Sep 2016 04:34:12 GMT
+Content-Type: image/jpeg
+Cache-Control: max-age=3600
+~~~
+
+In this case, if the client's cached response does not have the same `ETag` it SHOULD re-issue the
+request to obtain a fresh response.
+
+On the other hand, if the server determines that the client does not have the appropriate cached response, it can send the full, successful (`2xx`) response:
+
+~~~
+:status: 200
+ETag: "abc123"
+Date: Tue, 3 Sep 2016 04:34:12 GMT
+Content-Type: image/jpeg
+Cache-Control: max-age=3600
+
+[ body ]
+~~~
+
+**EDITOR'S NOTE**: This approach relies upon an _implicit conditional_ in the PUSH_PROMISE request.
+If felt necessary, this can be made explicit, for example by defining a new conditional header
+`If-In-Digest`.
+
+## Content Negotiation
+
+
+
+
+## Caching
+
+uncacheable content
+  - pushing stale
+max-age=0
+
+
+## Partial Content
+  - partial push
+
+
+
+## Other PUSH_PROMISE Headers
+
+ - host
+ - user agent
+ - cookies
+
+
+## HTTP/2 Priorities
+
+  - incoming request effects - cancel? deprioritise others?
+
+
+# Generating PUSH_PROMISE
+
+  - trickle push
+  - relative priority
+
+## Avoiding Push Races {#race}
+
+
+# Using Server Push Well
 
   - not magic
-  - preload
-  - no cookies
-  - conneg
-  - cache state
-  - promise header best practices
-  - push api in browsers?
-  - pushing uncacheable
   - best practices for content re pushing too much
-  - pushing HEAD
-  - pushing stale
-  - pushing 304
-  - pushing redirects
-  - partial push
-  - trickle push
+  - long wait (server think, back end)
+
+
+# Client Handling of Server Push
+
+
+  - matching push_promise headers
+  - affinity of push -- load group (FF), navigation handle (Edge)
+  - canonicalisation when receiving
   - push telemetry
-  - dependencies?
-  - link @rel as=''
+  - error codes
   - clients rejecting pushes
   - visualising with devtools
-  - long wait (server think, back end)
-  - incoming request effects - cancel? deprioritise others?
   - pushing content of next page 
-  - push direct into cache
-  - affinity of push -- load group (FF), navigation handle (Edge)
-  - "we don't want you to put anything into the cache that the user as not explicitly accessed"
-  - constructing push URIs (fragment, headers needed, allowed, disallowed?)
-  - matching push_promise headers
-  - cookies?
-  - canonicalisation when receiving
-  - relative priority
+  - push api in browsers?
+  - dependencies?
   - client behaviour when push is cancelled
+  - push direct into cache
+
+
+  - preload
+  - link @rel as=''
+  - "we don't want you to put anything into the cache that the user has not explicitly accessed"
+  - constructing push URIs (fragment, headers needed, allowed, disallowed?)
   
 
-
-
-
-
-# Processing Server Push
-
-
-# Updating Stored Responses
-
-Often, it is necessary to update a stored response, rather than completely
-replace it. For example, it may be desireable to update an index of all
-available message for a particular client by adding one new message.
-
-One way to achieve this in HTTP/2 is by pushing partial responses {{p5-range}},
-along with the corresponding partial requests.
-
-For example, the following request/response pair, when pushed to a client,
-would update that client's stored index of messages:
-
-    GET /bob/messages
-    Host: api.jitter.com
-    Range: bytes 2048-4096
-    If-Match: "abcdef"
-
-    206 Partial Content
-    Content-Type: application/json
-    ETag: "ghijkl"
-    Content-Range: bytes 2048-4096/*
-
-Here, the pushed request specifies a range to update, as well as an ETag in
-If-Match; if the provided ETag does not match that which has been stored, or if
-there is not stored response, the update will silently fail. The pushed
-response is a 206 (signifying partial update), and carries a matching
-Content-Range header, along with a new ETag header that replaces taht fo the
-stored response.
-
-This allows a server to partially update a stored response, but has the
-disadvantage of requiring the server to know its exact (byte-for-byte) content,
-so we define a different mechanism; the 207 Patch response status code.
-
-
-
-# Identifying Push Targets
-
-When clients have more than one server that they could connect to (e.g.,
-because the servers are actually intermediary gateways, load balanced using
-DNS), it becomes necessary to direct pushes to the appropriate intermediary or
-intermediaries (depending upon the use case).
-
-There are many ways to achieve this. Although out-of-band configuration might
-be suitable in many cases (since often such networks are), a standard mechanism
-is desireable to facilitiate interoperability.
-
-To do so, we assume the following deployment characteristics:
-
-* A very large number of clients.
-
-* A set of gateways. The purpose of this layer is to keep connections open to
-  the clients as much as possible, in order to reduce apparent latency. Note
-  that this can actually consist of several layers of successive
-  intermediaries, used to consolidate connections and/or route traffic.
-  
-* The origin server or origin servers. 
-
-When a client connects to a gateway, it sends a request that might be satisfied
-by a cache, or might be forwarded to the origin. In either case, the response
-denotes the cached response(s) to push to that client.
-
-
-
-    Push-To: success="/bob"
-
-# Managing Storage
-
-# Backwards Compatibility with HTTP/1.1
-
-    Cache-Control: max-age=0, connpush
-    
-connpush makes the response fresh as long as the client is connected to the
-server. connpush MUST NOT be forwarded or stored beyond the lifetime of the
-server connection.
-
-FIXME: is this really a CC directive, or a different header, or...?
-Probably a different header, since it needs to be hop-by-hop.
 
 
 
@@ -245,3 +299,14 @@ This document registers the following entries in the HTTP/2 Error Code registry:
 
 
 --- back
+
+
+# Algorithm for Handling Pushes
+
+Upon receiving a PUSH_PROMISE frame on a connection, possibly followed by an number of CONTINUATION frames, the last with END_HEADERS set:
+
+1. If the `Stream Identifier` of the PUSH_PROMISE does not refer to a stream that is open,
+2. If the `Promised Stream ID` refers to a stream that is open, or has an odd number,
+3. Parse the Header Block into a set of header fields `headers`.
+4. If the `:method` header field's value is not `GET` or `HEAD`, 
+5. 
