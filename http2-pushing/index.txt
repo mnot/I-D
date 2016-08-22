@@ -65,37 +65,36 @@ Table of Contents
    2.  Server Push and HTTP Semantics  . . . . . . . . . . . . . . .   3
      2.1.  HTTP Methods  . . . . . . . . . . . . . . . . . . . . . .   3
      2.2.  HTTP Status Codes . . . . . . . . . . . . . . . . . . . .   4
-     2.3.  Conditional Requests  . . . . . . . . . . . . . . . . . .   4
-       2.3.1.  PUSH_PROMISE with If-Match / If-Unmodified-Since  . .   4
+     2.3.  Conditional Requests  . . . . . . . . . . . . . . . . . .   5
+       2.3.1.  PUSH_PROMISE with If-Match / If-Unmodified-Since  . .   5
        2.3.2.  PUSH_PROMISE with If-None-Match / If-Modified-Since .   5
        2.3.3.  Generating 304 (Not Modified) without a Conditional
-               in PUSH_PROMISE . . . . . . . . . . . . . . . . . . .   5
-     2.4.  Content Negotiation . . . . . . . . . . . . . . . . . . .   6
+               in PUSH_PROMISE . . . . . . . . . . . . . . . . . . .   6
+     2.4.  Content Negotiation . . . . . . . . . . . . . . . . . . .   7
      2.5.  Caching . . . . . . . . . . . . . . . . . . . . . . . . .   8
        2.5.1.  Pushing Uncacheable Content . . . . . . . . . . . . .   8
-       2.5.2.  Pushing Stale Content . . . . . . . . . . . . . . . .   8
-       2.5.3.  Pushing with max-age=0, no-cache and similar  . . . .   8
-       2.5.4.  Pushing and Invalidation  . . . . . . . . . . . . . .   8
-       2.5.5.  Pushing and Cache Hits  . . . . . . . . . . . . . . .   8
-     2.6.  Partial Content . . . . . . . . . . . . . . . . . . . . .   8
-     2.7.  Other PUSH_PROMISE Headers  . . . . . . . . . . . . . . .   8
-     2.8.  CORS  . . . . . . . . . . . . . . . . . . . . . . . . . .   9
-     2.9.  Interaction with HTTP/2 Features  . . . . . . . . . . . .   9
-       2.9.1.  Priorities  . . . . . . . . . . . . . . . . . . . . .   9
-       2.9.2.  Connection Coalescing . . . . . . . . . . . . . . . .   9
-   3.  Generating PUSH_PROMISE . . . . . . . . . . . . . . . . . . .   9
-     3.1.  Avoiding Push Races . . . . . . . . . . . . . . . . . . .   9
+       2.5.2.  Pushing Stale Content . . . . . . . . . . . . . . . .   9
+       2.5.3.  Pushing with max-age=0, no-cache and similar  . . . .   9
+       2.5.4.  Pushing and Invalidation  . . . . . . . . . . . . . .   9
+       2.5.5.  Pushing and Cache Hits  . . . . . . . . . . . . . . .   9
+     2.6.  Partial Content . . . . . . . . . . . . . . . . . . . . .   9
+     2.7.  Other PUSH_PROMISE Headers  . . . . . . . . . . . . . . .   9
+     2.8.  CORS  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
+     2.9.  Interaction with HTTP/2 Features  . . . . . . . . . . . .  10
+       2.9.1.  Priorities  . . . . . . . . . . . . . . . . . . . . .  10
+       2.9.2.  Connection Coalescing . . . . . . . . . . . . . . . .  10
+   3.  Generating PUSH_PROMISE . . . . . . . . . . . . . . . . . . .  10
+     3.1.  Avoiding Push Races . . . . . . . . . . . . . . . . . . .  10
    4.  Using Server Push Well  . . . . . . . . . . . . . . . . . . .  10
    5.  Client Handling of Server Push  . . . . . . . . . . . . . . .  10
    6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  11
      6.1.  PUSH_IS_CACHED  . . . . . . . . . . . . . . . . . . . . .  11
-     6.2.  PUSH_UNAUTHORITATIVE  . . . . . . . . . . . . . . . . . .  11
-     6.3.  PUSH_CONTENT_ENCODING_NOT_SUPPORTED . . . . . . . . . . .  11
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  11
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
+     6.2.  PUSH_UNAUTHORITATIVE  . . . . . . . . . . . . . . . . . .  12
+     6.3.  PUSH_CONTENT_ENCODING_NOT_SUPPORTED . . . . . . . . . . .  12
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  12
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
      8.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .  12
-   Appendix A.  Algorithm for Handling Pushes  . . . . . . . . . . .  12
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .  13
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
@@ -106,6 +105,7 @@ Table of Contents
    The initial use case for Server Push was saving a round trip of
    latency when additional content is referenced.  For example, when a
    HTML page references CSS and JavaScript resources, the browser needs
+   to receive the HTML response before it can fetch those resources.
 
 
 
@@ -114,7 +114,6 @@ Nottingham              Expires February 23, 2017               [Page 2]
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
 
-   to receive the HTML response before it can fetch those resources.
    Server Push allows the server to proactively send them, in
    anticipation of the browser's imminent need.
 
@@ -161,7 +160,8 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    In theory, HEAD should operate in a similar fashion; it would be as
    if the client had performed a HEAD and used the pushed response to
    update the cache, as per [RFC7234], Section 4.3.5 ("Freshening
-   Responses via HEAD").
+   Responses via HEAD").  This might be useful, for example, to update
+
 
 
 
@@ -170,22 +170,68 @@ Nottingham              Expires February 23, 2017               [Page 3]
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
 
+   the metadata of that response.  However, the same effect can also be
+   achieved by using a conditional request; see Section 2.3.
+
    Of other status codes, perhaps the most interesting would be OPTIONS,
-   because of its use by CORS
+   because of its use by CORS ([WHATWG.fetch]).  See Section 2.8.
 
 2.2.  HTTP Status Codes
 
-   In principle, any HTTP status code can be pushed.
+   In principle, any HTTP status code can be pushed in a response.
+   Success (2xx), redirection (300, 301, 302, 303, 307, 308) and eror
+   (4xx and 5xx) status codes all have the same caching semantics,
+   described in [RFC7234].
 
-   o  Informational (1xx)
+   This implies that if they are pushed to the client, any of these
+   status codes should behave as if the client had requested them
+   previously and stored the response.  For example, a 403 (Forbidden)
+   can be pushed and stored just as a 200 (OK) - even if this would be
+   of very limited use.
 
-   o  Success (2xx)
+   There are a few complications to consider, however.
 
-   o  Redirection (300, 301, 302, 303, 307, 308)
+   304 (Not Modified) has special interaction with caches and validation
+   that is described in Section 2.3.
 
-   o  Not Modified (304) - see Section 2.3
+   Other 3xx Redirection codes indicate, when pushed, that if the client
+   were to make that request, it will be redirected.  That does not mean
+   that the "Location" header's URL should be followed immediately; it
+   is only upon an actual request from the client that it should be
+   acted upon.  Therefore, the caching semantics of 3xx redirects take
+   effect.
 
-   o  Error (4xx and 5xx)
+   1xx Informational codes don't make much sense as a Push payload,
+   because the headers they convey are lost in most implementations (to
+   be subsumed by the headers in the final response).  For example, the
+   headers on a 100 (Continue) response are a no-op; effectively, it's a
+   one-bit "go ahead" signal.  Since HTTP/2 already has protocol-level
+   signalling mechanisms, it's probably best to say that 1xx responses
+   SHOULD NOT be sent in Server Push, and MUST be ignored when received.
+
+   401 (Unauthorized) has the side effect of prompting the user for
+   their credentials.  Again, this does not mean that the User Agent
+   ought to do so when receiving the push; rather, this could be seen as
+   a mechanism to avoid the round trip that would otherwise be required
+   - just as in other intended uses of Server Push.
+
+   Many other 4xx and 5xx status codes don't have any practical use in
+   Server Push; e.g., 405 (Method Not Allowed), 408 (Request Timeout),
+   411 (Length Required) and 414 (URI Too Long) are all reactions to
+
+
+
+Nottingham              Expires February 23, 2017               [Page 4]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
+   problems with the request.  Since the server has sent that request,
+   their use is somewhat self-defeating; however, this does not mean
+   that a client encountering them should generate an error, or fail to
+   use the response.  At the very least, if the response is available in
+   devtools, debugging will be easier; additionally, someone might find
+   a creative, appropriate use for them some day.
 
 2.3.  Conditional Requests
 
@@ -215,17 +261,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    ("2xx") response (since the "ETag" does in fact match what is
    pushed).
 
-
-
-
-
-
-
-Nottingham              Expires February 23, 2017               [Page 4]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
 2.3.2.  PUSH_PROMISE with If-None-Match / If-Modified-Since
 
    If the server does not have a fresh local copy of the response, but
@@ -239,15 +274,25 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    Host: www.example.com
    If-None-Match: "lmnop"
 
+
+
+
+Nottingham              Expires February 23, 2017               [Page 5]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
    That way, the client again has an opportunity to send "RST_STREAM" if
-   it already has a fresh copy in cache.  Once the server has a fresh
-   (possibly validated) response locally available, it can either push a
-   "304 (Not Modified)" response in the case that the "ETag" hasn't
-   changed, and a successful ("2xx") response if it has.
+   it already has a fresh copy in cache.
+
+   Once the server has obtained a fresh (possibly validated) response,
+   it can either push a "304 (Not Modified)" response in the case that
+   the "ETag" hasn't changed, or a successful ("2xx") response if it
+   has.
 
    Note that if the client has a fresh copy in cache, but the server
-   does not, the client here can still use the fresh copy; it has not
-   been invalidated just because the server has not kept its copy fresh.
+   does not, the client can still use the fresh copy; it has not been
+   invalidated just because the server has not kept its copy fresh.
 
 2.3.3.  Generating 304 (Not Modified) without a Conditional in
         PUSH_PROMISE
@@ -274,14 +319,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    :path: /images/9012.jpg
    Host: www.example.com
 
-
-
-
-Nottingham              Expires February 23, 2017               [Page 5]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
    When the response body is available to the server, it can send a "304
    (Not Modified)" if it believes that the client already holds a copy
    (fresh or stale); however, it MUST include the validators to allow
@@ -292,6 +329,14 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    Date: Tue, 3 Sep 2016 04:34:12 GMT
    Content-Type: image/jpeg
    Cache-Control: max-age=3600
+
+
+
+
+Nottingham              Expires February 23, 2017               [Page 6]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
 
    In this case, if the client's cached response does not have the same
    "ETag" it SHOULD re-issue the request to obtain a fresh response.
@@ -330,14 +375,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
    However, this does imply a few things:
 
-
-
-
-Nottingham              Expires February 23, 2017               [Page 6]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
    o  The pushed request and response MUST still "agree"; i.e., if
       you're using gzip encoding, "Accept-Encoding" and "Content-
       Encoding" should be pushed with appropriate values.
@@ -349,6 +386,14 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    preferences of the client are, to allow it to select the appropriate
    responses to push.  To aid this, we suggest that servers create a
    response by copying the values of the request header fields mentioned
+
+
+
+Nottingham              Expires February 23, 2017               [Page 7]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
    in the "Vary" response header field from the request that is
    identified by the "PUSH_PROMISE" frame's Stream ID.
 
@@ -382,18 +427,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    Accept-Encoding: gzip, br
    Vary: Accept-Encoding
 
-
-
-
-
-
-
-
-Nottingham              Expires February 23, 2017               [Page 7]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
 2.5.  Caching
 
    Server Push has a strong tie to HTTP caching ([RFC7234]).
@@ -406,7 +439,20 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
       HTTP cache.  They MAY be made available to the application
       separately.
 
+
+
+
+
+
+
+Nottingham              Expires February 23, 2017               [Page 8]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
 2.5.2.  Pushing Stale Content
+
+   becoming stale too
 
 2.5.3.  Pushing with max-age=0, no-cache and similar
 
@@ -442,14 +488,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
       If a client receives a PUSH_PROMISE that does not include a
       complete and valid set of header fields or the :method pseudo-
-
-
-
-Nottingham              Expires February 23, 2017               [Page 8]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
       header field identifies a method that is not safe, it MUST respond
       with a stream error (Section 5.4.2) of type PROTOCOL_ERROR.
 
@@ -458,6 +496,15 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    o  user agent
 
    o  cookies
+
+
+
+
+
+Nottingham              Expires February 23, 2017               [Page 9]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
 
 2.8.  CORS
 
@@ -494,18 +541,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
       avoids a race where clients issue requests prior to receiving any
       PUSH_PROMISE frames.
 
-
-
-
-
-
-
-
-Nottingham              Expires February 23, 2017               [Page 9]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
 4.  Using Server Push Well
 
    o  not magic
@@ -519,6 +554,13 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    o  matching push_promise headers
 
    o  affinity of push - load group (FF), navigation handle (Edge)
+
+
+
+Nottingham              Expires February 23, 2017              [Page 10]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
 
    o  canonicalisation when receiving
 
@@ -550,18 +592,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    o  constructing push URIs (fragment, headers needed, allowed,
       disallowed?)
 
-
-
-
-
-
-
-
-Nottingham              Expires February 23, 2017              [Page 10]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
 6.  IANA Considerations
 
    This document registers the following entries in the HTTP/2 Error
@@ -578,6 +608,15 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
       need to update it.
 
    o  Specification: [this document]
+
+
+
+
+
+Nottingham              Expires February 23, 2017              [Page 11]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
 
 6.2.  PUSH_UNAUTHORITATIVE
 
@@ -607,17 +646,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
 8.  References
 
-
-
-
-
-
-
-Nottingham              Expires February 23, 2017              [Page 11]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
 8.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
@@ -635,6 +663,17 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
               RFC 7234, DOI 10.17487/RFC7234, June 2014,
               <http://www.rfc-editor.org/info/rfc7234>.
 
+
+
+
+
+
+
+Nottingham              Expires February 23, 2017              [Page 12]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
               DOI 10.17487/RFC7540, May 2015,
@@ -651,51 +690,12 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
               WHAT Working Group, "Fetch", 2016,
               <https://fetch.spec.whatwg.org/>.
 
-Appendix A.  Algorithm for Handling Pushes
-
-   Upon receiving a PUSH_PROMISE frame on a connection, possibly
-   followed by an number of CONTINUATION frames, the last with
-   END_HEADERS set:
-
-   1.  If the "Stream Identifier" of the PUSH_PROMISE does not refer to
-       a stream that is open,
-
-   2.  If the "Promised Stream ID" refers to a stream that is open, or
-       has an odd number,
-
-   3.  Parse the Header Block into a set of header fields "headers".
-
-   4.  If the ":method" header field's value is not "GET" or "HEAD",
-
-
-
-Nottingham              Expires February 23, 2017              [Page 12]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
-   5.
-
 Author's Address
 
    Mark Nottingham
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

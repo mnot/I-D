@@ -69,7 +69,8 @@ pushing far more data that could usefully fill the idle time on the connection.<
 <t>To improve this, this document explores how Server Push interacts with various HTTP features, with
 recommendations both for using Server Push in servers, and handling it by clients.</t>
 
-<t>It’s not so much of a specification, for now, as it is a collection of ideas about how Server Push <spanx style="strong">ought</spanx> to work.</t>
+<t>It’s not so much of a specification, for now, as it is a collection of ideas about how Server Push
+<spanx style="strong">ought</spanx> to work.</t>
 
 <t>It also does not address other use cases for Server Push, such as store-and-forward or
 publish-and-subscribe.</t>
@@ -98,22 +99,49 @@ requested and cached, roughly.</t>
 
 <t>In theory, HEAD should operate in a similar fashion; it would be as if the client had performed a
 HEAD and used the pushed response to update the cache, as per <xref target="RFC7234"/>, Section 4.3.5
-(“Freshening Responses via HEAD”).</t>
+(“Freshening Responses via HEAD”). This might be useful, for example, to update the metadata of
+that response. However, the same effect can also be achieved by using a conditional request; see
+<xref target="conditional"/>.</t>
 
-<t>Of other status codes, perhaps the most interesting would be OPTIONS, because of its use by CORS</t>
+<t>Of other status codes, perhaps the most interesting would be OPTIONS, because of its use by CORS
+(<xref target="WHATWG.fetch"/>). See <xref target="cors"/>.</t>
 
 </section>
 <section anchor="http-status-codes" title="HTTP Status Codes">
 
-<t>In principle, any HTTP status code can be pushed.</t>
+<t>In principle, any HTTP status code can be pushed in a response. Success (2xx), redirection (300,
+301, 302, 303, 307, 308) and eror (4xx and 5xx) status codes all have the same caching semantics,
+described in <xref target="RFC7234"/>.</t>
 
-<t><list style="symbols">
-  <t>Informational (1xx)</t>
-  <t>Success (2xx)</t>
-  <t>Redirection (300, 301, 302, 303, 307, 308)</t>
-  <t>Not Modified (304) - see <xref target="conditional"/></t>
-  <t>Error (4xx and 5xx)</t>
-</list></t>
+<t>This implies that if they are pushed to the client, any of these status codes should behave as if
+the client had requested them previously and stored the response. For example, a 403 (Forbidden)
+can be pushed and stored just as a 200 (OK) – even if this would be of very limited use.</t>
+
+<t>There are a few complications to consider, however.</t>
+
+<t>304 (Not Modified) has special interaction with caches and validation that is described in
+<xref target="conditional"/>.</t>
+
+<t>Other 3xx Redirection codes indicate, when pushed, that if the client were to make that request, it
+will be redirected. That does not mean that the <spanx style="verb">Location</spanx> header’s URL should be followed
+immediately; it is only upon an actual request from the client that it should be acted upon.
+Therefore, the caching semantics of 3xx redirects take effect.</t>
+
+<t>1xx Informational codes don’t make much sense as a Push payload, because the headers they convey
+are lost in most implementations (to be subsumed by the headers in the final response). For
+example, the headers on a 100 (Continue) response are a no-op; effectively, it’s a one-bit “go
+ahead” signal. Since HTTP/2 already has protocol-level signalling mechanisms, it’s probably best to
+say that 1xx responses SHOULD NOT be sent in Server Push, and MUST be ignored when received.</t>
+
+<t>401 (Unauthorized) has the side effect of prompting the user for their credentials. Again, this does not mean that the User Agent ought to do so when receiving the push; rather, this could be seen as a mechanism to avoid the round trip that would otherwise be required – just as in other intended uses of Server Push.</t>
+
+<t>Many other 4xx and 5xx status codes don’t have any practical use in Server Push; e.g., 405 (Method
+Not Allowed), 408 (Request Timeout), 411 (Length Required) and 414 (URI Too Long) are all reactions
+to problems with the request. Since the server has sent that request, their use is somewhat
+self-defeating; however, this does not mean that a client encountering them should generate an
+error, or fail to use the response. At the very least, if the response is available in devtools,
+debugging will be easier; additionally, someone might find a creative, appropriate use for them
+some day.</t>
 
 </section>
 <section anchor="conditional" title="Conditional Requests">
@@ -156,14 +184,15 @@ Host: www.example.com
 If-None-Match: "lmnop"
 ]]></artwork></figure>
 
-<t>That way, the client again has an opportunity to send <spanx style="verb">RST_STREAM</spanx> if it already has a fresh copy in
-cache. Once the server has a fresh (possibly validated) response locally available, it can either
-push a <spanx style="verb">304 (Not Modified)</spanx> response in the case that the <spanx style="verb">ETag</spanx> hasn’t changed, and a successful
-(<spanx style="verb">2xx</spanx>) response if it has.</t>
+<t>That way, the client again has an opportunity to send <spanx style="verb">RST_STREAM</spanx> if it already has a fresh copy
+in cache.</t>
 
-<t>Note that if the client has a fresh copy in cache, but the server does not, the client here can
-still use the fresh copy; it has not been invalidated just because the server has not kept its copy
-fresh.</t>
+<t>Once the server has obtained a fresh (possibly validated) response, it can either push a <spanx style="verb">304 (Not
+Modified)</spanx> response in the case that the <spanx style="verb">ETag</spanx> hasn’t changed, or a successful (<spanx style="verb">2xx</spanx>) response if
+it has.</t>
+
+<t>Note that if the client has a fresh copy in cache, but the server does not, the client can still
+use the fresh copy; it has not been invalidated just because the server has not kept its copy fresh.</t>
 
 </section>
 <section anchor="generating-304-not-modified-without-a-conditional-in-pushpromise" title="Generating 304 (Not Modified) without a Conditional in PUSH_PROMISE">
@@ -294,6 +323,8 @@ Vary: Accept-Encoding
 
 </section>
 <section anchor="pushing-stale-content" title="Pushing Stale Content">
+
+<t>becoming stale too</t>
 
 </section>
 <section anchor="pushing-with-max-age0-no-cache-and-similar" title="Pushing with max-age=0, no-cache and similar">
@@ -568,19 +599,6 @@ If the client determines, for any reason, that it does not wish to receive the p
     </references>
 
 
-<section anchor="algorithm-for-handling-pushes" title="Algorithm for Handling Pushes">
-
-<t>Upon receiving a PUSH_PROMISE frame on a connection, possibly followed by an number of CONTINUATION frames, the last with END_HEADERS set:</t>
-
-<t><list style="numbers">
-  <t>If the <spanx style="verb">Stream Identifier</spanx> of the PUSH_PROMISE does not refer to a stream that is open,</t>
-  <t>If the <spanx style="verb">Promised Stream ID</spanx> refers to a stream that is open, or has an odd number,</t>
-  <t>Parse the Header Block into a set of header fields <spanx style="verb">headers</spanx>.</t>
-  <t>If the <spanx style="verb">:method</spanx> header field’s value is not <spanx style="verb">GET</spanx> or <spanx style="verb">HEAD</spanx>,</t>
-  <t></t>
-</list></t>
-
-</section>
 
 
   </back>
