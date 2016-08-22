@@ -307,24 +307,54 @@ Vary: Accept-Encoding
 
 Server Push has a strong tie to HTTP caching ({{!RFC7234}}).
 
+
+### Caching and Scope of Server Push {#scope}
+
+
 ### Pushing Uncacheable Content
 
 {{!RFC7540}}, Section 8.2 says:
 
-> Pushed responses that are not cacheable MUST NOT be stored by any HTTP cache. They MAY be made available to the application separately.
+> Pushed responses that are not cacheable MUST NOT be stored by any HTTP cache. They MAY be made
+available to the application separately.
+
+As a result, any response that cannot be stored as per the rules in {{RFC7234}}, Section 3 cannot
+be stored by a receiving cache.
+
+However, they might still be usable if a browser API for Server Push emerges. See
+<https://github.com/whatwg/fetch/issues/51>.
+
+It's less clear if they can be used to trigger other actions after being temporarily stored. For
+example, it might be useful to store an uncacheable 302 redirect for the duration of the
+connection, so that a reference, when found, will be redirected without delay.
+
+The same effect could be achieved by merely sending `Cache-Control: max-age=0` (as per below), but
+it's questionable as to whether this would surprise Web developers.
 
 
 ### Pushing Stale Content
 
+
 becoming stale too
 
 
-### Pushing with max-age=0, no-cache and similar
-
+### Pushing with max-age=0, no-cache
 
 {{!RFC7540}}, Section 8.2 says:
 
 > Pushed responses are considered successfully validated on the origin server (e.g., if the "no-cache" cache response directive is present ({{!RFC7234}}, Section 5.2.2)) while the stream identified by the promised stream ID is still open.
+
+This implies that, while that stream is open, the pushed response can be considered fresh, even when it contains any (or all) of the following cache directives:
+
+* max-age=0
+* no-cache
+* s-maxage=0 (for shared caches)
+
+This applies to `Expires` when the value matches that of the `Date` header.
+
+
+
+See {{scope}} for a discussion of how widely such a response should be made available.
 
 
 ### Pushing and Invalidation
