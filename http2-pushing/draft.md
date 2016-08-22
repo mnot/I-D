@@ -103,13 +103,39 @@ Of other status codes, perhaps the most interesting would be OPTIONS, because of
 
 ## HTTP Status Codes
 
-In principle, any HTTP status code can be pushed in a response. 
+In principle, any HTTP status code can be pushed in a response. Success (2xx), redirection (300,
+301, 302, 303, 307, 308) and eror (4xx and 5xx) status codes all have the same caching semantics,
+described in {{RFC7234}}.
 
-* Informational (1xx)
-* Success (2xx)
-* Redirection (300, 301, 302, 303, 307, 308)
-* Not Modified (304) - see {{conditional}}
-* Error (4xx and 5xx) 
+This implies that if they are pushed to the client, any of these status codes should behave as if
+the client had requested them previously and stored the response. For example, a 403 (Forbidden)
+can be pushed and stored just as a 200 (OK) -- even if this would be of very limited use.
+
+There are a few complications to consider, however. 
+
+304 (Not Modified) has special interaction with caches and validation that is described in
+{{conditional}}.
+
+Other 3xx Redirection codes indicate, when pushed, that if the client were to make that request, it
+will be redirected. That does not mean that the `Location` header's URL should be followed
+immediately; it is only upon an actual request from the client that it should be acted upon.
+Therefore, the caching semantics of 3xx redirects take effect.
+
+1xx Informational codes don't make much sense as a Push payload, because the headers they convey
+are lost in most implementations (to be subsumed by the headers in the final response). For
+example, the headers on a 100 (Continue) response are a no-op; effectively, it's a one-bit "go
+ahead" signal. Since HTTP/2 already has protocol-level signalling mechanisms, it's probably best to
+say that 1xx responses SHOULD NOT be sent in Server Push, and MUST be ignored when received.
+
+401 (Unauthorized) has the side effect of prompting the user for their credentials. Again, this does not mean that the User Agent ought to do so when receiving the push; rather, this could be seen as a mechanism to avoid the round trip that would otherwise be required -- just as in other intended uses of Server Push.
+
+Many other 4xx and 5xx status codes don't have any practical use in Server Push; e.g., 405 (Method
+Not Allowed), 408 (Request Timeout), 411 (Length Required) and 414 (URI Too Long) are all reactions
+to problems with the request. Since the server has sent that request, their use is somewhat
+self-defeating; however, this does not mean that a client encountering them should generate an
+error, or fail to use the response. At the very least, if the response is available in devtools,
+debugging will be easier; additionally, someone might find a creative, appropriate use for them
+some day.
 
 
 ## Conditional Requests {#conditional}
@@ -287,6 +313,7 @@ Server Push has a strong tie to HTTP caching ({{!RFC7234}}).
 
 ### Pushing Stale Content
 
+becoming stale too
 
 
 ### Pushing with max-age=0, no-cache and similar
