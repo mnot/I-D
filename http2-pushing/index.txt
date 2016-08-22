@@ -66,10 +66,9 @@ Table of Contents
      2.1.  HTTP Methods  . . . . . . . . . . . . . . . . . . . . . .   3
      2.2.  HTTP Status Codes . . . . . . . . . . . . . . . . . . . .   4
      2.3.  Conditional Requests  . . . . . . . . . . . . . . . . . .   5
-       2.3.1.  PUSH_PROMISE with If-Match / If-Unmodified-Since  . .   5
-       2.3.2.  PUSH_PROMISE with If-None-Match / If-Modified-Since .   5
-       2.3.3.  Generating 304 (Not Modified) without a Conditional
-               in PUSH_PROMISE . . . . . . . . . . . . . . . . . . .   6
+       2.3.1.  If-Match / If-Unmodified-Since  . . . . . . . . . . .   5
+       2.3.2.  If-None-Match / If-Modified-Since . . . . . . . . . .   5
+       2.3.3.  304 (Not Modified) without a Conditional  . . . . . .   6
      2.4.  Content Negotiation . . . . . . . . . . . . . . . . . . .   7
      2.5.  Caching . . . . . . . . . . . . . . . . . . . . . . . . .   8
        2.5.1.  Pushing Uncacheable Content . . . . . . . . . . . . .   8
@@ -106,6 +105,7 @@ Table of Contents
    latency when additional content is referenced.  For example, when a
    HTML page references CSS and JavaScript resources, the browser needs
    to receive the HTML response before it can fetch those resources.
+
 
 
 
@@ -235,7 +235,7 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
 2.3.  Conditional Requests
 
-2.3.1.  PUSH_PROMISE with If-Match / If-Unmodified-Since
+2.3.1.  If-Match / If-Unmodified-Since
 
    If the server has immediate access to the response being pushed
    (e.g., if the server is authoritative for it, or it is fresh in
@@ -261,7 +261,7 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    ("2xx") response (since the "ETag" does in fact match what is
    pushed).
 
-2.3.2.  PUSH_PROMISE with If-None-Match / If-Modified-Since
+2.3.2.  If-None-Match / If-Modified-Since
 
    If the server does not have a fresh local copy of the response, but
    does have access to a stale one (in the meaning of [RFC7234]), it can
@@ -294,8 +294,7 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    does not, the client can still use the fresh copy; it has not been
    invalidated just because the server has not kept its copy fresh.
 
-2.3.3.  Generating 304 (Not Modified) without a Conditional in
-        PUSH_PROMISE
+2.3.3.  304 (Not Modified) without a Conditional
 
    If the server believes that the client does have a stale but valid
    copy in its cache (e.g., through the use of a cache digest; see
@@ -329,6 +328,7 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    Date: Tue, 3 Sep 2016 04:34:12 GMT
    Content-Type: image/jpeg
    Cache-Control: max-age=3600
+
 
 
 
