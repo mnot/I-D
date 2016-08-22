@@ -71,30 +71,31 @@ Table of Contents
        2.3.3.  304 (Not Modified) without a Conditional  . . . . . .   6
      2.4.  Content Negotiation . . . . . . . . . . . . . . . . . . .   7
      2.5.  Caching . . . . . . . . . . . . . . . . . . . . . . . . .   8
-       2.5.1.  Pushing Uncacheable Content . . . . . . . . . . . . .   9
-       2.5.2.  Pushing Stale Content . . . . . . . . . . . . . . . .   9
-       2.5.3.  Pushing with max-age=0, no-cache and similar  . . . .   9
-       2.5.4.  Pushing and Invalidation  . . . . . . . . . . . . . .   9
-       2.5.5.  Pushing and Cache Hits  . . . . . . . . . . . . . . .   9
-     2.6.  Partial Content . . . . . . . . . . . . . . . . . . . . .   9
-     2.7.  Other PUSH_PROMISE Headers  . . . . . . . . . . . . . . .   9
+       2.5.1.  Caching and Scope of Server Push  . . . . . . . . . .   9
+       2.5.2.  Pushing Uncacheable Content . . . . . . . . . . . . .   9
+       2.5.3.  Pushing Stale Content . . . . . . . . . . . . . . . .   9
+       2.5.4.  Pushing with max-age=0, no-cache  . . . . . . . . . .   9
+       2.5.5.  Pushing and Invalidation  . . . . . . . . . . . . . .  10
+       2.5.6.  Pushing and Cache Hits  . . . . . . . . . . . . . . .  10
+     2.6.  Partial Content . . . . . . . . . . . . . . . . . . . . .  10
+     2.7.  Other PUSH_PROMISE Headers  . . . . . . . . . . . . . . .  10
      2.8.  CORS  . . . . . . . . . . . . . . . . . . . . . . . . . .  10
-     2.9.  Interaction with HTTP/2 Features  . . . . . . . . . . . .  10
-       2.9.1.  Priorities  . . . . . . . . . . . . . . . . . . . . .  10
-       2.9.2.  Connection Coalescing . . . . . . . . . . . . . . . .  10
-   3.  Generating PUSH_PROMISE . . . . . . . . . . . . . . . . . . .  10
-     3.1.  Avoiding Push Races . . . . . . . . . . . . . . . . . . .  10
-   4.  Using Server Push Well  . . . . . . . . . . . . . . . . . . .  10
+     2.9.  Interaction with HTTP/2 Features  . . . . . . . . . . . .  11
+       2.9.1.  Priorities  . . . . . . . . . . . . . . . . . . . . .  11
+       2.9.2.  Connection Coalescing . . . . . . . . . . . . . . . .  11
+   3.  Generating PUSH_PROMISE . . . . . . . . . . . . . . . . . . .  11
+     3.1.  Avoiding Push Races . . . . . . . . . . . . . . . . . . .  11
+   4.  Using Server Push Well  . . . . . . . . . . . . . . . . . . .  11
    5.  Client Handling of Server Push  . . . . . . . . . . . . . . .  11
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  11
-     6.1.  PUSH_IS_CACHED  . . . . . . . . . . . . . . . . . . . . .  11
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
+     6.1.  PUSH_IS_CACHED  . . . . . . . . . . . . . . . . . . . . .  12
      6.2.  PUSH_UNAUTHORITATIVE  . . . . . . . . . . . . . . . . . .  12
-     6.3.  PUSH_CONTENT_ENCODING_NOT_SUPPORTED . . . . . . . . . . .  12
-   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  12
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .  13
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
+     6.3.  PUSH_CONTENT_ENCODING_NOT_SUPPORTED . . . . . . . . . . .  13
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  13
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .  14
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  14
 
 1.  Introduction
 
@@ -105,7 +106,6 @@ Table of Contents
    latency when additional content is referenced.  For example, when a
    HTML page references CSS and JavaScript resources, the browser needs
    to receive the HTML response before it can fetch those resources.
-
 
 
 
@@ -450,7 +450,9 @@ Nottingham              Expires February 23, 2017               [Page 8]
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
 
-2.5.1.  Pushing Uncacheable Content
+2.5.1.  Caching and Scope of Server Push
+
+2.5.2.  Pushing Uncacheable Content
 
    [RFC7540], Section 8.2 says:
 
@@ -458,11 +460,26 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
       HTTP cache.  They MAY be made available to the application
       separately.
 
-2.5.2.  Pushing Stale Content
+   As a result, any response that cannot be stored as per the rules in
+   [RFC7234], Section 3 cannot be stored by a receiving cache.
+
+   However, they might still be usable if a browser API for Server Push
+   emerges.  See https://github.com/whatwg/fetch/issues/51 .
+
+   It's less clear if they can be used to trigger other actions after
+   being temporarily stored.  For example, it might be useful to store
+   an uncacheable 302 redirect for the duration of the connection, so
+   that a reference, when found, will be redirected without delay.
+
+   The same effect could be achieved by merely sending "Cache-Control:
+   max-age=0" (as per below), but it's questionable as to whether this
+   would surprise Web developers.
+
+2.5.3.  Pushing Stale Content
 
    becoming stale too
 
-2.5.3.  Pushing with max-age=0, no-cache and similar
+2.5.4.  Pushing with max-age=0, no-cache
 
    [RFC7540], Section 8.2 says:
 
@@ -471,9 +488,33 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
       present ([RFC7234], Section 5.2.2)) while the stream identified by
       the promised stream ID is still open.
 
-2.5.4.  Pushing and Invalidation
+   This implies that, while that stream is open, the pushed response can
+   be considered fresh, even when it contains any (or all) of the
+   following cache directives:
 
-2.5.5.  Pushing and Cache Hits
+   o  max-age=0
+
+   o  no-cache
+
+   o  s-maxage=0 (for shared caches)
+
+
+
+
+Nottingham              Expires February 23, 2017               [Page 9]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
+   This applies to "Expires" when the value matches that of the "Date"
+   header.
+
+   See Section 2.5.1 for a discussion of how widely such a response
+   should be made available.
+
+2.5.5.  Pushing and Invalidation
+
+2.5.6.  Pushing and Cache Hits
 
    [RFC7540], Section 8.2.2 says:
 
@@ -499,13 +540,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
       header field identifies a method that is not safe, it MUST respond
       with a stream error (Section 5.4.2) of type PROTOCOL_ERROR.
 
-
-
-Nottingham              Expires February 23, 2017               [Page 9]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
    o  host
 
    o  user agent
@@ -515,6 +549,18 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 2.8.  CORS
 
    [WHATWG.fetch]
+
+
+
+
+
+
+
+
+Nottingham              Expires February 23, 2017              [Page 10]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
 
 2.9.  Interaction with HTTP/2 Features
 
@@ -555,13 +601,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
    o  long wait (server think, back end)
 
-
-
-Nottingham              Expires February 23, 2017              [Page 10]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
 5.  Client Handling of Server Push
 
    o  matching push_promise headers
@@ -571,6 +610,13 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    o  canonicalisation when receiving
 
    o  push telemetry
+
+
+
+Nottingham              Expires February 23, 2017              [Page 11]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
 
    o  error codes
 
@@ -609,15 +655,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
    o  Code: 0xNN
 
-
-
-
-
-Nottingham              Expires February 23, 2017              [Page 11]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
    o  Description: On a RST_STREAM sent on a pushed stream, indicates
       that the sender already had a fresh cached response, and did not
       need to update it.
@@ -629,6 +666,13 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    o  Name: PUSH_UNAUTHORITATIVE
 
    o  Code: 0xNN
+
+
+
+Nottingham              Expires February 23, 2017              [Page 12]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
 
    o  Description: On a RST_STREAM sent on a pushed stream, indicates
       that the server is not considered authoritative for the origin of
@@ -664,16 +708,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
               RFC 7233, DOI 10.17487/RFC7233, June 2014,
               <http://www.rfc-editor.org/info/rfc7233>.
 
-
-
-
-
-
-Nottingham              Expires February 23, 2017              [Page 12]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
    [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
               Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
               RFC 7234, DOI 10.17487/RFC7234, June 2014,
@@ -683,6 +717,18 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
               DOI 10.17487/RFC7540, May 2015,
               <http://www.rfc-editor.org/info/rfc7540>.
+
+
+
+
+
+
+
+
+Nottingham              Expires February 23, 2017              [Page 13]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
 
 8.2.  Informative References
 
@@ -725,4 +771,14 @@ Author's Address
 
 
 
-Nottingham              Expires February 23, 2017              [Page 13]
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 23, 2017              [Page 14]

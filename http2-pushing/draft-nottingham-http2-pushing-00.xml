@@ -314,13 +314,30 @@ Vary: Accept-Encoding
 
 <t>Server Push has a strong tie to HTTP caching (<xref target="RFC7234"/>).</t>
 
+<section anchor="scope" title="Caching and Scope of Server Push">
+
+</section>
 <section anchor="pushing-uncacheable-content" title="Pushing Uncacheable Content">
 
 <t><xref target="RFC7540"/>, Section 8.2 says:</t>
 
 <t><list style='empty'>
-  <t>Pushed responses that are not cacheable MUST NOT be stored by any HTTP cache. They MAY be made available to the application separately.</t>
+  <t>Pushed responses that are not cacheable MUST NOT be stored by any HTTP cache. They MAY be made
+available to the application separately.</t>
 </list></t>
+
+<t>As a result, any response that cannot be stored as per the rules in <xref target="RFC7234"/>, Section 3 cannot
+be stored by a receiving cache.</t>
+
+<t>However, they might still be usable if a browser API for Server Push emerges. See
+<eref target="https://github.com/whatwg/fetch/issues/51">https://github.com/whatwg/fetch/issues/51</eref>.</t>
+
+<t>It’s less clear if they can be used to trigger other actions after being temporarily stored. For
+example, it might be useful to store an uncacheable 302 redirect for the duration of the
+connection, so that a reference, when found, will be redirected without delay.</t>
+
+<t>The same effect could be achieved by merely sending <spanx style="verb">Cache-Control: max-age=0</spanx> (as per below), but
+it’s questionable as to whether this would surprise Web developers.</t>
 
 </section>
 <section anchor="pushing-stale-content" title="Pushing Stale Content">
@@ -328,13 +345,25 @@ Vary: Accept-Encoding
 <t>becoming stale too</t>
 
 </section>
-<section anchor="pushing-with-max-age0-no-cache-and-similar" title="Pushing with max-age=0, no-cache and similar">
+<section anchor="pushing-with-max-age0-no-cache" title="Pushing with max-age=0, no-cache">
 
 <t><xref target="RFC7540"/>, Section 8.2 says:</t>
 
 <t><list style='empty'>
   <t>Pushed responses are considered successfully validated on the origin server (e.g., if the “no-cache” cache response directive is present (<xref target="RFC7234"/>, Section 5.2.2)) while the stream identified by the promised stream ID is still open.</t>
 </list></t>
+
+<t>This implies that, while that stream is open, the pushed response can be considered fresh, even when it contains any (or all) of the following cache directives:</t>
+
+<t><list style="symbols">
+  <t>max-age=0</t>
+  <t>no-cache</t>
+  <t>s-maxage=0 (for shared caches)</t>
+</list></t>
+
+<t>This applies to <spanx style="verb">Expires</spanx> when the value matches that of the <spanx style="verb">Date</spanx> header.</t>
+
+<t>See <xref target="scope"/> for a discussion of how widely such a response should be made available.</t>
 
 </section>
 <section anchor="pushing-and-invalidation" title="Pushing and Invalidation">
