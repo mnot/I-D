@@ -63,7 +63,8 @@ pushing far more data that could usefully fill the idle time on the connection.
 To improve this, this document explores how Server Push interacts with various HTTP features, with
 recommendations both for using Server Push in servers, and handling it by clients.
 
-It's not so much of a specification, for now, as it is a collection of ideas about how Server Push **ought** to work. 
+It's not so much of a specification, for now, as it is a collection of ideas about how Server Push
+**ought** to work.
 
 It also does not address other use cases for Server Push, such as store-and-forward or
 publish-and-subscribe.
@@ -92,16 +93,17 @@ requested and cached, roughly.
 
 In theory, HEAD should operate in a similar fashion; it would be as if the client had performed a
 HEAD and used the pushed response to update the cache, as per {{!RFC7234}}, Section 4.3.5
-("Freshening Responses via HEAD").
+("Freshening Responses via HEAD"). This might be useful, for example, to update the metadata of
+that response. However, the same effect can also be achieved by using a conditional request; see
+{{conditional}}.
 
 Of other status codes, perhaps the most interesting would be OPTIONS, because of its use by CORS
-
-
+({{WHATWG.fetch}}). See {{cors}}.
 
 
 ## HTTP Status Codes
 
-In principle, any HTTP status code can be pushed. 
+In principle, any HTTP status code can be pushed in a response. 
 
 * Informational (1xx)
 * Success (2xx)
@@ -150,14 +152,15 @@ Host: www.example.com
 If-None-Match: "lmnop"
 ~~~
 
-That way, the client again has an opportunity to send `RST_STREAM` if it already has a fresh copy in
-cache. Once the server has a fresh (possibly validated) response locally available, it can either
-push a `304 (Not Modified)` response in the case that the `ETag` hasn't changed, and a successful
-(`2xx`) response if it has.
+That way, the client again has an opportunity to send `RST_STREAM` if it already has a fresh copy
+in cache. 
 
-Note that if the client has a fresh copy in cache, but the server does not, the client here can
-still use the fresh copy; it has not been invalidated just because the server has not kept its copy
-fresh.
+Once the server has obtained a fresh (possibly validated) response, it can either push a `304 (Not
+Modified)` response in the case that the `ETag` hasn't changed, or a successful (`2xx`) response if
+it has.
+
+Note that if the client has a fresh copy in cache, but the server does not, the client can still
+use the fresh copy; it has not been invalidated just because the server has not kept its copy fresh.
 
 
 ### Generating 304 (Not Modified) without a Conditional in PUSH_PROMISE
@@ -324,7 +327,7 @@ Most use cases for pushing partial content ({{!RFC7233}}) seem to
  - cookies
 
 
-## CORS
+## CORS {#cors}
 
 {{!WHATWG.fetch}}
 
