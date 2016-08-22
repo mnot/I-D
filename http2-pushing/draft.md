@@ -53,7 +53,7 @@ divergence in browser behaviour.
 Furthermore, it appears that some deployments tend to treat Server Push like a "magic bullet",
 pushing far more data that could usefully fill the idle time on the connection.
 
-To improve this, this document specifies how Server Push interacts with various HTTP features, with
+To improve this, this document explores how Server Push interacts with various HTTP features, with
 recommendations both for using Server Push in servers, and handling it by clients.
 
 It does not address other use cases for Server Push, such as store-and-forward or
@@ -205,6 +205,7 @@ If felt necessary, this can be made explicit, for example by defining a new cond
 uncacheable content
   - pushing stale
 max-age=0
+invalidation
 
 
 ## Partial Content
