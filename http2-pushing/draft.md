@@ -2,7 +2,7 @@
 title: Interesting Uses for HTTP/2 Server Push
 abbrev: HTTP/2 Pushing
 docname: draft-nottingham-http2-pushing-00
-date: 2015
+date: 2016
 category: info
 
 ipr: trust200902
