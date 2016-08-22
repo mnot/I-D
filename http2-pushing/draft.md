@@ -202,7 +202,55 @@ If felt necessary, this can be made explicit, for example by defining a new cond
 The interaction of Content Negotiation and Server Push is tricky, because it requires the server to
 guess what the client would have sent, in order to negotiate upon it.
 
+However, it becomes much simpler if we assume that the client SHOULD NOT check a `PUSH_PROMISE` request's headers to see whether or not it would have sent that request.
 
+This means, for example, that if you `PUSH_PROMISE` the "wrong" `User-Agent`, `Accept-Encoding`,
+`User-Agent` or even `Cookie` header field, the client SHOULD still use the pushed response; all
+they're looking for is a matching request method and URL.
+
+However, this does imply a few things:
+
+* The pushed request and response MUST still "agree"; i.e., if you're using gzip encoding, `Accept-Encoding` and `Content-Encoding` should be pushed with appropriate values.
+* The pushed response MUST have an appropriate `Vary` header field, if it is cacheable. This is so that the cache operates properly.
+
+Additionally, the server needs to know what the base capabilities and preferences of the client
+are, to allow it to select the appropriate responses to push. To aid this, we suggest that servers
+create a response by copying the values of the request header fields mentioned in the `Vary`
+response header field from the request that is identified by the `PUSH_PROMISE` frame's Stream ID.
+
+So, for example, if the first request for a page had the following headers:
+
+~~~
+:method: GET
+:scheme: https
+:authority: www.example.com
+:path: /
+User-Agent: FooAgent/1.0
+Accept-Encoding: gzip, br
+Accept-Language: en, fr
+Accept: text/html,s application/example, image/*
+Cookie: abc=123
+~~~
+
+and the server wishes to push these response headers for `/images/123.png`:
+
+~~~
+:status: 200
+Vary: Accept-Encoding
+Content-Type: image/png
+Cache-Control: max-age=3600
+~~~
+
+then it should use these headers for the `PUSH_PROMISE`:
+
+~~~
+:method: GET
+:scheme: https
+:authority: www.example.com
+:path: /images/123.png
+Accept-Encoding: gzip, br
+Vary: Accept-Encoding
+~~~
 
 
 ## Caching
@@ -225,9 +273,13 @@ invalidation
  - cookies
 
 
-## HTTP/2 Priorities
+## Interaction with HTTP/2 Features
+
+### Priorities
 
   - incoming request effects - cancel? deprioritise others?
+
+### Connection Coalescing
 
 
 # Generating PUSH_PROMISE
