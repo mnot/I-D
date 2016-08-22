@@ -424,12 +424,3 @@ This document registers the following entries in the HTTP/2 Error Code registry:
 --- back
 
 
-# Algorithm for Handling Pushes
-
-Upon receiving a PUSH_PROMISE frame on a connection, possibly followed by an number of CONTINUATION frames, the last with END_HEADERS set:
-
-1. If the `Stream Identifier` of the PUSH_PROMISE does not refer to a stream that is open,
-2. If the `Promised Stream ID` refers to a stream that is open, or has an odd number,
-3. Parse the Header Block into a set of header fields `headers`.
-4. If the `:method` header field's value is not `GET` or `HEAD`, 
-5. 
