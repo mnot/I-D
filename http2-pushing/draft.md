@@ -140,7 +140,7 @@ some day.
 
 ## Conditional Requests {#conditional}
 
-### PUSH_PROMISE with If-Match / If-Unmodified-Since
+### If-Match / If-Unmodified-Since
 
 If the server has immediate access to the response being pushed (e.g., if the server is authoritative for it, or it is fresh in cache), it might want to send conditional headers in the `PUSH_PROMISE` request.
 
@@ -163,7 +163,7 @@ If it does not do so, the server will continue to push the successful (`2xx`) re
 `ETag` does in fact match what is pushed).
 
 
-### PUSH_PROMISE with If-None-Match / If-Modified-Since
+###  If-None-Match / If-Modified-Since
 
 If the server does not have a fresh local copy of the response, but does have access to a stale one
 (in the meaning of {{!RFC7234}}), it can `PUSH_PROMISE` with `If-None-Match` and/or
@@ -189,7 +189,7 @@ Note that if the client has a fresh copy in cache, but the server does not, the 
 use the fresh copy; it has not been invalidated just because the server has not kept its copy fresh.
 
 
-### Generating 304 (Not Modified) without a Conditional in PUSH_PROMISE
+### 304 (Not Modified) without a Conditional
 
 If the server believes that the client does have a stale but valid copy in its cache (e.g., through
 the use of a cache digest; see {{?I-D.ietf-httpbis-cache-digest}}), it can send a `PUSH_PROMISE`
