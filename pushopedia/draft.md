@@ -497,19 +497,53 @@ As described in {{conneg}}, none of these headers should cause a client to ignor
 
 ## CORS {#cors}
 
-{{!WHATWG.fetch}}
+{{!WHATWG.fetch}} defines CORS, which uses the OPTIONS method to pre-flight certain requests to
+assure that the server has opted into them, as well as discover what headers and methods are
+allowed on such a request.
 
-OPTIONS
-Origin
+OPTIONS is safe and (in this case) does not have a request body (although technically, it has a
+zero-length body, that can probably be overlooked).
+
+Pushing OPTIONS as a means of pre-seeding CORS information would only work in very limited
+circumstances; because CORS is, by nature, cross-origin, the two origins in question would need
+some way of coordinating the push; the first origin would effectively tell the second origin that a
+request is imminent, so it should initiate a push.
+
+This seems fairly unlikely, unless the origins have an unusually close relationship. Conceivably,
+this might be possible if the origins are coalesced onto the same connection, since they would be
+represented by the same server. 
+
+Whether or not it's worth the specification and implementation work remains a separate question,
+especially when conveying site-wide CORS information via other mechanisms is under discussion.
+
+CORS also defines the use of several headers to control the reuse of content across origins.
+Presumably these would operate the same way whether or not they are pushed. Notably, the `Origin`
+request header is used to determine where the content that originated the request is from.
+
+For example, a HTML page at `https://www.example.com/thing` would send:
+
+> Origin: https://www.example.com/
+
+when loading content from `https://other.example.net/foo`. 
+
+If the returned content has a header:
+
+> Access-Control-Allow-Origin: https://www.example.com/
+
+then the browser will allow the page to have access to that content.
+
+It's not clear how this interacts with server push. Presumably, it will ignore the value of any
+`Origin` header in the PUSH_PROMISE, synthesising an appropriate value.
+
+However, the PUSH_PROMISE might still need to send an Origin header value, if the response contains
+`Vary: Origin`; otherwise, a cached response might be incorrectly used for another origin's request.
 
 
 ## Interaction with HTTP/2 Features {#h2}
 
 ### Priorities {#priority}
 
-- incoming request effects - cancel? deprioritise others?
-- dependencies
-
+See recent discussion on-list.
 
 
 ### Connection Coalescing {#coalesce}
