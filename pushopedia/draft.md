@@ -299,7 +299,7 @@ Accept-Encoding: gzip, br
 Vary: Accept-Encoding
 ~~~
 
-This approach has its limits. For example, use of {{I-D.httpbis-client-hints}} might not be
+This approach has its limits. For example, use of {{?I-D.ietf-httpbis-client-hints}} might not be
 practical with server push (since in some circumstances, hints might change between the base page
 request and the request for what's been pushed).
 
@@ -411,15 +411,15 @@ control when it is actually used; if the server wants to permit its use, it can 
 When a server wants to remove the contents of a client's cache for a given URL, but doesn't know
 what it's to be replaced with yet, it needs to invalidate.
 
-The only native HTTP mechanism for cache invalidation is described in {{RFC7234}}, Section 4.4:
+The only native HTTP mechanism for cache invalidation is described in {{!RFC7234}}, Section 4.4:
 
-> A cache MUST invalidate the effective Request URI (Section 5.5 of {{RFC7230}}) as well as the URI(s) in the Location and Content-Location response header fields (if present) when a non-error status code is received in response to an unsafe request method.
+> A cache MUST invalidate the effective Request URI (Section 5.5 of {{!RFC7230}}) as well as the URI(s) in the Location and Content-Location response header fields (if present) when a non-error status code is received in response to an unsafe request method.
 
 Since it is triggered by unsafe request methods (like POST), this can't be used in Server Push.
 
 We _could_ use this loophole a bit further down:
 
-> A cache MUST invalidate the effective request URI (Section 5.5 of {{RFC7230}}) when it receives a non-error response to a request with a method whose safety is unknown.
+> A cache MUST invalidate the effective request URI (Section 5.5 of {{!RFC7230}}) when it receives a non-error response to a request with a method whose safety is unknown.
 
 ... by defining a method that is defined to have a method whose safety is unknown (since if it's defined, it either won't be pushable, or won't trigger invalidation). E.g.
 
