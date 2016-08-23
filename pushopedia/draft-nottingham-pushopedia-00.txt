@@ -81,15 +81,15 @@ Table of Contents
      2.7.  Authentication  . . . . . . . . . . . . . . . . . . . . .  12
      2.8.  Push and Other HTTP Headers . . . . . . . . . . . . . . .  12
      2.9.  CORS  . . . . . . . . . . . . . . . . . . . . . . . . . .  13
-     2.10. Interaction with HTTP/2 Features  . . . . . . . . . . . .  13
-       2.10.1.  Priorities . . . . . . . . . . . . . . . . . . . . .  13
+     2.10. Interaction with HTTP/2 Features  . . . . . . . . . . . .  14
+       2.10.1.  Priorities . . . . . . . . . . . . . . . . . . . . .  14
        2.10.2.  Connection Coalescing  . . . . . . . . . . . . . . .  14
-       2.10.3.  Refusing Pushes  . . . . . . . . . . . . . . . . . .  14
-   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  15
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .  15
-     5.2.  Informative References  . . . . . . . . . . . . . . . . .  16
+       2.10.3.  Refusing Pushes  . . . . . . . . . . . . . . . . . .  15
+   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .  16
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  16
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .  16
+     5.2.  Informative References  . . . . . . . . . . . . . . . . .  17
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  17
 
 1.  Introduction
@@ -706,21 +706,21 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
 2.9.  CORS
 
-   [WHATWG.fetch]
+   [WHATWG.fetch] defines CORS, which uses the OPTIONS method to pre-
+   flight certain requests to assure that the server has opted into
+   them, as well as discover what headers and methods are allowed on
+   such a request.
 
-   OPTIONS Origin
+   OPTIONS is safe and (in this case) does not have a request body
+   (although technically, it has a zero-length body, that can probably
+   be overlooked).
 
-2.10.  Interaction with HTTP/2 Features
-
-2.10.1.  Priorities
-
-   o  incoming request effects - cancel? deprioritise others?
-
-   o  dependencies
-
-
-
-
+   Pushing OPTIONS as a means of pre-seeding CORS information would only
+   work in very limited circumstances; because CORS is, by nature,
+   cross-origin, the two origins in question would need some way of
+   coordinating the push; the first origin would effectively tell the
+   second origin that a request is imminent, so it should initiate a
+   push.
 
 
 
@@ -730,12 +730,62 @@ Nottingham              Expires February 24, 2017              [Page 13]
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
 
+   This seems fairly unlikely, unless the origins have an unusually
+   close relationship.  Conceivably, this might be possible if the
+   origins are coalesced onto the same connection, since they would be
+   represented by the same server.
+
+   Whether or not it's worth the specification and implementation work
+   remains a separate question, especially when conveying site-wide CORS
+   information via other mechanisms is under discussion.
+
+   CORS also defines the use of several headers to control the reuse of
+   content across origins.  Presumably these would operate the same way
+   whether or not they are pushed.  Notably, the "Origin" request header
+   is used to determine where the content that originated the request is
+   from.
+
+   For example, a HTML page at "https://www.example.com/thing" would
+   send:
+
+      Origin: https://www.example.com/
+
+   when loading content from "https://other.example.net/foo".
+
+   If the returned content has a header:
+
+      Access-Control-Allow-Origin: https://www.example.com/
+
+   then the browser will allow the page to have access to that content.
+
+   It's not clear how this interacts with server push.  Presumably, it
+   will ignore the value of any "Origin" header in the PUSH_PROMISE,
+   synthesising an appropriate value.
+
+   However, the PUSH_PROMISE might still need to send an Origin header
+   value, if the response contains "Vary: Origin"; otherwise, a cached
+   response might be incorrectly used for another origin's request.
+
+2.10.  Interaction with HTTP/2 Features
+
+2.10.1.  Priorities
+
+   See recent discussion on-list.
+
 2.10.2.  Connection Coalescing
 
    [RFC7540], Section 8.2 says:
 
       The server MUST include a value in the :authority pseudo-header
       field for which the server is authoritative (see Section 10.1).  A
+
+
+
+Nottingham              Expires February 24, 2017              [Page 14]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
       client MUST treat a PUSH_PROMISE for which the server is not
       authoritative as a stream error (Section 5.4.2) of type
       PROTOCOL_ERROR.
@@ -775,17 +825,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
    o  Specification: [this document]
 
-
-
-
-
-
-
-Nottingham              Expires February 24, 2017              [Page 14]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
 2.10.3.2.  PUSH_UNAUTHORITATIVE
 
    o  Name: PUSH_UNAUTHORITATIVE
@@ -795,6 +834,13 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    o  Description: On a RST_STREAM sent on a pushed stream, indicates
       that the server is not considered authoritative for the origin of
       the pushed request.
+
+
+
+Nottingham              Expires February 24, 2017              [Page 15]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
 
    o  Specification: [this document]
 
@@ -831,17 +877,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
 5.1.  Normative References
 
-
-
-
-
-
-
-Nottingham              Expires February 24, 2017              [Page 15]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
@@ -855,6 +890,13 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <http://www.rfc-editor.org/info/rfc7230>.
+
+
+
+Nottingham              Expires February 24, 2017              [Page 16]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
 
    [RFC7233]  Fielding, R., Ed., Lafon, Y., Ed., and J. Reschke, Ed.,
               "Hypertext Transfer Protocol (HTTP/1.1): Range Requests",
@@ -886,54 +928,12 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
               WHAT Working Group, "Fetch", 2016,
               <https://fetch.spec.whatwg.org/>.
 
-
-
-
-
-
-
-
-Nottingham              Expires February 24, 2017              [Page 16]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
 Author's Address
 
    Mark Nottingham
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
