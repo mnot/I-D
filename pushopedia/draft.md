@@ -48,7 +48,7 @@ recommendations about use and implementation.
 HTTP/2 {{!RFC7540}} defines Server Push as a mechanism for servers to "push" request/response pairs
 to clients.
 
-The initial use case for Server Push was saving a round trip of latency when additional content is
+The initial use case for Server Push is saving a round trip of latency when additional content is
 referenced. For example, when a HTML page references CSS and JavaScript resources, the browser
 needs to receive the HTML response before it can fetch those resources. Server Push allows the
 server to proactively send them, in anticipation of the browser's imminent need.
@@ -331,7 +331,7 @@ it's questionable as to whether this would surprise Web developers.
 
 ### Pushing Stale Content
 
-
+age
 becoming stale too
 
 
@@ -394,7 +394,11 @@ network vs. the origin. Clients SHOULD ignore such pushes.
  - host
  - user agent
  - cookies
-
+ - DNT
+ - expect
+ - origin
+ - referer
+ - client hints
 
 ## CORS {#cors}
 
