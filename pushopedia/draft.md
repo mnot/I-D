@@ -77,7 +77,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# Discussion: Server Push and HTTP Semantics
+# Server Push and HTTP Semantics
 
 ## HTTP Methods {#method}
 
@@ -503,7 +503,7 @@ OPTIONS
 Origin
 
 
-## Discussion: Interaction with HTTP/2 Features {#h2}
+## Interaction with HTTP/2 Features {#h2}
 
 ### Priorities {#priority}
 
