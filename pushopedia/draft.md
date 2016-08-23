@@ -539,14 +539,14 @@ However, the PUSH_PROMISE might still need to send an Origin header value, if th
 `Vary: Origin`; otherwise, a cached response might be incorrectly used for another origin's request.
 
 
-## Interaction with HTTP/2 Features {#h2}
+# Interaction with HTTP/2 Features {#h2}
 
-### Priorities {#priority}
+## Priorities {#priority}
 
 See recent discussion on-list.
 
 
-### Connection Coalescing {#coalesce}
+## Connection Coalescing {#coalesce}
 
 {{!RFC7540}}, Section 8.2 says:
 
@@ -557,17 +557,18 @@ a PUSH_PROMISE appears upon and its embedded request. Is it valid (and a good id
 from `foo.example.com` to push a stream to `bar.example.net` (for example)?
 
 
-### Refusing Pushes
+## Refusing Pushes
 
 {{!RFC7540}}, Section 8.2.2 says:
 
 > Once a client receives a PUSH_PROMISE frame and chooses to accept the pushed response, the client SHOULD NOT issue any requests for the promised response until after the promised stream has closed.
 > If the client determines, for any reason, that it does not wish to receive the pushed response from the server or if the server takes too long to begin sending the promised response, the client can send a RST_STREAM frame, using either the CANCEL or REFUSED_STREAM code and referencing the pushed stream's identifier.
 
-Unfortunately, this doesn't give the server much information about why the push was refused. New HTTP error codes are collected below, in an attempt to start to give this information.
+Unfortunately, this doesn't give the server much information about why the push was refused. New
+HTTP error codes are collected below, in an attempt to start to give this information.
 
 
-#### PUSH_IS_CACHED
+### PUSH_IS_CACHED
 
 * Name: PUSH_IS_CACHED
 * Code: 0xNN
@@ -575,7 +576,7 @@ Unfortunately, this doesn't give the server much information about why the push 
 * Specification: [this document]
 
 
-#### PUSH_UNAUTHORITATIVE
+### PUSH_UNAUTHORITATIVE
 
 * Name: PUSH_UNAUTHORITATIVE
 * Code: 0xNN
@@ -587,7 +588,7 @@ Note that this would need to overrule the following requirement in {{RFC7540}}, 
 > The server MUST include a value in the :authority pseudo-header field for which the server is authoritative (see Section 10.1). A client MUST treat a PUSH_PROMISE for which the server is not authoritative as a stream error (Section 5.4.2) of type PROTOCOL_ERROR.
 
 
-#### PUSH_CONTENT_ENCODING_NOT_SUPPORTED
+### PUSH_CONTENT_ENCODING_NOT_SUPPORTED
 
 * Name: PUSH_CONTENT_ENCODING_NOT_SUPPORTED
 * Code: 0xNN
