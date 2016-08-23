@@ -75,22 +75,25 @@ Table of Contents
        2.5.2.  Matching Pushes to Cache Entries  . . . . . . . . . .   9
        2.5.3.  Pushing Uncacheable Content . . . . . . . . . . . . .   9
        2.5.4.  Pushing with max-age=0, no-cache  . . . . . . . . . .  10
-       2.5.5.  Pushing Stale Content . . . . . . . . . . . . . . . .  10
+       2.5.5.  Pushing Stale Content . . . . . . . . . . . . . . . .  11
        2.5.6.  Pushing and Invalidation  . . . . . . . . . . . . . .  11
      2.6.  Partial Content . . . . . . . . . . . . . . . . . . . . .  12
      2.7.  Authentication  . . . . . . . . . . . . . . . . . . . . .  12
-     2.8.  Push and Other HTTP Headers . . . . . . . . . . . . . . .  12
+     2.8.  Push and Other HTTP Headers . . . . . . . . . . . . . . .  13
      2.9.  CORS  . . . . . . . . . . . . . . . . . . . . . . . . . .  13
-     2.10. Interaction with HTTP/2 Features  . . . . . . . . . . . .  14
-       2.10.1.  Priorities . . . . . . . . . . . . . . . . . . . . .  14
-       2.10.2.  Connection Coalescing  . . . . . . . . . . . . . . .  14
-       2.10.3.  Refusing Pushes  . . . . . . . . . . . . . . . . . .  15
-   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .  16
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  16
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .  16
-     5.2.  Informative References  . . . . . . . . . . . . . . . . .  17
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  17
+   3.  Interaction with HTTP/2 Features  . . . . . . . . . . . . . .  15
+     3.1.  Priorities  . . . . . . . . . . . . . . . . . . . . . . .  15
+     3.2.  Connection Coalescing . . . . . . . . . . . . . . . . . .  15
+     3.3.  Refusing Pushes . . . . . . . . . . . . . . . . . . . . .  15
+       3.3.1.  PUSH_IS_CACHED  . . . . . . . . . . . . . . . . . . .  15
+       3.3.2.  PUSH_UNAUTHORITATIVE  . . . . . . . . . . . . . . . .  16
+       3.3.3.  PUSH_CONTENT_ENCODING_NOT_SUPPORTED . . . . . . . . .  16
+   4.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .  16
+   6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  16
+     6.1.  Normative References  . . . . . . . . . . . . . . . . . .  17
+     6.2.  Informative References  . . . . . . . . . . . . . . . . .  17
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  18
 
 1.  Introduction
 
@@ -104,9 +107,6 @@ Table of Contents
    Server Push allows the server to proactively send them, in
    anticipation of the browser's imminent need.
 
-   Server Push is now supported by most Web browsers, and sites are
-   starting to experiment with it.  In doing so, it's become apparent
-
 
 
 Nottingham              Expires February 24, 2017               [Page 2]
@@ -114,6 +114,8 @@ Nottingham              Expires February 24, 2017               [Page 2]
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
 
+   Server Push is now supported by most Web browsers, and sites are
+   starting to experiment with it.  In doing so, it's become apparent
    that client handling of server push is not well-defined, leading to
    divergence in browser behaviour.
 
@@ -159,8 +161,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    the metadata of that response.  However, the same effect can also be
    achieved by using a conditional request; see Section 2.3.
 
-   Of other status codes, perhaps the most interesting would be OPTIONS,
-   because of its use by CORS ([WHATWG.fetch]).  See Section 2.9.
 
 
 
@@ -169,6 +169,9 @@ Nottingham              Expires February 24, 2017               [Page 3]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+   Of other status codes, perhaps the most interesting would be OPTIONS,
+   because of its use by CORS ([WHATWG.fetch]).  See Section 2.9.
 
 2.2.  HTTP Status Codes
 
@@ -215,9 +218,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
       does not mean that a client encountering them should generate an
       error, or fail to use the response.  At the very least, if the
       response is available in devtools, debugging will be easier;
-      additionally, someone might find a creative, appropriate use for
-      them some day.
-
 
 
 
@@ -225,6 +225,9 @@ Nottingham              Expires February 24, 2017               [Page 4]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+      additionally, someone might find a creative, appropriate use for
+      them some day.
 
 2.3.  Conditional Requests
 
@@ -270,10 +273,7 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    That way, the client again has an opportunity to send "RST_STREAM" if
    it already has a fresh copy in cache.
 
-   Once the server has obtained a fresh (possibly validated) response,
-   it can either push a "304 (Not Modified)" response in the case that
-   the "ETag" hasn't changed, or a successful ("2xx") response if it
-   has.
+
 
 
 
@@ -281,6 +281,11 @@ Nottingham              Expires February 24, 2017               [Page 5]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+   Once the server has obtained a fresh (possibly validated) response,
+   it can either push a "304 (Not Modified)" response in the case that
+   the "ETag" hasn't changed, or a successful ("2xx") response if it
+   has.
 
    Note that if the client has a fresh copy in cache, but the server
    does not, the client can still use the fresh copy; it has not been
@@ -324,11 +329,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    In this case, if the client's cached response does not have the same
    "ETag" it SHOULD re-issue the request to obtain a fresh response.
 
-   On the other hand, if the server determines that the client does not
-   have the appropriate cached response, it can send the full,
-   successful ("2xx") response:
-
-
 
 
 
@@ -337,6 +337,10 @@ Nottingham              Expires February 24, 2017               [Page 6]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+   On the other hand, if the server determines that the client does not
+   have the appropriate cached response, it can send the full,
+   successful ("2xx") response:
 
    :status: 200
    ETag: "abc123"
@@ -382,10 +386,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    in the "Vary" response header field from the request that is
    identified by the "PUSH_PROMISE" frame's Stream ID.
 
-   So, for example, if the first request for a page had the following
-   headers:
-
-
 
 
 
@@ -393,6 +393,9 @@ Nottingham              Expires February 24, 2017               [Page 7]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+   So, for example, if the first request for a page had the following
+   headers:
 
    :method: GET
    :scheme: https
@@ -440,15 +443,15 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    Reportedly, Firefox ties the affinity of a push to a "load group",
    whereas Edge is using a "navigation handle."
 
-   Effectively, doing so creates yet another kind of HTTP-ish cache in
-   the browser.  See also https://github.com/whatwg/fetch/issues/354 .
-
 
 
 Nottingham              Expires February 24, 2017               [Page 8]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+   Effectively, doing so creates yet another kind of HTTP-ish cache in
+   the browser.  See also https://github.com/whatwg/fetch/issues/354 .
 
    Discussion about why these implementations feel this is necessary
    would be helpful.  Possible reasons that have been posited include:
@@ -495,9 +498,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    things.  It could be that a truly uncacheable response (e.g., with
    "Cache-Control: no-store") would bypass the HTTP cache but then be
    stored by the application in anticipation of a future request, but
-   this might lead to some surprising results for Web developers,
-   because it's effectively specifying yet another kind of browser
-   caching (see Section 2.5.1).
 
 
 
@@ -505,6 +505,10 @@ Nottingham              Expires February 24, 2017               [Page 9]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+   this might lead to some surprising results for Web developers,
+   because it's effectively specifying yet another kind of browser
+   caching (see Section 2.5.1).
 
    However, they might still be usable if a browser API for Server Push
    emerges.  See https://github.com/whatwg/fetch/issues/51 .
@@ -547,12 +551,8 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    might have made the request).  It's just that this reuse isn't in the
    context of a HTTP cache's operation.
 
-2.5.5.  Pushing Stale Content
 
-   How client caches should handle a pushed stale response (e.g., with
-   some combination of "Expires", "Date", "Cache-Control" and "Age" that
-   results in it being considered not fresh, as per [RFC7234],
-   Section 4.2) is not defined by HTTP/2.
+
 
 
 
@@ -561,6 +561,13 @@ Nottingham              Expires February 24, 2017              [Page 10]
 
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
+
+2.5.5.  Pushing Stale Content
+
+   How client caches should handle a pushed stale response (e.g., with
+   some combination of "Expires", "Date", "Cache-Control" and "Age" that
+   results in it being considered not fresh, as per [RFC7234],
+   Section 4.2) is not defined by HTTP/2.
 
    This also applies to content that was fresh when it was pushed, but
    has become stale since that stream closed.
@@ -600,6 +607,17 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    safety is unknown (since if it's defined, it either won't be
    pushable, or won't trigger invalidation).  E.g.
 
+
+
+
+
+
+
+Nottingham              Expires February 24, 2017              [Page 11]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
    :method: INVALIDATE
    :scheme: https
    :authority: www.example.com
@@ -610,14 +628,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
    Another approach would be to push a 404 (Not Found) or 410 (Gone) to
    trigger invalidation.  However, Such a push would need to be
-
-
-
-Nottingham              Expires February 24, 2017              [Page 11]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
    uncacheable (e.g,. with "Cache-Control: no-store") to assure that the
    error response wasn't returned; however, this falls afoul of HTTP/2's
    requirement that uncacheable responses not interact with the HTTP
@@ -656,6 +666,14 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    Presumably, the PUSH_PROMISE for such a request would omit the
    "Authentication" header field.
 
+
+
+
+Nottingham              Expires February 24, 2017              [Page 12]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
    407 (Proxy Authenticate) is probably best not to push, since it's
    confusing authority of the network vs. the origin.  Clients SHOULD
    ignore such pushes.
@@ -666,14 +684,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
       If a client receives a PUSH_PROMISE that does not include a
       complete and valid set of header fields or the :method pseudo-
-
-
-
-Nottingham              Expires February 24, 2017              [Page 12]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
-
       header field identifies a method that is not safe, it MUST respond
       with a stream error (Section 5.4.2) of type PROTOCOL_ERROR.
 
@@ -711,6 +721,15 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    them, as well as discover what headers and methods are allowed on
    such a request.
 
+
+
+
+
+Nottingham              Expires February 24, 2017              [Page 13]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
    OPTIONS is safe and (in this case) does not have a request body
    (although technically, it has a zero-length body, that can probably
    be overlooked).
@@ -721,14 +740,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    coordinating the push; the first origin would effectively tell the
    second origin that a request is imminent, so it should initiate a
    push.
-
-
-
-
-Nottingham              Expires February 24, 2017              [Page 13]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
 
    This seems fairly unlikely, unless the origins have an unusually
    close relationship.  Conceivably, this might be possible if the
@@ -766,18 +777,7 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    value, if the response contains "Vary: Origin"; otherwise, a cached
    response might be incorrectly used for another origin's request.
 
-2.10.  Interaction with HTTP/2 Features
 
-2.10.1.  Priorities
-
-   See recent discussion on-list.
-
-2.10.2.  Connection Coalescing
-
-   [RFC7540], Section 8.2 says:
-
-      The server MUST include a value in the :authority pseudo-header
-      field for which the server is authoritative (see Section 10.1).  A
 
 
 
@@ -786,6 +786,18 @@ Nottingham              Expires February 24, 2017              [Page 14]
 Internet-Draft               HTTP/2 Pushing                  August 2016
 
 
+3.  Interaction with HTTP/2 Features
+
+3.1.  Priorities
+
+   See recent discussion on-list.
+
+3.2.  Connection Coalescing
+
+   [RFC7540], Section 8.2 says:
+
+      The server MUST include a value in the :authority pseudo-header
+      field for which the server is authoritative (see Section 10.1).  A
       client MUST treat a PUSH_PROMISE for which the server is not
       authoritative as a stream error (Section 5.4.2) of type
       PROTOCOL_ERROR.
@@ -796,7 +808,7 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    "foo.example.com" to push a stream to "bar.example.net" (for
    example)?
 
-2.10.3.  Refusing Pushes
+3.3.  Refusing Pushes
 
    [RFC7540], Section 8.2.2 says:
 
@@ -813,7 +825,7 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    why the push was refused.  New HTTP error codes are collected below,
    in an attempt to start to give this information.
 
-2.10.3.1.  PUSH_IS_CACHED
+3.3.1.  PUSH_IS_CACHED
 
    o  Name: PUSH_IS_CACHED
 
@@ -823,9 +835,16 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
       that the sender already had a fresh cached response, and did not
       need to update it.
 
+
+
+Nottingham              Expires February 24, 2017              [Page 15]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
    o  Specification: [this document]
 
-2.10.3.2.  PUSH_UNAUTHORITATIVE
+3.3.2.  PUSH_UNAUTHORITATIVE
 
    o  Name: PUSH_UNAUTHORITATIVE
 
@@ -834,13 +853,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    o  Description: On a RST_STREAM sent on a pushed stream, indicates
       that the server is not considered authoritative for the origin of
       the pushed request.
-
-
-
-Nottingham              Expires February 24, 2017              [Page 15]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
 
    o  Specification: [this document]
 
@@ -853,7 +865,7 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
       authoritative as a stream error (Section 5.4.2) of type
       PROTOCOL_ERROR.
 
-2.10.3.3.  PUSH_CONTENT_ENCODING_NOT_SUPPORTED
+3.3.3.  PUSH_CONTENT_ENCODING_NOT_SUPPORTED
 
    o  Name: PUSH_CONTENT_ENCODING_NOT_SUPPORTED
 
@@ -865,17 +877,28 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
 
    o  Specification: [this document]
 
-3.  IANA Considerations
+4.  IANA Considerations
 
    TBD
 
-4.  Security Considerations
+5.  Security Considerations
 
    Undoubtedly.
 
-5.  References
+6.  References
 
-5.1.  Normative References
+
+
+
+
+
+
+Nottingham              Expires February 24, 2017              [Page 16]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
+
+6.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -890,13 +913,6 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <http://www.rfc-editor.org/info/rfc7230>.
-
-
-
-Nottingham              Expires February 24, 2017              [Page 16]
-
-Internet-Draft               HTTP/2 Pushing                  August 2016
-
 
    [RFC7233]  Fielding, R., Ed., Lafon, Y., Ed., and J. Reschke, Ed.,
               "Hypertext Transfer Protocol (HTTP/1.1): Range Requests",
@@ -913,7 +929,7 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
               DOI 10.17487/RFC7540, May 2015,
               <http://www.rfc-editor.org/info/rfc7540>.
 
-5.2.  Informative References
+6.2.  Informative References
 
    [I-D.ietf-httpbis-cache-digest]
               Oku, K. and M. Nottingham, "Cache Digests for HTTP/2",
@@ -927,6 +943,16 @@ Internet-Draft               HTTP/2 Pushing                  August 2016
    [WHATWG.fetch]
               WHAT Working Group, "Fetch", 2016,
               <https://fetch.spec.whatwg.org/>.
+
+
+
+
+
+
+Nottingham              Expires February 24, 2017              [Page 17]
+
+Internet-Draft               HTTP/2 Pushing                  August 2016
+
 
 Author's Address
 
@@ -949,4 +975,34 @@ Author's Address
 
 
 
-Nottingham              Expires February 24, 2017              [Page 17]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 24, 2017              [Page 18]
