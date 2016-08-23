@@ -54,7 +54,7 @@ recommendations about use and implementation.</t>
 <t>HTTP/2 <xref target="RFC7540"/> defines Server Push as a mechanism for servers to “push” request/response pairs
 to clients.</t>
 
-<t>The initial use case for Server Push was saving a round trip of latency when additional content is
+<t>The initial use case for Server Push is saving a round trip of latency when additional content is
 referenced. For example, when a HTML page references CSS and JavaScript resources, the browser
 needs to receive the HTML response before it can fetch those resources. Server Push allows the
 server to proactively send them, in anticipation of the browser’s imminent need.</t>
@@ -83,9 +83,9 @@ publish-and-subscribe.</t>
 
 </section>
 </section>
-<section anchor="server-push-and-http-semantics" title="Server Push and HTTP Semantics">
+<section anchor="discussion-server-push-and-http-semantics" title="Discussion: Server Push and HTTP Semantics">
 
-<section anchor="http-methods" title="HTTP Methods">
+<section anchor="method" title="HTTP Methods">
 
 <t><xref target="RFC7540"/>, Section 8.2 requires that promised requests be cacheable, safe, and not have a request
 body.</t>
@@ -107,7 +107,7 @@ that response. However, the same effect can also be achieved by using a conditio
 (<xref target="WHATWG.fetch"/>). See <xref target="cors"/>.</t>
 
 </section>
-<section anchor="http-status-codes" title="HTTP Status Codes">
+<section anchor="status" title="HTTP Status Codes">
 
 <t>In principle, any HTTP status code can be pushed in a response. Success (2xx), redirection (300,
 301, 302, 303, 307, 308) and eror (4xx and 5xx) status codes all have the same caching semantics,
@@ -204,7 +204,7 @@ making it fresh in the client’s cache.</t>
 with an <spanx style="verb">If-None-Match</spanx> and/or <spanx style="verb">If-Modified-Since</spanx> conditional, as above.</t>
 
 <t>However, if it does not, it will still be desirable to generate the <spanx style="verb">PUSH_PROMISE</spanx> as soon as
-possible, so as to avoid the race described in {race}.</t>
+possible, so as to avoid the race described in <xref target="RFC7540"/>, Section 8.2.1.</t>
 
 <t>To allow this, a request without a conditional can be sent:</t>
 
@@ -249,7 +249,7 @@ If felt necessary, this can be made explicit, for example by defining a new cond
 
 </section>
 </section>
-<section anchor="content-negotiation" title="Content Negotiation">
+<section anchor="conneg" title="Content Negotiation">
 
 <t>The interaction of Content Negotiation and Server Push is tricky, because it requires the server to
 guess what the client would have sent, in order to negotiate upon it.</t>
@@ -306,12 +306,47 @@ Accept-Encoding: gzip, br
 Vary: Accept-Encoding
 ]]></artwork></figure>
 
+<t>This approach has its limits. For example, use of <xref target="I-D.ietf-httpbis-client-hints"/> might not be
+practical with server push (since in some circumstances, hints might change between the base page
+request and the request for what’s been pushed).</t>
+
 </section>
-<section anchor="caching" title="Caching">
+<section anchor="cache" title="Caching">
 
 <t>Server Push has a strong tie to HTTP caching (<xref target="RFC7234"/>).</t>
 
 <section anchor="scope" title="Caching and Scope of Server Push">
+
+<t>Currently, browser implementations of Server Push will not inject the pushed response into the HTTP
+cache until there is a reference to it from the stream that the PUSH_PROMISE was sent upon.</t>
+
+<t>This is not specified behaviour, and it has confused some. Reportedly, Firefox ties the affinity of
+a push to a “load group”, whereas Edge is using a “navigation handle.”</t>
+
+<t>Effectively, doing so creates yet another kind of HTTP-ish cache in the browser. See also
+<eref target="https://github.com/whatwg/fetch/issues/354">https://github.com/whatwg/fetch/issues/354</eref>.</t>
+
+<t>Discussion about why these implementations feel this is necessary would be helpful. Possible
+reasons that have been posited include:</t>
+
+<t><list style="symbols">
+  <t>Avoiding cache flooding. However, sites already have many ways to flood a cache with responses.</t>
+  <t>Avoiding cache poisoning. However, an attacker that has the ability to send a push for an origin can also (presumably) get that push referenced by content there.</t>
+  <t>Restricting use of push. Some developers want to push not only the assets for a given page to the client, but also push the next page that they might navigate to. This can be seen as abuse, but again, it’s already possible to fetch that into the cache in the background.</t>
+</list></t>
+
+</section>
+<section anchor="matching-pushes-to-cache-entries" title="Matching Pushes to Cache Entries">
+
+<t>Canonicalisation of request URLs is not specified for server push; presumably, limited
+canonicalisation (e.g., removing default ports, case-normalising the scheme and authority) are
+reasonable.</t>
+
+<t>This might be specified in terms of origins in <xref target="RFC6454"/>, since that already specifies a match
+algorithm that’s believed to conform with reality (roughly).</t>
+
+<t>It can be derived from the various specifications, but it would also be good to explicitly say that
+pushed URLs MUST NOT contain a fragment identifier.s</t>
 
 </section>
 <section anchor="pushing-uncacheable-content" title="Pushing Uncacheable Content">
@@ -326,20 +361,14 @@ available to the application separately.</t>
 <t>As a result, any response that cannot be stored as per the rules in <xref target="RFC7234"/>, Section 3 cannot
 be stored by a receiving cache.</t>
 
+<t>“Being made available to the application separately” could mean many things. It could be that a
+truly uncacheable response (e.g., with <spanx style="verb">Cache-Control: no-store</spanx>) would bypass the HTTP cache but
+then be stored by the application in anticipation of a future request, but this might lead to some
+surprising results for Web developers, because it’s effectively specifying yet another kind of
+browser caching (see <xref target="scope"/>).</t>
+
 <t>However, they might still be usable if a browser API for Server Push emerges. See
 <eref target="https://github.com/whatwg/fetch/issues/51">https://github.com/whatwg/fetch/issues/51</eref>.</t>
-
-<t>It’s less clear if they can be used to trigger other actions after being temporarily stored. For
-example, it might be useful to store an uncacheable 302 redirect for the duration of the
-connection, so that a reference, when found, will be redirected without delay.</t>
-
-<t>The same effect could be achieved by merely sending <spanx style="verb">Cache-Control: max-age=0</spanx> (as per below), but
-it’s questionable as to whether this would surprise Web developers.</t>
-
-</section>
-<section anchor="pushing-stale-content" title="Pushing Stale Content">
-
-<t>becoming stale too</t>
 
 </section>
 <section anchor="pushing-with-max-age0-no-cache" title="Pushing with max-age=0, no-cache">
@@ -350,7 +379,8 @@ it’s questionable as to whether this would surprise Web developers.</t>
   <t>Pushed responses are considered successfully validated on the origin server (e.g., if the “no-cache” cache response directive is present (<xref target="RFC7234"/>, Section 5.2.2)) while the stream identified by the promised stream ID is still open.</t>
 </list></t>
 
-<t>This implies that, while that stream is open, the pushed response can be considered fresh, even when it contains any (or all) of the following cache directives:</t>
+<t>This implies that, while that stream is open, the pushed response can be considered fresh, even
+when it contains any (or all) of the following cache directives:</t>
 
 <t><list style="symbols">
   <t>max-age=0</t>
@@ -358,28 +388,91 @@ it’s questionable as to whether this would surprise Web developers.</t>
   <t>s-maxage=0 (for shared caches)</t>
 </list></t>
 
-<t>This applies to <spanx style="verb">Expires</spanx> when the value matches that of the <spanx style="verb">Date</spanx> header.</t>
+<t>The underlying principle here is that while the response stream is still open, it’s semantically
+equivalent to a “normal” response. So, this would also naturally apply to <spanx style="verb">Expires</spanx> when the value
+matches that of the <spanx style="verb">Date</spanx> header. It’s less clear whether it would apply to pushed responses with
+a positive <spanx style="verb">Age</spanx> header, or <spanx style="verb">Expires</spanx> in the past, but on general principles they SHOULD be
+considered as just revalidated on the server, and therefore useable without revalidation.</t>
 
-<t>See <xref target="scope"/> for a discussion of how widely such a response should be made available.</t>
+<t>This means that the client can:
+* Pass the response on to the application for consumption
+* Store the response as stale in the cache</t>
+
+<t>Note that HTTP does not put constraints on <spanx style="emph">how</spanx> the application uses that response; it might use
+it multiple times (e.g., an image might occur more than once on a page, or more than one downstream
+client might have made the request). It’s just that this reuse isn’t in the context of a HTTP
+cache’s operation.</t>
+
+</section>
+<section anchor="pushing-stale-content" title="Pushing Stale Content">
+
+<t>How client caches should handle a pushed stale response (e.g., with some combination of <spanx style="verb">Expires</spanx>,
+<spanx style="verb">Date</spanx>, <spanx style="verb">Cache-Control</spanx> and <spanx style="verb">Age</spanx> that results in it being considered not fresh, as per
+<xref target="RFC7234"/>, Section 4.2) is not defined by HTTP/2.</t>
+
+<t>This also applies to content that was fresh when it was pushed, but has become stale since that
+stream closed.</t>
+
+<t>Strictly interpreting the specifications, it would be necessary to issue a revalidation request for
+that response. While this seems counter-intuitive at first, it might be interesting to consider
+doing so as a way of optimistically pre-fetching content into cache, while still giving the server
+control when it is actually used; if the server wants to permit its use, it can send a simple 304 (Not Modified). Otherwise, it can send a different response.</t>
 
 </section>
 <section anchor="pushing-and-invalidation" title="Pushing and Invalidation">
 
-</section>
-<section anchor="pushing-and-cache-hits" title="Pushing and Cache Hits">
+<t>When a server wants to remove the contents of a client’s cache for a given URL, but doesn’t know
+what it’s to be replaced with yet, it needs to invalidate.</t>
 
-<t><xref target="RFC7540"/>, Section 8.2.2 says:</t>
+<t>The only native HTTP mechanism for cache invalidation is described in <xref target="RFC7234"/>, Section 4.4:</t>
 
 <t><list style='empty'>
-  <t>Once a client receives a PUSH_PROMISE frame and chooses to accept the pushed response, the client SHOULD NOT issue any requests for the promised response until after the promised stream has closed.
-If the client determines, for any reason, that it does not wish to receive the pushed response from the server or if the server takes too long to begin sending the promised response, the client can send a RST_STREAM frame, using either the CANCEL or REFUSED_STREAM code and referencing the pushed stream’s identifier.</t>
+  <t>A cache MUST invalidate the effective Request URI (Section 5.5 of <xref target="RFC7230"/>) as well as the URI(s) in the Location and Content-Location response header fields (if present) when a non-error status code is received in response to an unsafe request method.</t>
 </list></t>
 
-</section>
-</section>
-<section anchor="partial-content" title="Partial Content">
+<t>Since it is triggered by unsafe request methods (like POST), this can’t be used in Server Push.</t>
 
-<t>Most use cases for pushing partial content (<xref target="RFC7233"/>) seem to</t>
+<t>We <spanx style="emph">could</spanx> use this loophole a bit further down:</t>
+
+<t><list style='empty'>
+  <t>A cache MUST invalidate the effective request URI (Section 5.5 of <xref target="RFC7230"/>) when it receives a non-error response to a request with a method whose safety is unknown.</t>
+</list></t>
+
+<t>… by defining a method that is defined to have a method whose safety is unknown (since if it’s defined, it either won’t be pushable, or won’t trigger invalidation). E.g.</t>
+
+<figure><artwork><![CDATA[
+:method: INVALIDATE
+:scheme: https
+:authority: www.example.com
+:path: /thing
+]]></artwork></figure>
+
+<t>However, doing that might cause problems with IANA, since we’d have to pick a value to register.</t>
+
+<t>Another approach would be to push a 404 (Not Found) or 410 (Gone) to trigger invalidation. However,
+Such a push would need to be uncacheable (e.g,. with <spanx style="verb">Cache-Control: no-store</spanx>) to assure that the
+error response wasn’t returned; however, this falls afoul of HTTP/2’s requirement that uncacheable
+responses not interact with the HTTP cache.</t>
+
+<t>If invalidation is an important use case, we’ll need to change one of these specifications, or
+invent a new protocol mechanism. Maybe a <spanx style="verb">CACHE_INVALIDATE</spanx> frame?</t>
+
+</section>
+</section>
+<section anchor="partial" title="Partial Content">
+
+<t>Conceivably, it might be interesting to push partial content (<xref target="RFC7233"/>) to make some kinds of
+content available to the client, when pushing the entire response would consume too much bandwidth;
+e.g.:</t>
+
+<t><list style="symbols">
+  <t>The index portion of a PDF file</t>
+  <t>The first segments or a video or audio file (and, in some formats, the last)</t>
+  <t>The header of an image file, as it might contain layout-critical metadata</t>
+</list></t>
+
+<t>However, it’s believed that support for partial content in many caches (in particular, browser
+caches) is poor.</t>
 
 </section>
 <section anchor="auth" title="Authentication">
@@ -395,7 +488,7 @@ intended uses of Server Push.</t>
 network vs. the origin. Clients SHOULD ignore such pushes.</t>
 
 </section>
-<section anchor="other-pushpromise-headers" title="Other PUSH_PROMISE Headers">
+<section anchor="headers" title="Push and Other HTTP Headers">
 
 <t><xref target="RFC7540"/>, Section 8.2.1 says:</t>
 
@@ -403,28 +496,45 @@ network vs. the origin. Clients SHOULD ignore such pushes.</t>
   <t>If a client receives a PUSH_PROMISE that does not include a complete and valid set of header fields or the :method pseudo-header field identifies a method that is not safe, it MUST respond with a stream error (Section 5.4.2) of type PROTOCOL_ERROR.</t>
 </list></t>
 
-<t><list style="symbols">
-  <t>host</t>
-  <t>user agent</t>
-  <t>cookies</t>
-</list></t>
+<t>“Complete” in this context is a bit fuzzy. The strictest reading would be that it MUST include the required pseudo-headers, along with any request headers specified by a later <spanx style="verb">Vary</spanx> (as discussed in <xref target="conneg"/>).</t>
+
+<t>There are a few headers that are interesting to consider, however.</t>
+
+<t>Use of the <spanx style="verb">Host</spanx> request header field is discouraged in HTTP/2, and SHOULD be omitted.</t>
+
+<t>The following request headers could be copied from the parent Stream ID’s request, but are unlikely to be useful (unless specified in <spanx style="verb">Vary</spanx>), and SHOULD be omitted otherwise:
+* <spanx style="verb">User-Agent</spanx> 
+* <spanx style="verb">Cookie</spanx>
+* <spanx style="verb">DNT</spanx></t>
+
+<t>The <spanx style="verb">Referer</spanx> header could be copied from the parent Stream ID’s request, but in most cases this would be a waste of bytes; it SHOULD be omitted.</t>
+
+<t><spanx style="verb">Expect</spanx> doesn’t make much sense in a push, as discussed in <xref target="status"/>; it SHOULD be omitted.</t>
+
+<t><spanx style="verb">Origin</spanx> is discussed in <xref target="cors"/>.</t>
+
+<t>As described in <xref target="conneg"/>, none of these headers should cause a client to ignore the push or generate an error.</t>
 
 </section>
 <section anchor="cors" title="CORS">
 
 <t><xref target="WHATWG.fetch"/></t>
 
-</section>
-<section anchor="interaction-with-http2-features" title="Interaction with HTTP/2 Features">
+<t>OPTIONS
+Origin</t>
 
-<section anchor="priorities" title="Priorities">
+</section>
+<section anchor="h2" title="Discussion: Interaction with HTTP/2 Features">
+
+<section anchor="priority" title="Priorities">
 
 <t><list style="symbols">
   <t>incoming request effects - cancel? deprioritise others?</t>
+  <t>dependencies</t>
 </list></t>
 
 </section>
-<section anchor="connection-coalescing" title="Connection Coalescing">
+<section anchor="coalesce" title="Connection Coalescing">
 
 <t><xref target="RFC7540"/>, Section 8.2 says:</t>
 
@@ -432,60 +542,21 @@ network vs. the origin. Clients SHOULD ignore such pushes.</t>
   <t>The server MUST include a value in the :authority pseudo-header field for which the server is authoritative (see Section 10.1). A client MUST treat a PUSH_PROMISE for which the server is not authoritative as a stream error (Section 5.4.2) of type PROTOCOL_ERROR.</t>
 </list></t>
 
-</section>
-</section>
-</section>
-<section anchor="generating-pushpromise" title="Generating PUSH_PROMISE">
+<t>Interestingly, it does not say anything about the relationship of the authority of the stream which
+a PUSH_PROMISE appears upon and its embedded request. Is it valid (and a good idea) for a stream
+from <spanx style="verb">foo.example.com</spanx> to push a stream to <spanx style="verb">bar.example.net</spanx> (for example)?</t>
 
-<t><list style="symbols">
-  <t>trickle push</t>
-  <t>relative priority</t>
-</list></t>
+</section>
+<section anchor="refusing-pushes" title="Refusing Pushes">
 
-<section anchor="race" title="Avoiding Push Races">
-
-<t><xref target="RFC7540"/>, Section 8.2.1 says:</t>
+<t><xref target="RFC7540"/>, Section 8.2.2 says:</t>
 
 <t><list style='empty'>
-  <t>The server SHOULD send PUSH_PROMISE (Section 6.6) frames prior to sending any frames that reference the promised responses. This avoids a race where clients issue requests prior to receiving any PUSH_PROMISE frames.</t>
+  <t>Once a client receives a PUSH_PROMISE frame and chooses to accept the pushed response, the client SHOULD NOT issue any requests for the promised response until after the promised stream has closed.
+If the client determines, for any reason, that it does not wish to receive the pushed response from the server or if the server takes too long to begin sending the promised response, the client can send a RST_STREAM frame, using either the CANCEL or REFUSED_STREAM code and referencing the pushed stream’s identifier.</t>
 </list></t>
 
-</section>
-</section>
-<section anchor="using-server-push-well" title="Using Server Push Well">
-
-<t><list style="symbols">
-  <t>not magic</t>
-  <t>best practices for content re pushing too much</t>
-  <t>long wait (server think, back end)</t>
-</list></t>
-
-</section>
-<section anchor="client-handling-of-server-push" title="Client Handling of Server Push">
-
-<t><list style="symbols">
-  <t>matching push_promise headers</t>
-  <t>affinity of push – load group (FF), navigation handle (Edge)</t>
-  <t>canonicalisation when receiving</t>
-  <t>push telemetry</t>
-  <t>error codes</t>
-  <t>clients rejecting pushes</t>
-  <t>visualising with devtools</t>
-  <t>pushing content of next page</t>
-  <t>push api in browsers?</t>
-  <t>dependencies?</t>
-  <t>client behaviour when push is cancelled</t>
-  <t>push direct into cache</t>
-  <t>preload</t>
-  <t>link @rel as=’’</t>
-  <t>“we don’t want you to put anything into the cache that the user has not explicitly accessed”</t>
-  <t>constructing push URIs (fragment, headers needed, allowed, disallowed?)</t>
-</list></t>
-
-</section>
-<section anchor="iana-considerations" title="IANA Considerations">
-
-<t>This document registers the following entries in the HTTP/2 Error Code registry:</t>
+<t>Unfortunately, this doesn’t give the server much information about why the push was refused. New HTTP error codes are collected below, in an attempt to start to give this information.</t>
 
 <section anchor="pushiscached" title="PUSH_IS_CACHED">
 
@@ -506,6 +577,12 @@ network vs. the origin. Clients SHOULD ignore such pushes.</t>
   <t>Specification: [this document]</t>
 </list></t>
 
+<t>Note that this would need to overrule the following requirement in <xref target="RFC7540"/>, Section 8.2:</t>
+
+<t><list style='empty'>
+  <t>The server MUST include a value in the :authority pseudo-header field for which the server is authoritative (see Section 10.1). A client MUST treat a PUSH_PROMISE for which the server is not authoritative as a stream error (Section 5.4.2) of type PROTOCOL_ERROR.</t>
+</list></t>
+
 </section>
 <section anchor="pushcontentencodingnotsupported" title="PUSH_CONTENT_ENCODING_NOT_SUPPORTED">
 
@@ -518,7 +595,16 @@ network vs. the origin. Clients SHOULD ignore such pushes.</t>
 
 </section>
 </section>
+</section>
+</section>
+<section anchor="iana-considerations" title="IANA Considerations">
+
+<t>TBD</t>
+
+</section>
 <section anchor="security-considerations" title="Security Considerations">
+
+<t>Undoubtedly.</t>
 
 </section>
 
@@ -573,6 +659,33 @@ network vs. the origin. Clients SHOULD ignore such pushes.</t>
 </front>
 <seriesInfo name='RFC' value='7234'/>
 <seriesInfo name='DOI' value='10.17487/RFC7234'/>
+</reference>
+
+
+
+<reference  anchor='RFC6454' target='http://www.rfc-editor.org/info/rfc6454'>
+<front>
+<title>The Web Origin Concept</title>
+<author initials='A.' surname='Barth' fullname='A. Barth'><organization /></author>
+<date year='2011' month='December' />
+<abstract><t>This document defines the concept of an &quot;origin&quot;, which is often used as the scope of authority or privilege by user agents.  Typically, user agents isolate content retrieved from different origins to prevent malicious web site operators from interfering with the operation of benign web sites.  In addition to outlining the principles that underlie the concept of origin, this document details how to determine the origin of a URI and how to serialize an origin into a string.  It also defines an HTTP header field, named &quot;Origin&quot;, that indicates which origins are associated with an HTTP request.   [STANDARDS-TRACK]</t></abstract>
+</front>
+<seriesInfo name='RFC' value='6454'/>
+<seriesInfo name='DOI' value='10.17487/RFC6454'/>
+</reference>
+
+
+
+<reference  anchor='RFC7230' target='http://www.rfc-editor.org/info/rfc7230'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the &quot;http&quot; and &quot;https&quot; Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7230'/>
+<seriesInfo name='DOI' value='10.17487/RFC7230'/>
 </reference>
 
 
@@ -635,9 +748,29 @@ network vs. the origin. Clients SHOULD ignore such pushes.</t>
 
 
 
+<reference anchor='I-D.ietf-httpbis-client-hints'>
+<front>
+<title>HTTP Client Hints</title>
+
+<author initials='I' surname='Grigorik' fullname='Ilya Grigorik'>
+    <organization />
+</author>
+
+<date month='May' day='31' year='2016' />
+
+<abstract><t>An increasing diversity of Web-connected devices and software capabilities has created a need to deliver optimized content for each device.  This specification defines a set of HTTP request header fields, colloquially known as Client Hints, to address this.  They are intended to be used as input to proactive content negotiation; just as the Accept header field allows clients to indicate what formats they prefer, Client Hints allow clients to indicate a list of device and agent specific preferences.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-client-hints-01' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-client-hints-01.txt' />
+</reference>
+
+
+
 
     </references>
-
 
 
 
