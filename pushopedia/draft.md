@@ -38,7 +38,7 @@ informative:
 
 --- abstract
 
-This document explores the use and implementation of HTTP/2 Server Push, in order to forumlate
+This document explores the use and implementation of HTTP/2 Server Push, in order to formulate
 recommendations about use and implementation. 
 
 --- middle
