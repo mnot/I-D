@@ -39,7 +39,7 @@ informative:
 --- abstract
 
 This document explores the use and implementation of HTTP/2 Server Push, in order to forumlate
-recommendations about use and implementation.
+recommendations about use and implementation. 
 
 --- middle
 
@@ -77,9 +77,9 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# Server Push and HTTP Semantics
+# Discussion: Server Push and HTTP Semantics
 
-## HTTP Methods
+## HTTP Methods {#method}
 
 {{!RFC7540}}, Section 8.2 requires that promised requests be cacheable, safe, and not have a request
 body.
@@ -101,7 +101,7 @@ Of other status codes, perhaps the most interesting would be OPTIONS, because of
 ({{WHATWG.fetch}}). See {{cors}}.
 
 
-## HTTP Status Codes
+## HTTP Status Codes {#status}
 
 In principle, any HTTP status code can be pushed in a response. Success (2xx), redirection (300,
 301, 302, 303, 307, 308) and eror (4xx and 5xx) status codes all have the same caching semantics,
@@ -200,7 +200,7 @@ If the server has a local copy of the response that it wishes to use, it can sen
 with an `If-None-Match` and/or `If-Modified-Since` conditional, as above. 
 
 However, if it does not, it will still be desirable to generate the `PUSH_PROMISE` as soon as
-possible, so as to avoid the race described in {race}.
+possible, so as to avoid the race described in {{!RFC7540}}, Section 8.2.1.
 
 To allow this, a request without a conditional can be sent:
 
@@ -244,7 +244,7 @@ If felt necessary, this can be made explicit, for example by defining a new cond
 `If-In-Digest`.
 
 
-## Content Negotiation
+## Content Negotiation {#conneg}
 
 The interaction of Content Negotiation and Server Push is tricky, because it requires the server to
 guess what the client would have sent, in order to negotiate upon it.
@@ -299,13 +299,47 @@ Accept-Encoding: gzip, br
 Vary: Accept-Encoding
 ~~~
 
+This approach has its limits. For example, use of {{I-D.httpbis-client-hints}} might not be
+practical with server push (since in some circumstances, hints might change between the base page
+request and the request for what's been pushed).
 
-## Caching
+## Caching {#cache}
 
 Server Push has a strong tie to HTTP caching ({{!RFC7234}}).
 
 
 ### Caching and Scope of Server Push {#scope}
+
+Currently, browser implementations of Server Push will not inject the pushed response into the HTTP
+cache until there is a reference to it from the stream that the PUSH_PROMISE was sent upon.
+
+This is not specified behaviour, and it has confused some. Reportedly, Firefox ties the affinity of
+a push to a "load group", whereas Edge is using a "navigation handle."
+
+Effectively, doing so creates yet another kind of HTTP-ish cache in the browser. See also
+<https://github.com/whatwg/fetch/issues/354>.
+
+Discussion about why these implementations feel this is necessary would be helpful. Possible
+reasons that have been posited include:
+
+* Avoiding cache flooding. However, sites already have many ways to flood a cache with responses.
+
+* Avoiding cache poisoning. However, an attacker that has the ability to send a push for an origin can also (presumably) get that push referenced by content there.
+
+* Restricting use of push. Some developers want to push not only the assets for a given page to the client, but also push the next page that they might navigate to. This can be seen as abuse, but again, it's already possible to fetch that into the cache in the background.
+
+
+### Matching Pushes to Cache Entries
+
+Canonicalisation of request URLs is not specified for server push; presumably, limited
+canonicalisation (e.g., removing default ports, case-normalising the scheme and authority) are
+reasonable.
+
+This might be specified in terms of origins in {{!RFC6454}}, since that already specifies a match
+algorithm that's believed to conform with reality (roughly).
+
+It can be derived from the various specifications, but it would also be good to explicitly say that
+pushed URLs MUST NOT contain a fragment identifier.s
 
 
 ### Pushing Uncacheable Content
@@ -318,21 +352,14 @@ available to the application separately.
 As a result, any response that cannot be stored as per the rules in {{RFC7234}}, Section 3 cannot
 be stored by a receiving cache.
 
+"Being made available to the application separately" could mean many things. It could be that a
+truly uncacheable response (e.g., with `Cache-Control: no-store`) would bypass the HTTP cache but
+then be stored by the application in anticipation of a future request, but this might lead to some
+surprising results for Web developers, because it's effectively specifying yet another kind of
+browser caching (see {{scope}}).
+
 However, they might still be usable if a browser API for Server Push emerges. See
 <https://github.com/whatwg/fetch/issues/51>.
-
-It's less clear if they can be used to trigger other actions after being temporarily stored. For
-example, it might be useful to store an uncacheable 302 redirect for the duration of the
-connection, so that a reference, when found, will be redirected without delay.
-
-The same effect could be achieved by merely sending `Cache-Control: max-age=0` (as per below), but
-it's questionable as to whether this would surprise Web developers.
-
-
-### Pushing Stale Content
-
-age
-becoming stale too
 
 
 ### Pushing with max-age=0, no-cache
@@ -341,20 +368,76 @@ becoming stale too
 
 > Pushed responses are considered successfully validated on the origin server (e.g., if the "no-cache" cache response directive is present ({{!RFC7234}}, Section 5.2.2)) while the stream identified by the promised stream ID is still open.
 
-This implies that, while that stream is open, the pushed response can be considered fresh, even when it contains any (or all) of the following cache directives:
+This implies that, while that stream is open, the pushed response can be considered fresh, even
+when it contains any (or all) of the following cache directives:
 
 * max-age=0
 * no-cache
 * s-maxage=0 (for shared caches)
 
-This applies to `Expires` when the value matches that of the `Date` header.
+The underlying principle here is that while the response stream is still open, it's semantically
+equivalent to a "normal" response. So, this would also naturally apply to `Expires` when the value
+matches that of the `Date` header. It's less clear whether it would apply to pushed responses with
+a positive `Age` header, or `Expires` in the past, but on general principles they SHOULD be
+considered as just revalidated on the server, and therefore useable without revalidation.
+
+This means that the client can:
+* Pass the response on to the application for consumption
+* Store the response as stale in the cache
+
+Note that HTTP does not put constraints on _how_ the application uses that response; it might use
+it multiple times (e.g., an image might occur more than once on a page, or more than one downstream
+client might have made the request). It's just that this reuse isn't in the context of a HTTP
+cache's operation.
 
 
+### Pushing Stale Content
 
-See {{scope}} for a discussion of how widely such a response should be made available.
+How client caches should handle a pushed stale response (e.g., with some combination of `Expires`,
+`Date`, `Cache-Control` and `Age` that results in it being considered not fresh, as per
+{{RFC7234}}, Section 4.2) is not defined by HTTP/2.
+
+This also applies to content that was fresh when it was pushed, but has become stale since that
+stream closed.
+
+Strictly interpreting the specifications, it would be necessary to issue a revalidation request for
+that response. While this seems counter-intuitive at first, it might be interesting to consider
+doing so as a way of optimistically pre-fetching content into cache, while still giving the server
+control when it is actually used; if the server wants to permit its use, it can send a simple 304 (Not Modified). Otherwise, it can send a different response.
 
 
 ### Pushing and Invalidation
+
+When a server wants to remove the contents of a client's cache for a given URL, but doesn't know
+what it's to be replaced with yet, it needs to invalidate.
+
+The only native HTTP mechanism for cache invalidation is described in {{RFC7234}}, Section 4.4:
+
+> A cache MUST invalidate the effective Request URI (Section 5.5 of {{RFC7230}}) as well as the URI(s) in the Location and Content-Location response header fields (if present) when a non-error status code is received in response to an unsafe request method.
+
+Since it is triggered by unsafe request methods (like POST), this can't be used in Server Push.
+
+We _could_ use this loophole a bit further down:
+
+> A cache MUST invalidate the effective request URI (Section 5.5 of {{RFC7230}}) when it receives a non-error response to a request with a method whose safety is unknown.
+
+... by defining a method that is defined to have a method whose safety is unknown (since if it's defined, it either won't be pushable, or won't trigger invalidation). E.g.
+
+~~~
+:method: INVALIDATE
+:scheme: https
+:authority: www.example.com
+:path: /thing
+~~~
+
+However, doing that might cause problems with IANA, since we'd have to pick a value to register.
+
+Another approach would be to push a 404 (Not Found) or 410 (Gone) to trigger invalidation. However,
+Such a push would need to be uncacheable (e.g,. with `Cache-Control: no-store`) to assure that the
+error response wasn't returned; however, this falls afoul of HTTP/2's requirement that uncacheable
+responses not interact with the HTTP cache.
+
+If invalidation is an important use case, we'll need to change one of these specifications, or invent a new protocol mechanism. Maybe a `CACHE_INVALIDATE` frame?
 
 
 ### Pushing and Cache Hits
@@ -367,7 +450,7 @@ See {{scope}} for a discussion of how widely such a response should be made avai
 
 
 
-## Partial Content
+## Partial Content {#partial}
 
 Most use cases for pushing partial content ({{!RFC7233}}) seem to 
 
@@ -385,32 +468,47 @@ Presumably, the PUSH_PROMISE for such a request would omit the `Authentication` 
 network vs. the origin. Clients SHOULD ignore such pushes.
 
 
-## Other PUSH_PROMISE Headers
+## Push and Other HTTP Headers {#headers}
 
 {{!RFC7540}}, Section 8.2.1 says:
 
 > If a client receives a PUSH_PROMISE that does not include a complete and valid set of header fields or the :method pseudo-header field identifies a method that is not safe, it MUST respond with a stream error (Section 5.4.2) of type PROTOCOL_ERROR.
 
- - host
- - user agent
- - cookies
- - DNT
- - expect
- - origin
- - referer
- - client hints
+"Complete" in this context is a bit fuzzy. The strictest reading would be that it MUST include the required pseudo-headers, along with any request headers specified by a later `Vary` (as discussed in {{conneg}}). 
+
+There are a few headers that are interesting to consider, however.
+
+Use of the `Host` request header field is discouraged in HTTP/2, and SHOULD be omitted.
+
+The following request headers could be copied from the parent Stream ID's request, but are unlikely to be useful (unless specified in `Vary`), and SHOULD be omitted otherwise:
+* `User-Agent` 
+* `Cookie`
+* `DNT`
+ 
+The `Referer` header could be copied from the parent Stream ID's request, but in most cases this would be a waste of bytes; it SHOULD be omitted.
+
+`Expect` doesn't make much sense in a push, as discussed in {{status}}; it SHOULD be omitted.
+
+`Origin` is discussed in {{cors}}. 
+
+As described in {{conneg}}, none of these headers should cause a client to ignore the push or generate an error. 
+
 
 ## CORS {#cors}
 
 {{!WHATWG.fetch}}
 
-## Interaction with HTTP/2 Features
+OPTIONS
+Origin
 
-### Priorities
+## Discussion: Interaction with HTTP/2 Features {#h2}
+
+### Priorities {#priority}
 
   - incoming request effects - cancel? deprioritise others?
+  - dependencies
 
-### Connection Coalescing
+### Connection Coalescing {#coalesce}
 
 {{!RFC7540}}, Section 8.2 says:
 
@@ -418,55 +516,22 @@ network vs. the origin. Clients SHOULD ignore such pushes.
 
 
 
-# Generating PUSH_PROMISE
-
-  - trickle push
-  - relative priority
-
-## Avoiding Push Races {#race}
-
-{{!RFC7540}}, Section 8.2.1 says:
-
-> The server SHOULD send PUSH_PROMISE (Section 6.6) frames prior to sending any frames that reference the promised responses. This avoids a race where clients issue requests prior to receiving any PUSH_PROMISE frames.
-
-
-
-# Using Server Push Well
-
-  - not magic
-  - best practices for content re pushing too much
-  - long wait (server think, back end)
 
 
 # Client Handling of Server Push
 
-
-  - matching push_promise headers
-  - affinity of push -- load group (FF), navigation handle (Edge)
-  - canonicalisation when receiving
-  - push telemetry
-  - error codes
   - clients rejecting pushes
-  - visualising with devtools
-  - pushing content of next page 
-  - push api in browsers?
-  - dependencies?
   - client behaviour when push is cancelled
-  - push direct into cache
 
 
-  - preload
-  - link @rel as=''
-  - "we don't want you to put anything into the cache that the user has not explicitly accessed"
-  - constructing push URIs (fragment, headers needed, allowed, disallowed?)
   
+# Proposals for Specification {#proposals}
 
 
 
 
-# IANA Considerations
 
-This document registers the following entries in the HTTP/2 Error Code registry:
+## Push-Related Error Codes {#error}
 
 ## PUSH_IS_CACHED
 
@@ -490,12 +555,16 @@ This document registers the following entries in the HTTP/2 Error Code registry:
 * Specification: [this document]
 
 
+
+# IANA Considerations
+
+TBD
+
+
 # Security Considerations
 
-
+Undoubtedly.
 
 
 
 --- back
-
-
