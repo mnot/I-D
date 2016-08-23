@@ -437,22 +437,23 @@ Such a push would need to be uncacheable (e.g,. with `Cache-Control: no-store`) 
 error response wasn't returned; however, this falls afoul of HTTP/2's requirement that uncacheable
 responses not interact with the HTTP cache.
 
-If invalidation is an important use case, we'll need to change one of these specifications, or invent a new protocol mechanism. Maybe a `CACHE_INVALIDATE` frame?
-
-
-### Pushing and Cache Hits
-
-{{!RFC7540}}, Section 8.2.2 says:
-
-> Once a client receives a PUSH_PROMISE frame and chooses to accept the pushed response, the client SHOULD NOT issue any requests for the promised response until after the promised stream has closed.
-> If the client determines, for any reason, that it does not wish to receive the pushed response from the server or if the server takes too long to begin sending the promised response, the client can send a RST_STREAM frame, using either the CANCEL or REFUSED_STREAM code and referencing the pushed stream's identifier.
-
+If invalidation is an important use case, we'll need to change one of these specifications, or
+invent a new protocol mechanism. Maybe a `CACHE_INVALIDATE` frame?
 
 
 
 ## Partial Content {#partial}
 
-Most use cases for pushing partial content ({{!RFC7233}}) seem to 
+Conceivably, it might be interesting to push partial content ({{!RFC7233}}) to make some kinds of
+content available to the client, when pushing the entire response would consume too much bandwidth;
+e.g.:
+
+* The index portion of a PDF file
+* The first segments or a video or audio file (and, in some formats, the last)
+* The header of an image file, as it might contain layout-critical metadata
+
+However, it's believed that support for partial content in many caches (in particular, browser
+caches) is poor. 
 
 
 ## Authentication {#auth}
@@ -501,12 +502,15 @@ As described in {{conneg}}, none of these headers should cause a client to ignor
 OPTIONS
 Origin
 
+
 ## Discussion: Interaction with HTTP/2 Features {#h2}
 
 ### Priorities {#priority}
 
-  - incoming request effects - cancel? deprioritise others?
-  - dependencies
+- incoming request effects - cancel? deprioritise others?
+- dependencies
+
+
 
 ### Connection Coalescing {#coalesce}
 
@@ -514,40 +518,42 @@ Origin
 
 > The server MUST include a value in the :authority pseudo-header field for which the server is authoritative (see Section 10.1). A client MUST treat a PUSH_PROMISE for which the server is not authoritative as a stream error (Section 5.4.2) of type PROTOCOL_ERROR.
 
+Interestingly, it does not say anything about the relationship of the authority of the stream which
+a PUSH_PROMISE appears upon and its embedded request. Is it valid (and a good idea) for a stream
+from `foo.example.com` to push a stream to `bar.example.net` (for example)?
 
 
+### Refusing Pushes
+
+{{!RFC7540}}, Section 8.2.2 says:
+
+> Once a client receives a PUSH_PROMISE frame and chooses to accept the pushed response, the client SHOULD NOT issue any requests for the promised response until after the promised stream has closed.
+> If the client determines, for any reason, that it does not wish to receive the pushed response from the server or if the server takes too long to begin sending the promised response, the client can send a RST_STREAM frame, using either the CANCEL or REFUSED_STREAM code and referencing the pushed stream's identifier.
+
+Unfortunately, this doesn't give the server much information about why the push was refused. New HTTP error codes are collected below, in an attempt to start to give this information.
 
 
-# Client Handling of Server Push
-
-  - clients rejecting pushes
-  - client behaviour when push is cancelled
-
-
-  
-# Proposals for Specification {#proposals}
-
-
-
-
-
-## Push-Related Error Codes {#error}
-
-## PUSH_IS_CACHED
+#### PUSH_IS_CACHED
 
 * Name: PUSH_IS_CACHED
 * Code: 0xNN
 * Description: On a RST_STREAM sent on a pushed stream, indicates that the sender already had a fresh cached response, and did not need to update it.
 * Specification: [this document]
 
-## PUSH_UNAUTHORITATIVE
+
+#### PUSH_UNAUTHORITATIVE
 
 * Name: PUSH_UNAUTHORITATIVE
 * Code: 0xNN
 * Description: On a RST_STREAM sent on a pushed stream, indicates that the server is not considered authoritative for the origin of the pushed request.
 * Specification: [this document]
 
-## PUSH_CONTENT_ENCODING_NOT_SUPPORTED
+Note that this would need to overrule the following requirement in {{RFC7540}}, Section 8.2:
+
+> The server MUST include a value in the :authority pseudo-header field for which the server is authoritative (see Section 10.1). A client MUST treat a PUSH_PROMISE for which the server is not authoritative as a stream error (Section 5.4.2) of type PROTOCOL_ERROR.
+
+
+#### PUSH_CONTENT_ENCODING_NOT_SUPPORTED
 
 * Name: PUSH_CONTENT_ENCODING_NOT_SUPPORTED
 * Code: 0xNN
