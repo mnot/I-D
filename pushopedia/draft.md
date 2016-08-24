@@ -279,13 +279,14 @@ Accept: text/html,s application/example, image/*
 Cookie: abc=123
 ~~~
 
-and the server wishes to push these response headers for `/images/123.png`:
+and the server wishes to push these response headers for `/style.css`:
 
 ~~~
 :status: 200
-Vary: Accept-Encoding
-Content-Type: image/png
+Content-Type: text/css
 Cache-Control: max-age=3600
+Content-Encoding: gzip
+Vary: Accept-Encoding
 ~~~
 
 then it should use these headers for the `PUSH_PROMISE`:
@@ -294,9 +295,8 @@ then it should use these headers for the `PUSH_PROMISE`:
 :method: GET
 :scheme: https
 :authority: www.example.com
-:path: /images/123.png
+:path: /style.css
 Accept-Encoding: gzip, br
-Vary: Accept-Encoding
 ~~~
 
 This approach has its limits. For example, use of {{?I-D.ietf-httpbis-client-hints}} might not be
