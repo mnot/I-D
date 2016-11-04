@@ -22,7 +22,7 @@ author:
     name: Mark Nottingham
     organization: 
     email: mnot@mnot.net
-    uri: http://www.mnot.net/
+    uri: https://www.mnot.net/
 
 normative:
   RFC2119:
@@ -31,7 +31,6 @@ informative:
   RFC2460:
   RFC3935:
   RFC4941:
-  RFC6265:
   CODELAW:
     target: http://harvardmagazine.com/2000/01/code-is-law-html
     title: "Code Is Law: On Liberty in Cyberspace"
@@ -62,29 +61,11 @@ informative:
         name: Robert Braden
         organization: USC Information Sciences Institute  
     date: 2002
-  PRIORITY:
-    target: http://www.w3.org/TR/html-design-principles/#priority-of-constituencies
-    title: HTML Design Principles
-    author: 
-      - 
-        ins: A. van Kesteren
-        name: Anne van Kesteren
-        organization: Opera Software ASA
-      -
-        ins: M. Stachowiak
-        name: Maciej Stachowiak
-        organization: Apple Inc
-    date: 26-11-2007
-  RFC6962:
-  RFC7230:
 
 
 --- abstract
 
-Internet standards serve and are used by a variety of communities. This document makes suggestions for explicitly identifying them, serving them, and determining how to resolve conflicts
-between their interests, when necessary.
-
-It also requires that Internet Standards consider end users as their highest priority concern.
+This document requires that Internet Standards consider end users as their highest priority concern.
 
 
 --- note_Note_to_Readers
@@ -101,10 +82,11 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/for-t
 
 As the Internet has become prevalent in many societies, it has also unavoidably become a profoundly
 political thing; it has helped overthrow governments, revolutionize social orders, control
-populations and reveal people's secrets. It has created wealth for some individuals and companies,
-while destroying others'.
+populations and reveal people's (and governments') secrets. It has created wealth for some
+individuals and companies, while destroying others'.
 
-The IETF, while focused on technical matters, is not neutral about the purpose of its work {{RFC3935}}:
+The IETF, while focused on technical matters, is not neutral about the purpose of its work in
+developing the Internet {{RFC3935}}:
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
 
@@ -129,35 +111,8 @@ Successful specifications will provide some benefit to all of the relevant parti
 standards do not represent a zero-sum game. However, there are often situations where we need to
 balance the benefits of a decision between two (or more) parties.
 
-We regularly decide to take up work against those who attempt to use the Internet for goals that we
-do not believe are beneficial; for example, those who attempt to disrupt Internet access
-(denial-of-service attackers) and those who seek to obtain data or control over a system that is
-not authorised by its administrator.
+To help clarify such decisions, {{users}} mandates that end users have the highest priority.
 
-Additionally, efforts are sometimes brought to the IETF that represent the needs of some parties
-but at the expense of others. When presented with such a proposal, we need to decide how to handle
-it.
-
-Currently, these kinds of decisions occur in an ad hoc fashion, often without explicitly being
-discussed. This approach works reasonably well in many cases; even if a party is not directly
-represented in the process, there are often advocates for their interests, and ultimately protocols
-that disadvantage a particular party tend to be either rejected by it or eventually replaced.
-
-However, we do sometimes expend a considerable amount of energy mitigating potential harm to
-under-represented members of the Internet community, and often such harm is not so onerous or
-obvious as to dissuade them from using something (e.g., {{RFC6265}}).
-
-In other words -- because our decisions have ethical implications, we should consider their impact
-and determine whether it is within our core values, and do so in a well-defined, open fashion.
-
-To facilitate that, {{identifying}} outlines a set of guidelines for identifying the relevant
-parties to an Internet standard. The aim of doing so is to both clarify the decision-making
-process, and to aid external parties when engaging with and judging the results of the standards
-process.
-
-In doing so, it becomes clear that Internet standards that give the highest priority to end users
-have the best chance of success, and of helping the IETF to succeed in its mission. As a result,
-{{users}} mandates that other parties cannot have a higher priority.
 
 
 ## Notational Conventions
@@ -169,15 +124,19 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # The Internet is for End Users {#users}
 
-Internet standards MUST NOT consider any other party to have higher priority over end users.
+Internet standards MUST NOT consider any other party to have priority over end users.
 
-While networks need to be managed, employers and equipment vendors need to meet business goals,
-etc., the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet --
-society is composed of what we call "end users."
-
-Furthermore, the success of the Internet to date is arguably due largely to its bias towards
-end user concerns; without a firm preference for their benefit, trust in the Internet will
+We require this because the success of the Internet to date is arguably due largely to its bias
+towards end user concerns; without a firm preference for their benefit, trust in the Internet will
 erode, and its value -- for everyone -- will be greatly diminished.
+
+While networks need to be managed, employers and equipment vendors need to meet business goals, and
+so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
+-- society is composed of what we call "end users."
+
+By "end users", we mean non-technical users whose activities our protocols are designed to support.
+Thus, the end user of a protocol to manage routers is not a router administrator; it is the people
+using the network that the router operates within.
 
 This does not mean that end users have ultimate priority; there may be cases where genuine
 technical need of another party requires that end user requirements compromise. However, such
@@ -195,83 +154,12 @@ process to help us make decisions, deploy our protocols, and ultimately determin
 failure. 
 
 Finally, this requirement only comes into force when an explicit conflict between the interests of
-users and other relevant parties is explicitly encountered (e.g., by being brought up in the
+end users and other relevant parties is explicitly encountered (e.g., by being brought up in the
 Working Group). It does not imply that a standards effort needs to be audited for user impact, or
-every decision weighed against user interests.
+every decision weighed against end user interests.
 
 
-# Identifying Relevant Parties {#identifying}
 
-Internet standards efforts are encouraged to consider and document relevant parties and their interrelationships.
-
-For example, HTML does so using the "priority of constituencies" in the HTML Design Principles
-{{PRIORITY}}:
-
-> In case of conflict, consider users over authors over implementors over specifiers over theoretical purity. In other words costs or difficulties to the user should be given more weight than costs to authors; which in turn should be given more weight than costs to implementors; which should be given more weight than costs to authors of the spec itself, which should be given more weight than those proposing changes for theoretical reasons alone. Of course, it is preferred to make things better for multiple parties at once.
-
-Note how the relative priority is explicit; this is intentional and encouraged. However, it need
-not be a strict ranking in all cases; in some areas, it can be more useful to give equal weight to
-parties, so as to encourage the tussle {{TUSSLE}}.
-
-Likewise, the responsibilities of, or expectations upon, different parties to a standard can vary
-greatly. For example, end users of Web browsers cannot be reasonably expected to make informed
-decisions about security, and therefore design decisions there are biased towards default security.
-
-Finally, note "In case of conflict." This wording makes it clear that relevant parties need not be
-considered in every decision, because their interests are not always in conflict; it is only
-important when a direct conflict of their interests is encountered.
-
-Extensions to existing standards out to consider consider how they interact with the extended
-standard's relevant parties. If they are not yet documented, this could be done in coordination
-with that standard's community and the IESG.
-
-The burden of this documentation need not be high; if HTML can do it in a paragraph, so can most
-other standards. While it might be appropriate in a separate document (e.g., a requirements or use
-cases draft) or the specification itself, documenting relevant parties in the WG charter has
-considerable benefits, since it clarifies their relationships up-front.
-
-Inevitably, documenting and interpreting these roles will become controversial; this is to be
-expected, and is still preferable to avoiding the discussion. The point is to make it explicit, so
-that the affected parties can be made aware of the discussion, and judge the outcome. 
-
-
-## Handling Change in Relevant Parties
-
-Changes in the use, deployment patterns, legal context, or other factors of a standard can bring
-pressure to re-balance the priorities of existing parties, or insert new ones (usually, when a
-standard is either extended or evolved).
-
-Such changes ought not diminish the priority of existing relevant parties without informed consent.
-Note that this may preclude the change completely, as it is often impossible to gain the informed
-consent of a large or diffuse group (e.g., end users).
-
-For example, there has been increasing pressure to change HTTP {{RFC7230}} to make it more amenable
-to optimization, filtering, and interposition of other value-added services, especially in the face
-of wider use of encryption (through HTTPS URIs). However, since HTTPS is already defined as a
-two-party protocol with end-to-end encryption, inserting a third party in any fashion would violate
-the expectations of two existing parties; end users and content publishers. Therefore, the HTTP
-Working Group has refused to consider such changes.
-
-
-## Avoiding Unnecessary Parties
-
-In protocol design, intermediation is often thought of as "those parties on the direct path between
-two people attempting to communicate"; e.g., middleboxes, proxies and so on.
-
-When discussing the parties relevant to an Internet standard, this definition can be expanded to
-include those parties that have the ability to prevent or control communication between two
-parties. This naturally includes middleboxes, but can also include third parties not directly
-on-path.
-
-For example, HTTP has on-path intermediaries (proxies, gateways, etc.), but also off-path
-intermediaries, in the form of the DNS registrar, the DNS server, and also the Certificate
-Authority if TLS is in use. Certificate Transparency {{RFC6962}} potentially adds yet another
-intermediary to this protocol suite.
-
-While there might be a good technical reason to interpose such an intermediary, it also introduces
-a new party, and thus needs to be done with due consideration of the impact on other parties.
-
-Therefore, unnecessary parties ought be avoided when possible in Internet standards. 
 
 
 # IANA Considerations
@@ -280,8 +168,8 @@ This document does not require action by IANA.
 
 # Security Considerations
 
-This document does not have direct security impact; however, applying its guidelines (or failing
-to) might affect security positively or negatively.
+This document does not have direct security impact; however, failing to apply it might affect
+security negatively in the long term.
 
 
 --- back
