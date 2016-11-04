@@ -2,7 +2,7 @@
 title: The "safe" HTTP Preference
 abbrev: Preference for Safe Browsing
 docname: draft-nottingham-safe-hint-07
-date: 2015
+date: 2016
 category: std
 
 ipr: trust200902
@@ -57,6 +57,9 @@ each Web site in turn, navigate to the appropriate page (possibly creating an
 account along the way) to get a cookie {{RFC6265}} set in the browser, for each
 browser on every device used.
 
+Often, the complete set of sites that can be configured in this manner is
+unknown, further complicating the task.
+
 If this desire is proactively advertised by the user agent, things become much
 simpler. A user agent that supports doing so (whether it be an individual
 browser, or through an Operating System HTTP library) need only be configured
@@ -68,8 +71,9 @@ Preference {{RFC7240}}.
 
 Note that this specification does not precisely define what "safe" is; rather,
 it is interpreted within the scope of each Web site that chooses to act upon
-this information. Furthermore, sending "safe" does not guarantee that the
-Web site will use it.
+this information. Furthermore, sending "safe" does not guarantee that the Web
+site will use it. As such, its effect can be described as "best effort," but
+not to be relied upon.
 
 That said, the intent of "safe" is to allow end users (or those acting on their
 behalf) to express a desire to avoid content that is considered "objectionable"
@@ -109,14 +113,14 @@ User-Agent: ExampleBrowser/1.0
 Prefer: safe
 ~~~
 
-User agents SHOULD include the "safe" preference in all requests, to ensure
-that the preference is available to the applicable resources. Note that the
-resources which "safe" is sent to is potentially configurable; see {{browsers}}
-for more information.
+User agents SHOULD include the "safe" preference in all HTTPS requests unless
+otherwise configured, to ensure that the preference is available to the
+applicable resources. See {{browsers}} for more information about configuring
+the set of resources "safe" is sent to.
 
-Additionally, other clients MAY insert it; e.g., an operating system might
-choose to insert the preference in requests based upon system-wide
-configuration.
+Safe MAY be implemented in common HTTP libraries (e.g., an operating system
+might choose to insert the preference in requests based upon system-wide
+configuration).
 
 Origin servers that utilize the "safe" preference ought to document that they do
 so, along with the criteria that they use to denote objectionable content. If a
@@ -135,10 +139,10 @@ Server: ExampleServer/2.0
 Vary: Prefer
 ~~~
 
-Note that the Vary response header needs to be sent if cacheable responses
-associated with the resource might change depending on the value of the
-"Prefer" header. This is not only true for those responses that are "safe",
-but also the default "unsafe" response.
+Note that the Vary response header needs to be sent if the response is
+cacheable and might change depending on the value of the "Prefer" header. This
+is not only true for those responses that are "safe", but also the default
+"unsafe" response.
 
 See {{RFC7234}} Section 4.1 for more information the interaction between Vary
 and Web caching.
@@ -165,14 +169,17 @@ exist.
 * Microsoft Bing
 * Mozilla Firefox - see https://bugzilla.mozilla.org/show_bug.cgi?id=995070
 * Cisco - see http://blogs.cisco.com/security/filtering-explicit-content
-* YouTube - based upon testing the live site (not formally announced)
 
 # Security Considerations
 
 The "safe" preference is not a secure mechanism; it can be inserted or removed
-by intermediaries with access to the request stream (e.g. for "http://" URLs).
+by intermediaries with access to the request stream (e.g. for "http" URLs).
+Therefore, it SHOULD NOT be included in requests with the "http" scheme.
+
 Its presence reveals limited information about the user, which may be of small
-assistance in "fingerprinting" the user.
+assistance in "fingerprinting" the user by sites. Therefore, user agents SHOULD
+NOT include it in requests when the user has expressed a desire to avoid such
+attacks (e.g., some forms of "private mode" browsing).
 
 By its nature, including "safe" in requests does not assure that all
 content will actually be safe; it is only when servers elect to honor it that
@@ -185,8 +192,9 @@ ensure that will need to combine its use with other techniques (e.g., content
 filtering).
 
 Furthermore, the server and user may have differing ideas regarding the
-semantics of "safe." As such, the "safety" of the user's experience when 
-browsing from site to site might (and probably will) change. 
+semantics of "safe." As such, the "safety" of the user's experience when
+browsing from site to site as well as over time might (and probably will)
+change.
 
 
 # IANA Considerations
@@ -221,16 +229,14 @@ such as:
   [] Request "safe" content from Web sites
 ~~~
 
-... along with further information available upon request (e.g., from a "help"
-system).
+... along with further information available upon request.
 
 Browsers might also allow the "safe" preference to be "locked" -- that is,
 prevent modification without administrative access, or a passcode.
 
 Note that this specification does not constrain browsers to send "safe" on all
-requests, although that is one possible implementation; e.g., an alternate
-implementation strategy would be to allow a blacklist (of sites that "safe" is
-not sent to).
+requests, although that is one possible implementation; e.g., alternate
+implementation strategies include blacklists and whitelists.
 
 
 # Supporting "safe" on Web Sites {#servers}
@@ -243,10 +249,13 @@ have another way to configure it.
 When honoring the safe preference, it is important that it not be possible to
 disable it through the Web site's interface, since "safe" may be configured and
 locked down by the browser's administrator (e.g., a parent). If the site has
-configuration (e.g., stored user preferences) and the safe preference is
-received in a request, the "safer" interpretation is always used.
+such a means of configuration (e.g., stored user preferences) and the safe
+preference is received in a request, the "safer" interpretation ought to be
+used.
 
-If the user expresses a wish to disable "safe" mode, the site should remind
+Likewise, sites might offer different levels of "safeness" through Web configuration, they will need to either inform their users of what level the "safe" hint corresponds to, or provide them with some means of adjusting it.
+
+If the user expresses a wish to disable "safe" mode, the site can remind
 them that the safe preference is being sent, and ask them to consult their
 administrator (since "safe" might be set by a locked-down Operating System
 configuration).
