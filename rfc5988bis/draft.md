@@ -573,7 +573,9 @@ algorithm can be used to parse it into the model described by this specification
 1. Let `links` be an empty list.
 
 2. Create `link_strings` by splitting `field_value` on "," characters, excepting "," characters
-within quoted strings as per {{RFC7230}}, Section 3.2.6.
+within quoted strings as per {{RFC7230}}, Section 3.2.6, or which form part of link's URI-Reference
+(i.e. between "<" and ">" characters where the "<" is immediately preceded by OWS and either a "," character
+or the beginning of the `field_value` string)
 
 3. For each `link_string` in `link_strings`:
 
@@ -592,37 +594,41 @@ within quoted strings as per {{RFC7230}}, Section 3.2.6.
 
       1. Remove OWS from the beginning and end of `parameter`.
 
-      2. Split `parameter` into `param_name` and `param_value` on the first "=" character. If
+      2. Skip this item if `parameter` matches the empty string ("")
+
+      3. Split `parameter` into `param_name` and `param_value` on the first "=" character. If
         `parameter` does not contain "=", let `param_name` be `parameter` and `param_value` be null.
 
-      3. Remove OWS from the end of `param_name` and the beginning of `param_value`.
+      4. Remove OWS from the end of `param_name` and the beginning of `param_value`.
 
-      4. Case-normalise `param_name` to lowercase.
+      5. Case-normalise `param_name` to lowercase.
 
-      5. If the first and last characters of `param_value` are both DQUOTE:
+      6. If the first and last characters of `param_value` are both DQUOTE:
 
          1. Remove the first and last characters of `param_value`.
 
          2. Replace quoted-pairs within `param_value` with the octet following the backslash, as
             per {{RFC7230}}, Section 3.2.6.
 
-      6. Append the tuple (`param_name`, `param_value`) to `link_parameters`.
+      7. Append the tuple (`param_name`, `param_value`) to `link_parameters`.
 
    6. Let `target` be the result of relatively resolving (as per {{RFC3986}}, Section 5.2)
      `target_string`. Note that any base URI carried in the payload body is NOT used.
 
-   7. Let `relations_string` be the first tuple of `link_parameters` whose first item matches the
+   7. Let `relations_string` be the second item of the first tuple of `link_parameters` whose first item matches the
      string "rel", or the empty string ("") if it is not present.
 
    8. Split `relations_string` into an array of strings `relation_types`, on RWS (removing
      all whitespace in the process).
 
-   9. Let `context_string` be the first tuple of `link_parameters` whose first item matches the
+   9. Let `context_string` be the second item of the first tuple of `link_parameters` whose first item matches the
      string "anchor". If it is not present, `context_string` is the identity of the representation
-     carrying the Link header {{RFC7231}}, Section 3.1.4.1, serialised as a URI.
+     carrying the Link header {{RFC7231}}, Section 3.1.4.1, serialised as a URI. Where the identity is "anonymous"
+     `context_string` is null.
 
    0. Let `context` be the result of relatively resolving (as per {{RFC3986}}, Section 5.2)
-      `context_string`. Note that any base URI carried in the payload body is NOT used.
+      `context_string`, unless `context_string` is null in which case `context` is null. Note that any base URI
+      carried in the payload body is NOT used.
 
    1. Let `target_attributes` be an empty array.
 
@@ -630,10 +636,12 @@ within quoted strings as per {{RFC7230}}, Section 3.2.6.
 
       1. If `param_name` matches "rel" or "anchor", skip this tuple.
 
-      2. If the last character of `param_name` is "\*", decode `param_value` according to
+      2. If `param_name` matches "media", "title", "title*" or "type" and `target_attributes` already contains a tuple whose first element matches the value of `param_name`, skip this tuple.
+
+      3. If the last character of `param_name` is "\*", decode `param_value` according to
          {{I-D.ietf-httpbis-rfc5987bis}}.
 
-      3. Append (`param_name`, `param_value`) to `target_attributes`.
+      4. Append (`param_name`, `param_value`) to `target_attributes`.
 
    3. For each `relation_type` in `relation_types`:
 
