@@ -176,10 +176,6 @@ security negatively in the long term.
 
 # Acknowledgements
 
-Thanks to Jacob Appelbaum for making the suggestion that led to this document.
-
-Thanks also to the WHATWG for blazing the trail.
-
 Thanks to Edward Snowden for his comments regarding the priority of end users at IETF93.
 
 Thanks to Harald Alvestrand for his substantial feedback and Stephen Farrell, Joe Hildebrand, Russ
