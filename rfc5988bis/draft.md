@@ -23,7 +23,7 @@ author:
     name: Mark Nottingham
     organization:
     email: mnot@mnot.net
-    uri: http://www.mnot.net/
+    uri: https://www.mnot.net/
 
 normative:
   RFC2026:
