@@ -126,13 +126,13 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 Internet standards MUST NOT consider any other party to have priority over end users.
 
-We require this because the success of the Internet to date is arguably due largely to its bias
-towards end user concerns; without a firm preference for their benefit, trust in the Internet will
-erode, and its value -- for everyone -- will be greatly diminished.
+We require this because the success of the Internet to date is arguably due to its bias towards end
+user concerns; without a firm preference for their benefit, trust in the Internet will erode, and
+its value -- for everyone -- will be greatly diminished.
 
-While networks need to be managed, employers and equipment vendors need to meet business goals, and
-so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
--- society is composed of what we call "end users."
+Furthermore, while networks need to be managed, employers and equipment vendors need to meet
+business goals, and so on, the IETF's mission is to "build a better human society" {{RFC3935}} and
+-- on the Internet -- society is composed of what we call "end users."
 
 By "end users", we mean non-technical users whose activities our protocols are designed to support.
 Thus, the end user of a protocol to manage routers is not a router administrator; it is the people
@@ -157,8 +157,6 @@ Finally, this requirement only comes into force when an explicit conflict betwee
 end users and other relevant parties is explicitly encountered (e.g., by being brought up in the
 Working Group). It does not imply that a standards effort needs to be audited for user impact, or
 every decision weighed against end user interests.
-
-
 
 
 
