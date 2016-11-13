@@ -40,27 +40,6 @@ informative:
         name: Lawrence Lessig
         organization: Harvard Magazine
     date: 2000
-  TUSSLE:
-    target: "http://groups.csail.mit.edu/ana/Publications/PubPDFs/Tussle2002.pdf"
-    title: "Tussle in Cyberspace: Defining Tomorrow’s Internet"
-    author:
-      -
-        ins: D. Clark
-        name: David D. Clark
-        organization: MIT Lab for Computer Science
-      -
-        ins: K. Sollins
-        name: Karen R. Sollins
-        organization: MIT Lab for Computer Science
-      -
-        ins: J. Wroclawski
-        name: John Wroclawski
-        organization: MIT Lab for Computer Science
-      -
-        ins: R. Braden
-        name: Robert Braden
-        organization: USC Information Sciences Institute  
-    date: 2002
 
 
 --- abstract
