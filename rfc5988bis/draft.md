@@ -276,8 +276,8 @@ This specification defines the parameters "rel", "anchor", "rev", "hreflang",
 ABNF for "rel" and "rev" parameter values:
 
 ~~~ abnf2616
-	rel            = relation-typ *( 1*SP relation-type )
-	rev            = relation-typ *( 1*SP relation-type )
+	rel            = relation-type *( 1*SP relation-type )
+	rev            = relation-type *( 1*SP relation-type )
 
 	relation-type  = reg-rel-type | ext-rel-type
 	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
