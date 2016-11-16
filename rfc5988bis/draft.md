@@ -270,40 +270,8 @@ The ABNF for the field value is given below:
   link-param     = token "=" ( token / quoted-string )
 ~~~
 
-This specification defines the parameters "rel", "anchor", "rev", "hreflang",
-"media", "title", "title*", and "type".
-  
-ABNF for "rel" and "rev" parameter values:
-
-~~~ abnf2616
-	rel            = relation-type *( 1*SP relation-type )
-	rev            = relation-type *( 1*SP relation-type )
-
-	relation-type  = reg-rel-type | ext-rel-type
-	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
-	ext-rel-type   = URI
-~~~~
-
-ABNF for "anchor" parameter:
-~~~ abnf2616
-  anchor         = URI-Reference
-~~~
-
-ABNF for "hreflang" parameter:
-~~~ abnf2616
-  hreflang       = Language-Tag
-~~~
-  
-ABNF for "media" parameter:
-~~~ abnf2616
-  media          = media_query_list
-~~~
-
-ABNF for "type" parameter:
-~~~ abnf2616
-	type           = media-type
-~~~
-
+This specification defines the link-params "rel", "anchor", "rev", "hreflang", "media", "title",
+"title*", and "type"; see {{header-context}}, {{header-type}} and {{header-attrs}}.
 
 ## Link Target
 
@@ -312,7 +280,7 @@ see {{RFC3987}}, Section 3.1) inside angle brackets ("&lt;&gt;"). If the URI-Ref
 parsers MUST resolve it as per {{RFC3986}}, Section 5. Note that any base IRI from the message's
 content is not applied.
 
-## Link Context
+## Link Context {#header-context}
 
 By default, the context of a link conveyed in the Link header field is identity of the
 representation it is associated with, as defined in {{RFC7231}}, Section 3.1.4.1, serialised as a
@@ -323,6 +291,10 @@ resource, or a third resource (i.e., when the anchor value is an absolute URI). 
 parameter's value is a relative URI, parsers MUST resolve it as per {{RFC3986}}, Section 5. Note
 that any base URI from the body's content is not applied.
 
+~~~ abnf2616
+  anchor         = URI-Reference
+~~~
+
 Consuming implementations can choose to ignore links with an anchor parameter. For example, the
 application in use might not allow the link context to be assigned to a different resource. In such
 cases, the entire link is to be ignored; consuming implementations MUST NOT process the link
@@ -332,7 +304,7 @@ Note that depending on HTTP status code and response headers, the link context m
 (i.e., no link context is available). For instance, this is the case on a 404 response to a GET
 request.
 
-## Relation Type
+## Relation Type {#header-type}
 
 The relation type of a link conveyed in the Link header field is conveyed in the "rel" parameter's
 value. The "rel" parameter MUST NOT appear more than once in a given link-value; occurrences after
@@ -342,6 +314,15 @@ The "rev" parameter has been used in the past to indicate that the semantics of 
 are in the reverse direction. That is, a link from A to B with REL="X" expresses the same
 relationship as a link from B to A with REV="X". "rev" is deprecated by this specification because
 it often confuses authors and readers; in most cases, using a separate relation type is preferable.
+
+~~~ abnf2616
+	rel            = relation-type *( 1*SP relation-type )
+	rev            = relation-type *( 1*SP relation-type )
+
+	relation-type  = reg-rel-type | ext-rel-type
+	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+	ext-rel-type   = URI
+~~~~
 
 Note that extension relation types are REQUIRED to be absolute URIs in Link headers, and MUST be
 quoted if they contain a semicolon (";") or comma (",") (as these characters are used as delimiters
@@ -363,10 +344,18 @@ the Content-Language header field of a HTTP response obtained by actually follow
 Multiple "hreflang" attributes on a single link-value indicate that multiple languages are
 available from the indicated resource.
 
+~~~ abnf2616
+  hreflang       = Language-Tag
+~~~
+
 The "media" attribute, when present, is used to indicate intended destination medium or media for
 style information (see {{W3C.REC-html5-20141028}}, Section 4.2.4). Its value MUST be quoted if it
 contains a semicolon (";") or comma (","). There MUST NOT be more than one "media" attribute in
 a link-value; occurrences after the first MUST be ignored by parsers.
+
+~~~ abnf2616
+  media          = media_query_list
+~~~
 
 The "title" attribute, when present, is used to label the destination of a link such that it can be
 used as a human-readable identifier (e.g., a menu entry) in the language indicated by the
@@ -387,6 +376,11 @@ dereferencing the link should be. Note that this is only a hint; for example, it
 the Content-Type header field of a HTTP response obtained by actually following the link. The
 "type" attribute MUST NOT appear more than once in a given link-value; occurrences after the first
 MUST be ignored by parsers.
+
+~~~ abnf2616
+	type           = media-type
+~~~
+
 
 ### Extension Attributes
 
