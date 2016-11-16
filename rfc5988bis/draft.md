@@ -269,8 +269,15 @@ The ABNF for the field value is given below:
   link-param = token "=" ( token / quoted-string )
 ~~~
 
+Note that any `link-param` can be generated with values using either the `token` or the
+`quoted-string` syntax, and therefore recipients MUST be able to parse both forms. Iqndividual
+`link-param`s specify their syntax in terms of the value after any necessary unquoting (as per
+{{RFC7230}}, Section 3.2.6).
+
 This specification defines the link-params "rel", "anchor", "rev", "hreflang", "media", "title",
-"title*", and "type"; see {{header-context}}, {{header-type}} and {{header-attrs}}.
+"title*", and "type"; see {{header-context}}, {{header-type}} and {{header-attrs}}. 
+
+
 
 ## Link Target
 
@@ -290,8 +297,9 @@ resource, or a third resource (i.e., when the anchor value is an absolute URI). 
 parameter's value is a relative URI, parsers MUST resolve it as per {{RFC3986}}, Section 5. Note
 that any base URI from the body's content is not applied.
 
+The ABNF for the `anchor` parameter's value is:
 ~~~ abnf2616
-  anchor         = URI-Reference
+  URI-Reference
 ~~~
 
 Consuming implementations can choose to ignore links with an anchor parameter. For example, the
@@ -314,10 +322,14 @@ are in the reverse direction. That is, a link from A to B with REL="X" expresses
 relationship as a link from B to A with REV="X". "rev" is deprecated by this specification because
 it often confuses authors and readers; in most cases, using a separate relation type is preferable.
 
+The ABNF for the `rel` and `rev` parameter values is:
 ~~~ abnf2616
-	rel            = relation-type *( 1*SP relation-type )
-	rev            = relation-type *( 1*SP relation-type )
+	relation-type *( 1*SP relation-type )
+~~~
 
+where:
+
+~~~ abnf2616
 	relation-type  = reg-rel-type | ext-rel-type
 	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
 	ext-rel-type   = URI
@@ -344,8 +356,9 @@ the Content-Language header field of a HTTP response obtained by actually follow
 Multiple "hreflang" attributes on a single link-value indicate that multiple languages are
 available from the indicated resource.
 
+The ABNF for the `hreflang` parameter value is:
 ~~~ abnf2616
-  hreflang       = Language-Tag
+  Language-Tag
 ~~~
 
 The "media" attribute, when present, is used to indicate intended destination medium or media for
@@ -353,8 +366,9 @@ style information (see {{W3C.REC-html5-20141028}}, Section 4.2.4). Its value MUS
 contains a semicolon (";") or comma (","). There MUST NOT be more than one "media" attribute in
 a link-value; occurrences after the first MUST be ignored by parsers.
 
+The ABNF for the `media` parameter value is:
 ~~~ abnf2616
-  media          = media_query_list
+  media_query_list
 ~~~
 
 The "title" attribute, when present, is used to label the destination of a link such that it can be
@@ -377,8 +391,9 @@ the Content-Type header field of a HTTP response obtained by actually following 
 "type" attribute MUST NOT appear more than once in a given link-value; occurrences after the first
 MUST be ignored by parsers.
 
+The ABNF for the `type` parameter's value is:
 ~~~ abnf2616
-	type           = media-type
+	media-type
 ~~~
 
 
