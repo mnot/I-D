@@ -264,9 +264,9 @@ The Link header field provides a means for serialising one or more links into HT
 The ABNF for the field value is given below:
 
 ~~~ abnf2616
-	Link           = #link-value
-	link-value     = "<" URI-Reference ">" OWS *( OWS ";" OWS link-param )
-  link-param     = token "=" ( token / quoted-string )
+	Link       = #link-value
+	link-value = "<" URI-Reference ">" OWS *( OWS ";" OWS link-param )
+  link-param = token "=" ( token / quoted-string )
 ~~~
 
 This specification defines the link-params "rel", "anchor", "rev", "hreflang", "media", "title",
