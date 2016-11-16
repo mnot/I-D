@@ -322,7 +322,7 @@ are in the reverse direction. That is, a link from A to B with REL="X" expresses
 relationship as a link from B to A with REV="X". "rev" is deprecated by this specification because
 it often confuses authors and readers; in most cases, using a separate relation type is preferable.
 
-The ABNF for the `rel` and `rev` parameter values is:
+The ABNF for the `rel` and `rev` parameters' values is:
 ~~~ abnf2616
 	relation-type *( 1*SP relation-type )
 ~~~
@@ -356,7 +356,7 @@ the Content-Language header field of a HTTP response obtained by actually follow
 Multiple "hreflang" attributes on a single link-value indicate that multiple languages are
 available from the indicated resource.
 
-The ABNF for the `hreflang` parameter value is:
+The ABNF for the `hreflang` parameter's value is:
 ~~~ abnf2616
   Language-Tag
 ~~~
@@ -366,7 +366,7 @@ style information (see {{W3C.REC-html5-20141028}}, Section 4.2.4). Its value MUS
 contains a semicolon (";") or comma (","). There MUST NOT be more than one "media" attribute in
 a link-value; occurrences after the first MUST be ignored by parsers.
 
-The ABNF for the `media` parameter value is:
+The ABNF for the `media` parameter's value is:
 ~~~ abnf2616
   media_query_list
 ~~~
