@@ -680,9 +680,19 @@ This specification has the following differences from its predecessor, RFC5988:
 
 * Clarified the cardinality of target attributes (generically and for "type").
 
-* Corrected the default link context for the Link header field, to be dependent upon the identity of the representation (as per RFC7231).
+* Corrected the default link context for the Link header field, to be dependent upon the identity
+  of the representation (as per RFC7231).
 
 * Defined a suggested parsing algorithm for the Link header.
 
 * The value space of target attributes and their definition has been specified.
+
+* The ABNF has been updated to be compatible with {{RFC7230}}. In particular, whitespace is now
+  explicit.
+
+* Some parameters on the HTTP header field can now appear as a token.
+
+* Handling of quoted strings is now defined by {{RFC7230}}.
+
+* The `type` header field parameter now needs to be quoted (as `token` does not allow "/").
 
