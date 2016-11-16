@@ -614,7 +614,7 @@ character or the beginning of the `field_value` string).
 
       1. Remove OWS from the beginning and end of `parameter`.
 
-      2. Skip this item if `parameter` matches the empty string ("")
+      2. Skip this item if `parameter` matches the empty string ("").
 
       3. Split `parameter` into `param_name` and `param_value` on the first "=" character. If
         `parameter` does not contain "=", let `param_name` be `parameter` and `param_value` be null.
