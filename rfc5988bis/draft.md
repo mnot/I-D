@@ -329,8 +329,9 @@ in the header field itself).
 
 ## Target Attributes {#header-attrs}
 
-The Link header field defines several attributes specific to this serialisation, and also allows
-extension attributes.
+The Link header field defines several target attributes specific to this serialisation, and also
+allows extension target attributes. Target attributes are serialised in the Link header field as
+parameters (see {{RFC7231}}, Section 3.1.1.1 for the definition of their syntax).
 
 ### Serialisation-Defined Attributes
 
