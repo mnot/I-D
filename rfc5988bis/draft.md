@@ -401,7 +401,7 @@ The ABNF for the `type` parameter's value is:
 
 Other link-params are link-extensions, and are to be considered as target attributes.
 
-Such target attributes MAY be defined to use the encoding in {{I-D.ietf-httpbis-rfc5987}} (e.g.,
+Such target attributes MAY be defined to use the encoding in {{I-D.ietf-httpbis-rfc5987bis}} (e.g.,
 "example" and "example*"). When both forms are present, they SHOULD be considered to be the same
 target attribute; processors SHOULD use the value of the name ending in "*" (after
 {{I-D.ietf-httpbis-rfc5987bis}} decoding), but MAY fall back to the other value if there is an
@@ -594,8 +594,8 @@ algorithm can be used to parse it into the model described by this specification
 
 2. Create `link_strings` by splitting `field_value` on "," characters, excepting "," characters
 within quoted strings as per {{RFC7230}}, Section 3.2.6, or which form part of link's URI-Reference
-(i.e. between "<" and ">" characters where the "<" is immediately preceded by OWS and either a "," character
-or the beginning of the `field_value` string)
+(i.e. between "<" and ">" characters where the "<" is immediately preceded by OWS and either a ","
+character or the beginning of the `field_value` string).
 
 3. For each `link_string` in `link_strings`:
 
@@ -635,20 +635,20 @@ or the beginning of the `field_value` string)
    6. Let `target` be the result of relatively resolving (as per {{RFC3986}}, Section 5.2)
      `target_string`. Note that any base URI carried in the payload body is NOT used.
 
-   7. Let `relations_string` be the second item of the first tuple of `link_parameters` whose first item matches the
-     string "rel", or the empty string ("") if it is not present.
+   7. Let `relations_string` be the second item of the first tuple of `link_parameters` whose first
+      item matches the string "rel", or the empty string ("") if it is not present.
 
    8. Split `relations_string` into an array of strings `relation_types`, on RWS (removing
-     all whitespace in the process).
+      all whitespace in the process).
 
-   9. Let `context_string` be the second item of the first tuple of `link_parameters` whose first item matches the
-     string "anchor". If it is not present, `context_string` is the identity of the representation
-     carrying the Link header {{RFC7231}}, Section 3.1.4.1, serialised as a URI. Where the identity is "anonymous"
-     `context_string` is null.
+   9. Let `context_string` be the second item of the first tuple of `link_parameters` whose first
+      item matches the string "anchor". If it is not present, `context_string` is the identity of
+      the representation carrying the Link header {{RFC7231}}, Section 3.1.4.1, serialised as a
+      URI. Where the identity is "anonymous" `context_string` is null.
 
    0. Let `context` be the result of relatively resolving (as per {{RFC3986}}, Section 5.2)
-      `context_string`, unless `context_string` is null in which case `context` is null. Note that any base URI
-      carried in the payload body is NOT used.
+     `context_string`, unless `context_string` is null in which case `context` is null. Note that
+      any base URI carried in the payload body is NOT used.
 
    1. Let `target_attributes` be an empty array.
 
@@ -656,7 +656,9 @@ or the beginning of the `field_value` string)
 
       1. If `param_name` matches "rel" or "anchor", skip this tuple.
 
-      2. If `param_name` matches "media", "title", "title*" or "type" and `target_attributes` already contains a tuple whose first element matches the value of `param_name`, skip this tuple.
+      2. If `param_name` matches "media", "title", "title*" or "type" and `target_attributes`
+         already contains a tuple whose first element matches the value of `param_name`, skip this
+         tuple.
 
       3. If the last character of `param_name` is "\*", decode `param_value` according to
          {{I-D.ietf-httpbis-rfc5987bis}}.
