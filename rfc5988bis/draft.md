@@ -393,7 +393,7 @@ MUST be ignored by parsers.
 
 The ABNF for the `type` parameter's value is:
 ~~~ abnf2616
-	media-type
+	type-name "/" subtype-name
 ~~~
 
 
