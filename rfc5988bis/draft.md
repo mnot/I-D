@@ -270,7 +270,7 @@ The ABNF for the field value is given below:
 ~~~
 
 Note that any `link-param` can be generated with values using either the `token` or the
-`quoted-string` syntax, and therefore recipients MUST be able to parse both forms. Iqndividual
+`quoted-string` syntax, and therefore recipients MUST be able to parse both forms. Individual
 `link-param`s specify their syntax in terms of the value after any necessary unquoting (as per
 {{RFC7230}}, Section 3.2.6).
 
