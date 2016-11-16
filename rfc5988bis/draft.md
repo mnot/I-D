@@ -26,7 +26,6 @@ author:
     uri: https://www.mnot.net/
 
 normative:
-  RFC2026:
   RFC2119:
   RFC3864:
   RFC3986:
