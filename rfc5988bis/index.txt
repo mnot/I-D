@@ -3,10 +3,10 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                             June 19, 2016
+Internet-Draft                                         November 16, 2016
 Obsoletes: 5988 (if approved)
 Intended status: Standards Track
-Expires: December 21, 2016
+Expires: May 20, 2017
 
 
                               Web Linking
@@ -49,13 +49,13 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 21, 2016.
+   This Internet-Draft will expire on May 20, 2017.
 
 
 
-Nottingham              Expires December 21, 2016               [Page 1]
+Nottingham                Expires May 20, 2017                  [Page 1]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
 Copyright Notice
@@ -97,11 +97,11 @@ Table of Contents
    5.  Target Attributes . . . . . . . . . . . . . . . . . . . . . .   7
    6.  Link Serialisation in HTTP Headers  . . . . . . . . . . . . .   8
      6.1.  Link Target . . . . . . . . . . . . . . . . . . . . . . .   8
-     6.2.  Link Context  . . . . . . . . . . . . . . . . . . . . . .   9
+     6.2.  Link Context  . . . . . . . . . . . . . . . . . . . . . .   8
      6.3.  Relation Type . . . . . . . . . . . . . . . . . . . . . .   9
      6.4.  Target Attributes . . . . . . . . . . . . . . . . . . . .   9
-       6.4.1.  Serialisation-Defined Attributes  . . . . . . . . . .  10
-       6.4.2.  Extension Attributes  . . . . . . . . . . . . . . . .  11
+       6.4.1.  Serialisation-Defined Attributes  . . . . . . . . . .   9
+       6.4.2.  Extension Attributes  . . . . . . . . . . . . . . . .  10
      6.5.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  11
    7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
      7.1.  Link HTTP Header Field Registration . . . . . . . . . . .  12
@@ -109,14 +109,14 @@ Table of Contents
 
 
 
-Nottingham              Expires December 21, 2016               [Page 2]
+Nottingham                Expires May 20, 2017                  [Page 2]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
    8.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
    9.  Internationalisation Considerations . . . . . . . . . . . . .  13
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
      10.1.  Normative References . . . . . . . . . . . . . . . . . .  14
      10.2.  Informative References . . . . . . . . . . . . . . . . .  15
    Appendix A.  Notes on Other Link Serialisations . . . . . . . . .  17
@@ -124,7 +124,7 @@ Internet-Draft                 Web Linking                     June 2016
      A.2.  Link Serialisation in Atom  . . . . . . . . . . . . . . .  18
    Appendix B.  Algorithm for Parsing Link Headers . . . . . . . . .  18
    Appendix C.  Changes from RFC5988 . . . . . . . . . . . . . . . .  20
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  21
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  22
 
 1.  Introduction
 
@@ -165,9 +165,9 @@ Internet-Draft                 Web Linking                     June 2016
 
 
 
-Nottingham              Expires December 21, 2016               [Page 3]
+Nottingham                Expires May 20, 2017                  [Page 3]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
 3.  Links
@@ -221,9 +221,9 @@ Internet-Draft                 Web Linking                     June 2016
 
 
 
-Nottingham              Expires December 21, 2016               [Page 4]
+Nottingham                Expires May 20, 2017                  [Page 4]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
 4.  Link Relation Types
@@ -277,9 +277,9 @@ Internet-Draft                 Web Linking                     June 2016
 
 
 
-Nottingham              Expires December 21, 2016               [Page 5]
+Nottingham                Expires May 20, 2017                  [Page 5]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
    Historically, registered relation types have been identified with a
@@ -333,9 +333,9 @@ Internet-Draft                 Web Linking                     June 2016
 
 
 
-Nottingham              Expires December 21, 2016               [Page 6]
+Nottingham                Expires May 20, 2017                  [Page 6]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
 4.2.  Extension Relation Types
@@ -389,9 +389,9 @@ Internet-Draft                 Web Linking                     June 2016
 
 
 
-Nottingham              Expires December 21, 2016               [Page 7]
+Nottingham                Expires May 20, 2017                  [Page 7]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
    This specification does define target attributes for use in the Link
@@ -402,37 +402,15 @@ Internet-Draft                 Web Linking                     June 2016
    The Link header field provides a means for serialising one or more
    links into HTTP headers.
 
-   Link           = "Link" ":" #link-value
-   link-value     = "<" URI-Reference ">" *( ";" link-param )
-   link-param     = ( ( "rel" "=" relation-types )
-                | ( "anchor" "=" <"> URI-Reference <"> )
-                | ( "rev" "=" relation-types )
-                | ( "hreflang" "=" Language-Tag )
-                | ( "media" "="
-                  ( media_query_list | ( <"> media_query_list <"> ) )
-                )
-                | ( "title" "=" quoted-string )
-                | ( "title*" "=" ext-value )
-                | ( "type" "=" ( media-type | quoted-mt ) )
-                | ( link-extension ) )
-   link-extension = ( parmname [ "=" ( ptoken | quoted-string ) ] )
-                | ( ext-name-star "=" ext-value )
-   ext-name-star  = parmname "*" ; reserved for RFC5987-profiled
-                               ; extensions. Whitespace NOT
-                               ; allowed in between.
-   ptoken         = 1*ptokenchar
-   ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "("
-                | ")" | "*" | "+" | "-" | "." | "/" | DIGIT
-                | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA
-                | "[" | "]" | "^" | "_" | "`" | "{" | "|"
-                | "}" | "~"
-   media-type     = type-name "/" subtype-name
-   quoted-mt      = <"> media-type <">
-   relation-types = relation-type
-                | <"> relation-type *( 1*SP relation-type ) <">
-   relation-type  = reg-rel-type | ext-rel-type
-   reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
-   ext-rel-type   = URI
+   The ABNF for the field value is given below:
+
+        Link       = #link-value
+        link-value = "<" URI-Reference ">" OWS *( OWS ";" OWS link-param )
+  link-param = token "=" ( token / quoted-string )
+
+   This specification defines the link-params "rel", "anchor", "rev",
+   "hreflang", "media", "title", "title*", and "type"; see Section 6.2,
+   Section 6.3 and Section 6.4.
 
 6.1.  Link Target
 
@@ -441,14 +419,6 @@ Internet-Draft                 Web Linking                     June 2016
    angle brackets ("<>").  If the URI-Reference is relative, parsers
    MUST resolve it as per [RFC3986], Section 5.  Note that any base IRI
    from the message's content is not applied.
-
-
-
-
-Nottingham              Expires December 21, 2016               [Page 8]
-
-Internet-Draft                 Web Linking                     June 2016
-
 
 6.2.  Link Context
 
@@ -463,11 +433,22 @@ Internet-Draft                 Web Linking                     June 2016
    Section 5.  Note that any base URI from the body's content is not
    applied.
 
+     anchor         = URI-Reference
+
    Consuming implementations can choose to ignore links with an anchor
    parameter.  For example, the application in use might not allow the
    link context to be assigned to a different resource.  In such cases,
    the entire link is to be ignored; consuming implementations MUST NOT
    process the link without applying the anchor.
+
+
+
+
+
+Nottingham                Expires May 20, 2017                  [Page 8]
+
+Internet-Draft                 Web Linking                 November 2016
+
 
    Note that depending on HTTP status code and response headers, the
    link context might be "anonymous" (i.e., no link context is
@@ -488,6 +469,13 @@ Internet-Draft                 Web Linking                     June 2016
    specification because it often confuses authors and readers; in most
    cases, using a separate relation type is preferable.
 
+           rel            = relation-type *( 1*SP relation-type )
+           rev            = relation-type *( 1*SP relation-type )
+
+           relation-type  = reg-rel-type | ext-rel-type
+           reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+           ext-rel-type   = URI
+
    Note that extension relation types are REQUIRED to be absolute URIs
    in Link headers, and MUST be quoted if they contain a semicolon (";")
    or comma (",") (as these characters are used as delimiters in the
@@ -497,14 +485,6 @@ Internet-Draft                 Web Linking                     June 2016
 
    The Link header field defines several attributes specific to this
    serialisation, and also allows extension attributes.
-
-
-
-
-Nottingham              Expires December 21, 2016               [Page 9]
-
-Internet-Draft                 Web Linking                     June 2016
-
 
 6.4.1.  Serialisation-Defined Attributes
 
@@ -517,8 +497,19 @@ Internet-Draft                 Web Linking                     June 2016
    that this is only a hint; for example, it does not override the
    Content-Language header field of a HTTP response obtained by actually
    following the link.  Multiple "hreflang" attributes on a single link-
+
+
+
+
+Nottingham                Expires May 20, 2017                  [Page 9]
+
+Internet-Draft                 Web Linking                 November 2016
+
+
    value indicate that multiple languages are available from the
    indicated resource.
+
+     hreflang       = Language-Tag
 
    The "media" attribute, when present, is used to indicate intended
    destination medium or media for style information (see
@@ -526,6 +517,8 @@ Internet-Draft                 Web Linking                     June 2016
    if it contains a semicolon (";") or comma (",").  There MUST NOT be
    more than one "media" attribute in a link-value; occurrences after
    the first MUST be ignored by parsers.
+
+     media          = media_query_list
 
    The "title" attribute, when present, is used to label the destination
    of a link such that it can be used as a human-readable identifier
@@ -554,18 +547,20 @@ Internet-Draft                 Web Linking                     June 2016
    once in a given link-value; occurrences after the first MUST be
    ignored by parsers.
 
-
-
-
-Nottingham              Expires December 21, 2016              [Page 10]
-
-Internet-Draft                 Web Linking                     June 2016
-
+           type           = media-type
 
 6.4.2.  Extension Attributes
 
    Other link-params are link-extensions, and are to be considered as
    target attributes.
+
+
+
+
+Nottingham                Expires May 20, 2017                 [Page 10]
+
+Internet-Draft                 Web Linking                 November 2016
+
 
    When link-extensions contain both a parmname and a corresponding ext-
    name-star (e.g., "example" and "example*"), they SHOULD be considered
@@ -578,15 +573,15 @@ Internet-Draft                 Web Linking                     June 2016
 
    For example:
 
-   Link: <http://example.com/TheBook/chapter2>; rel="previous";
-         title="previous chapter"
+       Link: <http://example.com/TheBook/chapter2>; rel="previous";
+             title="previous chapter"
 
    indicates that "chapter2" is previous to this resource in a logical
    navigation path.
 
    Similarly,
 
-   Link: </>; rel="http://example.net/foo"
+       Link: </>; rel="http://example.net/foo"
 
    indicates that the root resource ("/") is related to this resource
    with the extension relation type "http://example.net/foo".
@@ -595,10 +590,10 @@ Internet-Draft                 Web Linking                     June 2016
    multiple links, and also the use of RFC 5987 encoding to encode both
    non-ASCII characters and language information.
 
-   Link: </TheBook/chapter2>;
-         rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
-         </TheBook/chapter4>;
-         rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
+       Link: </TheBook/chapter2>;
+             rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
+             </TheBook/chapter4>;
+             rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
 
    Here, both links have titles encoded in UTF-8, use the German
    language ("de"), and the second link contains the Unicode code point
@@ -607,20 +602,21 @@ Internet-Draft                 Web Linking                     June 2016
    Note that link-values can convey multiple links between the same link
    target and link context; for example:
 
-   Link: <http://example.org/>;
-         rel="start http://example.net/relation/other"
-
-
-
-
-Nottingham              Expires December 21, 2016              [Page 11]
-
-Internet-Draft                 Web Linking                     June 2016
-
+       Link: <http://example.org/>;
+             rel="start http://example.net/relation/other"
 
    Here, the link to "http://example.org/" has the registered relation
    type "start" and the extension relation type
    "http://example.net/relation/other".
+
+
+
+
+
+Nottingham                Expires May 20, 2017                 [Page 11]
+
+Internet-Draft                 Web Linking                 November 2016
+
 
 7.  IANA Considerations
 
@@ -633,14 +629,14 @@ Internet-Draft                 Web Linking                     June 2016
    This specification updates the Message Header registry entry for
    "Link" in HTTP [RFC3864] to refer to this document.
 
-   Header field: Link
-   Applicable protocol: http
-   Status: standard
-   Author/change controller:
-       IETF  (iesg@ietf.org)
-       Internet Engineering Task Force
-   Specification document(s):
-       [RFC&rfc.number;]
+       Header field: Link
+       Applicable protocol: http
+       Status: standard
+       Author/change controller:
+           IETF  (iesg@ietf.org)
+           Internet Engineering Task Force
+       Specification document(s):
+           [RFC&rfc.number;]
 
 7.2.  Link Relation Type Registry
 
@@ -666,18 +662,17 @@ Internet-Draft                 Web Linking                     June 2016
    Expert(s), and IANA will set HTTP response headers on them as
    (reasonably) requested by the Expert(s).
 
-
-
-
-Nottingham              Expires December 21, 2016              [Page 12]
-
-Internet-Draft                 Web Linking                     June 2016
-
-
    Additionally, the HTML generated by IANA will:
 
    o  Take directions from the Expert(s) as to the content of the HTML
       page's introductory text and markup
+
+
+
+Nottingham                Expires May 20, 2017                 [Page 12]
+
+Internet-Draft                 Web Linking                 November 2016
+
 
    o  Include a stable HTML fragment identifier for each registered link
       relation
@@ -722,26 +717,25 @@ Internet-Draft                 Web Linking                     June 2016
    Note that registered Relation Names are required to be lower-case
    ASCII letters.
 
-
-
-
-Nottingham              Expires December 21, 2016              [Page 13]
-
-Internet-Draft                 Web Linking                     June 2016
-
-
 10.  References
+
+
+
+
+
+
+
+Nottingham                Expires May 20, 2017                 [Page 13]
+
+Internet-Draft                 Web Linking                 November 2016
+
 
 10.1.  Normative References
 
    [I-D.ietf-httpbis-rfc5987bis]
               Reschke, J., "Indicating Character Encoding and Language
               for HTTP Header Field Parameters", draft-ietf-httpbis-
-              rfc5987bis-01 (work in progress), March 2016.
-
-   [RFC2026]  Bradner, S., "The Internet Standards Process -- Revision
-              3", BCP 9, RFC 2026, DOI 10.17487/RFC2026, October 1996,
-              <http://www.rfc-editor.org/info/rfc2026>.
+              rfc5987bis-03 (work in progress), July 2016.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/
@@ -776,20 +770,21 @@ Internet-Draft                 Web Linking                     June 2016
               6838, DOI 10.17487/RFC6838, January 2013,
               <http://www.rfc-editor.org/info/rfc6838>.
 
-
-
-
-
-
-Nottingham              Expires December 21, 2016              [Page 14]
-
-Internet-Draft                 Web Linking                     June 2016
-
-
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing", RFC
               7230, DOI 10.17487/RFC7230, June 2014,
               <http://www.rfc-editor.org/info/rfc7230>.
+
+
+
+
+
+
+
+Nottingham                Expires May 20, 2017                 [Page 14]
+
+Internet-Draft                 Web Linking                 November 2016
+
 
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231, DOI
@@ -833,21 +828,19 @@ Internet-Draft                 Web Linking                     June 2016
               March 2015,
               <http://www.w3.org/TR/2015/REC-html-rdfa-20150317>.
 
-
-
-
-
-Nottingham              Expires December 21, 2016              [Page 15]
-
-Internet-Draft                 Web Linking                     June 2016
-
-
    [W3C.REC-html5-20141028]
               Hickson, I., Berjon, R., Faulkner, S., Leithead, T.,
-              Navara, E., O&#039;Connor, E., and S. Pfeiffer, "HTML5",
+              Navara, E., O&#039;Connor, T., and S. Pfeiffer, "HTML5",
               World Wide Web Consortium Recommendation REC-
               html5-20141028, October 2014,
               <http://www.w3.org/TR/2014/REC-html5-20141028>.
+
+
+
+Nottingham                Expires May 20, 2017                 [Page 15]
+
+Internet-Draft                 Web Linking                 November 2016
+
 
    [W3C.REC-xml-names-20091208]
               Bray, T., Hollander, D., Layman, A., Tobin, R., and H.
@@ -893,9 +886,16 @@ Internet-Draft                 Web Linking                     June 2016
 
 
 
-Nottingham              Expires December 21, 2016              [Page 16]
+
+
+
+
+
+
+
+Nottingham                Expires May 20, 2017                 [Page 16]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
 Appendix A.  Notes on Other Link Serialisations
@@ -949,9 +949,9 @@ A.1.  Link Serialisation in HTML
 
 
 
-Nottingham              Expires December 21, 2016              [Page 17]
+Nottingham                Expires May 20, 2017                 [Page 17]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
 A.2.  Link Serialisation in Atom
@@ -1005,9 +1005,9 @@ Appendix B.  Algorithm for Parsing Link Headers
 
 
 
-Nottingham              Expires December 21, 2016              [Page 18]
+Nottingham                Expires May 20, 2017                 [Page 18]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
        1.   Let "target_string" be the string between the first "<" and
@@ -1061,9 +1061,9 @@ Internet-Draft                 Web Linking                     June 2016
 
 
 
-Nottingham              Expires December 21, 2016              [Page 19]
+Nottingham                Expires May 20, 2017                 [Page 19]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
        8.   Split "relations_string" into an array of strings
@@ -1117,9 +1117,9 @@ Appendix C.  Changes from RFC5988
 
 
 
-Nottingham              Expires December 21, 2016              [Page 20]
+Nottingham                Expires May 20, 2017                 [Page 20]
 
-Internet-Draft                 Web Linking                     June 2016
+Internet-Draft                 Web Linking                 November 2016
 
 
    o  The Link Relation Application Data Registry has been removed.
@@ -1156,12 +1156,34 @@ Internet-Draft                 Web Linking                     June 2016
    o  The value space of target attributes and their definition has been
       specified.
 
+   o  The ABNF has been updated to be compatible with [RFC7230].  In
+      particular, whitespace is now explicit.
+
+   o  Some parameters on the HTTP header field can now appear as a
+      token.
+
+   o  Handling of quoted strings is now defined by [RFC7230].
+
+   o  The "type" header field parameter now needs to be quoted (as
+      "token" does not allow "/").
+
+
+
+
+
+
+
+Nottingham                Expires May 20, 2017                 [Page 21]
+
+Internet-Draft                 Web Linking                 November 2016
+
+
 Author's Address
 
    Mark Nottingham
 
    EMail: mnot@mnot.net
-   URI:   http://www.mnot.net/
+   URI:   https://www.mnot.net/
 
 
 
@@ -1173,4 +1195,38 @@ Author's Address
 
 
 
-Nottingham              Expires December 21, 2016              [Page 21]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham                Expires May 20, 2017                 [Page 22]
