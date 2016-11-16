@@ -262,37 +262,47 @@ This specification does define target attributes for use in the Link HTTP header
 
 The Link header field provides a means for serialising one or more links into HTTP headers.
 
-	Link           = "Link" ":" #link-value
-	link-value     = "<" URI-Reference ">" *( ";" link-param )
-	link-param     = ( ( "rel" "=" relation-types )
-	             | ( "anchor" "=" <"> URI-Reference <"> )
-	             | ( "rev" "=" relation-types )
-	             | ( "hreflang" "=" Language-Tag )
-	             | ( "media" "="
-                   ( media_query_list | ( <"> media_query_list <"> ) )
-                 )
-	             | ( "title" "=" quoted-string )
-	             | ( "title*" "=" ext-value )
-	             | ( "type" "=" ( media-type | quoted-mt ) )
-	             | ( link-extension ) )
-	link-extension = ( parmname [ "=" ( ptoken | quoted-string ) ] )
-	             | ( ext-name-star "=" ext-value )
-	ext-name-star  = parmname "*" ; reserved for RFC5987-profiled
-	                            ; extensions. Whitespace NOT
-	                            ; allowed in between.
-	ptoken         = 1*ptokenchar
-	ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "("
-	             | ")" | "*" | "+" | "-" | "." | "/" | DIGIT
-	             | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA
-	             | "[" | "]" | "^" | "_" | "`" | "{" | "|"
-	             | "}" | "~"
-	media-type     = type-name "/" subtype-name
-	quoted-mt      = <"> media-type <">
-	relation-types = relation-type
-	             | <"> relation-type *( 1*SP relation-type ) <">
+The ABNF for the field value is given below:
+
+~~~ abnf2616
+	Link           = #link-value
+	link-value     = "<" URI-Reference ">" OWS *( OWS ";" OWS link-param )
+  link-param     = token "=" ( token / quoted-string )
+~~~
+
+This specification defines the parameters "rel", "anchor", "rev", "hreflang",
+"media", "title", "title*", and "type".
+  
+ABNF for "rel" and "rev" parameter values:
+
+~~~ abnf2616
+	rel            = relation-typ *( 1*SP relation-type )
+	rev            = relation-typ *( 1*SP relation-type )
+
 	relation-type  = reg-rel-type | ext-rel-type
 	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
 	ext-rel-type   = URI
+~~~~
+
+ABNF for "anchor" parameter:
+~~~ abnf2616
+  anchor         = URI-Reference
+~~~
+
+ABNF for "hreflang" parameter:
+~~~ abnf2616
+  hreflang       = Language-Tag
+~~~
+  
+ABNF for "media" parameter:
+~~~ abnf2616
+  media          = media_query_list
+~~~
+
+ABNF for "type" parameter:
+~~~ abnf2616
+	type           = media-type
+~~~
 
 
 ## Link Target
