@@ -92,7 +92,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 This document uses the Augmented Backus-Naur Form (ABNF) notation of {{RFC7230}}, including the
  #rule, and explicitly includes the following rules from it: quoted-string, token, SP (space),
-OWS (optional whitespace), RWS (required whitespace) LOALPHA, DIGIT.
+BWS (bad whitespace), OWS (optional whitespace), RWS (required whitespace) LOALPHA, DIGIT.
 
 Additionally, the following rules are included from {{RFC3986}}: URI and URI-Reference; from
 {{RFC6838}}: type-name and subtype-name; from {{W3C.CR-css3-mediaqueries-20090915}}:
@@ -266,7 +266,7 @@ The ABNF for the field value is given below:
 ~~~ abnf2616
 	Link       = #link-value
 	link-value = "<" URI-Reference ">" OWS *( OWS ";" OWS link-param )
-  link-param = token "=" ( token / quoted-string )
+  link-param = token BWS "=" BWS ( token / quoted-string )
 ~~~
 
 Note that any `link-param` can be generated with values using either the `token` or the
