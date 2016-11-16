@@ -265,7 +265,7 @@ The ABNF for the field value is given below:
 
 ~~~ abnf2616
 	Link       = #link-value
-	link-value = "<" URI-Reference ">" OWS *( OWS ";" OWS link-param )
+	link-value = "<" URI-Reference ">" *( OWS ";" OWS link-param )
   link-param = token BWS "=" BWS ( token / quoted-string )
 ~~~
 
