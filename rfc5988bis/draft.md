@@ -248,7 +248,7 @@ serializations, and MUST be compared in a case-insensitive fashion.
 
 Target attribute definitions SHOULD specify:
 
-* Their serialisation into UTF-8 or a subset thereof, to maximise their chances of portability
+* Their serialisation into Unicode or a subset thereof, to maximise their chances of portability
   across link serialisations.
    
 * The semantics and error handling of multiple occurrences of the attribute on a given link.
