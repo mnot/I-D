@@ -23,10 +23,9 @@ author:
     name: Mark Nottingham
     organization:
     email: mnot@mnot.net
-    uri: http://www.mnot.net/
+    uri: https://www.mnot.net/
 
 normative:
-  RFC2026:
   RFC2119:
   RFC3864:
   RFC3986:
@@ -93,7 +92,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 This document uses the Augmented Backus-Naur Form (ABNF) notation of {{RFC7230}}, including the
  #rule, and explicitly includes the following rules from it: quoted-string, token, SP (space),
-OWS (optional whitespace), RWS (required whitespace) LOALPHA, DIGIT.
+BWS (bad whitespace), OWS (optional whitespace), RWS (required whitespace) LOALPHA, DIGIT.
 
 Additionally, the following rules are included from {{RFC3986}}: URI and URI-Reference; from
 {{RFC6838}}: type-name and subtype-name; from {{W3C.CR-css3-mediaqueries-20090915}}:
@@ -249,7 +248,7 @@ serializations, and MUST be compared in a case-insensitive fashion.
 
 Target attribute definitions SHOULD specify:
 
-* Their serialisation into UTF-8 or a subset thereof, to maximise their chances of portability
+* Their serialisation into Unicode or a subset thereof, to maximise their chances of portability
   across link serialisations.
    
 * The semantics and error handling of multiple occurrences of the attribute on a given link.
@@ -262,37 +261,22 @@ This specification does define target attributes for use in the Link HTTP header
 
 The Link header field provides a means for serialising one or more links into HTTP headers.
 
-	Link           = "Link" ":" #link-value
-	link-value     = "<" URI-Reference ">" *( ";" link-param )
-	link-param     = ( ( "rel" "=" relation-types )
-	             | ( "anchor" "=" <"> URI-Reference <"> )
-	             | ( "rev" "=" relation-types )
-	             | ( "hreflang" "=" Language-Tag )
-	             | ( "media" "="
-                   ( media_query_list | ( <"> media_query_list <"> ) )
-                 )
-	             | ( "title" "=" quoted-string )
-	             | ( "title*" "=" ext-value )
-	             | ( "type" "=" ( media-type | quoted-mt ) )
-	             | ( link-extension ) )
-	link-extension = ( parmname [ "=" ( ptoken | quoted-string ) ] )
-	             | ( ext-name-star "=" ext-value )
-	ext-name-star  = parmname "*" ; reserved for RFC5987-profiled
-	                            ; extensions. Whitespace NOT
-	                            ; allowed in between.
-	ptoken         = 1*ptokenchar
-	ptokenchar     = "!" | "#" | "$" | "%" | "&" | "'" | "("
-	             | ")" | "*" | "+" | "-" | "." | "/" | DIGIT
-	             | ":" | "<" | "=" | ">" | "?" | "@" | ALPHA
-	             | "[" | "]" | "^" | "_" | "`" | "{" | "|"
-	             | "}" | "~"
-	media-type     = type-name "/" subtype-name
-	quoted-mt      = <"> media-type <">
-	relation-types = relation-type
-	             | <"> relation-type *( 1*SP relation-type ) <">
-	relation-type  = reg-rel-type | ext-rel-type
-	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
-	ext-rel-type   = URI
+The ABNF for the field value is given below:
+
+~~~ abnf2616
+	Link       = #link-value
+	link-value = "<" URI-Reference ">" *( OWS ";" OWS link-param )
+  link-param = token BWS "=" BWS ( token / quoted-string )
+~~~
+
+Note that any `link-param` can be generated with values using either the `token` or the
+`quoted-string` syntax, and therefore recipients MUST be able to parse both forms. Individual
+`link-param`s specify their syntax in terms of the value after any necessary unquoting (as per
+{{RFC7230}}, Section 3.2.6).
+
+This specification defines the link-params "rel", "anchor", "rev", "hreflang", "media", "title",
+"title*", and "type"; see {{header-context}}, {{header-type}} and {{header-attrs}}. 
+
 
 
 ## Link Target
@@ -302,7 +286,7 @@ see {{RFC3987}}, Section 3.1) inside angle brackets ("&lt;&gt;"). If the URI-Ref
 parsers MUST resolve it as per {{RFC3986}}, Section 5. Note that any base IRI from the message's
 content is not applied.
 
-## Link Context
+## Link Context {#header-context}
 
 By default, the context of a link conveyed in the Link header field is identity of the
 representation it is associated with, as defined in {{RFC7231}}, Section 3.1.4.1, serialised as a
@@ -313,6 +297,11 @@ resource, or a third resource (i.e., when the anchor value is an absolute URI). 
 parameter's value is a relative URI, parsers MUST resolve it as per {{RFC3986}}, Section 5. Note
 that any base URI from the body's content is not applied.
 
+The ABNF for the `anchor` parameter's value is:
+~~~ abnf2616
+  URI-Reference
+~~~
+
 Consuming implementations can choose to ignore links with an anchor parameter. For example, the
 application in use might not allow the link context to be assigned to a different resource. In such
 cases, the entire link is to be ignored; consuming implementations MUST NOT process the link
@@ -322,7 +311,7 @@ Note that depending on HTTP status code and response headers, the link context m
 (i.e., no link context is available). For instance, this is the case on a 404 response to a GET
 request.
 
-## Relation Type
+## Relation Type {#header-type}
 
 The relation type of a link conveyed in the Link header field is conveyed in the "rel" parameter's
 value. The "rel" parameter MUST NOT appear more than once in a given link-value; occurrences after
@@ -333,14 +322,28 @@ are in the reverse direction. That is, a link from A to B with REL="X" expresses
 relationship as a link from B to A with REV="X". "rev" is deprecated by this specification because
 it often confuses authors and readers; in most cases, using a separate relation type is preferable.
 
+The ABNF for the `rel` and `rev` parameters' values is:
+~~~ abnf2616
+	relation-type *( 1*SP relation-type )
+~~~
+
+where:
+
+~~~ abnf2616
+	relation-type  = reg-rel-type | ext-rel-type
+	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+	ext-rel-type   = URI
+~~~~
+
 Note that extension relation types are REQUIRED to be absolute URIs in Link headers, and MUST be
 quoted if they contain a semicolon (";") or comma (",") (as these characters are used as delimiters
 in the header field itself).
 
 ## Target Attributes {#header-attrs}
 
-The Link header field defines several attributes specific to this serialisation, and also allows
-extension attributes.
+The Link header field defines several target attributes specific to this serialisation, and also
+allows extension target attributes. Target attributes are serialised in the Link header field as
+parameters (see {{RFC7231}}, Section 3.1.1.1 for the definition of their syntax).
 
 ### Serialisation-Defined Attributes
 
@@ -353,10 +356,20 @@ the Content-Language header field of a HTTP response obtained by actually follow
 Multiple "hreflang" attributes on a single link-value indicate that multiple languages are
 available from the indicated resource.
 
+The ABNF for the `hreflang` parameter's value is:
+~~~ abnf2616
+  Language-Tag
+~~~
+
 The "media" attribute, when present, is used to indicate intended destination medium or media for
 style information (see {{W3C.REC-html5-20141028}}, Section 4.2.4). Its value MUST be quoted if it
 contains a semicolon (";") or comma (","). There MUST NOT be more than one "media" attribute in
 a link-value; occurrences after the first MUST be ignored by parsers.
+
+The ABNF for the `media` parameter's value is:
+~~~ abnf2616
+  media_query_list
+~~~
 
 The "title" attribute, when present, is used to label the destination of a link such that it can be
 used as a human-readable identifier (e.g., a menu entry) in the language indicated by the
@@ -378,14 +391,21 @@ the Content-Type header field of a HTTP response obtained by actually following 
 "type" attribute MUST NOT appear more than once in a given link-value; occurrences after the first
 MUST be ignored by parsers.
 
+The ABNF for the `type` parameter's value is:
+~~~ abnf2616
+	type-name "/" subtype-name
+~~~
+
+
 ### Extension Attributes
 
 Other link-params are link-extensions, and are to be considered as target attributes.
 
-When link-extensions contain both a parmname and a corresponding ext-name-star (e.g., "example" and
-"example*"), they SHOULD be considered to be the same target attribute; processors SHOULD use the
-ext-name-star form (after {{I-D.ietf-httpbis-rfc5987bis}} decoding), but MAY fall back to the
-parmname value if there is an error in decoding it, or if they do not support decoding.
+Such target attributes MAY be defined to use the encoding in {{I-D.ietf-httpbis-rfc5987bis}} (e.g.,
+"example" and "example*"). When both forms are present, they SHOULD be considered to be the same
+target attribute; processors SHOULD use the value of the name ending in "*" (after
+{{I-D.ietf-httpbis-rfc5987bis}} decoding), but MAY fall back to the other value if there is an
+error in decoding it, or if they do not support decoding.
 
 
 ## Examples
@@ -573,7 +593,9 @@ algorithm can be used to parse it into the model described by this specification
 1. Let `links` be an empty list.
 
 2. Create `link_strings` by splitting `field_value` on "," characters, excepting "," characters
-within quoted strings as per {{RFC7230}}, Section 3.2.6.
+within quoted strings as per {{RFC7230}}, Section 3.2.6, or which form part of link's URI-Reference
+(i.e. between "<" and ">" characters where the "<" is immediately preceded by OWS and either a ","
+character or the beginning of the `field_value` string).
 
 3. For each `link_string` in `link_strings`:
 
@@ -592,37 +614,41 @@ within quoted strings as per {{RFC7230}}, Section 3.2.6.
 
       1. Remove OWS from the beginning and end of `parameter`.
 
-      2. Split `parameter` into `param_name` and `param_value` on the first "=" character. If
+      2. Skip this item if `parameter` matches the empty string ("").
+
+      3. Split `parameter` into `param_name` and `param_value` on the first "=" character. If
         `parameter` does not contain "=", let `param_name` be `parameter` and `param_value` be null.
 
-      3. Remove OWS from the end of `param_name` and the beginning of `param_value`.
+      4. Remove OWS from the end of `param_name` and the beginning of `param_value`.
 
-      4. Case-normalise `param_name` to lowercase.
+      5. Case-normalise `param_name` to lowercase.
 
-      5. If the first and last characters of `param_value` are both DQUOTE:
+      6. If the first and last characters of `param_value` are both DQUOTE:
 
          1. Remove the first and last characters of `param_value`.
 
          2. Replace quoted-pairs within `param_value` with the octet following the backslash, as
             per {{RFC7230}}, Section 3.2.6.
 
-      6. Append the tuple (`param_name`, `param_value`) to `link_parameters`.
+      7. Append the tuple (`param_name`, `param_value`) to `link_parameters`.
 
    6. Let `target` be the result of relatively resolving (as per {{RFC3986}}, Section 5.2)
      `target_string`. Note that any base URI carried in the payload body is NOT used.
 
-   7. Let `relations_string` be the first tuple of `link_parameters` whose first item matches the
-     string "rel", or the empty string ("") if it is not present.
+   7. Let `relations_string` be the second item of the first tuple of `link_parameters` whose first
+      item matches the string "rel", or the empty string ("") if it is not present.
 
    8. Split `relations_string` into an array of strings `relation_types`, on RWS (removing
-     all whitespace in the process).
+      all whitespace in the process).
 
-   9. Let `context_string` be the first tuple of `link_parameters` whose first item matches the
-     string "anchor". If it is not present, `context_string` is the identity of the representation
-     carrying the Link header {{RFC7231}}, Section 3.1.4.1, serialised as a URI.
+   9. Let `context_string` be the second item of the first tuple of `link_parameters` whose first
+      item matches the string "anchor". If it is not present, `context_string` is the identity of
+      the representation carrying the Link header {{RFC7231}}, Section 3.1.4.1, serialised as a
+      URI. Where the identity is "anonymous" `context_string` is null.
 
    0. Let `context` be the result of relatively resolving (as per {{RFC3986}}, Section 5.2)
-      `context_string`. Note that any base URI carried in the payload body is NOT used.
+     `context_string`, unless `context_string` is null in which case `context` is null. Note that
+      any base URI carried in the payload body is NOT used.
 
    1. Let `target_attributes` be an empty array.
 
@@ -630,10 +656,14 @@ within quoted strings as per {{RFC7230}}, Section 3.2.6.
 
       1. If `param_name` matches "rel" or "anchor", skip this tuple.
 
-      2. If the last character of `param_name` is "\*", decode `param_value` according to
+      2. If `param_name` matches "media", "title", "title*" or "type" and `target_attributes`
+         already contains a tuple whose first element matches the value of `param_name`, skip this
+         tuple.
+
+      3. If the last character of `param_name` is "\*", decode `param_value` according to
          {{I-D.ietf-httpbis-rfc5987bis}}.
 
-      3. Append (`param_name`, `param_value`) to `target_attributes`.
+      4. Append (`param_name`, `param_value`) to `target_attributes`.
 
    3. For each `relation_type` in `relation_types`:
 
@@ -676,9 +706,19 @@ This specification has the following differences from its predecessor, RFC5988:
 
 * Clarified the cardinality of target attributes (generically and for "type").
 
-* Corrected the default link context for the Link header field, to be dependent upon the identity of the representation (as per RFC7231).
+* Corrected the default link context for the Link header field, to be dependent upon the identity
+  of the representation (as per RFC7231).
 
 * Defined a suggested parsing algorithm for the Link header.
 
 * The value space of target attributes and their definition has been specified.
+
+* The ABNF has been updated to be compatible with {{RFC7230}}. In particular, whitespace is now
+  explicit.
+
+* Some parameters on the HTTP header field can now appear as a token.
+
+* Handling of quoted strings is now defined by {{RFC7230}}.
+
+* The `type` header field parameter now needs to be quoted (as `token` does not allow "/").
 
