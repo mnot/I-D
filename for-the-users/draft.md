@@ -116,9 +116,9 @@ Thus, the end user of a protocol to manage routers is not a router administrator
 using the network that the router operates within.
 
 This does not mean that end users have ultimate priority; there may be cases where genuine
-technical need of another party requires that end user requirements compromise. However, such
-tradeoffs need to be carefully examined, and avoided when there are alternate means of achieving
-the desired goals. If they cannot be, these choices and reasoning SHOULD be carefully documented.
+technical need requires compromise. However, such tradeoffs need to be carefully examined, and
+avoided when there are alternate means of achieving the desired goals. If they cannot be, these
+choices and reasoning SHOULD be carefully documented.
 
 For example, IPv6 {{RFC2460}} identifies each client with a unique address -- even though this
 provides a way to track end user activity and helps identify them -- because it is technically
