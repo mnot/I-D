@@ -115,7 +115,7 @@ Internet-Draft                 Web Linking                 November 2016
 
 
    8.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
-   9.  Internationalisation Considerations . . . . . . . . . . . . .  13
+   9.  Internationalisation Considerations . . . . . . . . . . . . .  14
    10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
      10.1.  Normative References . . . . . . . . . . . . . . . . . .  14
      10.2.  Informative References . . . . . . . . . . . . . . . . .  15
@@ -204,20 +204,20 @@ Internet-Draft                 Web Linking                 November 2016
    significant can do so.
 
    Links are conveyed in _link serialisations_; they are the "bytes on
-   the wire", and can occur in various forms.  This specification does
-   not define a general syntax for links, nor does it mandate a specific
-   context for any given link; it is expected that serialisations of
-   links will specify both aspects.  One such serialisation is
-   communication of links through HTTP headers, specified in Section 6.
+   the wire", and can occur in various forms.  For example, Atom
+   [RFC4287] and HTML [W3C.REC-html5-20141028] both defined
+   serialisations of links into their respective formats, and Section 6
+   defines how to serialise links in HTTP header fields.
+
+   This specification does not define a general syntax for links across
+   different serialisations, nor does it mandate a specific context for
+   any given link; it is expected that serialisations of links will
+   specify both aspects.
 
    Finally, links are consumed by _link applications_. Generally, an
    application will define the link relation types it uses, along with
    the serialisations that they might occur within.  For example, the
    application "Web browsing" looks for the "stylesheet" link relation
-   type in the HTML link serialisation.
-
-
-
 
 
 
@@ -225,6 +225,9 @@ Nottingham                Expires May 26, 2017                  [Page 4]
 
 Internet-Draft                 Web Linking                 November 2016
 
+
+   type in the HTML link serialisation, whereas the application
+   "AtomPub" uses the "edit" and "edit-media" link relations.
 
 4.  Link Relation Types
 
@@ -270,9 +273,6 @@ Internet-Draft                 Web Linking                 November 2016
    link context, and MUST NOT constrain the available representation
    media types of the link target.  However, they can specify the
    behaviours and properties of the target resource (e.g., allowable
-   HTTP methods, request and response media types that must be
-   supported).
-
 
 
 
@@ -281,6 +281,9 @@ Nottingham                Expires May 26, 2017                  [Page 5]
 
 Internet-Draft                 Web Linking                 November 2016
 
+
+   HTTP methods, request and response media types that must be
+   supported).
 
    Historically, registered relation types have been identified with a
    URI [RFC3986] by prefixing their names with an application-defined
@@ -327,9 +330,6 @@ Internet-Draft                 Web Linking                 November 2016
    Decisions (or lack thereof) made by the Expert(s) can be first
    appealed to Application Area Directors (contactable using app-
    ads@tools.ietf.org email address or directly by looking up their
-   email addresses on http://www.iesg.org/ website) and, if the
-   appellant is not satisfied with the response, to the full IESG (using
-   the iesg@iesg.org mailing list).
 
 
 
@@ -337,6 +337,10 @@ Nottingham                Expires May 26, 2017                  [Page 6]
 
 Internet-Draft                 Web Linking                 November 2016
 
+
+   email addresses on http://www.iesg.org/ website) and, if the
+   appellant is not satisfied with the response, to the full IESG (using
+   the iesg@iesg.org mailing list).
 
 4.2.  Extension Relation Types
 
@@ -383,16 +387,15 @@ Internet-Draft                 Web Linking                 November 2016
    o  Their serialisation into Unicode or a subset thereof, to maximise
       their chances of portability across link serialisations.
 
-   o  The semantics and error handling of multiple occurrences of the
-      attribute on a given link.
-
-
 
 
 Nottingham                Expires May 26, 2017                  [Page 7]
 
 Internet-Draft                 Web Linking                 November 2016
 
+
+   o  The semantics and error handling of multiple occurrences of the
+      attribute on a given link.
 
    This specification does define target attributes for use in the Link
    HTTP header field in Section 6.4.
@@ -439,9 +442,6 @@ Internet-Draft                 Web Linking                 November 2016
    Section 5.  Note that any base URI from the body's content is not
    applied.
 
-   The ABNF for the "anchor" parameter's value is: ~~~ abnf2616 URI-
-   Reference ~~~
-
 
 
 
@@ -449,6 +449,9 @@ Nottingham                Expires May 26, 2017                  [Page 8]
 
 Internet-Draft                 Web Linking                 November 2016
 
+
+   The ABNF for the "anchor" parameter's value is: ~~~ abnf2616 URI-
+   Reference ~~~
 
    Consuming implementations can choose to ignore links with an anchor
    parameter.  For example, the application in use might not allow the
@@ -494,9 +497,6 @@ Internet-Draft                 Web Linking                 November 2016
    The Link header field defines several target attributes specific to
    this serialisation, and also allows extension target attributes.
    Target attributes are serialised in the Link header field as
-   parameters (see [RFC7231], Section 3.1.1.1 for the definition of
-   their syntax).
-
 
 
 
@@ -505,6 +505,9 @@ Nottingham                Expires May 26, 2017                  [Page 9]
 
 Internet-Draft                 Web Linking                 November 2016
 
+
+   parameters (see [RFC7231], Section 3.1.1.1 for the definition of
+   their syntax).
 
 6.4.1.  Serialisation-Defined Attributes
 
@@ -552,9 +555,6 @@ Internet-Draft                 Web Linking                 November 2016
    processors SHOULD use the "title*" link-param's value for the "title"
    attribute.
 
-   The "type" attribute, when present, is a hint indicating what the
-   media type of the result of dereferencing the link should be.  Note
-
 
 
 Nottingham                Expires May 26, 2017                 [Page 10]
@@ -562,6 +562,8 @@ Nottingham                Expires May 26, 2017                 [Page 10]
 Internet-Draft                 Web Linking                 November 2016
 
 
+   The "type" attribute, when present, is a hint indicating what the
+   media type of the result of dereferencing the link should be.  Note
    that this is only a hint; for example, it does not override the
    Content-Type header field of a HTTP response obtained by actually
    following the link.  The "type" attribute MUST NOT appear more than
@@ -605,10 +607,8 @@ Internet-Draft                 Web Linking                 November 2016
    multiple links, and also the use of RFC 5987 encoding to encode both
    non-ASCII characters and language information.
 
-       Link: </TheBook/chapter2>;
-             rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
-             </TheBook/chapter4>;
-             rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
+
+
 
 
 
@@ -617,6 +617,11 @@ Nottingham                Expires May 26, 2017                 [Page 11]
 
 Internet-Draft                 Web Linking                 November 2016
 
+
+       Link: </TheBook/chapter2>;
+             rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
+             </TheBook/chapter4>;
+             rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
 
    Here, both links have titles encoded in UTF-8, use the German
    language ("de"), and the second link contains the Unicode code point
@@ -662,17 +667,17 @@ Internet-Draft                 Web Linking                 November 2016
    processes established by the Expert(s); typically, this will mean
    referring them to the registry Web page.
 
-   The Expert(s) will provide registry data to IANA in an agreed form
-   (e.g. a specific XML format).  IANA will publish:
-
-   o  The raw registry data
-
 
 
 Nottingham                Expires May 26, 2017                 [Page 12]
 
 Internet-Draft                 Web Linking                 November 2016
 
+
+   The Expert(s) will provide registry data to IANA in an agreed form
+   (e.g. a specific XML format).  IANA will publish:
+
+   o  The raw registry data
 
    o  The registry data, transformed into HTML
 
@@ -714,11 +719,6 @@ Internet-Draft                 Web Linking                 November 2016
    [RFC3986] for security considerations relating to URIs.  See
    [RFC7230] for security considerations relating to HTTP headers.
 
-9.  Internationalisation Considerations
-
-   Link targets may need to be converted to URIs in order to express
-   them in serialisations that do not support IRIs.  This includes the
-   Link HTTP header field.
 
 
 
@@ -729,6 +729,12 @@ Nottingham                Expires May 26, 2017                 [Page 13]
 
 Internet-Draft                 Web Linking                 November 2016
 
+
+9.  Internationalisation Considerations
+
+   Link targets may need to be converted to URIs in order to express
+   them in serialisations that do not support IRIs.  This includes the
+   Link HTTP header field.
 
    Similarly, the anchor parameter of the Link header field does not
    support IRIs, and therefore IRIs must be converted to URIs before
@@ -769,14 +775,8 @@ Internet-Draft                 Web Linking                 November 2016
               Identifiers (IRIs)", RFC 3987, DOI 10.17487/RFC3987,
               January 2005, <http://www.rfc-editor.org/info/rfc3987>.
 
-   [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
-              IANA Considerations Section in RFCs", BCP 26, RFC 5226,
-              DOI 10.17487/RFC5226, May 2008,
-              <http://www.rfc-editor.org/info/rfc5226>.
 
-   [RFC5646]  Phillips, A., Ed. and M. Davis, Ed., "Tags for Identifying
-              Languages", BCP 47, RFC 5646, DOI 10.17487/RFC5646,
-              September 2009, <http://www.rfc-editor.org/info/rfc5646>.
+
 
 
 
@@ -785,6 +785,15 @@ Nottingham                Expires May 26, 2017                 [Page 14]
 
 Internet-Draft                 Web Linking                 November 2016
 
+
+   [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
+              IANA Considerations Section in RFCs", BCP 26, RFC 5226,
+              DOI 10.17487/RFC5226, May 2008,
+              <http://www.rfc-editor.org/info/rfc5226>.
+
+   [RFC5646]  Phillips, A., Ed. and M. Davis, Ed., "Tags for Identifying
+              Languages", BCP 47, RFC 5646, DOI 10.17487/RFC5646,
+              September 2009, <http://www.rfc-editor.org/info/rfc5646>.
 
    [RFC6838]  Freed, N., Klensin, J., and T. Hansen, "Media Type
               Specifications and Registration Procedures", BCP 13,
@@ -824,15 +833,6 @@ Internet-Draft                 Web Linking                 November 2016
               HTTP/1.1", RFC 2817, DOI 10.17487/RFC2817, May 2000,
               <http://www.rfc-editor.org/info/rfc2817>.
 
-   [RFC2818]  Rescorla, E., "HTTP Over TLS", RFC 2818,
-              DOI 10.17487/RFC2818, May 2000,
-              <http://www.rfc-editor.org/info/rfc2818>.
-
-   [RFC4287]  Nottingham, M., Ed. and R. Sayre, Ed., "The Atom
-              Syndication Format", RFC 4287, DOI 10.17487/RFC4287,
-              December 2005, <http://www.rfc-editor.org/info/rfc4287>.
-
-
 
 
 
@@ -841,6 +841,14 @@ Nottingham                Expires May 26, 2017                 [Page 15]
 
 Internet-Draft                 Web Linking                 November 2016
 
+
+   [RFC2818]  Rescorla, E., "HTTP Over TLS", RFC 2818,
+              DOI 10.17487/RFC2818, May 2000,
+              <http://www.rfc-editor.org/info/rfc2818>.
+
+   [RFC4287]  Nottingham, M., Ed. and R. Sayre, Ed., "The Atom
+              Syndication Format", RFC 4287, DOI 10.17487/RFC4287,
+              December 2005, <http://www.rfc-editor.org/info/rfc4287>.
 
    [W3C.REC-html-rdfa-20150317]
               Sporny, M., "HTML+RDFa 1.1 - Second Edition", World Wide
@@ -861,14 +869,6 @@ Internet-Draft                 Web Linking                 November 2016
               Wide Web Consortium Recommendation REC-xml-names-20091208,
               December 2009,
               <http://www.w3.org/TR/2009/REC-xml-names-20091208>.
-
-
-
-
-
-
-
-
 
 
 
