@@ -121,7 +121,7 @@ process to help us make decisions, deploy our protocols, and ultimately determin
 failure.
 
 It does mean that when a proposed solution to a problem has a benefit to some other party at the
-identified expense of end users, we will find a different solution, or find another way to frame
+identified expense of end users, we will find a different solution or find another way to frame
 the problem.
 
 There may be cases where genuine technical need requires compromise. However, such tradeoffs need
