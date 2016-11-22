@@ -125,15 +125,18 @@ specified or significant in this specification; applications that wish to consid
 significant can do so.
 
 Links are conveyed in *link serialisations*; they are the "bytes on the wire", and can occur in
-various forms. This specification does not define a general syntax for links, nor does
-it mandate a specific context for any given link; it is expected that serialisations of links will
-specify both aspects. One such serialisation is communication of links through HTTP headers,
-specified in {{header}}.
+various forms. For example, Atom {{RFC4287}} and HTML {{W3C.REC-html5-20141028}} both defined
+serialisations of links into their respective formats, and {{header}} defines how to serialise
+links in HTTP header fields.
+
+This specification does not define a general syntax for links across different serialisations, nor
+does it mandate a specific context for any given link; it is expected that serialisations of links
+will specify both aspects.
 
 Finally, links are consumed by *link applications*. Generally, an application will define the link
 relation types it uses, along with the serialisations that they might occur within. For example,
 the application "Web browsing" looks for the "stylesheet" link relation type in the HTML link
-serialisation.
+serialisation, whereas the application "AtomPub" uses the "edit" and "edit-media" link relations.
 
 
 # Link Relation Types
