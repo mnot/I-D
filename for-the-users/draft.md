@@ -59,10 +59,10 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/for-t
 
 # Introduction
 
-As the Internet has become prevalent in many societies, it has also unavoidably become a profoundly
-political thing; it has helped overthrow governments, revolutionize social orders, control
-populations and reveal people's (and governments') secrets. It has created wealth for some
-individuals and companies, while destroying others'.
+As the Internet increasingly mediates key functions in societies, it has unavoidably become
+profoundly political; it has helped people overthrow throw governments and revolutionize social
+orders, control populations and reveal secrets. It has created wealth for some individuals and
+companies, while destroying others'.
 
 The IETF, while focused on technical matters, is not neutral about the purpose of its work in
 developing the Internet {{RFC3935}}:
