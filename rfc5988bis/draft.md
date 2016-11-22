@@ -630,7 +630,11 @@ character or the beginning of the `field_value` string).
          2. Replace quoted-pairs within `param_value` with the octet following the backslash, as
             per {{RFC7230}}, Section 3.2.6.
 
-      7. Append the tuple (`param_name`, `param_value`) to `link_parameters`.
+      7. If the last character of `param_name` is an asterisk ("\*"), decode `param_value`
+          according to {{I-D.ietf-httpbis-rfc5987bis}}. Skip this item if an unrecoverable error is
+          encountered.
+
+      8. Append the tuple (`param_name`, `param_value`) to `link_parameters`.
 
    6. Let `target` be the result of relatively resolving (as per {{RFC3986}}, Section 5.2)
      `target_string`. Note that any base URI carried in the payload body is NOT used.
@@ -660,12 +664,26 @@ character or the beginning of the `field_value` string).
          already contains a tuple whose first element matches the value of `param_name`, skip this
          tuple.
 
-      3. If the last character of `param_name` is "\*", decode `param_value` according to
-         {{I-D.ietf-httpbis-rfc5987bis}}.
+      3. Append (`param_name`, `param_value`) to `target_attributes`.
 
-      4. Append (`param_name`, `param_value`) to `target_attributes`.
+   3. Let `star_param_names` be the set of `param_name`s in the (`param_name`, `param_value`) tuples
+      of `link_parameters` where the last character of `param_name` is an asterisk ("\*").
 
-   3. For each `relation_type` in `relation_types`:
+   4. For each `star_param_name` in `star_param_names`:
+
+      1. Let `base_param_name` be `star_param_name` with the last character removed.
+
+      2. If the implementation does not choose to support an internationalised form of a parameter
+         named `base_param_name` for any reason (including, but not limited to, it being prohibited
+         by the parameter's specification), remove all tuples from `link_parameters` whose first
+         member is `star_param_name` and skip to the next `star_param_name`.
+
+      3. Remove all tuples from `link_parameters` whose first member is `base_param_name`.
+
+      4. Change the first member of all tuples in `link_parameters` whose first member is
+         `star_param_name` to `base_param_name`.
+
+   5. For each `relation_type` in `relation_types`:
 
       1. Case-normalise `relation_type` to lowercase.
 
