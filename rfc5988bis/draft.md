@@ -236,7 +236,7 @@ specify that they are expressed in another form, as long as they can be converte
 
 # Target Attributes {#attributes}
 
-*Target attributes* are a set of key/value pairs that describe the link or its target; for example,
+*Target attributes* are a list of key/value pairs that describe the link or its target; for example,
 a media type hint. 
 
 This specification does not attempt to coordinate the name of target attributes, their cardinality
