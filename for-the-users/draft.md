@@ -121,7 +121,8 @@ process to help us make decisions, deploy our protocols, and ultimately determin
 failure.
 
 It does mean that when a proposed solution to a problem has a benefit to some other party at the
-expense of end users, we will find a different solution, or find another way to frame the problem.
+identified expense of end users, we will find a different solution, or find another way to frame
+the problem.
 
 There may be cases where genuine technical need requires compromise. However, such tradeoffs need
 to be carefully examined, and avoided when there are alternate means of achieving the desired
@@ -133,9 +134,9 @@ necessary to provide networking (and despite this, there are mechanisms like {{R
 mitigate this effect, for those users who desire it).
 
 Finally, this requirement only comes into force when an explicit conflict between the interests of
-end users and other relevant parties is explicitly encountered (e.g., by being brought up in the
-Working Group). It does not imply that a standards effort needs to be audited for user impact, or
-every decision weighed against end user interests.
+end users and other relevant parties is encountered (e.g., by being brought up in the Working
+Group). It does not imply that a standards effort needs to be audited for user impact, or every
+decision weighed against end user interests.
 
 
 
