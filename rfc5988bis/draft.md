@@ -96,8 +96,7 @@ BWS (bad whitespace), OWS (optional whitespace), RWS (required whitespace) LOALP
 
 Additionally, the following rules are included from {{RFC3986}}: URI and URI-Reference; from
 {{RFC6838}}: type-name and subtype-name; from {{W3C.CR-css3-mediaqueries-20090915}}:
-media_query_list; from {{RFC5646}}: Language-Tag; and from {{I-D.ietf-httpbis-rfc5987bis}},
-ext-value and parmname.
+media_query_list; and from {{RFC5646}}: Language-Tag..
 
 
 # Links
@@ -243,8 +242,9 @@ or use; they are defined both by individual link relations and by link serialisa
 Serialisations SHOULD coordinate their target attributes to avoid conflicts in semantics
 or syntax. Relation types MAY define additional target attributes specific to them.
 
-The names of target attributes SHOULD conform to the parmname rule for portability across
-serializations, and MUST be compared in a case-insensitive fashion.
+The names of target attributes SHOULD conform to the token rule, but SHOULD NOT include any of the
+characters "%", "'" or "*", for portability across serializations, and MUST be compared in a
+case-insensitive fashion.
 
 Target attribute definitions SHOULD specify:
 
