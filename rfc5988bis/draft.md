@@ -239,11 +239,12 @@ specify that they are expressed in another form, as long as they can be converte
 *Target attributes* are a list of key/value pairs that describe the link or its target; for example,
 a media type hint. 
 
-This specification does not attempt to coordinate the name of target attributes, their cardinality
-or use; they are defined both by individual link relations and by link serialisations. 
+They can be defined both by individual link relation types and by link serialisations.
+Serialisations SHOULD coordinate their target attributes to avoid conflicts in semantics or syntax.
+Relation types MAY define additional target attributes specific to them.
 
-Serialisations SHOULD coordinate their target attributes to avoid conflicts in semantics
-or syntax. Relation types MAY define additional target attributes specific to them.
+This specification does not attempt to coordinate the name of target attributes, their cardinality
+or use.
 
 The names of target attributes SHOULD conform to the token rule, but SHOULD NOT include any of the
 characters "%", "'" or "*", for portability across serializations, and MUST be compared in a
@@ -251,10 +252,10 @@ case-insensitive fashion.
 
 Target attribute definitions SHOULD specify:
 
-* Their serialisation into Unicode or a subset thereof, to maximise their chances of portability
-  across link serialisations.
+* The serialisation of their values into Unicode or a subset thereof, to maximise their chances of
+  portability across link serialisations.
    
-* The semantics and error handling of multiple occurrences of the attribute on a given link.
+* The semantics and error handling of multiple occurrences of the target attribute on a given link.
 
 This specification does define target attributes for use in the Link HTTP header field in
 {{header-attrs}}.
