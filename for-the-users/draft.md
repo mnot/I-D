@@ -69,12 +69,14 @@ developing the Internet {{RFC3935}}:
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
 
-However, the IETF is most comfortable making purely technical decisions; our process is defined to
-favor technical merit, through our well-known bias towards "rough consensus and running code".
+However, the IETF is most comfortable making what we believe to be purely technical decisions; our
+process is defined to favor technical merit, through our well-known bias towards "rough consensus
+and running code".
 
 Nevertheless, the running code that results from our process (when things work well) inevitably has
 an impact beyond technical considerations, because the underlying decisions afford some uses, while
-discouraging others. Or, in the words of Lawrence Lessig {{CODELAW}}:
+discouraging others; while we believe we are making purely technical decisions, in reality that may
+not be possible. Or, in the words of Lawrence Lessig {{CODELAW}}:
 
 > Ours is the age of cyberspace. It, too, has a regulator... This regulator is code — the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
 
@@ -105,13 +107,9 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 Internet standards MUST NOT consider any other party to have priority over end users.
 
-We require this because the success of the Internet to date is arguably due to its bias towards end
-user concerns; without a firm preference for their benefit, trust in the Internet will erode, and
-its value -- for everyone -- will be greatly diminished.
-
-Furthermore, while networks need to be managed, employers and equipment vendors need to meet
-business goals, and so on, the IETF's mission is to "build a better human society" {{RFC3935}} and
--- on the Internet -- society is composed of what we call "end users."
+While networks need to be managed, employers and equipment vendors need to meet business goals, and
+so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
+-- society is composed of what we call "end users."
 
 By "end users", we mean non-technical users whose activities our protocols are designed to support.
 Thus, the end user of a protocol to manage routers is not a router administrator; it is the people
