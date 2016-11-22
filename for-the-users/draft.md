@@ -115,20 +115,22 @@ By "end users", we mean non-technical users whose activities our protocols are d
 Thus, the end user of a protocol to manage routers is not a router administrator; it is the people
 using the network that the router operates within.
 
-This does not mean that end users have ultimate priority; there may be cases where genuine
-technical need requires compromise. However, such tradeoffs need to be carefully examined, and
-avoided when there are alternate means of achieving the desired goals. If they cannot be, these
-choices and reasoning SHOULD be carefully documented.
+This does not mean that the IETF community has any specific insight into what is "good for end
+users"; as always, we will need to interact with the greater Internet community and apply our
+process to help us make decisions, deploy our protocols, and ultimately determine their success or
+failure.
+
+It does mean that when a proposed solution to a problem has a benefit to some other party at the
+expense of end users, we will find a different solution, or find another way to frame the problem.
+
+There may be cases where genuine technical need requires compromise. However, such tradeoffs need
+to be carefully examined, and avoided when there are alternate means of achieving the desired
+goals. If they cannot be, these choices and reasoning SHOULD be carefully documented.
 
 For example, IPv6 {{RFC2460}} identifies each client with a unique address -- even though this
 provides a way to track end user activity and helps identify them -- because it is technically
 necessary to provide networking (and despite this, there are mechanisms like {{RFC4941}} to
 mitigate this effect, for those users who desire it).
-
-This also does not mean that the IETF community has any specific insight into what is "good for end
-users"; as before, we will need to interact with the greater Internet community and apply our
-process to help us make decisions, deploy our protocols, and ultimately determine their success or
-failure. 
 
 Finally, this requirement only comes into force when an explicit conflict between the interests of
 end users and other relevant parties is explicitly encountered (e.g., by being brought up in the
