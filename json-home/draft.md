@@ -502,22 +502,6 @@ Joe Hildebrand, Jeni Tennison, Erik Wilde and Jorge Williams for their suggestio
 
 # Frequently Asked Questions
 
-## Why not Microformats?
-
-Browser-centric Web applications use HTML as their representation format of choice. While it is
-possible to augment HTML for non-browser clients (using techniques like Microformats
-{{MICROFORMATS}}), a few issues become evident when doing so:
-
-* HTML has a very forgiving syntax. While this is appropriate for browsers (especially considering
-  that there are many million HTML authors in the world), it makes for a less-than-precise language
-  for machines, resulting in both overhead (parsing and transmission) as well as lack of precision.
-* HTML is presentation-centric, making it tempting to reformat it from time to time, to improve the
-  "look and feel" of a page. However, doing so can cause comparatively brittle non-browser clients
-  to lose their understanding of the content's semantics, unless very careful controls are in place.
-
-Because of this, it's most practical to define a separate format, and JSON is easily
-machine-readable, precise, and has a better chance of being managed for stability.
-
 ## Why doesn't the format allow references or inheritance?
 
 Adding inheritance or references would allow more modularity in the format and make it more
@@ -526,12 +510,6 @@ the specification and by its users).
 
 Since good tools and compression are effective ways to achieve the same ends, this specification
 doesn't attempt them.
-
-## What about authentication?
-
-In HTTP, authentication is discoverable by interacting with the resource (usually, by getting a 401
-Unauthorized response status code, along with one or more challenges). While the home document
-could hint it, this isn't yet done, to avoid possible security complications.
 
 ## What about "Faults" (i.e., errors)?
 
