@@ -159,7 +159,7 @@ For example:
             "application/json": {}
           },
           "accept-patch": ["application/json-patch+json"],
-          "accept-post": ["application/xml"],
+          "accept-post": ["application/prs.my-special-post-format+json"],
           "accept-ranges": ["bytes"]
         }
       }
@@ -177,8 +177,8 @@ using a URI Template {{RFC6570}}, along with a mapping of identifiers to a varia
 template.
 
 It also gives several hints about interacting with the latter "widget" resources, including the
-HTTP methods usable with them, the patch formats they accept, and the fact that they support
-partial requests {{RFC7233}} using the "bytes" range-specifier.
+HTTP methods usable with them, the PATCH and POST formats they accept, and the fact that they
+support partial requests {{RFC7233}} using the "bytes" range-specifier.
 
 It gives no such hints about the "widgets" resource. This does not mean that it (for example)
 doesn't support any HTTP methods; it means that the client will need to discover this by
@@ -211,11 +211,11 @@ Note that the examples above use both tag {{?RFC4151}} and https {{?RFC7230}} UR
 
 # API Objects {#api-object}
 
-An API Object contains links to information about the API itself. 
+An API Object contains links to information about the API itself.
 
 Two members are defined:
 
-* "title" has a string value indicating the name of the API; 
+* "title" has a string value indicating the name of the API;
 
 * "links" has an object value, whose member names are link relation types {{RFC5988}}, and values
   are URLs {{RFC3986}}. The context of these links is the API home document as a whole.
@@ -345,7 +345,7 @@ When this hint is present, "POST" SHOULD be listed in the "allow" hint.
   the Accept-Ranges HTTP response header {{RFC7233}}.
 * Specification: [this document]
 
-Content MUST be an array of strings, containing HTTP range-specifiers.
+Content MUST be an array of strings, containing HTTP range-specifiers (typically, "bytes").
 
 ## accept-prefer
 
@@ -354,7 +354,7 @@ Content MUST be an array of strings, containing HTTP range-specifiers.
   specifications, a preference can be ignored by the server.
 * Specification: [this document]
 
-Content MUST be an array of strings, contain preferences.
+Content MUST be an array of strings, containing preferences.
 
 ## docs
 
@@ -419,71 +419,6 @@ Content MUST be a string; possible values are:
 TBD
 
 
-# Creating and Serving Home Documents
-
-When making an API home document available, there are a few things to keep in mind:
-
-* A home document is best located at a memorable URI, because its URI will effectively become the
-  URI for the API itself to clients.
-* Home documents can be personalized, just as "normal" home pages can. For example, you might
-  advertise different URIs, and/or different kinds of link relations, depending on the client's
-  identity.
-* Home documents SHOULD be assigned a freshness lifetime (e.g., "Cache-Control: max-age=3600") so
-  that clients can cache them, to avoid having to fetch it every time the client interacts with the
-  service.
-* Custom link relation types, as well as the URIs for variables, should lead to documentation for
-  those constructs.
-
-
-## Managing Change in Home Documents
-
-The URIs used in API home documents MAY change over time. However, changing them can cause issues
-for clients that are relying on cached home documents containing old links.
-
-To mitigate the impact of such changes, servers SHOULD consider:
-
-* Reducing the freshness lifetime of home documents before a link change, so that clients are less
-  likely to refer to an "old" document.
-* Regarding the "old" and "new" URIs as equally valid references for an "overlap" period.
-* After that period, handling requests for the "old" URIs appropriately; e.g., with a 404 Not
-  Found, or by redirecting the client to the new URI.
-
-
-## Evolving and Mixing APIs with Home Documents
-
-Using home documents affords the opportunity to change the "shape" of the API over time, without
-breaking old clients.
-
-This includes introducing new functions alongside the old ones -- by adding new link relation types
-with corresponding resource objects -- as well as adding new template variables, media types, and
-so on.
-
-It's important to realise that a home document can serve more than one "API" at a time; by listing
-all relevant relation types, it can effectively "mix" different APIs, allowing clients to work with
-different resources as they see fit.
-
-
-# Consuming Home Documents
-
-Clients might use home documents in a variety of ways.
-
-In the most common case -- actually consuming the API -- the client will scan the Resources Object
-for the link relation(s) that it is interested in, and then to interact with the resource(s)
-referred to. Resource Hints can be used to optimize communication with the client, as well as to
-inform as to the permissible actions (e.g., whether PUT is likely to be supported).
-
-Note that the home document is a "living" document; it does not represent a "contract", but rather
-is expected to be inspected before each interaction. In particular, links from the home document
-MUST NOT be assumed to be valid beyond the freshness lifetime of the home document, as per HTTP's
-caching model {{RFC7234}}.
-
-As a result, clients SHOULD cache the home document (as per {{RFC7234}}), to avoid fetching it
-before every interaction (which would otherwise be required).
-
-Likewise, a client encountering a 404 Not Found on a link SHOULD obtain a fresh copy of the home
-document, to assure that it is up-to-date.
-
-
 # Security Considerations
 
 Clients need to exercise care when using hints. For example, a naive client might send credentials
@@ -532,6 +467,71 @@ Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Sven Dietze, Graham Klyne,
 Joe Hildebrand, Jeni Tennison, Erik Wilde and Jorge Williams for their suggestions and feedback.
 
 
+# Considerations for Creating and Serving Home Documents
+
+When making an API home document available, there are a few things to keep in mind:
+
+* A home document is best located at a memorable URI, because its URI will effectively become the
+  URI for the API itself to clients.
+* Home documents can be personalized, just as "normal" home pages can. For example, you might
+  advertise different URIs, and/or different kinds of link relations, depending on the client's
+  identity.
+* Home documents ought to be assigned a freshness lifetime (e.g., "Cache-Control: max-age=3600") so
+  that clients can cache them, to avoid having to fetch it every time the client interacts with the
+  service.
+* Custom link relation types, as well as the URIs for variables, should lead to documentation for
+  those constructs.
+
+
+## Managing Change in Home Documents
+
+The URIs used in API home documents MAY change over time. However, changing them can cause issues
+for clients that are relying on cached home documents containing old links.
+
+To mitigate the impact of such changes, servers ought to consider:
+
+* Reducing the freshness lifetime of home documents before a link change, so that clients are less
+  likely to refer to an "old" document.
+* Regarding the "old" and "new" URIs as equally valid references for an "overlap" period.
+* After that period, handling requests for the "old" URIs appropriately; e.g., with a 404 Not
+  Found, or by redirecting the client to the new URI.
+
+
+## Evolving and Mixing APIs with Home Documents
+
+Using home documents affords the opportunity to change the "shape" of the API over time, without
+breaking old clients.
+
+This includes introducing new functions alongside the old ones -- by adding new link relation types
+with corresponding resource objects -- as well as adding new template variables, media types, and
+so on.
+
+It's important to realise that a home document can serve more than one "API" at a time; by listing
+all relevant relation types, it can effectively "mix" different APIs, allowing clients to work with
+different resources as they see fit.
+
+
+# Considerations for Consuming Home Documents
+
+Clients might use home documents in a variety of ways.
+
+In the most common case -- actually consuming the API -- the client will scan the Resources Object
+for the link relation(s) that it is interested in, and then to interact with the resource(s)
+referred to. Resource Hints can be used to optimize communication with the client, as well as to
+inform as to the permissible actions (e.g., whether PUT is likely to be supported).
+
+Note that the home document is a "living" document; it does not represent a "contract", but rather
+is expected to be inspected before each interaction. In particular, links from the home document
+MUST NOT be assumed to be valid beyond the freshness lifetime of the home document, as per HTTP's
+caching model {{RFC7234}}.
+
+As a result, clients ought to cache the home document (as per {{RFC7234}}), to avoid fetching it
+before every interaction (which would otherwise be required).
+
+Likewise, a client encountering a 404 Not Found on a link is encouraged obtain a fresh copy of the
+home document, to assure that it is up-to-date.
+
+
 # Frequently Asked Questions
 
 ## Why doesn't the format allow references or inheritance?
@@ -563,6 +563,8 @@ The appropriate way to do this is with a "form" language, much as HTML defines.
 
 Note that it is possible to support multiple query syntaxes on the same base URL, using more than
 one link relation type; see the example at the start of the document.
+
+
 
 
 # Open Issues
