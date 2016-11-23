@@ -82,7 +82,8 @@ header fields (as per {{RFC7230}}, Section 3.2). It is maintained at
 
 ## Requesting Registration
 
-Any party can request registration of a HTTP header field. 
+Any party can request registration of a HTTP header field. See {{?RFC7231}} Section 8.3.1 for
+considerations to take into account when creating a new HTTP header field.
 
 Registration requests can be sent to the "http-registrations@ietf.org" mailing list. The Expert(s)
 MAY establish alternate means of requesting registrations, which SHOULD be linked to from the
