@@ -189,7 +189,7 @@ type. This means that several link relations might apply to a common base URL; e
 }
 ~~~
 
-Note that the examples above use both tag {{?RFC4151}} and http {{?RFC7230}} URIs; any URI scheme can be used to identify link relations and other artefacts in home documents.
+Note that the examples above use both tag {{?RFC4151}} and https {{?RFC7230}} URIs; any URI scheme can be used to identify link relations and other artefacts in home documents.
 
 
 # Resource Objects
