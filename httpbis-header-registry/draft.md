@@ -75,8 +75,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # The HTTP Header Field Registry {#registry}
 
-The "Hypertext Transfer Protocol (HTTP) Header Field Registry" defines the namespace for the
-request method token (Section 4). It is maintained at
+The "Hypertext Transfer Protocol (HTTP) Header Field Registry" defines the namespace for HTTP
+header fields (as per {{RFC7230}}, Section 3.2). It is maintained at
 <http://www.iana.org/assignments/http-headers>.
 
 
