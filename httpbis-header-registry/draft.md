@@ -63,7 +63,9 @@ between header fields between protocols (and often, the mismatches create confus
 semantic overlap, this seems like the best path forward.
 
 Therefore, this document establishes a new HTTP Header Field Registry, defines its procedures, and
-guides the transition of existing values to it.
+guides the transition of existing values to it. Doing so effectively removes HTTP header fields
+from the scope of {{?RFC3864}} and the registries it defines, and updates {{?RFC7231}} Section 8.3
+with a new process for managing them.
 
 
 ## Notational Conventions
