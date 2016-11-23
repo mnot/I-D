@@ -345,9 +345,9 @@ SHOULD be in HTML format.
 Content MUST be an array of strings, with possible values "etag" and "last-modified" indicating
 type of precondition expected.
 
-## auth-req
+## auth-schemes
 
-* Resource Hint Name: auth-req
+* Resource Hint Name: auth-schemes
 * Description: Hints that the resource requires authentication using the HTTP Authentication
   Framework {{RFC7235}}.
 * Specification: [this document]
