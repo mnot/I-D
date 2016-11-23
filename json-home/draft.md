@@ -141,7 +141,7 @@ For example:
       "title": "Example API",
       "links": {
         "author": "mailto:api-admin@example.com",
-        "describedby": "https://example.com/api-docs/"
+        "describedBy": "https://example.com/api-docs/"
       }
     }
     "resources": {
@@ -149,8 +149,8 @@ For example:
         "href": "/widgets/"
       },
       "tag:me@example.com,2016:widget": {
-        "href-template": "/widgets/{widget_id}",
-        "href-vars": {
+        "hrefTemplate": "/widgets/{widget_id}",
+        "hrefVars": {
           "widget_id": "https://example.org/param/widget"
         },
         "hints": {
@@ -158,9 +158,9 @@ For example:
           "formats": {
             "application/json": {}
           },
-          "accept-patch": ["application/json-patch+json"],
-          "accept-post": ["application/prs.my-special-post-format+json"],
-          "accept-ranges": ["bytes"]
+          "acceptPatch": ["application/json-patch+json"],
+          "acceptPost": ["application/prs.my-special-post-format+json"],
+          "acceptRanges": ["bytes"]
         }
       }
     }
@@ -191,14 +191,14 @@ type. This means that several link relations might apply to a common base URL; e
 {
   "resources": {
     "tag:me@example.com,2016:search-by-id": {
-      "href-template": "/search?id={widget_id}",
-      "href-vars": {
+      "hrefTemplate": "/search?id={widget_id}",
+      "hrefVars": {
         "widget_id": "https://example.org/param/widget_id"
       }
     },
     "tag:me@example.com,2016:search-by-name": {
-      "href-template": "/search?name={widget_name}",
-      "href-vars": {
+      "hrefTemplate": "/search?name={widget_name}",
+      "hrefVars": {
         "widget_name": "https://example.org/param/widget_name"
       }
     }
@@ -231,13 +231,13 @@ API), or a templated link, in which case there are zero to many such resources.
 
 Direct links are indicated with an "href" property, whose value is a URI {{RFC3986}}.
 
-Templated links are indicated with an "href-template" property, whose value is a URI Template
-{{RFC6570}}. When "href-template" is present, the Resource Object MUST have a "href-vars" property;
+Templated links are indicated with an "hrefTemplate" property, whose value is a URI Template
+{{RFC6570}}. When "hrefTemplate" is present, the Resource Object MUST have a "hrefVars" property;
 see "Resolving Templated Links".
 
 Resource Objects MUST have exactly one of the "href" and "href-vars" properties.
 
-In both forms, the links that "href" and "href-template" refer to are URI-references {{RFC3986}}
+In both forms, the links that "href" and "hrefTemplate" refer to are URI-references {{RFC3986}}
 whose base URI is that of the API Home Document itself.
 
 Resource Objects MAY also have a "hints" property, whose value is an object that uses named
@@ -245,10 +245,10 @@ Resource Hints (see {{resource_hints}}) as its properties.
 
 ## Resolving Templated Links
 
-A URI can be derived from a Templated Link by treating the "href-template" value as a Level 3 URI
-Template {{RFC6570}}, using the "href-vars" property to fill the template.
+A URI can be derived from a Templated Link by treating the "hrefTemplate" value as a Level 3 URI
+Template {{RFC6570}}, using the "hrefVars" property to fill the template.
 
-The "href-vars" property, in turn, is an object that acts as a mapping between variable names
+The "hrefVars" property, in turn, is an object that acts as a mapping between variable names
 available to the template and absolute URIs that are used as global identifiers for the semantics
 and syntax of those variables.
 
@@ -256,8 +256,8 @@ For example, given the following Resource Object:
 
 ~~~
   "https://example.org/rel/widget": {
-    "href-template": "/widgets/{widget_id}",
-    "href-vars": {
+    "hrefTemplate": "/widgets/{widget_id}",
+    "hrefVars": {
       "widget_id": "https://example.org/param/widget"
     },
     "hints": {
@@ -265,9 +265,9 @@ For example, given the following Resource Object:
       "formats": {
         "application/json": {}
       },
-      "accept-patch": ["application/json-patch+json"],
-      "accept-post": ["application/xml"],
-      "accept-ranges": ["bytes"]
+      "acceptPatch": ["application/json-patch+json"],
+      "acceptPost": ["application/xml"],
+      "acceptRanges": ["bytes"]
     }
   }
 ~~~
@@ -292,7 +292,7 @@ means that generally, the user has the ability to PUT to a particular resource, 
 resource might reject a PUT based upon access control or other considerations. More fine-grained
 information might be gathered by interacting with the resource (e.g., via a GET), or by another
 resource "containing" it (such as a "widgets" collection) or describing it (e.g., one linked to it
-with a "describedby" link relation).
+with a "describedBy" link relation).
 
 This specification defines a set of common hints, based upon information that's discoverable by
 directly interacting with resources. See {{resource_hint_registry}} for information on defining new
@@ -317,9 +317,9 @@ Content MUST be an array of strings, containing HTTP methods.
 Content MUST be an object, whose keys are media types, and values are objects
 containing Representation Hints (see {{representation_hints}}).
 
-## accept-patch
+## acceptPatch
 
-* Resource Hint Name: accept-patch
+* Resource Hint Name: accept-Patch
 * Description: Hints the PATCH {{RFC5789}} request formats accepted by the resource for this
   client; equivalent to the Accept-Patch HTTP response header.
 * Specification: [this document]
@@ -328,9 +328,9 @@ Content MUST be an array of strings, containing media types.
 
 When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
 
-## accept-post
+## acceptPost
 
-* Resource Hint Name: accept-post
+* Resource Hint Name: acceptPost
 * Description: Hints the POST request formats accepted by the resource for this client.
 * Specification: [this document]
 
@@ -338,18 +338,18 @@ Content MUST be an array of strings, containing media types.
 
 When this hint is present, "POST" SHOULD be listed in the "allow" hint.
 
-## accept-ranges
+## acceptRanges
 
-* Resource Hint Name: accept-ranges
+* Resource Hint Name: acceptRanges
 * Description: Hints the range-specifiers available to the client for this resource; equivalent to
   the Accept-Ranges HTTP response header {{RFC7233}}.
 * Specification: [this document]
 
 Content MUST be an array of strings, containing HTTP range-specifiers (typically, "bytes").
 
-## accept-prefer
+## acceptPrefer
 
-* Resource Hint Name: accept-prefer
+* Resource Hint Name: acceptPrefer
 * Description: Hints the preferences {{RFC7240}} supported by the resource. Note that, as per that
   specifications, a preference can be ignored by the server.
 * Specification: [this document]
@@ -366,9 +366,9 @@ Content MUST be an array of strings, containing preferences.
 Content MUST be a string containing an absolute-URI {{RFC3986}} referring to documentation that
 SHOULD be in HTML format.
 
-## precondition-req
+## preconditionRequired
 
-* Resource Hint Name: precondition-req
+* Resource Hint Name: preconditionRequired
 * Description: Hints that the resource requires state-changing requests (e.g., PUT, PATCH) to
   include a precondition, as per {{RFC7232}}, to avoid conflicts due to concurrent updates.
 * Specification: [this document]
@@ -376,9 +376,9 @@ SHOULD be in HTML format.
 Content MUST be an array of strings, with possible values "etag" and "last-modified" indicating
 type of precondition expected.
 
-## auth-schemes
+## authSchemes
 
-* Resource Hint Name: auth-schemes
+* Resource Hint Name: authSchemes
 * Description: Hints that the resource requires authentication using the HTTP Authentication
   Framework {{RFC7235}}.
 * Specification: [this document]
@@ -391,7 +391,7 @@ For example, a Resource Object might contain the following hint:
 
 ~~~
   {
-    "auth-req": [
+    "authSchemes": [
       {
         "scheme": "Basic",
         "realms": ["private"]
