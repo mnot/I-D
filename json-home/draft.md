@@ -562,22 +562,3 @@ The appropriate way to do this is with a "form" language, much as HTML defines.
 Note that it is possible to support multiple query syntaxes on the same base URL, using more than
 one link relation type; see the example at the start of the document.
 
-
-
-
-# Open Issues
-
-The following is a list of placeholders for open issues.
-
-* Resource Hints
-  * rate limiting (per-resource?)
-  * indicate a POST to 201 Created pattern
-  * indicate an "action" POST
-  * outbound links
-  * forms?
-* Representation Hints
-  * format profiles
-  * deprecation
-* Defining new resource object properties - how new ones are minted, registry, etc.
-* Discovery (e.g., conneg, .well-known, etc.)
-* LIMITED include function?
