@@ -37,17 +37,6 @@ informative:
   RFC7233:
   RFC7235:
   RFC7240:
-  WADL:
-    target: http://www.w3.org/Submission/wadl/
-    title: Web Application Description Language
-    author:
-      - ins: M. Hadley
-      - organization: Sun Microsystems
-  MICROFORMATS:
-    target: http://microformats.org/
-    title: Microformats
-    author:
-      - organization: microformats.org
 
 --- abstract
 
@@ -67,31 +56,51 @@ For information about implementations, see <https://github.com/mnot/I-D/wiki/jso
 
 # Introduction
 
-There is an emerging preference for non-browser Web applications (colloquially, "HTTP APIs") to use
-a link-driven approach to their interactions to assure loose coupling, thereby enabling
-extensibility and API evolution.
+It is becoming increasingly common to use HTTP {{RFC7230}} for applications other than traditional
+Web browsing. Such "HTTP APIs" are used to integrate processes on disparate systems, make
+information available to machines across the Internet, and as part of the implementation of
+"micro-services."
 
-This is based upon experience with previous APIs that specified static URI paths (such as
-"https://api.example.com/v1.0/widgets/abc123/properties"), which have resulted in brittle, tight
-coupling between clients and servers.
+By using HTTP, these applications realise a number of benefits, from message framing to caching,
+and well-defined semantics that are broadly understood and useful.
 
-Sometimes, these APIs are documented by a document format like {{WADL}} that is used as a
-design-time description; i.e., the URIs and other information they describe are "baked into" client
-implementations.
+However, one of the core architectural tenants of the Web is the use of links {{RFC3986}} to
+navigate between states; typically, these applications document static URLs that clients need to
+know and servers need to implement, and any interaction outside of these bounds is uncharted
+territory.
 
-In contrast, a "follow your nose" API advertises the resources available to clients using link
-relations {{RFC5988}} and the formats they support using internet media types {{RFC6838}} at run
-time. A client can then decide which resources to interact with "on the fly" based upon its
+In contrast, a link-driven application discovers relevant resources at run time, using a shared
+vocabulary of link relations {{RFC5988}} and internet media types {{RFC6838}} to support a "follow
+your nose" style of interaction.
+
+A client can then decide which resources to interact with "on the fly" based upon its
 capabilities (as described by link relations), and the server can safely add new resources and
 formats without disturbing clients that are not yet aware of them.
 
-Clients need to be able to discover this information quickly and efficiently use it. Just as with a
-human-targeted "home page" for a site, we can create a "home document" for a HTTP API that
-describes it to non-browser clients.
+Doing so can provide any of a number of benefits, including:
+
+* Extensibility - Because new server capabilities can be expressed as link relations, new features can be layered in without introducing a new API version; clients will discover them in the home document. This promotes loose coupling between clients and servers.
+
+* Evolvability - Likewise, interfaces can change gradually by introducing a new link relation and/or format while still supporting the old ones.
+
+* Customisation - Home documents can be tailored for the client, allowing diffrent classes of service or different client permissions to be exposed naturally.
+
+* Flexible deployment - Since URLs aren't baked into documentation, the server can choose what URLs to use for a given service.
+
+* API mixing - Likewise, more than one API can be deployed on a given server, without fear of collisions.
+
+Whether an application ought to use links in this fashion depends on how it is deployed; generally,
+the most benefit will be received when multiple instances of the service are deployed, possibly
+with different versions, and they are consumed by clients with different capabilities. In
+particular, Internet Standards that use HTTP as a substrate are likely to require the attributes
+described above.
+
+Clients need to be able to discover information about these applications to use it efficiently;
+just as with a human-targeted "home page" for a site, there is a need for a "home document" for a
+HTTP API that describes it to non-browser clients.
 
 Of course, an HTTP API might use any format to do so; however, there are advantages to having a
-standard home document format. This specification suggests one for consideration, using the JSON
-format {{RFC7159}}.
+common home document format. This specification defines one, using the JSON format {{RFC7159}}.
 
 
 ## Notational Conventions
@@ -420,15 +429,6 @@ so on.
 It's important to realise that a home document can serve more than one "API" at a time; by listing
 all relevant relation types, it can effectively "mix" different APIs, allowing clients to work with
 different resources as they see fit.
-
-
-## Documenting APIs that use Home Documents
-
-Another use case for "static" API description formats like WSDL and WADL is to generate
-documentation for the API from them.
-
-An API that uses the home document format correctly won't have a need to do so, provided that the
-link relation types and media types it uses are well-documented already.
 
 
 # Consuming Home Documents
