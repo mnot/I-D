@@ -267,8 +267,8 @@ The Link header field provides a means for serialising one or more links into HT
 The ABNF for the field value is given below:
 
 ~~~ abnf2616
-	Link       = #link-value
-	link-value = "<" URI-Reference ">" *( OWS ";" OWS link-param )
+  Link       = #link-value
+  link-value = "<" URI-Reference ">" *( OWS ";" OWS link-param )
   link-param = token BWS "=" BWS ( token / quoted-string )
 ~~~
 
@@ -327,15 +327,15 @@ it often confuses authors and readers; in most cases, using a separate relation 
 
 The ABNF for the `rel` and `rev` parameters' values is:
 ~~~ abnf2616
-	relation-type *( 1*SP relation-type )
+  relation-type *( 1*SP relation-type )
 ~~~
 
 where:
 
 ~~~ abnf2616
-	relation-type  = reg-rel-type | ext-rel-type
-	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
-	ext-rel-type   = URI
+  relation-type  = reg-rel-type | ext-rel-type
+  reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+  ext-rel-type   = URI
 ~~~~
 
 Note that extension relation types are REQUIRED to be absolute URIs in Link headers, and MUST be
@@ -396,7 +396,7 @@ MUST be ignored by parsers.
 
 The ABNF for the `type` parameter's value is:
 ~~~ abnf2616
-	type-name "/" subtype-name
+  type-name "/" subtype-name
 ~~~
 
 
@@ -415,14 +415,14 @@ error in decoding it, or if they do not support decoding.
 
 For example:
 
-	Link: <http://example.com/TheBook/chapter2>; rel="previous";
-	      title="previous chapter"
+    Link: <http://example.com/TheBook/chapter2>; rel="previous";
+          title="previous chapter"
 
 indicates that "chapter2" is previous to this resource in a logical navigation path.
 
 Similarly,
 
-	Link: </>; rel="http://example.net/foo"
+    Link: </>; rel="http://example.net/foo"
 
 indicates that the root resource ("/") is related to this resource with the extension relation type
 "http://example.net/foo".
@@ -430,10 +430,10 @@ indicates that the root resource ("/") is related to this resource with the exte
 The example below shows an instance of the Link header field encoding multiple links, and also the
 use of RFC 5987 encoding to encode both non-ASCII characters and language information.
 
-	Link: </TheBook/chapter2>;
-	      rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
-	      </TheBook/chapter4>;
-	      rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
+    Link: </TheBook/chapter2>;
+          rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
+          </TheBook/chapter4>;
+          rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
 
 Here, both links have titles encoded in UTF-8, use the German language ("de"), and the second link
 contains the Unicode code point U+00E4 ("LATIN SMALL LETTER A WITH DIAERESIS").
@@ -441,8 +441,8 @@ contains the Unicode code point U+00E4 ("LATIN SMALL LETTER A WITH DIAERESIS").
 Note that link-values can convey multiple links between the same link target and link context; for
 example:
 
-	Link: <http://example.org/>;
-	      rel="start http://example.net/relation/other"
+    Link: <http://example.org/>;
+          rel="start http://example.net/relation/other"
 
 Here, the link to "http://example.org/" has the registered relation type "start" and the extension
 relation type "http://example.net/relation/other".
@@ -458,14 +458,14 @@ Registry, as it has not been used, and future use is not anticipated.
 This specification updates the Message Header registry entry for "Link" in HTTP {{RFC3864}} to
 refer to this document.
 
-	Header field: Link
-	Applicable protocol: http
-	Status: standard
-	Author/change controller:
-	    IETF  (iesg@ietf.org)
-	    Internet Engineering Task Force
-	Specification document(s):
-	    [RFC&rfc.number;]
+    Header field: Link
+    Applicable protocol: http
+    Status: standard
+    Author/change controller:
+        IETF  (iesg@ietf.org)
+        Internet Engineering Task Force
+    Specification document(s):
+        [RFC&rfc.number;]
 
 ## Link Relation Type Registry
 
