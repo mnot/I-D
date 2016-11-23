@@ -159,7 +159,6 @@ For example:
             "application/json": {}
           },
           "acceptPatch": ["application/json-patch+json"],
-          "acceptPost": ["application/prs.my-special-post-format+json"],
           "acceptRanges": ["bytes"]
         }
       }
@@ -266,7 +265,6 @@ For example, given the following Resource Object:
         "application/json": {}
       },
       "acceptPatch": ["application/json-patch+json"],
-      "acceptPost": ["application/xml"],
       "acceptRanges": ["bytes"]
     }
   }
