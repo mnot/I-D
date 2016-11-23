@@ -1,0 +1,392 @@
+
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                         November 23, 2016
+Updates: 3864, 7231 (if approved)
+Intended status: Standards Track
+Expires: May 27, 2017
+
+
+                   A Registry for HTTP Header Fields
+              draft-nottingham-httpbis-header-registry-00
+
+Abstract
+
+   This document defines a separate IANA registry for HTTP header
+   fields, and establishes the procedures for its operation.
+
+Note to Readers
+
+   The issues list for this draft can be found at
+   https://github.com/mnot/I-D/labels/httpbis-header-registry .
+
+   The most recent (often, unpublished) draft is at
+   https://mnot.github.io/I-D/httpbis-header-registry/ .
+
+   Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
+   pages/httpbis-header-registry .
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on May 27, 2017.
+
+Copyright Notice
+
+   Copyright (c) 2016 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+
+Nottingham                Expires May 27, 2017                  [Page 1]
+
+Internet-Draft            HTTP Header Registry             November 2016
+
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+   2.  The HTTP Header Field Registry  . . . . . . . . . . . . . . .   3
+     2.1.  Requesting Registration . . . . . . . . . . . . . . . . .   3
+     2.2.  Registration Request Processing . . . . . . . . . . . . .   4
+     2.3.  Updating Registrations  . . . . . . . . . . . . . . . . .   4
+   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+     3.1.  Registry Creation . . . . . . . . . . . . . . . . . . . .   5
+     3.2.  Registry Operation  . . . . . . . . . . . . . . . . . . .   5
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
+     5.2.  Informative References  . . . . . . . . . . . . . . . . .   7
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   7
+
+1.  Introduction
+
+   [RFC3864] established common IANA registries for header fields from a
+   variety of protocols.  Experience has shown that having a combined
+   registry has few benefits, and creates a number of issues, including:
+
+   o  Difficulty in evolving the registration process (without
+      coordination with other protocols),
+
+   o  Registry user confusion, due to the large number of header fields
+      registered,
+
+   o  Using one expert to review all header field registrations is
+      onerous to that individual,
+
+   o  Lack of HTTP community involvement / oversight in reviews.
+
+   While these issues could be mitigated by a RFC3864bis, it is more
+   straightforward to separate the HTTP registrations out into a
+   separate registry; since there is only slight syntactic similarity
+   between header fields between protocols (and often, the mismatches
+
+
+
+Nottingham                Expires May 27, 2017                  [Page 2]
+
+Internet-Draft            HTTP Header Registry             November 2016
+
+
+   create confusion), and little semantic overlap, this seems like the
+   best path forward.
+
+   Therefore, this document establishes a new HTTP Header Field
+   Registry, defines its procedures, and guides the transition of
+   existing values to it.
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+2.  The HTTP Header Field Registry
+
+   The "Hypertext Transfer Protocol (HTTP) Header Field Registry"
+   defines the namespace for the request method token (Section 4).  It
+   is maintained at http://www.iana.org/assignments/http-headers .
+
+2.1.  Requesting Registration
+
+   Any party can request registration of a HTTP header field.
+
+   Registration requests can be sent to the "http-
+   registrations@ietf.org" mailing list.  The Expert(s) MAY establish
+   alternate means of requesting registrations, which SHOULD be linked
+   to from the registry page.
+
+   Registration requests consist of at least the following information:
+
+   o  *Header field name*: The requested field name.  It MUST conform to
+      the field-name syntax defined in [RFC7230], Section 3.2, and
+      SHOULD be restricted to just letters, digits, hyphen ('-') and
+      underscore ('_') characters, with the first character being a
+      letter.
+
+   o  *Status*: "standard" or "provisional"
+
+   o  *Author/Change controller*: For a standards-track RFC, state
+      "IETF".  For other open standards, give the name of the publishing
+      body (e.g., "W3C").  For other specifications, give the name and/
+      or organisation name and e-mail address of the primary
+      specification author.
+
+   o  *Specification document(s)*: Reference to the document that
+      specifies the header field, preferably including a URI that can be
+      used to retrieve a copy of the document.  An indication of the
+      relevant section(s) MAY also be included, but is not required.
+
+
+
+Nottingham                Expires May 27, 2017                  [Page 3]
+
+Internet-Draft            HTTP Header Registry             November 2016
+
+
+   The Expert(s) MAY define additional fields to be collected in the
+   registry, in consultation with the community.
+
+   Header fields that are defined in an IETF standards-track document,
+   have a comparable amount of review (typically, as an Open Standard in
+   the sense of [RFC2026], section 7), or are generally recognised to be
+   in widespread use (in the judgment of the Expert(s)) MAY be
+   registered with the status "standard".  Such registrations MUST have
+   a defining specification that is publicly available.
+
+   Other header fields MUST be registered with the status "provisional".
+
+2.2.  Registration Request Processing
+
+   Header fields are registered on the advice of a Designated Expert
+   (appointed by the IESG or their delegate).  Header fields with the
+   status 'standard' are Specification Required (using terminology from
+   [RFC5226]).
+
+   The goal of the registry is to reflect common use of HTTP on the
+   Internet.  Therefore, the Expert(s) SHOULD be strongly biased towards
+   approving registrations, unless they are abusive, frivolous, not
+   likely to be used on the Internet, or actively harmful to the
+   Internet and/or the Web (not merely aesthetically displeasing, or
+   architecturally dubious).
+
+   The Expert(s) MUST clearly identify any issues which cause a
+   registration to be refused.  Advice about the syntax or semantics of
+   a proposed header can be given, but if it does not block
+   registration, this SHOULD be explicitly stated.
+
+   When a request is approved, the Expert(s) will inform IANA, and the
+   registration will be processed.  The IESG is the final arbiter of any
+   objection.
+
+2.3.  Updating Registrations
+
+   After registration, the change controller MAY request that the status
+   of a registration be changed to "obsoleted", request that the change
+   controller be updated, and/or request that the specification
+   document(s) be updated.
+
+   Likewise, the IESG MAY request changes to the registry at any time.
+   The Expert(s) MAY act on the IESG's behalf to update incorrect or
+   out-of-date standard entries.
+
+   All such requests are subject to the same conditions and processes
+   described in Section 2.2.
+
+
+
+Nottingham                Expires May 27, 2017                  [Page 4]
+
+Internet-Draft            HTTP Header Registry             November 2016
+
+
+   If the Expert(s) make reasonable attempts to contact a change
+   controller but cannot contact them, they MAY update a registration.
+
+3.  IANA Considerations
+
+3.1.  Registry Creation
+
+   IANA will create a new registry as outlined in Section 2.
+
+   After creating the registry, all entries in the Permanent and
+   Provisional Message Header Registries with the protocol 'http' are to
+   be moved to it, with the following changes applied:
+
+   1.  The 'Applicable Protocol' field is to be omitted.
+
+   2.  Entries with a status of 'experimental' or 'informational' are to
+       have a status of 'standard'.
+
+   3.  Entries with a status of 'deprecated' are to have a status of
+       'obsoleted'.
+
+   4.  Provisional entries without a status are to have a status of
+       'provisional'.
+
+   5.  Permanent entries without a status (after confirmation that the
+       registration document did not define one) will have a status of
+       'provisional'.  The Expert(s) MAY choose to update their status
+       if there is evidence that another is more appropriate.
+
+   The Permanent and Provisional Message Header registries will be
+   annotated to indicate that HTTP header field registrations have
+   moved, with an appropriate link.
+
+3.2.  Registry Operation
+
+   IANA will direct any incoming requests regarding the registry to this
+   document and, if defined, the processes established by the Expert(s);
+   typically, this will mean referring them to the registry Web page.
+
+   The Expert(s) will provide registry data to IANA in an agreed form
+   (e.g. a specific XML format).  IANA will publish:
+
+   o  The raw registry data
+
+   o  The registry data, transformed into HTML
+
+   o  The registry data in any alternative formats provided by the
+      Expert(s)
+
+
+
+Nottingham                Expires May 27, 2017                  [Page 5]
+
+Internet-Draft            HTTP Header Registry             November 2016
+
+
+   Each published document will be at a URL agreed to by IANA and the
+   Expert(s), and IANA will set HTTP response headers on them as
+   (reasonably) requested by the Expert(s).
+
+   Additionally, the HTML generated by IANA will:
+
+   o  Take directions from the Expert(s) as to the content of the HTML
+      page's introductory text
+
+   o  Include a stable HTML fragment identifier for each registered
+      header field
+
+   All registry data documents MUST include Simplified BSD License text
+   as described in Section 4.e of the Trust Legal Provisions
+   (<http://trustee.ietf.org/license-info>).
+
+4.  Security Considerations
+
+   No security considerations are introduced by this specification
+   beyond those already inherent in the use of HTTP header fields.
+
+5.  References
+
+5.1.  Normative References
+
+   [RFC2026]  Bradner, S., "The Internet Standards Process -- Revision
+              3", BCP 9, RFC 2026, DOI 10.17487/RFC2026, October 1996,
+              <http://www.rfc-editor.org/info/rfc2026>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/
+              RFC2119, March 1997,
+              <http://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
+              IANA Considerations Section in RFCs", BCP 26, RFC 5226,
+              DOI 10.17487/RFC5226, May 2008,
+              <http://www.rfc-editor.org/info/rfc5226>.
+
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing", RFC
+              7230, DOI 10.17487/RFC7230, June 2014,
+              <http://www.rfc-editor.org/info/rfc7230>.
+
+
+
+
+
+
+
+
+Nottingham                Expires May 27, 2017                  [Page 6]
+
+Internet-Draft            HTTP Header Registry             November 2016
+
+
+5.2.  Informative References
+
+   [RFC3864]  Klyne, G., Nottingham, M., and J. Mogul, "Registration
+              Procedures for Message Header Fields", BCP 90, RFC 3864,
+              DOI 10.17487/RFC3864, September 2004,
+              <http://www.rfc-editor.org/info/rfc3864>.
+
+Author's Address
+
+   Mark Nottingham
+
+   Email: mnot@mnot.net
+   URI:   https://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham                Expires May 27, 2017                  [Page 7]
