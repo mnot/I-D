@@ -12,7 +12,6 @@ layout: front
 * [link-hint](link-hint) - HTTP Link Hints 
 * [linked-cache-inv](linked-cache-inv)  
 * [proxy-explanation](proxy-explanation) - The application/proxy-explanation+json media type 
-* [rfc3864bis](rfc3864bis) - Registration Procedures for Message Header Fields 
 * [rfc5988bis](rfc5988bis) - Web Linking 
 * [safe-hint](safe-hint) - The safe HTTP Preference 
 * [site-wide-headers](site-wide-headers) - Site-Wide HTTP Headers
