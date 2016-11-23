@@ -72,7 +72,7 @@ a link-driven approach to their interactions to assure loose coupling, thereby e
 extensibility and API evolution.
 
 This is based upon experience with previous APIs that specified static URI paths (such as
-"http://api.example.com/v1.0/widgets/abc123/properties"), which have resulted in brittle, tight
+"https://api.example.com/v1.0/widgets/abc123/properties"), which have resulted in brittle, tight
 coupling between clients and servers.
 
 Sometimes, these APIs are documented by a document format like {{WADL}} that is used as a
@@ -129,7 +129,7 @@ For example:
       "tag:me@example.com,2016:widget": {
         "href-template": "/widgets/{widget_id}",
         "href-vars": {
-          "widget_id": "http://example.org/param/widget"
+          "widget_id": "https://example.org/param/widget"
         },
         "hints": {
           "allow": ["GET", "PUT", "DELETE", "PATCH"],
@@ -167,13 +167,13 @@ type. This means that several link relations might apply to a common base URL; e
     "tag:me@example.com,2016:search-by-id": {
       "href-template": "/search?id={widget_id}",
       "href-vars": {
-        "widget_id": "http://example.org/param/widget_id"
+        "widget_id": "https://example.org/param/widget_id"
       }
     },
     "tag:me@example.com,2016:search-by-name": {
       "href-template": "/search?name={widget_name}",
       "href-vars": {
-        "widget_name": "http://example.org/param/widget_name"
+        "widget_name": "https://example.org/param/widget_name"
       }
     }
   }
@@ -215,10 +215,10 @@ and syntax of those variables.
 For example, given the following Resource Object:
 
 ~~~
-  "http://example.org/rel/widget": {
+  "https://example.org/rel/widget": {
     "href-template": "/widgets/{widget_id}",
     "href-vars": {
-      "widget_id": "http://example.org/param/widget"
+      "widget_id": "https://example.org/param/widget"
     },
     "hints": {
       "allow": ["GET", "PUT", "DELETE", "PATCH"],
@@ -232,10 +232,10 @@ For example, given the following Resource Object:
   }
 ~~~
 
-If you understand that "http://example.org/param/widget" is an numeric identifier for a widget, you
+If you understand that "https://example.org/param/widget" is an numeric identifier for a widget, you
 can then find the resource corresponding to widget number 12345 at
-"http://example.org/widgets/12345" (assuming that the Home Document is located at
-"http://example.org/").
+"https://example.org/widgets/12345" (assuming that the Home Document is located at
+"https://example.org/").
 
 
 # Resource Hints {#resource_hints}
