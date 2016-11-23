@@ -80,7 +80,9 @@ between header fields between protocols (and often, the mismatches create confus
 semantic overlap, this seems like the best path forward.</t>
 
 <t>Therefore, this document establishes a new HTTP Header Field Registry, defines its procedures, and
-guides the transition of existing values to it.</t>
+guides the transition of existing values to it. Doing so effectively removes HTTP header fields
+from the scope of <xref target="RFC3864"/> and the registries it defines, and updates <xref target="RFC7231"/> Section 8.3
+with a new process for managing them.</t>
 
 <section anchor="notational-conventions" title="Notational Conventions">
 
@@ -92,13 +94,14 @@ guides the transition of existing values to it.</t>
 </section>
 <section anchor="registry" title="The HTTP Header Field Registry">
 
-<t>The “Hypertext Transfer Protocol (HTTP) Header Field Registry” defines the namespace for the
-request method token (Section 4). It is maintained at
+<t>The “Hypertext Transfer Protocol (HTTP) Header Field Registry” defines the namespace for HTTP
+header fields (as per <xref target="RFC7230"/>, Section 3.2). It is maintained at
 <eref target="http://www.iana.org/assignments/http-headers">http://www.iana.org/assignments/http-headers</eref>.</t>
 
 <section anchor="requesting-registration" title="Requesting Registration">
 
-<t>Any party can request registration of a HTTP header field.</t>
+<t>Any party can request registration of a HTTP header field. See <xref target="RFC7231"/> Section 8.3.1 for
+considerations to take into account when creating a new HTTP header field.</t>
 
 <t>Registration requests can be sent to the “http-registrations@ietf.org” mailing list. The Expert(s)
 MAY establish alternate means of requesting registrations, which SHOULD be linked to from the
@@ -316,6 +319,20 @@ the use of HTTP header fields.</t>
 
 
 
+<reference  anchor='RFC7231' target='http://www.rfc-editor.org/info/rfc7231'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7231'/>
+<seriesInfo name='DOI' value='10.17487/RFC7231'/>
+</reference>
+
+
+
 
     </references>
 
@@ -324,84 +341,86 @@ the use of HTTP header fields.</t>
   </back>
 
 <!-- ##markdown-source:
-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
-ojAa/A+fdVINJiAAAA==
+H4sIAK5HNVgAA41Za3PcthX9jl+Brj9o5dmHLOe5SdOqlhxpRrJdSZ600+lk
+QBLcRUQSW4KUvPXov/fcC4CPlZU0H5zVkgDu49xzz8XO53PRmKbQK3kir/Xa
+uKbeydzW8vz29oM81yrTtXxrdJE5oZKk1ver0aO4RmQ2rVSJfbJa5c28sk1j
+qvVGlfNN02wT4+YbXjGvw4r50ZHIVIMVx0evvhEpPq5tvVtJ12Si3dIjt5Kv
+v/vmq5n89vj1KyHMtl7Jpm5dc3x09P3RsVC1Viv5s650rQrxYOu7dW3b7Urc
+6R3+ylbyomp0XelmfkpWCeEaVWW/qsJWOHenndialfxXY9OZxD+mynTVzKSz
+dVPr3OHTrgwfmtqkeJTacqvChxIv45GpClPpfwuh2mZj65WQcyHxn6lg/9VC
+vutCwV/7KF2p+m7/ia3XqjL/VY2x1UryV7pUpljJEuH8K/2zgC/8oK1hOEXW
+rZbLh4eHRXy6FKKydYlN7jVMkddv3xy/evX9CuGr8v6BEPP5XKoEfsEdIW43
+xknksCWnZKZzuOSkkk5vVY1UyIuTdyeyfoIQn1SZM0JmEtGVGkFOCuM22KDZ
+aLmtbaqztsaftMw0TtotMkZuLrwdsF3/+o7+aeyv17ylI5u0NM61WIjtGl7d
+sJ2UTJmqSiYa37Y4VDXyxxiOtWk2bbJAhpYUleXF/HRZqEQXbvkMFn9a+NNK
+i2NqnVIMpjZvdDWTbbVtvTvZYTgZJgzP49CHQ43l4545Z0kHXfv9042q1hTj
+WrN7+o+dIMwhfMv1Zr5VWPt77nBcS5NlhRbiBRVCbbM2paAL8fnzX4ALqq3H
+x0G+Mka1rUbJNiFvo0zLvLYl4HGv8LzZSZtTmlFCtnALcfYJ+TW6SrXcKCfd
+xj5UyBzc26h7AB4LcVACiGU9pOjNXD8gpRXQ1wQwpSjxhpFYtWWC820uPCao
+8NKizbAf4PxSnpo8N2lbwBpTSX1vCz6KEBjOYMR5ODonpw+IsG2RCAuqMJV/
+Sl9Ki0V179DhjPbv2LF1eJjaKm8dVsxk1mqQBx9UqHqte0v3YubN0LXOeMOP
+juwDE0lN8WpoE/CrQQxUUYzWjjxwhD8sA9U5fzACC+oy9yZrVcF7X6r0jgzg
+GqWktpXhwFBYNNf4Utp7lJlZb2h1OBnJE79sTKHJHdeVX2pbGIFiA/zMWhFW
+kx1yEkAECCIbXBelBZzJUtoXsHlQdUZGdjyCfQVbNXaJEmEqvDignAiNHyQi
+lfLSWnvni510BZvudlUDBjMpXioNEgA/RaKbB62rvfjHb7vEyilBLNQ55a80
+DgSZEnN54PV5PvR4LEyDbikciLmiQymGhdrOPDE5rUsiqzs2FgeCTrYKiAqR
+8DSDjoIohSUd5w5pE2gHCp604A6Ds46hiU17gmUbxbo1WeBexLdyhpENNOhP
+WE2gu1cFpRXhNs1Cnlr6zlmp81yn1B8Q3lqX8M19geUF1z7t7lIQOW084hMK
+06DqDFsZDfZRDO09rKPujnU3mtlJfrd4LbgMfRRivRIHIehqHaq6JJJ78YKa
+KGNIFfKNre4RSgKU53PoAElCwMnJ1ceb28nM/1++e8+fr8/+/vHi+uyUPt+c
+n1xedh/iGzfn7z9envaf/PcCK9+8v7o6e3fqF1+d/HPiPZu8/3B78f7dyeWE
+imqcYWJ6hBxlZEiWbGvNpI83tEtrk+APU4Gb/xR69uMjuyjJk+exID+/iIXy
+6L2enO+IT/SnRt5S/nOs+RAwL6e00+GXt5p0sKL8kVBxEDu66/ZiXE9TmI6D
+kEWfxKPHx1mXxdeL48OFvPCkoOCwYrpXjeAWF1SLQUIX0D1L5cBEFSsq7mqh
+pbmfQpav9X+AWAbv9YA4hDipdiixGuRGeqD2r40ZHwBVT3G8gKn6WQQuXpHX
+AuXvUEyRpYht1Z0OTJWCFpHWhw04henCt7audEenUd8f2BQMdVHFOAJI6CIT
+DsCIH/+KLptToCYUzIIOIs2wYGxwu22m7lAAhz2PoIuQ+CUWK7Uijs3jsbR+
+tP8MXph0IwPKE5Ik1Z1m6o7lLrpWTeLjeYcoZEgBRb2RhVb4TF7ltijsA53c
+CVHIXGpWL1+eD3sd4e7lyxW7FnaFIf0zRhWXMZEzdopx41fm9IrvCp8CnDNB
+Ylz6wvoCTn3l9q6DSFnte/d/w7wBNxrEEmHKzJq1yWa3pbRPD+YHh0y6kOQV
+ATalBjg9+BVfQ+GRuOZ1TGjeyNo1/SOc51HjT1j4eNyA0lpHQZjwxILWMcF4
+ICcgw3vjmO0m/tUTHjqWb1hNUkSg84pC17T4LZagn4Yd3Jy0/h01bZpnCBeT
+i7Pbt5MFv+hFDwi96lfM4NYa/aDjA8oqa3ovicn0xGY7OdWL9QJE+MvrN5PD
+4X5uq1MDXRZhNtoNu+OgJb3Mo4/zUOKDeJKYE9ilyrKaOkA8uzalAgpHW0s/
+fMX4jR5FAkaFUFSuNQiRxWnATUfQrKTCtoEEhzVM0QBpYzUKbNfLT8T44/WF
+Xx3KGRox83qOGiBcJsW73UUX4okLeVKxdEsjU+EI3zsLfQ+FAV5gmMJ0ScWt
+ChcaCJ0NISmTlikWIwIXi4G6DMNMRwu80pcCxdKEbhlY3HeklEDDkOe21Ysv
+ktlc01DWvUQW9EqnK3Hg+agzcCio3YUCpD0QGELbEzjGWMxoOPCBKkkAJhCh
+qmSGRViCMJ42uy2CVRSwC90He74nwN6EPaPxYFMXhAk306Pjb6jmQzDltxBz
+VBowcO0vD4odTkjtGhj0ieMYw1W0ZqRcZZRROQ3b/9ZmawZMSGcXaR/qRA+k
+flf5dPeAoh5UNDpQC84dC2EmthAJjh5rsxGeveB3vghTIFHdo0woYEjEey67
+caPmPb9slYxWDZml67kDfg8NmIQEyTGy6vOLbffH4z4EKLiD86yPnMruTap9
+Rz7V1PJ5mPABhKDYbi1pIx4v6P2Ls5ufJY/92tQiQ1XQ9AGGGR+2781BjPEB
+2zGmg+tQJnLashswsDSVLex656WtB83XxwSaw1BMa4uKCenu+qBxvsZzKp04
+O7ceeawAgtfxForbda/+h5277z7Y2VZrZDUxyoORJgcEdMspetq526ogdsR+
+O/ZWJfDrHifktcG4hylxRvQgaCzBth7cTFB75vmiiAMAOlSZt0UkyfhSZGz6
+7hedyCkxTwmvUEIKANnoxhcoWqXbUvuHyaHc0o1pEKm29s/bxMC4w6d0xb0d
+S2tiWbqSMzlcq3ZxHPVaJVUUajXWet47xJgcBL0y3oRKaL5kgHhhAHPiCOc8
+GhHcraWghNIJRE79qgosm/McY7Vn26Sw6Z0YHh4muj6VmOtRoKahaZX6bcbT
+NfhKdULVxMQSl48gAVAXRdBKfCEz25+sIh3jtUTHOYkOuY2VY1zQHMT3qk5M
+4+8lKJY2+c3TYaj2jzST7etrJ6Gwc1q176gOF1gDycHkFx1jkhqUJAd5ZHgS
+t8gEsjaxibMFTUSYpJ5s8vQswjBPkdksQnJ/lXDPyYDBanh/icJ4APHPesoZ
+ehIv6kIhdNVPLQ5xbAxJ0qcNF4UUCkzQlgd0/7BRRU77+LOpi9u6Ju4gCdQ2
+c5vP+UGkLwlzaYCGkSfIsvPtIghtqnXXchajbY6UE4Lke7xjwERcjMdMkNyA
+vGnQvNjrZRg07shb5dATuBlDoJbbhgNBiSAH1Zcy07IMohqJr9G4PhPMUBSa
+4P4YDwRDuqikq8c3o7Fr2Ix28g1PWjT68asM/3BZ42evPkF8rVREAfL5czcn
+Py46XHeD21j00A1cCH4UFR/QJ1TFgzzC+qHvl/IKYcRItPebCJaKrjHFOyd5
+QMPdweAugK5ZMn8VMxwTummpuyfegkx0honplYfbwQl9k3Ju4nh/EOYkE3Wd
+LU3DKD9eyLPgT7hc6QvzgC8gDRWHwhYA48FgRqOvgrlBlwxWdo12IV7/3gmZ
+hoyi33iy39msowDs9tViFGI92Jm4vFv37GYDQYPtvl4M8vfsZlPlMYG50gTv
+ew4akVf/U4nJuB0EfW0rHZj7Dyz6AmOkG4sONOAHVj1xB5P3F6AQw5mfYFho
+V37Witev3FAwJWGL0Fv/b+gO7uxiX+FKVmEYDrNKOPjJndCeluUQlL63eUhU
+Q+P4jmGsNXek5+sn9Z0ZZkmWAODM0qugwIM4U9XZfgl7Shxdv1UwA1EMMwmz
+vejZcfgzSFCfXXp+kIO5g3dls+haRfJAWMdLyf0uIUgjhfuS26ftnSGRDaxG
+3hXtwb77qUmta00XIKQDeM4mVIXOJv9xdSl9pUJH9QEL8znIQsqX/iZFPYxP
+6Z8Mv535K2PaklkTppzfXl1++WVv4K67aKLZ3hvjomdPYynEmUIb635U6xPU
+Ia7hifoyek5MtvMRiQqo282Los5x4bSHJV3ibC1NgeEiMfTikrrCtOtqu8PB
+FdO+pdR1u3HZZ15zNMLUGNZ0h1O0ESVqmx6wXATdbXmfetWJCWqQg0GSNye0
+HFDXCb/YWQKz/tTw7hd+8PfEQszPS/Ja+YE0qGVDBQka16qbL3kKG9aqlxTj
+fMZUhJEx3DLIG1Oi02BVJv92cyovIakpsnzDvHd93d2rfbWgMYjvCW7pJ3t5
+iTIteu5BFn6kWUg29JtZ8+dJuBXm3/e1XsQLz2XhT5tTR5osfzr0d+I4pqWf
+ep5IhXf0W1N4tnd7S60iRjWmm360GanERO8sg4yoWBU0+xPpEPNSfCv2aDjj
+jUbt8Ht2ojAa/A9l2da8XCEAAA==
 
 -->
 
