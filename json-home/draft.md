@@ -115,8 +115,14 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 An API Home Document (or, interchangeably, "home document") uses the format described in {{RFC7159}}
 and has the media type "application/json-home".
 
-Its content consists of a root object with a "resources" property, whose member names are link
-relation types (as defined by {{RFC5988}}), and values are Resource Objects, defined below.
+Its content consists of a root object with:
+
+* A "resources" member, whose value is an object that describes the resources associated with the
+  API. Its member names are link relation types (as defined by {{RFC5988}}), and their values are
+  Resource Objects ({{resource-object}}).
+
+* Optionally, a "api" member, whose value is an API Object ({{api-object}}) that contains
+  information about the API as a whole.
 
 For example:
 
@@ -131,6 +137,13 @@ For example:
   Connection: close
 
   {
+    "api": {
+      "title": "Example API",
+      "links": {
+        "author": "mailto:api-admin@example.com",
+        "describedby": "https://example.com/api-docs/"
+      }
+    }
     "resources": {
       "tag:me@example.com,2016:widgets": {
         "href": "/widgets/"
@@ -154,10 +167,14 @@ For example:
   }
 ~~~
 
-Here, we have a home document that links to a resource, "/widgets/" with the relation
-"tag:me@example.com,2016:widgets". It also links to an unknown number of resources with the relation
-type "tag:me@example.com,2016:widget" using a URI Template {{RFC6570}}, along with a mapping of
-identifiers to a variable for use in that template.
+Here, we have a home document for the API "Example API", whose author can be contacted at the
+e-mail address "api-admin@example.com", and whose documentation is at
+"https://example.com/api-docs/".
+
+It links to a resource "/widgets/" with the relation "tag:me@example.com,2016:widgets". It also
+links to an unknown number of resources with the relation type "tag:me@example.com,2016:widget"
+using a URI Template {{RFC6570}}, along with a mapping of identifiers to a variable for use in that
+template.
 
 It also gives several hints about interacting with the latter "widget" resources, including the
 HTTP methods usable with them, the patch formats they accept, and the fact that they support
@@ -192,7 +209,21 @@ type. This means that several link relations might apply to a common base URL; e
 Note that the examples above use both tag {{?RFC4151}} and https {{?RFC7230}} URIs; any URI scheme can be used to identify link relations and other artefacts in home documents.
 
 
-# Resource Objects
+# API Objects {#api-object}
+
+An API Object contains links to information about the API itself. 
+
+Two members are defined:
+
+* "title" has a string value indicating the name of the API; 
+
+* "links" has an object value, whose member names are link relation types {{RFC5988}}, and values
+  are URLs {{RFC3986}}. The context of these links is the API home document as a whole.
+
+Future members MAY be defined by specifications that update this document.
+
+
+# Resource Objects {#resource-object}
 
 A Resource Object links to resources of the defined type using one of two mechanisms; either a
 direct link (in which case there is exactly one resource of that relation type associated with the
@@ -378,8 +409,9 @@ For example, a Resource Object might contain the following hint:
 Content MUST be a string; possible values are:
 
 * "deprecated" - indicates that use of the resource is not recommended, but it is still available.
-* "gone" - indicates that the resource is no longer available; i.e., it will return a 410 Gone HTTP
-  status code if accessed.
+
+* "gone" - indicates that the resource is no longer available; i.e., it will return a 404 (Not
+  Found) or 410 (Gone) HTTP status code if accessed.
 
 
 # Representation Hints {#representation_hints}
@@ -537,13 +569,8 @@ one link relation type; see the example at the start of the document.
 
 The following is a list of placeholders for open issues.
 
-* top-level object(s)
-  * contact details
-  * overall documentation
-  * release info?
-  * ToS
-  * rate limiting (per-resource?)
 * Resource Hints
+  * rate limiting (per-resource?)
   * indicate a POST to 201 Created pattern
   * indicate an "action" POST
   * outbound links
@@ -551,6 +578,6 @@ The following is a list of placeholders for open issues.
 * Representation Hints
   * format profiles
   * deprecation
-* Defining new top-level and resource object properties - how new ones are minted, registry, etc.
+* Defining new resource object properties - how new ones are minted, registry, etc.
 * Discovery (e.g., conneg, .well-known, etc.)
 * LIMITED include function?
