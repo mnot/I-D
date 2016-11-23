@@ -6,6 +6,7 @@ layout: front
 * [for-the-users](for-the-users) - The Internet is for End Users 
 * [http-cache-channels](http-cache-channels)  
 * [http-patch-status](http-patch-status) - The 2NN Patch HTTP Status Code 
+* [httpbis-header-registry](httpbis-header-registry) - A Registry for HTTP Header Fields 
 * [httpbis-retry](httpbis-retry) - Retrying HTTP Requests 
 * [json-home](json-home) - Home Documents for HTTP APIs 
 * [link-hint](link-hint) - HTTP Link Hints 
