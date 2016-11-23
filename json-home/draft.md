@@ -101,10 +101,10 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# JSON Home Documents
+# API Home Documents
 
-A JSON Home Document uses the format described in {{RFC7159}} and has the media type
-"application/json-home".
+An API Home Document (or, interchangeably, "home document") uses the format described in {{RFC7159}}
+and has the media type "application/json-home".
 
 Its content consists of a root object with a "resources" property, whose member names are link
 relation types (as defined by {{RFC5988}}), and values are Resource Objects, defined below.
@@ -198,7 +198,7 @@ see "Resolving Templated Links".
 Resource Objects MUST have exactly one of the "href" and "href-vars" properties.
 
 In both forms, the links that "href" and "href-template" refer to are URI-references {{RFC3986}}
-whose base URI is that of the JSON Home Document itself.
+whose base URI is that of the API Home Document itself.
 
 Resource Objects MAY also have a "hints" property, whose value is an object that uses named
 Resource Hints (see {{resource_hints}}) as its properties.
@@ -380,7 +380,7 @@ TBD
 
 # Creating and Serving Home Documents
 
-When making a home document available, there are a few things to keep in mind:
+When making an API home document available, there are a few things to keep in mind:
 
 * A home document is best located at a memorable URI, because its URI will effectively become the
   URI for the API itself to clients.
@@ -396,8 +396,8 @@ When making a home document available, there are a few things to keep in mind:
 
 ## Managing Change in Home Documents
 
-The URIs used in home documents MAY change over time. However, changing them can cause issues for
-clients that are relying on cached home documents containing old links.
+The URIs used in API home documents MAY change over time. However, changing them can cause issues
+for clients that are relying on cached home documents containing old links.
 
 To mitigate the impact of such changes, servers SHOULD consider:
 
