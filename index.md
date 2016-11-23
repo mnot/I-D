@@ -9,7 +9,6 @@ layout: front
 * [httpbis-header-registry](httpbis-header-registry) - A Registry for HTTP Header Fields 
 * [httpbis-retry](httpbis-retry) - Retrying HTTP Requests 
 * [json-home](json-home) - Home Documents for HTTP APIs 
-* [link-hint](link-hint) - HTTP Link Hints 
 * [linked-cache-inv](linked-cache-inv)  
 * [proxy-explanation](proxy-explanation) - The application/proxy-explanation+json media type 
 * [rfc5988bis](rfc5988bis) - Web Linking 
