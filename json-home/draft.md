@@ -80,18 +80,18 @@ design-time description; i.e., the URIs and other information they describe are 
 implementations.
 
 In contrast, a "follow your nose" API advertises the resources available to clients using link
-relations {{RFC5988}} and the formats they support using internet media types {{RFC6838}}. A client
-can then decide -- at run time -- which resources to interact with based upon its capabilities (as
-described by link relations), and the server can safely add new resources and formats without
-disturbing clients that are not yet aware of them.
+relations {{RFC5988}} and the formats they support using internet media types {{RFC6838}} at run
+time. A client can then decide which resources to interact with "on the fly" based upon its
+capabilities (as described by link relations), and the server can safely add new resources and
+formats without disturbing clients that are not yet aware of them.
 
-As such, clients need to be able to discover this information quickly and efficiently use it to
-interact with the server. Just as with a human-targeted "home page" for a site, we can create a
-"home document" for a HTTP API that describes it to non-browser clients.
+Clients need to be able to discover this information quickly and efficiently use it. Just as with a
+human-targeted "home page" for a site, we can create a "home document" for a HTTP API that
+describes it to non-browser clients.
 
 Of course, an HTTP API might use any format to do so; however, there are advantages to having a
-standard home document format. This specification suggests one for consideration, using t
-he JSON format {{RFC7159}}.
+standard home document format. This specification suggests one for consideration, using the JSON
+format {{RFC7159}}.
 
 
 ## Notational Conventions
