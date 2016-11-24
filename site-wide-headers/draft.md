@@ -1,7 +1,7 @@
 ---
 title: Site-Wide HTTP Headers
 abbrev:
-docname: draft-nottingham-site-wide-headers-01
+docname: draft-nottingham-site-wide-headers-02
 date: 2016
 category: std
 
