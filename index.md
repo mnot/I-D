@@ -9,7 +9,6 @@ layout: front
 * [httpbis-retry](httpbis-retry) - Retrying HTTP Requests 
 * [json-home](json-home) - Home Documents for HTTP APIs 
 * [linked-cache-inv](linked-cache-inv)  
-* [proxy-explanation](proxy-explanation) - The application/proxy-explanation+json media type 
 * [rfc5988bis](rfc5988bis) - Web Linking 
 * [safe-hint](safe-hint) - The safe HTTP Preference 
 * [site-wide-headers](site-wide-headers) - Site-Wide HTTP Headers
