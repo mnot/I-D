@@ -312,8 +312,7 @@ Content MUST be an array of strings, containing HTTP methods.
   GET and PUT methods respectively, subject to the 'allow' hint.
 * Specification: [this document]
 
-Content MUST be an object, whose keys are media types, and values are objects
-containing Representation Hints (see {{representation_hints}}).
+Content MUST be an object, whose keys are media types, and values are objects, currently empty.
 
 ## acceptPatch
 
@@ -412,10 +411,6 @@ Content MUST be a string; possible values are:
   Found) or 410 (Gone) HTTP status code if accessed.
 
 
-# Representation Hints {#representation_hints}
-
-TBD
-
 
 # Security Considerations
 
@@ -448,9 +443,6 @@ criteria above. Requests for registration of new resource hints are to use the f
 
 Initial registrations are enumerated in {{resource_hints}}.
 
-## HTTP Representation Hint Registry {#representation_hint_registry}
-
-TBD
 
 ## Media Type Registration
 
