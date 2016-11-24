@@ -105,7 +105,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # The Internet is for End Users {#users}
 
-Internet standards MUST NOT consider any other party to have priority over end users.
+Internet standards MUST consider the end users to have priority over every other party.
 
 While networks need to be managed, employers and equipment vendors need to meet business goals, and
 so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
