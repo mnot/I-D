@@ -97,7 +97,7 @@ Registration requests consist of at least the following information:
   in {{!RFC7230}}, Section 3.2, and SHOULD be restricted to just letters, digits, hyphen ('-') and
   underscore ('_') characters, with the first character being a letter.
 
-* **Status**: "standard" or "provisional"
+* **Status**: "permanent" or "provisional"
 
 * **Author/Change controller**: For a standards-track RFC, state "IETF". For other open standards,
   give the name of the publishing body (e.g., "W3C"). For other specifications, give the name
@@ -113,7 +113,8 @@ the community.
 Header fields that are defined in an IETF standards-track document, have a comparable amount of
 review (typically, as an Open Standard in the sense of {{!RFC2026}}, section 7), or are generally
 recognised to be in widespread use (in the judgment of the Expert(s)) MAY be registered with the
-status "standard". Such registrations MUST have a defining specification that is publicly available.
+status "permanent". Such registrations MUST have a defining specification that is publicly
+available.
 
 Other header fields MUST be registered with the status "provisional".
 
@@ -121,7 +122,7 @@ Other header fields MUST be registered with the status "provisional".
 ## Registration Request Processing {#processing}
 
 Header fields are registered on the advice of a Designated Expert (appointed by the IESG or their
-delegate). Header fields with the status 'standard' are Specification Required (using terminology
+delegate). Header fields with the status 'permanent' are Specification Required (using terminology
 from {{!RFC5226}}).
 
 The goal of the registry is to reflect common use of HTTP on the Internet. Therefore, the Expert(s)
@@ -137,14 +138,14 @@ When a request is approved, the Expert(s) will inform IANA, and the registration
 The IESG is the final arbiter of any objection.
 
 
-## Updating Registrations 
+## Updating Registrations {#update}
 
 After registration, the change controller MAY request that the status of a registration be changed
 to "obsoleted", request that the change controller be updated, and/or request that the
 specification document(s) be updated.
 
 Likewise, the IESG MAY request changes to the registry at any time. The Expert(s) MAY act on the
-IESG's behalf to update incorrect or out-of-date standard entries.
+IESG's behalf to update incorrect or out-of-date permanent entries.
 
 All such requests are subject to the same conditions and processes described in {{processing}}.
 
@@ -163,7 +164,8 @@ After creating the registry, all entries in the Permanent and Provisional Messag
 with the protocol 'http' are to be moved to it, with the following changes applied:
 
 1. The 'Applicable Protocol' field is to be omitted.
-2. Entries with a status of 'experimental' or 'informational' are to have a status of 'standard'.
+2. Entries with a status of 'standard', 'experimental', or 'informational' are to have a status of
+   'permanent'.
 3. Entries with a status of 'deprecated' are to have a status of 'obsoleted'.
 4. Provisional entries without a status are to have a status of 'provisional'.
 5. Permanent entries without a status (after confirmation that the registration document did not define one) will have a status of 'provisional'. The Expert(s) MAY choose to update their status if there is evidence that another is more appropriate.
