@@ -1,7 +1,7 @@
 ---
 title: Web Linking
 abbrev:
-docname: draft-nottingham-rfc5988bis-03
+docname: draft-nottingham-rfc5988bis-04
 date: 2016
 category: std
 obsoletes: 5988
@@ -185,34 +185,49 @@ in link serialisations that do not explicitly accommodate them.
 
 ### Registering Link Relation Types {#procedure}
 
-Relation types are registered on the advice of a Designated Expert (appointed by the IESG or their
-delegate), with a Specification Required (using terminology from {{RFC5226}}).
+Any party can request registration of a link relation type.
 
-The Expert(s) will establish procedures for requesting registrations, and make them available from
-the registry page.
+Registration requests can be sent to the "link-relations@ietf.org" mailing list. The Expert(s)
+MAY establish alternate means of requesting registrations, which SHOULD be linked to from the
+registry page.
 
 Registration requests consist of at least the following information:
 
-* Relation Name:
-* Description:
-* Reference:
+* **Relation Name**: The name of the relation type
+
+* **Description**: A short English description of the type's semantics. It SHOULD be stated in
+  terms of the relationship between the link context and link target.
+
+* **Reference**: Reference to the document that specifies the link relation type,
+  preferably including a URI that can be used to retrieve a copy of the document. An indication of
+  the relevant section(s) MAY also be included, but is not required.
 
 The Expert(s) MAY define additional fields to be collected in the registry.
 
 General requirements for registered relation types are described in {{registered}}.
 
-See the registry for examples of the description field; generally, it SHOULD identify the semantics
-in terms of the link's context and target.
-
 Registrations MUST reference a freely available, stable specification.
 
-Note that relation types can be registered by third parties, if the Expert(s) determine that an
-unregistered relation type is widely deployed and not likely to be registered in a timely manner.
+Note that relation types can be registered by third parties (including the Expert(s)), if the
+Expert(s) determine that an unregistered relation type is widely deployed and not likely to be
+registered in a timely manner.
 
-Decisions (or lack thereof) made by the Expert(s) can be first appealed to Application Area
-Directors (contactable using app-ads@tools.ietf.org email address or directly by looking up their
-email addresses on http://www.iesg.org/ website) and, if the appellant is not satisfied with the
-response, to the full IESG (using the iesg@iesg.org mailing list).
+### Registration Request Processing {#processing}
+
+Relation types are registered on the advice of a Designated Expert (appointed by the IESG or their
+delegate), with a Specification Required (using terminology from {{RFC5226}}).
+
+The goal of the registry is to reflect common use of HTTP on the Internet. Therefore, the Expert(s)
+SHOULD be strongly biased towards approving registrations, unless they are abusive, frivolous, not
+likely to be used on the Internet, or actively harmful to the Internet and/or the Web (not merely
+aesthetically displeasing, or architecturally dubious).
+
+The Expert(s) MUST clearly identify any issues which cause a registration to be refused. Advice
+about the syntax or semantics of a proposed link relation type can be given, but if it does not
+block registration, this SHOULD be explicitly stated.
+
+When a request is approved, the Expert(s) will inform IANA, and the registration will be processed.
+The IESG is the final arbiter of any objection.
 
 
 ## Extension Relation Types
@@ -268,8 +283,8 @@ The Link header field provides a means for serialising one or more links into HT
 The ABNF for the field value is given below:
 
 ~~~ abnf2616
-	Link       = #link-value
-	link-value = "<" URI-Reference ">" *( OWS ";" OWS link-param )
+  Link       = #link-value
+  link-value = "<" URI-Reference ">" *( OWS ";" OWS link-param )
   link-param = token BWS "=" BWS ( token / quoted-string )
 ~~~
 
@@ -328,15 +343,15 @@ it often confuses authors and readers; in most cases, using a separate relation 
 
 The ABNF for the `rel` and `rev` parameters' values is:
 ~~~ abnf2616
-	relation-type *( 1*SP relation-type )
+  relation-type *( 1*SP relation-type )
 ~~~
 
 where:
 
 ~~~ abnf2616
-	relation-type  = reg-rel-type | ext-rel-type
-	reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
-	ext-rel-type   = URI
+  relation-type  = reg-rel-type | ext-rel-type
+  reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+  ext-rel-type   = URI
 ~~~~
 
 Note that extension relation types are REQUIRED to be absolute URIs in Link headers, and MUST be
@@ -397,7 +412,7 @@ MUST be ignored by parsers.
 
 The ABNF for the `type` parameter's value is:
 ~~~ abnf2616
-	type-name "/" subtype-name
+  type-name "/" subtype-name
 ~~~
 
 
@@ -416,14 +431,14 @@ error in decoding it, or if they do not support decoding.
 
 For example:
 
-	Link: <http://example.com/TheBook/chapter2>; rel="previous";
-	      title="previous chapter"
+    Link: <http://example.com/TheBook/chapter2>; rel="previous";
+          title="previous chapter"
 
 indicates that "chapter2" is previous to this resource in a logical navigation path.
 
 Similarly,
 
-	Link: </>; rel="http://example.net/foo"
+    Link: </>; rel="http://example.net/foo"
 
 indicates that the root resource ("/") is related to this resource with the extension relation type
 "http://example.net/foo".
@@ -431,10 +446,10 @@ indicates that the root resource ("/") is related to this resource with the exte
 The example below shows an instance of the Link header field encoding multiple links, and also the
 use of RFC 5987 encoding to encode both non-ASCII characters and language information.
 
-	Link: </TheBook/chapter2>;
-	      rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
-	      </TheBook/chapter4>;
-	      rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
+    Link: </TheBook/chapter2>;
+          rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
+          </TheBook/chapter4>;
+          rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
 
 Here, both links have titles encoded in UTF-8, use the German language ("de"), and the second link
 contains the Unicode code point U+00E4 ("LATIN SMALL LETTER A WITH DIAERESIS").
@@ -442,8 +457,8 @@ contains the Unicode code point U+00E4 ("LATIN SMALL LETTER A WITH DIAERESIS").
 Note that link-values can convey multiple links between the same link target and link context; for
 example:
 
-	Link: <http://example.org/>;
-	      rel="start http://example.net/relation/other"
+    Link: <http://example.org/>;
+          rel="start http://example.net/relation/other"
 
 Here, the link to "http://example.org/" has the registered relation type "start" and the extension
 relation type "http://example.net/relation/other".
@@ -459,22 +474,23 @@ Registry, as it has not been used, and future use is not anticipated.
 This specification updates the Message Header registry entry for "Link" in HTTP {{RFC3864}} to
 refer to this document.
 
-	Header field: Link
-	Applicable protocol: http
-	Status: standard
-	Author/change controller:
-	    IETF  (iesg@ietf.org)
-	    Internet Engineering Task Force
-	Specification document(s):
-	    [RFC&rfc.number;]
+    Header field: Link
+    Applicable protocol: http
+    Status: standard
+    Author/change controller:
+        IETF  (iesg@ietf.org)
+        Internet Engineering Task Force
+    Specification document(s):
+        [RFC&rfc.number;]
 
 ## Link Relation Type Registry
 
 This specification updates the registration procedures for the Link Relation Type registry; see
 {{procedure}}. The Expert(s) and IANA will interact as outlined below.
 
-IANA will direct any incoming requests regarding the registry to the processes established by the
-Expert(s); typically, this will mean referring them to the registry Web page.
+IANA will direct any incoming requests regarding the registry to this document and, if defined, the
+processes established by the Expert(s); typically, this will mean referring them to the registry
+Web page.
 
 The Expert(s) will provide registry data to IANA in an agreed form (e.g. a specific XML format).
 IANA will publish:
@@ -488,7 +504,8 @@ set HTTP response headers on them as (reasonably) requested by the Expert(s).
 
 Additionally, the HTML generated by IANA will:
 
- * Take directions from the Expert(s) as to the content of the HTML page's introductory text and markup
+ * Take directions from the Expert(s) as to the content of the HTML page's introductory text
+
  * Include a stable HTML fragment identifier for each registered link relation
 
 All registry data documents MUST include Simplified BSD License text as described in Section 4.e of

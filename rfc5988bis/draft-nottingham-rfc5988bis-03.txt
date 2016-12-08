@@ -3,10 +3,10 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                         November 22, 2016
+Internet-Draft                                         November 25, 2016
 Obsoletes: 5988 (if approved)
 Intended status: Standards Track
-Expires: May 26, 2017
+Expires: May 29, 2017
 
 
                               Web Linking
@@ -49,11 +49,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 26, 2017.
+   This Internet-Draft will expire on May 29, 2017.
 
 
 
-Nottingham                Expires May 26, 2017                  [Page 1]
+Nottingham                Expires May 29, 2017                  [Page 1]
 
 Internet-Draft                 Web Linking                 November 2016
 
@@ -93,32 +93,33 @@ Table of Contents
    4.  Link Relation Types . . . . . . . . . . . . . . . . . . . . .   5
      4.1.  Registered Relation Types . . . . . . . . . . . . . . . .   5
        4.1.1.  Registering Link Relation Types . . . . . . . . . . .   6
+       4.1.2.  Registration Request Processing . . . . . . . . . . .   7
      4.2.  Extension Relation Types  . . . . . . . . . . . . . . . .   7
-   5.  Target Attributes . . . . . . . . . . . . . . . . . . . . . .   7
+   5.  Target Attributes . . . . . . . . . . . . . . . . . . . . . .   8
    6.  Link Serialisation in HTTP Headers  . . . . . . . . . . . . .   8
-     6.1.  Link Target . . . . . . . . . . . . . . . . . . . . . . .   8
-     6.2.  Link Context  . . . . . . . . . . . . . . . . . . . . . .   8
+     6.1.  Link Target . . . . . . . . . . . . . . . . . . . . . . .   9
+     6.2.  Link Context  . . . . . . . . . . . . . . . . . . . . . .   9
      6.3.  Relation Type . . . . . . . . . . . . . . . . . . . . . .   9
-     6.4.  Target Attributes . . . . . . . . . . . . . . . . . . . .   9
+     6.4.  Target Attributes . . . . . . . . . . . . . . . . . . . .  10
        6.4.1.  Serialisation-Defined Attributes  . . . . . . . . . .  10
        6.4.2.  Extension Attributes  . . . . . . . . . . . . . . . .  11
-     6.5.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  11
+     6.5.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  12
    7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
-     7.1.  Link HTTP Header Field Registration . . . . . . . . . . .  12
-     7.2.  Link Relation Type Registry . . . . . . . . . . . . . . .  12
+     7.1.  Link HTTP Header Field Registration . . . . . . . . . . .  13
 
 
 
-Nottingham                Expires May 26, 2017                  [Page 2]
+Nottingham                Expires May 29, 2017                  [Page 2]
 
 Internet-Draft                 Web Linking                 November 2016
 
 
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
+     7.2.  Link Relation Type Registry . . . . . . . . . . . . . . .  13
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
    9.  Internationalisation Considerations . . . . . . . . . . . . .  14
    10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
      10.1.  Normative References . . . . . . . . . . . . . . . . . .  14
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  15
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  16
    Appendix A.  Notes on Other Link Serialisations . . . . . . . . .  17
      A.1.  Link Serialisation in HTML  . . . . . . . . . . . . . . .  17
      A.2.  Link Serialisation in Atom  . . . . . . . . . . . . . . .  18
@@ -164,8 +165,7 @@ Internet-Draft                 Web Linking                 November 2016
 
 
 
-
-Nottingham                Expires May 26, 2017                  [Page 3]
+Nottingham                Expires May 29, 2017                  [Page 3]
 
 Internet-Draft                 Web Linking                 November 2016
 
@@ -221,7 +221,7 @@ Internet-Draft                 Web Linking                 November 2016
 
 
 
-Nottingham                Expires May 26, 2017                  [Page 4]
+Nottingham                Expires May 29, 2017                  [Page 4]
 
 Internet-Draft                 Web Linking                 November 2016
 
@@ -277,7 +277,7 @@ Internet-Draft                 Web Linking                 November 2016
 
 
 
-Nottingham                Expires May 26, 2017                  [Page 5]
+Nottingham                Expires May 29, 2017                  [Page 5]
 
 Internet-Draft                 Web Linking                 November 2016
 
@@ -295,20 +295,25 @@ Internet-Draft                 Web Linking                 November 2016
 
 4.1.1.  Registering Link Relation Types
 
-   Relation types are registered on the advice of a Designated Expert
-   (appointed by the IESG or their delegate), with a Specification
-   Required (using terminology from [RFC5226]).
+   Any party can request registration of a link relation type.
 
-   The Expert(s) will establish procedures for requesting registrations,
-   and make them available from the registry page.
+   Registration requests can be sent to the "link-relations@ietf.org"
+   mailing list.  The Expert(s) MAY establish alternate means of
+   requesting registrations, which SHOULD be linked to from the registry
+   page.
 
    Registration requests consist of at least the following information:
 
-   o  Relation Name:
+   o  *Relation Name*: The name of the relation type
 
-   o  Description:
+   o  *Description*: A short English description of the type's
+      semantics.  It SHOULD be stated in terms of the relationship
+      between the link context and link target.
 
-   o  Reference:
+   o  *Reference*: Reference to the document that specifies the link
+      relation type, preferably including a URI that can be used to
+      retrieve a copy of the document.  An indication of the relevant
+      section(s) MAY also be included, but is not required.
 
    The Expert(s) MAY define additional fields to be collected in the
    registry.
@@ -316,31 +321,44 @@ Internet-Draft                 Web Linking                 November 2016
    General requirements for registered relation types are described in
    Section 4.1.
 
-   See the registry for examples of the description field; generally, it
-   SHOULD identify the semantics in terms of the link's context and
-   target.
-
    Registrations MUST reference a freely available, stable
    specification.
 
-   Note that relation types can be registered by third parties, if the
-   Expert(s) determine that an unregistered relation type is widely
-   deployed and not likely to be registered in a timely manner.
-
-   Decisions (or lack thereof) made by the Expert(s) can be first
-   appealed to Application Area Directors (contactable using app-
-   ads@tools.ietf.org email address or directly by looking up their
+   Note that relation types can be registered by third parties
+   (including the Expert(s)), if the Expert(s) determine that an
+   unregistered relation type is widely deployed and not likely to be
+   registered in a timely manner.
 
 
 
-Nottingham                Expires May 26, 2017                  [Page 6]
+
+
+Nottingham                Expires May 29, 2017                  [Page 6]
 
 Internet-Draft                 Web Linking                 November 2016
 
 
-   email addresses on http://www.iesg.org/ website) and, if the
-   appellant is not satisfied with the response, to the full IESG (using
-   the iesg@iesg.org mailing list).
+4.1.2.  Registration Request Processing
+
+   Relation types are registered on the advice of a Designated Expert
+   (appointed by the IESG or their delegate), with a Specification
+   Required (using terminology from [RFC5226]).
+
+   The goal of the registry is to reflect common use of HTTP on the
+   Internet.  Therefore, the Expert(s) SHOULD be strongly biased towards
+   approving registrations, unless they are abusive, frivolous, not
+   likely to be used on the Internet, or actively harmful to the
+   Internet and/or the Web (not merely aesthetically displeasing, or
+   architecturally dubious).
+
+   The Expert(s) MUST clearly identify any issues which cause a
+   registration to be refused.  Advice about the syntax or semantics of
+   a proposed link relation type can be given, but if it does not block
+   registration, this SHOULD be explicitly stated.
+
+   When a request is approved, the Expert(s) will inform IANA, and the
+   registration will be processed.  The IESG is the final arbiter of any
+   objection.
 
 4.2.  Extension Relation Types
 
@@ -363,6 +381,18 @@ Internet-Draft                 Web Linking                 November 2016
    Note that while extension relation types are required to be URIs, a
    serialisation of links can specify that they are expressed in another
    form, as long as they can be converted to URIs.
+
+
+
+
+
+
+
+
+Nottingham                Expires May 29, 2017                  [Page 7]
+
+Internet-Draft                 Web Linking                 November 2016
+
 
 5.  Target Attributes
 
@@ -387,13 +417,6 @@ Internet-Draft                 Web Linking                 November 2016
    o  Their serialisation into Unicode or a subset thereof, to maximise
       their chances of portability across link serialisations.
 
-
-
-Nottingham                Expires May 26, 2017                  [Page 7]
-
-Internet-Draft                 Web Linking                 November 2016
-
-
    o  The semantics and error handling of multiple occurrences of the
       attribute on a given link.
 
@@ -407,15 +430,25 @@ Internet-Draft                 Web Linking                 November 2016
 
    The ABNF for the field value is given below:
 
-          Link       = #link-value
-          link-value = "<" URI-Reference ">" *( OWS ";" OWS link-param )
-    link-param = token BWS "=" BWS ( token / quoted-string )
+     Link       = #link-value
+     link-value = "<" URI-Reference ">" *( OWS ";" OWS link-param )
+     link-param = token BWS "=" BWS ( token / quoted-string )
 
    Note that any "link-param" can be generated with values using either
    the "token" or the "quoted-string" syntax, and therefore recipients
    MUST be able to parse both forms.  Individual "link-param"s specify
    their syntax in terms of the value after any necessary unquoting (as
    per [RFC7230], Section 3.2.6).
+
+
+
+
+
+
+Nottingham                Expires May 29, 2017                  [Page 8]
+
+Internet-Draft                 Web Linking                 November 2016
+
 
    This specification defines the link-params "rel", "anchor", "rev",
    "hreflang", "media", "title", "title*", and "type"; see Section 6.2,
@@ -442,14 +475,6 @@ Internet-Draft                 Web Linking                 November 2016
    Section 5.  Note that any base URI from the body's content is not
    applied.
 
-
-
-
-Nottingham                Expires May 26, 2017                  [Page 8]
-
-Internet-Draft                 Web Linking                 November 2016
-
-
    The ABNF for the "anchor" parameter's value is: ~~~ abnf2616 URI-
    Reference ~~~
 
@@ -473,6 +498,14 @@ Internet-Draft                 Web Linking                 November 2016
 
    The "rev" parameter has been used in the past to indicate that the
    semantics of the relationship are in the reverse direction.  That is,
+
+
+
+Nottingham                Expires May 29, 2017                  [Page 9]
+
+Internet-Draft                 Web Linking                 November 2016
+
+
    a link from A to B with REL="X" expresses the same relationship as a
    link from B to A with REV="X". "rev" is deprecated by this
    specification because it often confuses authors and readers; in most
@@ -483,9 +516,9 @@ Internet-Draft                 Web Linking                 November 2016
 
    where:
 
-           relation-type  = reg-rel-type | ext-rel-type
-           reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
-           ext-rel-type   = URI
+     relation-type  = reg-rel-type | ext-rel-type
+     reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+     ext-rel-type   = URI
 
    Note that extension relation types are REQUIRED to be absolute URIs
    in Link headers, and MUST be quoted if they contain a semicolon (";")
@@ -497,15 +530,6 @@ Internet-Draft                 Web Linking                 November 2016
    The Link header field defines several target attributes specific to
    this serialisation, and also allows extension target attributes.
    Target attributes are serialised in the Link header field as
-
-
-
-
-Nottingham                Expires May 26, 2017                  [Page 9]
-
-Internet-Draft                 Web Linking                 November 2016
-
-
    parameters (see [RFC7231], Section 3.1.1.1 for the definition of
    their syntax).
 
@@ -530,6 +554,14 @@ Internet-Draft                 Web Linking                 November 2016
    destination medium or media for style information (see
    [W3C.REC-html5-20141028], Section 4.2.4).  Its value MUST be quoted
    if it contains a semicolon (";") or comma (",").  There MUST NOT be
+
+
+
+Nottingham                Expires May 29, 2017                 [Page 10]
+
+Internet-Draft                 Web Linking                 November 2016
+
+
    more than one "media" attribute in a link-value; occurrences after
    the first MUST be ignored by parsers.
 
@@ -555,13 +587,6 @@ Internet-Draft                 Web Linking                 November 2016
    processors SHOULD use the "title*" link-param's value for the "title"
    attribute.
 
-
-
-Nottingham                Expires May 26, 2017                 [Page 10]
-
-Internet-Draft                 Web Linking                 November 2016
-
-
    The "type" attribute, when present, is a hint indicating what the
    media type of the result of dereferencing the link should be.  Note
    that this is only a hint; for example, it does not override the
@@ -586,19 +611,26 @@ Internet-Draft                 Web Linking                 November 2016
    back to the other value if there is an error in decoding it, or if
    they do not support decoding.
 
+
+
+Nottingham                Expires May 29, 2017                 [Page 11]
+
+Internet-Draft                 Web Linking                 November 2016
+
+
 6.5.  Examples
 
    For example:
 
-       Link: <http://example.com/TheBook/chapter2>; rel="previous";
-             title="previous chapter"
+   Link: <http://example.com/TheBook/chapter2>; rel="previous";
+         title="previous chapter"
 
    indicates that "chapter2" is previous to this resource in a logical
    navigation path.
 
    Similarly,
 
-       Link: </>; rel="http://example.net/foo"
+   Link: </>; rel="http://example.net/foo"
 
    indicates that the root resource ("/") is related to this resource
    with the extension relation type "http://example.net/foo".
@@ -607,21 +639,10 @@ Internet-Draft                 Web Linking                 November 2016
    multiple links, and also the use of RFC 5987 encoding to encode both
    non-ASCII characters and language information.
 
-
-
-
-
-
-
-Nottingham                Expires May 26, 2017                 [Page 11]
-
-Internet-Draft                 Web Linking                 November 2016
-
-
-       Link: </TheBook/chapter2>;
-             rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
-             </TheBook/chapter4>;
-             rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
+   Link: </TheBook/chapter2>;
+         rel="previous"; title*=UTF-8'de'letztes%20Kapitel,
+         </TheBook/chapter4>;
+         rel="next"; title*=UTF-8'de'n%c3%a4chstes%20Kapitel
 
    Here, both links have titles encoded in UTF-8, use the German
    language ("de"), and the second link contains the Unicode code point
@@ -630,8 +651,8 @@ Internet-Draft                 Web Linking                 November 2016
    Note that link-values can convey multiple links between the same link
    target and link context; for example:
 
-       Link: <http://example.org/>;
-             rel="start http://example.net/relation/other"
+   Link: <http://example.org/>;
+         rel="start http://example.net/relation/other"
 
    Here, the link to "http://example.org/" has the registered relation
    type "start" and the extension relation type
@@ -643,19 +664,29 @@ Internet-Draft                 Web Linking                 November 2016
    Relation Application Data Registry, as it has not been used, and
    future use is not anticipated.
 
+
+
+
+
+
+Nottingham                Expires May 29, 2017                 [Page 12]
+
+Internet-Draft                 Web Linking                 November 2016
+
+
 7.1.  Link HTTP Header Field Registration
 
    This specification updates the Message Header registry entry for
    "Link" in HTTP [RFC3864] to refer to this document.
 
-       Header field: Link
-       Applicable protocol: http
-       Status: standard
-       Author/change controller:
-           IETF  (iesg@ietf.org)
-           Internet Engineering Task Force
-       Specification document(s):
-           [RFC&rfc.number;]
+   Header field: Link
+   Applicable protocol: http
+   Status: standard
+   Author/change controller:
+       IETF  (iesg@ietf.org)
+       Internet Engineering Task Force
+   Specification document(s):
+       [RFC&rfc.number;]
 
 7.2.  Link Relation Type Registry
 
@@ -663,16 +694,9 @@ Internet-Draft                 Web Linking                 November 2016
    Relation Type registry; see Section 4.1.1.  The Expert(s) and IANA
    will interact as outlined below.
 
-   IANA will direct any incoming requests regarding the registry to the
-   processes established by the Expert(s); typically, this will mean
-   referring them to the registry Web page.
-
-
-
-Nottingham                Expires May 26, 2017                 [Page 12]
-
-Internet-Draft                 Web Linking                 November 2016
-
+   IANA will direct any incoming requests regarding the registry to this
+   document and, if defined, the processes established by the Expert(s);
+   typically, this will mean referring them to the registry Web page.
 
    The Expert(s) will provide registry data to IANA in an agreed form
    (e.g. a specific XML format).  IANA will publish:
@@ -691,10 +715,20 @@ Internet-Draft                 Web Linking                 November 2016
    Additionally, the HTML generated by IANA will:
 
    o  Take directions from the Expert(s) as to the content of the HTML
-      page's introductory text and markup
+      page's introductory text
 
-   o  Include a stable HTML fragment identifier for each registered link
-      relation
+   o  Include a stable HTML fragment identifier for each registered
+      header field
+
+
+
+
+
+
+Nottingham                Expires May 29, 2017                 [Page 13]
+
+Internet-Draft                 Web Linking                 November 2016
+
 
    All registry data documents MUST include Simplified BSD License text
    as described in Section 4.e of the Trust Legal Provisions
@@ -718,17 +752,6 @@ Internet-Draft                 Web Linking                 November 2016
    [RFC3987] for security considerations relating to IRIs.  See
    [RFC3986] for security considerations relating to URIs.  See
    [RFC7230] for security considerations relating to HTTP headers.
-
-
-
-
-
-
-
-Nottingham                Expires May 26, 2017                 [Page 13]
-
-Internet-Draft                 Web Linking                 November 2016
-
 
 9.  Internationalisation Considerations
 
@@ -756,9 +779,16 @@ Internet-Draft                 Web Linking                 November 2016
               for HTTP Header Field Parameters", draft-ietf-httpbis-
               rfc5987bis-03 (work in progress), July 2016.
 
+
+
+Nottingham                Expires May 29, 2017                 [Page 14]
+
+Internet-Draft                 Web Linking                 November 2016
+
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997,
+              Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/
+              RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
 
    [RFC3864]  Klyne, G., Nottingham, M., and J. Mogul, "Registration
@@ -767,24 +797,13 @@ Internet-Draft                 Web Linking                 November 2016
               <http://www.rfc-editor.org/info/rfc3864>.
 
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
-              Resource Identifier (URI): Generic Syntax", STD 66,
-              RFC 3986, DOI 10.17487/RFC3986, January 2005,
+              Resource Identifier (URI): Generic Syntax", STD 66, RFC
+              3986, DOI 10.17487/RFC3986, January 2005,
               <http://www.rfc-editor.org/info/rfc3986>.
 
    [RFC3987]  Duerst, M. and M. Suignard, "Internationalized Resource
               Identifiers (IRIs)", RFC 3987, DOI 10.17487/RFC3987,
               January 2005, <http://www.rfc-editor.org/info/rfc3987>.
-
-
-
-
-
-
-
-Nottingham                Expires May 26, 2017                 [Page 14]
-
-Internet-Draft                 Web Linking                 November 2016
-
 
    [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
               IANA Considerations Section in RFCs", BCP 26, RFC 5226,
@@ -796,18 +815,18 @@ Internet-Draft                 Web Linking                 November 2016
               September 2009, <http://www.rfc-editor.org/info/rfc5646>.
 
    [RFC6838]  Freed, N., Klensin, J., and T. Hansen, "Media Type
-              Specifications and Registration Procedures", BCP 13,
-              RFC 6838, DOI 10.17487/RFC6838, January 2013,
+              Specifications and Registration Procedures", BCP 13, RFC
+              6838, DOI 10.17487/RFC6838, January 2013,
               <http://www.rfc-editor.org/info/rfc6838>.
 
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
+              Protocol (HTTP/1.1): Message Syntax and Routing", RFC
+              7230, DOI 10.17487/RFC7230, June 2014,
               <http://www.rfc-editor.org/info/rfc7230>.
 
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
-              DOI 10.17487/RFC7231, June 2014,
+              Protocol (HTTP/1.1): Semantics and Content", RFC 7231, DOI
+              10.17487/RFC7231, June 2014,
               <http://www.rfc-editor.org/info/rfc7231>.
 
    [W3C.CR-css3-mediaqueries-20090915]
@@ -815,6 +834,13 @@ Internet-Draft                 Web Linking                 November 2016
               Queries", World Wide Web Consortium CR CR-css3-
               mediaqueries-20090915, September 2009,
               <http://www.w3.org/TR/2009/CR-css3-mediaqueries-20090915>.
+
+
+
+Nottingham                Expires May 29, 2017                 [Page 15]
+
+Internet-Draft                 Web Linking                 November 2016
+
 
 10.2.  Informative References
 
@@ -825,25 +851,16 @@ Internet-Draft                 Web Linking                 November 2016
 
    [RFC2616]  Fielding, R., Gettys, J., Mogul, J., Frystyk, H.,
               Masinter, L., Leach, P., and T. Berners-Lee, "Hypertext
-              Transfer Protocol -- HTTP/1.1", RFC 2616,
-              DOI 10.17487/RFC2616, June 1999,
+              Transfer Protocol -- HTTP/1.1", RFC 2616, DOI 10.17487/
+              RFC2616, June 1999,
               <http://www.rfc-editor.org/info/rfc2616>.
 
    [RFC2817]  Khare, R. and S. Lawrence, "Upgrading to TLS Within
               HTTP/1.1", RFC 2817, DOI 10.17487/RFC2817, May 2000,
               <http://www.rfc-editor.org/info/rfc2817>.
 
-
-
-
-
-Nottingham                Expires May 26, 2017                 [Page 15]
-
-Internet-Draft                 Web Linking                 November 2016
-
-
-   [RFC2818]  Rescorla, E., "HTTP Over TLS", RFC 2818,
-              DOI 10.17487/RFC2818, May 2000,
+   [RFC2818]  Rescorla, E., "HTTP Over TLS", RFC 2818, DOI 10.17487/
+              RFC2818, May 2000,
               <http://www.rfc-editor.org/info/rfc2818>.
 
    [RFC4287]  Nottingham, M., Ed. and R. Sayre, Ed., "The Atom
@@ -876,24 +893,7 @@ Internet-Draft                 Web Linking                 November 2016
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Nottingham                Expires May 26, 2017                 [Page 16]
+Nottingham                Expires May 29, 2017                 [Page 16]
 
 Internet-Draft                 Web Linking                 November 2016
 
@@ -949,7 +949,7 @@ A.1.  Link Serialisation in HTML
 
 
 
-Nottingham                Expires May 26, 2017                 [Page 17]
+Nottingham                Expires May 29, 2017                 [Page 17]
 
 Internet-Draft                 Web Linking                 November 2016
 
@@ -1005,7 +1005,7 @@ Appendix B.  Algorithm for Parsing Link Headers
 
 
 
-Nottingham                Expires May 26, 2017                 [Page 18]
+Nottingham                Expires May 29, 2017                 [Page 18]
 
 Internet-Draft                 Web Linking                 November 2016
 
@@ -1061,7 +1061,7 @@ Internet-Draft                 Web Linking                 November 2016
 
 
 
-Nottingham                Expires May 26, 2017                 [Page 19]
+Nottingham                Expires May 29, 2017                 [Page 19]
 
 Internet-Draft                 Web Linking                 November 2016
 
@@ -1117,7 +1117,7 @@ Internet-Draft                 Web Linking                 November 2016
 
 
 
-Nottingham                Expires May 26, 2017                 [Page 20]
+Nottingham                Expires May 29, 2017                 [Page 20]
 
 Internet-Draft                 Web Linking                 November 2016
 
@@ -1173,7 +1173,7 @@ Appendix C.  Changes from RFC5988
 
 
 
-Nottingham                Expires May 26, 2017                 [Page 21]
+Nottingham                Expires May 29, 2017                 [Page 21]
 
 Internet-Draft                 Web Linking                 November 2016
 
@@ -1229,4 +1229,4 @@ Author's Address
 
 
 
-Nottingham                Expires May 26, 2017                 [Page 22]
+Nottingham                Expires May 29, 2017                 [Page 22]
