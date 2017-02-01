@@ -1,13 +1,13 @@
 ---
 title: Retrying HTTP Requests
-abbrev: 
+abbrev:
 docname: draft-nottingham-httpbis-retry-01
-date: 2016
+date: 2017
 category: info
 
 ipr: trust200902
 area: General
-workgroup: 
+workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
@@ -17,7 +17,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
@@ -41,15 +41,15 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/httpb
 
 # Introduction
 
-One of the benefits of HTTP's well-defined method semantics is that they allow failed requests to be retried, under certain circumstances. 
+One of the benefits of HTTP's well-defined method semantics is that they allow failed requests to be retried, under certain circumstances.
 
 However, interest in extending, redefining or just clarifying HTTP's retry semantics is increasing, for a number of reasons:
 
-* Since HTTP/1.1's requirements were written, there has been a substantial amount of experience deploying and using HTTP, leading implementations to refine their behaviour, arguably diverging from the specification.
+* Since HTTP/1.1's requirements were written, there has been a substantial amount of experience deploying and using HTTP, leading implementations to refine their behaviour, often diverging from the specification.
 
-* Likewise, changes such as HTTP/2 {{?RFC7540}} might change the underlying assumptions that these requirements were based upon. 
+* Likewise, changes such as HTTP/2 {{?RFC7540}} might change the underlying assumptions that these requirements were based upon.
 
-* Emerging lower-layer developments such as TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.hamilton-early-deployment-quic}} introduce the possibility of replayed requests in the beginning of a connection, thanks to Zero Round Trip (0RT) modes. In some ways, these are similar to retries -- but not completely.
+* Emerging lower-layer developments such as TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.ietf-quic-transport}} introduce the possibility of replayed requests in the beginning of a connection, thanks to Zero Round Trip (0RT) modes. In some ways, these are similar to retries -- but not completely.
 
 * Applications sometimes want requests to be retried by infrastructure, but can't easily express them in a non-idempotent request (such as GET).
 
@@ -65,20 +65,20 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 
 # Background {#background}
- 
+
 ## Retries and Replays: A Taxonomy of Repetition {#retry_replay}
 
 In HTTP, there are three similar but separate phenomena that deserve consideration for the purposes of this document:
 
-1. **User Retries** happen when a user initiates an action that results in a duplicate request being emitted. For example, a user retry might occur when a "reload" button is pressed, a URL is typed in again, "return" is pressed in the URL bar again, or a navigation link or form button is pressed twice while still on screen.
+1. **User Retries** happen when a user initiates an action that results in a duplicate HTTP request message being emitted. For example, a user retry might occur when a "reload" button is pressed, a URL is typed in again, "return" is pressed in the URL bar again, or a navigation link or form button is pressed twice while still on screen.
 
-2. **Automatic Retries** happen when an HTTP client implementation resends a previous request without user intervention or initiation. This might happen when a GET request fails to return a complete response, or when a connection drops before the request is sent. Note that automatic retries can (and are) performed both by user agents and intermediary clients.
+2. **Automatic Retries** happen when an HTTP client implementation resends a previous request message without user intervention or initiation. This might happen when a GET request fails to return a complete response, or when a connection drops before the request is sent. Note that automatic retries can (and are) performed both by user agents and intermediary clients.
 
-3. **Replays** happen when the packet(s) containing a request are re-sent on the network, either automatically as part of transport protocol operation, or by an attacker. The closest upstream HTTP client might not have any indication that a replay has occurred.
+3. **Replays** happen when the underlying transport units (e.g., TCP packets, QUIC frames) containing a HTTP request message are re-sent on the network **and** appear to be separate requests to the downstream server, either automatically as part of transport protocol operation, or by an attacker. The upstream HTTP client might not have any indication that a replay has occurred.
 
-Note that retries initiated by code shipped to the client by the server (e.g., in JavaScript) occupy a grey area here; however, because they are not initiated by the generic HTTP client implementation itself, we will consider them user retries for the time being.
+Note that retries initiated by code shipped to the client by the server (e.g., in JavaScript) occupy a grey area here. Because they are not initiated by the generic HTTP client implementation itself, we will consider them user retries for the time being.
 
-Also, this document doesn't include TCP-layer loss recovery (i.e., retransmission).
+Also, this document doesn't include transport layer loss recovery (e.g., TCP retransmission). This is distinguished from replays because the transport automatically suppresses duplicates.
 
 
 ## What the Spec Says: Automatic Retries {#spec}
@@ -113,7 +113,7 @@ The same specification addresses HTTP over TLS in Section 6.3.2:
 
 {{I-D.ietf-tls-tls13}}, Section 2.3 explains the properties of Zero-RTT Data in TLS 1.3:
 
-> IMPORTANT NOTE: The security properties for 0-RTT data (regardless of the cipher suite) are 
+> IMPORTANT NOTE: The security properties for 0-RTT data (regardless of the cipher suite) are
 weaker than those for other kinds of TLS data.
 > Specifically:
 
@@ -125,37 +125,44 @@ Section 4.2.6 defines a mechanism to limit the exposure to replay.
 
 ### QUIC
 
-The QUIC specifications don't say anything about the replay risk of 0RTT.
+{{!I-D.ietf-quic-tls}} Section 7.2 says this about the risks of replay during the 0RTT handshake:
 
-        
+> If 0-RTT keys are available, the lack of replay protection means that restrictions on their use are necessary to avoid replay attacks on the protocol.
+>
+> A client MUST only use 0-RTT keys to protect data that is idempotent. A client MAY wish to apply additional restrictions on what data it sends prior to the completion of the TLS handshake. A client otherwise treats 0-RTT keys as equivalent to 1-RTT keys.
+>
+> A client that receives an indication that its 0-RTT data has been accepted by a server can send 0-RTT data until it receives all of the server’s handshake messages. A client SHOULD stop sending 0-RTT data if it receives an indication that 0-RTT data has been rejected.
+>
+> A server MUST NOT use 0-RTT keys to protect packets.
+
 
 # Discussion {#discussion}
 
 
 ## Automatic Retries In Practice {#auto_retry}
 
-In practice, it has been observed (see {{current}}) that some client (both user agent and intermediary) implementations do automatically retry requests. However, they do not do so consistently, and arguably not in the spirit of the specification, unless this vague catch-all:
+In practice, it has been observed (see {{current}}) that some client implementations (both user agent and intermediary) do automatically retry requests. However, they do not do so consistently, and arguably not in the spirit of the specification, unless this vague catch-all:
 
 > some means to detect that the original request was never applied
 
 is interpreted very broadly.
 
-On the server side, it has been widely observed that content on the Web doesn't always honour HTTP idemotency semantics, with many GET requests incurring side effects, and with some sites even requiring browsers to retry POST requests in order to properly interoperate. (TODO: refs / details from Patrick and Artur).
+On the server side, it has been widely observed that content on the Web doesn't always honour HTTP idemotency semantics, with many GET requests incurring side effects, and with some sites even requiring browsers to retry POST requests in order to properly interoperate.
 
 Despite this situation, the Web seems to work reasonably well to date (with [notable exceptions](https://signalvnoise.com/archives2/google_web_accelerator_hey_not_so_fast_an_alert_for_web_app_designers.php)).
 
-The status quo, therefore, is that no Web application can read HTTP's retry requirements as a guarantee that any given request won't be retried, even for methods that are not idempotent. As a result, applications that care about avoiding duplicate requests need to build a way to detect not only user retries but also automatic retries into the application "above" HTTP itself. 
+The status quo, therefore, is that no Web application can read HTTP's retry requirements as a guarantee that any given request won't be retried, even for methods that are not idempotent. As a result, applications that care about avoiding duplicate requests need to build a way to detect not only user retries but also automatic retries into the application "above" HTTP itself.
 
 
 ## Replays Are Different {#replay}
 
-TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.hamilton-early-deployment-quic}} all have mechanisms to carry application data on the first packet sent by a client, to avoid the latency of connection setup.
+TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.ietf-quic-transport}} all have mechanisms to carry application data on the first packet sent by a client, to avoid the latency of connection setup.
 
-The request(s) in this first packet might be _replayed_, either because the first packet is lost and retransmitted by the transport protocol in use, or because an attacker observes the packet and sends a duplicate at some point in the future.
+The request(s) in this first packet might be _replayed_, either because the first packet (now carrying a HTTP request) is thought to be lost and retransmitted, or because an attacker observes the packet and sends a duplicate at some point in the future.
 
-At first glance, it seems as if the idempotency semantics of HTTP request methods could be used to determine what requests are suitable for inclusion in the first packet of various 0RT mechanisms being discussed (as suggested by TCP Fast Open). For example, we could disallow POST (and other non-idempotent methods) in 0RT data. 
+At first glance, it seems as if the idempotency semantics of HTTP request methods could be used to determine what requests are suitable for inclusion in the first packet of various 0RTT mechanisms being discussed (as suggested by TCP Fast Open). For example, we could disallow POST (and other non-idempotent methods) in 0RTT data.
 
-Upon reflection, though, the observations above lead us to believe that since any request might be retried (automatically or by users), applications will need to have a means of detecting duplicate requests, thereby preventing side effects from replays as well as retries. Thus, any HTTP request can be included in the first packet of a 0RT, despite the risk of replay.
+Upon reflection, though, the observations above lead us to believe that since any request might be retried (automatically or by users), applications will still need to have a means of detecting duplicate requests, thereby preventing side effects from replays as well as retries. Thus, any HTTP request can be included in the first packet of a 0RTT, despite the risk of replay.
 
 Two types of attack specific to replayed HTTP requests need to be taken into account, however:
 
@@ -163,9 +170,9 @@ Two types of attack specific to replayed HTTP requests need to be taken into acc
 
 2. An attacker might use a replayed request to leak information about the response over time. If they can observe the encrypted payload on the wire, they can infer the size of the response (e.g., it might get bigger if the user's bank account has more in it).
 
-The first attack cannot be mitigated by HTTP; the 0RT mechanism itself needs some transport-layer means of scoping the usability of the first packet on a connection so that it cannot be reused broadly. For example, this might be by time, network location.
+The first attack cannot be mitigated by HTTP; the 0RT mechanism itself needs some transport-layer means of scoping the usability of the first packet on a connection so that it cannot be reused broadly. For example, this might be by time, or by network location.
 
-The second attack is more difficult to mitigate; scoping the usability of the first packet helps, but does not completely prevent the attack. If the replayed request is state-changing, the application's retry detection should kick in and prevent information leakage (since the response will likely contain an error, instead of the desired information). 
+The second attack is more difficult to mitigate; scoping the usability of the first packet helps, but does not completely prevent the attack. If the replayed request is state-changing, the application's retry detection should kick in and prevent information leakage (since the response will likely contain an error, instead of the desired information).
 
 If it is not (e.g., a GET), the information being targeted is vulnerable as long as both the first packet and the credentials in the request (if any) are valid.
 
@@ -183,7 +190,7 @@ As a result, more carefully specifying the conditions under which a request can 
 * Connection timeouts
 * Whether or not any part of the response has been received
 * Whether or not it is the first request on the connection
-* Variance due to use of HTTP/2, TLS/1.3 and TCP Fast Open.
+* Variance due to use of HTTP/2, TLS/1.3, TCP Fast Open and QUIC.
 
 Furthermore, readers might mistake the language in RFC7230 as guaranteeing that some requests (e.g., POST) are never automatically retried; this should be clarified.
 
@@ -197,7 +204,7 @@ A number of mechanisms have been mooted at various times, e.g.:
 * Defining a status code to allow servers to indicate that the request needs to be sent in a way that can't be replayed
 
 
-## Feedback to Transport 0RT Efforts {#feedback}
+## Feedback to Transport 0RTT Efforts {#feedback}
 
 If the observations above hold, we should disabuse any notion that HTTP method idempotency is a useful way to avoid problems with replay attacks. Instead, we should encourage development of mechanisms to mitigate the aspects of replay that are different than retries (e.g., potential for DOS attacks).
 
@@ -208,15 +215,15 @@ Yep.
 
 # Acknowledgements
 
-Thanks to 
-Brad Fitzpatrick, 
-Leif Hedstrom, 
-Subodh Iyengar, 
-Amos Jeffries, 
-Patrick McManus, 
+Thanks to
+Brad Fitzpatrick,
+Leif Hedstrom,
+Subodh Iyengar,
+Amos Jeffries,
+Patrick McManus,
 Matt Menke,
-Miroslav Ponec, 
-Daniel Stenberg and 
+Miroslav Ponec,
+Daniel Stenberg and
 Martin Thomson
 for their input and feedback.
 
@@ -259,7 +266,7 @@ Currently, it considers GET, HEAD, OPTIONS, REPORT, PROPFIND, SEARCH and PRI to 
 
 ## Traffic Server
 
-Apache Traffic Server, a caching proxy server, ties retry-ability to whether the request required a "tunnel" -- i.e., forward to the next server. This is indicated by `request_body_start`, which is set when a POST tunnel is used.
+Apache Traffic Server, a caching proxy server, ties retry-ability to whether the request required a "tunnel" -- i.e., forwarding the request body to the next server. This is indicated by `request_body_start`, which is set when a POST tunnel is used.
 
 ~~~ C++
 // bool HttpTransact::is_request_retryable
@@ -276,7 +283,7 @@ HttpTransact::is_request_retryable(State *s)
 
   if (s->state_machine->plugin_tunnel_type != HTTP_NO_PLUGIN_TUNNEL) {
     // API can override
-    if (s->state_machine->plugin_tunnel_type == HTTP_PLUGIN_AS_SERVER && 
+    if (s->state_machine->plugin_tunnel_type == HTTP_PLUGIN_AS_SERVER &&
         s->api_info.retry_intercept_failures == true) {
       // This used to be an == comparison, which made no sense. Changed
       // to be an assignment, hoping the state is correct.
