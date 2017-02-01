@@ -1,7 +1,7 @@
 ---
 title: Retrying HTTP Requests
 abbrev:
-docname: draft-nottingham-httpbis-retry-01
+docname: draft-nottingham-httpbis-retry-02
 date: 2017
 category: info
 
