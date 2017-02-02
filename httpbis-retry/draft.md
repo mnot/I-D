@@ -51,7 +51,7 @@ However, interest in extending, redefining or just clarifying HTTP's retry seman
 
 * Emerging lower-layer developments such as TCP Fast Open {{?RFC7413}}, TLS/1.3 {{?I-D.ietf-tls-tls13}} and QUIC {{?I-D.ietf-quic-transport}} introduce the possibility of replayed requests in the beginning of a connection, thanks to Zero Round Trip (0RT) modes. In some ways, these are similar to retries -- but not completely.
 
-* Applications sometimes want requests to be retried by infrastructure, but can't easily express them in a non-idempotent request (such as GET).
+* Applications sometimes want requests to be retried by infrastructure, but can't easily express them in an idempotent request (such as GET).
 
 This draft gives some background in {{background}}, discusses aspects of these issues in {{discussion}}, suggesting possible areas of work in {{work}}, and cataloguing current implementation behaviours in {{current}}.
 
