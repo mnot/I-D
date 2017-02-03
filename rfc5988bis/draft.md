@@ -166,10 +166,11 @@ There are two kinds of relation types: registered and extension.
 Well-defined relation types can be registered as tokens for convenience and/or to promote reuse by
 other applications, using the procedure in {{procedure}}.
 
-Registered relation type names MUST conform to the reg-rel-type rule, and MUST be compared
-character-by-character in a case-insensitive fashion. They SHOULD be appropriate to the specificity
-of the relation type; i.e., if the semantics are highly specific to a particular application, the
-name should reflect that, so that more general names are available for less specific use.
+Registered relation type names MUST conform to the reg-rel-type rule (see {{header-type}}), and
+MUST be compared character-by-character in a case-insensitive fashion. They SHOULD be appropriate
+to the specificity of the relation type; i.e., if the semantics are highly specific to a particular
+application, the name should reflect that, so that more general names are available for less
+specific use.
 
 Registered relation types MUST NOT constrain the media type of the link context, and MUST NOT
 constrain the available representation media types of the link target. However, they can specify
