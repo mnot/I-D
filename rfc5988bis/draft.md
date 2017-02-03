@@ -317,6 +317,7 @@ parameter's value is a relative URI, parsers MUST resolve it as per {{RFC3986}},
 that any base URI from the body's content is not applied.
 
 The ABNF for the `anchor` parameter's value is:
+
 ~~~ abnf2616
   URI-Reference
 ~~~
@@ -342,6 +343,7 @@ relationship as a link from B to A with REV="X". "rev" is deprecated by this spe
 it often confuses authors and readers; in most cases, using a separate relation type is preferable.
 
 The ABNF for the `rel` and `rev` parameters' values is:
+
 ~~~ abnf2616
   relation-type *( 1*SP relation-type )
 ~~~
@@ -376,6 +378,7 @@ Multiple "hreflang" attributes on a single link-value indicate that multiple lan
 available from the indicated resource.
 
 The ABNF for the `hreflang` parameter's value is:
+
 ~~~ abnf2616
   Language-Tag
 ~~~
@@ -386,6 +389,7 @@ contains a semicolon (";") or comma (","). There MUST NOT be more than one "medi
 a link-value; occurrences after the first MUST be ignored by parsers.
 
 The ABNF for the `media` parameter's value is:
+
 ~~~ abnf2616
   media_query_list
 ~~~
@@ -411,6 +415,7 @@ the Content-Type header field of a HTTP response obtained by actually following 
 MUST be ignored by parsers.
 
 The ABNF for the `type` parameter's value is:
+
 ~~~ abnf2616
   type-name "/" subtype-name
 ~~~
