@@ -44,7 +44,6 @@ informative:
   RFC2817:
   RFC2818:
   RFC4287:
-  W3C.REC-xml-names-20091208:
   W3C.REC-html5-20141028:
   W3C.REC-html-rdfa-20150317:
 
@@ -242,9 +241,8 @@ The URI used for an extension relation type SHOULD be under the control of the p
 defining it, or be delegated to them.
 
 When extension relation types are compared, they MUST be compared as strings (after converting to
-URIs if serialised in a different format, such as a XML QNames {{W3C.REC-xml-names-20091208}}) in a
-case-insensitive fashion, character-by-character. Because of this, all-lowercase URIs SHOULD be
-used for extension relations.
+URIs if serialised in a different format) in a case-insensitive fashion, character-by-character.
+Because of this, all-lowercase URIs SHOULD be used for extension relations.
 
 Note that while extension relation types are required to be URIs, a serialisation of links can
 specify that they are expressed in another form, as long as they can be converted to URIs.
