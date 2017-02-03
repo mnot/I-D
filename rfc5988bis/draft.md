@@ -548,40 +548,33 @@ Note that registered Relation Names are required to be lower-case ASCII letters.
 
 # Notes on Other Link Serialisations
 
-Header fields ({{header}}) are only one serialisation of links; other specifications have defined alternative serialisations.
+Header fields ({{header}}) are only one serialisation of links; other specifications have defined
+alternative serialisations.
 
 ## Link Serialisation in HTML {#html}
 
-HTML {{W3C.REC-html5-20141028}} motivated the original syntax of the Link header field, and many of
-the design decisions in this document are driven by a desire to stay compatible with it.
+HTML motivated the original syntax of the Link header field, and many of the design decisions in
+this document are driven by a desire to stay compatible with it.
 
 In HTML, the link element can be mapped to links as specified here by using the "href" attribute
 for the target URI, and "rel" to convey the relation type, as in the Link header field. The context
-of the link is the URI associated with the entire HTML document.
+of the link is the URI associated with the entire HTML document. HTML also defines several
+attributes on links that can be seen as target attributes, including "media", "hreflang", "type"
+and "sizes".
 
-All of the link relation types defined by HTML have been included in the Link Relation Type
-registry, so they can be used without modification. However, there are several potential ways to
-serialise extension relation types into HTML, including:
-
-* As absolute URIs,
-* using the RDFa {{W3C.REC-html-rdfa-20150317}} convention of mapping token
-  prefixes to URIs (in a manner similar to XML name spaces).
-
-Individual applications of linking will therefore need to define how their extension links should
-be serialised into HTML.
+HTML5 ({{W3C.REC-html5-20141028}}) Section 4.8 defines modern HTML links. That document links to
+the Microformats Wiki as a registry; over time, the IANA registry ought to mirror its contents, and
+ideally eventually replace it (although that depends on the HTML community).
 
 Surveys of existing HTML content have shown that unregistered link relation types that are not URIs
 are (perhaps inevitably) common. Consuming HTML implementations ought not consider such
 unregistered short links to be errors, but rather relation types with a local scope (i.e., their
 meaning is specific and perhaps private to that document).
 
-HTML also defines several attributes on links that can be seen as target attributes, including
-"media", "hreflang", "type" and "sizes".
-
-Finally, the HTML specification gives a special meaning when the "alternate" and "stylesheet"
-relation types coincide in the same link. Such links ought to be serialised in the Link header field
-using a single list of relation-types (e.g., rel="alternate stylesheet") to preserve this
-relationship.
+Finally, the HTML specification gives a special meaning when the "alternate" relation types
+coincides with other relation types in the same link. Such links ought to be serialised in the Link
+header field using a single list of relation-types (e.g., rel="alternate stylesheet") to preserve
+this relationship.
 
 ## Link Serialisation in Atom {#atom}
 
