@@ -120,12 +120,12 @@ Internet-Draft                 Web Linking                 February 2017
    10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
      10.1.  Normative References . . . . . . . . . . . . . . . . . .  15
      10.2.  Informative References . . . . . . . . . . . . . . . . .  16
-   Appendix A.  Notes on Other Link Serialisations . . . . . . . . .  18
-     A.1.  Link Serialisation in HTML  . . . . . . . . . . . . . . .  18
-     A.2.  Link Serialisation in Atom  . . . . . . . . . . . . . . .  19
-   Appendix B.  Algorithm for Parsing Link Headers . . . . . . . . .  19
-   Appendix C.  Changes from RFC5988 . . . . . . . . . . . . . . . .  22
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  23
+   Appendix A.  Notes on Other Link Serialisations . . . . . . . . .  17
+     A.1.  Link Serialisation in HTML  . . . . . . . . . . . . . . .  17
+     A.2.  Link Serialisation in Atom  . . . . . . . . . . . . . . .  17
+   Appendix B.  Algorithm for Parsing Link Headers . . . . . . . . .  18
+   Appendix C.  Changes from RFC5988 . . . . . . . . . . . . . . . .  21
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  22
 
 1.  Introduction
 
@@ -262,12 +262,12 @@ Internet-Draft                 Web Linking                 February 2017
    convenience and/or to promote reuse by other applications, using the
    procedure in Section 4.1.1.
 
-   Registered relation type names MUST conform to the reg-rel-type rule,
-   and MUST be compared character-by-character in a case-insensitive
-   fashion.  They SHOULD be appropriate to the specificity of the
-   relation type; i.e., if the semantics are highly specific to a
-   particular application, the name should reflect that, so that more
-   general names are available for less specific use.
+   Registered relation type names MUST conform to the reg-rel-type rule
+   (see Section 6.3), and MUST be compared character-by-character in a
+   case-insensitive fashion.  They SHOULD be appropriate to the
+   specificity of the relation type; i.e., if the semantics are highly
+   specific to a particular application, the name should reflect that,
+   so that more general names are available for less specific use.
 
    Registered relation types MUST NOT constrain the media type of the
    link context, and MUST NOT constrain the available representation
@@ -344,7 +344,7 @@ Internet-Draft                 Web Linking                 February 2017
    (appointed by the IESG or their delegate), with a Specification
    Required (using terminology from [RFC5226]).
 
-   The goal of the registry is to reflect common use of HTTP on the
+   The goal of the registry is to reflect common use of links on the
    Internet.  Therefore, the Expert(s) SHOULD be strongly biased towards
    approving registrations, unless they are abusive, frivolous, not
    likely to be used on the Internet, or actively harmful to the
@@ -374,9 +374,9 @@ Internet-Draft                 Web Linking                 February 2017
 
    When extension relation types are compared, they MUST be compared as
    strings (after converting to URIs if serialised in a different
-   format, such as a XML QNames [W3C.REC-xml-names-20091208]) in a case-
-   insensitive fashion, character-by-character.  Because of this, all-
-   lowercase URIs SHOULD be used for extension relations.
+   format) in a case-insensitive fashion, character-by-character.
+   Because of this, all-lowercase URIs SHOULD be used for extension
+   relations.
 
    Note that while extension relation types are required to be URIs, a
    serialisation of links can specify that they are expressed in another
@@ -400,12 +400,12 @@ Internet-Draft                 Web Linking                 February 2017
    link or its target; for example, a media type hint.
 
    They can be defined both by individual link relation types and by
-   link serialisations.  Serialisations SHOULD coordinate their target
-   attributes to avoid conflicts in semantics or syntax.  Relation types
-   MAY define additional target attributes specific to them.
+   link serialisations.
 
    This specification does not attempt to coordinate the name of target
-   attributes, their cardinality or use.
+   attributes, their cardinality or use.  Serialisations SHOULD
+   coordinate their target attributes to avoid conflicts in semantics or
+   syntax.
 
    The names of target attributes SHOULD conform to the token rule, but
    SHOULD NOT include any of the characters "%", "'" or "*", for
@@ -898,62 +898,6 @@ Nottingham               Expires August 7, 2017                [Page 16]
 Internet-Draft                 Web Linking                 February 2017
 
 
-   [W3C.REC-xml-names-20091208]
-              Bray, T., Hollander, D., Layman, A., Tobin, R., and H.
-              Thompson, "Namespaces in XML 1.0 (Third Edition)", World
-              Wide Web Consortium Recommendation REC-xml-names-20091208,
-              December 2009,
-              <http://www.w3.org/TR/2009/REC-xml-names-20091208>.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Nottingham               Expires August 7, 2017                [Page 17]
-
-Internet-Draft                 Web Linking                 February 2017
-
-
 Appendix A.  Notes on Other Link Serialisations
 
    Header fields (Section 6) are only one serialisation of links; other
@@ -961,27 +905,22 @@ Appendix A.  Notes on Other Link Serialisations
 
 A.1.  Link Serialisation in HTML
 
-   HTML [W3C.REC-html5-20141028] motivated the original syntax of the
-   Link header field, and many of the design decisions in this document
-   are driven by a desire to stay compatible with it.
+   HTML motivated the original syntax of the Link header field, and many
+   of the design decisions in this document are driven by a desire to
+   stay compatible with it.
 
    In HTML, the link element can be mapped to links as specified here by
    using the "href" attribute for the target URI, and "rel" to convey
    the relation type, as in the Link header field.  The context of the
-   link is the URI associated with the entire HTML document.
+   link is the URI associated with the entire HTML document.  HTML also
+   defines several attributes on links that can be seen as target
+   attributes, including "media", "hreflang", "type" and "sizes".
 
-   All of the link relation types defined by HTML have been included in
-   the Link Relation Type registry, so they can be used without
-   modification.  However, there are several potential ways to serialise
-   extension relation types into HTML, including:
-
-   o  As absolute URIs,
-
-   o  using the RDFa [W3C.REC-html-rdfa-20150317] convention of mapping
-      token prefixes to URIs (in a manner similar to XML name spaces).
-
-   Individual applications of linking will therefore need to define how
-   their extension links should be serialised into HTML.
+   HTML5 ([W3C.REC-html5-20141028]) Section 4.8 defines modern HTML
+   links.  That document links to the Microformats Wiki as a registry;
+   over time, the IANA registry ought to mirror its contents, and
+   ideally eventually replace it (although that depends on the HTML
+   community).
 
    Surveys of existing HTML content have shown that unregistered link
    relation types that are not URIs are (perhaps inevitably) common.
@@ -990,25 +929,11 @@ A.1.  Link Serialisation in HTML
    scope (i.e., their meaning is specific and perhaps private to that
    document).
 
-   HTML also defines several attributes on links that can be seen as
-   target attributes, including "media", "hreflang", "type" and "sizes".
-
    Finally, the HTML specification gives a special meaning when the
-   "alternate" and "stylesheet" relation types coincide in the same
-   link.  Such links ought to be serialised in the Link header field
-   using a single list of relation-types (e.g., rel="alternate
+   "alternate" relation types coincides with other relation types in the
+   same link.  Such links ought to be serialised in the Link header
+   field using a single list of relation-types (e.g., rel="alternate
    stylesheet") to preserve this relationship.
-
-
-
-
-
-
-
-Nottingham               Expires August 7, 2017                [Page 18]
-
-Internet-Draft                 Web Linking                 February 2017
-
 
 A.2.  Link Serialisation in Atom
 
@@ -1021,6 +946,13 @@ A.2.  Link Serialisation in Atom
 
    When serialising an atom:link into a Link header field, it is
    necessary to convert link targets (if used) to URIs.
+
+
+
+Nottingham               Expires August 7, 2017                [Page 17]
+
+Internet-Draft                 Web Linking                 February 2017
+
 
    Atom defines extension relation types in terms of IRIs.  This
    specification re-defines them as URIs, to simplify and reduce errors
@@ -1058,14 +990,6 @@ Appendix B.  Algorithm for Parsing Link Headers
        immediately preceded by OWS and either a "," character or the
        beginning of the "field_value" string).
 
-
-
-
-Nottingham               Expires August 7, 2017                [Page 19]
-
-Internet-Draft                 Web Linking                 February 2017
-
-
    3.  For each "link_string" in "link_strings":
 
        1.   Let "target_string" be the string between the first "<" and
@@ -1078,6 +1002,13 @@ Internet-Draft                 Web Linking                 February 2017
        3.   Split "rest" into an array of strings "parameter_strings",
             on the ";" character, excepting ";" characters within quoted
             strings as per [RFC7230], Section 3.2.6.
+
+
+
+Nottingham               Expires August 7, 2017                [Page 18]
+
+Internet-Draft                 Web Linking                 February 2017
+
 
        4.   Let "link_parameters" be an empty array.
 
@@ -1113,15 +1044,6 @@ Internet-Draft                 Web Linking                 February 2017
                 [I-D.ietf-httpbis-rfc5987bis].  Skip this item if an
                 unrecoverable error is encountered.
 
-
-
-
-
-Nottingham               Expires August 7, 2017                [Page 20]
-
-Internet-Draft                 Web Linking                 February 2017
-
-
             8.  Append the tuple ("param_name", "param_value") to
                 "link_parameters".
 
@@ -1136,6 +1058,13 @@ Internet-Draft                 Web Linking                 February 2017
        8.   Split "relations_string" into an array of strings
             "relation_types", on RWS (removing all whitespace in the
             process).
+
+
+
+Nottingham               Expires August 7, 2017                [Page 19]
+
+Internet-Draft                 Web Linking                 February 2017
+
 
        9.   Let "context_string" be the second item of the first tuple
             of "link_parameters" whose first item matches the string
@@ -1171,13 +1100,6 @@ Internet-Draft                 Web Linking                 February 2017
             where the last character of "param_name" is an asterisk
             ("*").
 
-
-
-Nottingham               Expires August 7, 2017                [Page 21]
-
-Internet-Draft                 Web Linking                 February 2017
-
-
        14.  For each "star_param_name" in "star_param_names":
 
             1.  Let "base_param_name" be "star_param_name" with the last
@@ -1190,6 +1112,15 @@ Internet-Draft                 Web Linking                 February 2017
                 specification), remove all tuples from "link_parameters"
                 whose first member is "star_param_name" and skip to the
                 next "star_param_name".
+
+
+
+
+
+Nottingham               Expires August 7, 2017                [Page 20]
+
+Internet-Draft                 Web Linking                 February 2017
+
 
             3.  Remove all tuples from "link_parameters" whose first
                 member is "base_param_name".
@@ -1226,14 +1157,6 @@ Appendix C.  Changes from RFC5988
 
    o  Link cardinality was clarified.
 
-
-
-
-Nottingham               Expires August 7, 2017                [Page 22]
-
-Internet-Draft                 Web Linking                 February 2017
-
-
    o  Terminology was changed from "target IRI" and "context IRI" to
       "link target" and "link context" respectively.
 
@@ -1247,6 +1170,13 @@ Internet-Draft                 Web Linking                 February 2017
 
    o  More carefully defined and used "link serialisations" and "link
       applications."
+
+
+
+Nottingham               Expires August 7, 2017                [Page 21]
+
+Internet-Draft                 Web Linking                 February 2017
+
 
    o  Clarified the cardinality of target attributes (generically and
       for "type").
@@ -1285,4 +1215,18 @@ Author's Address
 
 
 
-Nottingham               Expires August 7, 2017                [Page 23]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham               Expires August 7, 2017                [Page 22]

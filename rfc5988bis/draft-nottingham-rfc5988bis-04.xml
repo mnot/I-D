@@ -163,10 +163,11 @@ meaning in HTML for historical reasons.</t>
 <t>Well-defined relation types can be registered as tokens for convenience and/or to promote reuse by
 other applications, using the procedure in <xref target="procedure"/>.</t>
 
-<t>Registered relation type names MUST conform to the reg-rel-type rule, and MUST be compared
-character-by-character in a case-insensitive fashion. They SHOULD be appropriate to the specificity
-of the relation type; i.e., if the semantics are highly specific to a particular application, the
-name should reflect that, so that more general names are available for less specific use.</t>
+<t>Registered relation type names MUST conform to the reg-rel-type rule (see <xref target="header-type"/>), and
+MUST be compared character-by-character in a case-insensitive fashion. They SHOULD be appropriate
+to the specificity of the relation type; i.e., if the semantics are highly specific to a particular
+application, the name should reflect that, so that more general names are available for less
+specific use.</t>
 
 <t>Registered relation types MUST NOT constrain the media type of the link context, and MUST NOT
 constrain the available representation media types of the link target. However, they can specify
@@ -214,7 +215,7 @@ registered in a timely manner.</t>
 <t>Relation types are registered on the advice of a Designated Expert (appointed by the IESG or their
 delegate), with a Specification Required (using terminology from <xref target="RFC5226"/>).</t>
 
-<t>The goal of the registry is to reflect common use of HTTP on the Internet. Therefore, the Expert(s)
+<t>The goal of the registry is to reflect common use of links on the Internet. Therefore, the Expert(s)
 SHOULD be strongly biased towards approving registrations, unless they are abusive, frivolous, not
 likely to be used on the Internet, or actively harmful to the Internet and/or the Web (not merely
 aesthetically displeasing, or architecturally dubious).</t>
@@ -239,9 +240,8 @@ automatically access that resource to avoid overburdening its server.</t>
 defining it, or be delegated to them.</t>
 
 <t>When extension relation types are compared, they MUST be compared as strings (after converting to
-URIs if serialised in a different format, such as a XML QNames <xref target="W3C.REC-xml-names-20091208"/>) in a
-case-insensitive fashion, character-by-character. Because of this, all-lowercase URIs SHOULD be
-used for extension relations.</t>
+URIs if serialised in a different format) in a case-insensitive fashion, character-by-character.
+Because of this, all-lowercase URIs SHOULD be used for extension relations.</t>
 
 <t>Note that while extension relation types are required to be URIs, a serialisation of links can
 specify that they are expressed in another form, as long as they can be converted to URIs.</t>
@@ -253,12 +253,11 @@ specify that they are expressed in another form, as long as they can be converte
 <t><spanx style="emph">Target attributes</spanx> are a list of key/value pairs that describe the link or its target; for example,
 a media type hint.</t>
 
-<t>They can be defined both by individual link relation types and by link serialisations.
-Serialisations SHOULD coordinate their target attributes to avoid conflicts in semantics or syntax.
-Relation types MAY define additional target attributes specific to them.</t>
+<t>They can be defined both by individual link relation types and by link serialisations.</t>
 
 <t>This specification does not attempt to coordinate the name of target attributes, their cardinality
-or use.</t>
+or use. Serialisations SHOULD coordinate their target attributes to avoid conflicts in semantics or
+syntax.</t>
 
 <t>The names of target attributes SHOULD conform to the token rule, but SHOULD NOT include any of the
 characters “%”, “’” or “*”, for portability across serializations, and MUST be compared in a
@@ -848,40 +847,6 @@ they will be displayed to end users.</t>
 
 
 
-<reference anchor='W3C.REC-xml-names-20091208'
-           target='http://www.w3.org/TR/2009/REC-xml-names-20091208'>
-<front>
-<title>Namespaces in XML 1.0 (Third Edition)</title>
-
-<author initials='T.' surname='Bray' fullname='Tim Bray'>
-    <organization />
-</author>
-
-<author initials='D.' surname='Hollander' fullname='Dave Hollander'>
-    <organization />
-</author>
-
-<author initials='A.' surname='Layman' fullname='Andrew Layman'>
-    <organization />
-</author>
-
-<author initials='R.' surname='Tobin' fullname='Richard Tobin'>
-    <organization />
-</author>
-
-<author initials='H.' surname='Thompson' fullname='Henry Thompson'>
-    <organization />
-</author>
-
-<date month='December' day='8' year='2009' />
-</front>
-
-<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-xml-names-20091208' />
-<format type='HTML' target='http://www.w3.org/TR/2009/REC-xml-names-20091208' />
-</reference>
-
-
-
 <reference anchor='W3C.REC-html5-20141028'
            target='http://www.w3.org/TR/2014/REC-html5-20141028'>
 <front>
@@ -948,42 +913,33 @@ they will be displayed to end users.</t>
 
 <section anchor="notes-on-other-link-serialisations" title="Notes on Other Link Serialisations">
 
-<t>Header fields (<xref target="header"/>) are only one serialisation of links; other specifications have defined alternative serialisations.</t>
+<t>Header fields (<xref target="header"/>) are only one serialisation of links; other specifications have defined
+alternative serialisations.</t>
 
 <section anchor="html" title="Link Serialisation in HTML">
 
-<t>HTML <xref target="W3C.REC-html5-20141028"/> motivated the original syntax of the Link header field, and many of
-the design decisions in this document are driven by a desire to stay compatible with it.</t>
+<t>HTML motivated the original syntax of the Link header field, and many of the design decisions in
+this document are driven by a desire to stay compatible with it.</t>
 
 <t>In HTML, the link element can be mapped to links as specified here by using the “href” attribute
 for the target URI, and “rel” to convey the relation type, as in the Link header field. The context
-of the link is the URI associated with the entire HTML document.</t>
+of the link is the URI associated with the entire HTML document. HTML also defines several
+attributes on links that can be seen as target attributes, including “media”, “hreflang”, “type”
+and “sizes”.</t>
 
-<t>All of the link relation types defined by HTML have been included in the Link Relation Type
-registry, so they can be used without modification. However, there are several potential ways to
-serialise extension relation types into HTML, including:</t>
-
-<t><list style="symbols">
-  <t>As absolute URIs,</t>
-  <t>using the RDFa <xref target="W3C.REC-html-rdfa-20150317"/> convention of mapping token
-prefixes to URIs (in a manner similar to XML name spaces).</t>
-</list></t>
-
-<t>Individual applications of linking will therefore need to define how their extension links should
-be serialised into HTML.</t>
+<t>HTML5 (<xref target="W3C.REC-html5-20141028"/>) Section 4.8 defines modern HTML links. That document links to
+the Microformats Wiki as a registry; over time, the IANA registry ought to mirror its contents, and
+ideally eventually replace it (although that depends on the HTML community).</t>
 
 <t>Surveys of existing HTML content have shown that unregistered link relation types that are not URIs
 are (perhaps inevitably) common. Consuming HTML implementations ought not consider such
 unregistered short links to be errors, but rather relation types with a local scope (i.e., their
 meaning is specific and perhaps private to that document).</t>
 
-<t>HTML also defines several attributes on links that can be seen as target attributes, including
-“media”, “hreflang”, “type” and “sizes”.</t>
-
-<t>Finally, the HTML specification gives a special meaning when the “alternate” and “stylesheet”
-relation types coincide in the same link. Such links ought to be serialised in the Link header field
-using a single list of relation-types (e.g., rel=”alternate stylesheet”) to preserve this
-relationship.</t>
+<t>Finally, the HTML specification gives a special meaning when the “alternate” relation types
+coincides with other relation types in the same link. Such links ought to be serialised in the Link
+header field using a single list of relation-types (e.g., rel=”alternate stylesheet”) to preserve
+this relationship.</t>
 
 </section>
 <section anchor="atom" title="Link Serialisation in Atom">
