@@ -295,7 +295,6 @@ This specification defines the link-params "rel", "anchor", "rev", "hreflang", "
 "title*", and "type"; see {{header-context}}, {{header-type}} and {{header-attrs}}. 
 
 
-
 ## Link Target
 
 Each link-value conveys one target IRI as a URI-Reference (after conversion to one, if necessary;
@@ -466,6 +465,7 @@ example:
 Here, the link to "http://example.org/" has the registered relation type "start" and the extension
 relation type "http://example.net/relation/other".
 
+
 # IANA Considerations
 
 In addition to the actions below, IANA should terminate the Link Relation Application Data
@@ -485,6 +485,7 @@ refer to this document.
         Internet Engineering Task Force
     Specification document(s):
         [RFC&rfc.number;]
+
 
 ## Link Relation Type Registry
 
