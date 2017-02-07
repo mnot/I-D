@@ -223,6 +223,7 @@ Amos Jeffries,
 Patrick McManus,
 Matt Menke,
 Miroslav Ponec,
+Alex Rousskov,
 Daniel Stenberg and
 Martin Thomson
 for their input and feedback.
@@ -262,6 +263,8 @@ FwdState::checkRetriable()
 
 Currently, it considers GET, HEAD, OPTIONS, REPORT, PROPFIND, SEARCH and PRI to be safe, and GET, HEAD, PUT, DELETE, OPTIONS, TRACE, PROPFIND, PROPPATCH, MKCOL, COPY, MOVE, UNLOCK, and PRI to be idempotent.
 
+
+See [the Squid FAQ](http://wiki.squid-cache.org/SquidFaq/InnerWorkings?highlight=%28reforward%29#When_does_Squid_re-forward_a_client_request.3F) for more detail.
 
 
 ## Traffic Server
