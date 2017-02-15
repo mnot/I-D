@@ -233,9 +233,9 @@ Future members of the API Object MAY be defined by specifications that update th
 
 # Resource Objects {#resource-object}
 
-A Resource Object links to resources of the defined type using one of two mechanisms; either a
-direct link (in which case there is exactly one resource of that relation type associated with the
-API), or a templated link, in which case there are zero to many such resources.
+A Resource Object links to resources of the type indicated in their name using one of two
+mechanisms; either a direct link (in which case there is exactly one resource of that relation type
+associated with the API), or a templated link, in which case there are zero to many such resources.
 
 Direct links are indicated with an "href" property, whose value is a URI {{RFC3986}}.
 
@@ -243,7 +243,7 @@ Templated links are indicated with an "hrefTemplate" property, whose value is a 
 {{RFC6570}}. When "hrefTemplate" is present, the Resource Object MUST have a "hrefVars" property;
 see "Resolving Templated Links".
 
-Resource Objects MUST have exactly one of the "href" and "href-vars" properties.
+Resource Objects MUST have exactly one of the "href" or "href-vars" properties.
 
 In both forms, the links that "href" and "hrefTemplate" refer to are URI-references {{RFC3986}}
 whose base URI is that of the API Home Document itself.
