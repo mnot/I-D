@@ -479,7 +479,7 @@ Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Sven Dietze, Graham Klyne,
 Joe Hildebrand, Jeni Tennison, Erik Wilde and Jorge Williams for their suggestions and feedback.
 
 
-# Considerations for Creating and Serving Home Documents
+# Creating and Serving Home Documents
 
 When making an API home document available, there are a few things to keep in mind:
 
@@ -523,7 +523,7 @@ all relevant relation types, it can effectively "mix" different APIs, allowing c
 different resources as they see fit.
 
 
-# Considerations for Consuming Home Documents
+# Consuming Home Documents
 
 Clients might use home documents in a variety of ways.
 
