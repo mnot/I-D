@@ -64,14 +64,18 @@ information available to machines across the Internet, and as part of the implem
 By using HTTP, these applications realise a number of benefits, from message framing to caching,
 and well-defined semantics that are broadly understood and useful.
 
-However, one of the core architectural tenants of the Web is the use of links {{RFC3986}} to
-navigate between states; typically, these applications document static URLs that clients need to
-know and servers need to implement, and any interaction outside of these bounds is uncharted
-territory.
+Often, these applications of HTTP are defined by documenting static URLs that clients need to 
+know and servers need to implement. Any interaction outside of these bounds is uncharted territory.
 
-In contrast, a link-driven application discovers relevant resources at run time, using a shared
+For some applications, this approach brings issues, especially when the interface changes, either
+due to evolution, extension or drift between implementations. Furthermore, implementing more than
+one instance of interface can bring further issues, as different environments have different
+requirements.
+
+The Web itself offers one way to address these issues, using links {{RFC3986}} to navigate between
+states. A link-driven application discovers relevant resources at run time, using a shared
 vocabulary of link relations {{RFC5988}} and internet media types {{RFC6838}} to support a "follow
-your nose" style of interaction.
+your nose" style of interaction -- just as a Web browser does to navigate the Web.
 
 A client can then decide which resources to interact with "on the fly" based upon its
 capabilities (as described by link relations), and the server can safely add new resources and
@@ -95,12 +99,9 @@ with different versions, and they are consumed by clients with different capabil
 particular, Internet Standards that use HTTP as a substrate are likely to require the attributes
 described above.
 
-Clients need to be able to discover information about these applications to use it efficiently;
-just as with a human-targeted "home page" for a site, there is a need for a "home document" for a
-HTTP API that describes it to non-browser clients.
-
-Of course, an HTTP API might use any format to do so; however, there are advantages to having a
-common home document format. This specification defines one, using the JSON format {{RFC7159}}.
+This document defines a "home page" format using the JSON format {{RFC7159}} for APIs to use as a
+launching point for the interactions they offer, using links. Having a well-defined format for this
+purpose promotes good practice and tooling.
 
 
 ## Notational Conventions
