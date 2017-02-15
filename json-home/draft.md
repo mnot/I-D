@@ -538,11 +538,18 @@ caching model {{RFC7234}}.
 As a result, clients ought to cache the home document (as per {{RFC7234}}), to avoid fetching it
 before every interaction (which would otherwise be required).
 
-Likewise, a client encountering a 404 Not Found on a link is encouraged obtain a fresh copy of the
-home document, to assure that it is up-to-date.
+Likewise, a client encountering a 404 (Not Found) on a link is encouraged obtain a fresh copy of
+the home document, to assure that it is up-to-date.
 
 
 # Frequently Asked Questions
+
+## Why not use (insert other service description format)?
+
+There are a fair number of existing service description formats, including those that specialise in
+"RESTful" interactions. However, these formats generally are optimised for pairwise integration, or
+one-server-to-many-client integration, and less capable of describing protocols where both the
+server and client can evolve and be extended.
 
 ## Why doesn't the format allow references or inheritance?
 
@@ -558,7 +565,7 @@ doesn't attempt them.
 In HTTP, errors are conveyed by HTTP status codes. While this specification could (and even may)
 allow enumeration of possible error conditions, there's a concern that this will encourage
 applications to define many such "faults", leading to tight coupling between the application and
-its clients.
+its clients. See {{?RFC7807}} for further considerations.
 
 ## How Do I find the schema for a format?
 
