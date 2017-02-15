@@ -116,6 +116,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 An API Home Document (or, interchangeably, "home document") uses the format described in {{RFC7159}}
 and has the media type "application/json-home".
 
+**Note: this media type is not final, and will change before final publication.**
+
 Its content consists of a root object with:
 
 * A "resources" member, whose value is an object that describes the resources associated with the
