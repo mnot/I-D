@@ -206,21 +206,29 @@ type. This means that several link relations might apply to a common base URL; e
 }
 ~~~
 
-Note that the examples above use both tag {{?RFC4151}} and https {{?RFC7230}} URIs; any URI scheme can be used to identify link relations and other artefacts in home documents.
+Note that the examples above use both tag {{?RFC4151}} and https {{?RFC7230}} URIs; any URI scheme
+can be used to identify link relations and other artefacts in home documents. Typically, these are
+not links to be followed; they are only used to identify things.
 
 
 # API Objects {#api-object}
 
 An API Object contains links to information about the API itself.
 
-Two members are defined:
+Two optional members are defined:
 
 * "title" has a string value indicating the name of the API;
 
 * "links" has an object value, whose member names are link relation types {{RFC5988}}, and values
   are URLs {{RFC3986}}. The context of these links is the API home document as a whole.
 
-Future members MAY be defined by specifications that update this document.
+No links are required to be conveyed, but APIs might benefit from setting the following:
+
+* author - a suitable URL (e.g., mailto: or https:) for the author(s) of the API
+* describedBy - a link to documentation for the API
+* license - a link to the legal terms for using the API
+
+Future members of the API Object MAY be defined by specifications that update this document.
 
 
 # Resource Objects {#resource-object}
