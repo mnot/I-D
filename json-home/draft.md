@@ -312,13 +312,14 @@ hints.
   the resource; equivalent to the Allow HTTP response header.
 * Specification: [this document]
 
-Content MUST be an array of strings, containing HTTP methods.
+Content MUST be an array of strings, containing HTTP methods. As per HTTP, when GET is supported, a
+client MAY assume that HEAD is supported.
 
 ## formats
 
 * Resource Hint Name: formats
-* Description: Hints the representation types that the resource produces and consumes, using the
-  GET and PUT methods respectively, subject to the 'allow' hint.
+* Description: Hints the representation types that the resource makes available, using the
+  GET method.
 * Specification: [this document]
 
 Content MUST be an object, whose keys are media types, and values are objects, currently empty.
@@ -343,6 +344,16 @@ When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
 Content MUST be an array of strings, containing media types.
 
 When this hint is present, "POST" SHOULD be listed in the "allow" hint.
+
+## acceptPut
+
+* Resource Hint Name: acceptPut
+* Description: Hints the PUT request formats accepted by the resource for this client.
+* Specification: [this document]
+
+Content MUST be an array of strings, containing media types.
+
+When this hint is present, "PUT" SHOULD be listed in the "allow" hint.
 
 ## acceptRanges
 
