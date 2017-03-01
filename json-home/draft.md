@@ -433,14 +433,14 @@ Content MUST be a string; possible values are:
   Found) or 410 (Gone) HTTP status code if accessed.
 
 
-# Discovering Home Documents
+# Discovering Home Documents {#discovery}
 
 Home documents are useful starting points for interacting with APIs, both for using the API itself and for discovering additional information about the API. Home documents are distinct resources with their own URIs, and it is possible that home document resources are linked to from other resources, such as from (possibly select) resources of the API itself, or from resources that provide API directory or discovery services.
 
 In these cases, the question is how to establish the link to a home document. This specification defines and registers a specific link relation type for this purpose, so that links to home documents can be made and identified by using this specific link relation type.
 
 
-## The "home" Link Relation Type
+## The "home" Link Relation Type {#link-relation}
 
 The "home" link relation type is used to establish a link to a "home document" resource that provides context and/or starting points for the context resource.
 
