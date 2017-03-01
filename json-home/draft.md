@@ -59,7 +59,7 @@ For information about implementations, see <https://github.com/mnot/I-D/wiki/jso
 It is becoming increasingly common to use HTTP {{RFC7230}} for applications other than traditional
 Web browsing. Such "HTTP APIs" are used to integrate processes on disparate systems, make
 information available to machines across the Internet, and as part of the implementation of
-"micro-services."
+"microservices."
 
 By using HTTP, these applications realise a number of benefits, from message framing to caching,
 and well-defined semantics that are broadly understood and useful.
