@@ -99,7 +99,7 @@ with different versions, and they are consumed by clients with different capabil
 particular, Internet Standards that use HTTP as a substrate are likely to require the attributes
 described above.
 
-This document defines a "home page" format using the JSON format {{RFC7159}} for APIs to use as a
+This document defines a "home document" format using the JSON format {{RFC7159}} for APIs to use as a
 launching point for the interactions they offer, using links. Having a well-defined format for this
 purpose promotes good practice and tooling.
 
