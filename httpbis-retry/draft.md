@@ -147,7 +147,7 @@ In practice, it has been observed (see {{current}}) that some client implementat
 
 is interpreted very broadly.
 
-On the server side, it has been widely observed that content on the Web doesn't always honour HTTP idemotency semantics, with many GET requests incurring side effects, and with some sites even requiring browsers to retry POST requests in order to properly interoperate.
+On the server side, it has been widely observed that content on the Web doesn't always honour HTTP idempotency semantics, with many GET requests incurring side effects, and with some sites even requiring browsers to retry POST requests in order to properly interoperate.
 
 Despite this situation, the Web seems to work reasonably well to date (with [notable exceptions](https://signalvnoise.com/archives2/google_web_accelerator_hey_not_so_fast_an_alert_for_web_app_designers.php)).
 
