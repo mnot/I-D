@@ -7,7 +7,7 @@ category: bcp
 
 ipr: trust200902
 area: General
-workgroup: WUGH
+workgroup: 
 keyword: Internet-Draft
 
 stand_alone: yes
