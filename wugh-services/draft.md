@@ -200,7 +200,7 @@ This document does not require any action from IANA.
 # Security Considerations
 
 This document does not introduce security considerations for protocols, but its application helps
-assure that the process that the IETF uses to produce protocols maintains its integrity.
+assure that the process that the IETF uses maintains its integrity.
 
 
 --- back
