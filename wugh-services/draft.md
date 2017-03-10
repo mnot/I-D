@@ -107,9 +107,15 @@ Use of third-party tools MUST NOT require legal agreements, beyond acceptance of
 of service" and similar measures. In particular, third-party services MUST NOT require assignment
 of intellectual property.
 
-Third-party tools SHOULD be accessible using common clients; typically, a Web browser. It is not a
-requirement that every third-party tool be accessible using every possible combination of
-technology.
+When choosing a tool, a Working Group MUST consider the breadth of platform(s) it is available
+upon; tools that are platform-specific SHOULD NOT be chosen unless there is consensus in the
+Working Group that the benefits of using that tool outweigh this limitation, and no suitable
+alternative is available. Tools that are specific to individual users (e.g., the Editors) MAY be
+exempted from this requirement, although the Working Group Chair(s) MUST approve of such choices.
+
+It is not a requirement that every third-party tool be accessible using every possible combination
+of technology.
+
 
 ## Clear Procedure {#procedure}
 
