@@ -59,11 +59,6 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/for-t
 
 # Introduction
 
-As the Internet increasingly mediates key functions in societies, it has unavoidably become
-profoundly political; it has helped people overthrow throw governments and revolutionize social
-orders, control populations and reveal secrets. It has created wealth for some individuals and
-companies, while destroying others'.
-
 The IETF, while focused on technical matters, is not neutral about the purpose of its work in
 developing the Internet {{RFC3935}}:
 
@@ -79,6 +74,11 @@ discouraging others; while we believe we are making purely technical decisions, 
 not be possible. Or, in the words of Lawrence Lessig {{CODELAW}}:
 
 > Ours is the age of cyberspace. It, too, has a regulator... This regulator is code — the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
+
+This impact has become significant. As the Internet increasingly mediates key functions in
+societies, it has unavoidably become profoundly political; it has helped people overthrow throw
+governments and revolutionize social orders, control populations and reveal secrets. It has created
+wealth for some individuals and companies, while destroying others'.
 
 All of this raises the question: Who do we go through the pain of rough consensus and write that
 running code for?
