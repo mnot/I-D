@@ -158,3 +158,17 @@ Thanks to Edward Snowden for his comments regarding the priority of end users at
 
 Thanks to Harald Alvestrand for his substantial feedback and Stephen Farrell, Joe Hildebrand, Russ
 Housley, Niels ten Oever, and Martin Thomson for their suggestions.
+
+
+# Frequently Asked Questions
+
+## How will this impact my standard / Working Group / etc.?
+
+The most noticeable thing that this document changes is a situation where a proposal is made to do
+something that disadvantages end users, for the benefit of another party (e.g., network operators).
+
+If the Working Group reaches consensus (even rough) that this is the case, then there is no need
+for debate about whose interests are most important; it has been made clear. Instead, the Working
+Group can go on to finding other solutions that don't disadvantage end users, or (if need be) document why there is no other choice.
+
+Such documentation might already be required; e.g., as part of Security Considerations.
