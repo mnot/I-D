@@ -340,7 +340,8 @@ When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
 ## acceptPost
 
 * Resource Hint Name: acceptPost
-* Description: Hints the POST request formats accepted by the resource for this client.
+* Description: Hints the POST request formats accepted by the resource for this client;
+  equivalent to the Accept-Post HTTP response header.
 * Specification: [this document]
 
 Content MUST be an array of strings, containing media types.
