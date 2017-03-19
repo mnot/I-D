@@ -87,7 +87,7 @@ Doing so can provide any of a number of benefits, including:
 
 * Evolvability - Likewise, interfaces can change gradually by introducing a new link relation and/or format while still supporting the old ones.
 
-* Customisation - Home documents can be tailored for the client, allowing diffrent classes of service or different client permissions to be exposed naturally.
+* Customisation - Home documents can be tailored for the client, allowing different classes of service or different client permissions to be exposed naturally.
 
 * Flexible deployment - Since URLs aren't baked into documentation, the server can choose what URLs to use for a given service.
 
