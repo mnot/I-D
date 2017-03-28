@@ -1,7 +1,7 @@
 ---
 title: The Internet is for End Users
 docname: draft-nottingham-for-the-users-04
-date: 2016
+date: 2017
 category: bcp
 
 ipr: trust200902
@@ -31,6 +31,7 @@ informative:
   RFC2460:
   RFC3935:
   RFC4941:
+  RFC7282:
   CODELAW:
     target: http://harvardmagazine.com/2000/01/code-is-law-html
     title: "Code Is Law: On Liberty in Cyberspace"
@@ -94,6 +95,9 @@ balance the benefits of a decision between two (or more) parties.
 
 To help clarify such decisions, {{users}} mandates that end users have the highest priority.
 
+Doing so helps the IETF achieve its mission, and also helps to assure the long-term health of the
+Internet. By prioritising the concerns of end users, we assure that it reaches the greatest number
+of people, thereby delivering greater utility by maximising its network effect.
 
 
 ## Notational Conventions
@@ -105,7 +109,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # The Internet is for End Users {#users}
 
-Internet standards MUST consider the end users to have priority over every other party.
+Internet standards MUST consider the end users of the Internet to have priority over every other
+party.
 
 While networks need to be managed, employers and equipment vendors need to meet business goals, and
 so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
@@ -167,8 +172,9 @@ Housley, Niels ten Oever, and Martin Thomson for their suggestions.
 The most noticeable thing that this document changes is a situation where a proposal is made to do
 something that disadvantages end users, for the benefit of another party (e.g., network operators).
 
-If the Working Group reaches consensus (even rough) that this is the case, then there is no need
-for debate about whose interests are most important; it has been made clear. Instead, the Working
-Group can go on to finding other solutions that don't disadvantage end users, or (if need be) document why there is no other choice.
+If the Working Group reaches consensus (even rough, as per {{RFC7282}}) that this is the case, then
+there is no need for debate about whose interests are most important; it has been made clear.
+Instead, the Working Group can go on to finding other solutions that don't disadvantage end users,
+or (if need be) document why there is no other choice.
 
 Such documentation might already be required; e.g., as part of Security Considerations.
