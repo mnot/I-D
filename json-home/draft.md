@@ -146,7 +146,7 @@ For example:
         "author": "mailto:api-admin@example.com",
         "describedBy": "https://example.com/api-docs/"
       }
-    }
+    },
     "resources": {
       "tag:me@example.com,2016:widgets": {
         "href": "/widgets/"
