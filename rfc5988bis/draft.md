@@ -423,7 +423,7 @@ The ABNF for the `type` parameter's value is:
 Other link-params are link-extensions, and are to be considered as target attributes.
 
 Such target attributes MAY be defined to use the encoding in {{I-D.ietf-httpbis-rfc5987bis}} (e.g.,
-"example" and "example*"). When both forms are present, they SHOULD be considered to be the same
+"example" and "example\*"). When both forms are present, they SHOULD be considered to be the same
 target attribute; processors SHOULD use the value of the name ending in "*" (after
 {{I-D.ietf-httpbis-rfc5987bis}} decoding), but MAY fall back to the other value if there is an
 error in decoding it, or if they do not support decoding.
