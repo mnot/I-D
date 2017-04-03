@@ -77,12 +77,12 @@ not be possible. Or, in the words of Lawrence Lessig {{CODELAW}}:
 > Ours is the age of cyberspace. It, too, has a regulator... This regulator is code — the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
 
 This impact has become significant. As the Internet increasingly mediates key functions in
-societies, it has unavoidably become profoundly political; it has helped people overthrow throw
+societies, it has unavoidably become profoundly political; it has helped people overthrow
 governments and revolutionize social orders, control populations and reveal secrets. It has created
 wealth for some individuals and companies, while destroying others'.
 
-All of this raises the question: Who do we go through the pain of rough consensus and write that
-running code for?
+All of this raises the question: For whom do we go through the pain of gathering rough consensus
+and writing running code?
 
 There are a variety of identifiable parties in the larger Internet community that standards can
 provide benefit to, such as (but not limited to) end users, network operators, schools, equipment
@@ -116,7 +116,7 @@ While networks need to be managed, employers and equipment vendors need to meet 
 so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
 -- society is composed of what we call "end users."
 
-By "end users", we mean non-technical users whose activities our protocols are designed to support.
+By "end users," we mean non-technical users whose activities our protocols are designed to support.
 Thus, the end user of a protocol to manage routers is not a router administrator; it is the people
 using the network that the router operates within.
 
