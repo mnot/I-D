@@ -429,7 +429,7 @@ target attribute; processors SHOULD use the value of the name ending in "\*" (af
 error in decoding it, or if they do not support decoding.
 
 
-## Examples
+## Link Header Field Examples
 
 For example:
 
