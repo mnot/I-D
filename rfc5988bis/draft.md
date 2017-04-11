@@ -141,12 +141,12 @@ serialisation, whereas the application "AtomPub" uses the "edit" and "edit-media
 # Link Relation Types
 
 In the simplest case, a link relation type identifies the semantics of a link. For example, a link
-with the relation type "copyright" indicates that the resource identified by the link target is a
-statement of the copyright terms applying to the current link context.
+with the relation type "copyright" indicates that the current link context has a copyright resource
+at the link target.
 
 Link relation types can also be used to indicate that the target resource has particular
 attributes, or exhibits particular behaviours; for example, a "service" link implies that the
-identified resource is part of a defined protocol (in this case, a service description).
+link target can be used as part of a defined protocol (in this case, a service description).
 
 Relation types are not to be confused with media types {{RFC6838}}; they do not identify the format
 of the representation that results when the link is dereferenced. Rather, they only describe how
