@@ -103,7 +103,7 @@ Table of Contents
      6.4.  Target Attributes . . . . . . . . . . . . . . . . . . . .  10
        6.4.1.  Serialisation-Defined Attributes  . . . . . . . . . .  10
        6.4.2.  Extension Attributes  . . . . . . . . . . . . . . . .  11
-     6.5.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  12
+     6.5.  Link Header Field Examples  . . . . . . . . . . . . . . .  12
    7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
      7.1.  Link HTTP Header Field Registration . . . . . . . . . . .  13
 
@@ -117,15 +117,15 @@ Internet-Draft                 Web Linking                    April 2017
      7.2.  Link Relation Type Registry . . . . . . . . . . . . . . .  13
    8.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
    9.  Internationalisation Considerations . . . . . . . . . . . . .  14
-   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
      10.1.  Normative References . . . . . . . . . . . . . . . . . .  15
      10.2.  Informative References . . . . . . . . . . . . . . . . .  16
-   Appendix A.  Notes on Other Link Serialisations . . . . . . . . .  17
-     A.1.  Link Serialisation in HTML  . . . . . . . . . . . . . . .  17
-     A.2.  Link Serialisation in Atom  . . . . . . . . . . . . . . .  17
-   Appendix B.  Algorithm for Parsing Link Headers . . . . . . . . .  18
-   Appendix C.  Changes from RFC5988 . . . . . . . . . . . . . . . .  21
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  22
+   Appendix A.  Notes on Other Link Serialisations . . . . . . . . .  18
+     A.1.  Link Serialisation in HTML  . . . . . . . . . . . . . . .  18
+     A.2.  Link Serialisation in Atom  . . . . . . . . . . . . . . .  18
+   Appendix B.  Algorithm for Parsing Link Headers . . . . . . . . .  19
+   Appendix C.  Changes from RFC5988 . . . . . . . . . . . . . . . .  22
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  23
 
 1.  Introduction
 
@@ -626,7 +626,7 @@ Internet-Draft                 Web Linking                    April 2017
    back to the other value if there is an error in decoding it, or if
    they do not support decoding.
 
-6.5.  Examples
+6.5.  Link Header Field Examples
 
    For example:
 
@@ -642,6 +642,14 @@ Internet-Draft                 Web Linking                    April 2017
 
    indicates that the root resource ("/") is related to this resource
    with the extension relation type "http://example.net/foo".
+
+   This link:
+
+   Link: </terms>; rel="copyright"; anchor="#foo"
+
+   indicates that the linked copyright terms only apply to the portion
+   of the document indicated by the (media type-specific) fragment
+   identifier "foo".
 
    The example below shows an instance of the Link header field encoding
    multiple links, and also the use of RFC 5987 encoding to encode both
@@ -659,20 +667,19 @@ Internet-Draft                 Web Linking                    April 2017
    Note that link-values can convey multiple links between the same link
    target and link context; for example:
 
-   Link: <http://example.org/>;
-         rel="start http://example.net/relation/other"
-
-   Here, the link to "http://example.org/" has the registered relation
-   type "start" and the extension relation type
-   "http://example.net/relation/other".
-
-
 
 
 Nottingham              Expires October 13, 2017               [Page 12]
 
 Internet-Draft                 Web Linking                    April 2017
 
+
+   Link: <http://example.org/>;
+         rel="start http://example.net/relation/other"
+
+   Here, the link to "http://example.org/" has the registered relation
+   type "start" and the extension relation type
+   "http://example.net/relation/other".
 
 7.  IANA Considerations
 
@@ -714,6 +721,15 @@ Internet-Draft                 Web Linking                    April 2017
    o  The registry data in any alternative formats provided by the
       Expert(s)
 
+
+
+
+
+Nottingham              Expires October 13, 2017               [Page 13]
+
+Internet-Draft                 Web Linking                    April 2017
+
+
    Each published document will be at a URL agreed to by IANA and the
    Expert(s), and IANA will set HTTP response headers on them as
    (reasonably) requested by the Expert(s).
@@ -722,13 +738,6 @@ Internet-Draft                 Web Linking                    April 2017
 
    o  Take directions from the Expert(s) as to the content of the HTML
       page's introductory text
-
-
-
-Nottingham              Expires October 13, 2017               [Page 13]
-
-Internet-Draft                 Web Linking                    April 2017
-
 
    o  Include a stable HTML fragment identifier for each registered link
       relation
@@ -770,21 +779,17 @@ Internet-Draft                 Web Linking                    April 2017
    comparison.  It is not expected that they will be displayed to end
    users.
 
-   Note that registered Relation Names are required to be lower-case
-   ASCII letters.
-
-10.  References
-
-
-
-
-
 
 
 Nottingham              Expires October 13, 2017               [Page 14]
 
 Internet-Draft                 Web Linking                    April 2017
 
+
+   Note that registered Relation Names are required to be lower-case
+   ASCII letters.
+
+10.  References
 
 10.1.  Normative References
 
@@ -826,11 +831,6 @@ Internet-Draft                 Web Linking                    April 2017
               RFC 6838, DOI 10.17487/RFC6838, January 2013,
               <http://www.rfc-editor.org/info/rfc6838>.
 
-   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <http://www.rfc-editor.org/info/rfc7230>.
-
 
 
 
@@ -841,6 +841,11 @@ Nottingham              Expires October 13, 2017               [Page 15]
 
 Internet-Draft                 Web Linking                    April 2017
 
+
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing",
+              RFC 7230, DOI 10.17487/RFC7230, June 2014,
+              <http://www.rfc-editor.org/info/rfc7230>.
 
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
@@ -884,6 +889,15 @@ Internet-Draft                 Web Linking                    April 2017
               March 2015,
               <http://www.w3.org/TR/2015/REC-html-rdfa-20150317>.
 
+
+
+
+
+Nottingham              Expires October 13, 2017               [Page 16]
+
+Internet-Draft                 Web Linking                    April 2017
+
+
    [W3C.REC-html5-20141028]
               Hickson, I., Berjon, R., Faulkner, S., Leithead, T.,
               Navara, E., O&#039;Connor, T., and S. Pfeiffer, "HTML5",
@@ -893,7 +907,49 @@ Internet-Draft                 Web Linking                    April 2017
 
 
 
-Nottingham              Expires October 13, 2017               [Page 16]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires October 13, 2017               [Page 17]
 
 Internet-Draft                 Web Linking                    April 2017
 
@@ -949,7 +1005,7 @@ A.2.  Link Serialisation in Atom
 
 
 
-Nottingham              Expires October 13, 2017               [Page 17]
+Nottingham              Expires October 13, 2017               [Page 18]
 
 Internet-Draft                 Web Linking                    April 2017
 
@@ -1005,7 +1061,7 @@ Appendix B.  Algorithm for Parsing Link Headers
 
 
 
-Nottingham              Expires October 13, 2017               [Page 18]
+Nottingham              Expires October 13, 2017               [Page 19]
 
 Internet-Draft                 Web Linking                    April 2017
 
@@ -1061,7 +1117,7 @@ Internet-Draft                 Web Linking                    April 2017
 
 
 
-Nottingham              Expires October 13, 2017               [Page 19]
+Nottingham              Expires October 13, 2017               [Page 20]
 
 Internet-Draft                 Web Linking                    April 2017
 
@@ -1117,7 +1173,7 @@ Internet-Draft                 Web Linking                    April 2017
 
 
 
-Nottingham              Expires October 13, 2017               [Page 20]
+Nottingham              Expires October 13, 2017               [Page 21]
 
 Internet-Draft                 Web Linking                    April 2017
 
@@ -1173,7 +1229,7 @@ Appendix C.  Changes from RFC5988
 
 
 
-Nottingham              Expires October 13, 2017               [Page 21]
+Nottingham              Expires October 13, 2017               [Page 22]
 
 Internet-Draft                 Web Linking                    April 2017
 
@@ -1229,4 +1285,4 @@ Author's Address
 
 
 
-Nottingham              Expires October 13, 2017               [Page 22]
+Nottingham              Expires October 13, 2017               [Page 23]
