@@ -445,6 +445,13 @@ Similarly,
 indicates that the root resource ("/") is related to this resource with the extension relation type
 "http://example.net/foo".
 
+This link:
+
+    Link: </terms>; rel="copyright"; anchor="#foo"
+
+indicates that the linked copyright terms only apply to the portion of the document indicated by
+the (media type-specific) fragment identifier "foo".
+
 The example below shows an instance of the Link header field encoding multiple links, and also the
 use of RFC 5987 encoding to encode both non-ASCII characters and language information.
 
