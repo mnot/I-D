@@ -1,7 +1,7 @@
 ---
 title: Web Linking
 abbrev:
-docname: draft-nottingham-rfc5988bis-04
+docname: draft-nottingham-rfc5988bis-05
 date: 2017
 category: std
 obsoletes: 5988
