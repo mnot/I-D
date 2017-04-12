@@ -91,7 +91,7 @@ application is _using HTTP_ when any of the following conditions are true:
   {{RFC7540}}.
 
 When an application is using HTTP, all of the requirements of the HTTP protocol suite (including
-but not limited to {{!RFC7320}}, {{!RFC7321}}, {{!RFC7322}}, {{!RFC7233}}, {{!RFC7234},
+but not limited to {{!RFC7320}}, {{!RFC7321}}, {{!RFC7322}}, {{!RFC7233}}, {{!RFC7234}},
 {{!RFC7325}} and {{!RFC7540}}) are in force.
 
 An application might not be _using HTTP_ according to this definition, but still relying upon the
