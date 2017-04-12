@@ -40,7 +40,6 @@ idnits: $(target).txt
 	bootstrapJsUrl='../Tools/bower_components/bootstrap/dist/js/bootstrap.min.js' \
 	bootstrapCssUrl='../Tools/bower_components/bootstrap/dist/css/bootstrap.min.css' \
 	jqueryJsUrl='../Tools/bower_components/jquery/dist/jquery.min.js' \
-	navbar='../Tools/navbar.html' \
 	> $@
 #	$(xml2rfc) --html $< $@
 
