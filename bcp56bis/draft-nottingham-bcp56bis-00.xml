@@ -70,6 +70,7 @@ variety of reasons:</t>
   <t>familiarity by implementers, specifiers, administrators, developers and users;</t>
   <t>availability of a variety of client, server and proxy implementations;</t>
   <t>ease of use;</t>
+  <t>ubiquity of Web browsers;</t>
   <t>reuse of existing mechanisms like authentication and encryption;</t>
   <t>presence of HTTP servers and clients in target deployments, and</t>
   <t>its ability to traverse firewalls.</t>
@@ -87,10 +88,11 @@ protocols over HTTP brings its own set of issues:</t>
 </list></t>
 
 <t>This document contains best current practices regarding these issues in the use of HTTP by
-applications. <xref target="used"/> defines what applications it applies to; <xref target="elements"/> conveys best practices
-for specific HTTP protocol elements.</t>
+applications other than Web browsing. <xref target="used"/> defines what applications it applies to;
+<xref target="overview"/> surveys the properties of HTTP that are important to preserve, and <xref target="bp"/> conveys best
+practices for those applications that do use HTTP.</t>
 
-<t>It is intended primarily for use by IETF efforts, but might be applicable in other situations.</t>
+<t>It is written primarily to guide IETF efforts, but might be applicable in other situations.</t>
 
 <section anchor="notational-conventions" title="Notational Conventions">
 
@@ -106,10 +108,10 @@ for specific HTTP protocol elements.</t>
 application is <spanx style="emph">using HTTP</spanx> when any of the following conditions are true:</t>
 
 <t><list style="symbols">
-  <t>The transport port used (or default port) is 80 or 443</t>
-  <t>The URL scheme used is “http” or “https”</t>
-  <t>The message format is as described in <xref target="RFC7320"/>, or the connection handshake is as described in
-<xref target="RFC7540"/>.</t>
+  <t>The transport port (or default port) is 80 or 443,</t>
+  <t>The URL scheme is “http” or “https”,</t>
+  <t>The ALPN protocol ID <xref target="RFC7301"/> is “http/1.1”, “h2” or “h2c”, or</t>
+  <t>The message formats described in <xref target="RFC7320"/> and/or <xref target="RFC7540"/> are used in conjunction with the IANA registries defined for HTTP.</t>
 </list></t>
 
 <t>When an application is using HTTP, all of the requirements of the HTTP protocol suite (including
@@ -125,23 +127,171 @@ freedom to modify protocol operation, but are also likely to lose at least a por
 benefits outlined above, as most HTTP implementations won’t be easily adaptable to these changes,
 and as the protocol diverges from HTTP, the benefit of mindshare will be lost.</t>
 
-<t>Protocols that are based upon HTTP MUST NOT reuse the HTTP URL schemes, HTTP transport ports, or
-HTTP IANA registries; rather, they are encouraged to establish their own.</t>
+<t>Protocols that are based upon HTTP MUST NOT reuse HTTP’s URL schemes, transport ports, ALPN
+protocol IDs or IANA registries; rather, they are encouraged to establish their own.</t>
 
 </section>
-<section anchor="overview" title="Getting the Most out of HTTP">
+<section anchor="overview" title="What’s Important About HTTP">
 
-<t>TBD - examples, outline a sample application with best practices, explain the overall preferred
-approach.</t>
+<t>There are many ways that HTTP applications are defined and deployed, and sometimes they are brought
+to the IETF for standardisation. In that process, what might be workable for deployment in a
+limited fashion isn’t appropriate for standardisation and the corresponding broader deployment.
+This section examines the facets of the protocol that are important to preserve in these situations.</t>
+
+<section anchor="generic-semantics" title="Generic Semantics">
+
+<t>When writing an application’s specification, it’s often tempting to specify exactly how HTTP is to
+be implemented, supported and used.</t>
+
+<t>However, this can easily lead to an unintended profile of HTTP’s behaviour. For example, it’s
+common to see specifications with language like this:</t>
+
+<figure><artwork><![CDATA[
+A `200 OK` response means that the widget has successfully been updated.
+]]></artwork></figure>
+
+<t>This sort of specification is bad practice, because it is adding new semantics to HTTP’s status
+codes and methods, respectively; a recipient – whether it’s an origin server, client library,
+intermediary or cache – now has to know these extra semantics to understand the message.</t>
+
+<t>Some applications even require specific behaviours, such as:</t>
+
+<figure><artwork><![CDATA[
+A `POST` request MUST result in a `201 Created` response.
+]]></artwork></figure>
+
+<t>This forms an expectation in the client that the response will always be <spanx style="verb">201 Created</spanx>, when in
+fact there are a number of reasons why the status code might differ in a real deployment. If the
+client does not anticipate this, the application’s deployment is brittle.</t>
+
+<t>Much of the value of HTTP is in its <spanx style="emph">generic semantics</spanx> – that is, the protocol elements defined
+by HTTP are potentially applicable to every resource, not specific to a particular context.
+Application-specific semantics are expressed in the payload; mostly, in the body, but also in
+header fields.</t>
+
+<t>This allows a HTTP message to be examined by generic HTTP software, and its handling to be
+correctly determined. It also allows people to leverage their knowledge of HTTP semantics without
+special-casing them for a particular application.</t>
+
+<t>Therefore, applications that use HTTP MUST NOT re-define, refine or overlay the semantics of
+defined protocol elements. Instead, they SHOULD focus their specifications on protocol elements
+that are specific to them; namely their HTTP resources.</t>
+
+<t>See <xref target="resource"/> for details.</t>
 
 </section>
-<section anchor="elements" title="Using HTTP Protocol Elements">
+<section anchor="links" title="Links">
 
-<t>This section contains best practices regarding the use of specific HTTP protocol elements.</t>
+<t>Another common practice is assuming that the HTTP server’s name space (or a portion thereof) is
+exclusively for the use of a single application. This effectively overlays special,
+application-specific semantics onto that space, precludes other applications from using it.</t>
 
+<t>As explained in <xref target="RFC7320"/>, such “squatting” on a part of the URL space by a standard usurps the
+server’s authority over its own resources, can cause deployment issues, and is therefore bad
+practice in standards.</t>
+
+<t>Instead of statically defining URL paths, applications are encouraged to define links in payloads,
+to allow flexibility in deployment. For example, navigating with a link allows a request to be
+routed to a different server without the overhead of a redirection, thereby supporting deployment
+across machines well.</t>
+
+</section>
+<section anchor="http-capabilities" title="HTTP Capabilities">
+
+<t>The simplest possible use of HTTP is to POST data to a single URL, thereby effectively tunnelling
+through the protocol.</t>
+
+<t>This “RPC” style of communication does get some benefit from using HTTP – namely, message framing and the availability of implementations – but fails to realise many others:</t>
+
+<t><list style="symbols">
+  <t>Caching for server scalability, latency and bandwidth reduction, and reliability;</t>
+  <t>Authentication and access control;</t>
+  <t>Automatic redirection;</t>
+  <t>Partial content to selectively request part of a response;</t>
+  <t>Natural support for extensions and versioning through protocol extension; and</t>
+  <t>The ability to interact with the application easily using a Web browser.</t>
+</list></t>
+
+<t>Using such a high-level protocol to tunnel simple semantics has downsides too; because of its more
+advanced capabilities, breadth of deployment and age, HTTP’s complexity can cause interoperability
+problems that could be avoided by using a simpler substrate (e.g., WebSockets <xref target="RFC6455"/>, if
+browser support is necessary, or TCP <xref target="RFC0793"/> if not), or making the application be <spanx style="emph">based upon
+HTTP</spanx>, instead of using it (as defined in <xref target="used"/>).</t>
+
+<t>Applications that use HTTP are encouraged to accommodate the various features that the protocol
+offers, so that their users receive the maximum benefit from it. This document does not require
+specific features to be used, since the appropriate design tradeoffs are highly specific to a given
+situation. However, following the practices in <xref target="bp"/> will help make them available.</t>
+
+</section>
+</section>
+<section anchor="bp" title="Best Practices for Using HTTP">
+
+<t>This section contains best practices regarding the use of HTTP by applications, including practices
+for specific HTTP protocol elements.</t>
+
+<section anchor="specifying-the-use-of-http" title="Specifying the Use of HTTP">
+
+<t>When specifying the use of HTTP, an application SHOULD use <xref target="RFC7230"/> as the primary reference,
+MAY specify a minimum version to be supported (HTTP/1.1 is suggested), and SHOULD NOT specify a
+maximum version.</t>
+
+<t>Likewise, applications need not specify what HTTP mechanisms – such as redirection, caching,
+authentication, proxy authentication, and so on – are to be supported. Full featured support for
+HTTP SHOULD be taken for granted in servers and clients, and the application’s function SHOULD
+degrade gracefully if they are not (although this might be achieved by informing the user that
+their task cannot be completed).</t>
+
+<t>For example, an application can specify that it uses HTTP like this:</t>
+
+<figure><artwork><![CDATA[
+Foo Application uses HTTP {{RFC7230}}. Implementations MUST support 
+HTTP/1.1, and MAY support later versions. Support for common HTTP 
+mechanisms such as redirection and caching are assumed.
+]]></artwork></figure>
+
+</section>
+<section anchor="resource" title="Defining HTTP Resources">
+
+<t>HTTP Applications SHOULD focus on defining the following application-specific protocol elements:</t>
+
+<t><list style="symbols">
+  <t>Media types <xref target="RFC6838"/>, often based upon a format convention such as JSON <xref target="RFC7159"/>,</t>
+  <t>HTTP header fields, as per <xref target="headers"/>, and</t>
+  <t>The behaviour of resources, as identified by link relations <xref target="RFC5988"/>.</t>
+</list></t>
+
+<t>By composing these protocol elements, an application can define a set of resources, identified by
+link relations, that implement specified behaviours, including:</t>
+
+<t><list style="symbols">
+  <t>Retrieval of their state using GET, in one or more formats identified by media type;</t>
+  <t>Resource creation or update using POST or PUT, with an appropriately identified request body format;</t>
+  <t>Data processing using POST and identified request and response body format(s); and</t>
+  <t>Resource deletion using DELETE.</t>
+</list></t>
+
+<t>For example, an application could specify:</t>
+
+<figure><artwork><![CDATA[
+Resources linked to with the "example-widget" link relation type are
+Widgets. The state of a Widget can be fetched in the
+"application/example-widget+json" format, and can be updated by PUT
+to the same link. Widget resources can be deleted.
+
+The "Example-Count" response header field on Widget representations
+indicates how many Widgets are held by the sender.
+
+The "application/example-widget+json" format is a JSON {{RFC7159}}
+format representing the state of a Widget. It contains links to
+related information in the link indicated by the Link header field
+value with the "example-other-info" link relation type.
+]]></artwork></figure>
+
+</section>
 <section anchor="url-schemes" title="URL Schemes">
 
-<t>Applications that use HTTP SHOULD use the “http” and/or “https” URL schemes.</t>
+<t>Applications that use HTTP MUST use the “http” and/or “https” URL schemes.</t>
 
 <t>Using other schemes to denote an application using HTTP makes it more difficult to use with
 existing implementations (e.g., Web browsers), and is likely to fail to meet the requirements of
@@ -181,7 +331,7 @@ other relevant resources.</t>
 than specifying “the initial document is at “/foo/v1”, they should allow a deployment to give an
 arbitrary URL as the entry point for the application.</t>
 
-<t>In cases where doing so is impractical (e.g., it is not possibly to convey a whole URL, but only a
+<t>In cases where doing so is impractical (e.g., it is not possible to convey a whole URL, but only a
 hostname) applications that use HTTP MAY define a well-known URL <xref target="RFC5785"/> as an entry point to
 their operation.</t>
 
@@ -227,12 +377,25 @@ application is harmful, as these are not generic semantics, since the consumer n
 context of the application to understand them.</t>
 
 <t>Furthermore, applications using HTTP SHOULD NOT re-specify the semantics of HTTP status codes, even
-if it is only by copying their definition.</t>
+if it is only by copying their definition. They MUST NOT require specific status phrases to be
+used; the status phrase has no function in HTTP, and is not guaranteed to be preserved by
+implementations.</t>
 
-<t>Typically, applications using HTTP will convey application-specific information in the message body and/or HTTP header fields, not the status code.</t>
+<t>Typically, applications using HTTP will convey application-specific information in the message body
+and/or HTTP header fields, not the status code.</t>
+
+<t>Specifications sometimes also create a “laundry list” of potential status codes, in an effort to be
+helpful. The problem with doing so is that such a list is never complete; for example, if a network
+proxy is interposed, the client might encounter a <spanx style="verb">407 Proxy Authentication Required</spanx> response; or,
+if the server is rate limiting the client, it might receive a <spanx style="verb">429 Too Many Requests</spanx> response.</t>
+
+<t>Since the list of HTTP status codes can be added to, it’s safer to refer to it directly, and point
+out that clients SHOULD be able to handle all applicable protocol elements gracefully (i.e.,
+falling back to the generic <spanx style="verb">n00</spanx> semantics of a given status code; e.g., <spanx style="verb">499</spanx> can be safely
+handled as <spanx style="verb">400</spanx> by clients that don’t recognise it).</t>
 
 </section>
-<section anchor="http-header-fields" title="HTTP Header Fields">
+<section anchor="headers" title="HTTP Header Fields">
 
 <t>Applications that use HTTP MAY define new HTTP header fields, following the advice in <xref target="RFC7321"/>,
 Section 8.3.1.</t>
@@ -285,6 +448,22 @@ Section 8.3.1.</t>
 <seriesInfo name='BCP' value='14'/>
 <seriesInfo name='RFC' value='2119'/>
 <seriesInfo name='DOI' value='10.17487/RFC2119'/>
+</reference>
+
+
+
+<reference  anchor='RFC7301' target='http://www.rfc-editor.org/info/rfc7301'>
+<front>
+<title>Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension</title>
+<author initials='S.' surname='Friedl' fullname='S. Friedl'><organization /></author>
+<author initials='A.' surname='Popov' fullname='A. Popov'><organization /></author>
+<author initials='A.' surname='Langley' fullname='A. Langley'><organization /></author>
+<author initials='E.' surname='Stephan' fullname='E. Stephan'><organization /></author>
+<date year='2014' month='July' />
+<abstract><t>This document describes a Transport Layer Security (TLS) extension for application-layer protocol negotiation within the TLS handshake. For instances in which multiple application protocols are supported on the same TCP or UDP port, this extension allows the application layer to negotiate which protocol will be used within the TLS connection.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7301'/>
+<seriesInfo name='DOI' value='10.17487/RFC7301'/>
 </reference>
 
 
@@ -393,6 +572,35 @@ Section 8.3.1.</t>
 
 
 
+<reference  anchor='RFC6838' target='http://www.rfc-editor.org/info/rfc6838'>
+<front>
+<title>Media Type Specifications and Registration Procedures</title>
+<author initials='N.' surname='Freed' fullname='N. Freed'><organization /></author>
+<author initials='J.' surname='Klensin' fullname='J. Klensin'><organization /></author>
+<author initials='T.' surname='Hansen' fullname='T. Hansen'><organization /></author>
+<date year='2013' month='January' />
+<abstract><t>This document defines procedures for the specification and registration of media types for use in HTTP, MIME, and other Internet protocols.  This memo documents an Internet Best Current Practice.</t></abstract>
+</front>
+<seriesInfo name='BCP' value='13'/>
+<seriesInfo name='RFC' value='6838'/>
+<seriesInfo name='DOI' value='10.17487/RFC6838'/>
+</reference>
+
+
+
+<reference  anchor='RFC5988' target='http://www.rfc-editor.org/info/rfc5988'>
+<front>
+<title>Web Linking</title>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'><organization /></author>
+<date year='2010' month='October' />
+<abstract><t>This document specifies relation types for Web links, and defines a registry for them.  It also defines the use of such links in HTTP headers with the Link header field.  [STANDARDS-TRACK]</t></abstract>
+</front>
+<seriesInfo name='RFC' value='5988'/>
+<seriesInfo name='DOI' value='10.17487/RFC5988'/>
+</reference>
+
+
+
 <reference  anchor='RFC7595' target='http://www.rfc-editor.org/info/rfc7595'>
 <front>
 <title>Guidelines and Registration Procedures for URI Schemes</title>
@@ -489,15 +697,42 @@ Section 8.3.1.</t>
 
 
 
-<reference  anchor='RFC5988' target='http://www.rfc-editor.org/info/rfc5988'>
+<reference  anchor='RFC6455' target='http://www.rfc-editor.org/info/rfc6455'>
 <front>
-<title>Web Linking</title>
-<author initials='M.' surname='Nottingham' fullname='M. Nottingham'><organization /></author>
-<date year='2010' month='October' />
-<abstract><t>This document specifies relation types for Web links, and defines a registry for them.  It also defines the use of such links in HTTP headers with the Link header field.  [STANDARDS-TRACK]</t></abstract>
+<title>The WebSocket Protocol</title>
+<author initials='I.' surname='Fette' fullname='I. Fette'><organization /></author>
+<author initials='A.' surname='Melnikov' fullname='A. Melnikov'><organization /></author>
+<date year='2011' month='December' />
+<abstract><t>The WebSocket Protocol enables two-way communication between a client running untrusted code in a controlled environment to a remote host that has opted-in to communications from that code.  The security model used for this is the origin-based security model commonly used by web browsers.  The protocol consists of an opening handshake followed by basic message framing, layered over TCP.  The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers that does not rely on opening multiple HTTP connections (e.g., using XMLHttpRequest or &lt;iframe&gt;s and long polling).  [STANDARDS-TRACK]</t></abstract>
 </front>
-<seriesInfo name='RFC' value='5988'/>
-<seriesInfo name='DOI' value='10.17487/RFC5988'/>
+<seriesInfo name='RFC' value='6455'/>
+<seriesInfo name='DOI' value='10.17487/RFC6455'/>
+</reference>
+
+
+
+<reference  anchor='RFC0793' target='http://www.rfc-editor.org/info/rfc793'>
+<front>
+<title>Transmission Control Protocol</title>
+<author initials='J.' surname='Postel' fullname='J. Postel'><organization /></author>
+<date year='1981' month='September' />
+</front>
+<seriesInfo name='STD' value='7'/>
+<seriesInfo name='RFC' value='793'/>
+<seriesInfo name='DOI' value='10.17487/RFC0793'/>
+</reference>
+
+
+
+<reference  anchor='RFC7159' target='http://www.rfc-editor.org/info/rfc7159'>
+<front>
+<title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
+<author initials='T.' surname='Bray' fullname='T. Bray' role='editor'><organization /></author>
+<date year='2014' month='March' />
+<abstract><t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format.  It was derived from the ECMAScript Programming Language Standard.  JSON defines a small set of formatting rules for the portable representation of structured data.</t><t>This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='7159'/>
+<seriesInfo name='DOI' value='10.17487/RFC7159'/>
 </reference>
 
 
@@ -548,94 +783,156 @@ Section 8.3.1.</t>
     </references>
 
 
-<section anchor="getting-value-out-of-http" title="Getting Value out of HTTP">
-
-</section>
 
 
   </back>
 
 <!-- ##markdown-source:
-H4sIAPnJ7VgAA7VZ23LbOBJ9x1dglYckU5J8iyeJs7VZT+xMXBUnWV92ap9S
-IAlJWJMEByCtaF359z3dAG+yx7PXF1skwUZfTp/uBmezmahNnesj+bmU9UrL
-xmtpF/LD1dUXqbxU8rJJfO1UrUVm01IVWJo5tahnpa1rUy5XqpglaXX4Y2L8
-bHdXZFh6JPd3916KFD+X1m2OJBYIm3ib61r7I3mwv3sohKnckaxd4+v93d3X
-u/tCOa2O5M+61E7lYm3dzdLZpjqS4kZvcJkdybOy1q7U9eyEdBDC16rMvqrc
-lth0o72ozJGQ0m8KpxfYqbS4qm0af3nr6sEDGGbSml5IbVGp7mehy9rTb1Pm
-BpKFUE29sg63ZrhL9yHifC4/dT7g28E958rdbD+xbqlK8w9VG1se8R1dKJMf
-yQJu/DP9mcMqftA4cyRXdV35o52d9Xo9b5/uCCFms5lUHJAU1nOUjEfAal1S
-6LIQM9/GTC6skxZxdVJVVW5SVkBWzsInNvdzebXC+4hsQzZLX+nULIz2MtG+
-FhVtY1JckhyIATi6d58OsTKPukFV/fUT/ant1wutMu28EFcAlvG+gaDc+DpK
-o40pijJVJfbD3aaEAbX8Y2v90tSrJpkjIjvkhJ2z2clOrhKd+50Wcn+aB/GF
-hVynU7LiGftjKpuyahJsuNLZ87gV9hxuwK6NuxjL8lvBOyT5IghMV6pcQnkA
-lA3Qv68mocjUfme5mlUK744UZlcVJstyLcQTArWzWZNSbGJQ7+7+cPH+3cv9
-g93v3/8XEeYgl2G1ErfKGV1vKHhIOW+BZiF+kAtVmNzgGR4lG2mKKtcEC8Rw
-2kGDfqusMKVhBSxdZ/pW57bCM4l0JDWdfwOB6hYYVwmEhs2UHOyc5gayIVi7
-W9IeL0Lrb4N92RQWBCUZapBMl05H6Olv0AJpJgtNMTK+IITdaEn5CgmtO0i4
-LlO3qejyjYSMygHNZdqzXdAjWBB0g9tAisotdQ0Tq9xumBimtAQSEF7ZGldb
-MJmi9+Fj4/Ra5fB9gGbLWcwsTUnLVxxEsNaSXssMKwlF2rAFC+FYxdYlKr3h
-LXqCvtI5Ecbd3VvgZPfV4Qvg5AFkvGcs8ZrXh69pDay7PO/u7r/a3/v+fS4/
-2DVi6KYyVxvtaM9Sr0WHImkpROymhJ56Nt6uS3itJnVCdjOKLle2yQHTcgTI
-xpNQlpDpBUgVqmILeX3xUfp0hXi/ldcwje5VYGn/thdlaraauV65LEgpNBg5
-C+HCk7rx8G+mER2YHbcgYUA9y4KFTDTkw0J9M0VTAI15o4l69DdmVGTXwtli
-uxAOXzcUTIJ6G3n4KAFcgyKTLoAZuA+Qy/yE5KtbazKdvSVADPk2tUA5ignT
-rUwb5+huT7tOL2EweS6QbyRRc79WJxsxcDfS/u6O2AIRD77wcr0CZw3XkF/5
-Gg9r+wZv6JB3Hm9Bs1u9iYp1CgnCVGSCNGzcWdy+DNSfMdGSq0pYjSWmQN7n
-G4YkaQ12OTu9ei/1YkGxnsqkqUGIy1XN3gpKwq1kaSA3b+ommgbKfEL1lS9V
-Lt+RqiU/CwmHbkFSu+Dl5Pz68moyDf/lp8/8++L0L9dnF6cn9Pvyw/HHj92P
-dsXlh8/XH0/6X+G+wJvvPp+fn346CS+fH/9tMg1x//zl6uzzp+OPkxCbYYyp
-aCB3Ex2wA96pA4sDrKkzCS5MKQLh7+/tIUmpQqAq+ODgnzTFH7mRvZV3Tzio
-QpyYxUIzWEYRXYGCZNY9W1qVU+D1MP/mIKSxilO5RnapDUwZgohi+LV/72sQ
-pEpmb8Lfwua5XdNzoCWQWKiRaOo0cwFFA5lVekppzutQw56FHFVNHu4+p71e
-7VLqvnhxEF/sqSG8hCUTKrkTWsa//CQuLbT3qLKEr0KFKj/2L8BN9RSN5/fv
-zBCkP7QuNVddOA6pulI3+oF30ZWFtw9f7HJwfgl+kFu+6l0FUOR56yWnf21Q
-ETg32nvjzPGNAV0/M2WaN5TsgrIBjQRKGXoI6AD4xIYgGtBd7Y2u9gdX+wcH
-oysUiKnoVh7GUhBvsGXPOXbwFbyYath5PDYx5CfpBSyPgKHS1EaashFaRDqM
-iJDbqNI5VbV8Q6uayjKDhV6n5ZOWlVBUbEEkjei4uXyPaOlvipqC6bbXg0pr
-tHi0M7MsNpkFibSVqJTr3T6GSdAs9HaBZfwbQGNKvBgFKyQRBBNlqUFexaIX
-SxA8ddmkq3EmkisxaWgwOscPmPral9NEEaDZDcGD26xBbRsRPid0YZ0WC6d1
-RrXJ4hqqbHr8cDnqfU1bI+8td0I59ya5JQsAKDRSWMA5F1sOCkOCkWvBFb2p
-aeABPSWo+FPSmhvrMGiM+zJQbPmUsQChRO4qU1XNrB1aFWwZG+epIKxBGAWh
-L5EGTQW11VxzQ97QgqgNe9hwWsKgNeEHe8GSGg7/0rmy5rKGFVs+lS3lx26x
-S7ueVlB3+M6YobiDCMg8O/50TDWYWl1UyTcSbl5Rl4S/G94UHaRtHDDFQUat
-VDxw0ALjqEEiLgeZ/6x5HGQtzsmj8HRXu++eUHt1a/QazH7104mctYAnXUJI
-qLPjWyP8rzF5bJXoKd6tchVbBBJMXFS1WCSCd1alq6jYdd+XtT6Vp7GSQ7Gu
-I4idi498OW5cfqNhaRuU328YUNApLJchLGCeYSpxhEkUvx4rchvSWBGAr52+
-KgxjDOnBxthHhLsUrUzTtPpIo1qgHnCXRAnI6W9SqliREcj5optAtrPjmZ4v
-51P5i07QMts1jUTPQ7Ng/CAzF5iQOKc1OOWBctFS9uHrQ649ZwtSCCJQuYjN
-HEtRGeJcm+iTUV3iqXEa2CX6DmnEwyCetYxYqU1uVYZMJX6vR9WX25En8qrL
-ki+UJf9OkIalvj1KGJb3oCQak9a4hc5rwSIx5NBBkG+rjw6ZlgWvNzHXhiY/
-9ZTQFKswG7fkqPJ22GWGR/MmQmrT8Algo1LQ1EQ6Bh6lTnTN7Qwpwg6kuQ3d
-7K1Kw5jamR+MUnWH7qc+jMHReS3zwG1nZeQ6umQSsZX6FXMIJgR0sTxiywaN
-c9ek1M523USYUufyeEDW3N4M2gPRTkqeRhYKaOMbVwUTfKVS4AEox+zbVTrs
-soA1dWCUDtSYkUFvzCo8FsNU+BYt0Rjt/LCfkOdsZMg37sOn49o4xkrH08p7
-mxqKwRDAXqMRALn4oFrLJYLgU4GO/VaH0Nf+WBrk5OfTq3Z6prd2FtbCMqL0
-WzrUQeVwXeGdEPwSlXVnX3P5EcmKFmMse0Jt59pkdDZw/OUsHixxfYNScgcy
-J/LW2Bz2+FF42DtAncoedcv96sLZtKlwgbDf+DjBH75+9QrNHJ6HkY0L+vXF
-2aAythwA8K41ikEsxL1nu041RrtFPKRFUG4CjumsCl0dUokceWJ8SgVmI0Q8
-tM032CWenrTFaWni1Ez+hOf4tpJLVP9yK9J8EITZkDhQBwTyyM1bim6iYu26
-CmTK0M4xDhOqqyER0fgRXVNsO2ROkd41GUSqyq7hjg6trQigRZ+qb6n36zwy
-/1foTtE4xPXEJQZ5Am4mN6m4HPviTmUNtXcjzIa2ggivHGGMghKt7+fJgLQJ
-oXjndm8SmxEfT12CCgOTCRnkax7u7uulh2p13DwIS0jmFM0VT5JUCC0ph/6S
-Zvwi5gk0jBUvlidLdO+9SUKdi+BUkGFzzsNAsrakzlGs0BPR6fnzR5ni+G/9
-4REheXZT0hkUGROT4eWrw3gQVo4MQ2hjS9aWgyExn4dG/tEYP5yPHVMOz6Qg
-+pNebx1T0TyAP2/63jFW+iyeDrTFCDc4RfiA5EJTWyifea37UQ5j3vPYUret
-/pasH5aUjyb9geYIWFFoVQ6zui2jiR4lxODgBQ5TPLF1BYAi+vfGkwQb+jrq
-IcZI+WVl8C7KTG0dYQIyeZYbBTXiJETsx4PD/W4WpRsvXr7eo1k0HGVwtDPs
-Xc6iSSJ6dDDaYj1WrAm9ick817l5bFh7y6dEnkGpLeLl2YKiiUIxlV8+X9Lf
-a/w5Of14enWKi+Ordx9CCWSCEINY9THnY4GA/kTnVFyytgTRQWRYSE/bYE1l
-+KzkHxolyiX1ZYyEdnQR/QGyVo7NoLrb0yIBHA0I8k7l8TS4bWsYjPobYu15
-UAyUI5lyqKkBW1K3OW6Gn/rxcD7Mmctw5vqOzlz/68QZHuDOJcTFat/Fumzz
-abiyS6rgiC4HnqGEDMHx/F6GiT7DHGfYXF6awuTBqw9vFPH3UAI/tKF4LLfk
-b+aWfTy9HkXYQOX/EGZh7P3/wkzQh6Dfg9nlwPtP4wHyRi6aMm1P2/qaEr/e
-tM1MW8MGxwgxdCGJvF3UawYNeX2gxqybUzthfAyD0dkyxoYY7w+G24qNISyc
-gaJVGbRW1E1wyeoQP1Z1BH2utX3n8lA3O+hrhvEOX5Q6C4j2eCotuyECUeFv
-cPfOeFfKFYsmn8aGgE6KgBNyTuu3TuN2bogyPRDhuJj47oibYTTYb3sgpfyn
-4YZnFHpawOr3jSOcFPf9PBjHBy7vz/jud7L3sncqkSgYWdrhklsOZGxqq+hY
-AnR/Ykml4zcqxUAbLhptV/MQiIZ9aQxDO20nNtu0RxYsbMVfyiVmvzyLdMB2
-9VYMqfdDWP2eVz/KvYOOqWPQrb36Q3yOVHZrUj08MKcTZnEZj31ezQ/me3xy
-RB8o6HTsHTbFjBB6Kr/9fYtQWdrxmQaBnl6lYx8JwQ1/b74n56eT+J2cPn6O
-ztD+yl/tBgdo4p9ASRs6xyIAAA==
+H4sIANvP9VgAA7Vb2XbbSJJ9x1dg6AfbPRQly1bZluZMjcp2dWnG20jyqdNP
+dhJIktkGATYSkMz2qX+fuBGRiQSpUvVsL7aIJZeIyBs3FhwcHGSd6yp7mn+o
+825l897bvFnkv1xff8yNz01+1c9915rOZmVT1GZNj5atWXQHddN1rl6uzPpg
+XmxOfpg7f3B0lJX06Gl+fPTkeVbQn8um3Z7m9EDWzH1T2c760/zp8dFJlrlN
+e5p3be+746Ojl0fHmWmtOc3/bGvbmiq7bdqvy7bpN6fZV7ulX+VpflF3tq1t
+d/AaS8gy35m6/GyqpqY5t9ZnG3ea5bnfrlu7oInqhn51TaF/+abtkhu0L1d0
+eKFo1hsT/1zbuvP429WVo5GzzPTdqmnp0gFdxXUa4t0sfx9FwJdFOu9M+3X3
+TtMuTe3+bjrX1Kd8xa6Nq07zNUnx3/DPjHbFN/rWnearrtv408PD29vbWbh7
+mGXZwcFBblgfBe2eleQ86auzNTRXisp8UFm+aNq8IbW2udlsKlfwAvJN25BM
+msrP8usVvU+K7bHn3G9s4RbO+nxufZdtMI0r6CfGoWHINuK7D1NTmenaaKn2
+83v80zWfL60pbeuz7Jrsynnf00CV852OhomhxbwwNc1HV/uaNtDl/xJ2v3Td
+qp/PSCOHEMLhxcHrw8rMbeUPg8X960yGXzc0bmsL7OIRy2Oa9/Wmn9OEK1s+
+1qloznQCFq3O4hoePwx8iJEvZcBiZeolLZ7skzdg/3iZsCLX+cPl6mBj6N3R
+gllUa1eWlc2yBzDqtin7ArpRpX7//k+XP796fvz06Lff/i80zEqu5WmT3ZjW
+2W4L5dGJ8w1Zc5b9KV+Ytasc3aNb823u1pvKwixIh9NoGvjblGtXO15Ag9+l
+vbFVs6F7OR1HLLP1ZzSguSEbN3MaVCYzeTJzUTkamwa27Q1WTy/Sqr8l8/JW
+eCBaJJsajYyf/dz9rdcxf7XzfN42t2HO1qpZ2m+0QjqC+dpCf86vYX1fbY6z
+TKMHUWFiWxftdoOfGGLTkqHXxYCDskTZnCybJEpwadql7Wj3m6rZMmZM8QiN
+QJrPw767hjDO4H0Sv2vtralILWK1Ac4YdPoaj69YvwRoS7xWOl4jLSRoVDZI
+Mje8ubkpvvIUA3Rf2wpY8v37j2RCRy9OnpEJ3WE0P7OZ8TMvT17iGdrd1bt4
+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
+j9tVQgAA
 
 -->
 
