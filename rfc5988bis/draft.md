@@ -134,7 +134,7 @@ the application "Web browsing" looks for the "stylesheet" link relation type in 
 serialisation, whereas the application "AtomPub" uses the "edit" and "edit-media" link relations.
 
 
-# Link Relation Types
+## Link Relation Types
 
 In the simplest case, a link relation type identifies the semantics of a link. For example, a link
 with the relation type "copyright" indicates that the current link context has a copyright resource
@@ -156,7 +156,7 @@ meaning in HTML for historical reasons.
 There are two kinds of relation types: registered and extension.
 
 
-## Registered Relation Types {#registered}
+### Registered Relation Types {#registered}
 
 Well-defined relation types can be registered as tokens for convenience and/or to promote reuse by
 other applications, using the procedure in {{procedure}}.
@@ -179,7 +179,7 @@ relation types by other processors. Applications that do use such URIs internall
 in link serialisations that do not explicitly accommodate them.
 
 
-### Registering Link Relation Types {#procedure}
+#### Registering Link Relation Types {#procedure}
 
 The link relations registry is located at <https://www.iana.org/assignments/link-relations/>.
 Registration requests can be made by following the instructions located there, or by sending an
@@ -207,7 +207,7 @@ Expert(s) determine that an unregistered relation type is widely deployed and no
 registered in a timely manner.
 
 
-### Registration Request Processing {#processing}
+#### Registration Request Processing {#processing}
 
 Relation types are registered on the advice of a Designated Expert (appointed by the IESG or their
 delegate), with a Specification Required (using terminology from {{RFC5226}}).
@@ -227,7 +227,7 @@ When a request is approved, the Expert(s) will inform IANA, and the registration
 The IESG is the final arbiter of any objection.
 
 
-## Extension Relation Types
+### Extension Relation Types
 
 Applications that don't wish to register a relation type can use an extension relation type, which
 is a URI {{RFC3986}} that uniquely identifies the relation type. Although the URI can point to a
@@ -245,7 +245,7 @@ Note that while extension relation types are required to be URIs, a serialisatio
 specify that they are expressed in another form, as long as they can be converted to URIs.
 
 
-# Target Attributes {#attributes}
+## Target Attributes {#attributes}
 
 *Target attributes* are a list of key/value pairs that describe the link or its target; for example,
 a media type hint.
