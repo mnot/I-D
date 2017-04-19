@@ -248,7 +248,7 @@ specify that they are expressed in another form, as long as they can be converte
 # Target Attributes {#attributes}
 
 *Target attributes* are a list of key/value pairs that describe the link or its target; for example,
-a media type hint. 
+a media type hint.
 
 They can be defined both by individual link relation types and by link serialisations.
 
@@ -275,7 +275,7 @@ This specification does define target attributes for use in the Link HTTP header
 
 The Link header field provides a means for serialising one or more links into HTTP headers.
 
-The ABNF for the field value is given below:
+The ABNF for the field value is:
 
 ~~~ abnf2616
   Link       = #link-value
@@ -322,7 +322,7 @@ cases, the entire link is to be ignored; consuming implementations MUST NOT proc
 without applying the anchor.
 
 Note that depending on HTTP status code and response headers, the link context might be "anonymous"
-(i.e., no link context is available). For instance, this is the case on a 404 response to a GET
+(i.e., no link context is available). For example, this is the case on a 404 response to a GET
 request.
 
 ## Relation Type {#header-type}
@@ -528,7 +528,7 @@ caution should be exercised when using it. Use of Transport Layer Security (TLS)
 
 Link applications ought to consider the attack vectors opened by automatically following, trusting,
 or otherwise using links gathered from HTTP headers. In particular, Link header fields that use the
-"anchor" parameter to associate a link's context with another resource should be treated with due
+"anchor" parameter to associate a link's context with another resource are to be treated with due
 caution.
 
 The Link header field makes extensive use of IRIs and URIs. See {{RFC3987}} for security
