@@ -39,8 +39,6 @@ normative:
   I-D.ietf-httpbis-rfc5987bis:
 
 informative:
-  RFC2068:
-  RFC2616:
   RFC2817:
   RFC2818:
   RFC4287:
@@ -50,7 +48,7 @@ informative:
 
 --- abstract
 
-This specification defines a way to indicate the relationships between resources on the Web
+This specification defines a model for the relationships between resources on the Web
 ("links") and the type of those relationships ("link relation types").
 
 It also defines the serialisation of such links in HTTP headers with the Link header field.
@@ -72,18 +70,17 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/rfc59
 
 # Introduction
 
-This specification defines a way to indicate the relationships between resources on the Web
+This specification defines a model for indicate the relationships between resources on the Web
 ("links") and the type of those relationships ("link relation types").
 
 HTML {{W3C.REC-html5-20141028}} and Atom {{RFC4287}} both have well-defined concepts of linking;
-this specification generalises this into a framework that encompasses linking in these formats and
+{{links}} generalises this into a framework that encompasses linking in these formats and
 (potentially) elsewhere.
 
-Furthermore, this specification formalises an HTTP header field for conveying such links, having
-been originally defined in Section 19.6.2.4 of {{RFC2068}}, but removed from {{RFC2616}}.
+Furthermore, {{header}} defines an HTTP header field for conveying such links.
 
 
-# Notational Conventions
+## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14,
@@ -95,10 +92,10 @@ BWS (bad whitespace), OWS (optional whitespace), RWS (required whitespace) LOALP
 
 Additionally, the following rules are included from {{RFC3986}}: URI and URI-Reference; from
 {{RFC6838}}: type-name and subtype-name; from {{W3C.CR-css3-mediaqueries-20090915}}:
-media_query_list; and from {{RFC5646}}: Language-Tag..
+media_query_list; and from {{RFC5646}}: Language-Tag.
 
 
-# Links
+# Links {#links}
 
 In this specification, a link is a typed connection between two resources, and is comprised of:
 
