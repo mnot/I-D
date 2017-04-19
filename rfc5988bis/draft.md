@@ -43,7 +43,6 @@ informative:
   RFC2818:
   RFC4287:
   W3C.REC-html5-20141028:
-  W3C.REC-html-rdfa-20150317:
 
 
 --- abstract
