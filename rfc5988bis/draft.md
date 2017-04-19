@@ -104,14 +104,14 @@ In this specification, a link is a typed connection between two resources, and i
 * a *link target*, and
 * optionally, *target attributes* ({{attributes}}).
 
-A link can be viewed as a statement of the form "{link context} has a {link relation type} resource
-at {link target}, which has {target attributes}".
+A link can be viewed as a statement of the form "*link context* has a *link relation type* resource
+at *link target*, which has *target attributes*".
 
 Link contexts and link targets are both IRIs {{RFC3987}}. However, in the common case, the link
 context will also be a URI {{RFC3986}}, because many protocols (such as HTTP) do not support
 dereferencing IRIs. Likewise, the link target will be sometimes be converted to a URI (see
-{{RFC3987}}, Section 3.1) in places that do not support IRIs (such as the Link header field defined
-in {{header}}).
+{{RFC3987}}, Section 3.1) in serialisations that do not support IRIs (such as the Link header field
+defined in {{header}}).
 
 This specification does not place restrictions on the cardinality of links; there can be multiple
 links to and from a particular target, and multiple links of the same or different types between a
@@ -130,7 +130,7 @@ does it mandate a specific context for any given link; it is expected that seria
 will specify both aspects.
 
 Finally, links are consumed by *link applications*. Generally, an application will define the link
-relation types it uses, along with the serialisations that they might occur within. For example,
+relation type(s) it uses, along with the serialisation(s) that they might occur within. For example,
 the application "Web browsing" looks for the "stylesheet" link relation type in the HTML link
 serialisation, whereas the application "AtomPub" uses the "edit" and "edit-media" link relations.
 
@@ -171,7 +171,7 @@ specific use.
 Registered relation types MUST NOT constrain the media type of the link context, and MUST NOT
 constrain the available representation media types of the link target. However, they can specify
 the behaviours and properties of the target resource (e.g., allowable HTTP methods, request and
-response media types that must be supported).
+response media types that are required be supported).
 
 Historically, registered relation types have been identified with a URI {{RFC3986}} by prefixing
 their names with an application-defined base URI (e.g., see {{atom}}). This practice is NOT
