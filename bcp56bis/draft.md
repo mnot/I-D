@@ -9,16 +9,12 @@ ipr: trust200902
 area: General
 workgroup:
 keyword: Internet-Draft
+keyword: HTTP
+keyword: Web
+keyword: substrate
 
 stand_alone: yes
-pi:
-  symrefs: no
-  toc: no
-  sortrefs: no
-  strict:
-  compact:
-  comments:
-  inline:
+pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
 author:
  -
