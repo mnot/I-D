@@ -10,7 +10,6 @@ layout: front
 * [json-home](json-home) - Home Documents for HTTP APIs 
 * [linked-cache-inv](linked-cache-inv)  
 * [registry-custodian](registry-custodian) - Managing IANA Registries with Custodians 
-* [rfc3864bis](rfc3864bis)  
 * [rfc5988bis](rfc5988bis) - Web Linking 
 * [safe-hint](safe-hint) - The safe HTTP Preference 
 * [site-wide-headers](site-wide-headers) - Site-Wide HTTP Headers 
