@@ -82,8 +82,8 @@ Furthermore, {{header}} defines an HTTP header field for conveying such links.
 ## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
-"RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14,
-{{RFC2119}}, as scoped to those conformance targets.
+"RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
+described in BCP 14, {{RFC2119}}, as scoped to those conformance targets.
 
 This document uses the Augmented Backus-Naur Form (ABNF) notation of {{RFC7230}}, including the
  #rule, and explicitly includes the following rules from it: quoted-string, token, SP (space),
