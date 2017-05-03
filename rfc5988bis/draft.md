@@ -95,7 +95,7 @@ media_query_list; and from {{RFC5646}}: Language-Tag.
 
 ## Conformance and Error Handling
 
-The requirements regarding conformance and error handling highlighted in {{RFC7320}}, Section 2.5
+The requirements regarding conformance and error handling highlighted in {{RFC7230}}, Section 2.5
 apply to this document.
 
 
