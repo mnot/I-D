@@ -93,6 +93,11 @@ Additionally, the following rules are included from {{RFC3986}}: URI and URI-Ref
 {{RFC6838}}: type-name and subtype-name; from {{W3C.CR-css3-mediaqueries-20090915}}:
 media_query_list; and from {{RFC5646}}: Language-Tag.
 
+## Conformance and Error Handling
+
+The requirements regarding conformance and error handling highlighted in {{RFC7320}}, Section 2.5
+apply to this document.
+
 
 # Links {#links}
 
