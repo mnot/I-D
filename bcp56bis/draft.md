@@ -31,7 +31,7 @@ HTTP is often used as a substrate for other application protocols. This document
 practices for these protocols' use of HTTP.
 
 
---- note_Note_to_Readers
+--- note_Note_to_Readers_
 
 The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/bcp56bis>.
 
@@ -45,7 +45,7 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/bcp56
 # Introduction
 
 HTTP {{!RFC7230}} is often used as a substrate for other application protocols. This is done for a
-variety of reasons:
+variety of reasons, including:
 
 * familiarity by implementers, specifiers, administrators, developers and users,
 * availability of a variety of client, server and proxy implementations,
@@ -62,12 +62,13 @@ protocols over HTTP brings its own set of issues:
 * Should an application using HTTP define a new URL scheme? Use new ports?
 * Should it use standard HTTP methods and status codes, or define new ones?
 * How can the maximum value be extracted from the use of HTTP?
+* How does it coexist with other uses of HTTP -- especially Web browsing?
 * How can interoperability problems and "protocol dead ends" be avoided?
 
-This document contains best current practices regarding these issues in the use of HTTP by
-applications other than Web browsing. {{used}} defines what applications it applies to;
-{{overview}} surveys the properties of HTTP that are important to preserve, and {{bp}} conveys best
-practices for those applications that do use HTTP.
+This document contains best current practices regarding the use of HTTP by applications other than
+Web browsing. {{used}} defines what applications it applies to; {{overview}} surveys the properties
+of HTTP that are important to preserve, and {{bp}} conveys best practices for those applications
+that do use HTTP.
 
 It is written primarily to guide IETF efforts, but might be applicable in other situations.
 
