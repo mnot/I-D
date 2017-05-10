@@ -47,11 +47,11 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/bcp56
 HTTP {{!RFC7230}} is often used as a substrate for other application protocols. This is done for a
 variety of reasons:
 
-* familiarity by implementers, specifiers, administrators, developers and users;
-* availability of a variety of client, server and proxy implementations;
-* ease of use;
-* ubiquity of Web browsers;
-* reuse of existing mechanisms like authentication and encryption;
+* familiarity by implementers, specifiers, administrators, developers and users,
+* availability of a variety of client, server and proxy implementations,
+* ease of use,
+* ubiquity of Web browsers,
+* reuse of existing mechanisms like authentication and encryption,
 * presence of HTTP servers and clients in target deployments, and
 * its ability to traverse firewalls.
 
