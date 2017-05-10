@@ -70,7 +70,8 @@ Web browsing. {{used}} defines what applications it applies to; {{overview}} sur
 of HTTP that are important to preserve, and {{bp}} conveys best practices for those applications
 that do use HTTP.
 
-It is written primarily to guide IETF efforts, but might be applicable in other situations.
+It is written primarily to guide IETF efforts, but might be applicable in other situations. Note
+that the requirements herein do not necessarily apply to the development of generic HTTP extensions.
 
 ## Notational Conventions
 
@@ -111,6 +112,7 @@ protocol IDs or IANA registries; rather, they are encouraged to establish their 
 There are many ways that HTTP applications are defined and deployed, and sometimes they are brought
 to the IETF for standardisation. In that process, what might be workable for deployment in a
 limited fashion isn't appropriate for standardisation and the corresponding broader deployment.
+
 This section examines the facets of the protocol that are important to preserve in these situations.
 
 
@@ -141,9 +143,10 @@ by HTTP are potentially applicable to every resource, not specific to a particul
 Application-specific semantics are expressed in the payload; mostly, in the body, but also in
 header fields.
 
-This allows a HTTP message to be examined by generic HTTP software, and its handling to be
-correctly determined. It also allows people to leverage their knowledge of HTTP semantics without
-special-casing them for a particular application.
+This allows a HTTP message to be examined by generic HTTP software (e.g., HTTP servers,
+intermediaries, client implementatiions), and its handling to be correctly determined. It also
+allows people to leverage their knowledge of HTTP semantics without special-casing them for a
+particular application.
 
 Therefore, applications that use HTTP MUST NOT re-define, refine or overlay the semantics of
 defined protocol elements. Instead, they SHOULD focus their specifications on protocol elements
@@ -162,13 +165,17 @@ As explained in {{!RFC7320}}, such "squatting" on a part of the URL space by a s
 server's authority over its own resources, can cause deployment issues, and is therefore bad
 practice in standards.
 
-Instead of statically defining URL paths, applications are encouraged to define links in payloads,
-to allow flexibility in deployment. For example, navigating with a link allows a request to be
-routed to a different server without the overhead of a redirection, thereby supporting deployment
-across machines well.
+Instead of statically defining URL paths, it is RECOMMENDED that applications using HTTP define
+links in payloads, to allow flexibility in deployment. 
+
+Using runtime links in this fashion has a number of other benefits. For example, navigating with a
+link allows a request to be routed to a different server without the overhead of a redirection,
+thereby supporting deployment across machines well. It becomes possible to "mix" different
+applications on the same server, and offers a natural path for extensibility, versioning and
+capability management.
 
 
-## HTTP Capabilities
+## Getting Value from HTTP
 
 The simplest possible use of HTTP is to POST data to a single URL, thereby effectively tunnelling
 through the protocol.
@@ -203,9 +210,12 @@ for specific HTTP protocol elements.
 
 ## Specifying the Use of HTTP
 
-When specifying the use of HTTP, an application SHOULD use {{!RFC7230}} as the primary reference,
-MAY specify a minimum version to be supported (HTTP/1.1 is suggested), and SHOULD NOT specify a
-maximum version.
+When specifying the use of HTTP, an application SHOULD use {{!RFC7230}} as the primary reference;
+it is not necessary to reference all of the specifications in the HTTP suite unless there are
+specific reasons to do so (e.g., a particular feature is called out).
+
+Applications using HTTP MAY specify a minimum version to be supported (HTTP/1.1 is suggested), and
+MUST NOT specify a maximum version.
 
 Likewise, applications need not specify what HTTP mechanisms -- such as redirection, caching,
 authentication, proxy authentication, and so on -- are to be supported. Full featured support for
@@ -236,7 +246,7 @@ link relations, that implement specified behaviours, including:
 * Data processing using POST and identified request and response body format(s); and
 * Resource deletion using DELETE.
 
-For example, an application could specify:
+For example, an application might specify:
 
     Resources linked to with the "example-widget" link relation type are
     Widgets. The state of a Widget can be fetched in the
@@ -252,25 +262,6 @@ For example, an application could specify:
     value with the "example-other-info" link relation type.
 
 
-## URL Schemes
-
-Applications that use HTTP MUST use the "http" and/or "https" URL schemes.
-
-Using other schemes to denote an application using HTTP makes it more difficult to use with
-existing implementations (e.g., Web browsers), and is likely to fail to meet the requirements of
-{{!RFC7595}}.
-
-If it is necessary to advertise the application in use, this SHOULD be done in message payloads,
-not the URL scheme.
-
-
-## Transport Ports
-
-Applications that use HTTP SHOULD use the default port for the URL scheme in use. If it is felt
-that networks might need to distinguish the application's traffic for operational reasons, it MAY
-register a separate port, but be aware that this has privacy implications for that protocol's users.
-
-
 ## HTTP URLs
 
 In HTTP, URLs are opaque identifiers under the control of the server. As outlined in {{!RFC7320}},
@@ -282,7 +273,8 @@ URL paths. For example, specifying that a "GET to the URL /foo retrieves a bar d
 practice. Likewise, specifying "The widget API is at the path /bar" violates {{!RFC7320}}.
 
 Instead, applications that use HTTP are encouraged to use typed links {{?RFC5988}} to convey the
-URIs that are in use, as well as the semantics of the resources that they identify.
+URIs that are in use, as well as the semantics of the resources that they identify. See
+{{resource}} for details.
 
 
 ### Initial URL Discovery
@@ -291,18 +283,54 @@ Generally, a client with begin interacting with a given application server by re
 document that contains information about that particular deployment, potentially including links to
 other relevant resources.
 
-Applications that use HTTP SHOULD allow an arbitrary URL as that entry point. For example, rather
-than specifying "the initial document is at "/foo/v1", they should allow a deployment to give an
-arbitrary URL as the entry point for the application.
+Applications that use HTTP SHOULD allow an arbitrary URL to be used as that entry point. For
+example, rather than specifying "the initial document is at "/foo/v1", they should allow a
+deployment to use any URL as the entry point for the application.
 
 In cases where doing so is impractical (e.g., it is not possible to convey a whole URL, but only a
-hostname) applications that use HTTP MAY define a well-known URL {{?RFC5785}} as an entry point to
-their operation.
+hostname) applications that use HTTP MAY define a well-known URL {{?RFC5785}} as an entry point.
+
+### URL Schemes {#scheme}
+
+Applications that use HTTP MUST allow use of the "https" URL scheme, and SHOULD NOT allow use of
+the "http" URL scheme, unless interoperability considerations with existing deployments require it.
+They MUST NOT use other URL schemes.
+
+"https" is preferred to mitigate pervasive monitoring attacks {{?RFC7258}}.
+
+Using other schemes to denote an application using HTTP makes it more difficult to use with
+existing implementations (e.g., Web browsers), and is likely to fail to meet the requirements of
+{{!RFC7595}}.
+
+If it is necessary to advertise the application in use, this SHOULD be done in message payloads,
+not the URL scheme.
+
+### Transport Ports
+
+Applications that use HTTP SHOULD use the default port for the URL scheme in use. If it is felt
+that networks might need to distinguish the application's traffic for operational reasons, it MAY
+register a separate port, but be aware that this has privacy implications for that protocol's
+users. The impact of doing so MUST be documented in Security Considerations.
+
+
+## Authentication and Application State {#state}
+
+Applications that use HTTP MAY use stateful cookies {{?RFC6265}} to identify a client and/or store
+client-specific data to contextualise requests. 
+
+If it is only necessary to identify clients, applications that use HTTP MAY use HTTP authentication
+{{?RFC7235}}; if the Basic authentication scheme {{?RFC7617}} is used, it MUST NOT be used with the
+'http' URL scheme.
+
+In either case, it is important to carefully specify the scoping and use of these mechanisms; if
+they expose sensitive data or capabilities (e.g., by acting as an ambiant authority), exploits are
+possible. Mitigations include using a request-specific token to assure the intent of the client.
 
 
 ## HTTP Methods
 
-Applications that use HTTP are encouraged to use existing HTTP methods.
+Applications that use HTTP MUST confine themselves to using registered HTTP methods such as GET,
+POST, PUT, DELETE, and PATCH.
 
 New HTTP methods are rare; they are required to be registered with IETF Review (see {{!RFC7232}}),
 and are also required to be *generic*. That means that they need to be potentially applicable to
@@ -311,9 +339,6 @@ all resources, not just those of one application.
 While historically some applications (e.g., {{?RFC6352}} and {{?RFC4791}}) have defined non-generic
 methods, {{!RFC7231}} now forbids this.
 
-This means that, typically, applications will use GET, POST, PUT, DELETE, PATCH, and other
-registered methods.
-
 When it is believed that a new method is required, authors are encouraged to engage with the HTTP
 community early, and document their proposal as a separate HTTP extension, rather than as part of
 an application's specification.
@@ -321,7 +346,7 @@ an application's specification.
 
 ## HTTP Status Codes
 
-Applications that use HTTP are encouraged to use existing HTTP status codes.
+Applications that use HTTP MUST only use registered HTTP status codes.
 
 As with methods, new HTTP status codes are rare, and required (by {{!RFC7231}}) to be registered
 with IETF review. Similarly, HTTP status codes are generic; they are required (by {{!RFC7231}}) to
@@ -332,14 +357,14 @@ HTTP community early, and document their proposal as a separate HTTP extension, 
 of an application's specification.
 
 Status codes' primary function is to convey HTTP semantics for the benefit of generic HTTP
-software, not application-specific semantics. Therefore, applications SHOULD NOT specify additional
+software, not application-specific semantics. Therefore, applications MUST NOT specify additional
 semantics or refine existing semantics for status codes.
 
 In particular, specifying that a particular status code has a specific meaning in the context of an
 application is harmful, as these are not generic semantics, since the consumer needs to be in the
 context of the application to understand them.
 
-Furthermore, applications using HTTP SHOULD NOT re-specify the semantics of HTTP status codes, even
+Furthermore, applications using HTTP MUST NOT re-specify the semantics of HTTP status codes, even
 if it is only by copying their definition. They MUST NOT require specific status phrases to be
 used; the status phrase has no function in HTTP, and is not guaranteed to be preserved by
 implementations.
@@ -360,10 +385,29 @@ handled as `400` by clients that don't recognise it).
 
 ## HTTP Header Fields {#headers}
 
-Applications that use HTTP MAY define new HTTP header fields, following the advice in {{RFC7321}},
+Applications that use HTTP MAY define new HTTP header fields, following the advice in {{!RFC7321}},
 Section 8.3.1.
 
+Typically, using HTTP header fields is appropriate in a few different situations:
 
+* Their content is useful to intermediaries (who often wish to avoid parsing the body), and/or
+* Their content is useful to generic HTTP software (e.g., clients, servers), and/or
+* It is not possible to include their content in the message body (usually because a format does not allow it).
+
+If none of these motivations apply, using a header field is NOT RECOMMENDED.
+
+New header fields MUST be registered, as per {{!RFC7231}} and {{!RFC3864}}. 
+
+It is RECOMMENDED that header field names be short (even when HTTP/2 header compression is in
+effect, there is an overhead) but appropriately specific. In particular, if a header field is
+specific to an application, an identifier for that application SHOULD form a prefix to the header
+field name, separated by a "-".
+
+The semantics of existing HTTP header fields MUST NOT be re-defined without updating their
+registration or defining an extension to them (if allowed). For example, an application using HTTP
+cannot specify that the `Location` header has a special meaning in a certain context.
+
+See {{state}} for requirements regarding header fields that carry application state (e.g,. Cookie).
 
 
 # IANA Considerations
@@ -372,8 +416,11 @@ This document has no requirements for IANA.
 
 # Security Considerations
 
-TBD
+{{state}} discusses the impact of using stateful mechanisms in the protocol as ambiant authority,
+and suggests a mitigation.
 
+{{scheme}} requires support for 'https' URLs, and discourages the use of 'http' URLs, to mitigate
+pervasive monitoring attacks.
 
 --- back
 
