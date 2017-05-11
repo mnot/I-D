@@ -1,6 +1,6 @@
 ---
 title: On the use of HTTP as a Substrate
-docname: draft-nottingham-bcp56bis-00
+docname: draft-nottingham-bcp56bis-01
 date: 2017
 category: bcp
 obsoletes: 3205
