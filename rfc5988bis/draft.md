@@ -35,7 +35,7 @@ normative:
   RFC5646:
   RFC7230:
   RFC7231:
-  W3C.CR-css3-mediaqueries-20090915:
+  W3C.CR-css3-mediaqueries-20120619:
   I-D.ietf-httpbis-rfc5987bis:
   I-D.leiba-rfc2119-update:
 
@@ -93,7 +93,7 @@ This document uses the Augmented Backus-Naur Form (ABNF) notation of {{RFC7230}}
 BWS (bad whitespace), OWS (optional whitespace), RWS (required whitespace) LOALPHA, DIGIT.
 
 Additionally, the following rules are included from {{RFC3986}}: URI and URI-Reference; from
-{{RFC6838}}: type-name and subtype-name; from {{W3C.CR-css3-mediaqueries-20090915}}:
+{{RFC6838}}: type-name and subtype-name; from {{W3C.CR-css3-mediaqueries-20120619}}:
 media-query-list; and from {{RFC5646}}: Language-Tag.
 
 ## Conformance and Error Handling
