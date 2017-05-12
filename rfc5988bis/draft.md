@@ -40,6 +40,7 @@ normative:
   I-D.leiba-rfc2119-update:
 
 informative:
+  RFC2046:
   RFC2817:
   RFC2818:
   RFC4287:
@@ -151,7 +152,7 @@ Link relation types can also be used to indicate that the target resource has pa
 attributes, or exhibits particular behaviours; for example, a "service" link implies that the
 link target can be used as part of a defined protocol (in this case, a service description).
 
-Relation types are not to be confused with media types {{RFC6838}}; they do not identify the format
+Relation types are not to be confused with media types {{RFC2046}}; they do not identify the format
 of the representation that results when the link is dereferenced. Rather, they only describe how
 the current context is related to another resource.
 
