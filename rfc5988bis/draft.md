@@ -496,7 +496,7 @@ refer to this document.
         IETF  (iesg@ietf.org)
         Internet Engineering Task Force
     Specification document(s):
-        [RFC&rfc.number;]
+        [this document]
 
 
 ## Link Relation Type Registry
