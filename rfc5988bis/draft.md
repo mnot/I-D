@@ -355,7 +355,7 @@ where:
 ~~~ abnf2616
   relation-type  = reg-rel-type | ext-rel-type
   reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
-  ext-rel-type   = URI
+  ext-rel-type   = URI ; Section 3 of {{RFC3986}}
 ~~~~
 
 Note that extension relation types are REQUIRED to be absolute URIs in Link headers, and MUST be
