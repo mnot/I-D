@@ -419,7 +419,7 @@ MUST be ignored by parsers.
 The ABNF for the `type` parameter's value is:
 
 ~~~ abnf2616
-  type-name "/" subtype-name
+  type-name "/" subtype-name ; see {{RFC6838}}, Section 4.2
 ~~~
 
 
