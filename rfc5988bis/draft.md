@@ -93,7 +93,7 @@ BWS (bad whitespace), OWS (optional whitespace), RWS (required whitespace) LOALP
 
 Additionally, the following rules are included from {{RFC3986}}: URI and URI-Reference; from
 {{RFC6838}}: type-name and subtype-name; from {{W3C.CR-css3-mediaqueries-20090915}}:
-media_query_list; and from {{RFC5646}}: Language-Tag.
+media-query-list; and from {{RFC5646}}: Language-Tag.
 
 ## Conformance and Error Handling
 
@@ -392,7 +392,7 @@ a link-value; occurrences after the first MUST be ignored by parsers.
 The ABNF for the `media` parameter's value is:
 
 ~~~ abnf2616
-  media_query_list
+  media-query-list
 ~~~
 
 The "title" attribute, when present, is used to label the destination of a link such that it can be
