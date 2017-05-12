@@ -321,7 +321,7 @@ that any base URI from the body's content is not applied.
 The ABNF for the `anchor` parameter's value is:
 
 ~~~ abnf2616
-  URI-Reference
+  URI-Reference ; Section 4.1 of {{RFC3986}}
 ~~~
 
 Consuming implementations can choose to ignore links with an anchor parameter. For example, the
