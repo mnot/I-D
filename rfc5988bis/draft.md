@@ -477,6 +477,16 @@ example:
 Here, the link to "http://example.org/" has the registered relation type "start" and the extension
 relation type "http://example.net/relation/other".
 
+Finally, this header field:
+
+    Link: <https://example.org/>; rel="start",
+          <https://example.org/index>; rel="index"
+
+is equivalent to these:
+
+    Link: <https://example.org/>; rel="start"
+    Link: <https://example.org/index>; rel="index"
+
 
 # IANA Considerations
 
