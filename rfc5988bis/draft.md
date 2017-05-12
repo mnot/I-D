@@ -202,7 +202,7 @@ Registration requests consist of at least the following information:
 
 * **Reference**: Reference to the document that specifies the link relation type,
   preferably including a URI that can be used to retrieve a copy of the document. An indication of
-  the relevant section(s) MAY also be included, but is not required.
+  the relevant section(s) can also be included, but is not required.
 
 The Expert(s) MAY define additional fields to be collected in the registry.
 
