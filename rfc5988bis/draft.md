@@ -261,8 +261,8 @@ a media type hint.
 They can be defined both by individual link relation types and by link serialisations.
 
 This specification does not attempt to coordinate the name of target attributes, their cardinality
-or use. Serialisations SHOULD coordinate their target attributes to avoid conflicts in semantics or
-syntax, and MAY define their own registries of target attributes.
+or use. Those creating and maintaining serialisations SHOULD coordinate their target attributes to
+avoid conflicts in semantics or syntax, and MAY define their own registries of target attributes.
 
 The names of target attributes SHOULD conform to the token rule, but SHOULD NOT include any of the
 characters "%", "'" or "*", for portability across serializations, and MUST be compared in a
