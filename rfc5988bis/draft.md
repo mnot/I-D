@@ -576,7 +576,7 @@ of the link is the URI associated with the entire HTML document. HTML also defin
 attributes on links that can be seen as target attributes, including "media", "hreflang", "type"
 and "sizes".
 
-HTML5 ({{W3C.REC-html5-20141028}}) Section 4.8 defines modern HTML links. That document links to
+Section 4.8 of HTML5 ({{W3C.REC-html5-20141028}}) defines modern HTML links. That document links to
 the Microformats Wiki as a registry; over time, the IANA registry ought to mirror its contents, and
 ideally eventually replace it (although that depends on the HTML community).
 
