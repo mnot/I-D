@@ -359,8 +359,8 @@ where:
 ~~~~
 
 Note that extension relation types are REQUIRED to be absolute URIs in Link header fields, and MUST
-be quoted if they contain a semicolon (";") or comma (",") (as these characters are used as
-delimiters in the header field itself).
+be quoted when they contain characters not allowed in tokens, such as semicolon (";") or comma
+(",") (as these characters are used as delimiters in the header field itself).
 
 ## Target Attributes {#header-attrs}
 
