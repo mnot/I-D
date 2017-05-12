@@ -218,7 +218,7 @@ registered in a timely manner otherwise.
 #### Registration Request Processing {#processing}
 
 Relation types are registered on the advice of a Designated Expert (appointed by the IESG or their
-delegate), with a Specification Required (using terminology from {{RFC5226}}).
+delegate), with a Specification Required (using terminology from Section 4.1 of {{RFC5226}}).
 
 The goal of the registry is to reflect common use of links on the Internet. Therefore, the
 Expert(s) SHOULD be strongly biased towards approving registrations, unless they are abusive,
