@@ -537,13 +537,13 @@ caution should be exercised when using it. Use of Transport Layer Security (TLS)
 ({{RFC2818}} and {{RFC2817}}) is currently the only end-to-end way to provide such protection.
 
 Link applications ought to consider the attack vectors opened by automatically following, trusting,
-or otherwise using links gathered from HTTP headers. In particular, Link header fields that use the
-"anchor" parameter to associate a link's context with another resource are to be treated with due
-caution.
+or otherwise using links gathered from HTTP header fields. In particular, Link header fields that
+use the "anchor" parameter to associate a link's context with another resource are to be treated
+with due caution.
 
 The Link header field makes extensive use of IRIs and URIs. See {{RFC3987}} for security
 considerations relating to IRIs. See {{RFC3986}} for security considerations relating to URIs. See
-{{RFC7230}} for security considerations relating to HTTP headers.
+{{RFC7230}} for security considerations relating to HTTP header fields.
 
 # Internationalisation Considerations
 
