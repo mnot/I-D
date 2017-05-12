@@ -304,8 +304,8 @@ This specification defines the link-params "rel", "anchor", "rev", "hreflang", "
 
 Each link-value conveys one target IRI as a URI-Reference (after conversion to one, if necessary;
 see {{RFC3987}}, Section 3.1) inside angle brackets ("&lt;&gt;"). If the URI-Reference is relative,
-parsers MUST resolve it as per {{RFC3986}}, Section 5. Note that any base IRI from the message's
-content is not applied.
+parsers MUST resolve it as per {{RFC3986}}, Section 5. Note that any base IRI appearing in the
+message's content is not applied.
 
 ## Link Context {#header-context}
 
