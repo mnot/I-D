@@ -353,8 +353,8 @@ The ABNF for the `rel` and `rev` parameters' values is:
 where:
 
 ~~~ abnf2616
-  relation-type  = reg-rel-type | ext-rel-type
-  reg-rel-type   = LOALPHA *( LOALPHA | DIGIT | "." | "-" )
+  relation-type  = reg-rel-type / ext-rel-type
+  reg-rel-type   = LOALPHA *( LOALPHA / DIGIT / "." / "-" )
   ext-rel-type   = URI ; Section 3 of {{RFC3986}}
 ~~~~
 
