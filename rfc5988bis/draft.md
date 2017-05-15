@@ -137,9 +137,10 @@ does it mandate a specific context for any given link; it is expected that seria
 will specify both aspects.
 
 Finally, links are consumed by *link applications*. Generally, an application will define the link
-relation type(s) it uses, along with the serialisation(s) that they might occur within. For example,
-the application "Web browsing" looks for the "stylesheet" link relation type in the HTML link
-serialisation, whereas the application "AtomPub" uses the "edit" and "edit-media" link relations.
+relation type(s) it uses, along with the serialisation(s) that they might occur within. For
+example, the application "Web browsing" looks for the "stylesheet" link relation type in the HTML
+link serialisation (and optionally in the Link header field), whereas the application "AtomPub"
+uses the "edit" and "edit-media" link relations in the Atom serialisation.
 
 
 ## Link Relation Types
