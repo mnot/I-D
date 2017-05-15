@@ -424,4 +424,12 @@ pervasive monitoring attacks.
 
 --- back
 
+# Changes from RFC3205
+
+RFC3205 captured the Best Current Practice in the early 2000's, based on the concerns facing
+protocol designers at the time. Use of HTTP has changed considerably since then, and as a result
+this document is substantially different. As a result, the changes are too numerous to list
+individually.
+
+
 
