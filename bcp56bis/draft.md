@@ -88,11 +88,11 @@ application is _using HTTP_ when any of the following conditions are true:
 * The transport port in use is 80 or 443,
 * The URL scheme "http" or "https" is used,
 * The ALPN protocol ID {{!RFC7301}} "http/1.1", "h2" or "h2c" is used, or
-* The message formats described in {{RFC7320}} and/or {{RFC7540}} are used in conjunction with the IANA registries defined for HTTP.
+* The message formats described in {{RFC7230}} and/or {{RFC7540}} are used in conjunction with the IANA registries defined for HTTP.
 
 When an application is using HTTP, all of the requirements of the HTTP protocol suite (including
-but not limited to {{!RFC7320}}, {{!RFC7321}}, {{!RFC7322}}, {{!RFC7233}}, {{!RFC7234}},
-{{!RFC7325}} and {{!RFC7540}}) are in force.
+but not limited to {{!RFC7230}}, {{!RFC7231}}, {{!RFC7232}}, {{!RFC7233}}, {{!RFC7234}},
+{{!RFC7235}} and {{!RFC7540}}) are in force.
 
 An application might not be _using HTTP_ according to this definition, but still relying upon the
 HTTP specifications in some manner. For example, an application might wish to avoid re-specifying
@@ -385,7 +385,7 @@ handled as `400` by clients that don't recognise it).
 
 ## HTTP Header Fields {#headers}
 
-Applications that use HTTP MAY define new HTTP header fields, following the advice in {{!RFC7321}},
+Applications that use HTTP MAY define new HTTP header fields, following the advice in {{!RFC7231}},
 Section 8.3.1.
 
 Typically, using HTTP header fields is appropriate in a few different situations:
