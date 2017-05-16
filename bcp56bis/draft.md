@@ -336,8 +336,8 @@ New HTTP methods are rare; they are required to be registered with IETF Review (
 and are also required to be *generic*. That means that they need to be potentially applicable to
 all resources, not just those of one application.
 
-While historically some applications (e.g., {{?RFC6352}} and {{?RFC4791}}) have defined non-generic
-methods, {{!RFC7231}} now forbids this.
+While historically some applications (e.g., {{?RFC4791}}) has defined non-generic methods,
+{{!RFC7231}} now forbids this.
 
 When it is believed that a new method is required, authors are encouraged to engage with the HTTP
 community early, and document their proposal as a separate HTTP extension, rather than as part of
