@@ -310,7 +310,7 @@ message's content is not applied.
 
 ## Link Context {#header-context}
 
-By default, the context of a link conveyed in the Link header field is identity of the
+By default, the context of a link conveyed in the Link header field is the URL of the
 representation it is associated with, as defined in {{RFC7231}}, Section 3.1.4.1, serialised as a
 URI.
 
@@ -628,56 +628,59 @@ As with HTML, atom:link defines some attributes that are not explicitly mirrored
 field syntax, but they can also be used as link-extensions to maintain fidelity.
 
 
-# Algorithm for Parsing Link Headers {#parse}
+# Algorithms for Parsing Link Header Fields {#parse}
 
-Given a HTTP header field-value `field_value` as a string assuming ASCII encoding, the following
-algorithm can be used to parse it into the model described by this specification:
+This appendix outlines a non-normative algorithm, for parsing the Link header(s) out of a header
+set, parsing a link header field value, and algorithms for parsing generic parts of the field value.
+
+They are advisory only, and in cases where there is disagreement, the correct behaviour is defined
+by the body of this specification.
+
+## Parsing a Header Set for Links {#parse-set}
+
+This algorithm can be used to parse the Link header fields that a HTTP header set contains. Given a
+`header_set` of (string `field_name`, string `field_value`) pairs, assuming ASCII encoding, it
+returns a list of link objects.
+
+1. Let `field_values` be a list containing the members of `header_set` whose `field_name` is a
+case-insensitive match for "link".
+
+2. Let `links` be an empty list.
+
+3. For each `field_value` in `field_values`:
+
+   1. Let `value_links` be the result of *Parsing A Link Field Value* ({{parse-fv}}) from
+   `field_value`.
+   
+   2. Append each member of `value_links` to `links`.
+   
+4. Return `links`.
+   
+   
+## Parsing a Link Field Value {#parse-fv}
+
+This algorithm parses zero or more comma-separated link-values from a Link header field. Given a
+string `field_value`, assuming ASCII encoding, it returns a list of link objects.
 
 1. Let `links` be an empty list.
 
-2. Create `link_strings` by splitting `field_value` on "," characters, excepting "," characters
-within quoted strings as per {{RFC7230}}, Section 3.2.6, or which form part of link's URI-Reference
-(i.e. between "<" and ">" characters where the "<" is immediately preceded by OWS and either a ","
-character or the beginning of the `field_value` string).
+2. While `field_value` has content:
 
-3. For each `link_string` in `link_strings`:
+   1. Consume any leading OWS.
+      
+   2. If the first character is not "<", return `links`.
+   
+   3. Discard the first character ("<").
+   
+   4. Consume up to but not including the first ">" character or end of `field_value` and let the
+   result be `target_string`.
 
-   1. Let `target_string` be the string between the first "<" and first ">" characters in
-     `link_string`. If they do not appear, or do not appear in that order, fail parsing.
+   5. If the next character is not ">", return `links`.
 
-   2. Let `rest` be the remaining characters (if any) after the first ">" character in
-     `link_string`.
+   6. Discard the leading ">" character.
 
-   3. Split `rest` into an array of strings `parameter_strings`, on the ";" character, excepting
-     ";" characters within quoted strings as per {{RFC7230}}, Section 3.2.6.
-
-   4. Let `link_parameters` be an empty array.
-
-   5. For each item `parameter` in `parameter_strings`:
-
-      1. Remove OWS from the beginning and end of `parameter`.
-
-      2. Skip this item if `parameter` matches the empty string ("").
-
-      3. Split `parameter` into `param_name` and `param_value` on the first "=" character. If
-        `parameter` does not contain "=", let `param_name` be `parameter` and `param_value` be null.
-
-      4. Remove OWS from the end of `param_name` and the beginning of `param_value`.
-
-      5. Case-normalise `param_name` to lowercase.
-
-      6. If the first and last characters of `param_value` are both DQUOTE:
-
-         1. Remove the first and last characters of `param_value`.
-
-         2. Replace quoted-pairs within `param_value` with the octet following the backslash, as
-            per {{RFC7230}}, Section 3.2.6.
-
-      7. If the last character of `param_name` is an asterisk ("\*"), decode `param_value`
-          according to {{I-D.ietf-httpbis-rfc5987bis}}. Skip this item if an unrecoverable error is
-          encountered.
-
-      8. Append the tuple (`param_name`, `param_value`) to `link_parameters`.
+   7. Let `link_parameters`, be the result of *Parsing Parameters* ({{parse-param}}) from
+   `field_value` (consuming zero or more characters of it).
 
    6. Let `target` be the result of relatively resolving (as per {{RFC3986}}, Section 5.2)
      `target_string`. Note that any base URI carried in the payload body is NOT used.
@@ -685,19 +688,19 @@ character or the beginning of the `field_value` string).
    7. Let `relations_string` be the second item of the first tuple of `link_parameters` whose first
       item matches the string "rel", or the empty string ("") if it is not present.
 
-   8. Split `relations_string` into an array of strings `relation_types`, on RWS (removing
-      all whitespace in the process).
+   8. Split `relations_string` on RWS (removing it in the process) into a list of strings
+   `relation_types`.
 
    9. Let `context_string` be the second item of the first tuple of `link_parameters` whose first
-      item matches the string "anchor". If it is not present, `context_string` is the identity of
+      item matches the string "anchor". If it is not present, `context_string` is the URL of
       the representation carrying the Link header {{RFC7231}}, Section 3.1.4.1, serialised as a
-      URI. Where the identity is "anonymous" `context_string` is null.
+      URI. Where the URL is anonymous, `context_string` is null.
 
    0. Let `context` be the result of relatively resolving (as per {{RFC3986}}, Section 5.2)
      `context_string`, unless `context_string` is null in which case `context` is null. Note that
       any base URI carried in the payload body is NOT used.
 
-   1. Let `target_attributes` be an empty array.
+   1. Let `target_attributes` be an empty list.
 
    2. For each tuple (`param_name`, `param_value`) of `link_parameters`:
 
@@ -733,7 +736,90 @@ character or the beginning of the `field_value` string).
       2. Append a link object to `links` with the target `target`, relation type of
          `relation_type`, context of `context`, and target attributes `target_attributes`.
 
-4. Return `links`.
+3. Return `links`.
+
+
+## Parsing Parameters {#parse-param}
+
+This algorithm parses the parameters from a header field value. Given an ASCII string `input`, it
+returns a list of (string `parameter_name`, string `parameter_value`) tuples that it contains.
+`input` is modified to remove the parsed parameters.
+
+1. Let `parameters` be an empty list.
+
+2. While `input` has content:
+
+   1. Consume any leading OWS.
+   
+   2. If the first character is not ";", return `parameters`.
+   
+   3. Discard the leading ";" character.
+   
+   4. Consume any leading OWS.
+
+   5. Consume up to but not including the first BWS, "=", ";", "," character or end of `input` and
+   let the result be `parameter_name`.
+   
+   6. Consume any leading BWS.
+   
+   7. If the next character is "=":
+   
+      1. Discard the leading "=" character.
+     
+      2. Consume any leading BWS.
+     
+      3. If the next character is DQUOTE, let `parameter_value` be the result of *Parsing a Quoted
+      String* ({{parse-qs}}) from `input` (consuming zero or more characters of it).
+      
+      4. Else, consume the contents up to but not including the first ";", "," character or end of
+      `input` and let the results be `parameter_value`.
+
+      5. If the last character of `parameter_name` is an asterisk ("\*"), decode `parameter_value`
+      according to {{I-D.ietf-httpbis-rfc5987bis}}. Continue processing `input` if an unrecoverable
+      error is encountered.
+   
+   8. Else:
+
+      1. Let `parameter_value` be an empty string.
+
+   9. Case-normalise `parameter_name` to lowercase.
+     
+   0. Append (`parameter_name`, `parameter_value`) to `parameters`.
+   
+   1. Consume any leading OWS.
+
+   2. If the next character is "," or the end of `input`, stop processing `input` and return
+   `parameters`.
+   
+
+## Parsing a Quoted String {#parse-qs}
+
+This algorithm parses a quoted string, as per {{RFC7230}}, Section 3.2.6. Given an ASCII string
+`input`, it returns an unquoted string. `input` is modified to remove the parsed string.
+
+1. Let `output` be an empty string.
+
+2. If the first character of `input` is not DQUOTE, return `output`.
+
+3. Discard the first character.
+
+4. While `input` has content:
+
+   1. If the first character is a backslash ("\\"):
+
+      1. Discard the first character.
+
+      2. If there is no more `input`, return `output`.
+
+      3. Else, consume the first character and append it to `output`.
+         
+   2. Else, if the first character is DQUOTE, discard it and return `output`.
+   
+   3. Else, consume the first character and append it to `output`.
+   
+5. Return `output`.
+
+
 
 
 # Changes from RFC5988
