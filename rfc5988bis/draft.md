@@ -630,8 +630,9 @@ field syntax, but they can also be used as link-extensions to maintain fidelity.
 
 # Algorithms for Parsing Link Header Fields {#parse}
 
-This appendix outlines a non-normative algorithm, for parsing the Link header(s) out of a header
-set, parsing a link header field value, and algorithms for parsing generic parts of the field value.
+This appendix outlines a set of non-normative algorithms: for parsing the Link header(s) out of a
+header set, parsing a link header field value, and algorithms for parsing generic parts of the
+field value.
 
 These algorithms are more permissive than the ABNF defining the syntax might suggest; the error
 handling embodied in them is a reasonable approach, but not one that is required. As such they are
