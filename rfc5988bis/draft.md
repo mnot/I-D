@@ -71,7 +71,7 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/rfc59
 
 # Introduction
 
-This specification defines a model for indicating the relationships between resources on the Web
+This specification defines a model for the relationships between resources on the Web
 ("links") and the type of those relationships ("link relation types").
 
 HTML {{W3C.REC-html5-20141028}} and Atom {{RFC4287}} both have well-defined concepts of linking;
