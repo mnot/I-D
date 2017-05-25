@@ -94,8 +94,9 @@ Web browsing. <xref target="used"/> defines what applications it applies to; <xr
 of HTTP that are important to preserve, and <xref target="bp"/> conveys best practices for those applications
 that do use HTTP.</t>
 
-<t>It is written primarily to guide IETF efforts, but might be applicable in other situations. Note
-that the requirements herein do not necessarily apply to the development of generic HTTP extensions.</t>
+<t>It is written primarily to guide IETF efforts to define application protocols using HTTP for
+deployment on the Internet, but might be applicable in other situations. Note that the requirements
+herein do not necessarily apply to the development of generic HTTP extensions.</t>
 
 <section anchor="notational-conventions" title="Notational Conventions">
 
@@ -308,12 +309,15 @@ standards cannot usurp this space, since it might conflict with existing resourc
 implementation and deployment.</t>
 
 <t>In other words, applications that use HTTP MUST NOT associate application semantics with specific
-URL paths. For example, specifying that a “GET to the URL /foo retrieves a bar document” is bad
-practice. Likewise, specifying “The widget API is at the path /bar” violates <xref target="RFC7320"/>.</t>
+URL paths on arbitrary servers. Doing so inappropriately conflates the identity of the resource (its URL) with te capabilities that resource supports, bringing about many of the same interoperability problems that <xref target="RFC4367"/> warns of.</t>
 
-<t>Instead, applications that use HTTP are encouraged to use typed links <xref target="RFC5988"/> to convey the
-URIs that are in use, as well as the semantics of the resources that they identify. See
-<xref target="resource"/> for details.</t>
+<t>For example, specifying that a “GET to the URL /foo retrieves a bar document” is bad practice.
+Likewise, specifying “The widget API is at the path /bar” violates <xref target="RFC7320"/>.</t>
+
+<t>Instead, applications that use HTTP are encouraged to ensure that URLs are discovered at runtime,
+allowing HTTP-based services to describe their own capabilities. One way to do this is to use typed
+links <xref target="RFC5988"/> to convey the URIs that are in use, as well as the semantics of the resources
+that they identify. See <xref target="resource"/> for details.</t>
 
 <section anchor="initial-url-discovery" title="Initial URL Discovery">
 
@@ -353,20 +357,6 @@ register a separate port, but be aware that this has privacy implications for th
 users. The impact of doing so MUST be documented in Security Considerations.</t>
 
 </section>
-</section>
-<section anchor="state" title="Authentication and Application State">
-
-<t>Applications that use HTTP MAY use stateful cookies <xref target="RFC6265"/> to identify a client and/or store
-client-specific data to contextualise requests.</t>
-
-<t>If it is only necessary to identify clients, applications that use HTTP MAY use HTTP authentication
-<xref target="RFC7235"/>; if the Basic authentication scheme <xref target="RFC7617"/> is used, it MUST NOT be used with the
-‘http’ URL scheme.</t>
-
-<t>In either case, it is important to carefully specify the scoping and use of these mechanisms; if
-they expose sensitive data or capabilities (e.g., by acting as an ambiant authority), exploits are
-possible. Mitigations include using a request-specific token to assure the intent of the client.</t>
-
 </section>
 <section anchor="http-methods" title="HTTP Methods">
 
@@ -452,6 +442,30 @@ cannot specify that the <spanx style="verb">Location</spanx> header has a specia
 
 <t>See <xref target="state"/> for requirements regarding header fields that carry application state (e.g,. Cookie).</t>
 
+</section>
+<section anchor="browser" title="Ensuring Browser Interoperability">
+
+</section>
+<section anchor="access-control" title="Access Control">
+
+<t>Modern Web browsers constrain the ability of content from one origin (as defined by <xref target="RFC6454"/>)
+to access resources from another, to avoid the “confused deputy” problem. As a result, applications
+that wish to expose cross-origin data to browsers will need to implement <xref target="W3C.REC-cors-20140116"/>.</t>
+
+<section anchor="state" title="Authentication and Application State">
+
+<t>Applications that use HTTP MAY use stateful cookies <xref target="RFC6265"/> to identify a client and/or store
+client-specific data to contextualise requests.</t>
+
+<t>If it is only necessary to identify clients, applications that use HTTP MAY use HTTP authentication
+<xref target="RFC7235"/>; if the Basic authentication scheme <xref target="RFC7617"/> is used, it MUST NOT be used with the
+‘http’ URL scheme.</t>
+
+<t>In either case, it is important to carefully specify the scoping and use of these mechanisms; if
+they expose sensitive data or capabilities (e.g., by acting as an ambiant authority), exploits are
+possible. Mitigations include using a request-specific token to assure the intent of the client.</t>
+
+</section>
 </section>
 </section>
 <section anchor="iana-considerations" title="IANA Considerations">
@@ -686,6 +700,24 @@ pervasive monitoring attacks.</t>
 
 
 
+<reference anchor="W3C.REC-cors-20140116"
+           target='http://www.w3.org/TR/2014/REC-cors-20140116'>
+<front>
+<title>Cross-Origin Resource Sharing</title>
+
+<author initials='A.' surname='Kesteren' fullname='Anne van Kesteren'>
+    <organization />
+</author>
+
+<date month='January' day='16' year='2014' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-cors-20140116' />
+<format type='HTML' target='http://www.w3.org/TR/2014/REC-cors-20140116' />
+</reference>
+
+
+
 
     </references>
 
@@ -778,6 +810,20 @@ pervasive monitoring attacks.</t>
 
 
 
+<reference  anchor="RFC4367" target='http://www.rfc-editor.org/info/rfc4367'>
+<front>
+<title>What's in a Name: False Assumptions about DNS Names</title>
+<author initials='J.' surname='Rosenberg' fullname='J. Rosenberg' role='editor'><organization /></author>
+<author><organization>IAB</organization></author>
+<date year='2006' month='February' />
+<abstract><t>The Domain Name System (DNS) provides an essential service on the Internet, mapping structured names to a variety of data, usually IP addresses.  These names appear in email addresses, Uniform Resource Identifiers (URIs), and other application-layer identifiers that are often rendered to human users.  Because of this, there has been a strong demand to acquire names that have significance to people, through equivalence to registered trademarks, company names, types of services, and so on.  There is a danger in this trend; the humans and automata that consume and use such names will associate specific semantics with some names and thereby make assumptions about the services that are, or should be, provided by the hosts associated with the names.  Those assumptions can often be false, resulting in a variety of failure conditions.  This document discusses this problem in more detail and makes recommendations on how it can be avoided.  This memo provides information for the Internet community.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='4367'/>
+<seriesInfo name='DOI' value='10.17487/RFC4367'/>
+</reference>
+
+
+
 <reference  anchor="RFC5785" target='http://www.rfc-editor.org/info/rfc5785'>
 <front>
 <title>Defining Well-Known Uniform Resource Identifiers (URIs)</title>
@@ -803,6 +849,34 @@ pervasive monitoring attacks.</t>
 <seriesInfo name='BCP' value='188'/>
 <seriesInfo name='RFC' value='7258'/>
 <seriesInfo name='DOI' value='10.17487/RFC7258'/>
+</reference>
+
+
+
+<reference  anchor="RFC4791" target='http://www.rfc-editor.org/info/rfc4791'>
+<front>
+<title>Calendaring Extensions to WebDAV (CalDAV)</title>
+<author initials='C.' surname='Daboo' fullname='C. Daboo'><organization /></author>
+<author initials='B.' surname='Desruisseaux' fullname='B. Desruisseaux'><organization /></author>
+<author initials='L.' surname='Dusseault' fullname='L. Dusseault'><organization /></author>
+<date year='2007' month='March' />
+<abstract><t>This document defines extensions to the Web Distributed Authoring and Versioning (WebDAV) protocol to specify a standard way of accessing, managing, and sharing calendaring and scheduling information based on the iCalendar format.  This document defines the &quot;calendar-access&quot; feature of CalDAV.  [STANDARDS-TRACK]</t></abstract>
+</front>
+<seriesInfo name='RFC' value='4791'/>
+<seriesInfo name='DOI' value='10.17487/RFC4791'/>
+</reference>
+
+
+
+<reference  anchor="RFC6454" target='http://www.rfc-editor.org/info/rfc6454'>
+<front>
+<title>The Web Origin Concept</title>
+<author initials='A.' surname='Barth' fullname='A. Barth'><organization /></author>
+<date year='2011' month='December' />
+<abstract><t>This document defines the concept of an &quot;origin&quot;, which is often used as the scope of authority or privilege by user agents.  Typically, user agents isolate content retrieved from different origins to prevent malicious web site operators from interfering with the operation of benign web sites.  In addition to outlining the principles that underlie the concept of origin, this document details how to determine the origin of a URI and how to serialize an origin into a string.  It also defines an HTTP header field, named &quot;Origin&quot;, that indicates which origins are associated with an HTTP request.   [STANDARDS-TRACK]</t></abstract>
+</front>
+<seriesInfo name='RFC' value='6454'/>
+<seriesInfo name='DOI' value='10.17487/RFC6454'/>
 </reference>
 
 
@@ -833,21 +907,6 @@ pervasive monitoring attacks.</t>
 
 
 
-<reference  anchor="RFC4791" target='http://www.rfc-editor.org/info/rfc4791'>
-<front>
-<title>Calendaring Extensions to WebDAV (CalDAV)</title>
-<author initials='C.' surname='Daboo' fullname='C. Daboo'><organization /></author>
-<author initials='B.' surname='Desruisseaux' fullname='B. Desruisseaux'><organization /></author>
-<author initials='L.' surname='Dusseault' fullname='L. Dusseault'><organization /></author>
-<date year='2007' month='March' />
-<abstract><t>This document defines extensions to the Web Distributed Authoring and Versioning (WebDAV) protocol to specify a standard way of accessing, managing, and sharing calendaring and scheduling information based on the iCalendar format.  This document defines the &quot;calendar-access&quot; feature of CalDAV.  [STANDARDS-TRACK]</t></abstract>
-</front>
-<seriesInfo name='RFC' value='4791'/>
-<seriesInfo name='DOI' value='10.17487/RFC4791'/>
-</reference>
-
-
-
 
     </references>
 
@@ -865,177 +924,183 @@ individually.</t>
   </back>
 
 <!-- ##markdown-source:
-H4sIAMFRGlkAA7Vca3PbyHL9Pr8C4X6wdENRsmyvbSmVjdb23lXihyLJ2Uql
-UvYQGJK4BgFeDCCZce1/T5/unsGA0sq3biX7wSuS4Dy6e06ffgwPDg5MV3aV
-O8k+1Fm3clnvXdYssl+vry8y6zObXfVz37W2c6Zo8tqu6dGitYvuoG66rqyX
-K7s+mOebZz/OS39w9NgU9OhJdnz0+LnJ6c9l025PMnrANHPfVK5z/iR7cnz0
-zJhy055kXdv77vjo6OXRsbGtsyfZn13tWluZ26b9smybfnNivrgtvSpOsvO6
-c23tuoPXWMLwPpY7vPrNzYcXPq7f+M7WxSdbNTWtcOu82ZQn2X91TT7N6J+y
-LlzdTTPftF3rFp7+2q71j64tc/oob9Ybq3+s6WH6qKyrsnb/bYztu1XTnpjs
-wGT0X1nTPt/NsvdRSvy2CPCdbb/sftK0S1uX/2O7sqlP+B23tmV1kq1J0P+C
-f2a0cf6gb2ndq67b+JPDw9vb21n49NAYc3BwkFnect4Zw3osPam0czWUW4hW
-o1SyRdNmDWm+zexmU5U5LyDbtA2JpKn8LLte0fdJ9z12nPmNy8tF6Xw2d74z
-G0xT5vQS49AwZD7xu49Sa5rp2mip7tN7/NM1ny6dLVzrPxlzTbZXet/TSFXp
-Ox0OM0PTWW5rmpDe7WvaQZf9U9j+suxW/XxGCjmEFA7PD14fVnbuKn8YrPKf
-ZzL8uqFxW5djG3sskGnW15t+ThOuXLGvU9Gc6QQsW52lbHj8MPAhRr6UAfOV
-rZe0eLJh3oD7/jJhRGXnD5erg42l744WzLJal0VRkeH+AMNvm6LPoRzV6rdv
-/3D5y6vnx0+Ofv/9/0LFrOVanrbmxral67bQHp1K39Rs63nVF2SzJ8b8KVvY
-dVmV9Bg9Nd9m5XpTOZgI6XMazQR/22Jd1iWvpcHrwt24qtnQZxmdR6yY3qUB
-7Q3Zu53ToDKvzZJF5FUpp9O1N9gIfZE28DWZl3fFA9F62exoZLzs5+Vfex2T
-oCGbt81tmLN1aqLuK62QtpatHVRZ+jUM8YvLcK5p9CA1TOzqvN1u8BJDbFoy
-+jofYFOWKJuTZZNwCV1tu3Qd7X5TNVtFD3qERiAjyMK+u4Yg0eL7pImydbe2
-Ig2JAQf0Y/jpazy+YlUToi3xtaLkNdJCgnJlgyRzy5ub2/wLTzEg/bWrgCvf
-vv1E1nT04tlTsqZ77OcXtjh+5uWzl3iGdnf1Lr57/OL48e+/z7Jfm1tSbzvN
-Krt1Leas3a2JtpY10B6LaY5PPW++ua1Jah2WIxjABna1avqKjLkemW3vMSiP
-ULgFYS8tlabIPl6+zXy+IlP4KftIW8N7G4Jy/9MwVNnxrtkP2LaQUdaOgLsQ
-ddEnXe9JvoUj7dC2dQoMRmeDx6IdMhxBhmv7tVz3azLUqncAKPeVgZfO4KJt
-1rseNXy9aBw2TvOw2WW3hA56QulpHy2JIMDxSSIj2A62SwJIF1LCLHCegg2R
-tOd0JmRLk2gKBYEt2W7hJ1ipvWnKwhU/wbRSgM8bOkrkvRjfs7xvW7w74Hzr
-liQ66GCXLhAIJIryuqGOTpNJlz4jiwFKkQ2JdH12uyKsHH231Nf0Ydec0jdg
-Nzelu6Vv+Z7O19bz/BveeEfPmbCMjgcjGCZkIP1bWj1ZPJ9S+h6fORpvvqGR
-aK88Em9115U1tLV0TYYHLhres3q0c3YXt4SBwN5NW64JsSo+xcuexJudv7n+
-JXOLBQxxms37jjB9uepYATI2aQroIMLyZdfLbMwcnMyJjbaOMKxloPMZPero
-O7QW8iVknLRoLxNj0G044Qq0rFaSzhLEqsxFSmSorvY8E/mXHzAbT2yr7BWk
-UsueGXeIS2UgUz6bvPt4dT2Zyv+z9x/478s3//7x/PLNa/x99evZ27fxj/DE
-1a8fPr59Pfwl7xv65qsP7969ef9avvzu7D8nop/Jh4vr8w/vz95OGDlHBgrV
-0gbnTgyfFNuJy6Mzm7flnF6UtRHvePz4MWEV3Cm5UC87/9nBeAkiip+ybz+w
-JRrzulwsHFv6yAxXhMRZET9bNraCtboUhmaEy+MlTrNbAhlL2qhNCl30yKfh
-e59kIFuzY4K+Fk1VNbf4nAxTsFwIBZFkx5AIbRDA1B6WzfAG+cAgaewXR0Cs
-p0+fTPXJARKzCYjIBJ/zXwQB9AXsPTx79vbi/eA1zl8HevHkiGBdvnT4ePYY
-alod60DH+TAMvaMjrWGMS/Yaa9uN1UKjDpyFFH1I48hbz57yW60TBkOPkgz+
-0tfMeAQgIaLzs/dngCDQCYCDIEjBR1bP5G8i1WxH8oPgycSqKsh8dK70PTaT
-KAtP3MFle5H8GJxinLuqJPpGc5MxplxsOrx6PHp1PHr1ZPSKvO7UxFfP1L/q
-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
-5dR4W+ltw+ACxreTxmQXDkDKx+bhxt7U0K+kBfEVekm/b+0MjL13d0w7vRoo
-zTy85diYWgczTh+Mthzq7Wp6e4QMqZb27xi2GQy7ZcOm0Ktcl5WI8/6J1BDu
-Ozf3TWgeMunsD026ediqHzSttB3077MvyYv//9oXrhJ+176uEuk/iqW8WIOR
-ThUNaHaaDgMJS65SpN2UJnRTitQf7kljinNvH+LdElohd8ooTE6C/ja0I0Yy
-PV7ojt2f10nUfF+eJYmpU21Ln1VcP1CWiXsd01ukE07l3bkzt7Ltmrz2VGNR
-72L56k7fbloRR4BE9tAygoeyuSZnk/l2Ofudru41Us99CytZ35VyWv5MWj1H
-/CLNsNw5uVPuDDfliJnNEd9tQo25bJMbW6zwbTrZTku5Dr5ZtRyO875Bh4vT
-mDONH7Na6iYx25CW1FiJpdxbrkcOflDvZXAxZCf0QjfVdiMO7Y9Fxb0DIdq/
-z77vydKGaAnVA6M8+L4iU4ihEiHjuI6L5cPVG+YEXC5BwmBSWdJ+u+XfcJjw
-TfqAkDtaK/mSoVztVSGjGYIMVaIO7bgR4EqzIdI/Kv1E/FMXHE/eSKcsF09P
-tf0p3PdYMHpyKGb0Rw80IQAuKp3AIUCQSI0htJbg6vPTo+fZBX9tJ4S5VPgd
-Lg/wDTtTpklmxmkIh28Nhcx7+DmGmDoOvS6Y7/hldt1QkIUc0qVGH6MLClfx
-kLIA7jsWoaBBoMV2p1d1vMXlgdARwXELrhRId7hYLedyTMzxhV9gGMLv4OG4
-yVw6KhLXd7fRP6mf75UzN5uaheV2wtHPKQQs+lwfHX0en/mQyEz2d5oJs/v8
-9OXLz2Gv2Fy1NbIuTgSS7miweQzKMr2DjvtatOdmWZd8pWY/JTy/ynn4hc8D
-RaSh2PrdmDT5sYP7Dta4JcgWN9oLPLruaq60BP5i9mT2eIwGCQCMhuYcZdK/
-xHdDFrSKpGs2XvwK96DLNnYaSsyIQDq0+sXLBtne7arRavb4Iir5qVAhZkiR
-/NBhuMb8R8M/eO0hhs7atZGOeX5vxjOEdt14xruIl+31vrdyB0t6/GJFfrgm
-w+lEsYZz9NfVaTDbULgariXiVwKmMZ4cVQJpkXArSZO2xmhjlYUMysBYk/J+
-En4M15ifvPjxKXo0wq8m3GkDHy0DeV6+g+RXANg9vj7FF5C4g+M4PA3MxP0X
-5QplbaT1V1uB2bTq2GG9L/dfRuXu4HP4TmXKbRh3d2RjRv1zI47INemhejdk
-pe7pCIPmwJVAvb4GBJGpzLD/aWSthbT8Tw4m+lMwI3yJzO2eo5XmUOIVlCK2
-n3OxOdIMzcm1sXUgtpjwPTLlzOGqCKHhQmwO7T4P3gQfTr7RWuSo9we7//y2
-kYc/hx0klJG8b8IYbZa7FoWd4aKU3kuR5JsUpUa53KF9cCwecRG2bbfjMlMX
-Gl+nM4ockZ3b11+RwHXjcX5w9xdUlFON5l/oTWWkc/8oz2jMsIGi9Hnvvd6a
-HTKYIsiYOEzakMLtr+C+ILzddJNkQrTXznOPXsgyzXh2KXb8HtbuR/3YnHTz
-nHXTSjBWKaGaT3shh+ycXNUIdQPzUN1gJj95BZcKGb3S39PiPlmgB/9knP6B
-ZJu003FuEQ0mr/SHai6SSypcuEJ8mB0fHR09Qks1NzQ1MeggO0L+2Ob8YwTD
-D+Wgf5a77sQ2wRRnaSso61iuzxdDJWYONAnURnsDrdwLwa1NM/4dE+56nCPM
-0Pg7ejuu64dvKbtLfl6sI25VI7JBazKuu9GRNWhfuCkLdhHcfPu/ay408NtP
-AAA=
+H4sIAOdMJlkAA7Vca3PbyHL9Pr8C4X6wdENSD7+lVDZa2XtXiR+KJWcrlUrZ
+Q2JI4hoEeDGAZMbl/54+3T2DAaWVb91K9oNXJMF5dPecPv0YTiYT0xZt6U6y
+91XWrlzWeZfVi+y36+vLzPrMZlfdzLeNbZ3J63ll1/Ro3thFO6nqti2q5cqu
+J7P55umzWeEnh0cmp0dPsuPDo+dmTn8u62Z7ktEDpp75unSt8yfZ4+PDp8YU
+m+Yka5vOt8eHhy8Pj41tnD3J/uwq19jS3NbNl2VTd5sT88Vt6VV+kl1UrWsq
+105eYQn9+1hu/+p3N+tf+Lh+41tb5Z9sWVe0wq3zZlOcZP/V1vNxRv8UVe6q
+dpz5umkbt/D013atf7RNMaeP5vV6Y/WPNT1MHxVVWVTuv42xXbuqmxOTTUxG
+/xUV7fPtNHsXpcRviwDf2ubL7id1s7RV8T+2LerqhN9xa1uUJ9maBP0v+GdK
+G+cPuobWvWrbjT85OLi9vZ2GTw+MMZPJJLO85XlrDOux8KTS1lVQbi5ajVLJ
+FnWT1aT5JrObTVnMeQHZpqlJJHXpp9n1ir5Puu+w48xv3LxYFM5nM+dbs8E0
+xZxeYhwahswnfvdRak1TXRst1X16h3/a+tMHZ3PX+E/GXJPtFd53NFJZ+FaH
+w8zQdDa3FU1I73YV7aDN/ilsf1m0q242JYUcQAoHF5NXB6WdudIfBKv856kM
+v65p3MbNsY09Fsg466pNN6MJVy7f16loznQClq3OUtQ8fhj4ACN/kAHnK1st
+afFkw7wB9+NlwoiK1h8sV5ONpe8OFsyyWhd5XpLh/gTDb+q8m0M5qtVv3/7h
+w6/nz48fH37//n+hYtZyJU9bc2ObwrVbaI9Opa8rtvV52eVksyfG/Clb2HVR
+FvQYPTXbZsV6UzqYCOlzHM0Ef9t8XVQFr6XG69zduLLe0GcZnUesmN6lAe0N
+2bud0aAyr82SRczLQk6na26wEfoibeBrMi/vigei9bLZ0ch42c2Kv3Y6JkFD
+Nmvq2zBn49RE3VdaIW0tWzuosvBrGOIXl+Fc0+hBapjYVfNmu8FLDLFpyOir
+eQ+bskTZnCybhEvoapula2n3m7LeKnrQIzQCGUEW9t3WBIkW3ydNFI27tSVp
+SAw4oB/DT1fh8RWrmhBtia/lBa+RFhKUKxskmVve3MzOv/AUPdJfuxK48u3b
+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
+qf4vYzQv4AFTAAA=
 
 -->
 
