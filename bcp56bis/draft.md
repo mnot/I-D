@@ -70,8 +70,9 @@ Web browsing. {{used}} defines what applications it applies to; {{overview}} sur
 of HTTP that are important to preserve, and {{bp}} conveys best practices for those applications
 that do use HTTP.
 
-It is written primarily to guide IETF efforts, but might be applicable in other situations. Note
-that the requirements herein do not necessarily apply to the development of generic HTTP extensions.
+It is written primarily to guide IETF efforts to define application protocols using HTTP for
+deployment on the Internet, but might be applicable in other situations. Note that the requirements
+herein do not necessarily apply to the development of generic HTTP extensions.
 
 ## Notational Conventions
 
@@ -269,12 +270,15 @@ standards cannot usurp this space, since it might conflict with existing resourc
 implementation and deployment.
 
 In other words, applications that use HTTP MUST NOT associate application semantics with specific
-URL paths. For example, specifying that a "GET to the URL /foo retrieves a bar document" is bad
-practice. Likewise, specifying "The widget API is at the path /bar" violates {{!RFC7320}}.
+URL paths on arbitrary servers. Doing so inappropriately conflates the identity of the resource (its URL) with te capabilities that resource supports, bringing about many of the same interoperability problems that {{?RFC4367}} warns of.
 
-Instead, applications that use HTTP are encouraged to use typed links {{?RFC5988}} to convey the
-URIs that are in use, as well as the semantics of the resources that they identify. See
-{{resource}} for details.
+For example, specifying that a "GET to the URL /foo retrieves a bar document" is bad practice.
+Likewise, specifying "The widget API is at the path /bar" violates {{!RFC7320}}.
+
+Instead, applications that use HTTP are encouraged to ensure that URLs are discovered at runtime,
+allowing HTTP-based services to describe their own capabilities. One way to do this is to use typed
+links {{?RFC5988}} to convey the URIs that are in use, as well as the semantics of the resources
+that they identify. See {{resource}} for details.
 
 
 ### Initial URL Discovery
@@ -311,20 +315,6 @@ Applications that use HTTP SHOULD use the default port for the URL scheme in use
 that networks might need to distinguish the application's traffic for operational reasons, it MAY
 register a separate port, but be aware that this has privacy implications for that protocol's
 users. The impact of doing so MUST be documented in Security Considerations.
-
-
-## Authentication and Application State {#state}
-
-Applications that use HTTP MAY use stateful cookies {{?RFC6265}} to identify a client and/or store
-client-specific data to contextualise requests. 
-
-If it is only necessary to identify clients, applications that use HTTP MAY use HTTP authentication
-{{?RFC7235}}; if the Basic authentication scheme {{?RFC7617}} is used, it MUST NOT be used with the
-'http' URL scheme.
-
-In either case, it is important to carefully specify the scoping and use of these mechanisms; if
-they expose sensitive data or capabilities (e.g., by acting as an ambiant authority), exploits are
-possible. Mitigations include using a request-specific token to assure the intent of the client.
 
 
 ## HTTP Methods
@@ -408,6 +398,30 @@ registration or defining an extension to them (if allowed). For example, an appl
 cannot specify that the `Location` header has a special meaning in a certain context.
 
 See {{state}} for requirements regarding header fields that carry application state (e.g,. Cookie).
+
+
+## Ensuring Browser Interoperability {#browser}
+
+## Access Control
+
+Modern Web browsers constrain the ability of content from one origin (as defined by {{?RFC6454}})
+to access resources from another, to avoid the "confused deputy" problem. As a result, applications
+that wish to expose cross-origin data to browsers will need to implement {{!W3C.REC-cors-20140116}}.
+
+
+### Authentication and Application State {#state}
+
+Applications that use HTTP MAY use stateful cookies {{?RFC6265}} to identify a client and/or store
+client-specific data to contextualise requests. 
+
+If it is only necessary to identify clients, applications that use HTTP MAY use HTTP authentication
+{{?RFC7235}}; if the Basic authentication scheme {{?RFC7617}} is used, it MUST NOT be used with the
+'http' URL scheme.
+
+In either case, it is important to carefully specify the scoping and use of these mechanisms; if
+they expose sensitive data or capabilities (e.g., by acting as an ambiant authority), exploits are
+possible. Mitigations include using a request-specific token to assure the intent of the client.
+
 
 
 # IANA Considerations
