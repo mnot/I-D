@@ -490,9 +490,6 @@ is equivalent to these:
 
 # IANA Considerations
 
-In addition to the actions below, IANA should terminate the Link Relation Application Data
-Registry, as it has not been used, and future use is not anticipated.
-
 
 ## Link HTTP Header Field Registration
 
@@ -538,6 +535,14 @@ the Trust Legal Provisions (<eref target="http://trustee.ietf.org/license-info"/
 IANA will direct any incoming requests regarding the registry to this document and, if defined, the
 processes established by the Expert(s); typically, this will mean referring them to the registry
 Web page.
+
+
+## Link Relation Application Data Registry
+
+This specification terminates the Link Relation Application Data Registry, as it has not been used,
+and future use is not anticipated. IANA is instructed to remove it.
+
+
 
 
 # Security Considerations
