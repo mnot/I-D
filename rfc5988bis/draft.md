@@ -536,6 +536,10 @@ IANA will direct any incoming requests regarding the registry to this document a
 processes established by the Expert(s); typically, this will mean referring them to the registry
 Web page.
 
+Note that the Expert(s) are allowed (as per {{procedure}}) to define additional fields to be
+collected in the registry.
+
+
 
 ## Link Relation Application Data Registry
 
