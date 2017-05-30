@@ -184,8 +184,8 @@ response media types that are required be supported).
 Historically, registered relation types have been identified with a URI {{RFC3986}} by prefixing
 their names with an application-defined base URI (e.g., see {{atom}}). This practice is NOT
 RECOMMENDED, because the resulting strings will not be considered equivalent to the registered
-relation types by other processors. Applications that do use such URIs internally MUST NOT use them
-in link serialisations that do not explicitly accommodate them.
+relation types by other applications. Applications that do use such URIs internally MUST NOT use
+them in link serialisations that do not explicitly accommodate them.
 
 
 #### Registering Link Relation Types {#procedure}
@@ -408,7 +408,7 @@ NOT appear more than once in a given link-value; occurrences after the first MUS
 parsers. If the attribute does not contain language information, its language is indicated by the
 Content-Language header field (when present).
 
-If both the "title" and "title\*" link-param appear in a link, processors SHOULD use the
+If both the "title" and "title\*" link-param appear in a link, applications SHOULD use the
 "title\*" link-param's value for the "title" attribute.
 
 The "type" attribute, when present, is a hint indicating what the media type of the result of
@@ -430,7 +430,7 @@ Other link-params are link-extensions, and are to be considered as target attrib
 
 Such target attributes MAY be defined to use the encoding in {{I-D.ietf-httpbis-rfc5987bis}} (e.g.,
 "example" and "example\*"). When both forms are present, they SHOULD be considered to be the same
-target attribute; processors SHOULD use the value of the name ending in "\*" (after
+target attribute; applications SHOULD use the value of the name ending in "\*" (after
 {{I-D.ietf-httpbis-rfc5987bis}} decoding), but MAY fall back to the other value if there is an
 error in decoding it, or if they do not support decoding.
 
