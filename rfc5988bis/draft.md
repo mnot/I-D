@@ -325,9 +325,9 @@ The ABNF for the `anchor` parameter's value is:
   URI-Reference ; Section 4.1 of {{RFC3986}}
 ~~~
 
-Consuming implementations can choose to ignore links with an anchor parameter. For example, the
+Link application can choose to ignore links with an anchor parameter. For example, the
 application in use might not allow the link context to be assigned to a different resource. In such
-cases, the entire link is to be ignored; consuming implementations MUST NOT process the link
+cases, the entire link is to be ignored; link applications MUST NOT process the link
 without applying the anchor.
 
 Note that depending on HTTP status code and response headers, the link context might be "anonymous"
