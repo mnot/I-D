@@ -41,7 +41,6 @@ normative:
 
 informative:
   RFC2046:
-  RFC2817:
   RFC2818:
   RFC4287:
   W3C.REC-html5-20141028:
@@ -543,9 +542,9 @@ Web page.
 
 # Security Considerations
 
-The content of the Link header field is not secure, private or integrity-guaranteed, and due
-caution should be exercised when using it. Use of Transport Layer Security (TLS) with HTTP
-({{RFC2818}} and {{RFC2817}}) is currently the only end-to-end way to provide such protection.
+The content of the Link header field is not secure, private or integrity-guaranteed. Use of
+Transport Layer Security (TLS) with HTTP ({{RFC2818}}) is currently the only end-to-end way to
+provide these properties.
 
 Link applications ought to consider the attack vectors opened by automatically following, trusting,
 or otherwise using links gathered from HTTP header fields. In particular, Link header fields that
