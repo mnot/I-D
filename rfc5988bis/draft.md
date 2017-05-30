@@ -552,9 +552,9 @@ or otherwise using links gathered from HTTP header fields. In particular, Link h
 use the "anchor" parameter to associate a link's context with another resource are to be treated
 with due caution.
 
-The Link header field makes extensive use of IRIs and URIs. See {{RFC3987}} for security
-considerations relating to IRIs. See {{RFC3986}} for security considerations relating to URIs. See
-{{RFC7230}} for security considerations relating to HTTP header fields.
+The Link header field makes extensive use of IRIs and URIs. See {{RFC3987}} Section 8 for security
+considerations relating to IRIs. See {{RFC3986}} Section 7 for security considerations relating to
+URIs. See {{RFC7230}} Section 9 for security considerations relating to HTTP header fields.
 
 # Internationalisation Considerations
 
