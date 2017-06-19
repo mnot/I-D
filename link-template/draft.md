@@ -1,7 +1,7 @@
 ---
 title: The Link-Template HTTP Header Field
 abbrev: Link-Template
-docname: draft-nottingham-link-template-01
+docname: draft-nottingham-link-template-02
 date: 2017
 category: std
 
