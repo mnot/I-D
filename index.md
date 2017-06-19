@@ -13,6 +13,5 @@ layout: front
 * [registry-custodian](registry-custodian) - Managing IANA Registries with Custodians 
 * [rfc-tags](rfc-tags)  
 * [rfc5988bis](rfc5988bis) - Web Linking 
-* [safe-hint](safe-hint) - The safe HTTP Preference 
 * [site-wide-headers](site-wide-headers) - Site-Wide HTTP Headers 
 * [wugh-services](wugh-services) - Using Third Party Services for IETF Work
