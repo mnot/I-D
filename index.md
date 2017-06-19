@@ -8,8 +8,10 @@ layout: front
 * [httpbis-header-registry](httpbis-header-registry) - A Registry for HTTP Header Fields 
 * [httpbis-retry](httpbis-retry) - Retrying HTTP Requests 
 * [json-home](json-home) - Home Documents for HTTP APIs 
+* [link-template](link-template) - The Link-Template HTTP Header Field 
 * [linked-cache-inv](linked-cache-inv)  
 * [registry-custodian](registry-custodian) - Managing IANA Registries with Custodians 
+* [rfc-tags](rfc-tags)  
 * [rfc5988bis](rfc5988bis) - Web Linking 
 * [safe-hint](safe-hint) - The safe HTTP Preference 
 * [site-wide-headers](site-wide-headers) - Site-Wide HTTP Headers 
