@@ -1,6 +1,6 @@
 ---
 title: The Internet is for End Users
-docname: draft-nottingham-for-the-users-04
+docname: draft-nottingham-for-the-users-05
 date: 2017
 category: bcp
 
@@ -99,6 +99,13 @@ Doing so helps the IETF achieve its mission, and also helps to assure the long-t
 Internet. By prioritising the concerns of end users, we assure that it reaches the greatest number
 of people, thereby delivering greater utility by maximising its network effect.
 
+In doing so, our goal is not to avoid all potential harm to or constraint of end users; rather,
+it's to give guidance in a particular situation -- when we've identified a conflict between the
+needs of end users and another stakeholder (e.g., a network operator), and need a "tiebreaker", we
+should err on the side of finding a solution that doesn't harm end users. Note that "harm" is not
+defined in this document; that is something that the relevant body (e.g., Working Group) needs to
+discuss.
+
 
 ## Notational Conventions
 
@@ -114,7 +121,8 @@ party.
 
 While networks need to be managed, employers and equipment vendors need to meet business goals, and
 so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
--- society is composed of what we call "end users."
+-- society is composed of end users, along with groups of individuals forming business,
+governments, clubs, civil society organizations, and other institutions that influence it.
 
 By "end users," we mean non-technical users whose activities our protocols are designed to support.
 Thus, the end user of a protocol to manage routers is not a router administrator; it is the people
@@ -125,9 +133,13 @@ users"; as always, we will need to interact with the greater Internet community 
 process to help us make decisions, deploy our protocols, and ultimately determine their success or
 failure.
 
-It does mean that when a proposed solution to a problem has a benefit to some other party at the
-identified expense of end users, we will find a different solution or find another way to frame
-the problem.
+It does means that, because end users are not technical experts, we have a responsibility to
+consider their needs, and will need to engage with those who understand how our work will affect
+end users, such as civil society organisations, as well as governments, businesses and other groups
+representing some aspect of end user needs.
+
+When a proposed solution to a problem has a benefit to some other party at the identified expense
+of end users, we will find a different solution or find another way to frame the problem.
 
 There may be cases where genuine technical need requires compromise. However, such tradeoffs need
 to be carefully examined, and avoided when there are alternate means of achieving the desired
@@ -161,8 +173,8 @@ security negatively in the long term.
 
 Thanks to Edward Snowden for his comments regarding the priority of end users at IETF93.
 
-Thanks to Harald Alvestrand for his substantial feedback and Stephen Farrell, Joe Hildebrand, Russ
-Housley, Niels ten Oever, and Martin Thomson for their suggestions.
+Thanks to Harald Alvestrand for his substantial feedback and Stephen Farrell, Joe Hildebrand, Lee
+Howard, Russ Housley, Niels ten Oever, and Martin Thomson for their suggestions.
 
 
 # Frequently Asked Questions
