@@ -292,9 +292,16 @@ The ABNF for the field value is:
 ~~~
 
 Note that any `link-param` can be generated with values using either the `token` or the
-`quoted-string` syntax, and therefore recipients MUST be able to parse both forms. Individual
-`link-param`s specify their syntax in terms of the value after any necessary unquoting (as per
-{{RFC7230}}, Section 3.2.6).
+`quoted-string` syntax, and therefore recipients MUST be able to parse both forms. In other words,
+the following parameters are equivalent:
+
+~~~
+  x=y
+  x="y"
+~~~
+
+Individual `link-param`s specify their syntax in terms of the value after any necessary unquoting
+(as per {{RFC7230}}, Section 3.2.6).
 
 This specification defines the link-params "rel", "anchor", "rev", "hreflang", "media", "title",
 "title*", and "type"; see {{header-context}}, {{header-type}} and {{header-attrs}}. 
@@ -875,6 +882,8 @@ This specification has the following differences from its predecessor, RFC5988:
   explicit.
 
 * Some parameters on the HTTP header field can now appear as a token.
+
+* Parameters on the HTTP header can now be value-less.
 
 * Handling of quoted strings is now defined by {{RFC7230}}.
 
