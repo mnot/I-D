@@ -288,7 +288,7 @@ The ABNF for the field value is:
 ~~~ abnf2616
   Link       = #link-value
   link-value = "<" URI-Reference ">" *( OWS ";" OWS link-param )
-  link-param = token BWS "=" BWS ( token / quoted-string )
+  link-param = token BWS [ "=" BWS ( token / quoted-string ) ]
 ~~~
 
 Note that any `link-param` can be generated with values using either the `token` or the
