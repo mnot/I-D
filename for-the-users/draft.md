@@ -98,8 +98,16 @@ To help clarify such decisions, {{users}} mandates that end users have the highe
 Our goal is not to avoid all potential harm to or constraint of end users; rather, it's to give
 guidance in a particular situation -- when we've identified a conflict between the needs of end
 users and another stakeholder (e.g., a network operator), and need a "tiebreaker", we should err on
-the side of finding a solution that doesn't harm end users. Note that "harm" is not defined in this
-document; that is something that the relevant body (e.g., Working Group) needs to discuss.
+the side of finding a solution that doesn't harm end users.
+
+Note that "harm" is not defined in this document; that is something that the relevant body (e.g.,
+Working Group) needs to discuss. The IETF has already established a body of guidance for such
+decisions, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}}
+on pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy
+considerations.
+
+Over time, additional guidance is likely to be defined. In the absence of specific guidance on a
+given topic, this document provides a general approach to making such decisions.
 
 Doing so helps the IETF achieve its mission, and also helps to assure the long-term health of the
 Internet. By prioritising the concerns of end users, we assure that it reaches the greatest number
@@ -173,7 +181,7 @@ security negatively in the long term.
 Thanks to Edward Snowden for his comments regarding the priority of end users at IETF93.
 
 Thanks to Harald Alvestrand for his substantial feedback and Stephen Farrell, Joe Hildebrand, Lee
-Howard, Russ Housley, Niels ten Oever, and Martin Thomson for their suggestions.
+Howard, Russ Housley, Niels ten Oever, Martin Thomson, and Brian Trammell for their suggestions.
 
 
 # Frequently Asked Questions
