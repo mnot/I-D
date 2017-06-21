@@ -99,12 +99,11 @@ Doing so helps the IETF achieve its mission, and also helps to assure the long-t
 Internet. By prioritising the concerns of end users, we assure that it reaches the greatest number
 of people, thereby delivering greater utility by maximising its network effect.
 
-In doing so, our goal is not to avoid all potential harm to or constraint of end users; rather,
-it's to give guidance in a particular situation -- when we've identified a conflict between the
-needs of end users and another stakeholder (e.g., a network operator), and need a "tiebreaker", we
-should err on the side of finding a solution that doesn't harm end users. Note that "harm" is not
-defined in this document; that is something that the relevant body (e.g., Working Group) needs to
-discuss.
+Our goal is not to avoid all potential harm to or constraint of end users; rather, it's to give
+guidance in a particular situation -- when we've identified a conflict between the needs of end
+users and another stakeholder (e.g., a network operator), and need a "tiebreaker", we should err on
+the side of finding a solution that doesn't harm end users. Note that "harm" is not defined in this
+document; that is something that the relevant body (e.g., Working Group) needs to discuss.
 
 
 ## Notational Conventions
