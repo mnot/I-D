@@ -15,7 +15,7 @@
 <?rfc inline="yes"?>
 <?rfc rfcedstyle="yes"?>
 
-<rfc ipr="trust200902" docName="draft-nottingham-link-template-02" category="std">
+<rfc ipr="trust200902" docName="draft-nottingham-link-template-03" category="std">
 
   <front>
     <title abbrev="Link-Template">The Link-Template HTTP Header Field</title>
@@ -69,7 +69,7 @@ the structure of a link between two resources, so that new links can be generate
 in a URI <xref target="RFC3986"/>.</t>
 
 <t>This specification defines a HTTP header field for conveying templates for links in the headers of
-a HTTP message. It is complimentary to the Link header field <xref target="RFC5988"/>, which carries links
+a HTTP message. It is complimentary to the Link header field <xref target="I-D.nottingham-rfc5988bis"/>, which carries links
 directly.</t>
 
 <section anchor="notational-conventions" title="Notational Conventions">
@@ -86,8 +86,8 @@ and the “URI-Template” rule from <xref target="RFC6570"/>.</t>
 <section anchor="the-link-template-header-field" title="The Link-Template Header Field">
 
 <t>The Link-Template entity-header field provides a means for serialising one or more links into HTTP
-headers. It is semantically equivalent to the Link header field <xref target="RFC5988"/>, except
-that it uses URI Templates <xref target="RFC6570"/> to convey the structure of links.</t>
+headers. It is semantically equivalent to the Link header field <xref target="I-D.nottingham-rfc5988bis"/>,
+except that it uses URI Templates <xref target="RFC6570"/> to convey the structure of links.</t>
 
 <figure><artwork><![CDATA[
   Link-Template  = "Link-Template" ":" #linkt-value
@@ -103,16 +103,15 @@ Link-Template: </{username}>; rel="http://example.org/rel/user"
 <t>indicates that a resource with the relation type “http://example.org/rel/user” can be found by
 interpolating the “username” variable into the template given.</t>
 
-<t>The target for the link (as defined by <xref target="RFC5988"/>) is the result of expanding the URI
-Template <xref target="RFC6570"/> (being converted to an absolute URI after expansion, if
-necessary).</t>
+<t>The target for the link (as defined by <xref target="I-D.nottingham-rfc5988bis"/>) is the result of expanding
+the URI Template <xref target="RFC6570"/> (being converted to an absolute URI after expansion, if necessary).</t>
 
 <t>The context, relation type and target attributes for the link are determined as defined for the
-Link header field in <xref target="RFC5988"/>.</t>
+Link header field in <xref target="I-D.nottingham-rfc5988bis"/>.</t>
 
 <t>The parameters on a linkt-value have identical semantics to those of a Link header field
-<xref target="RFC5988"/>. This includes (but is not limited to) the use of the “rel” parameter to convey the
-relation type, the “anchor” parameter to modify the context IRI, and so on.</t>
+<xref target="I-D.nottingham-rfc5988bis"/>. This includes (but is not limited to) the use of the “rel”
+parameter to convey the relation type, the “anchor” parameter to modify the context IRI, and so on.</t>
 
 <t>Likewise, the requirements for parameters on linkt-values are the same as those for a Link header
 field; in particular, the “rel” parameter MUST NOT appear more than once, and if it does, the
@@ -132,8 +131,8 @@ about the syntax or semantics of that variable; specification of particular form
 information is out of scope for this document.</t>
 
 <t>To determine the URI for a given variable, the value given is used as a base URI in reference
-resolution (as specified in <xref target="RFC3986"/>). If the resulting URI is still relative, the
-context of the link is used as the base URI in a further resolution; see <xref target="RFC5988"/>.</t>
+resolution (as specified in <xref target="RFC3986"/>). If the resulting URI is still relative, the context of
+the link is used as the base URI in a further resolution; see <xref target="I-D.nottingham-rfc5988bis"/>.</t>
 
 <t>For example:</t>
 
@@ -159,8 +158,8 @@ Link-Template: </widgets/{widget_id}>;
 </section>
 <section anchor="security-considerations" title="Security Considerations">
 
-<t>The security consideration for the Link header field in <xref target="RFC5988"/> and those for URI Templates
-<xref target="RFC6570"/> both apply.</t>
+<t>The security consideration for the Link header field in <xref target="I-D.nottingham-rfc5988bis"/> and those
+for URI Templates <xref target="RFC6570"/> both apply.</t>
 
 </section>
 <section anchor="iana-considerations" title="IANA Considerations">
@@ -221,15 +220,23 @@ Reference: [this document]
 
 
 
-<reference  anchor="RFC5988" target='http://www.rfc-editor.org/info/rfc5988'>
+<reference anchor="I-D.nottingham-rfc5988bis">
 <front>
 <title>Web Linking</title>
-<author initials='M.' surname='Nottingham' fullname='M. Nottingham'><organization /></author>
-<date year='2010' month='October' />
-<abstract><t>This document specifies relation types for Web links, and defines a registry for them.  It also defines the use of such links in HTTP headers with the Link header field.  [STANDARDS-TRACK]</t></abstract>
+
+<author initials='M' surname='Nottingham' fullname='Mark Nottingham'>
+    <organization />
+</author>
+
+<date month='June' day='6' year='2017' />
+
+<abstract><t>This specification defines a model for the relationships between resources on the Web ("links") and the type of those relationships ("link relation types").  It also defines the serialisation of such links in HTTP headers with the Link header field.</t></abstract>
+
 </front>
-<seriesInfo name='RFC' value='5988'/>
-<seriesInfo name='DOI' value='10.17487/RFC5988'/>
+
+<seriesInfo name='Internet-Draft' value='draft-nottingham-rfc5988bis-06' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-nottingham-rfc5988bis-06.txt' />
 </reference>
 
 
@@ -284,52 +291,53 @@ Reference: [this document]
   </back>
 
 <!-- ##markdown-source:
-H4sIAGMzR1kAA8VYbW/bOBL+zl8xp3zY5uCXNIvdtk63uFzTXgPkpZukWBwO
-i4KSaJuIJPpIKo6vSH/7PkNKshTnuv1wwOWDI4uc4bw888zQ4/FYeO0LNaOb
-paIzXd2Ob1S5KqRX9OHm5iN9UDJXlt5rVeRCpqlVd7PhPpGbrJIlVORWzv24
-Mt7rarGU5bjgfb7ZNz44FDn+z+jw4PkLkeFxYexmRs7nQuiVnZG3tfOHBwev
-sFVaJWf0D1UpKwuxNvZ2YU29molbtcG3PFox/IZjty9+U+nuS7aIrII92lRC
-OC+r/LMsTAWzNsqJlZ7Rv7zJRoQPXeWq8iNyxnqr5g5Pm7J58FZnWMpMuZLN
-Q4nNWNIVDlEjsvNM5c5vCvW7ELL2S2NngsaC8KcrN6PzCV10sQqvYxjPpb19
-vGLsQlb6P8HsWXijSqmLGZUI99/4Y1IpHxZqCx+W3q/cbDpdr9eTdnUqhBiP
-xyRTWA+jhbhZakdupTI911nQTbmaw3pH/mk4LCMc5gyHEa2sudM5zCRJpZKV
-o7mxUOEyq1OOO2vBYXXma6vIzLEvZCBVfq1URX5tkA1napspjqrBudJTpdZh
-n6NMVthMiwADr/JJ4wNcUp8v+MObz1fBKMf+KNLO1bC/0M630nNTVzlB7+s2
-LAvtl3U6QdKmHJ3p6fhkWshUFW46wOybSVRaGmizKkOG6ZmZe1WNqK5WdYpj
-lirfj9DH2YNTQuCbo7SJh/S1T1n9VdSaLWW1gN2AfbBd/bnBDDnt3XSxHK8k
-ZHdND6EqdZ4XSog9Oq28NTmSEbD/5ctfrt6//fmnFwcPD13aJSBeeXkfEtmq
-ciErI1ovkTJ1v0LNwLzaxcQ75Tmzd9JqmRacRmS0LrwTusLyp6tTikf9+Orl
-zw8Pk2/CTu7CLJiSmepObfjArVH8PqIEBzHSopSDNaLRUyrnEJoJnYbkcLUW
-mutU2g0qvEP58MBo7k+vXr58eGCvdbYElKzVAVc4UOQaYPDFBs7s7XGtBi9k
-QW/Zzoq/NHAE8xBTj6Pk/NP1TTKK/+niMjxfvfv10+nVuxN+vv5wfHbWPbQ7
-rj9cfjo72T7F9wKSby/Pz99dnETh8+N/4h8yQ8nlx5vTy4vjsyTGBX6DoWv2
-OqALbqMmdOWVXVkVgObamsUXyET/D58/f7VNV6eidg07HNcLfgGRv1+8bxLY
-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
+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
+/JqRyuxG/BfEfFjOtxQAAA==
 
 -->
 
