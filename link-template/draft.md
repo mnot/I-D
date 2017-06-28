@@ -48,7 +48,7 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/link-
 in a URI {{!RFC3986}}.
 
 This specification defines a HTTP header field for conveying templates for links in the headers of
-a HTTP message. It is complimentary to the Link header field {{!RFC5988}}, which carries links
+a HTTP message. It is complimentary to the Link header field {{!I-D.nottingham-rfc5988bis}}, which carries links
 directly.
 
 ## Notational Conventions
@@ -64,8 +64,8 @@ and the "URI-Template" rule from {{!RFC6570}}.
 # The Link-Template Header Field
 
 The Link-Template entity-header field provides a means for serialising one or more links into HTTP
-headers. It is semantically equivalent to the Link header field {{!RFC5988}}, except
-that it uses URI Templates {{!RFC6570}} to convey the structure of links.
+headers. It is semantically equivalent to the Link header field {{!I-D.nottingham-rfc5988bis}},
+except that it uses URI Templates {{!RFC6570}} to convey the structure of links.
 
 ~~~
   Link-Template  = "Link-Template" ":" #linkt-value
@@ -81,16 +81,15 @@ Link-Template: </{username}>; rel="http://example.org/rel/user"
 indicates that a resource with the relation type "http://example.org/rel/user" can be found by
 interpolating the "username" variable into the template given.
 
-The target for the link (as defined by {{!RFC5988}}) is the result of expanding the URI
-Template {{!RFC6570}} (being converted to an absolute URI after expansion, if
-necessary).
+The target for the link (as defined by {{!I-D.nottingham-rfc5988bis}}) is the result of expanding
+the URI Template {{!RFC6570}} (being converted to an absolute URI after expansion, if necessary).
 
 The context, relation type and target attributes for the link are determined as defined for the
-Link header field in {{!RFC5988}}.
+Link header field in {{!I-D.nottingham-rfc5988bis}}.
 
 The parameters on a linkt-value have identical semantics to those of a Link header field
-{{!RFC5988}}. This includes (but is not limited to) the use of the "rel" parameter to convey the
-relation type, the "anchor" parameter to modify the context IRI, and so on.
+{{!I-D.nottingham-rfc5988bis}}. This includes (but is not limited to) the use of the "rel"
+parameter to convey the relation type, the "anchor" parameter to modify the context IRI, and so on.
 
 Likewise, the requirements for parameters on linkt-values are the same as those for a Link header
 field; in particular, the "rel" parameter MUST NOT appear more than once, and if it does, the
@@ -111,8 +110,8 @@ about the syntax or semantics of that variable; specification of particular form
 information is out of scope for this document.
 
 To determine the URI for a given variable, the value given is used as a base URI in reference
-resolution (as specified in {{!RFC3986}}). If the resulting URI is still relative, the
-context of the link is used as the base URI in a further resolution; see {{!RFC5988}}.
+resolution (as specified in {{!RFC3986}}). If the resulting URI is still relative, the context of
+the link is used as the base URI in a further resolution; see {{!I-D.nottingham-rfc5988bis}}.
 
 For example:
 
@@ -137,8 +136,8 @@ Link-Template: </widgets/{widget_id}>;
 
 # Security Considerations
 
-The security consideration for the Link header field in {{!RFC5988}} and those for URI Templates
-{{!RFC6570}} both apply.
+The security consideration for the Link header field in {{!I-D.nottingham-rfc5988bis}} and those
+for URI Templates {{!RFC6570}} both apply.
 
 # IANA Considerations
 
