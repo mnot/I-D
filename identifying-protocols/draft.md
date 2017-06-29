@@ -97,15 +97,30 @@ configuration. This is effectively what the HTTP/2 SETTINGS frame does.
 
 # Port Numbers
 
-Transport protocols like TCP {{?RFC793}} and UDP {{?RFC768}} commonly use port numbers to identify
+Transport protocols like TCP {{?RFC793}} and UDP {{?RFC768}} use port numbers to identify
 protocols. Historically, port numbers have been used to identify the application in use, which maps
 roughly to the protocol.
+
+Generally, a protocol registers a "default" port that is to be used for it; this allows a client to
+connect to a server for a given purpose only using that server's name.
 
 However, there are cases where different applications use the same protocol on different ports
 (e.g, SMTP on port 25, submission on port 587); conversely, different applications sometimes use
 the same protocol on the same port (e.g., countless applications using HTTP on ports 80 and 443).
 
+The binding between a port number and a protocol is also weak; just because HTTPS is allocated port
+443, it isn't constrained to operate only on that port (and is commonly deployed on other ports as
+well). Likewise, ports are sometimes used for purposes other than that allocated; again using 443
+as an example, other protocols are known to use it for firewall traversal.
 
+This means that while they serve their primary purpose of multiplexing multiple protocols onto the
+same host well, port numbers have limited utility for the purposes of protocol identification
+outlined above.
+
+The most commonly cited case, discriminating traffic in the network, can only be described as "best
+effort" generously, especially in these times of pervasive encryption {{?RFC7258}}. The port number
+that traffic uses is no guarantee of the application or protocol in use. At best, it is an
+indicator of *possible* application and/or protocol.
 
 
 ## Service Names
@@ -123,11 +138,20 @@ That specification goes on to recommend:
 > Because the port number space is finite (and therefore conservation is an important goal), the
 > alternative of using service names instead of port numbers is RECOMMENDED whenever possible.
 
+In other words, service names allow a host to dynamically nominate the port(s) to be used, rather
+than relying upon a default port.
 
-getservbyname()
+Being evolved from them, service names generally have the same granularity and scope of purpose as
+port numbers; that is, they're fairly "high-level", occupying conceptual space somewhere between
+coarsely-defined protocols and applications.
 
+Service names have only been used with SRV to date. They are difficult to retrofit onto existing
+protocols, since already-deployed clients will not support them, and therefore fail to work if they
+are used.
 
+So, stop asking for HTTP to support SRV. It's not going to happen.
 
+Service names' conceptually "high" level and binding to SRV makes them useful for negotiating a protocol (or protocol suite), but less useful for negotiating a specific version or configuration of that protocol, since 
 
 
 # URI Schemes
@@ -135,12 +159,18 @@ getservbyname()
 URI schemes {{?RFC3986}} occur as part of a resource identifier that's often (but not always) end
 user-visible.
 
+The primary purpose of URIs is identification.
+
 
 # ALPN Protocol IDs
 
 A newer form of protocol identification was introduced by ALPN {{?RFC7301}}, which establishes a
 name space of Protocol Identifiers.
 
+The original purpose of ALPN Protocol IDs was to identify the "next" protocol inside a TLS
+connection, so that HTTP could negotiate the use of HTTP/2 instead of HTTP/1. HTTP/2 quickly
+adopted this name space for other purposes, including the identification of protocols in
+Alternative Services {{?RFC7838}}.
 
 # IANA Considerations
 
