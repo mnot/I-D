@@ -419,7 +419,7 @@ If it is only necessary to identify clients, applications that use HTTP MAY use 
 'http' URL scheme.
 
 In either case, it is important to carefully specify the scoping and use of these mechanisms; if
-they expose sensitive data or capabilities (e.g., by acting as an ambiant authority), exploits are
+they expose sensitive data or capabilities (e.g., by acting as an ambient authority), exploits are
 possible. Mitigations include using a request-specific token to assure the intent of the client.
 
 
