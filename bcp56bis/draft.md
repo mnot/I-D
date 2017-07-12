@@ -430,7 +430,7 @@ This document has no requirements for IANA.
 
 # Security Considerations
 
-{{state}} discusses the impact of using stateful mechanisms in the protocol as ambiant authority,
+{{state}} discusses the impact of using stateful mechanisms in the protocol as ambient authority,
 and suggests a mitigation.
 
 {{scheme}} requires support for 'https' URLs, and discourages the use of 'http' URLs, to mitigate
