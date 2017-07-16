@@ -1,0 +1,392 @@
+
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                             July 16, 2017
+Intended status: Best Current Practice
+Expires: January 17, 2018
+
+
+                         Identifying Protocols
+               draft-nottingham-identifying-protocols-00
+
+Abstract
+
+   This document explores different means of identifying protocols, the
+   reasons for doing so, and defines best practices for their use.
+
+Note to Readers
+
+   The issues list for this draft can be found at
+   https://github.com/mnot/I-D/labels/identifying-protocols .
+
+   The most recent (often, unpublished) draft is at
+   https://mnot.github.io/I-D/identifying-protocols/ .
+
+   Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
+   pages/identifying-protocols .
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on January 17, 2018.
+
+Copyright Notice
+
+   Copyright (c) 2017 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+
+
+Nottingham              Expires January 17, 2018                [Page 1]
+
+Internet-Draft            Identifying Protocols                July 2017
+
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+   2.  "Magic" . . . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   3.  Port Numbers  . . . . . . . . . . . . . . . . . . . . . . . .   3
+     3.1.  Service Names . . . . . . . . . . . . . . . . . . . . . .   4
+   4.  URI Schemes . . . . . . . . . . . . . . . . . . . . . . . . .   5
+   5.  ALPN Protocol IDs . . . . . . . . . . . . . . . . . . . . . .   5
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .   6
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   7
+
+1.  Introduction
+
+   For a variety of reasons, it's often necessary to identify Internet
+   protocols.  This includes:
+
+   o  Assuring that the endpoints positively support the intended
+      protocol (e.g., to avoid cross-protocol attacks)
+
+   o  Negotiating the use of a protocol (or protocol version)
+
+   o  Configuring protocol details, such as transport parameters, or
+      optional features
+
+   o  Discriminating traffic based upon protocol, for policy enforcement
+      or quality of service
+
+   o  Establishing a name space for extensions and other protocol
+      artefacts
+
+   Internet standards define a number of ways to identify a protocol.
+   Less is said about the appropriate use of these identifiers for
+
+
+
+
+Nottingham              Expires January 17, 2018                [Page 2]
+
+Internet-Draft            Identifying Protocols                July 2017
+
+
+   various purposes.  This document defines best practices for the use
+   of several kinds of protocol identifiers.
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+2.  "Magic"
+
+   It's very common for protocols to specify an initial set of octets
+   that are to be sent by endpoints on a connection, so-called "magic."
+
+   Magic is best used to assure that the protocol being used is
+   unambiguous, to prevent cross-protocol attacks as well as plain
+   misconfiguration.
+
+   For example, HTTP/2 [RFC7540] uses a "connection preface"
+   (Section 3.5) for this purpose; it sends the string:
+
+      PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n
+
+   This was carefully designed to quickly and unambiguously break as
+   many HTTP/1.1 servers as possible, so that if a HTTP/2 client were to
+   accidentally connect to a HTTP/1.1 server, it would fail quickly and
+   as reliably as possible.  This aids error recovery.
+
+   Magic is less helpful for negotiating the protocol to be used.  For
+   example, the PROXY protocol uses magic to preface metadata onto a
+   connection.  However, the client needs to be configured to use the
+   PROXY protocol on an endpoint-by-endpoint basis, since negotiation
+   will fail otherwise.
+
+   Since Magic only applies to the data stream it is used within, it is
+   also less than useful for negotiating alternative transports.
+   However, a protocol can overload magic to perform some kinds of
+   configuration.  This is effectively what the HTTP/2 SETTINGS frame
+   does.
+
+3.  Port Numbers
+
+   Transport protocols like TCP [RFC0793] and UDP [RFC0768] use port
+   numbers to identify protocols.  Historically, port numbers have been
+   used to identify the application in use, which maps roughly to the
+   protocol.
+
+
+
+
+
+Nottingham              Expires January 17, 2018                [Page 3]
+
+Internet-Draft            Identifying Protocols                July 2017
+
+
+   Generally, a protocol registers a "default" port that is to be used
+   for it; this allows a client to connect to a server for a given
+   purpose only using that server's name.
+
+   However, there are cases where different applications use the same
+   protocol on different ports (e.g, SMTP on port 25, submission on port
+   587); conversely, different applications sometimes use the same
+   protocol on the same port (e.g., countless applications using HTTP on
+   ports 80 and 443).
+
+   The binding between a port number and a protocol is also weak; just
+   because HTTPS is allocated port 443, it isn't constrained to operate
+   only on that port (and is commonly deployed on other ports as well).
+   Likewise, ports are sometimes used for purposes other than that
+   allocated; again using 443 as an example, other protocols are known
+   to use it for firewall traversal.
+
+   This means that while they serve their primary purpose of
+   multiplexing multiple protocols onto the same host well, port numbers
+   have limited utility for the purposes of protocol identification
+   outlined above.
+
+   The most commonly cited case, discriminating traffic in the network,
+   can only be described as "best effort" generously, especially in
+   these times of pervasive encryption [RFC7258].  The port number that
+   traffic uses is no guarantee of the application or protocol in use.
+   At best, it is an indicator of _possible_ application and/or
+   protocol.
+
+3.1.  Service Names
+
+   DNS SRV [RFC2782] introduced Service Names as as complement to and
+   extension of port numbers.  They are managed in the same registry
+   [RFC0635]:
+
+   Service names are the unique key in the Service Name and Transport
+   Protocol Port Number registry.  This unique symbolic name for a
+   service may also be used for other purposes, such as in DNS SRV
+   records.
+
+   That specification goes on to recommend:
+
+      Because the port number space is finite (and therefore
+      conservation is an important goal), the alternative of using
+      service names instead of port numbers is RECOMMENDED whenever
+      possible.
+
+
+
+
+
+Nottingham              Expires January 17, 2018                [Page 4]
+
+Internet-Draft            Identifying Protocols                July 2017
+
+
+   In other words, service names allow a host to dynamically nominate
+   the port(s) to be used, rather than relying upon a default port.
+
+   Being evolved from them, service names generally have the same
+   granularity and scope of purpose as port numbers; that is, they're
+   fairly "high-level", occupying conceptual space somewhere between
+   coarsely-defined protocols and applications.
+
+   Service names have only been used with SRV to date.  They are
+   difficult to retrofit onto existing protocols, since already-deployed
+   clients will not support them, and therefore fail to work if they are
+   used.
+
+   So, stop asking for HTTP to support SRV.  It's not going to happen.
+
+   Service names' conceptually "high" level and binding to SRV makes
+   them useful for negotiating a protocol (or protocol suite), but less
+   useful for negotiating a specific version or configuration of that
+   protocol, since
+
+4.  URI Schemes
+
+   URI schemes [RFC3986] occur as part of a resource identifier that's
+   often (but not always) end user-visible.
+
+   The primary purpose of URIs is identification.
+
+5.  ALPN Protocol IDs
+
+   A newer form of protocol identification was introduced by ALPN
+   [RFC7301], which establishes a name space of Protocol Identifiers.
+
+   The original purpose of ALPN Protocol IDs was to identify the "next"
+   protocol inside a TLS connection, so that HTTP could negotiate the
+   use of HTTP/2 instead of HTTP/1.  HTTP/2 quickly adopted this name
+   space for other purposes, including the identification of protocols
+   in Alternative Services [RFC7838].
+
+6.  IANA Considerations
+
+   This document has no requirements for IANA.
+
+7.  Security Considerations
+
+
+
+
+
+
+
+
+Nottingham              Expires January 17, 2018                [Page 5]
+
+Internet-Draft            Identifying Protocols                July 2017
+
+
+8.  References
+
+8.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/
+              RFC2119, March 1997,
+              <http://www.rfc-editor.org/info/rfc2119>.
+
+8.2.  Informative References
+
+   [RFC0635]  Cerf, V., "Assessment of ARPANET protocols", RFC 635, DOI
+              10.17487/RFC0635, April 1974,
+              <http://www.rfc-editor.org/info/rfc635>.
+
+   [RFC0768]  Postel, J., "User Datagram Protocol", STD 6, RFC 768, DOI
+              10.17487/RFC0768, August 1980,
+              <http://www.rfc-editor.org/info/rfc768>.
+
+   [RFC0793]  Postel, J., "Transmission Control Protocol", STD 7, RFC
+              793, DOI 10.17487/RFC0793, September 1981,
+              <http://www.rfc-editor.org/info/rfc793>.
+
+   [RFC2782]  Gulbrandsen, A., Vixie, P., and L. Esibov, "A DNS RR for
+              specifying the location of services (DNS SRV)", RFC 2782,
+              DOI 10.17487/RFC2782, February 2000,
+              <http://www.rfc-editor.org/info/rfc2782>.
+
+   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+              Resource Identifier (URI): Generic Syntax", STD 66, RFC
+              3986, DOI 10.17487/RFC3986, January 2005,
+              <http://www.rfc-editor.org/info/rfc3986>.
+
+   [RFC7258]  Farrell, S. and H. Tschofenig, "Pervasive Monitoring Is an
+              Attack", BCP 188, RFC 7258, DOI 10.17487/RFC7258, May
+              2014, <http://www.rfc-editor.org/info/rfc7258>.
+
+   [RFC7301]  Friedl, S., Popov, A., Langley, A., and E. Stephan,
+              "Transport Layer Security (TLS) Application-Layer Protocol
+              Negotiation Extension", RFC 7301, DOI 10.17487/RFC7301,
+              July 2014, <http://www.rfc-editor.org/info/rfc7301>.
+
+   [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
+              Transfer Protocol Version 2 (HTTP/2)", RFC 7540, DOI
+              10.17487/RFC7540, May 2015,
+              <http://www.rfc-editor.org/info/rfc7540>.
+
+
+
+
+
+Nottingham              Expires January 17, 2018                [Page 6]
+
+Internet-Draft            Identifying Protocols                July 2017
+
+
+   [RFC7838]  Nottingham, M., McManus, P., and J. Reschke, "HTTP
+              Alternative Services", RFC 7838, DOI 10.17487/RFC7838,
+              April 2016, <http://www.rfc-editor.org/info/rfc7838>.
+
+Author's Address
+
+   Mark Nottingham
+
+   Email: mnot@mnot.net
+   URI:   https://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires January 17, 2018                [Page 7]
