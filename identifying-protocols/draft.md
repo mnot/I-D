@@ -83,7 +83,7 @@ possible, so that if a HTTP/2 client were to accidentally connect to a HTTP/1.1 
 fail quickly and as reliably as possible. This aids error recovery.
 
 Magic is less helpful for negotiating the protocol to be used. For example, the PROXY protocol
-{{PROXY}} uses magic to preface metadata onto a connection. However, the client needs to be
+uses magic to preface metadata onto a connection. However, the client needs to be
 configured to use the PROXY protocol on an endpoint-by-endpoint basis, since negotiation will fail
 otherwise.
 
@@ -97,7 +97,7 @@ configuration. This is effectively what the HTTP/2 SETTINGS frame does.
 
 # Port Numbers
 
-Transport protocols like TCP {{?RFC793}} and UDP {{?RFC768}} use port numbers to identify
+Transport protocols like TCP {{?RFC0793}} and UDP {{?RFC0768}} use port numbers to identify
 protocols. Historically, port numbers have been used to identify the application in use, which maps
 roughly to the protocol.
 
@@ -126,7 +126,7 @@ indicator of *possible* application and/or protocol.
 ## Service Names
 
 DNS SRV {{?RFC2782}} introduced Service Names as as complement to and extension of port numbers.
-They are managed in the same registry {{?RFC635}}:
+They are managed in the same registry {{?RFC0635}}:
 
     Service names are the unique key in the Service Name and Transport
     Protocol Port Number registry.  This unique symbolic name for a
