@@ -54,7 +54,7 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/linke
 
 # Introduction
 
-In normal operation, a HTTP {{!RFC2616}} cache will invalidate a stored response if an
+In normal operation, a HTTP {{!RFC7230}} cache will invalidate a stored response if an
 unsafe request (e.g., POST, PUT or DELETE) is made to its URI. HTTP also provides for such a
 state-changing request to invalidate related resources (using the Location and Content-Location
 headers in the response), but this is of limited utility, because those headers have defined
@@ -67,9 +67,9 @@ course the blog entry itself. If any of these resources is made cacheable, it wi
 those changes, causing confusion if the user tries to verify that their changes have been correctly
 applied.
 
-This memo introduces new link relation types {{!RFC5988}} that allow more fine-grained
-relationships between resources to be defined, so that caches can invalidate all related
-representations when the state of one changes. It also introduces a cache-control response
+This memo introduces new link relation types {{!I-D.nottingham-rfc5988bis}} that allow more
+fine-grained relationships between resources to be defined, so that caches can invalidate all
+related representations when the state of one changes. It also introduces a cache-control response
 extension, so that responses using the relations can be cached by implementations that understand
 these relations.
 
@@ -168,7 +168,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
 {{RFC2119}}.
 
-This document uses the Augmented Backus-Naur Form (ABNF) notation of {{!RFC2616}}, and explicitly
+This document uses the Augmented Backus-Naur Form (ABNF) notation of {{!RFC7230}}, and explicitly
 includes the following rules from it: delta-seconds.
 
 
@@ -238,7 +238,7 @@ Content-Location response headers (after normalisation) upon receipt of a succes
 state-changing request.
 
 Here, a response is considered to "contain" a link relation if it is carried in the Link HTTP
-header {{!RFC5988}}. I.e., it is not necessary to look at the response body.
+header {{!I-D.nottingham-rfc5988bis}}. I.e., it is not necessary to look at the response body.
 
 "Invalidate" means that the cache will either remove all stored responses related to the effective
 request URI, or will mark these as "invalid" and in need of a mandatory validation before they can
