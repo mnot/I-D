@@ -5,11 +5,11 @@
 Network Working Group                                      M. Nottingham
 Internet-Draft
 Intended status: Informational                                  M. Kelly
-Expires: May 17, 2016                                  November 14, 2015
+Expires: January 18, 2018                                  July 17, 2017
 
 
                        Linked Cache Invalidation
-                  draft-nottingham-linked-cache-inv-04
+                  draft-nottingham-linked-cache-inv-05
 
 Abstract
 
@@ -18,6 +18,17 @@ Abstract
    cache-control extension that takes advantage of those relationships
    to use them to extend response freshness.  Collectively, this is
    referred to as Linked Cache Invalidation (LCI).
+
+Note to Readers
+
+   The issues list for this draft can be found at
+   https://github.com/mnot/I-D/labels/linked-cache-inv .
+
+   The most recent (often, unpublished) draft is at
+   https://mnot.github.io/I-D/linked-cache-inv/ .
+
+   Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
+   pages/linked-cache-inv .
 
 Status of This Memo
 
@@ -34,11 +45,22 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 17, 2016.
+   This Internet-Draft will expire on January 18, 2018.
+
+
+
+
+
+
+
+Nottingham & Kelly      Expires January 18, 2018                [Page 1]
+
+Internet-Draft          Linked Cache Invalidation              July 2017
+
 
 Copyright Notice
 
-   Copyright (c) 2015 IETF Trust and the persons identified as the
+   Copyright (c) 2017 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -46,33 +68,26 @@ Copyright Notice
    (http://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
-   to this document.
-
-
-
-
-
-
-Nottingham & Kelly        Expires May 17, 2016                  [Page 1]
-
-Internet-Draft                                             November 2015
-
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
 
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-     1.1.  Example . . . . . . . . . . . . . . . . . . . . . . . . .   2
-   2.  Notational Conventions  . . . . . . . . . . . . . . . . . . .   4
-   3.  The 'invalidates' Link Relation Type  . . . . . . . . . . . .   5
-   4.  The 'inv-by' Link Relation Type . . . . . . . . . . . . . . .   5
-   5.  The 'inv-maxage' Response Cache-Control Extension . . . . . .   5
-     5.1.  inv-maxage Syntax . . . . . . . . . . . . . . . . . . . .   5
-     5.2.  inv-maxage Semantics  . . . . . . . . . . . . . . . . . .   6
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
-   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   7
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   7
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .   8
+     1.1.  Example . . . . . . . . . . . . . . . . . . . . . . . . .   3
+     1.2.  Notational Conventions  . . . . . . . . . . . . . . . . .   5
+   2.  The 'invalidates' Link Relation Type  . . . . . . . . . . . .   5
+   3.  The 'inv-by' Link Relation Type . . . . . . . . . . . . . . .   5
+   4.  The 'inv-maxage' Response Cache-Control Extension . . . . . .   6
+     4.1.  inv-maxage Syntax . . . . . . . . . . . . . . . . . . . .   6
+     4.2.  inv-maxage Semantics  . . . . . . . . . . . . . . . . . .   6
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   8
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .   8
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   8
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   8
 
@@ -91,6 +106,14 @@ Table of Contents
    user's summary page, the blog's "front" page, the blog's Atom feed,
    and of course the blog entry itself.  If any of these resources is
    made cacheable, it will not reflect those changes, causing confusion
+
+
+
+Nottingham & Kelly      Expires January 18, 2018                [Page 2]
+
+Internet-Draft          Linked Cache Invalidation              July 2017
+
+
    if the user tries to verify that their changes have been correctly
    applied.
 
@@ -105,14 +128,6 @@ Table of Contents
 
    Taking the blog use case described above, imagine that we have the
    following related resources:
-
-
-
-
-Nottingham & Kelly        Expires May 17, 2016                  [Page 2]
-
-Internet-Draft                                             November 2015
-
 
    o  http://example.com/blog/2012/05/04/hi [the blog entry]
 
@@ -147,6 +162,14 @@ Internet-Draft                                             November 2015
    To invalidate the full comments page for the entry, the relationship
    can be described in that page's response headers:
 
+
+
+
+Nottingham & Kelly      Expires January 18, 2018                [Page 3]
+
+Internet-Draft          Linked Cache Invalidation              July 2017
+
+
    HTTP/1.1 200 OK
    Content-Type: text/html
    Content-Length: 5555
@@ -161,15 +184,6 @@ Internet-Draft                                             November 2015
 
    Note that the full comments page also carries a Cache-Control header
    that instructs "normal" caches not to reuse this response, but allows
-
-
-
-
-Nottingham & Kelly        Expires May 17, 2016                  [Page 3]
-
-Internet-Draft                                             November 2015
-
-
    those caches that are aware of LCI to consider it fresh for ten
    minutes.
 
@@ -203,6 +217,15 @@ Internet-Draft                                             November 2015
    It is important to note that the invalidations are only effective in
    the caches that the client's request stream travels through.  This
    means other caches will continue to serve the "old" content until the
+
+
+
+
+Nottingham & Kelly      Expires January 18, 2018                [Page 4]
+
+Internet-Draft          Linked Cache Invalidation              July 2017
+
+
    invalidation event is propagated to them (see below) or the cached
    responses become stale.
 
@@ -210,27 +233,17 @@ Internet-Draft                                             November 2015
    Protocol (HTCP) [RFC2756] can be used to propagate invalidation
    events between them.
 
-2.  Notational Conventions
+1.2.  Notational Conventions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-   document are to be interpreted as described in RFC 2119 [RFC2119].
-
-
-
-
-
-
-Nottingham & Kelly        Expires May 17, 2016                  [Page 4]
-
-Internet-Draft                                             November 2015
-
+   document are to be interpreted as described in [RFC2119].
 
    This document uses the Augmented Backus-Naur Form (ABNF) notation of
    [RFC2616], and explicitly includes the following rules from it:
    delta-seconds.
 
-3.  The 'invalidates' Link Relation Type
+2.  The 'invalidates' Link Relation Type
 
    The 'invalidates' link relation type allows a response that signifies
    a state change on the server to indicate one or more associated URIs
@@ -245,7 +258,7 @@ Internet-Draft                                             November 2015
 
    o  Notes:
 
-4.  The 'inv-by' Link Relation Type
+3.  The 'inv-by' Link Relation Type
 
    The 'inv-by' link relation type allows a response to nominate one or
    more other resources that affect the state of the resource it's
@@ -261,26 +274,26 @@ Internet-Draft                                             November 2015
 
    o  Notes:
 
-5.  The 'inv-maxage' Response Cache-Control Extension
+
+
+
+Nottingham & Kelly      Expires January 18, 2018                [Page 5]
+
+Internet-Draft          Linked Cache Invalidation              July 2017
+
+
+4.  The 'inv-maxage' Response Cache-Control Extension
 
    When present, the 'inv-maxage' cache-control extension indicates the
    number of seconds that caches who implement Linked Cache invalidation
    can consider responses fresh for, provided they are not invalidated.
 
-5.1.  inv-maxage Syntax
+4.1.  inv-maxage Syntax
 
    The inv-maxage cache-control extension is parameterised with a
    numeric argument:
 
    "inv-maxage" "=" ( delta-seconds | ( <"> delta-seconds <"> ) )
-
-
-
-
-Nottingham & Kelly        Expires May 17, 2016                  [Page 5]
-
-Internet-Draft                                             November 2015
-
 
    Note that the argument MAY occur in either token or quoted-string
    form.
@@ -291,7 +304,7 @@ Internet-Draft                                             November 2015
    If the directive appears more than once in a response, each instance
    is invalid and MUST be ignored by caches.
 
-5.2.  inv-maxage Semantics
+4.2.  inv-maxage Semantics
 
    HTTP caches MAY, if they fully implement this specification,
    disregard the HTTP response cache-control directives 'no-cache',
@@ -315,6 +328,16 @@ Internet-Draft                                             November 2015
    Location response headers (after normalisation) upon receipt of a
    successful response to a state-changing request.
 
+
+
+
+
+
+Nottingham & Kelly      Expires January 18, 2018                [Page 6]
+
+Internet-Draft          Linked Cache Invalidation              July 2017
+
+
    Here, a response is considered to "contain" a link relation if it is
    carried in the Link HTTP header [RFC5988].  I.e., it is not necessary
    to look at the response body.
@@ -329,14 +352,6 @@ Internet-Draft                                             November 2015
 
    A "state-changing" request is one with an unsafe method (e.g., POST,
    PUT, DELETE, PATCH), or one that is not known to be safe.
-
-
-
-
-Nottingham & Kelly        Expires May 17, 2016                  [Page 6]
-
-Internet-Draft                                             November 2015
-
 
    In this context, "normalisation" means, in the case of a relative
    request-URI, that it is absolutised using the value of the Host
@@ -353,7 +368,7 @@ Internet-Draft                                             November 2015
    linked invalidations), or when a changed response is seen (such as
    when HTTP validation is unsuccessful).
 
-6.  Security Considerations
+5.  Security Considerations
 
    Linked Cache Invalidation does not guarantee that invalidations will
    be effected; e.g., they can be lost due to network issues or cache
@@ -370,41 +385,43 @@ Internet-Draft                                             November 2015
    invalidate a large number of responses), leading to a reduction in
    service quality.
 
-7.  IANA Considerations
+
+
+
+
+Nottingham & Kelly      Expires January 18, 2018                [Page 7]
+
+Internet-Draft          Linked Cache Invalidation              July 2017
+
+
+6.  IANA Considerations
 
    This document registers two entries in the Link Relation Type
-   Registry; see Section 3 and Section 4.
+   Registry; see Section 2 and Section 3.
 
    It also registers a HTTP Cache Directive, "inv-maxage"; see
-   Section 5.
+   Section 4.
 
-8.  References
+7.  References
 
-8.1.  Normative References
+7.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997,
+              Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/
+              RFC2119, March 1997,
               <http://www.rfc-editor.org/info/rfc2119>.
-
-
-
-Nottingham & Kelly        Expires May 17, 2016                  [Page 7]
-
-Internet-Draft                                             November 2015
-
 
    [RFC2616]  Fielding, R., Gettys, J., Mogul, J., Frystyk, H.,
               Masinter, L., Leach, P., and T. Berners-Lee, "Hypertext
-              Transfer Protocol -- HTTP/1.1", RFC 2616,
-              DOI 10.17487/RFC2616, June 1999,
+              Transfer Protocol -- HTTP/1.1", RFC 2616, DOI 10.17487/
+              RFC2616, June 1999,
               <http://www.rfc-editor.org/info/rfc2616>.
 
-   [RFC5988]  Nottingham, M., "Web Linking", RFC 5988,
-              DOI 10.17487/RFC5988, October 2010,
+   [RFC5988]  Nottingham, M., "Web Linking", RFC 5988, DOI 10.17487/
+              RFC5988, October 2010,
               <http://www.rfc-editor.org/info/rfc5988>.
 
-8.2.  Informative References
+7.2.  Informative References
 
    [RFC2756]  Vixie, P. and D. Wessels, "Hyper Text Caching Protocol
               (HTCP/0.0)", RFC 2756, DOI 10.17487/RFC2756, January 2000,
@@ -419,13 +436,24 @@ Authors' Addresses
    Mark Nottingham
 
    Email: mnot@mnot.net
-   URI:   http://www.mnot.net/
+   URI:   https://www.mnot.net/
+
+
+
+
+
+
+
+
+Nottingham & Kelly      Expires January 18, 2018                [Page 8]
+
+Internet-Draft          Linked Cache Invalidation              July 2017
 
 
    Mike Kelly
 
    Email: mike@stateless.co
-   URI:   http://stateless.co/
+   URI:   http://stateless.co
 
 
 
@@ -445,4 +473,32 @@ Authors' Addresses
 
 
 
-Nottingham & Kelly        Expires May 17, 2016                  [Page 8]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham & Kelly      Expires January 18, 2018                [Page 9]
