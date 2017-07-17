@@ -74,7 +74,7 @@ Cache Invalidation (LCI).</t>
 
 <section anchor="introduction" title="Introduction">
 
-<t>In normal operation, a HTTP <xref target="RFC2616"/> cache will invalidate a stored response if an
+<t>In normal operation, a HTTP <xref target="RFC7230"/> cache will invalidate a stored response if an
 unsafe request (e.g., POST, PUT or DELETE) is made to its URI. HTTP also provides for such a
 state-changing request to invalidate related resources (using the Location and Content-Location
 headers in the response), but this is of limited utility, because those headers have defined
@@ -87,9 +87,9 @@ course the blog entry itself. If any of these resources is made cacheable, it wi
 those changes, causing confusion if the user tries to verify that their changes have been correctly
 applied.</t>
 
-<t>This memo introduces new link relation types <xref target="RFC5988"/> that allow more fine-grained
-relationships between resources to be defined, so that caches can invalidate all related
-representations when the state of one changes. It also introduces a cache-control response
+<t>This memo introduces new link relation types <xref target="I-D.nottingham-rfc5988bis"/> that allow more
+fine-grained relationships between resources to be defined, so that caches can invalidate all
+related representations when the state of one changes. It also introduces a cache-control response
 extension, so that responses using the relations can be cached by implementations that understand
 these relations.</t>
 
@@ -190,7 +190,7 @@ until the invalidation event is propagated to them (see below) or the cached res
 “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in
 <xref target="RFC2119"/>.</t>
 
-<t>This document uses the Augmented Backus-Naur Form (ABNF) notation of <xref target="RFC2616"/>, and explicitly
+<t>This document uses the Augmented Backus-Naur Form (ABNF) notation of <xref target="RFC7230"/>, and explicitly
 includes the following rules from it: delta-seconds.</t>
 
 </section>
@@ -265,7 +265,7 @@ Content-Location response headers (after normalisation) upon receipt of a succes
 state-changing request.</t>
 
 <t>Here, a response is considered to “contain” a link relation if it is carried in the Link HTTP
-header <xref target="RFC5988"/>. I.e., it is not necessary to look at the response body.</t>
+header <xref target="I-D.nottingham-rfc5988bis"/>. I.e., it is not necessary to look at the response body.</t>
 
 <t>“Invalidate” means that the cache will either remove all stored responses related to the effective
 request URI, or will mark these as “invalid” and in need of a mandatory validation before they can
@@ -338,34 +338,37 @@ to invalidate a large number of responses), leading to a reduction in service qu
 
 
 
-<reference  anchor='RFC2616' target='http://www.rfc-editor.org/info/rfc2616'>
+<reference  anchor='RFC7230' target='http://www.rfc-editor.org/info/rfc7230'>
 <front>
-<title>Hypertext Transfer Protocol -- HTTP/1.1</title>
-<author initials='R.' surname='Fielding' fullname='R. Fielding'><organization /></author>
-<author initials='J.' surname='Gettys' fullname='J. Gettys'><organization /></author>
-<author initials='J.' surname='Mogul' fullname='J. Mogul'><organization /></author>
-<author initials='H.' surname='Frystyk' fullname='H. Frystyk'><organization /></author>
-<author initials='L.' surname='Masinter' fullname='L. Masinter'><organization /></author>
-<author initials='P.' surname='Leach' fullname='P. Leach'><organization /></author>
-<author initials='T.' surname='Berners-Lee' fullname='T. Berners-Lee'><organization /></author>
-<date year='1999' month='June' />
-<abstract><t>HTTP has been in use by the World-Wide Web global information initiative since 1990. This specification defines the protocol referred to as &quot;HTTP/1.1&quot;, and is an update to RFC 2068.  [STANDARDS-TRACK]</t></abstract>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the &quot;http&quot; and &quot;https&quot; Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract>
 </front>
-<seriesInfo name='RFC' value='2616'/>
-<seriesInfo name='DOI' value='10.17487/RFC2616'/>
+<seriesInfo name='RFC' value='7230'/>
+<seriesInfo name='DOI' value='10.17487/RFC7230'/>
 </reference>
 
 
 
-<reference  anchor='RFC5988' target='http://www.rfc-editor.org/info/rfc5988'>
+<reference anchor='I-D.nottingham-rfc5988bis'>
 <front>
 <title>Web Linking</title>
-<author initials='M.' surname='Nottingham' fullname='M. Nottingham'><organization /></author>
-<date year='2010' month='October' />
-<abstract><t>This document specifies relation types for Web links, and defines a registry for them.  It also defines the use of such links in HTTP headers with the Link header field.  [STANDARDS-TRACK]</t></abstract>
+
+<author initials='M' surname='Nottingham' fullname='Mark Nottingham'>
+    <organization />
+</author>
+
+<date month='June' day='6' year='2017' />
+
+<abstract><t>This specification defines a model for the relationships between resources on the Web ("links") and the type of those relationships ("link relation types").  It also defines the serialisation of such links in HTTP headers with the Link header field.</t></abstract>
+
 </front>
-<seriesInfo name='RFC' value='5988'/>
-<seriesInfo name='DOI' value='10.17487/RFC5988'/>
+
+<seriesInfo name='Internet-Draft' value='draft-nottingham-rfc5988bis-06' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-nottingham-rfc5988bis-06.txt' />
 </reference>
 
 
