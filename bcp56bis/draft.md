@@ -296,6 +296,14 @@ hostname) applications that use HTTP MAY define a well-known URL {{?RFC5785}} as
 
 ### URL Schemes {#scheme}
 
+URL schemes serve a number of purposes for most applications. For example, they typically establish
+a name space, can imply the use of DNS for resolution, and can affect things like cookie processing
+{{?RFC6265}} and the calculation of the origin {{?RFC6454}}.
+
+
+
+registerProtocolHandler() https://html.spec.whatwg.org/#custom-handlers
+
 Applications that use HTTP MUST allow use of the "https" URL scheme, and SHOULD NOT allow use of
 the "http" URL scheme, unless interoperability considerations with existing deployments require it.
 They MUST NOT use other URL schemes.
