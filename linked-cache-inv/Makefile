@@ -36,7 +36,12 @@ idnits: $(target).txt
 	
 %.html: %.xml
 	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
-	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) > $@
+	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) \
+	bootstrapJsUrl='../Tools/bower_components/bootstrap/dist/js/bootstrap.min.js' \
+	bootstrapCssUrl='../Tools/bower_components/bootstrap/dist/css/bootstrap.min.css' \
+	jqueryJsUrl='../Tools/bower_components/jquery/dist/jquery.min.js' \
+	navbar='../Tools/navbar.html' \
+	> $@
 #	$(xml2rfc) --html $< $@
 
 %.txt: %.xml
