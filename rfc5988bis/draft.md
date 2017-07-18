@@ -35,9 +35,9 @@ normative:
   RFC5646:
   RFC7230:
   RFC7231:
+  RFC8174:
   W3C.REC-css3-mediaqueries-20120619:
   I-D.ietf-httpbis-rfc5987bis:
-  I-D.leiba-rfc2119-update:
 
 informative:
   RFC2046:
@@ -84,8 +84,8 @@ Furthermore, {{header}} defines an HTTP header field for conveying such links.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
-described in BCP 14 {{RFC2119}},{{I-D.leiba-rfc2119-update}} when, and only when, they appear in
-all capitals, as shown here.
+described in BCP 14 {{RFC2119}},{{RFC8174}} when, and only when, they appear in all capitals, as
+shown here.
 
 This document uses the Augmented Backus-Naur Form (ABNF) notation of {{RFC7230}}, including the
  #rule, and explicitly includes the following rules from it: quoted-string, token, SP (space),
