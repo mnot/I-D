@@ -550,7 +550,7 @@ collected in the registry.
 
 ## Link Relation Application Data Registry
 
-This specification terminates the Link Relation Application Data Registry, as it has not been used,
+This specification removes the Link Relation Application Data Registry, as it has not been used,
 and future use is not anticipated. IANA is instructed to remove it.
 
 
