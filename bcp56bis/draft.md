@@ -296,26 +296,32 @@ hostname) applications that use HTTP MAY define a well-known URL {{?RFC5785}} as
 
 ### URL Schemes {#scheme}
 
-URL schemes serve a number of purposes for most applications. For example, they typically establish
-a name space, can imply the use of DNS for resolution, and can affect things like cookie processing
-{{?RFC6265}} and the calculation of the origin {{?RFC6454}}.
+Applications that use HTTP will typically use the "http" and/or "https" URL schemes. "https" is preferred to mitigate pervasive monitoring attacks {{?RFC7258}}.
+
+However, application-specific schemes can be defined as well.
+
+When defining an URL scheme for an application using HTTP, there are a number of tradeoffs and
+caveats to keep in mind:
+
+* Unmodified Web browsers will not support the new scheme. While it is possible to register new URL schemes with Web browsers (e.g. registerProtocolHandler() in {{custom-handlers}}, as well as several proprietary approaches), support for these mechanisms is not shared by all browsers, and their capabilities can vary.
+
+* Likewise, existing non-browser clients, intermediaries, servers and associated software will not recognise the new scheme, and might fail to operate. For example, a client library might fail to dispatch the request; a cache might refuse to store the response, and a proxy might fail to forward the request. 
+
+* Because URLs occur in and are generated in HTTP artefacts commonly, often without human intervention (e.g., in the `Location` header), it can be difficult to assure that the new scheme is used consistently.
+
+* The resources identified by the new scheme will still be available with "http" and/or "https" URLs to clients. While it is possible to define the relationship between these resources in new new scheme's specification, existing HTTP software (such as clients, caches, intermediaries and servers) will not be available, so there is a danger of confusion when the "wrong" URL is used.
+
+* Features that rely upon the URL's origin {{?RFC6454}}, such as the Web's same-origin policy, will be impacted by a change of scheme.
+
+* HTTP-specific features such as cookies {{?RFC6265}}, authentication {{?RFC7235}}, caching {{?RFC7234}}, and CORS {{CORS}} might or might not work correctly, depending on how they are defined and implemented. Generally, they are designed and implemented with an assumption that the URL will always be "http" or "https".
+
+* Web features that require a secure context {{secure-context}} will likely treat a new scheme as insecure.
+
+For these reasons, it is preferable to use the message payload to indicate the application in use, rather than the URL scheme.
+
+See {{?RFC7595}} for more information about minting new URL schemes.
 
 
-
-registerProtocolHandler() https://html.spec.whatwg.org/#custom-handlers
-
-Applications that use HTTP MUST allow use of the "https" URL scheme, and SHOULD NOT allow use of
-the "http" URL scheme, unless interoperability considerations with existing deployments require it.
-They MUST NOT use other URL schemes.
-
-"https" is preferred to mitigate pervasive monitoring attacks {{?RFC7258}}.
-
-Using other schemes to denote an application using HTTP makes it more difficult to use with
-existing implementations (e.g., Web browsers), and is likely to fail to meet the requirements of
-{{!RFC7595}}.
-
-If it is necessary to advertise the application in use, this SHOULD be done in message payloads,
-not the URL scheme.
 
 ### Transport Ports
 
