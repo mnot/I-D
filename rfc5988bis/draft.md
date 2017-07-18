@@ -31,7 +31,7 @@ normative:
   RFC3986:
   RFC3987:
   RFC6838:
-  RFC5226:
+  RFC8126:
   RFC5646:
   RFC7230:
   RFC7231:
@@ -204,34 +204,34 @@ Registration requests consist of at least the following information:
   preferably including a URI that can be used to retrieve a copy of the document. An indication of
   the relevant section(s) can also be included, but is not required.
 
-The Expert(s) MAY define additional fields to be collected in the registry.
+The expert(s) MAY define additional fields to be collected in the registry.
 
 General requirements for registered relation types are described in {{registered}}.
 
 Registrations MUST reference a freely available, stable specification.
 
-Note that relation types can be registered by third parties (including the Expert(s)), if the
-Expert(s) determine that an unregistered relation type is widely deployed and not likely to be
+Note that relation types can be registered by third parties (including the expert(s)), if the
+expert(s) determine that an unregistered relation type is widely deployed and not likely to be
 registered in a timely manner otherwise.
 
 
 #### Registration Request Processing {#processing}
 
-Relation types are registered on the advice of a Designated Expert (appointed by the IESG or their
-delegate), with a Specification Required (using terminology from Section 4.1 of {{RFC5226}}).
+Relation types are registered using the Specification Required policy (see Section 4.6 of
+{{RFC8126}}), which implies review and approval by a designated expert.
 
 The goal of the registry is to reflect common use of links on the Internet. Therefore, the
-Expert(s) SHOULD be strongly biased towards approving registrations, unless they are abusive,
+expert(s) SHOULD be strongly biased towards approving registrations, unless they are abusive,
 frivolous, not likely to be used on the Internet, or actively harmful to the Internet and/or the
 Web (not merely aesthetically displeasing, or architecturally dubious). As stated in
-{{registered}}, the Experts MAY withhold registration of names that are too general for the
+{{registered}}, the expert(s) MAY withhold registration of names that are too general for the
 proposed application.
 
-The Expert(s) MUST clearly identify any issues which cause a registration to be refused. Advice
+The expert(s) MUST clearly identify any issues which cause a registration to be refused. Advice
 about the semantics of a proposed link relation type can be given, but if it does not block
 registration, this SHOULD be explicitly stated.
 
-When a request is approved, the Expert(s) will inform IANA, and the registration will be processed.
+When a request is approved, the expert(s) will inform IANA, and the registration will be processed.
 The IESG is the final arbiter of any objection.
 
 
@@ -519,10 +519,10 @@ This specification updates the registration procedures for the Link Relation Typ
 {{procedure}}.
 
 IANA will direct any incoming requests regarding the registry to this document and, if defined, the
-processes established by the Expert(s); typically, this will mean referring them to the registry
+processes established by the expert(s); typically, this will mean referring them to the registry
 Web page.
 
-Note that the Expert(s) are allowed (as per {{procedure}}) to define additional fields to be
+Note that the expert(s) are allowed (as per {{procedure}}) to define additional fields to be
 collected in the registry.
 
 
@@ -843,8 +843,6 @@ This specification has the following differences from its predecessor, RFC5988:
 
 * Removed misleading statement that the link header field is semantically equivalent to HTML and
   Atom links.
-
-* More carefully defined how the Experts and IANA should interact.
 
 * More carefully defined and used "link serialisations" and "link applications."
 
