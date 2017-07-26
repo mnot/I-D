@@ -329,6 +329,7 @@ that networks might need to distinguish the application's traffic for operationa
 register a separate port, but be aware that this has privacy implications for that protocol's
 users. The impact of doing so MUST be documented in Security Considerations.
 
+See {{?RFC7605}} for further guidance.
 
 ## HTTP Methods
 
