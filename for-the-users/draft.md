@@ -128,8 +128,8 @@ party.
 
 While networks need to be managed, employers and equipment vendors need to meet business goals, and
 so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
--- society is composed of end users, along with groups of individuals forming business,
-governments, clubs, civil society organizations, and other institutions that influence it.
+-- society is composed of end users, along with groups of them forming business, governments,
+clubs, civil society organizations, and other institutions that influence it.
 
 By "end users," we mean non-technical users whose activities our protocols are designed to support.
 Thus, the end user of a protocol to manage routers is not a router administrator; it is the people
