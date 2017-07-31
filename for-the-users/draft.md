@@ -56,6 +56,9 @@ The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/for
 
 Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/for-the-users>.
 
+See also the draft's current status in the IETF datatracker, at
+<https://datatracker.ietf.org/doc/draft-nottingham-for-the-users/>.
+
 --- middle
 
 # Introduction
