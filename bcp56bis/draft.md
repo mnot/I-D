@@ -317,7 +317,6 @@ caveats to keep in mind:
 
 * Web features that require a secure context {{secure-context}} will likely treat a new scheme as insecure.
 
-For these reasons, it is preferable to use the message payload to indicate the application in use, rather than the URL scheme.
 
 See {{?RFC7595}} for more information about minting new URL schemes.
 
@@ -330,6 +329,7 @@ that networks might need to distinguish the application's traffic for operationa
 register a separate port, but be aware that this has privacy implications for that protocol's
 users. The impact of doing so MUST be documented in Security Considerations.
 
+See {{?RFC7605}} for further guidance.
 
 ## HTTP Methods
 
@@ -412,6 +412,9 @@ registration or defining an extension to them (if allowed). For example, an appl
 cannot specify that the `Location` header has a special meaning in a certain context.
 
 See {{state}} for requirements regarding header fields that carry application state (e.g,. Cookie).
+
+
+## Defining Message Payloads {#payload}
 
 
 ## Ensuring Browser Interoperability {#browser}

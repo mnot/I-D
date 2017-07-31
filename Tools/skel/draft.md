@@ -2,7 +2,7 @@
 title: 
 abbrev: 
 docname: draft-nottingham-SHORTNAME-00
-date: 2015
+date: 2017
 category: info
 
 ipr: trust200902
@@ -38,6 +38,8 @@ The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/SHO
 
 Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/SHORTNAME>.
 
+See also the draft's current status in the IETF datatracker, at
+<https://datatracker.ietf.org/doc/draft-nottingham-SHORTNAME/>.
 
 --- middle
 
