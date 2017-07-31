@@ -70,7 +70,7 @@ process is defined to favor technical merit, through our well-known bias towards
 and running code".
 
 Nevertheless, the running code that results from our process (when things work well) inevitably has
-an impact beyond technical considerations, because the underlying decisions afford some uses, while
+an impact beyond technical considerations, because the underlying decisions afford some uses while
 discouraging others; while we believe we are making purely technical decisions, in reality that may
 not be possible. Or, in the words of Lawrence Lessig {{CODELAW}}:
 
