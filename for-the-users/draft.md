@@ -170,8 +170,8 @@ This document does not require action by IANA.
 
 # Security Considerations
 
-This document does not have direct security impact; however, failing to apply it might affect
-security negatively in the long term.
+This document does not have direct security impact; however, failing to prioritise end users might
+well affect their security negatively in the long term.
 
 
 --- back
@@ -180,20 +180,48 @@ security negatively in the long term.
 
 Thanks to Edward Snowden for his comments regarding the priority of end users at IETF93.
 
+Thanks to the WHATWG for blazing the trail with the Priority of Constituencies.
+
 Thanks to Harald Alvestrand for his substantial feedback and Stephen Farrell, Joe Hildebrand, Lee
 Howard, Russ Housley, Niels ten Oever, Martin Thomson, and Brian Trammell for their suggestions.
 
 
 # Frequently Asked Questions
 
-## How will this impact my standard / Working Group / etc.?
 
-The most noticeable thing that this document changes is a situation where a proposal is made to do
-something that disadvantages end users, for the benefit of another party (e.g., network operators).
+## Why do we need this?
 
-If the Working Group reaches consensus (even rough, as per {{RFC7282}}) that this is the case, then
-there is no need for debate about whose interests are most important; it has been made clear.
-Instead, the Working Group can go on to finding other solutions that don't disadvantage end users,
-or (if need be) document why there is no other choice.
+It's not uncommon for proposals to be made in the IETF for a change to a protocol -- one that's
+being designed or already deployed -- to make certain tasks easier, but in a way that causes some
+parties concern about impact upon end users.
 
-Such documentation might already be required; e.g., as part of Security Considerations.
+For example, network operators approached the HTTP Working Group in 2014 with a proposal to allow
+an "explicitly authenticated proxy" to be involved in HTTPS connections, so that operators could
+interpose new services, improve network efficiency and meet regulatory mandates.
+
+After much discussion, the Working Group declined the new work, on the grounds that HTTPS was
+explicitly documented as an end-to-end encrypted protocol {{?RFC7230}}, and couldn't be changed
+retroactively.
+
+Having a policy like this in place would have given the Working Group a way to hold a more
+productive and limited discussion, because it would be focused on the question "Does intercepting
+HTTPS have an unacceptable potential for harming end users?"
+
+Achieving even rough consensus {{?RFC7282}} on that would allow the Working Group to conclude
+discussion more quickly, while still giving the proposal a fair hearing.
+
+That discussion would still necessarily need to encompass the nature of the harm, various tradeoffs
+and possible alternatives, as discussed above. Nevertheless, having *some* form of guidance
+regarding the overall goals and priority of constituencies does help Working Groups in this
+situation.
+
+
+## How will this impact my Working Group?
+
+When someone identifies a potential impact upon end users in a document or proposal, the Working
+Group should assess it. If the Working Group does reach consensus (even rough, as per {{?RFC7282}})
+that this is the case, the risk will need to be mitigated, or an alternative approach found.
+
+As explained above, there might be cases where the Working Group determines that there is potential
+for end user impact, but that it is the "least worst" option. These cases are encouraged to be
+documented (e.g., in Security Considerations).
