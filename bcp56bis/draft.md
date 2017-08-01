@@ -453,6 +453,11 @@ and suggests a mitigation.
 {{scheme}} requires support for 'https' URLs, and discourages the use of 'http' URLs, to mitigate
 pervasive monitoring attacks.
 
+Applications that use HTTP in a manner that involves modification of implementations -- for
+example, requiring support for a new URL scheme, or a non-standard method -- risk having those
+implementations "fork" from their parent HTTP implementations, with the possible result that they
+do not benefit from patches and other security improvements incorporated upstream.
+
 --- back
 
 # Changes from RFC3205
