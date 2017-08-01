@@ -227,4 +227,5 @@ that this is the case, the risk will need to be mitigated, or an alternative app
 
 As explained above, there might be cases where the Working Group determines that there is potential
 for end user impact, but that it is the "least worst" option. These cases are encouraged to be
-documented (e.g., in Security Considerations).
+documented (e.g., in Security Considerations), to help contextualise the decision, warn deployers
+and users of potential problems, and encourage further protocol development to mitigate the risk.
