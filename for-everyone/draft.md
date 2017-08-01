@@ -61,7 +61,7 @@ For example, a datacentre network might want to change how congestion control op
 
 Or, a financial institution might need to conform to regulations specific to them, and thus need to change how encrypted protocols on their network operate to enable efficient monitoring of activity, while still adhering to their security requirements. While this might be seen as pragmatic in that environment, using such techniques on the open Internet would be widely seen as a step (or many steps) backwards in security, as it would sacrifice Forward Security {{}}, and furthermore be prone to abuse for attacks such as pervasive monitoring {{?RFC7258}}.
 
-In discussing such proposals, there is often a question of whether it is appropriate to promote something to Internet Standard if it could be harmful when deployed inappropriately.
+In discussing such proposals, there is often a question of whether it is appropriate to promote something to Internet Standard, or even publish it at all, if it could be harmful when deployed inappropriately.
 
 Clearly, every Internet Standard need not be deployable on every Internet-connected network; likewise, the very possibility of harm does not automatically preclude standardisation. However, when the potential consequences and/or likelihood of deployment outside the intended environment are too great, such a proposal needs much more careful vetting.
 
