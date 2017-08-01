@@ -1,5 +1,5 @@
 ---
-title: 
+title: On Protocols Intended for Limited Deployment
 abbrev:
 docname: draft-nottingham-for-everyone-00
 date: 2017
@@ -75,7 +75,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 {{RFC2119}}.
 
 
-# The Internet is for Everyone
+# Limited Deployment Protocols
 
 
 
@@ -84,7 +84,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 Engineers often concentrate on the problems immediately in front of them, and propose solutions that minimally solve those problems. While this is acceptable practice in a limited, known environment, this style of engineering often fails when proposing changes to the Internet, because it is such a diverse environment.
 
-## Undesireable Deployment
+## Undesirable Deployment
 
 ## The Impact of Standardisation
 
