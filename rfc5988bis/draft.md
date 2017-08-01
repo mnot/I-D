@@ -300,6 +300,10 @@ the following parameters are equivalent:
   x="y"
 ~~~
 
+Previous definitions of the Link header did not equate the token and quoted-string forms
+explicitly; the "title" parameter was always quoted, and the "hreflang" parameter was always a
+token. Senders wishing to maximize interoperability will send them in those forms.
+
 Individual `link-param`s specify their syntax in terms of the value after any necessary unquoting
 (as per {{RFC7230}}, Section 3.2.6).
 
