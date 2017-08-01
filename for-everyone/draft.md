@@ -45,15 +45,17 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-Internet Standards are used in a variety of environments; connectivity now reaches from universities to homes, businesses, coffee shops, data centres and beyond, to more exotics places like airplanes, Antarctica and even deep space {{?RFC4838}}. It also has expanded from NN terrestrial countries in YYYY to more than MM today.
+{{RFC3935}} declares that the goal of the IETF "is to make the Internet work better."
 
-Likewise, the Internet is now used for an ever-expanding set of users. From its origination as a network of university computers in that filled rooms, it now connects a diverse range of endpoints, from desktop and laptop computers to phones, radios, toys, cameras, industrial control systems, military hardware, the international financial system, many other businesses, government databases and much more.
+It goes on to define the Internet as:
 
-This expansion of both deployment and uses is a desirable outcome; as the network grows, so does its value {{}}. As a result, the IETF has a long history of adapting its technology to different environments and different use cases, to assure the widest possible reach.
+> A large, heterogeneous collection of interconnected systems that can be used for communication of many different types between any interested parties connected to it. The term includes both the "core Internet" (ISP networks) and "edge Internet" (corporate and private networks, often connected via firewalls, NAT boxes, application layer gateways and similar devices.
 
-Proposals for new Internet Standards or changes to existing ones are often brought to the IETF from these diverse communities of users and deployments often seek to improve specific conditions for them.
+But later, in Section 4.2, goes on to say:
 
-While doing so is generally encouraged (since the Internet often needs to adapt to its environment), there are cases where proposals that represent improvements in a specific environment can be hazardous to deploy elsewhere.
+> In attempting to resolve the question of the IETF's scope, perhaps the fairest balance is struck by this formulation: "protocols and practices for which secure and scalable implementations are expected to have wide deployment and interoperation on the Internet, or to form part of the infrastructure of the Internet."
+
+When a new proposal is brought to the IETF, this scope is important to keep in mind; if the proposal is inappropriate to "have wide deployment and interoperation on the Internet" as a whole, special care needs to be taken.
 
 For example, a datacentre network might want to change how congestion control operates (or remove it entirely) inside its confines. While this might be advantageous in a controlled environment, it would be disastrous to do so on the open Internet, as it would result in congestion collapse {{?I-D.draft-ietf-tcpm-dctcp}}. 
 
@@ -61,7 +63,7 @@ Or, a financial institution might need to conform to regulations specific to the
 
 In discussing such proposals, there is often a question of whether it is appropriate to promote something to Internet Standard if it could be harmful when deployed inappropriately.
 
-Clearly, every Internet Standard need not be deployable on every Internet-connected network; likewise, the possibility of harm does not preclude standardisation. However, when the potential consequences and/or likelihood of deployment outside the intended environment are too great, such a proposal needs much more careful vetting.
+Clearly, every Internet Standard need not be deployable on every Internet-connected network; likewise, the very possibility of harm does not automatically preclude standardisation. However, when the potential consequences and/or likelihood of deployment outside the intended environment are too great, such a proposal needs much more careful vetting.
 
 This document explores the properties of such proposals and suggests guidelines for evaluating whether they should become Internet Standards.
 
@@ -75,15 +77,14 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # The Internet is for Everyone
 
-Engineers often concentrate on the problems immediately in front of them, and propose solutions that minimally solve those problems. While this is acceptable practice in a limited, known environment, this style of engineering often fails when proposing changes to the Internet, because it is such a diverse environment.
-
-
 
 
 
 ## Diversity and the Internet
 
-## Containment
+Engineers often concentrate on the problems immediately in front of them, and propose solutions that minimally solve those problems. While this is acceptable practice in a limited, known environment, this style of engineering often fails when proposing changes to the Internet, because it is such a diverse environment.
+
+## Undesireable Deployment
 
 ## The Impact of Standardisation
 
