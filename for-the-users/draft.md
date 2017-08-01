@@ -99,7 +99,7 @@ balance the benefits of a decision between two (or more) parties.
 To help clarify such decisions, {{users}} mandates that end users have the highest priority.
 
 Our goal is not to avoid all potential harm to or constraint of end users; rather, it's to give
-guidance in a particular situation -- when we've identified a conflict between the needs of end
+guidance in a particular situation -- when we've identified a conflict between the interests of end
 users and another stakeholder (e.g., a network operator), and need a "tiebreaker", we should err on
 the side of finding a solution that doesn't harm end users.
 
@@ -144,9 +144,9 @@ process to help us make decisions, deploy our protocols, and ultimately determin
 failure.
 
 It does means that, because end users are not technical experts, we have a responsibility to
-consider their needs, and will need to engage with those who understand how our work will affect
+consider their interests, and will need to engage with those who understand how our work will affect
 end users, such as civil society organisations, as well as governments, businesses and other groups
-representing some aspect of end user needs.
+representing some aspect of end user interests.
 
 When a proposed solution to a problem has a benefit to some other party at the identified expense
 of end users, we will find a different solution or find another way to frame the problem.
