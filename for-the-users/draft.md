@@ -126,8 +126,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 # The Internet is for End Users {#users}
 
-Internet standards MUST consider the end users of the Internet to have priority over every other
-party.
+When there are unresolvable conflicts between the interests of different parties, Internet
+standards MUST consider the end users of the Internet to have priority over every other party.
 
 While networks need to be managed, employers and equipment vendors need to meet business goals, and
 so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
@@ -185,9 +185,9 @@ Thanks to Edward Snowden for his comments regarding the priority of end users at
 
 Thanks to the WHATWG for blazing the trail with the Priority of Constituencies.
 
-Thanks to Harald Alvestrand for his substantial feedback and Stephen Farrell, Joe Hildebrand, Lee
-Howard, Russ Housley, Niels ten Oever, Mando Rachovitsa, Martin Thomson, and Brian Trammell for
-their suggestions.
+Thanks to Harald Alvestrand for his substantial feedback and Mohamed Boucadair, Stephen Farrell,
+Joe Hildebrand, Lee Howard, Russ Housley, Niels ten Oever, Mando Rachovitsa, Martin Thomson, and
+Brian Trammell for their suggestions.
 
 
 # Frequently Asked Questions
