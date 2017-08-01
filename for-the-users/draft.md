@@ -1,6 +1,6 @@
 ---
 title: The Internet is for End Users
-docname: draft-nottingham-for-the-users-05
+docname: draft-nottingham-for-the-users-06
 date: 2017
 category: bcp
 
