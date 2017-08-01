@@ -186,7 +186,8 @@ Thanks to Edward Snowden for his comments regarding the priority of end users at
 Thanks to the WHATWG for blazing the trail with the Priority of Constituencies.
 
 Thanks to Harald Alvestrand for his substantial feedback and Stephen Farrell, Joe Hildebrand, Lee
-Howard, Russ Housley, Niels ten Oever, Martin Thomson, and Brian Trammell for their suggestions.
+Howard, Russ Housley, Niels ten Oever, Mando Rachovitsa, Martin Thomson, and Brian Trammell for
+their suggestions.
 
 
 # Frequently Asked Questions
@@ -215,8 +216,7 @@ discussion more quickly, while still giving the proposal a fair hearing.
 
 That discussion would still necessarily need to encompass the nature of the harm, various tradeoffs
 and possible alternatives, as discussed above. Nevertheless, having *some* form of guidance
-regarding the overall goals and priority of constituencies does help Working Groups in this
-situation.
+regarding the overall goals and priorities does help Working Groups in this situation.
 
 
 ## How will this impact my Working Group?
