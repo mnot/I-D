@@ -110,7 +110,8 @@ on pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} rega
 considerations.
 
 Over time, additional guidance is likely to be defined. In the absence of specific guidance on a
-given topic, this document provides a general approach to making such decisions.
+given topic (such as that referenced above), this document provides a general approach to making
+such decisions.
 
 Doing so helps the IETF achieve its mission, and also helps to assure the long-term health of the
 Internet. By prioritising the concerns of end users, we assure that it reaches the greatest number
