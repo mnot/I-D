@@ -32,7 +32,7 @@ informative:
 
 --- note_Note_to_Readers
 
-*RFC EDITOR: please remove this sectio before publication*
+*RFC EDITOR: please remove this section before publication*
 
 The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/SHORTNAME>.
 
