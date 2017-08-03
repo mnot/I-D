@@ -209,7 +209,7 @@ Registration requests consist of at least the following information:
   preferably including a URI that can be used to retrieve a copy of the document. An indication of
   the relevant section(s) can also be included, but is not required.
 
-The expert(s) MAY define additional fields to be collected in the registry.
+The expert(s) can define additional fields to be collected in the registry.
 
 General requirements for registered relation types are described in {{registered}}.
 
@@ -226,15 +226,15 @@ Relation types are registered using the Specification Required policy (see Secti
 {{RFC8126}}), which implies review and approval by a designated expert.
 
 The goal of the registry is to reflect common use of links on the Internet. Therefore, the
-expert(s) SHOULD be strongly biased towards approving registrations, unless they are abusive,
+expert(s) should be strongly biased towards approving registrations, unless they are abusive,
 frivolous, not likely to be used on the Internet, or actively harmful to the Internet and/or the
 Web (not merely aesthetically displeasing, or architecturally dubious). As stated in
-{{registered}}, the expert(s) MAY withhold registration of names that are too general for the
+{{registered}}, the expert(s) can withhold registration of names that are too general for the
 proposed application.
 
-The expert(s) MUST clearly identify any issues which cause a registration to be refused. Advice
+The expert(s) will clearly identify any issues which cause a registration to be refused. Advice
 about the semantics of a proposed link relation type can be given, but if it does not block
-registration, this SHOULD be explicitly stated.
+registration, this should be explicitly stated.
 
 When a request is approved, the expert(s) will inform IANA, and the registration will be processed.
 The IESG is the final arbiter of any objection.
