@@ -32,6 +32,8 @@ informative:
 
 --- note_Note_to_Readers
 
+*RFC EDITOR: please remove this sectio before publication*
+
 The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/SHORTNAME>.
 
 The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/SHORTNAME/>.
