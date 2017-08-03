@@ -217,7 +217,8 @@ Registrations MUST reference a freely available, stable specification.
 
 Note that relation types can be registered by third parties (including the expert(s)), if the
 expert(s) determine that an unregistered relation type is widely deployed and not likely to be
-registered in a timely manner otherwise.
+registered in a timely manner otherwise. Such registrations still are subject to the requirements
+defined, including the need to reference a specification.
 
 
 #### Registration Request Processing {#processing}
