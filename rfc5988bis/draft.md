@@ -56,7 +56,7 @@ It also defines the serialisation of such links in HTTP headers with the Link he
 
 --- note_Note_to_Readers
 
-*RFC EDITOR: please remove this sectio before publication*
+*RFC EDITOR: please remove this section before publication*
 
 This is a work-in-progress to revise RFC5988.
 
