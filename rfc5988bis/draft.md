@@ -115,6 +115,9 @@ In this specification, a link is a typed connection between two resources, and i
 A link can be viewed as a statement of the form "*link context* has a *link relation type* resource
 at *link target*, which has *target attributes*".
 
+For example, <https://www.example.com/> has a "canonical" resource at <https://example.com>, which
+has a "type" of "text/html".
+
 Link contexts and link targets are both IRIs {{RFC3987}}. However, in the common case, the link
 context will also be a URI {{RFC3986}}, because many protocols (such as HTTP) do not support
 dereferencing IRIs. Likewise, the link target will be sometimes be converted to a URI (see
