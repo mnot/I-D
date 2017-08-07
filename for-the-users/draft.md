@@ -45,7 +45,8 @@ informative:
 
 --- abstract
 
-This document requires that Internet Standards consider end users as their highest priority concern.
+This document requires that, when a conflict cannot be avoided, Internet Standards consider end
+users as their highest priority concern.
 
 
 --- note_Note_to_Readers
