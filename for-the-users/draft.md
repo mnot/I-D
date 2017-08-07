@@ -231,3 +231,24 @@ for end user impact, but that it is the "least worst" option. {{users}} requires
 to be documented (e.g., in Security Considerations), to help contextualise the decision, warn
 deployers and users of potential problems, and encourage further protocol development to mitigate
 the risk.
+
+
+## How do Working Groups decide what's in the interest of end users?
+
+Using the same process of discussion and consensus-gathering as they do now, but focused on the
+issue of what the impact upon users is.
+
+Doing so might include broadening participation in the working group to include new perspectives
+that are not well-represented, to assure diversity and better represent end user concerns.
+
+In many Working Groups, implementers have a strong voice, since implementation is necessary for
+successful deployment. When assessing end-user impact, however, the desires of implementers might
+conflict with the needs of end users, and so care must be taken to avoid assigning too much weight
+to the availability of implementations.
+
+Finally, as discussed, the IETF has a variety of specific guidance regarding privacy, security and
+other areas that potentially impact end users, and it is expected to grow over time. This document
+provides a more general goal in areas that are not yet covered by such guidance; it does not
+override it.
+
+
