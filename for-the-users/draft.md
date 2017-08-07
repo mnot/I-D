@@ -221,9 +221,10 @@ regarding the overall goals and priorities does help Working Groups in this situ
 
 ## How will this impact my Working Group?
 
-When someone identifies a potential impact upon end users in a document or proposal, the Working
-Group should assess it. If the Working Group does reach consensus (even rough, as per {{?RFC7282}})
-that this is the case, the risk will need to be mitigated, or an alternative approach found.
+When someone identifies a potential negative impact upon end users in a document or proposal, the
+Working Group should assess it. If the Working Group does reach consensus (even rough, as per
+{{?RFC7282}}) that this is the case, the risk will need to be mitigated, or an alternative approach
+found.
 
 As explained above, there might be cases where the Working Group determines that there is potential
 for end user impact, but that it is the "least worst" option. {{users}} requires these situations
