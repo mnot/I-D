@@ -197,8 +197,7 @@ Brian Trammell for their suggestions.
 ## Why do we need this?
 
 It's not uncommon for proposals to be made in the IETF for a change to a protocol -- one that's
-being designed or already deployed -- to make certain tasks easier, but in a way that causes some
-parties concern about impact upon end users.
+being designed or already deployed -- to make certain tasks easier, but in a way that causes q concern about impact upon end users.
 
 For example, network operators approached the HTTP Working Group in 2014 with a proposal to allow
 an "explicitly authenticated proxy" to be involved in HTTPS connections, so that operators could
