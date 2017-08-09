@@ -353,8 +353,8 @@ request.
 ## Relation Type {#header-type}
 
 The relation type of a link conveyed in the Link header field is conveyed in the "rel" parameter's
-value. The "rel" parameter MUST NOT appear more than once in a given link-value; occurrences after
-the first MUST be ignored by parsers.
+value. The "rel" parameter MUST be present but MUST NOT appear more than once in a given link-value;
+occurrences after the first MUST be ignored by parsers.
 
 The "rev" parameter has been used in the past to indicate that the semantics of the relationship
 are in the reverse direction. That is, a link from A to B with REL="X" expresses the same
