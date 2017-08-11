@@ -552,9 +552,19 @@ Transport Layer Security (TLS) with HTTP ({{RFC2818}}) is currently the only end
 provide these properties.
 
 Link applications ought to consider the attack vectors opened by automatically following, trusting,
-or otherwise using links gathered from HTTP header fields. In particular, Link header fields that
-use the "anchor" parameter to associate a link's context with another resource are to be treated
-with due caution.
+or otherwise using links gathered from HTTP header fields. 
+
+For example, Link header fields that use the "anchor" parameter to associate a link's context with
+another resource cannot be trusted since they are effectively assertions by a third party that
+could be incorrect or malicious. Applications can mitigate this risk by specifying that such links
+should be discarded unless some relationship between the resources is established (e.g., they share
+the same authority).
+
+Dereferencing links has a number of risks, depending on the application in use. For example, the
+Referer header {{RFC7231}} can expose information about the application's state (including private
+information) in its value. Likewise, cookies {{?RFC6265}} are another mechanism that, if
+used, can become an attack vector. Applications can mitigate these risks by carefully specifying
+how such mechanisms should operate.
 
 The Link header field makes extensive use of IRIs and URIs. See {{RFC3987}} Section 8 for security
 considerations relating to IRIs. See {{RFC3986}} Section 7 for security considerations relating to
