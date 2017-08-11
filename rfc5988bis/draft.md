@@ -356,6 +356,9 @@ The relation type of a link conveyed in the Link header field is conveyed in the
 value. The "rel" parameter MUST be present but MUST NOT appear more than once in a given link-value;
 occurrences after the first MUST be ignored by parsers.
 
+The "rel" parameter can, however, contain multiple link relation types. When this occurs, it
+establishes multiple links that share the same context, target, and target attributes.
+
 The "rev" parameter has been used in the past to indicate that the semantics of the relationship
 are in the reverse direction. That is, a link from A to B with REL="X" expresses the same
 relationship as a link from B to A with REV="X". "rev" is deprecated by this specification because
