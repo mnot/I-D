@@ -30,7 +30,7 @@ informative:
 
 {{?RFC2324}} was an April 1 RFC that lampooned the various ways HTTP was abused; one such abuse was the definition of the application-specific 418 (I'm a Teapot) status code.
 
-In the intervening years, this status code has been widely implemented as an "Easter Egg", and therefore is effectively consumed by this use.
+In the intervening years, this status code has been widely implemented as an "easter egg", and therefore is effectively consumed by this use.
 
 This document changes 418 to the status of "Reserved" in the IANA HTTP Status Code registry to reflect that.
 
