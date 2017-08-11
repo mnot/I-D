@@ -313,8 +313,9 @@ token. Senders wishing to maximize interoperability will send them in those form
 Individual `link-param`s specify their syntax in terms of the value after any necessary unquoting
 (as per {{RFC7230}}, Section 3.2.6).
 
-This specification defines the link-params "rel", "anchor", "rev", "hreflang", "media", "title",
-"title*", and "type"; see {{header-context}}, {{header-type}} and {{header-attrs}}. 
+This specification establishes the link-params "rel", "anchor", and "rev" (which are part of the
+general link model), as well as "hreflang", "media", "title", "title*", and "type" (which are
+target attributes defined by the serialization.
 
 
 ## Link Target
