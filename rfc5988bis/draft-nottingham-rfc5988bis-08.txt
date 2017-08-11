@@ -101,11 +101,11 @@ Table of Contents
      3.1.  Link Target . . . . . . . . . . . . . . . . . . . . . . .   9
      3.2.  Link Context  . . . . . . . . . . . . . . . . . . . . . .   9
      3.3.  Relation Type . . . . . . . . . . . . . . . . . . . . . .  10
-     3.4.  Target Attributes . . . . . . . . . . . . . . . . . . . .  10
+     3.4.  Target Attributes . . . . . . . . . . . . . . . . . . . .  11
        3.4.1.  Serialisation-Defined Attributes  . . . . . . . . . .  11
        3.4.2.  Extension Attributes  . . . . . . . . . . . . . . . .  12
      3.5.  Link Header Field Examples  . . . . . . . . . . . . . . .  12
-   4.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
+   4.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
 
 
 
@@ -114,14 +114,14 @@ Nottingham              Expires February 12, 2018               [Page 2]
 Internet-Draft                 Web Linking                   August 2017
 
 
-     4.1.  Link HTTP Header Field Registration . . . . . . . . . . .  13
+     4.1.  Link HTTP Header Field Registration . . . . . . . . . . .  14
      4.2.  Link Relation Type Registry . . . . . . . . . . . . . . .  14
      4.3.  Link Relation Application Data Registry . . . . . . . . .  14
    5.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
    6.  Internationalisation Considerations . . . . . . . . . . . . .  15
    7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
      7.1.  Normative References  . . . . . . . . . . . . . . . . . .  15
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .  16
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  17
    Appendix A.  Notes on Other Link Serialisations . . . . . . . . .  18
      A.1.  Link Serialisation in HTML  . . . . . . . . . . . . . . .  18
      A.2.  Link Serialisation in Atom  . . . . . . . . . . . . . . .  18
@@ -470,9 +470,10 @@ Internet-Draft                 Web Linking                   August 2017
    Individual "link-param"s specify their syntax in terms of the value
    after any necessary unquoting (as per [RFC7230], Section 3.2.6).
 
-   This specification defines the link-params "rel", "anchor", "rev",
-   "hreflang", "media", "title", "title*", and "type"; see Section 3.2,
-   Section 3.3 and Section 3.4.
+   This specification establishes the link-params "rel", "anchor", and
+   "rev" (which are part of the general link model), as well as
+   "hreflang", "media", "title", "title*", and "type" (which are target
+   attributes defined by the serialization.
 
 3.1.  Link Target
 
@@ -497,7 +498,6 @@ Internet-Draft                 Web Linking                   August 2017
 
    The ABNF for the "anchor" parameter's value is:
 
-     URI-Reference ; Section 4.1 of {{RFC3986}}
 
 
 
@@ -505,6 +505,8 @@ Nottingham              Expires February 12, 2018               [Page 9]
 
 Internet-Draft                 Web Linking                   August 2017
 
+
+     URI-Reference ; Section 4.1 of {{RFC3986}}
 
    Link application can choose to ignore links with an anchor parameter.
    For example, the application in use might not allow the link context
@@ -523,6 +525,10 @@ Internet-Draft                 Web Linking                   August 2017
    conveyed in the "rel" parameter's value.  The "rel" parameter MUST be
    present but MUST NOT appear more than once in a given link-value;
    occurrences after the first MUST be ignored by parsers.
+
+   The "rel" parameter can, however, contain multiple link relation
+   types.  When this occurs, it establishes multiple links that share
+   the same context, target, and target attributes.
 
    The "rev" parameter has been used in the past to indicate that the
    semantics of the relationship are in the reverse direction.  That is,
@@ -547,13 +553,7 @@ Internet-Draft                 Web Linking                   August 2017
    (",") (as these characters are used as delimiters in the header field
    itself).
 
-3.4.  Target Attributes
 
-   The Link header field defines several target attributes specific to
-   this serialisation, and also allows extension target attributes.
-   Target attributes are serialised in the Link header field as
-   parameters (see [RFC7231], Section 3.1.1.1 for the definition of
-   their syntax).
 
 
 
@@ -561,6 +561,14 @@ Nottingham              Expires February 12, 2018              [Page 10]
 
 Internet-Draft                 Web Linking                   August 2017
 
+
+3.4.  Target Attributes
+
+   The Link header field defines several target attributes specific to
+   this serialisation, and also allows extension target attributes.
+   Target attributes are serialised in the Link header field as
+   parameters (see [RFC7231], Section 3.1.1.1 for the definition of
+   their syntax).
 
 3.4.1.  Serialisation-Defined Attributes
 
@@ -602,14 +610,6 @@ Internet-Draft                 Web Linking                   August 2017
    different character set, and/or contain language information as per
    [I-D.ietf-httpbis-rfc5987bis].  The "title*" link-param MUST NOT
    appear more than once in a given link-value; occurrences after the
-   first MUST be ignored by parsers.  If the attribute does not contain
-   language information, its language is indicated by the Content-
-   Language header field (when present).
-
-   If both the "title" and "title*" link-param appear in a link,
-   applications SHOULD use the "title*" link-param's value for the
-   "title" attribute.
-
 
 
 
@@ -617,6 +617,14 @@ Nottingham              Expires February 12, 2018              [Page 11]
 
 Internet-Draft                 Web Linking                   August 2017
 
+
+   first MUST be ignored by parsers.  If the attribute does not contain
+   language information, its language is indicated by the Content-
+   Language header field (when present).
+
+   If both the "title" and "title*" link-param appear in a link,
+   applications SHOULD use the "title*" link-param's value for the
+   "title" attribute.
 
    The "type" attribute, when present, is a hint indicating what the
    media type of the result of dereferencing the link should be.  Note
@@ -657,14 +665,6 @@ Internet-Draft                 Web Linking                   August 2017
 
    Link: </>; rel="http://example.net/foo"
 
-   indicates that the root resource ("/") is related to this resource
-   with the extension relation type "http://example.net/foo".
-
-   This link:
-
-   Link: </terms>; rel="copyright"; anchor="#foo"
-
-
 
 
 
@@ -673,6 +673,13 @@ Nottingham              Expires February 12, 2018              [Page 12]
 
 Internet-Draft                 Web Linking                   August 2017
 
+
+   indicates that the root resource ("/") is related to this resource
+   with the extension relation type "http://example.net/foo".
+
+   This link:
+
+   Link: </terms>; rel="copyright"; anchor="#foo"
 
    indicates that the linked copyright terms only apply to the portion
    of the document indicated by the (media type-specific) fragment
@@ -711,13 +718,6 @@ Internet-Draft                 Web Linking                   August 2017
    Link: <https://example.org/>; rel="start"
    Link: <https://example.org/index>; rel="index"
 
-4.  IANA Considerations
-
-4.1.  Link HTTP Header Field Registration
-
-   This specification updates the Message Header registry entry for
-   "Link" in HTTP [RFC3864] to refer to this document.
-
 
 
 
@@ -729,6 +729,13 @@ Nottingham              Expires February 12, 2018              [Page 13]
 
 Internet-Draft                 Web Linking                   August 2017
 
+
+4.  IANA Considerations
+
+4.1.  Link HTTP Header Field Registration
+
+   This specification updates the Message Header registry entry for
+   "Link" in HTTP [RFC3864] to refer to this document.
 
    Header field: Link
    Applicable protocol: http
@@ -771,13 +778,6 @@ Internet-Draft                 Web Linking                   August 2017
    For example, Link header fields that use the "anchor" parameter to
    associate a link's context with another resource cannot be trusted
    since they are effectively assertions by a third party that could be
-   incorrect or malicious.  Applications can mitigate this risk by
-   specifying that such links should be discarded unless some
-   relationship between the resources is established (e.g., they share
-   the same authority).
-
-   Dereferencing links has a number of risks, depending on the
-   application in use.  For example, the Referer header [RFC7231] can
 
 
 
@@ -786,6 +786,13 @@ Nottingham              Expires February 12, 2018              [Page 14]
 Internet-Draft                 Web Linking                   August 2017
 
 
+   incorrect or malicious.  Applications can mitigate this risk by
+   specifying that such links should be discarded unless some
+   relationship between the resources is established (e.g., they share
+   the same authority).
+
+   Dereferencing links has a number of risks, depending on the
+   application in use.  For example, the Referer header [RFC7231] can
    expose information about the application's state (including private
    information) in its value.  Likewise, cookies [RFC6265] are another
    mechanism that, if used, can become an attack vector.  Applications
@@ -824,6 +831,17 @@ Internet-Draft                 Web Linking                   August 2017
               for HTTP Header Field Parameters", draft-ietf-httpbis-
               rfc5987bis-05 (work in progress), February 2017.
 
+
+
+
+
+
+
+Nottingham              Expires February 12, 2018              [Page 15]
+
+Internet-Draft                 Web Linking                   August 2017
+
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
@@ -833,14 +851,6 @@ Internet-Draft                 Web Linking                   August 2017
               Procedures for Message Header Fields", BCP 90, RFC 3864,
               DOI 10.17487/RFC3864, September 2004,
               <http://www.rfc-editor.org/info/rfc3864>.
-
-
-
-
-Nottingham              Expires February 12, 2018              [Page 15]
-
-Internet-Draft                 Web Linking                   August 2017
-
 
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
               Resource Identifier (URI): Generic Syntax", STD 66,
@@ -879,16 +889,6 @@ Internet-Draft                 Web Linking                   August 2017
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <http://www.rfc-editor.org/info/rfc8174>.
 
-   [W3C.REC-css3-mediaqueries-20120619]
-              Rivoal, F., "Media Queries", World Wide Web Consortium
-              Recommendation REC-css3-mediaqueries-20120619, June 2012,
-              <http://www.w3.org/TR/2012/
-              REC-css3-mediaqueries-20120619>.
-
-7.2.  Informative References
-
-
-
 
 
 
@@ -897,6 +897,14 @@ Nottingham              Expires February 12, 2018              [Page 16]
 
 Internet-Draft                 Web Linking                   August 2017
 
+
+   [W3C.REC-css3-mediaqueries-20120619]
+              Rivoal, F., "Media Queries", World Wide Web Consortium
+              Recommendation REC-css3-mediaqueries-20120619, June 2012,
+              <http://www.w3.org/TR/2012/
+              REC-css3-mediaqueries-20120619>.
+
+7.2.  Informative References
 
    [RFC2046]  Freed, N. and N. Borenstein, "Multipurpose Internet Mail
               Extensions (MIME) Part Two: Media Types", RFC 2046,
@@ -921,14 +929,6 @@ Internet-Draft                 Web Linking                   August 2017
               World Wide Web Consortium Recommendation REC-
               html5-20141028, October 2014,
               <http://www.w3.org/TR/2014/REC-html5-20141028>.
-
-
-
-
-
-
-
-
 
 
 
