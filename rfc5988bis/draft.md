@@ -278,7 +278,7 @@ Target attribute definitions SHOULD specify:
 
 * The serialisation of their values into Unicode or a subset thereof, to maximise their chances of
   portability across link serialisations.
-   
+
 * The semantics and error handling of multiple occurrences of the target attribute on a given link.
 
 This specification does define target attributes for use in the Link HTTP header field in
@@ -315,7 +315,7 @@ Individual `link-param`s specify their syntax in terms of the value after any ne
 
 This specification establishes the link-params "rel", "anchor", and "rev" (which are part of the
 general link model), as well as "hreflang", "media", "title", "title*", and "type" (which are
-target attributes defined by the serialization.
+target attributes defined by the serialization).
 
 
 ## Link Target
@@ -556,7 +556,7 @@ Transport Layer Security (TLS) with HTTP ({{RFC2818}}) is currently the only end
 provide these properties.
 
 Link applications ought to consider the attack vectors opened by automatically following, trusting,
-or otherwise using links gathered from HTTP header fields. 
+or otherwise using links gathered from HTTP header fields.
 
 For example, Link header fields that use the "anchor" parameter to associate a link's context with
 another resource cannot be trusted since they are effectively assertions by a third party that
@@ -672,12 +672,12 @@ case-insensitive match for "link".
 
    1. Let `value_links` be the result of *Parsing A Link Field Value* ({{parse-fv}}) from
    `field_value`.
-   
+
    2. Append each member of `value_links` to `links`.
-   
+
 4. Return `links`.
-   
-   
+
+
 ## Parsing a Link Field Value {#parse-fv}
 
 This algorithm parses zero or more comma-separated link-values from a Link header field. Given a
@@ -688,11 +688,11 @@ string `field_value`, assuming ASCII encoding, it returns a list of link objects
 2. While `field_value` has content:
 
    1. Consume any leading OWS.
-      
+
    2. If the first character is not "<", return `links`.
-   
+
    3. Discard the first character ("<").
-   
+
    4. Consume up to but not including the first ">" character or end of `field_value` and let the
    result be `target_string`.
 
@@ -771,47 +771,47 @@ returns a list of (string `parameter_name`, string `parameter_value`) tuples tha
 2. While `input` has content:
 
    1. Consume any leading OWS.
-   
+
    2. If the first character is not ";", return `parameters`.
-   
+
    3. Discard the leading ";" character.
-   
+
    4. Consume any leading OWS.
 
    5. Consume up to but not including the first BWS, "=", ";", "," character or end of `input` and
    let the result be `parameter_name`.
-   
+
    6. Consume any leading BWS.
-   
+
    7. If the next character is "=":
-   
+
       1. Discard the leading "=" character.
-     
+
       2. Consume any leading BWS.
-     
+
       3. If the next character is DQUOTE, let `parameter_value` be the result of *Parsing a Quoted
       String* ({{parse-qs}}) from `input` (consuming zero or more characters of it).
-      
+
       4. Else, consume the contents up to but not including the first ";", "," character or end of
       `input` and let the results be `parameter_value`.
 
       5. If the last character of `parameter_name` is an asterisk ("\*"), decode `parameter_value`
       according to {{I-D.ietf-httpbis-rfc5987bis}}. Continue processing `input` if an unrecoverable
       error is encountered.
-   
+
    8. Else:
 
       1. Let `parameter_value` be an empty string.
 
    9. Case-normalise `parameter_name` to lowercase.
-     
+
    0. Append (`parameter_name`, `parameter_value`) to `parameters`.
-   
+
    1. Consume any leading OWS.
 
    2. If the next character is "," or the end of `input`, stop processing `input` and return
    `parameters`.
-   
+
 
 ## Parsing a Quoted String {#parse-qs}
 
@@ -833,11 +833,11 @@ This algorithm parses a quoted string, as per {{RFC7230}}, Section 3.2.6. Given 
       2. If there is no more `input`, return `output`.
 
       3. Else, consume the first character and append it to `output`.
-         
+
    2. Else, if the first character is DQUOTE, discard it and return `output`.
-   
+
    3. Else, consume the first character and append it to `output`.
-   
+
 5. Return `output`.
 
 
