@@ -60,7 +60,7 @@ But later, in Section 4.2, goes on to say:
 
 When a new proposal is brought to the IETF, this scope is important to keep in mind; if the proposal is specified to certain kinds of deployments, but might cause harm in others, it could be inappropriate to "have wide deployment and interoperation on the Internet" as a whole.
 
-For example, a datacentre network might want to change how congestion control operates (or remove it entirely) inside its confines. While this might be advantageous in a controlled environment, it would be disastrous to do so on the open Internet, as it would result in congestion collapse {{?I-D.draft-ietf-tcpm-dctcp}}.
+For example, a datacentre network might want to change how congestion control operates (or remove it entirely) inside its confines. While this might be advantageous in a controlled environment, it would be disastrous to do so on the open Internet, as it would result in congestion collapse {{?I-D.ietf-tcpm-dctcp}}.
 
 Or, a financial institution might need to conform to regulations specific to them, and thus need to change how encrypted protocols on their network operate to enable efficient monitoring of activity, while still adhering to their security requirements. While this might be seen as pragmatic in that environment, using such techniques on the open Internet would be widely seen as a step (or many steps) backwards in security, as it would sacrifice forward security, and furthermore be prone to abuse for attacks such as pervasive monitoring {{?RFC7258}}.
 
