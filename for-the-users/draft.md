@@ -160,7 +160,7 @@ There may be cases where genuine technical need requires compromise. However, su
 to be carefully examined, and avoided when there are alternate means of achieving the desired
 goals. If they cannot be, these choices and reasoning SHOULD be carefully documented.
 
-For example, IPv6 {{RFC8200}} can be used to assign a client with a unique address prefix -- even
+For example, IPv6 {{?RFC8200}} can be used to assign a client with a unique address prefix -- even
 though this provides a way to track end user activity and helps identify them -- because it is
 technically necessary to provide networking (and despite this, there are mechanisms like
 {{RFC4941}} to mitigate this effect, for those users who desire it).
