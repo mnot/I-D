@@ -20,7 +20,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
@@ -68,6 +68,10 @@ The IETF, while focused on technical matters, is not neutral about the purpose o
 developing the Internet {{RFC3935}}:
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
+
+and:
+
+> The Internet isn't value-neutral, and neither is the IETF. We want the Internet to be useful for communities that share our commitment to openness and fairness. We embrace technical concepts such as decentralized control, edge-user empowerment and sharing of resources, because those concepts resonate with the core values of the IETF community. These concepts have little to do with the technology that's possible, and much to do with the technology that we choose to create.
 
 However, the IETF is most comfortable making what we believe to be purely technical decisions; our
 process is defined to favor technical merit, through our well-known bias towards "rough consensus
