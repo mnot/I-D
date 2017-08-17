@@ -29,7 +29,7 @@ informative:
 
 --- abstract
 
-This document explores the properties of changes to protocols that might be harmful if widely deployed, and suggests guidelines for evaluating whether they should become Internet Standards.
+This document explores the properties of changes to protocols that might be harmful if widely deployed, and suggests guidelines for evaluating whether they should be published.
 
 --- note_Note_to_Readers
 
@@ -66,9 +66,9 @@ Or, a financial institution might need to conform to regulations specific to the
 
 In discussing such proposals, there is often a question of whether it is appropriate to promote something to Internet Standard, or even publish it at all.
 
-Clearly, every Internet Standard need not be deployable on every Internet-connected network; likewise, the very possibility of harm does not automatically preclude standardisation. However, when the potential consequences and/or likelihood of deployment outside the intended environment are too great, such a proposal needs much more careful vetting.
+Clearly, every Internet specification need not be deployable on every Internet-connected network; likewise, the very possibility of harm does not automatically preclude standardisation. However, when the potential consequences and/or likelihood of deployment outside the intended environment are too great, such a proposal needs much more careful vetting.
 
-This document explores the properties of such "limited scope" proposals and suggests guidelines for evaluating whether they should become Internet Standards.
+This document explores the properties of such "limited scope" proposals and suggests guidelines for evaluating whether they should be published.
 
 
 ## Notational Conventions
@@ -122,11 +122,15 @@ It's much less clear whether the appropriate incentives are in place to avoid ha
 
 ## Considering the Impact of Standardisation
 
-When the IETF determines that a limited-scope proposal cannot be published as an Internet Standard due to its potential harm, a few counter-arguments usually surface.
+When the IETF determines that a limited-scope proposal cannot be published due to its potential harm, a few counter-arguments usually surface.
 
-It is sometimes argued that if the IETF withholds standards-track status, the proponents can still have their proposal published as an Individual Submission, or by another standards organisation.
+It is sometimes argued that if the IETF withholds standards-track status (or publication
+altogether) the proponents can still have their proposal published as an Individual Submission, or
+by another standards organisation.
 
 This might be true, but it ignores the imprimatur of the IETF Standards Track; becoming an IETF standard *does* have demonstrable value, otherwise participants would not have invested significant resources into creating them, and indeed the proponents would not have brought their proposal to the IETF.
+
+Likewise, publication as an RFC -- even on another track -- is perceived by many as an implied endorsement by the IETF.
 
 A similar argument is that by accepting such work into the IETF, we can minimise harm and avoid something worse being published elsewhere. Again, this might be true, but if we compromise our values (as expressed in existing Internet Standards and Best Current Practices) to do so, this is a loss much greater than the area of the proposal in question; it establishes a precedent for further erosion of them, and dilutes their current expression. This must be avoided.
 
