@@ -7,7 +7,7 @@ category: bcp
 
 ipr: trust200902
 area: General
-workgroup: 
+workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
@@ -17,7 +17,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
@@ -48,7 +48,7 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-{{RFC3935}} declares that the goal of the IETF "is to make the Internet work better."
+{{?RFC3935}} declares that the goal of the IETF "is to make the Internet work better."
 
 It goes on to define the Internet as:
 
@@ -60,9 +60,9 @@ But later, in Section 4.2, goes on to say:
 
 When a new proposal is brought to the IETF, this scope is important to keep in mind; if the proposal is specified to certain kinds of deployments, but might cause harm in others, it could be inappropriate to "have wide deployment and interoperation on the Internet" as a whole.
 
-For example, a datacentre network might want to change how congestion control operates (or remove it entirely) inside its confines. While this might be advantageous in a controlled environment, it would be disastrous to do so on the open Internet, as it would result in congestion collapse {{?I-D.draft-ietf-tcpm-dctcp}}. 
+For example, a datacentre network might want to change how congestion control operates (or remove it entirely) inside its confines. While this might be advantageous in a controlled environment, it would be disastrous to do so on the open Internet, as it would result in congestion collapse {{?I-D.draft-ietf-tcpm-dctcp}}.
 
-Or, a financial institution might need to conform to regulations specific to them, and thus need to change how encrypted protocols on their network operate to enable efficient monitoring of activity, while still adhering to their security requirements. While this might be seen as pragmatic in that environment, using such techniques on the open Internet would be widely seen as a step (or many steps) backwards in security, as it would sacrifice Forward Security {{}}, and furthermore be prone to abuse for attacks such as pervasive monitoring {{?RFC7258}}.
+Or, a financial institution might need to conform to regulations specific to them, and thus need to change how encrypted protocols on their network operate to enable efficient monitoring of activity, while still adhering to their security requirements. While this might be seen as pragmatic in that environment, using such techniques on the open Internet would be widely seen as a step (or many steps) backwards in security, as it would sacrifice forward security, and furthermore be prone to abuse for attacks such as pervasive monitoring {{?RFC7258}}.
 
 In discussing such proposals, there is often a question of whether it is appropriate to promote something to Internet Standard, or even publish it at all.
 
@@ -89,7 +89,7 @@ Therefore, proposals to change it need to consider what effect they will have wh
 
 ## Defining Limited Scope
 
-A proposal is said to have "limited scope" if it is designed with deployment on a subset of the Internet, or if it is known to only be suitable for deployment on a subset of the Internet. 
+A proposal is said to have "limited scope" if it is designed with deployment on a subset of the Internet, or if it is known to only be suitable for deployment on a subset of the Internet.
 
 A subset of the Internet could be a single network, or a single type of Internet-connected network. Generally, it would be considered "edge Internet", using {{RFC3935}} terminology.
 
@@ -111,11 +111,11 @@ A key consideration when evaluating a limited-scope proposal is whether harmful 
 
 For example, a proposal to disable congestion control in TCP needs to be enabled in the operating system (in most current implementations). The operating system vendor has a strong incentive to deliver flexible yet safe systems; congestion collapse due to irresponsible deployment will lead to less use of that operating system, so the vendor will assure that it is deployed responsibly, most likely by requiring the administrator of the machine to explicitly configure their machine to do so.
 
-The administrator, in turn, has a strong incentive to make sure that all applications on the machine have fair network access, and that the machine is no penalised as a bad actor by the network it operates within; operating without congestion control on an ISP network, for example, will eventually get noticed, and likely result in access being terminated. 
+The administrator, in turn, has a strong incentive to make sure that all applications on the machine have fair network access, and that the machine is no penalised as a bad actor by the network it operates within; operating without congestion control on an ISP network, for example, will eventually get noticed, and likely result in access being terminated.
 
 These incentives suggest that it is safe for the IETF to define limited-deployment modifications to congestion control, because wider deployment on the Internet -- where it would be harmful -- is against the interests of the relevant parties.
 
-A counterexample would be a proposal to weaken encryption to make it possible to monitor it in enterprise networks. While there might be a reasonable argument for deploying this in a constrained network, the potential harm if it is deployed on the broader Internet is considerable; it could be used to enable pervasive monitoring {{RFC7624}}, for example.
+A counterexample would be a proposal to weaken encryption to make it possible to monitor it in enterprise networks. While there might be a reasonable argument for deploying this in a constrained network, the potential harm if it is deployed on the broader Internet is considerable; it could be used to enable pervasive monitoring {{?RFC7624}}, for example.
 
 It's much less clear whether the appropriate incentives are in place to avoid harmful deployment of such a proposal. Depending on the specifics of how it worked, deployment could be compelled, for example.
 
@@ -126,7 +126,7 @@ When the IETF determines that a limited-scope proposal cannot be published as an
 
 It is sometimes argued that if the IETF withholds standards-track status, the proponents can still have their proposal published as an Individual Submission, or by another standards organisation.
 
-This might be true, but it ignores the imprimatur of the IETF Standards Track; becoming an IETF standard *does* have demonstrable value, otherwise participants would not have invested significant resources into creating them, and indeed the proponents would not have brought their proposal to the IETF. 
+This might be true, but it ignores the imprimatur of the IETF Standards Track; becoming an IETF standard *does* have demonstrable value, otherwise participants would not have invested significant resources into creating them, and indeed the proponents would not have brought their proposal to the IETF.
 
 A similar argument is that by accepting such work into the IETF, we can minimise harm and avoid something worse being published elsewhere. Again, this might be true, but if we compromise our values (as expressed in existing Internet Standards and Best Current Practices) to do so, this is a loss much greater than the area of the proposal in question; it establishes a precedent for further erosion of them, and dilutes their current expression. This must be avoided.
 
