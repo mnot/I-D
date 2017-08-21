@@ -85,7 +85,7 @@ This specification uses the Augmented Backus-Naur Form (ABNF) notation of {{!RFC
 
 Additionally, it uses the "field-name", "OWS" and "token" rules from {{!RFC7230}}.
 
-# The "Variant" HTTP Header Field
+# The "Variants" HTTP Header Field
 
 The `Variant` HTTP response header field is used to indicate what other representations are available for a given resource at the time that the response is produced.
 
