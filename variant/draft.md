@@ -240,6 +240,13 @@ If the number or advertised characteristics of the representations available for
 
 Note that the `Variants` header is not a commitment to make representations of a certain nature available; the runtime behaviour of the server always overrides hints like `Variants`.
 
+# Acknowledgments
+
+This protocol is conceptually similar to, but simpler than, Transparent Content Negotiation {{?RFC2295}}. Thanks to its authors for their inspiration.
+
+It is also a generalisation of a Fastly feature designed by Rogier 'DocWilco' Mulhuijzen.
+
+Thanks to Hooman Beheshti for his review and input.
 
 --- back
 
@@ -255,7 +262,7 @@ Caches SHOULD use Quality Values ({{!RFC7231}}, Section 5.3.1) to determine whet
 
 If no acceptable representation can be found using quality values, the first value listed in the relevant `Variant` field-value SHOULD be selected.
 
-The "identity" encoding (which as per {{!{{RFC7231}} Section 5.3.4 represents "no encoding") is always implicitly available at the lowest priority; if the server wishes to change its priority, it can be explicitly listed. Responses are not required to carry "identity" in the `Content-Encoding` response header field by this specification.
+The "identity" encoding (which as per {{{{!RFC7231}} Section 5.3.4 represents "no encoding") is always implicitly available at the lowest priority; if the server wishes to change its priority, it can be explicitly listed. Responses are not required to carry "identity" in the `Content-Encoding` response header field by this specification.
 
 Caches MAY assign a minimum quality value to trigger a request to origin. For example, a cache might decide to send a request to origin if there is not a stored response to which the client has assigned a quality value above 0.2.
 
