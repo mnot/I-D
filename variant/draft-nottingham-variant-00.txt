@@ -78,18 +78,19 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The "Variant" HTTP Header Field . . . . . . . . . . . . . . .   4
-     2.1.  Defining Content Negotiation Using Variants . . . . . . .   4
+     2.1.  Defining Content Negotiation Using Variants . . . . . . .   5
      2.2.  Cache Behaviour . . . . . . . . . . . . . . . . . . . . .   5
        2.2.1.  Relationship to Vary  . . . . . . . . . . . . . . . .   5
-     2.3.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   5
+     2.3.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   6
        2.3.1.  Single Variant  . . . . . . . . . . . . . . . . . . .   6
-       2.3.2.  Multiple Variants . . . . . . . . . . . . . . . . . .   6
+       2.3.2.  Multiple Variants . . . . . . . . . . . . . . . . . .   7
        2.3.3.  Partial Coverage  . . . . . . . . . . . . . . . . . .   7
    3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   8
-     5.2.  Informative References  . . . . . . . . . . . . . . . . .   9
+   5.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .   8
+   6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
+     6.1.  Normative References  . . . . . . . . . . . . . . . . . .   8
+     6.2.  Informative References  . . . . . . . . . . . . . . . . .   9
    Appendix A.  Variants and Defined Content Negotiation Mechanisms    9
      A.1.  Content-Encoding  . . . . . . . . . . . . . . . . . . . .   9
      A.2.  Content-Language  . . . . . . . . . . . . . . . . . . . .  10
@@ -104,8 +105,7 @@ Table of Contents
 
    Successfully reusing negotiated responses that have been stored in a
    HTTP cache requires establishment of a secondary cache key
-   ([RFC7234], Section 4.1) using the Vary header ([RFC7231],
-   Section 7.1.4).
+
 
 
 
@@ -113,6 +113,9 @@ Nottingham              Expires February 22, 2018               [Page 2]
 
 Internet-Draft                HTTP Variants                  August 2017
 
+
+   ([RFC7234], Section 4.1) using the Vary header ([RFC7231],
+   Section 7.1.4).
 
    HTTP's caching model allows a certain amount of latitude in
    normalising request header fields to match those stored in the cache,
@@ -158,9 +161,6 @@ Internet-Draft                HTTP Variants                  August 2017
    This specification uses the Augmented Backus-Naur Form (ABNF)
    notation of [RFC5234] with a list extension, defined in Section 7 of
    [RFC7230], that allows for compact definition of comma-separated
-   lists using a '#' operator (similar to how the '*' operator indicates
-   repetition).
-
 
 
 
@@ -169,6 +169,9 @@ Nottingham              Expires February 22, 2018               [Page 3]
 
 Internet-Draft                HTTP Variants                  August 2017
 
+
+   lists using a '#' operator (similar to how the '*' operator indicates
+   repetition).
 
    Additionally, it uses the "field-name", "OWS" and "token" rules from
    [RFC7230].
@@ -211,12 +214,9 @@ Internet-Draft                HTTP Variants                  August 2017
    as it might be used by the header's algorithm for selecting a
    response.
 
-2.1.  Defining Content Negotiation Using Variants
-
-   To be usable with Variants, proactive content negotiation mechanisms
-   need to be specified to take advantage of it.  Specifically, they:
-
-
+   Senders SHOULD consistently send "Variant" on all cacheable (as per
+   [RFC7234], Section 3) responses for a resource, since its absence
+   will trigger caches to fall back to "Vary" processing.
 
 
 
@@ -225,6 +225,11 @@ Nottingham              Expires February 22, 2018               [Page 4]
 
 Internet-Draft                HTTP Variants                  August 2017
 
+
+2.1.  Defining Content Negotiation Using Variants
+
+   To be usable with Variants, proactive content negotiation mechanisms
+   need to be specified to take advantage of it.  Specifically, they:
 
    o  MUST define a request header field that advertises the clients
       preferences or capabilities, whose field-name SHOULD begin with
@@ -269,11 +274,6 @@ Internet-Draft                HTTP Variants                  August 2017
    terms of this specification or not present in the "Variants" field
    SHOULD still form part of the secondary cache key.
 
-2.3.  Examples
-
-
-
-
 
 
 
@@ -281,6 +281,8 @@ Nottingham              Expires February 22, 2018               [Page 5]
 
 Internet-Draft                HTTP Variants                  August 2017
 
+
+2.3.  Examples
 
 2.3.1.  Single Variant
 
@@ -324,9 +326,7 @@ Internet-Draft                HTTP Variants                  August 2017
    Also, note that response header is listed in "Variants", not the
    request header (as is the case with "Vary").
 
-2.3.2.  Multiple Variants
 
-   A more complicated request/response pair:
 
 
 
@@ -337,6 +337,10 @@ Nottingham              Expires February 22, 2018               [Page 6]
 
 Internet-Draft                HTTP Variants                  August 2017
 
+
+2.3.2.  Multiple Variants
+
+   A more complicated request/response pair:
 
    GET /bar HTTP/1.1
    Host: www.example.net
@@ -385,10 +389,6 @@ Internet-Draft                HTTP Variants                  August 2017
 
 
 
-
-
-
-
 Nottingham              Expires February 22, 2018               [Page 7]
 
 Internet-Draft                HTTP Variants                  August 2017
@@ -421,14 +421,34 @@ Internet-Draft                HTTP Variants                  August 2017
    representations of a certain nature available; the runtime behaviour
    of the server always overrides hints like "Variants".
 
-5.  References
+5.  Acknowledgments
 
-5.1.  Normative References
+   This protocol is conceptually similar to, but simpler than,
+   Transparent Content Negotiation [RFC2295].  Thanks to its authors for
+   their inspiration.
+
+   It is also a generalisation of a Fastly feature designed by Rogier
+   'DocWilco' Mulhuijzen.
+
+   Thanks to Hooman Beheshti for his review and input.
+
+6.  References
+
+6.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997, <https://www.rfc-
               editor.org/info/rfc2119>.
+
+
+
+
+
+Nottingham              Expires February 22, 2018               [Page 8]
+
+Internet-Draft                HTTP Variants                  August 2017
+
 
    [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
               Specifications: ABNF", STD 68, RFC 5234,
@@ -440,16 +460,6 @@ Internet-Draft                HTTP Variants                  August 2017
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <https://www.rfc-editor.org/info/rfc7230>.
 
-
-
-
-
-
-Nottingham              Expires February 22, 2018               [Page 8]
-
-Internet-Draft                HTTP Variants                  August 2017
-
-
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
               DOI 10.17487/RFC7231, June 2014, <https://www.rfc-
@@ -460,11 +470,15 @@ Internet-Draft                HTTP Variants                  August 2017
               RFC 7234, DOI 10.17487/RFC7234, June 2014,
               <https://www.rfc-editor.org/info/rfc7234>.
 
-5.2.  Informative References
+6.2.  Informative References
 
    [I-D.ietf-httpbis-client-hints]
               Grigorik, I., "HTTP Client Hints", draft-ietf-httpbis-
               client-hints-04 (work in progress), April 2017.
+
+   [RFC2295]  Holtman, K. and A. Mutz, "Transparent Content Negotiation
+              in HTTP", RFC 2295, DOI 10.17487/RFC2295, March 1998,
+              <https://www.rfc-editor.org/info/rfc2295>.
 
    [RFC3864]  Klyne, G., Nottingham, M., and J. Mogul, "Registration
               Procedures for Message Header Fields", BCP 90, RFC 3864,
@@ -483,6 +497,15 @@ A.1.  Content-Encoding
    value, the applicable request header field is "Accept-Encoding", as
    per [RFC7231] Section 5.3.4.
 
+
+
+
+
+Nottingham              Expires February 22, 2018               [Page 9]
+
+Internet-Draft                HTTP Variants                  August 2017
+
+
    Caches SHOULD use Quality Values ([RFC7231], Section 5.3.1) to
    determine whether there is an acceptable stored response, in
    conjunction with the information carried in the Variants response
@@ -492,19 +515,17 @@ A.1.  Content-Encoding
    the first value listed in the relevant "Variant" field-value SHOULD
    be selected.
 
+   The "identity" encoding (which as per {{!RFC7231 Section 5.3.4
+   represents "no encoding") is always implicitly available at the
+   lowest priority; if the server wishes to change its priority, it can
+   be explicitly listed.  Responses are not required to carry "identity"
+   in the "Content-Encoding" response header field by this
+   specification.
+
    Caches MAY assign a minimum quality value to trigger a request to
    origin.  For example, a cache might decide to send a request to
    origin if there is not a stored response to which the client has
    assigned a quality value above 0.2.
-
-
-
-
-
-Nottingham              Expires February 22, 2018               [Page 9]
-
-Internet-Draft                HTTP Variants                  August 2017
-
 
 A.2.  Content-Language
 
@@ -533,27 +554,6 @@ Author's Address
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
