@@ -120,6 +120,8 @@ Here, recipients can infer that two Device Pixel Ratios are available, as well a
 
 Note that the ordering of values after the field-name is significant, as it might be used by the header's algorithm for selecting a response.
 
+Senders SHOULD consistently send `Variant` on all cacheable (as per {{!RFC7234}}, Section 3) responses for a resource, since its absence will trigger caches to fall back to `Vary` processing.
+
 
 ## Defining Content Negotiation Using Variants
 
