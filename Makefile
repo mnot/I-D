@@ -3,7 +3,7 @@
 # Usage: make [draft-short-name]
 
 files = $(wildcard *)
-reserved = Abandoned Published Tools Makefile index.md README.md _includes _layouts _site
+reserved = Abandoned Published Tools Makefile draft_head.html index.html draft_foot.html README.md _includes _layouts _site
 drafts = $(filter-out $(reserved), $(files))
 
 %::
@@ -14,7 +14,7 @@ drafts = $(filter-out $(reserved), $(files))
 	sed -i '' -e"s/SHORTNAME/$@/g" \
 		$@/draft.md
 
-.PHONY: index.md
-index.md: $(drafts)
-	echo "---\nlayout: front\n---" > $@
-	echo "$(foreach draft,$(drafts),\n* [$(draft)]($(draft)) $(shell Tools/index.py $(draft)/draft.md))" >> $@
+index.html: $(drafts)
+	cat draft_head.html > $@
+	echo "$(foreach draft,$(drafts),\n<li><a href='$(draft)'>$(draft)</a> - $(shell Tools/index.py $(draft)/draft.md)</li>)" >> $@
+	cat draft_foot.html >> $@

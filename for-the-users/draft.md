@@ -20,7 +20,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
@@ -45,7 +45,8 @@ informative:
 
 --- abstract
 
-This document requires that Internet Standards consider end users as their highest priority concern.
+This document requires that, when a conflict cannot be avoided, Internet Standards consider end
+users as their highest priority concern.
 
 
 --- note_Note_to_Readers
@@ -67,6 +68,10 @@ The IETF, while focused on technical matters, is not neutral about the purpose o
 developing the Internet {{RFC3935}}:
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
+
+and:
+
+> The Internet isn't value-neutral, and neither is the IETF. We want the Internet to be useful for communities that share our commitment to openness and fairness. We embrace technical concepts such as decentralized control, edge-user empowerment and sharing of resources, because those concepts resonate with the core values of the IETF community. These concepts have little to do with the technology that's possible, and much to do with the technology that we choose to create.
 
 However, the IETF is most comfortable making what we believe to be purely technical decisions; our
 process is defined to favor technical merit, through our well-known bias towards "rough consensus
@@ -156,7 +161,7 @@ There may be cases where genuine technical need requires compromise. However, su
 to be carefully examined, and avoided when there are alternate means of achieving the desired
 goals. If they cannot be, these choices and reasoning SHOULD be carefully documented.
 
-For example, IPv6 {{RFC8200}} can be used to assign a client with a unique address prefix -- even
+For example, IPv6 {{?RFC8200}} can be used to assign a client with a unique address prefix -- even
 though this provides a way to track end user activity and helps identify them -- because it is
 technically necessary to provide networking (and despite this, there are mechanisms like
 {{RFC4941}} to mitigate this effect, for those users who desire it).
@@ -197,8 +202,7 @@ Brian Trammell for their suggestions.
 ## Why do we need this?
 
 It's not uncommon for proposals to be made in the IETF for a change to a protocol -- one that's
-being designed or already deployed -- to make certain tasks easier, but in a way that causes some
-parties concern about impact upon end users.
+being designed or already deployed -- to make certain tasks easier, but in a way that causes q concern about impact upon end users.
 
 For example, network operators approached the HTTP Working Group in 2014 with a proposal to allow
 an "explicitly authenticated proxy" to be involved in HTTPS connections, so that operators could
@@ -222,12 +226,34 @@ regarding the overall goals and priorities does help Working Groups in this situ
 
 ## How will this impact my Working Group?
 
-When someone identifies a potential impact upon end users in a document or proposal, the Working
-Group should assess it. If the Working Group does reach consensus (even rough, as per {{?RFC7282}})
-that this is the case, the risk will need to be mitigated, or an alternative approach found.
+When someone identifies a potential negative impact upon end users in a document or proposal, the
+Working Group should assess it. If the Working Group does reach consensus (even rough, as per
+{{?RFC7282}}) that this is the case, the risk will need to be mitigated, or an alternative approach
+found.
 
 As explained above, there might be cases where the Working Group determines that there is potential
 for end user impact, but that it is the "least worst" option. {{users}} requires these situations
 to be documented (e.g., in Security Considerations), to help contextualise the decision, warn
 deployers and users of potential problems, and encourage further protocol development to mitigate
 the risk.
+
+
+## How do Working Groups decide what's in the interest of end users?
+
+Using the same process of discussion and consensus-gathering as they do now, but focused on the
+issue of what the impact upon users is.
+
+Doing so might include broadening participation in the working group to include new perspectives
+that are not well-represented, to assure diversity and better represent end user concerns.
+
+In many Working Groups, implementers have a strong voice, since implementation is necessary for
+successful deployment. When assessing end-user impact, however, the desires of implementers might
+conflict with the needs of end users, and so care must be taken to avoid assigning too much weight
+to the availability of implementations.
+
+Finally, as discussed, the IETF has a variety of specific guidance regarding privacy, security and
+other areas that potentially impact end users, and it is expected to grow over time. This document
+provides a more general goal in areas that are not yet covered by such guidance; it does not
+override it.
+
+

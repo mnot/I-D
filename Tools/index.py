@@ -8,5 +8,5 @@ try:
 except:
     sys.exit(0)
 for section in draft:
-    print '- ' + section['title']
+    print section['title']
     break
