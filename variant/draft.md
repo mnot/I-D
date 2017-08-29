@@ -112,6 +112,7 @@ Variants: content-encoding
 a recipient can infer that no content-codings are supported. Note that as always with header field names, it is case-insensitive.
 
 A more complex example:
+
 ~~~
 Variants: DPR;1.0;2.0, Content-Language;en ;fr
 ~~~
