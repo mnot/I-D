@@ -255,7 +255,7 @@ Note that the `Variants` header is not a commitment to make representations of a
 
 This protocol is conceptually similar to, but simpler than, Transparent Content Negotiation {{?RFC2295}}. Thanks to its authors for their inspiration.
 
-It is also a generalisation of a Fastly feature designed by Rogier 'DocWilco' Mulhuijzen.
+It is also a generalisation of a Fastly VCL feature designed by Rogier 'DocWilco' Mulhuijzen.
 
 Thanks to Hooman Beheshti for his review and input.
 
