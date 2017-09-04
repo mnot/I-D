@@ -152,6 +152,7 @@ Caches that fully implement this specification MUST ignore request header-fields
 
 Request header fields listed in `Vary` that are not implemented in terms of this specification or not present in the `Variants` field SHOULD still form part of the secondary cache key.
 
+
 ## Examples
 
 ### Single Variant
