@@ -66,6 +66,7 @@ HTTP/1.1 200 OK
 Content-Type: text/html
 Content-Language: fr
 Vary: Accept-Language
+Transfer-Encoding: chunked
 
 [French content]
 ~~~
@@ -168,6 +169,7 @@ Content-Language: en
 Cache-Control: max-age=3600
 Variants: Content-Language;en;de
 Vary: Accept-Language
+Transfer-Encoding: chunked
 ~~~
 
 Upon receipt of this response, the cache knows that two representations of this resource are available, one with a `Content-Language` of "en", and another whose `Content-Language` is "de".
@@ -200,6 +202,7 @@ Content-Encoding: br
 Variants: Content-Language;en;jp;de
 Variants: Content-Encoding;br;gzip
 Vary: Accept-Language, Accept-Encoding
+Transfer-Encoding: chunked
 ~~~
 
 Here, the cache knows that there are two axes that the response varies upon; `Content-Language` and `Content-Encoding`. Thus, there are a total of six possible representations for the resource, and the cache needs to consider the selection algorithms for both axes.
@@ -223,6 +226,7 @@ Content-Language: en
 Content-Encoding: br
 Variants: Content-Encoding;br;gzip
 Vary: Accept-Language, Accept-Encoding
+Transfer-Encoding: chunked
 ~~~
 
 Here, the cache will need to calculate a secondary cache key as per {{!RFC7234}}, Section 4.1 -- but considering only `Accept-Language` to be in its field-value -- and then continue processing `Variants` for the set of stored responses that the algorithm described there selects.
