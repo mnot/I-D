@@ -101,7 +101,7 @@ So, given this example header field:
 Variants: Content-Encoding;gzip
 ~~~
 
-a recipient can infer that the only content-coding available for that resource is "gzip".
+a recipient can infer that the only content-coding available for that resource is "gzip" (along with the "identity" non-encoding; see {{content-encoding}).
 
 Given:
 
@@ -255,7 +255,7 @@ Thanks to Hooman Beheshti for his review and input.
 
 This appendix defines the required information to use existing proactive content negotiation mechanisms (as defined in {{!RFC7231}}, Section 5.3) with the `Variants` header field.
 
-## Content-Encoding
+## Content-Encoding {#content-encoding}
 
 When negotiating for the `Content-Encoding` response header field's value, the applicable request header field is `Accept-Encoding`, as per {{!RFC7231}} Section 5.3.4.
 
@@ -270,7 +270,7 @@ The "identity" encoding (which as per {{!RFC7231 Section 5.3.4 represents "no en
 
 Caches MAY assign a minimum quality value to trigger a request to origin. For example, a cache might decide to send a request to origin if there is not a stored response to which the client has assigned a quality value above 0.2.
 
-## Content-Language
+## Content-Language {#content-language}
 
 When negotiating for the `Content-Language` response header field's value, the applicable request header field is `Accept-Language`, as per {{!RFC7231}} Section 5.3.5.
 
