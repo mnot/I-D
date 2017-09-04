@@ -85,13 +85,16 @@ HTTP/1.1 200 OK
 Content-Type: text/html
 Content-Language: fr
 Vary: Accept-Language
+Transfer-Encoding: chunked
 
 [French content]
 ]]></artwork></figure>
 
-<t>a downstream (client or intermediary) cache that has full knowledge of the semantics of <spanx style="verb">Accept-Language</spanx> and <spanx style="verb">Content-Language</spanx> will know that a French representation is available, and might be able to infer that an English representation is not available, but it does not know, for example, whether a Japanese representation is available without making another request, thereby incurring possibly unnecessary latency.</t>
+<t>Provided that the cache has full knowledge of the semantics of <spanx style="verb">Accept-Language</spanx> and <spanx style="verb">Content-Language</spanx>, it will know that a French representation is available and might be able to infer that an English representation is not available. But, it does not know (for example) whether a Japanese representation is available without making another request, thereby incurring possibly unnecessary latency.</t>
 
-<t>This specification introduces the HTTP <spanx style="verb">Variants</spanx> response header field to address this shortcoming, by communicating what representations are available for a given resource.</t>
+<t>This specification introduces the HTTP <spanx style="verb">Variants</spanx> response header field to address this shortcoming by communicating what representations are available for a given resource. This information enables caches that understand <spanx style="verb">Variants</spanx> to correctly select the most appropriate stored response, properly forwarding requests that cannot be satisfied.</t>
+
+<t><spanx style="verb">Variants</spanx> is best used when content negotiation takes place over a known, constrained set of representations. Since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations. Likewise, it works best for content negotiation over header fields whose semantics are well-understood, since it requires a selection algorithm to be specified ahead of time.</t>
 
 <section anchor="notational-conventions" title="Notational Conventions">
 
@@ -110,10 +113,12 @@ Vary: Accept-Language
 <t>The <spanx style="verb">Variant</spanx> HTTP response header field is used to indicate what other representations are available for a given resource at the time that the response is produced.</t>
 
 <figure><artwork><![CDATA[
-Variants = 1#( field-name *( OWS ";" OWS token ))
+Variants        = 1#variant
+variant         = field-name *( OWS ";" OWS available-value )
+available-value = token
 ]]></artwork></figure>
 
-<t>Each <spanx style="verb">field-name</spanx> in the list indicates a response header field that carries a value that clients might proactively negotiate for; each <spanx style="verb">token</spanx> parameter on the <spanx style="verb">field-name</spanx> is an available value.</t>
+<t>Each <spanx style="verb">variant</spanx> indicates a response header field that carries a value that clients might proactively negotiate for; each parameter on it indicates a value for which there is an available representation on the origin server.</t>
 
 <t>So, given this example header field:</t>
 
@@ -121,7 +126,7 @@ Variants = 1#( field-name *( OWS ";" OWS token ))
 Variants: Content-Encoding;gzip
 ]]></artwork></figure>
 
-<t>a recipient can infer that the only content-coding available for that resource is “gzip”.</t>
+<t>a recipient can infer that the only content-coding available for that resource is “gzip” (along with the “identity” non-encoding; see {{content-encoding}).</t>
 
 <t>Given:</t>
 
@@ -143,32 +148,56 @@ Variants: DPR;1.0;2.0, Content-Language;en ;fr
 
 <t>Senders SHOULD consistently send <spanx style="verb">Variant</spanx> on all cacheable (as per <xref target="RFC7234"/>, Section 3) responses for a resource, since its absence will trigger caches to fall back to <spanx style="verb">Vary</spanx> processing.</t>
 
+<t>Likewise, servers MUST send the <spanx style="verb">Content-*</spanx> response headers nominated by <spanx style="verb">Variants</spanx> when sending that header.</t>
+
 <section anchor="defining-content-negotiation-using-variants" title="Defining Content Negotiation Using Variants">
 
 <t>To be usable with Variants, proactive content negotiation mechanisms need to be specified to take advantage of it. Specifically, they:</t>
 
 <t><list style="symbols">
-  <t>MUST define a request header field that advertises the clients preferences or capabilities, whose field-name SHOULD begin with “Accept-“</t>
-  <t>MUST define a response header field that indicates the result of selection, whose field-name SHOULD begin with “Content-“ and whose field-value SHOULD be a token</t>
-  <t>MUST define a way for selecting a result, given a request header field value.</t>
+  <t>MUST define a request header field that advertises the clients preferences or capabilities, whose field-name SHOULD begin with “Accept-“.</t>
+  <t>MUST define a response header field that indicates the result of selection, whose field-name SHOULD begin with “Content-“ and whose field-value SHOULD be a token.</t>
+  <t>MUST define an algorithm for selecting a result, given a request header field value. It MUST return an ordered list of selected responses, given the incoming request, a list of selected responses, and the list of available values from <spanx style="verb">Variants</spanx>.</t>
 </list></t>
 
 <t><xref target="backports"/> fulfils these requirements for some existing proactive content negotiation mechanisms in HTTP.</t>
 
 </section>
-<section anchor="cache-behaviour" title="Cache Behaviour">
+<section anchor="cache" title="Cache Behaviour">
 
-<t>Caches that implement the <spanx style="verb">Variants</spanx> header field and the relevant semantics of the field-name it contains SHOULD use that knowledge to either select an appropriate stored representation, or forward the request if no appropriate representation is stored.</t>
+<t>Caches that implement the <spanx style="verb">Variants</spanx> header field and the relevant semantics of the field-name it contains can use that knowledge to either select an appropriate stored representation, or forward the request if no appropriate representation is stored.</t>
 
-<t>They do so by running the defined algorithm to normalise the relevant request header field to a value, which they can then either locate in their cache or fetch from the origin server.</t>
+<t>They do so by running this algorithm (or its functional equivalent) upon receiving a request, <spanx style="verb">incoming-request</spanx>:</t>
 
-<t>The information in the <spanx style="verb">Variants</spanx> header field is usable so long as the response that conveyed it remains fresh (as per <xref target="RFC7234"/>, Section 4.2). Caches SHOULD use the most recent response’s <spanx style="verb">Variant</spanx> field-value(s), but MAY use older ones as long as they are still fresh.</t>
+<t><list style="numbers">
+  <t>Let <spanx style="verb">selected-responses</spanx> be a list of the stored responses suitable for reuse as defined in <xref target="RFC7234"/> Section 4, excepting the requirement to calculate a secondary cache key.</t>
+  <t>Order <spanx style="verb">selected-responses</spanx> by the “Date” header field, most recent to least recent.</t>
+  <t>If the freshest (as per <xref target="RFC7234"/>, Section 4.2) has one or more <spanx style="verb">Variants</spanx> header field(s):
+  <list style="numbers">
+      <t>Select one member of <spanx style="verb">selected-responses</spanx> and let its “Variants” header field-value(s) be <spanx style="verb">Variants</spanx>. This SHOULD be the most recent response, but MAY be from an older one as long as it is still fresh.</t>
+      <t>For each <spanx style="verb">variant</spanx> in <spanx style="verb">Variants</spanx>:
+      <list style="numbers">
+          <t>If the <spanx style="verb">field-name</spanx> corresponds to the response header field identified by a content negotiation mechanism that the implementation supports:
+          <list style="numbers">
+              <t>Let <spanx style="verb">available-values</spanx> be a list containing all <spanx style="verb">available-value</spanx> for the <spanx style="verb">variant</spanx>.</t>
+              <t>Let <spanx style="verb">selected-responses</spanx> be the result of running the algorithm defined by the content negotiation mechanism with <spanx style="verb">incoming-request</spanx>, <spanx style="verb">selected-responses</spanx> and <spanx style="verb">available-values</spanx>.</t>
+              <t>Remove the content negotiation’s identified request header field-name from the “Vary” header field of each member of <spanx style="verb">selected-responses</spanx>, if present.</t>
+            </list></t>
+        </list></t>
+    </list></t>
+  <t>Process any member of <spanx style="verb">selected-responses</spanx> that has a “Vary” response header field whose field-value still contains one or more <spanx style="verb">field-name</spanx>s, removing that members if it does not match (as per <xref target="RFC7234"/>, Section 4.1).</t>
+  <t>Return the first member of <spanx style="verb">selected-responses</spanx>. If <spanx style="verb">selected-responses</spanx> is empty, return <spanx style="verb">null</spanx>.</t>
+</list></t>
+
+<t>This algorithm will either return the appropriate stored response to use, or <spanx style="verb">null</spanx> if the cache needs to forward the request towards the origin server.</t>
 
 <section anchor="relationship-to-vary" title="Relationship to Vary">
 
 <t>Caches that fully implement this specification MUST ignore request header-fields in the <spanx style="verb">Vary</spanx> header for the purposes of secondary cache key calculation (<xref target="RFC7234"/>, Section 4.1) when their semantics are understood, implemented as per this specification, and their corresponding response header field is listed in <spanx style="verb">Variants</spanx>.</t>
 
 <t>Request header fields listed in <spanx style="verb">Vary</spanx> that are not implemented in terms of this specification or not present in the <spanx style="verb">Variants</spanx> field SHOULD still form part of the secondary cache key.</t>
+
+<t>The algorithm in <xref target="cache"/> implements these requirements.</t>
 
 </section>
 </section>
@@ -189,6 +218,7 @@ Content-Language: en
 Cache-Control: max-age=3600
 Variants: Content-Language;en;de
 Vary: Accept-Language
+Transfer-Encoding: chunked
 ]]></artwork></figure>
 
 <t>Upon receipt of this response, the cache knows that two representations of this resource are available, one with a <spanx style="verb">Content-Language</spanx> of “en”, and another whose <spanx style="verb">Content-Language</spanx> is “de”.</t>
@@ -221,6 +251,7 @@ Content-Encoding: br
 Variants: Content-Language;en;jp;de
 Variants: Content-Encoding;br;gzip
 Vary: Accept-Language, Accept-Encoding
+Transfer-Encoding: chunked
 ]]></artwork></figure>
 
 <t>Here, the cache knows that there are two axes that the response varies upon; <spanx style="verb">Content-Language</spanx> and <spanx style="verb">Content-Encoding</spanx>. Thus, there are a total of six possible representations for the resource, and the cache needs to consider the selection algorithms for both axes.</t>
@@ -244,6 +275,7 @@ Content-Language: en
 Content-Encoding: br
 Variants: Content-Encoding;br;gzip
 Vary: Accept-Language, Accept-Encoding
+Transfer-Encoding: chunked
 ]]></artwork></figure>
 
 <t>Here, the cache will need to calculate a secondary cache key as per <xref target="RFC7234"/>, Section 4.1 – but considering only <spanx style="verb">Accept-Language</spanx> to be in its field-value – and then continue processing <spanx style="verb">Variants</spanx> for the set of stored responses that the algorithm described there selects.</t>
@@ -276,7 +308,7 @@ Vary: Accept-Language, Accept-Encoding
 
 <t>This protocol is conceptually similar to, but simpler than, Transparent Content Negotiation <xref target="RFC2295"/>. Thanks to its authors for their inspiration.</t>
 
-<t>It is also a generalisation of a Fastly feature designed by Rogier ‘DocWilco’ Mulhuijzen.</t>
+<t>It is also a generalisation of a Fastly VCL feature designed by Rogier ‘DocWilco’ Mulhuijzen.</t>
 
 <t>Thanks to Hooman Beheshti for his review and input.</t>
 
@@ -365,6 +397,21 @@ Vary: Accept-Language, Accept-Encoding
 
 
 
+<reference  anchor="RFC4647" target='https://www.rfc-editor.org/info/rfc4647'>
+<front>
+<title>Matching of Language Tags</title>
+<author initials='A.' surname='Phillips' fullname='A. Phillips'><organization /></author>
+<author initials='M.' surname='Davis' fullname='M. Davis'><organization /></author>
+<date year='2006' month='September' />
+<abstract><t>This document describes a syntax, called a &quot;language-range&quot;, for specifying items in a user's list of language preferences.  It also describes different mechanisms for comparing and matching these to language tags.  Two kinds of matching mechanisms, filtering and lookup, are defined.  Filtering produces a (potentially empty) set of language tags, whereas lookup produces a single language tag. Possible applications include language negotiation or content selection.  This document, in combination with RFC 4646, replaces RFC 3066, which replaced RFC 1766.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract>
+</front>
+<seriesInfo name='BCP' value='47'/>
+<seriesInfo name='RFC' value='4647'/>
+<seriesInfo name='DOI' value='10.17487/RFC4647'/>
+</reference>
+
+
+
 
     </references>
 
@@ -437,34 +484,50 @@ Vary: Accept-Language, Accept-Encoding
 
 <t>When negotiating for the <spanx style="verb">Content-Encoding</spanx> response header field’s value, the applicable request header field is <spanx style="verb">Accept-Encoding</spanx>, as per <xref target="RFC7231"/> Section 5.3.4.</t>
 
-<t>Caches SHOULD use Quality Values (<xref target="RFC7231"/>, Section 5.3.1) to determine whether there is an acceptable stored response, in conjunction with the information carried in the Variants response header field.</t>
+<t>To perform content negotiation for Content-Encoding given an <spanx style="verb">incoming-request</spanx>, <spanx style="verb">stored-responses</spanx> and <spanx style="verb">available-values</spanx>:</t>
 
-<t>If no acceptable representation can be found using quality values, the first value listed in the relevant <spanx style="verb">Variant</spanx> field-value SHOULD be selected.</t>
-
-<t>The “identity” encoding (which as per {{!RFC7231 Section 5.3.4 represents “no encoding”) is always implicitly available at the lowest priority; if the server wishes to change its priority, it can be explicitly listed. Responses are not required to carry “identity” in the <spanx style="verb">Content-Encoding</spanx> response header field by this specification.</t>
-
-<t><list style="symbols">
-  <t>TODO: x-</t>
-  <t>TODO: normalisations</t>
+<t><list style="numbers">
+  <t>Let <spanx style="verb">preferred-codings</spanx> be a list of the <spanx style="verb">coding</spanx>s in the “Accept-Encoding” header field of <spanx style="verb">incoming-request</spanx>, ordered by their <spanx style="verb">weight</spanx>, highest to lowest. If “Accept-Encoding” is not present or empty, <spanx style="verb">preferred-codings</spanx> will be empty.</t>
+  <t>If <spanx style="verb">identity</spanx> is not a member of <spanx style="verb">preferred-codings</spanx>, append <spanx style="verb">identity</spanx> to <spanx style="verb">preferred-codings</spanx> with a <spanx style="verb">weight</spanx> of 0.001.</t>
+  <t>Remove any member of <spanx style="verb">preferred-codings</spanx> whose <spanx style="verb">weight</spanx> is 0.</t>
+  <t>Append “identity” to <spanx style="verb">available-values</spanx>.</t>
+  <t>Remove any member of <spanx style="verb">available-values</spanx> not present in <spanx style="verb">preferred-codings</spanx>, comparing in a case-insensitive fashion.</t>
+  <t>Let <spanx style="verb">filtered-responses</spanx> be an empty list.</t>
+  <t>For each <spanx style="verb">available-value</spanx> of <spanx style="verb">available-values</spanx>:
+  <list style="numbers">
+      <t>If there is a member of <spanx style="verb">stored-responses</spanx> whose “Content-Encoding” field-value has <spanx style="verb">content-coding</spanx>s (<xref target="RFC7231"/>, Section 3.1.2.2) that all match members of <spanx style="verb">available-value</spanx> in a case-insensitive fashion, append that stored response to <spanx style="verb">filtered-responses</spanx>.</t>
+    </list></t>
+  <t>If there is a member of <spanx style="verb">stored-responses</spanx> that does not have a “Content-Encoding” header field, append that stored response to <spanx style="verb">filtered-responses</spanx>.</t>
+  <t>Return <spanx style="verb">filtered-responses</spanx>.</t>
 </list></t>
 
-<t>Caches MAY assign a minimum quality value to trigger a request to origin. For example, a cache might decide to send a request to origin if there is not a stored response to which the client has assigned a quality value above 0.2.</t>
+<t>This algorithm selects the stored response(s) in order of preference by the client; if none are stored in cache, the request will be forwarded towards the origin. It defaults to the “identity” non-encoding.</t>
+
+<t>Implementations MAY remove members of <spanx style="verb">filtered-responses</spanx> based upon their <spanx style="verb">weight</spanx> or other criteria before returning. For example, they might wish to return an empty list when the client’s most-preferred available response is not stored, so as to populate the cache as well as honour the client’s preferences.</t>
 
 </section>
 <section anchor="content-language" title="Content-Language">
 
 <t>When negotiating for the <spanx style="verb">Content-Language</spanx> response header field’s value, the applicable request header field is <spanx style="verb">Accept-Language</spanx>, as per <xref target="RFC7231"/> Section 5.3.5.</t>
 
-<t>Caches SHOULD use Quality Values (<xref target="RFC7231"/>, Section 5.3.1) to determine whether there is an acceptable stored response, in conjunction with the information carried in the Variants response header field.</t>
+<t>To perform content negotiation for Content-Language given an <spanx style="verb">incoming-request</spanx>, <spanx style="verb">stored-responses</spanx> and <spanx style="verb">available-values</spanx>:</t>
 
-<t><list style="symbols">
-  <t>TODO: stripping localisation</t>
-  <t>TODO: other normalisations</t>
+<t><list style="numbers">
+  <t>Let <spanx style="verb">preferred-langs</spanx> be a list of the <spanx style="verb">language-range</spanx>s in the “Accept-Language” header field (<xref target="RFC7231"/>, Section 5.3.5) of <spanx style="verb">incoming-request</spanx>, ordered by their <spanx style="verb">weight</spanx>, highest to lowest.</t>
+  <t>If <spanx style="verb">preferred-langs</spanx> is empty, append “*” with a <spanx style="verb">weight</spanx> of 0.001.</t>
+  <t>Remove any member of <spanx style="verb">preferred-langs</spanx> whose <spanx style="verb">weight</spanx> is 0.</t>
+  <t>Filter <spanx style="verb">available-values</spanx> using <spanx style="verb">preferred-langs</spanx> with either the Basic Filtering scheme defined in <xref target="RFC4647"/> Section 3.3.1, or the Lookup scheme defined in Section 3.4 of that document. Use the first member of <spanx style="verb">available-values</spanx> as the default.</t>
+  <t>Let <spanx style="verb">filtered-responses</spanx> be an empty list.</t>
+  <t>For each <spanx style="verb">available-value</spanx> of <spanx style="verb">available-values</spanx>:
+  <list style="numbers">
+      <t>If there is a member of <spanx style="verb">stored-responses</spanx> whose “Content-Language” field-value has a <spanx style="verb">language-tag</spanx> (<xref target="RFC7231"/>, Section 3.1.3.2) that matches <spanx style="verb">available-value</spanx> in a case-insensitive fashion, append that stored response to <spanx style="verb">filtered-responses</spanx>.</t>
+    </list></t>
+  <t>Return <spanx style="verb">filtered-responses</spanx>.</t>
 </list></t>
 
-<t>If no acceptable representation can be found using quality values, the first value listed in the relevant <spanx style="verb">Variant</spanx> field-value SHOULD be selected.</t>
+<t>This algorithm selects the available response(s) (according to <spanx style="verb">Variants</spanx>) in order of preference by the client; if none are stored in cache, the request will be forwarded towards the origin. If no preferred language can be selected, the first <spanx style="verb">available-value</spanx> will be used as the default.</t>
 
-<t>Caches MAY assign a minimum quality value to trigger a request to origin. For example, a cache might decide to send a request to origin if there is not a stored response to which the client has assigned a quality value above 0.2.</t>
+<t>Implementations MAY remove members of <spanx style="verb">filtered-responses</spanx> based upon their <spanx style="verb">weight</spanx> or other criteria before returning. For example, they might wish to return an empty list when the client’s most-preferred available response is not stored, so as to populate the cache as well as honour the client’s preferences.</t>
 
 </section>
 </section>
@@ -473,109 +536,133 @@ Vary: Accept-Language, Accept-Encoding
   </back>
 
 <!-- ##markdown-source:
-H4sIAHr4pVkAA+VbbXMbx5H+vr9iDvpAUgWAL5LiGIwvR4uUxTuJVCjKrquU
-yxxgB8CYi93Vzi5BmCX/9jzdPbMvAGgpOVcllcsHC9LuzvTr00/3TAaDQVTa
-MjEj9fr6+p36XhdWp6WL9HhcmLtRFGeTVC/wOC70tBykWVnadDbXi8GdvDo4
-OIhiXeKNo4PDr6IJfs6yYjVSroyjKqdHbqS+Onr2PIpsXoxUWVSuPDo4+Prg
-KNKF0SP1nUlNoZNomRW3syKr8lF0a1b4WzxS52lpitSUg1PaP4pcqdP4J51k
-KXZcGRfldqT+WmaTvsJ/bBqbtOwrlxVlYaYOv1YL/6Ms7ASPJtki1/7HAi/j
-kU0Tm5ofo0hX5TwrRpEaRAr/sykkfztUF7XS/M9ij7e6uF1/khUzndpfdGmz
-dKReaVcmK35gFtomI7WA+f6L/jOERvygKiD+vCxzN9rfXy6Xw/B0P4rSrFhg
-qTsDgdTVq5dHh4dfj2DEdNo8iKLBYKD0GNpBqSi6nlunXG4mdmonLAe0KIss
-ribGqXJuxM03wc83qjAuz1Jn1Nzo2BRqak0Sw5ZsnyqlVYxaznWJN3O8DJPx
-uk7BeUrfQTE9ToyCUEqrGaRKac2sKiZmKOJBJfPTBf2nzH664m1cFD2FSurs
-9Pz68mqk8sRoyFCYRXZnICdpYSYs/9hgaaPyapx4lZ6SnkZZ5yoolVhX8u78
-FYepmmj6Dv9apbGC6H8KJp7Zcl6Nh9Btnyy9fz443Yf8JnH7Pp7/cyirLzJH
-Kk+gr9rNpqVJ+6pKWQo3N/Ge3wlbttdn9/lNbMbL+3X3aeErWW8y1+nMiAVJ
-fPN5IckbtnT7s/kg1/i2Le57A0ckLmP/slg7Tk2qoqC9kDBl5RAF/PT87PqV
-Qk5qipdbU/SxcVRv3HowtKacDhHQ+0CA/ceSn5UiFy9sHCcmip5QwnK4kaOi
-iKMtLzIEJyIDMYV0hlApMKK0Ep+7Dw//gVAAQhx++tRX773bnw2fDw/3yL42
-nQAmHHZOVvAq/lSVMxyjsQE6LJC8FGMqS/GCriOajCD7DSZZjM/6alyVYimY
-UiVwQgVbwgZOLU2S0J+pWSIJ9D28s0tBZe71AsEJ/ICRHx7+DF+waQZks7F1
-g0liaYc50sx9+rRH7qgmSDY3rRKIU5iKJK81htxBPspHuH2uYZixQdq4EoEe
-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
+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
 
 -->
 

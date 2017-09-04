@@ -4,9 +4,9 @@
 
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                    Fastly
-Updates: 7234 (if approved)                              August 30, 2017
+Updates: 7234 (if approved)                            September 4, 2017
 Intended status: Standards Track
-Expires: March 3, 2018
+Expires: March 8, 2018
 
 
                              HTTP Variants
@@ -49,13 +49,13 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on March 3, 2018.
+   This Internet-Draft will expire on March 8, 2018.
 
 
 
-Nottingham                Expires March 3, 2018                 [Page 1]
+Nottingham                Expires March 8, 2018                 [Page 1]
 
-Internet-Draft                HTTP Variants                  August 2017
+Internet-Draft                HTTP Variants               September 2017
 
 
 Copyright Notice
@@ -76,25 +76,25 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   4
    2.  The "Variants" HTTP Header Field  . . . . . . . . . . . . . .   4
      2.1.  Defining Content Negotiation Using Variants . . . . . . .   5
      2.2.  Cache Behaviour . . . . . . . . . . . . . . . . . . . . .   5
-       2.2.1.  Relationship to Vary  . . . . . . . . . . . . . . . .   5
-     2.3.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   6
-       2.3.1.  Single Variant  . . . . . . . . . . . . . . . . . . .   6
-       2.3.2.  Multiple Variants . . . . . . . . . . . . . . . . . .   7
-       2.3.3.  Partial Coverage  . . . . . . . . . . . . . . . . . .   7
-   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
-   5.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .   8
-   6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
-     6.1.  Normative References  . . . . . . . . . . . . . . . . . .   8
-     6.2.  Informative References  . . . . . . . . . . . . . . . . .   9
-   Appendix A.  Variants and Defined Content Negotiation Mechanisms    9
-     A.1.  Content-Encoding  . . . . . . . . . . . . . . . . . . . .   9
-     A.2.  Content-Language  . . . . . . . . . . . . . . . . . . . .  10
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
+       2.2.1.  Relationship to Vary  . . . . . . . . . . . . . . . .   7
+     2.3.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   7
+       2.3.1.  Single Variant  . . . . . . . . . . . . . . . . . . .   7
+       2.3.2.  Multiple Variants . . . . . . . . . . . . . . . . . .   8
+       2.3.3.  Partial Coverage  . . . . . . . . . . . . . . . . . .   8
+   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
+   5.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  10
+   6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
+     6.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
+     6.2.  Informative References  . . . . . . . . . . . . . . . . .  11
+   Appendix A.  Variants and Defined Content Negotiation Mechanisms   11
+     A.1.  Content-Encoding  . . . . . . . . . . . . . . . . . . . .  11
+     A.2.  Content-Language  . . . . . . . . . . . . . . . . . . . .  12
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
 
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Nottingham                Expires March 3, 2018                 [Page 2]
+Nottingham                Expires March 8, 2018                 [Page 2]
 
-Internet-Draft                HTTP Variants                  August 2017
+Internet-Draft                HTTP Variants               September 2017
 
 
    ([RFC7234], Section 4.1) using the Vary header ([RFC7231],
@@ -137,20 +137,41 @@ Internet-Draft                HTTP Variants                  August 2017
    Content-Type: text/html
    Content-Language: fr
    Vary: Accept-Language
+   Transfer-Encoding: chunked
 
    [French content]
 
-   a downstream (client or intermediary) cache that has full knowledge
-   of the semantics of "Accept-Language" and "Content-Language" will
-   know that a French representation is available, and might be able to
-   infer that an English representation is not available, but it does
-   not know, for example, whether a Japanese representation is available
-   without making another request, thereby incurring possibly
-   unnecessary latency.
+   Provided that the cache has full knowledge of the semantics of
+   "Accept-Language" and "Content-Language", it will know that a French
+   representation is available and might be able to infer that an
+   English representation is not available.  But, it does not know (for
+   example) whether a Japanese representation is available without
+   making another request, thereby incurring possibly unnecessary
+   latency.
 
    This specification introduces the HTTP "Variants" response header
-   field to address this shortcoming, by communicating what
-   representations are available for a given resource.
+   field to address this shortcoming by communicating what
+   representations are available for a given resource.  This information
+   enables caches that understand "Variants" to correctly select the
+   most appropriate stored response, properly forwarding requests that
+   cannot be satisfied.
+
+   "Variants" is best used when content negotiation takes place over a
+   known, constrained set of representations.  Since each variant needs
+   to be listed in the header field, it is ill-suited for open-ended
+   sets of representations.  Likewise, it works best for content
+   negotiation over header fields whose semantics are well-understood,
+
+
+
+
+Nottingham                Expires March 8, 2018                 [Page 3]
+
+Internet-Draft                HTTP Variants               September 2017
+
+
+   since it requires a selection algorithm to be specified ahead of
+   time.
 
 1.1.  Notational Conventions
 
@@ -161,15 +182,6 @@ Internet-Draft                HTTP Variants                  August 2017
    This specification uses the Augmented Backus-Naur Form (ABNF)
    notation of [RFC5234] with a list extension, defined in Section 7 of
    [RFC7230], that allows for compact definition of comma-separated
-
-
-
-
-Nottingham                Expires March 3, 2018                 [Page 3]
-
-Internet-Draft                HTTP Variants                  August 2017
-
-
    lists using a '#' operator (similar to how the '*' operator indicates
    repetition).
 
@@ -182,18 +194,22 @@ Internet-Draft                HTTP Variants                  August 2017
    other representations are available for a given resource at the time
    that the response is produced.
 
-   Variants = 1#( field-name *( OWS ";" OWS token ))
+   Variants        = 1#variant
+   variant         = field-name *( OWS ";" OWS available-value )
+   available-value = token
 
-   Each "field-name" in the list indicates a response header field that
-   carries a value that clients might proactively negotiate for; each
-   "token" parameter on the "field-name" is an available value.
+   Each "variant" indicates a response header field that carries a value
+   that clients might proactively negotiate for; each parameter on it
+   indicates a value for which there is an available representation on
+   the origin server.
 
    So, given this example header field:
 
    Variants: Content-Encoding;gzip
 
    a recipient can infer that the only content-coding available for that
-   resource is "gzip".
+   resource is "gzip" (along with the "identity" non-encoding; see
+   {{content-encoding}).
 
    Given:
 
@@ -201,6 +217,14 @@ Internet-Draft                HTTP Variants                  August 2017
 
    a recipient can infer that no content-codings are supported.  Note
    that as always with header field names, it is case-insensitive.
+
+
+
+
+Nottingham                Expires March 8, 2018                 [Page 4]
+
+Internet-Draft                HTTP Variants               September 2017
+
 
    A more complex example:
 
@@ -219,12 +243,8 @@ Internet-Draft                HTTP Variants                  August 2017
    [RFC7234], Section 3) responses for a resource, since its absence
    will trigger caches to fall back to "Vary" processing.
 
-
-
-Nottingham                Expires March 3, 2018                 [Page 4]
-
-Internet-Draft                HTTP Variants                  August 2017
-
+   Likewise, servers MUST send the "Content-*" response headers
+   nominated by "Variants" when sending that header.
 
 2.1.  Defining Content Negotiation Using Variants
 
@@ -233,14 +253,16 @@ Internet-Draft                HTTP Variants                  August 2017
 
    o  MUST define a request header field that advertises the clients
       preferences or capabilities, whose field-name SHOULD begin with
-      "Accept-"
+      "Accept-".
 
    o  MUST define a response header field that indicates the result of
       selection, whose field-name SHOULD begin with "Content-" and whose
-      field-value SHOULD be a token
+      field-value SHOULD be a token.
 
-   o  MUST define a way for selecting a result, given a request header
-      field value.
+   o  MUST define an algorithm for selecting a result, given a request
+      header field value.  It MUST return an ordered list of selected
+      responses, given the incoming request, a list of selected
+      responses, and the list of available values from "Variants".
 
    Appendix A fulfils these requirements for some existing proactive
    content negotiation mechanisms in HTTP.
@@ -248,19 +270,73 @@ Internet-Draft                HTTP Variants                  August 2017
 2.2.  Cache Behaviour
 
    Caches that implement the "Variants" header field and the relevant
-   semantics of the field-name it contains SHOULD use that knowledge to
+   semantics of the field-name it contains can use that knowledge to
    either select an appropriate stored representation, or forward the
    request if no appropriate representation is stored.
 
-   They do so by running the defined algorithm to normalise the relevant
-   request header field to a value, which they can then either locate in
-   their cache or fetch from the origin server.
 
-   The information in the "Variants" header field is usable so long as
-   the response that conveyed it remains fresh (as per [RFC7234],
-   Section 4.2).  Caches SHOULD use the most recent response's "Variant"
-   field-value(s), but MAY use older ones as long as they are still
-   fresh.
+
+
+Nottingham                Expires March 8, 2018                 [Page 5]
+
+Internet-Draft                HTTP Variants               September 2017
+
+
+   They do so by running this algorithm (or its functional equivalent)
+   upon receiving a request, "incoming-request":
+
+   1.  Let "selected-responses" be a list of the stored responses
+       suitable for reuse as defined in [RFC7234] Section 4, excepting
+       the requirement to calculate a secondary cache key.
+
+   2.  Order "selected-responses" by the "Date" header field, most
+       recent to least recent.
+
+   3.  If the freshest (as per [RFC7234], Section 4.2) has one or more
+       "Variants" header field(s):
+
+       1.  Select one member of "selected-responses" and let its
+           "Variants" header field-value(s) be "Variants".  This SHOULD
+           be the most recent response, but MAY be from an older one as
+           long as it is still fresh.
+
+       2.  For each "variant" in "Variants":
+
+           1.  If the "field-name" corresponds to the response header
+               field identified by a content negotiation mechanism that
+               the implementation supports:
+
+               1.  Let "available-values" be a list containing all
+                   "available-value" for the "variant".
+
+               2.  Let "selected-responses" be the result of running the
+                   algorithm defined by the content negotiation
+                   mechanism with "incoming-request", "selected-
+                   responses" and "available-values".
+
+               3.  Remove the content negotiation's identified request
+                   header field-name from the "Vary" header field of
+                   each member of "selected-responses", if present.
+
+   4.  Process any member of "selected-responses" that has a "Vary"
+       response header field whose field-value still contains one or
+       more "field-name"s, removing that members if it does not match
+       (as per [RFC7234], Section 4.1).
+
+   5.  Return the first member of "selected-responses".  If "selected-
+       responses" is empty, return "null".
+
+   This algorithm will either return the appropriate stored response to
+   use, or "null" if the cache needs to forward the request towards the
+   origin server.
+
+
+
+
+Nottingham                Expires March 8, 2018                 [Page 6]
+
+Internet-Draft                HTTP Variants               September 2017
+
 
 2.2.1.  Relationship to Vary
 
@@ -274,13 +350,7 @@ Internet-Draft                HTTP Variants                  August 2017
    terms of this specification or not present in the "Variants" field
    SHOULD still form part of the secondary cache key.
 
-
-
-
-Nottingham                Expires March 3, 2018                 [Page 5]
-
-Internet-Draft                HTTP Variants                  August 2017
-
+   The algorithm in Section 2.2 implements these requirements.
 
 2.3.  Examples
 
@@ -298,6 +368,7 @@ Internet-Draft                HTTP Variants                  August 2017
    Cache-Control: max-age=3600
    Variants: Content-Language;en;de
    Vary: Accept-Language
+   Transfer-Encoding: chunked
 
    Upon receipt of this response, the cache knows that two
    representations of this resource are available, one with a "Content-
@@ -315,6 +386,14 @@ Internet-Draft                HTTP Variants                  August 2017
    request that indicates both languages are acceptable will use the
    q-value to make a determination of what response to return.
 
+
+
+
+Nottingham                Expires March 8, 2018                 [Page 7]
+
+Internet-Draft                HTTP Variants               September 2017
+
+
    A cache receiving a request that does not list either language as
    acceptable (or does not contain an Accept-Language at all) will
    return the "en" representation (possibly fetching it from the
@@ -325,18 +404,6 @@ Internet-Draft                HTTP Variants                  August 2017
 
    Also, note that response header is listed in "Variants", not the
    request header (as is the case with "Vary").
-
-
-
-
-
-
-
-
-Nottingham                Expires March 3, 2018                 [Page 6]
-
-Internet-Draft                HTTP Variants                  August 2017
-
 
 2.3.2.  Multiple Variants
 
@@ -354,6 +421,7 @@ Internet-Draft                HTTP Variants                  August 2017
    Variants: Content-Language;en;jp;de
    Variants: Content-Encoding;br;gzip
    Vary: Accept-Language, Accept-Encoding
+   Transfer-Encoding: chunked
 
    Here, the cache knows that there are two axes that the response
    varies upon; "Content-Language" and "Content-Encoding".  Thus, there
@@ -369,6 +437,19 @@ Internet-Draft                HTTP Variants                  August 2017
    Now, consider the previous example, but where only one of the varied
    axes is listed in "Variants":
 
+
+
+
+
+
+
+
+
+Nottingham                Expires March 8, 2018                 [Page 8]
+
+Internet-Draft                HTTP Variants               September 2017
+
+
    GET /bar HTTP/1.1
    Host: www.example.net
    Accept-Language: en;q=1.0, fr;q=0.5
@@ -380,19 +461,12 @@ Internet-Draft                HTTP Variants                  August 2017
    Content-Encoding: br
    Variants: Content-Encoding;br;gzip
    Vary: Accept-Language, Accept-Encoding
+   Transfer-Encoding: chunked
 
    Here, the cache will need to calculate a secondary cache key as per
    [RFC7234], Section 4.1 - but considering only "Accept-Language" to be
    in its field-value - and then continue processing "Variants" for the
    set of stored responses that the algorithm described there selects.
-
-
-
-
-Nottingham                Expires March 3, 2018                 [Page 7]
-
-Internet-Draft                HTTP Variants                  August 2017
-
 
 3.  IANA Considerations
 
@@ -421,14 +495,25 @@ Internet-Draft                HTTP Variants                  August 2017
    representations of a certain nature available; the runtime behaviour
    of the server always overrides hints like "Variants".
 
+
+
+
+
+
+
+Nottingham                Expires March 8, 2018                 [Page 9]
+
+Internet-Draft                HTTP Variants               September 2017
+
+
 5.  Acknowledgments
 
    This protocol is conceptually similar to, but simpler than,
    Transparent Content Negotiation [RFC2295].  Thanks to its authors for
    their inspiration.
 
-   It is also a generalisation of a Fastly feature designed by Rogier
-   'DocWilco' Mulhuijzen.
+   It is also a generalisation of a Fastly VCL feature designed by
+   Rogier 'DocWilco' Mulhuijzen.
 
    Thanks to Hooman Beheshti for his review and input.
 
@@ -441,14 +526,9 @@ Internet-Draft                HTTP Variants                  August 2017
               DOI 10.17487/RFC2119, March 1997, <https://www.rfc-
               editor.org/info/rfc2119>.
 
-
-
-
-
-Nottingham                Expires March 3, 2018                 [Page 8]
-
-Internet-Draft                HTTP Variants                  August 2017
-
+   [RFC4647]  Phillips, A. and M. Davis, "Matching of Language Tags",
+              BCP 47, RFC 4647, DOI 10.17487/RFC4647, September 2006,
+              <https://www.rfc-editor.org/info/rfc4647>.
 
    [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
               Specifications: ABNF", STD 68, RFC 5234,
@@ -469,6 +549,18 @@ Internet-Draft                HTTP Variants                  August 2017
               Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
               RFC 7234, DOI 10.17487/RFC7234, June 2014,
               <https://www.rfc-editor.org/info/rfc7234>.
+
+
+
+
+
+
+
+
+Nottingham                Expires March 8, 2018                [Page 10]
+
+Internet-Draft                HTTP Variants               September 2017
+
 
 6.2.  Informative References
 
@@ -497,39 +589,57 @@ A.1.  Content-Encoding
    value, the applicable request header field is "Accept-Encoding", as
    per [RFC7231] Section 5.3.4.
 
+   To perform content negotiation for Content-Encoding given an
+   "incoming-request", "stored-responses" and "available-values":
+
+   1.  Let "preferred-codings" be a list of the "coding"s in the
+       "Accept-Encoding" header field of "incoming-request", ordered by
+       their "weight", highest to lowest.  If "Accept-Encoding" is not
+       present or empty, "preferred-codings" will be empty.
+
+   2.  If "identity" is not a member of "preferred-codings", append
+       "identity" to "preferred-codings" with a "weight" of 0.001.
+
+   3.  Remove any member of "preferred-codings" whose "weight" is 0.
+
+   4.  Append "identity" to "available-values".
+
+   5.  Remove any member of "available-values" not present in
+       "preferred-codings", comparing in a case-insensitive fashion.
+
+   6.  Let "filtered-responses" be an empty list.
+
+   7.  For each "available-value" of "available-values":
 
 
 
-
-Nottingham                Expires March 3, 2018                 [Page 9]
+Nottingham                Expires March 8, 2018                [Page 11]
 
-Internet-Draft                HTTP Variants                  August 2017
+Internet-Draft                HTTP Variants               September 2017
 
 
-   Caches SHOULD use Quality Values ([RFC7231], Section 5.3.1) to
-   determine whether there is an acceptable stored response, in
-   conjunction with the information carried in the Variants response
-   header field.
+       1.  If there is a member of "stored-responses" whose "Content-
+           Encoding" field-value has "content-coding"s ([RFC7231],
+           Section 3.1.2.2) that all match members of "available-value"
+           in a case-insensitive fashion, append that stored response to
+           "filtered-responses".
 
-   If no acceptable representation can be found using quality values,
-   the first value listed in the relevant "Variant" field-value SHOULD
-   be selected.
+   8.  If there is a member of "stored-responses" that does not have a
+       "Content-Encoding" header field, append that stored response to
+       "filtered-responses".
 
-   The "identity" encoding (which as per {{!RFC7231 Section 5.3.4
-   represents "no encoding") is always implicitly available at the
-   lowest priority; if the server wishes to change its priority, it can
-   be explicitly listed.  Responses are not required to carry "identity"
-   in the "Content-Encoding" response header field by this
-   specification.
+   9.  Return "filtered-responses".
 
-   o  TODO: x-
+   This algorithm selects the stored response(s) in order of preference
+   by the client; if none are stored in cache, the request will be
+   forwarded towards the origin.  It defaults to the "identity" non-
+   encoding.
 
-   o  TODO: normalisations
-
-   Caches MAY assign a minimum quality value to trigger a request to
-   origin.  For example, a cache might decide to send a request to
-   origin if there is not a stored response to which the client has
-   assigned a quality value above 0.2.
+   Implementations MAY remove members of "filtered-responses" based upon
+   their "weight" or other criteria before returning.  For example, they
+   might wish to return an empty list when the client's most-preferred
+   available response is not stored, so as to populate the cache as well
+   as honour the client's preferences.
 
 A.2.  Content-Language
 
@@ -537,30 +647,54 @@ A.2.  Content-Language
    value, the applicable request header field is "Accept-Language", as
    per [RFC7231] Section 5.3.5.
 
-   Caches SHOULD use Quality Values ([RFC7231], Section 5.3.1) to
-   determine whether there is an acceptable stored response, in
-   conjunction with the information carried in the Variants response
-   header field.
+   To perform content negotiation for Content-Language given an
+   "incoming-request", "stored-responses" and "available-values":
 
-   o  TODO: stripping localisation
+   1.  Let "preferred-langs" be a list of the "language-range"s in the
+       "Accept-Language" header field ([RFC7231], Section 5.3.5) of
+       "incoming-request", ordered by their "weight", highest to lowest.
 
-   o  TODO: other normalisations
+   2.  If "preferred-langs" is empty, append "*" with a "weight" of
+       0.001.
 
-   If no acceptable representation can be found using quality values,
-   the first value listed in the relevant "Variant" field-value SHOULD
-   be selected.
+   3.  Remove any member of "preferred-langs" whose "weight" is 0.
 
-   Caches MAY assign a minimum quality value to trigger a request to
-   origin.  For example, a cache might decide to send a request to
-   origin if there is not a stored response to which the client has
-   assigned a quality value above 0.2.
+   4.  Filter "available-values" using "preferred-langs" with either the
+       Basic Filtering scheme defined in [RFC4647] Section 3.3.1, or the
+       Lookup scheme defined in Section 3.4 of that document.  Use the
+       first member of "available-values" as the default.
+
+   5.  Let "filtered-responses" be an empty list.
 
 
 
-Nottingham                Expires March 3, 2018                [Page 10]
+
+Nottingham                Expires March 8, 2018                [Page 12]
 
-Internet-Draft                HTTP Variants                  August 2017
+Internet-Draft                HTTP Variants               September 2017
 
+
+   6.  For each "available-value" of "available-values":
+
+       1.  If there is a member of "stored-responses" whose "Content-
+           Language" field-value has a "language-tag" ([RFC7231],
+           Section 3.1.3.2) that matches "available-value" in a case-
+           insensitive fashion, append that stored response to
+           "filtered-responses".
+
+   7.  Return "filtered-responses".
+
+   This algorithm selects the available response(s) (according to
+   "Variants") in order of preference by the client; if none are stored
+   in cache, the request will be forwarded towards the origin.  If no
+   preferred language can be selected, the first "available-value" will
+   be used as the default.
+
+   Implementations MAY remove members of "filtered-responses" based upon
+   their "weight" or other criteria before returning.  For example, they
+   might wish to return an empty list when the client's most-preferred
+   available response is not stored, so as to populate the cache as well
+   as honour the client's preferences.
 
 Author's Address
 
@@ -591,26 +725,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Nottingham                Expires March 3, 2018                [Page 11]
+Nottingham                Expires March 8, 2018                [Page 13]
