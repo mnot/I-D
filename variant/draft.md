@@ -139,7 +139,7 @@ To be usable with Variants, proactive content negotiation mechanisms need to be 
 
 ## Cache Behaviour
 
-Caches that implement the `Variants` header field and the relevant semantics of the field-name it contains SHOULD use that knowledge to either select an appropriate stored representation, or forward the request if no appropriate representation is stored.
+Caches that implement the `Variants` header field and the relevant semantics of the field-name it contains can use that knowledge to either select an appropriate stored representation, or forward the request if no appropriate representation is stored.
 
 They do so by running the defined algorithm to normalise the relevant request header field to a value, which they can then either locate in their cache or fetch from the origin server.
 
