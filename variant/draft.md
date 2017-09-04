@@ -144,6 +144,7 @@ They do so by running the defined algorithm to normalise the relevant request he
 
 The information in the `Variants` header field is usable so long as the response that conveyed it remains fresh (as per {{!RFC7234}}, Section 4.2). Caches SHOULD use the most recent response's `Variant` field-value(s), but MAY use older ones as long as they are still fresh.
 
+
 ### Relationship to Vary
 
 Caches that fully implement this specification MUST ignore request header-fields in the `Vary` header for the purposes of secondary cache key calculation ({{!RFC7234}}, Section 4.1) when their semantics are understood, implemented as per this specification, and their corresponding response header field is listed in `Variants`.
@@ -181,6 +182,7 @@ Note that `Accept-Language` is listed in Vary, to assure backwards-compatibility
 
 Also, note that response header is listed in `Variants`, not the request header (as is the case with `Vary`).
 
+
 ### Multiple Variants
 
 A more complicated request/response pair:
@@ -203,6 +205,7 @@ Vary: Accept-Language, Accept-Encoding
 Here, the cache knows that there are two axes that the response varies upon; `Content-Language` and `Content-Encoding`. Thus, there are a total of six possible representations for the resource, and the cache needs to consider the selection algorithms for both axes.
 
 Upon a subsequent request, if both selection algorithms return a stored representation, it can be served from cache; otherwise, the request will need to be forwarded to origin.
+
 
 ### Partial Coverage
 
@@ -236,11 +239,13 @@ This specification registers one value in the Permanent Message Header Field Nam
 * Specification document(s): [this document]
 * Related information:
 
+
 # Security Considerations
 
 If the number or advertised characteristics of the representations available for a resource are considered sensitive, the `Variants` header by its nature will leak them.
 
 Note that the `Variants` header is not a commitment to make representations of a certain nature available; the runtime behaviour of the server always overrides hints like `Variants`.
+
 
 # Acknowledgments
 
@@ -252,9 +257,11 @@ Thanks to Hooman Beheshti for his review and input.
 
 --- back
 
+
 # Variants and Defined Content Negotiation Mechanisms {#backports}
 
 This appendix defines the required information to use existing proactive content negotiation mechanisms (as defined in {{!RFC7231}}, Section 5.3) with the `Variants` header field.
+
 
 ## Content-Encoding {#content-encoding}
 
@@ -270,6 +277,7 @@ The "identity" encoding (which as per {{!RFC7231 Section 5.3.4 represents "no en
 * TODO: normalisations
 
 Caches MAY assign a minimum quality value to trigger a request to origin. For example, a cache might decide to send a request to origin if there is not a stored response to which the client has assigned a quality value above 0.2.
+
 
 ## Content-Language {#content-language}
 
