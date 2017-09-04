@@ -70,7 +70,7 @@ Vary: Accept-Language
 [French content]
 ~~~
 
-a downstream (client or intermediary) cache that has full knowledge of the semantics of `Accept-Language` and `Content-Language` will know that a French representation is available, and might be able to infer that an English representation is not available, but it does not know, for example, whether a Japanese representation is available without making another request, thereby incurring possibly unnecessary latency.
+Provided that the cache has full knowledge of the semantics of `Accept-Language` and `Content-Language`, it will know that a French representation is available and might be able to infer that an English representation is not available. But, it does not know (for example) whether a Japanese representation is available without making another request, thereby incurring possibly unnecessary latency.
 
 This specification introduces the HTTP `Variants` response header field to address this shortcoming, by communicating what representations are available for a given resource.
 
