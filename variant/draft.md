@@ -72,7 +72,7 @@ Vary: Accept-Language
 
 Provided that the cache has full knowledge of the semantics of `Accept-Language` and `Content-Language`, it will know that a French representation is available and might be able to infer that an English representation is not available. But, it does not know (for example) whether a Japanese representation is available without making another request, thereby incurring possibly unnecessary latency.
 
-This specification introduces the HTTP `Variants` response header field to address this shortcoming, by communicating what representations are available for a given resource.
+This specification introduces the HTTP `Variants` response header field to address this shortcoming by communicating what representations are available for a given resource. This information enables caches that understand `Variants` to correctly select the most appropriate stored response, properly forwarding requests that cannot be satisfied.
 
 
 ## Notational Conventions
@@ -84,6 +84,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 This specification uses the Augmented Backus-Naur Form (ABNF) notation of {{!RFC5234}} with a list extension, defined in Section 7 of {{!RFC7230}}, that allows for compact definition of comma-separated lists using a '#' operator (similar to how the '*' operator indicates repetition).
 
 Additionally, it uses the "field-name", "OWS" and "token" rules from {{!RFC7230}}.
+
 
 # The "Variants" HTTP Header Field
 
