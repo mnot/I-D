@@ -1,13 +1,13 @@
 ---
-title: 
-abbrev: 
+title:
+abbrev:
 docname: draft-nottingham-SHORTNAME-00
 date: 2017
 category: info
 
 ipr: trust200902
 area: General
-workgroup: 
+workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
@@ -17,7 +17,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
@@ -50,8 +50,10 @@ See also the draft's current status in the IETF datatracker, at
 ## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
-"RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
-{{RFC2119}}.
+"RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
+described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
+shown here.
+
 
 # Security Considerations
 
