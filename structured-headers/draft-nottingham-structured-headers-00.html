@@ -1,0 +1,137 @@
+<!DOCTYPE html
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title></title><script type="application/javascript">
+function anchorRewrite() {
+  map = { };
+  if (window.location.hash.length >= 1) {
+    var fragid = window.location.hash.substr(1);
+    if (fragid) {
+      if (! document.getElementById(fragid)) {
+        var prefix = "rfc.";
+        var mapped = map[fragid];
+        if (mapped) {
+          window.location.hash = mapped;
+        } else if (fragid.indexOf("section-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(8);
+        } else if (fragid.indexOf("appendix-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(9);
+        } else if (fragid.indexOf("s-") == 0) {
+          var postfix = fragid.substring(2);
+          if (postfix.startsWith("abstract")) {
+            window.location.hash = prefix + postfix;
+          } else if (postfix.startsWith("note-")) {
+            window.location.hash = prefix + "note." + postfix.substring(5);
+          } else {
+            window.location.hash = prefix + "section." + postfix;
+          }
+        } else if (fragid.indexOf("p-") == 0) {
+          var r = fragid.substring(2);
+          var p = r.indexOf("-");
+          if (p >= 0) {
+            window.location.hash = prefix + "section." + r.substring(0, p) + ".p." + r.substring(p + 1);
+          }
+        }
+      }
+    }  
+  }
+}
+window.addEventListener('hashchange', anchorRewrite);
+window.addEventListener('DOMContentLoaded', anchorRewrite);
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" type="text/css" href="../Tools/bower_components/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      #rfc\.toc > ul ul {
+        list-style: none;
+      }
+      #sidebar {
+        position: fixed;
+        height: 90%;
+        overflow-y: auto;
+        font-size: 90%;
+      }
+      .container .nav-sublist {
+        padding-left: 20px;
+        padding-right: 10px;
+        font-size: 90%;
+      }
+      .container .navbar-brand {
+        padding-top: 0;
+      }
+      .container .nav > li > a {
+        padding: 10px 7px 5px 15px;
+        display: inline-block;
+      }
+      .container .nav > li > a + a {
+        padding: 10px 15px 5px 7px;
+        display: inline-block;
+      }
+      .container .nav > li > a {
+        padding: 5px 10px;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+      span.tt {
+        font: 11pt consolas, monospace;
+        font-size-adjust: none;
+      }
+    </style><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Data Types" href="#rfc.section.2"><link rel="Chapter" title="3 Parsing Structured Headers" href="#rfc.section.3"><link rel="Chapter" title="4 Specifying Structured Headers" href="#rfc.section.4"><link rel="Chapter" title="5 Security Considerations" href="#rfc.section.5"><link rel="Chapter" href="#rfc.section.6" title="6 Normative References"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: SAXON 9.1.0.8 from Saxonica http://www.saxonica.com/"><meta name="keywords" content="Internet-Draft"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Nottingham, M."><meta name="dcterms.identifier" content="urn:ietf:id:draft-nottingham-structured-headers-00"><meta name="dcterms.issued" content="2015-WRONG SYNTAX FOR MONTH"><meta name="dcterms.abstract" content="— note_Note_to_ReadersThe issues list for this draft can be found at https://github.com/mnot/I-D/labels/structured-headers.The most recent (often, unpublished) draft is at https://mnot.github.io/I-D/structured-headers/.Recent changes are listed at https://github.com/mnot/I-D/commits/gh-pages/structured-headers."><meta name="description" content="— note_Note_to_ReadersThe issues list for this draft can be found at https://github.com/mnot/I-D/labels/structured-headers.The most recent (often, unpublished) draft is at https://mnot.github.io/I-D/structured-headers/.Recent changes are listed at https://github.com/mnot/I-D/commits/gh-pages/structured-headers."></head><body><div class="container" id="top"><div class="row"><div class="col-md-4 col-md-push-8 hidden-sm hidden-xs" id="sidebar" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top">draft-nottingham-structured-headers-00</a></div><br clear="all"><div class=""><div id="rfc.toc"><ul class="nav"><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#data-types">Data Types</a><ul><li><a href="#rfc.section.2.1">2.1.</a>&nbsp;&nbsp;&nbsp;<a href="#numbers">Numbers</a></li><li><a href="#rfc.section.2.2">2.2.</a>&nbsp;&nbsp;&nbsp;<a href="#strings">Strings</a></li><li><a href="#rfc.section.2.3">2.3.</a>&nbsp;&nbsp;&nbsp;<a href="#labels">Labels</a></li><li><a href="#rfc.section.2.4">2.4.</a>&nbsp;&nbsp;&nbsp;<a href="#dictionaries">Dictionaries</a></li><li><a href="#rfc.section.2.5">2.5.</a>&nbsp;&nbsp;&nbsp;<a href="#lists">Lists</a></li></ul></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#parsing-structured-headers">Parsing Structured Headers</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#specifying-structured-headers">Specifying Structured Headers</a><ul><li><a href="#rfc.section.4.1">4.1.</a>&nbsp;&nbsp;&nbsp;<a href="#notational-conventions">Notational Conventions</a></li></ul></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#security-considerations">Security Considerations</a></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">Normative References</a></li><li><a href="#rfc.authors">Author's Address</a></li></ul></div></div></div></div><div class="col-md-8 main" role="main"><header><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Network Working Group</td><td class="text-right">M. Nottingham</td></tr><tr><td class="text-left">Internet-Draft</td><td class="text-right"> 2015</td></tr><tr><td class="text-left">Intended status: Informational</td><td class="text-right"></td></tr><tr><td class="text-left">Expires: WRONG SYNTAX FOR MONTH</td><td class="text-right"></td></tr></tbody></table><div id="rfc.title"><h1></h1><div class="filename">draft-nottingham-structured-headers-00</div></div></header><hr><h2 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h2><div class="lead"><div id="rfc.abstract.p.1"><p>— note_Note_to_Readers</p></div><div id="rfc.abstract.p.2"><p>The issues list for this draft can be found at <a href="https://github.com/mnot/I-D/labels/structured-headers">https://github.com/mnot/I-D/labels/structured-headers</a>.</p></div><div id="rfc.abstract.p.3"><p>The most recent (often, unpublished) draft is at <a href="https://mnot.github.io/I-D/structured-headers/">https://mnot.github.io/I-D/structured-headers/</a>.</p></div><div id="rfc.abstract.p.4"><p>Recent changes are listed at <a href="https://github.com/mnot/I-D/commits/gh-pages/structured-headers">https://github.com/mnot/I-D/commits/gh-pages/structured-headers</a>.</p></div></div><section id="rfc.status"><h2><a href="#rfc.status">Status of this Memo</a></h2><div id="rfc.boilerplate.1.p.1"><p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p></div><div id="rfc.boilerplate.1.p.2"><p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF). Note that other groups may also distribute working documents as Internet-Drafts. The list of current Internet-Drafts is at <a href="http://datatracker.ietf.org/drafts/current/">http://datatracker.ietf.org/drafts/current/</a>.</p></div><div id="rfc.boilerplate.1.p.3"><p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or to cite them other than as “work in progress”.</p></div><div id="rfc.boilerplate.1.p.4"><p>This Internet-Draft will expire in WRONG SYNTAX FOR MONTH.</p></div></section><section id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><div id="rfc.boilerplate.2.p.1"><p>Copyright © 2015 IETF Trust and the persons identified as the document authors. All rights reserved.</p></div><div id="rfc.boilerplate.2.p.2"><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p></div></section><section id="introduction"><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h2></section><section id="data-types"><h2 id="rfc.section.2"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#data-types">Data Types</a></h2><section id="numbers"><h3 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1.</a>&nbsp;<a href="#numbers">Numbers</a></h3></section><section id="strings"><h3 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2.</a>&nbsp;<a href="#strings">Strings</a></h3></section><section id="labels"><h3 id="rfc.section.2.3"><a href="#rfc.section.2.3">2.3.</a>&nbsp;<a href="#labels">Labels</a></h3></section><section id="dictionaries"><h3 id="rfc.section.2.4"><a href="#rfc.section.2.4">2.4.</a>&nbsp;<a href="#dictionaries">Dictionaries</a></h3></section><section id="lists"><h3 id="rfc.section.2.5"><a href="#rfc.section.2.5">2.5.</a>&nbsp;<a href="#lists">Lists</a></h3></section></section><section id="parsing-structured-headers"><h2 id="rfc.section.3"><a href="#rfc.section.3">3.</a>&nbsp;<a href="#parsing-structured-headers">Parsing Structured Headers</a></h2></section><section id="specifying-structured-headers"><h2 id="rfc.section.4"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#specifying-structured-headers">Specifying Structured Headers</a></h2><section id="notational-conventions"><h3 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1.</a>&nbsp;<a href="#notational-conventions">Notational Conventions</a></h3><div id="rfc.section.4.1.p.1"><p>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a>.</p></div></section></section><section id="security-considerations"><h2 id="rfc.section.5"><a href="#rfc.section.5">5.</a>&nbsp;<a href="#security-considerations">Security Considerations</a></h2></section><section id="rfc.references"><h2 id="rfc.section.6"><a href="#rfc.section.6">6.</a> Normative References</h2><dl class="dl-horizontal"><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP&nbsp;14, RFC&nbsp;2119, <a href="http://dx.doi.org/10.17487/RFC2119">DOI&nbsp;10.17487/RFC2119</a>, March&nbsp;1997, &lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd></dl></section><section id="rfc.authors" class="avoidbreakinside"><h2><a href="#rfc.authors">Author's Address</a></h2><address><b>Mark Nottingham</b><br>EMail: <a href="mailto:mnot@mnot.net">mnot@mnot.net</a><br>URI: <a href="https://www.mnot.net/">https://www.mnot.net/</a></address></section></div></div></div><script src="../Tools/bower_components/jquery/dist/jquery.min.js"></script><script src="../Tools/bower_components/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
