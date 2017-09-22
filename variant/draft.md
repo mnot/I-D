@@ -164,7 +164,7 @@ They do so by running this algorithm (or its functional equivalent) upon receivi
       1. If the `field-name` corresponds to the response header field identified by a content negotiation mechanism that the implementation supports:
          1. Let `available-values` be a list containing all `available-value` for the `variant`.
          2. Let `selected-responses` be the result of running the algorithm defined by the content negotiation mechanism with `incoming-request`, `selected-responses` and `available-values`.
-         3. Remove the content negotiation's identified request header field-name from the "Vary" header field of each member of `selected-responses`, if present.
+         3. For the purposes of selecting a response, ignore the content negotiation's identified request header field-name in the "Vary" header field of each member of `selected-responses`, if present.
 4. Process any member of `selected-responses` that has a "Vary" response header field whose field-value still contains one or more `field-name`s, removing that members if it does not match (as per {{!RFC7234}}, Section 4.1).
 5. Return the first member of `selected-responses`. If `selected-responses` is empty, return `null`.
 
@@ -205,11 +205,11 @@ Subsequent requests (while this response is fresh) will cause the cache to eithe
 
 So, a request with "en" in `Accept-Language` is received and its q-value indicates that it is acceptable, the stored response is used. A request that indicates that "de" is acceptable will be forwarded to the origin, thereby populating the cache. A cache receiving a request that indicates both languages are acceptable will use the q-value to make a determination of what response to return.
 
-A cache receiving a request that does not list either language as acceptable (or does not contain an Accept-Language at all) will return the "en" representation (possibly fetching it from the origin), since it is listed first.
+A cache receiving a request that does not list either language as acceptable (or does not contain an Accept-Language at all) will return the "en" representation (possibly fetching it from the origin), since it is listed first in the `Variants` list.
 
 Note that `Accept-Language` is listed in Vary, to assure backwards-compatibility with caches that do not support `Variants`.
 
-Also, note that response header is listed in `Variants`, not the request header (as is the case with `Vary`).
+Also, note that is is the response header which is listed in Variants, not the request header (the opposite of Vary).
 
 
 ### Multiple Variants
