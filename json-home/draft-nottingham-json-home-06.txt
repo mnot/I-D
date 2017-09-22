@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                         February 15, 2017
+Internet-Draft                                        September 22, 2017
 Intended status: Informational
-Expires: August 19, 2017
+Expires: March 26, 2018
 
 
                       Home Documents for HTTP APIs
@@ -19,16 +19,16 @@ Abstract
 Note to Readers
 
    The issues list for this draft can be found at
-   https://github.com/mnot/I-D/labels/json-home .
+   https://github.com/mnot/I-D/labels/json-home.
 
    The most recent (often, unpublished) draft is at
-   https://mnot.github.io/I-D/json-home/ .
+   https://mnot.github.io/I-D/json-home/.
 
    Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
-   pages/json-home .
+   pages/json-home.
 
    For information about implementations, see https://github.com/mnot/I-
-   D/wiki/json-home .
+   D/wiki/json-home.
 
 Status of This Memo
 
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on August 19, 2017.
+   This Internet-Draft will expire on March 26, 2018.
 
 
 
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Nottingham               Expires August 19, 2017                [Page 1]
+Nottingham               Expires March 26, 2018                 [Page 1]
 
-Internet-Draft        Home Documents for HTTP APIs         February 2017
+Internet-Draft        Home Documents for HTTP APIs        September 2017
 
 
 Copyright Notice
@@ -93,33 +93,36 @@ Table of Contents
      5.9.  preconditionRequired  . . . . . . . . . . . . . . . . . .  11
      5.10. authSchemes . . . . . . . . . . . . . . . . . . . . . . .  11
      5.11. status  . . . . . . . . . . . . . . . . . . . . . . . . .  12
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  12
-   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
-     7.1.  HTTP Resource Hint Registry . . . . . . . . . . . . . . .  12
-     7.2.  Media Type Registration . . . . . . . . . . . . . . . . .  13
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  13
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .  14
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  15
-   Appendix B.  Creating and Serving Home Documents  . . . . . . . .  15
-     B.1.  Managing Change in Home Documents . . . . . . . . . . . .  15
-     B.2.  Evolving and Mixing APIs with Home Documents  . . . . . .  16
-   Appendix C.  Consuming Home Documents . . . . . . . . . . . . . .  16
-   Appendix D.  Frequently Asked Questions . . . . . . . . . . . . .  17
+   6.  Discovering Home Documents  . . . . . . . . . . . . . . . . .  12
+     6.1.  The "home" Link Relation Type . . . . . . . . . . . . . .  13
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
+     8.1.  HTTP Resource Hint Registry . . . . . . . . . . . . . . .  13
+     8.2.  Media Type Registration . . . . . . . . . . . . . . . . .  14
+     8.3.  Link Relation Type Registration . . . . . . . . . . . . .  14
+   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
+     9.1.  Normative References  . . . . . . . . . . . . . . . . . .  14
+     9.2.  Informative References  . . . . . . . . . . . . . . . . .  15
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  16
+   Appendix B.  Creating and Serving Home Documents  . . . . . . . .  16
+     B.1.  Managing Change in Home Documents . . . . . . . . . . . .  16
 
 
 
-Nottingham               Expires August 19, 2017                [Page 2]
+Nottingham               Expires March 26, 2018                 [Page 2]
 
-Internet-Draft        Home Documents for HTTP APIs         February 2017
+Internet-Draft        Home Documents for HTTP APIs        September 2017
 
 
-     D.1.  Why not use (insert other service description format)?  .  17
-     D.2.  Why doesn't the format allow references or inheritance? .  17
-     D.3.  What about "Faults" (i.e., errors)? . . . . . . . . . . .  17
-     D.4.  How Do I find the schema for a format?  . . . . . . . . .  17
-     D.5.  How do I express complex query arguments? . . . . . . . .  17
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  18
+     B.2.  Evolving and Mixing APIs with Home Documents  . . . . . .  17
+   Appendix C.  Consuming Home Documents . . . . . . . . . . . . . .  17
+   Appendix D.  Frequently Asked Questions . . . . . . . . . . . . .  17
+     D.1.  Why not use (insert other service description format)?  .  18
+     D.2.  Why doesn't the format allow references or inheritance? .  18
+     D.3.  What about "Faults" (i.e., errors)? . . . . . . . . . . .  18
+     D.4.  How Do I find the schema for a format?  . . . . . . . . .  18
+     D.5.  How do I express complex query arguments? . . . . . . . .  18
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  19
 
 1.  Introduction
 
@@ -127,7 +130,7 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
    applications other than traditional Web browsing.  Such "HTTP APIs"
    are used to integrate processes on disparate systems, make
    information available to machines across the Internet, and as part of
-   the implementation of "micro-services."
+   the implementation of "microservices."
 
    By using HTTP, these applications realise a number of benefits, from
    message framing to caching, and well-defined semantics that are
@@ -159,23 +162,24 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
 
    o  Extensibility - Because new server capabilities can be expressed
       as link relations, new features can be layered in without
+
+
+
+Nottingham               Expires March 26, 2018                 [Page 3]
+
+Internet-Draft        Home Documents for HTTP APIs        September 2017
+
+
       introducing a new API version; clients will discover them in the
       home document.  This promotes loose coupling between clients and
       servers.
-
-
-
-Nottingham               Expires August 19, 2017                [Page 3]
-
-Internet-Draft        Home Documents for HTTP APIs         February 2017
-
 
    o  Evolvability - Likewise, interfaces can change gradually by
       introducing a new link relation and/or format while still
       supporting the old ones.
 
    o  Customisation - Home documents can be tailored for the client,
-      allowing diffrent classes of service or different client
+      allowing different classes of service or different client
       permissions to be exposed naturally.
 
    o  Flexible deployment - Since URLs aren't baked into documentation,
@@ -191,7 +195,7 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
    capabilities.  In particular, Internet Standards that use HTTP as a
    substrate are likely to require the attributes described above.
 
-   This document defines a "home page" format using the JSON format
+   This document defines a "home document" format using the JSON format
    [RFC7159] for APIs to use as a launching point for the interactions
    they offer, using links.  Having a well-defined format for this
    purpose promotes good practice and tooling.
@@ -213,18 +217,19 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
 
    Its content consists of a root object with:
 
+
+
+
+
+Nottingham               Expires March 26, 2018                 [Page 4]
+
+Internet-Draft        Home Documents for HTTP APIs        September 2017
+
+
    o  A "resources" member, whose value is an object that describes the
       resources associated with the API.  Its member names are link
       relation types (as defined by [RFC5988]), and their values are
       Resource Objects (Section 4).
-
-
-
-
-Nottingham               Expires August 19, 2017                [Page 4]
-
-Internet-Draft        Home Documents for HTTP APIs         February 2017
-
 
    o  Optionally, a "api" member, whose value is an API Object
       (Section 3) that contains information about the API as a whole.
@@ -247,7 +252,7 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
            "author": "mailto:api-admin@example.com",
            "describedBy": "https://example.com/api-docs/"
          }
-       }
+       },
        "resources": {
          "tag:me@example.com,2016:widgets": {
            "href": "/widgets/"
@@ -269,18 +274,17 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
        }
      }
 
+
+
+
+Nottingham               Expires March 26, 2018                 [Page 5]
+
+Internet-Draft        Home Documents for HTTP APIs        September 2017
+
+
    Here, we have a home document for the API "Example API", whose author
    can be contacted at the e-mail address "api-admin@example.com", and
    whose documentation is at "https://example.com/api-docs/".
-
-
-
-
-
-Nottingham               Expires August 19, 2017                [Page 5]
-
-Internet-Draft        Home Documents for HTTP APIs         February 2017
-
 
    It links to a resource "/widgets/" with the relation
    "tag:me@example.com,2016:widgets".  It also links to an unknown
@@ -329,13 +333,9 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
 
 
 
-
-
-
-
-Nottingham               Expires August 19, 2017                [Page 6]
+Nottingham               Expires March 26, 2018                 [Page 6]
 
-Internet-Draft        Home Documents for HTTP APIs         February 2017
+Internet-Draft        Home Documents for HTTP APIs        September 2017
 
 
 3.  API Objects
@@ -389,9 +389,9 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
 
 
 
-Nottingham               Expires August 19, 2017                [Page 7]
+Nottingham               Expires March 26, 2018                 [Page 7]
 
-Internet-Draft        Home Documents for HTTP APIs         February 2017
+Internet-Draft        Home Documents for HTTP APIs        September 2017
 
 
    Resource Objects MAY also have a "hints" property, whose value is an
@@ -445,9 +445,9 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
 
 
 
-Nottingham               Expires August 19, 2017                [Page 8]
+Nottingham               Expires March 26, 2018                 [Page 8]
 
-Internet-Draft        Home Documents for HTTP APIs         February 2017
+Internet-Draft        Home Documents for HTTP APIs        September 2017
 
 
    For example, a resource might hint that the PUT method is allowed on
@@ -461,7 +461,7 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
 
    This specification defines a set of common hints, based upon
    information that's discoverable by directly interacting with
-   resources.  See Section 7.1 for information on defining new hints.
+   resources.  See Section 8.1 for information on defining new hints.
 
 5.1.  allow
 
@@ -501,9 +501,9 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
 
 
 
-Nottingham               Expires August 19, 2017                [Page 9]
+Nottingham               Expires March 26, 2018                 [Page 9]
 
-Internet-Draft        Home Documents for HTTP APIs         February 2017
+Internet-Draft        Home Documents for HTTP APIs        September 2017
 
 
    Content MUST be an array of strings, containing media types.
@@ -516,7 +516,8 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
    o  Resource Hint Name: acceptPost
 
    o  Description: Hints the POST request formats accepted by the
-      resource for this client.
+      resource for this client; equivalent to the Accept-Post HTTP
+      response header.
 
    o  Specification: [this document]
 
@@ -556,10 +557,9 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
 
 
 
-
-Nottingham               Expires August 19, 2017               [Page 10]
+Nottingham               Expires March 26, 2018                [Page 10]
 
-Internet-Draft        Home Documents for HTTP APIs         February 2017
+Internet-Draft        Home Documents for HTTP APIs        September 2017
 
 
 5.7.  acceptPrefer
@@ -613,9 +613,9 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
 
 
 
-Nottingham               Expires August 19, 2017               [Page 11]
+Nottingham               Expires March 26, 2018                [Page 11]
 
-Internet-Draft        Home Documents for HTTP APIs         February 2017
+Internet-Draft        Home Documents for HTTP APIs        September 2017
 
 
    and optionally a "realms" property containing an array of zero to
@@ -650,29 +650,55 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
       it will return a 404 (Not Found) or 410 (Gone) HTTP status code if
       accessed.
 
-6.  Security Considerations
+6.  Discovering Home Documents
+
+   Home documents are useful starting points for interacting with APIs,
+   both for using the API itself and for discovering additional
+   information about the API.  Home documents are distinct resources
+   with their own URIs, and it is possible that home document resources
+   are linked to from other resources, such as from (possibly select)
+   resources of the API itself, or from resources that provide API
+   directory or discovery services.
+
+   In these cases, the question is how to establish the link to a home
+   document.  This specification defines and registers a specific link
+   relation type for this purpose, so that links to home documents can
+   be made and identified by using this specific link relation type.
+
+
+
+
+
+Nottingham               Expires March 26, 2018                [Page 12]
+
+Internet-Draft        Home Documents for HTTP APIs        September 2017
+
+
+6.1.  The "home" Link Relation Type
+
+   The "home" link relation type is used to establish a link to a "home
+   document" resource that provides context and/or starting points for
+   the context resource.
+
+   The format of the linked home document is not constrained by the
+   "home" link relation type.  A home resource can be either machine-
+   readable or human-readable, and the "home" link relation type is
+   appropriate to link to both kinds of home documents.
+
+7.  Security Considerations
 
    Clients need to exercise care when using hints.  For example, a naive
    client might send credentials to a server that uses the auth-req
    hint, without checking to see if those credentials are appropriate
    for that server.
 
-7.  IANA Considerations
+8.  IANA Considerations
 
-7.1.  HTTP Resource Hint Registry
+8.1.  HTTP Resource Hint Registry
 
    This specification defines the HTTP Resource Hint Registry.  See
    Section 5 for a general description of the function of resource
    hints.
-
-
-
-
-
-Nottingham               Expires August 19, 2017               [Page 12]
-
-Internet-Draft        Home Documents for HTTP APIs         February 2017
-
 
    In particular, resource hints are generic; that is, they are
    potentially applicable to any resource, not specific to one
@@ -697,107 +723,128 @@ Internet-Draft        Home Documents for HTTP APIs         February 2017
 
    o  Specification: [reference to specification document]
 
+
+
+Nottingham               Expires March 26, 2018                [Page 13]
+
+Internet-Draft        Home Documents for HTTP APIs        September 2017
+
+
    Initial registrations are enumerated in Section 5.
 
-7.2.  Media Type Registration
+8.2.  Media Type Registration
 
    TBD
 
-8.  References
+8.3.  Link Relation Type Registration
 
-8.1.  Normative References
+   This specification registers the "home" link relation type in the
+   registry of link relation types [RFC5988].
+
+   o  Relation Name: home
+
+   o  Description: Links to a "home document" resource that provides
+      context and/or starting points for the context resource.
+
+   o  Reference: This specification
+
+9.  References
+
+9.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997,
-              <http://www.rfc-editor.org/info/rfc2119>.
+              DOI 10.17487/RFC2119, March 1997, <https://www.rfc-
+              editor.org/info/rfc2119>.
 
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
               Resource Identifier (URI): Generic Syntax", STD 66,
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
-              <http://www.rfc-editor.org/info/rfc3986>.
+              <https://www.rfc-editor.org/info/rfc3986>.
 
    [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
-              IANA Considerations Section in RFCs", BCP 26, RFC 5226,
-              DOI 10.17487/RFC5226, May 2008,
-              <http://www.rfc-editor.org/info/rfc5226>.
-
-
-
-
-Nottingham               Expires August 19, 2017               [Page 13]
-
-Internet-Draft        Home Documents for HTTP APIs         February 2017
-
+              IANA Considerations Section in RFCs", RFC 5226,
+              DOI 10.17487/RFC5226, May 2008, <https://www.rfc-
+              editor.org/info/rfc5226>.
 
    [RFC5988]  Nottingham, M., "Web Linking", RFC 5988,
-              DOI 10.17487/RFC5988, October 2010,
-              <http://www.rfc-editor.org/info/rfc5988>.
+              DOI 10.17487/RFC5988, October 2010, <https://www.rfc-
+              editor.org/info/rfc5988>.
 
    [RFC6570]  Gregorio, J., Fielding, R., Hadley, M., Nottingham, M.,
               and D. Orchard, "URI Template", RFC 6570,
-              DOI 10.17487/RFC6570, March 2012,
-              <http://www.rfc-editor.org/info/rfc6570>.
+              DOI 10.17487/RFC6570, March 2012, <https://www.rfc-
+              editor.org/info/rfc6570>.
+
+
+
+
+
+
+Nottingham               Expires March 26, 2018                [Page 14]
+
+Internet-Draft        Home Documents for HTTP APIs        September 2017
+
 
    [RFC7159]  Bray, T., Ed., "The JavaScript Object Notation (JSON) Data
               Interchange Format", RFC 7159, DOI 10.17487/RFC7159, March
-              2014, <http://www.rfc-editor.org/info/rfc7159>.
+              2014, <https://www.rfc-editor.org/info/rfc7159>.
 
    [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
               Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
               RFC 7234, DOI 10.17487/RFC7234, June 2014,
-              <http://www.rfc-editor.org/info/rfc7234>.
+              <https://www.rfc-editor.org/info/rfc7234>.
 
-8.2.  Informative References
+9.2.  Informative References
 
    [RFC4151]  Kindberg, T. and S. Hawke, "The 'tag' URI Scheme",
               RFC 4151, DOI 10.17487/RFC4151, October 2005,
-              <http://www.rfc-editor.org/info/rfc4151>.
+              <https://www.rfc-editor.org/info/rfc4151>.
 
    [RFC5789]  Dusseault, L. and J. Snell, "PATCH Method for HTTP",
               RFC 5789, DOI 10.17487/RFC5789, March 2010,
-              <http://www.rfc-editor.org/info/rfc5789>.
+              <https://www.rfc-editor.org/info/rfc5789>.
 
    [RFC6838]  Freed, N., Klensin, J., and T. Hansen, "Media Type
               Specifications and Registration Procedures", BCP 13,
               RFC 6838, DOI 10.17487/RFC6838, January 2013,
-              <http://www.rfc-editor.org/info/rfc6838>.
+              <https://www.rfc-editor.org/info/rfc6838>.
 
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <http://www.rfc-editor.org/info/rfc7230>.
+              <https://www.rfc-editor.org/info/rfc7230>.
 
    [RFC7232]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Conditional Requests", RFC 7232,
-              DOI 10.17487/RFC7232, June 2014,
-              <http://www.rfc-editor.org/info/rfc7232>.
+              DOI 10.17487/RFC7232, June 2014, <https://www.rfc-
+              editor.org/info/rfc7232>.
 
    [RFC7233]  Fielding, R., Ed., Lafon, Y., Ed., and J. Reschke, Ed.,
               "Hypertext Transfer Protocol (HTTP/1.1): Range Requests",
               RFC 7233, DOI 10.17487/RFC7233, June 2014,
-              <http://www.rfc-editor.org/info/rfc7233>.
-
-
-
-
-Nottingham               Expires August 19, 2017               [Page 14]
-
-Internet-Draft        Home Documents for HTTP APIs         February 2017
-
+              <https://www.rfc-editor.org/info/rfc7233>.
 
    [RFC7235]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Authentication", RFC 7235,
-              DOI 10.17487/RFC7235, June 2014,
-              <http://www.rfc-editor.org/info/rfc7235>.
+              DOI 10.17487/RFC7235, June 2014, <https://www.rfc-
+              editor.org/info/rfc7235>.
 
    [RFC7240]  Snell, J., "Prefer Header for HTTP", RFC 7240,
-              DOI 10.17487/RFC7240, June 2014,
-              <http://www.rfc-editor.org/info/rfc7240>.
+              DOI 10.17487/RFC7240, June 2014, <https://www.rfc-
+              editor.org/info/rfc7240>.
+
+
+
+
+Nottingham               Expires March 26, 2018                [Page 15]
+
+Internet-Draft        Home Documents for HTTP APIs        September 2017
+
 
    [RFC7807]  Nottingham, M. and E. Wilde, "Problem Details for HTTP
               APIs", RFC 7807, DOI 10.17487/RFC7807, March 2016,
-              <http://www.rfc-editor.org/info/rfc7807>.
+              <https://www.rfc-editor.org/info/rfc7807>.
 
 Appendix A.  Acknowledgements
 
@@ -834,20 +881,22 @@ B.1.  Managing Change in Home Documents
 
    To mitigate the impact of such changes, servers ought to consider:
 
-
-
-
-Nottingham               Expires August 19, 2017               [Page 15]
-
-Internet-Draft        Home Documents for HTTP APIs         February 2017
-
-
    o  Reducing the freshness lifetime of home documents before a link
       change, so that clients are less likely to refer to an "old"
       document.
 
    o  Regarding the "old" and "new" URIs as equally valid references for
       an "overlap" period.
+
+
+
+
+
+
+Nottingham               Expires March 26, 2018                [Page 16]
+
+Internet-Draft        Home Documents for HTTP APIs        September 2017
+
 
    o  After that period, handling requests for the "old" URIs
       appropriately; e.g., with a 404 Not Found, or by redirecting the
@@ -888,21 +937,22 @@ Appendix C.  Consuming Home Documents
    [RFC7234]), to avoid fetching it before every interaction (which
    would otherwise be required).
 
-
-
-
-
-
-Nottingham               Expires August 19, 2017               [Page 16]
-
-Internet-Draft        Home Documents for HTTP APIs         February 2017
-
-
    Likewise, a client encountering a 404 (Not Found) on a link is
    encouraged obtain a fresh copy of the home document, to assure that
    it is up-to-date.
 
 Appendix D.  Frequently Asked Questions
+
+
+
+
+
+
+
+Nottingham               Expires March 26, 2018                [Page 17]
+
+Internet-Draft        Home Documents for HTTP APIs        September 2017
+
 
 D.1.  Why not use (insert other service description format)?
 
@@ -946,17 +996,19 @@ D.5.  How do I express complex query arguments?
    appropriate way to do this is with a "form" language, much as HTML
    defines.
 
-
-
-
-Nottingham               Expires August 19, 2017               [Page 17]
-
-Internet-Draft        Home Documents for HTTP APIs         February 2017
-
-
    Note that it is possible to support multiple query syntaxes on the
    same base URL, using more than one link relation type; see the
    example at the start of the document.
+
+
+
+
+
+
+Nottingham               Expires March 26, 2018                [Page 18]
+
+Internet-Draft        Home Documents for HTTP APIs        September 2017
+
 
 Author's Address
 
@@ -1005,4 +1057,8 @@ Author's Address
 
 
 
-Nottingham               Expires August 19, 2017               [Page 18]
+
+
+
+
+Nottingham               Expires March 26, 2018                [Page 19]

@@ -2,7 +2,7 @@
 title: Site-Wide HTTP Headers
 abbrev:
 docname: draft-nottingham-site-wide-headers-02
-date: 2016
+date: 2017
 category: std
 
 ipr: trust200902

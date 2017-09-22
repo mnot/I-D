@@ -24,6 +24,26 @@ author:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
+informative:
+  HTML5:
+    target: https://html.spec.whatwg.org
+    title: HTML - Living Standard
+    author:
+     -
+        ins: various
+        name: various
+        org: WHATWG
+    date: 2017-09-22
+  FETCH:
+    target: https://fetch.spec.whatwg.org
+    title: Fetch - Living Standard
+    author:
+     -
+        ins: various
+        name: various
+        org: WHATWG
+    date: 2017-09-22
+
 
 --- abstract
 
@@ -167,7 +187,7 @@ server's authority over its own resources, can cause deployment issues, and is t
 practice in standards.
 
 Instead of statically defining URL paths, it is RECOMMENDED that applications using HTTP define
-links in payloads, to allow flexibility in deployment. 
+links in payloads, to allow flexibility in deployment.
 
 Using runtime links in this fashion has a number of other benefits. For example, navigating with a
 link allows a request to be routed to a different server without the overhead of a redirection,
@@ -226,8 +246,8 @@ their task cannot be completed).
 
 For example, an application can specify that it uses HTTP like this:
 
-    Foo Application uses HTTP {{!RFC7230}}. Implementations MUST support 
-    HTTP/1.1, and MAY support later versions. Support for common HTTP 
+    Foo Application uses HTTP {{!RFC7230}}. Implementations MUST support
+    HTTP/1.1, and MAY support later versions. Support for common HTTP
     mechanisms such as redirection and caching are assumed.
 
 
@@ -303,9 +323,9 @@ However, application-specific schemes can be defined as well.
 When defining an URL scheme for an application using HTTP, there are a number of tradeoffs and
 caveats to keep in mind:
 
-* Unmodified Web browsers will not support the new scheme. While it is possible to register new URL schemes with Web browsers (e.g. registerProtocolHandler() in {{custom-handlers}}, as well as several proprietary approaches), support for these mechanisms is not shared by all browsers, and their capabilities can vary.
+* Unmodified Web browsers will not support the new scheme. While it is possible to register new URL schemes with Web browsers (e.g. registerProtocolHandler() in {{HTML5}} Section 8.7.1.3, as well as several proprietary approaches), support for these mechanisms is not shared by all browsers, and their capabilities can vary.
 
-* Likewise, existing non-browser clients, intermediaries, servers and associated software will not recognise the new scheme, and might fail to operate. For example, a client library might fail to dispatch the request; a cache might refuse to store the response, and a proxy might fail to forward the request. 
+* Likewise, existing non-browser clients, intermediaries, servers and associated software will not recognise the new scheme, and might fail to operate. For example, a client library might fail to dispatch the request; a cache might refuse to store the response, and a proxy might fail to forward the request.
 
 * Because URLs occur in and are generated in HTTP artefacts commonly, often without human intervention (e.g., in the `Location` header), it can be difficult to assure that the new scheme is used consistently.
 
@@ -313,9 +333,9 @@ caveats to keep in mind:
 
 * Features that rely upon the URL's origin {{?RFC6454}}, such as the Web's same-origin policy, will be impacted by a change of scheme.
 
-* HTTP-specific features such as cookies {{?RFC6265}}, authentication {{?RFC7235}}, caching {{?RFC7234}}, and CORS {{CORS}} might or might not work correctly, depending on how they are defined and implemented. Generally, they are designed and implemented with an assumption that the URL will always be "http" or "https".
+* HTTP-specific features such as cookies {{?RFC6265}}, authentication {{?RFC7235}}, caching {{?RFC7234}}, and CORS {{FETCH}} might or might not work correctly, depending on how they are defined and implemented. Generally, they are designed and implemented with an assumption that the URL will always be "http" or "https".
 
-* Web features that require a secure context {{secure-context}} will likely treat a new scheme as insecure.
+* Web features that require a secure context {{?W3C.CR-secure-contexts-20160915}} will likely treat a new scheme as insecure.
 
 
 See {{?RFC7595}} for more information about minting new URL schemes.
@@ -400,7 +420,7 @@ Typically, using HTTP header fields is appropriate in a few different situations
 
 If none of these motivations apply, using a header field is NOT RECOMMENDED.
 
-New header fields MUST be registered, as per {{!RFC7231}} and {{!RFC3864}}. 
+New header fields MUST be registered, as per {{!RFC7231}} and {{!RFC3864}}.
 
 It is RECOMMENDED that header field names be short (even when HTTP/2 header compression is in
 effect, there is an overhead) but appropriately specific. In particular, if a header field is
@@ -429,7 +449,7 @@ that wish to expose cross-origin data to browsers will need to implement {{!W3C.
 ### Authentication and Application State {#state}
 
 Applications that use HTTP MAY use stateful cookies {{?RFC6265}} to identify a client and/or store
-client-specific data to contextualise requests. 
+client-specific data to contextualise requests.
 
 If it is only necessary to identify clients, applications that use HTTP MAY use HTTP authentication
 {{?RFC7235}}; if the Basic authentication scheme {{?RFC7617}} is used, it MUST NOT be used with the

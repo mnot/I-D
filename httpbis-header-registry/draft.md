@@ -2,7 +2,7 @@
 title: A Registry for HTTP Header Fields
 abbrev: HTTP Header Registry
 docname: draft-nottingham-httpbis-header-registry-00
-date: 2016
+date: 2017
 category: std
 updates: 3864, 7231
 
@@ -18,7 +18,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
@@ -158,7 +158,7 @@ they MAY update a registration.
 
 ## Registry Creation
 
-IANA will create a new registry as outlined in {{registry}}. 
+IANA will create a new registry as outlined in {{registry}}.
 
 After creating the registry, all entries in the Permanent and Provisional Message Header Registries
 with the protocol 'http' are to be moved to it, with the following changes applied:
