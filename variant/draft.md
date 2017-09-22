@@ -51,7 +51,7 @@ See also the draft's current status in the IETF datatracker, at
 
 HTTP proactive content negotiation ({{!RFC7231}}, Section 3.4.1) is increasingly being used to determine not only a response's content-coding, but also its language, as well as newer axes (for example, see {{?I-D.ietf-httpbis-client-hints}}).
 
-Successfully reusing negotiated responses that have been stored in a HTTP cache requires establishment of a secondary cache key ({{!RFC7234}}, Section 4.1) using the Vary header ({{!RFC7231}}, Section 7.1.4).
+Successfully reusing negotiated responses that have been stored in a HTTP cache requires establishment of a secondary cache key ({{!RFC7234}}, Section 4.1) using the Vary header ({{!RFC7231}}, Section 7.1.4), which identifies the request headers that form the secondary cache key for a given response.
 
 HTTP's caching model allows a certain amount of latitude in normalising request header fields to match those stored in the cache, so as to increase the chances of a cache hit while still respecting the semantics of that header. However, this is often inadequate; even with understanding of the headers' semantics to facilitate such normalisation, a cache does not know enough about the possible alternative representations available on the origin server to make an appropriate decision.
 
@@ -73,7 +73,7 @@ Transfer-Encoding: chunked
 
 Provided that the cache has full knowledge of the semantics of `Accept-Language` and `Content-Language`, it will know that a French representation is available and might be able to infer that an English representation is not available. But, it does not know (for example) whether a Japanese representation is available without making another request, thereby incurring possibly unnecessary latency.
 
-This specification introduces the HTTP `Variants` response header field to address this shortcoming by communicating what representations are available for a given resource. This information enables caches that understand `Variants` to correctly select the most appropriate stored response, properly forwarding requests that cannot be satisfied.
+This specification introduces the HTTP `Variants` response header field to provide caches with enough information to properly serve responses -- either selected from cache or by forwarding them towards the origin -- for content negotiation mechanisms with known semantics.
 
 `Variants` is best used when content negotiation takes place over a known, constrained set of representations. Since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations. Likewise, it works best for content negotiation over header fields whose semantics are well-understood, since it requires a selection algorithm to be specified ahead of time.
 
@@ -120,12 +120,17 @@ a recipient can infer that no content-codings are supported. Note that as always
 A more complex example:
 
 ~~~
-Variants: DPR;1.0;2.0, Content-Language;en ;fr
+Variants: Content-Encoding;gzip;brotli, Content-Language;en ;fr
 ~~~
 
-Here, recipients can infer that two Device Pixel Ratios are available, as well as two content languages. Note that, as with all HTTP header fields that use the "#" list rule (see {{!RFC7230}}, Section 7), they might occur in the same header field or separately.
+Here, recipients can infer that two Content-Encodings are available, as well as two content languages. Note that, as with all HTTP header fields that use the "#" list rule (see {{!RFC7230}}, Section 7), they might occur in the same header field or separately, like this:
 
-Note that the ordering of values after the field-name is significant, as it might be used by the header's algorithm for selecting a response.
+~~~
+Variants: Content-Encoding;gzip;brotli
+Variants: Content-Language;en ;fr
+~~~
+
+The ordering of available-values after the field-name is significant, as it might be used by the header's algorithm for selecting a response.
 
 Senders SHOULD consistently send `Variant` on all cacheable (as per {{!RFC7234}}, Section 3) responses for a resource, since its absence will trigger caches to fall back to `Vary` processing.
 
@@ -138,9 +143,11 @@ To be usable with Variants, proactive content negotiation mechanisms need to be 
 
 * MUST define a request header field that advertises the clients preferences or capabilities, whose field-name SHOULD begin with "Accept-".
 * MUST define a response header field that indicates the result of selection, whose field-name SHOULD begin with "Content-" and whose field-value SHOULD be a token.
-* MUST define an algorithm for selecting a result, given a request header field value. It MUST return an ordered list of selected responses, given the incoming request, a list of selected responses, and the list of available values from `Variants`.
+* MUST define an algorithm for selecting a result. It MUST return an ordered list of selected responses, given the incoming request, a list of selected responses, and the list of available values from `Variants`. If the result is an empty list, it implies that the cache does not contain an appropriate response.
 
 {{backports}} fulfils these requirements for some existing proactive content negotiation mechanisms in HTTP.
+
+Note that unlike Vary, Variants does not use stored request headers to help select a response; this is why defining a response header to aid selection is required.
 
 
 ## Cache Behaviour {#cache}
@@ -291,7 +298,7 @@ This appendix defines the required information to use existing proactive content
 
 When negotiating for the `Content-Encoding` response header field's value, the applicable request header field is `Accept-Encoding`, as per {{!RFC7231}} Section 5.3.4.
 
-To perform content negotiation for Content-Encoding given an `incoming-request`, `stored-responses` and `available-values`: 
+To perform content negotiation for Content-Encoding given an `incoming-request`, `stored-responses` and `available-values`:
 
 1. Let `preferred-codings` be a list of the `coding`s in the "Accept-Encoding" header field of `incoming-request`, ordered by their `weight`, highest to lowest. If "Accept-Encoding" is not present or empty, `preferred-codings` will be empty.
 2. If `identity` is not a member of `preferred-codings`, append `identity` to `preferred-codings` with a `weight` of 0.001.
@@ -313,9 +320,9 @@ Implementations MAY remove members of `filtered-responses` based upon their `wei
 
 When negotiating for the `Content-Language` response header field's value, the applicable request header field is `Accept-Language`, as per {{!RFC7231}} Section 5.3.5.
 
-To perform content negotiation for Content-Language given an `incoming-request`, `stored-responses` and `available-values`: 
+To perform content negotiation for Content-Language given an `incoming-request`, `stored-responses` and `available-values`:
 
-1. Let `preferred-langs` be a list of the `language-range`s in the "Accept-Language" header field ({{!RFC7231}}, Section 5.3.5) of `incoming-request`, ordered by their `weight`, highest to lowest. 
+1. Let `preferred-langs` be a list of the `language-range`s in the "Accept-Language" header field ({{!RFC7231}}, Section 5.3.5) of `incoming-request`, ordered by their `weight`, highest to lowest.
 2. If `preferred-langs` is empty, append "*" with a `weight` of 0.001.
 3. Remove any member of `preferred-langs` whose `weight` is 0.
 4. Filter `available-values` using `preferred-langs` with either the Basic Filtering scheme defined in {{!RFC4647}} Section 3.3.1, or the Lookup scheme defined in Section 3.4 of that document. Use the first member of `available-values` as the default.
