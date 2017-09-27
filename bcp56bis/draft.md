@@ -329,7 +329,7 @@ caveats to keep in mind:
 
 * Because URLs occur in and are generated in HTTP artefacts commonly, often without human intervention (e.g., in the `Location` header), it can be difficult to assure that the new scheme is used consistently.
 
-* The resources identified by the new scheme will still be available with "http" and/or "https" URLs to clients. While it is possible to define the relationship between these resources in new new scheme's specification, existing HTTP software (such as clients, caches, intermediaries and servers) will not be available, so there is a danger of confusion when the "wrong" URL is used.
+* The resources identified by the new scheme will still be available with "http" and/or "https" URLs to clients. While it is possible to define the relationship between these resources in the new scheme's specification, existing HTTP software (such as clients, caches, intermediaries and servers) will not be available, so there is a danger of confusion when the "wrong" URL is used.
 
 * Features that rely upon the URL's origin {{?RFC6454}}, such as the Web's same-origin policy, will be impacted by a change of scheme.
 
