@@ -4,13 +4,13 @@
 
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                    Fastly
-Updates: 7234 (if approved)                           September 22, 2017
+Updates: 7234 (if approved)                           September 28, 2017
 Intended status: Standards Track
-Expires: March 26, 2018
+Expires: April 1, 2018
 
 
                              HTTP Variants
-                      draft-nottingham-variant-00
+                      draft-nottingham-variants-00
 
 Abstract
 
@@ -49,11 +49,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on March 26, 2018.
+   This Internet-Draft will expire on April 1, 2018.
 
 
 
-Nottingham               Expires March 26, 2018                 [Page 1]
+Nottingham                Expires April 1, 2018                 [Page 1]
 
 Internet-Draft                HTTP Variants               September 2017
 
@@ -99,21 +99,22 @@ Table of Contents
 1.  Introduction
 
    HTTP proactive content negotiation ([RFC7231], Section 3.4.1) is
-   increasingly being used to determine not only a response's content-
-   coding, but also its language, as well as newer axes (for example,
-   see [I-D.ietf-httpbis-client-hints]).
+   starting to be used more widely again.  The most widely seen use -
+   determining a response's content-coding - is being joined by renewed
+   interest in negotiation for language and other, newer attributes (for
+   example, see [I-D.ietf-httpbis-client-hints]).
 
    Successfully reusing negotiated responses that have been stored in a
    HTTP cache requires establishment of a secondary cache key
-   ([RFC7234], Section 4.1) using the Vary header ([RFC7231],
 
 
 
-Nottingham               Expires March 26, 2018                 [Page 2]
+Nottingham                Expires April 1, 2018                 [Page 2]
 
 Internet-Draft                HTTP Variants               September 2017
 
 
+   ([RFC7234], Section 4.1) using the Vary header ([RFC7231],
    Section 7.1.4), which identifies the request headers that form the
    secondary cache key for a given response.
 
@@ -150,22 +151,21 @@ Internet-Draft                HTTP Variants               September 2017
    latency.
 
    This specification introduces the HTTP "Variants" response header
-   field to provide caches with enough information to properly serve
-   responses - either selected from cache or by forwarding them towards
-   the origin - for content negotiation mechanisms with known semantics.
+   field to enumerate the available variant representations on the
+   origin server, to provide clients and caches with enough information
+   to properly satisfy requests - either by selecting a response from
+   cache or by forwarding the request towards the origin.
 
    "Variants" is best used when content negotiation takes place over a
-   known, constrained set of representations.  Since each variant needs
-   to be listed in the header field, it is ill-suited for open-ended
-   sets of representations.  Likewise, it works best for content
-   negotiation over header fields whose semantics are well-understood,
-   since it requires a selection algorithm to be specified ahead of
-   time.
+   constrained set of representations; since each variant needs to be
+   listed in the header field, it is ill-suited for open-ended sets of
+   representations.  Likewise, it works best for content negotiation
+   over header fields whose semantics are well-understood, since it
+   requires a selection algorithm to be specified ahead of time.
 
 
 
-
-Nottingham               Expires March 26, 2018                 [Page 3]
+Nottingham                Expires April 1, 2018                 [Page 3]
 
 Internet-Draft                HTTP Variants               September 2017
 
@@ -173,8 +173,10 @@ Internet-Draft                HTTP Variants               September 2017
 1.1.  Notational Conventions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-   document are to be interpreted as described in [RFC2119].
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
 
    This specification uses the Augmented Backus-Naur Form (ABNF)
    notation of [RFC5234] with a list extension, defined in Section 7 of
@@ -217,14 +219,14 @@ Internet-Draft                HTTP Variants               September 2017
 
    A more complex example:
 
-   Variants: Content-Encoding;gzip;brotli, Content-Language;en ;fr
 
 
-
-Nottingham               Expires March 26, 2018                 [Page 4]
+Nottingham                Expires April 1, 2018                 [Page 4]
 
 Internet-Draft                HTTP Variants               September 2017
 
+
+   Variants: Content-Encoding;gzip;brotli, Content-Language;en ;fr
 
    Here, recipients can infer that two Content-Encodings are available,
    as well as two content languages.  Note that, as with all HTTP header
@@ -238,9 +240,10 @@ Internet-Draft                HTTP Variants               September 2017
    as it might be used by the header's algorithm for selecting a
    response.
 
-   Senders SHOULD consistently send "Variant" on all cacheable (as per
-   [RFC7234], Section 3) responses for a resource, since its absence
-   will trigger caches to fall back to "Vary" processing.
+   Senders SHOULD consistently send "Variant" header fields on all
+   cacheable (as per [RFC7234], Section 3) responses for a resource,
+   since its absence will trigger caches to fall back to "Vary"
+   processing.
 
    Likewise, servers MUST send the "Content-*" response headers
    nominated by "Variants" when sending that header.
@@ -269,15 +272,12 @@ Internet-Draft                HTTP Variants               September 2017
 
    Note that unlike Vary, Variants does not use stored request headers
    to help select a response; this is why defining a response header to
-   aid selection is required.
+   aid identification and selection is required.
 
 
 
 
-
-
-
-Nottingham               Expires March 26, 2018                 [Page 5]
+Nottingham                Expires April 1, 2018                 [Page 5]
 
 Internet-Draft                HTTP Variants               September 2017
 
@@ -333,7 +333,7 @@ Internet-Draft                HTTP Variants               September 2017
 
 
 
-Nottingham               Expires March 26, 2018                 [Page 6]
+Nottingham                Expires April 1, 2018                 [Page 6]
 
 Internet-Draft                HTTP Variants               September 2017
 
@@ -389,7 +389,7 @@ Internet-Draft                HTTP Variants               September 2017
 
 
 
-Nottingham               Expires March 26, 2018                 [Page 7]
+Nottingham                Expires April 1, 2018                 [Page 7]
 
 Internet-Draft                HTTP Variants               September 2017
 
@@ -445,7 +445,7 @@ Internet-Draft                HTTP Variants               September 2017
 
 
 
-Nottingham               Expires March 26, 2018                 [Page 8]
+Nottingham                Expires April 1, 2018                 [Page 8]
 
 Internet-Draft                HTTP Variants               September 2017
 
@@ -501,7 +501,7 @@ Internet-Draft                HTTP Variants               September 2017
 
 
 
-Nottingham               Expires March 26, 2018                 [Page 9]
+Nottingham                Expires April 1, 2018                 [Page 9]
 
 Internet-Draft                HTTP Variants               September 2017
 
@@ -557,10 +557,14 @@ Internet-Draft                HTTP Variants               September 2017
 
 
 
-Nottingham               Expires March 26, 2018                [Page 10]
+Nottingham                Expires April 1, 2018                [Page 10]
 
 Internet-Draft                HTTP Variants               September 2017
 
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
 6.2.  Informative References
 
@@ -607,16 +611,16 @@ A.1.  Content-Encoding
    5.  Remove any member of "available-values" not present in
        "preferred-codings", comparing in a case-insensitive fashion.
 
-   6.  Let "filtered-responses" be an empty list.
-
-   7.  For each "available-value" of "available-values":
 
 
-
-Nottingham               Expires March 26, 2018                [Page 11]
+Nottingham                Expires April 1, 2018                [Page 11]
 
 Internet-Draft                HTTP Variants               September 2017
 
+
+   6.  Let "filtered-responses" be an empty list.
+
+   7.  For each "available-value" of "available-values":
 
        1.  If there is a member of "stored-responses" whose "Content-
            Encoding" field-value has "content-coding"s ([RFC7231],
@@ -661,18 +665,19 @@ A.2.  Content-Language
 
    4.  Filter "available-values" using "preferred-langs" with either the
        Basic Filtering scheme defined in [RFC4647] Section 3.3.1, or the
+
+
+
+
+Nottingham                Expires April 1, 2018                [Page 12]
+
+Internet-Draft                HTTP Variants               September 2017
+
+
        Lookup scheme defined in Section 3.4 of that document.  Use the
        first member of "available-values" as the default.
 
    5.  Let "filtered-responses" be an empty list.
-
-
-
-
-Nottingham               Expires March 26, 2018                [Page 12]
-
-Internet-Draft                HTTP Variants               September 2017
-
 
    6.  For each "available-value" of "available-values":
 
@@ -720,9 +725,4 @@ Author's Address
 
 
 
-
-
-
-
-
-Nottingham               Expires March 26, 2018                [Page 13]
+Nottingham                Expires April 1, 2018                [Page 13]
