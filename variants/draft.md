@@ -1,7 +1,7 @@
 ---
 title: HTTP Variants
 abbrev:
-docname: draft-nottingham-variant-00
+docname: draft-nottingham-variants-00
 date: 2017
 category: std
 updates: 7234
