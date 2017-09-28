@@ -303,7 +303,7 @@ that they identify. See {{resource}} for details.
 
 ### Initial URL Discovery
 
-Generally, a client with begin interacting with a given application server by requesting an initial
+Generally, a client will begin interacting with a given application server by requesting an initial
 document that contains information about that particular deployment, potentially including links to
 other relevant resources.
 
