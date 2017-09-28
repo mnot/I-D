@@ -133,7 +133,7 @@ Variants: Content-Language;en ;fr
 
 The ordering of available-values after the field-name is significant, as it might be used by the header's algorithm for selecting a response.
 
-Senders SHOULD consistently send `Variant` on all cacheable (as per {{!RFC7234}}, Section 3) responses for a resource, since its absence will trigger caches to fall back to `Vary` processing.
+Senders SHOULD consistently send `Variant` header fields on all cacheable (as per {{!RFC7234}}, Section 3) responses for a resource, since its absence will trigger caches to fall back to `Vary` processing.
 
 Likewise, servers MUST send the `Content-*` response headers nominated by `Variants` when sending that header.
 
@@ -148,7 +148,7 @@ To be usable with Variants, proactive content negotiation mechanisms need to be 
 
 {{backports}} fulfils these requirements for some existing proactive content negotiation mechanisms in HTTP.
 
-Note that unlike Vary, Variants does not use stored request headers to help select a response; this is why defining a response header to aid selection is required.
+Note that unlike Vary, Variants does not use stored request headers to help select a response; this is why defining a response header to aid identification and selection is required.
 
 
 ## Cache Behaviour {#cache}
