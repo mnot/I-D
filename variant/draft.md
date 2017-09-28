@@ -73,9 +73,9 @@ Transfer-Encoding: chunked
 
 Provided that the cache has full knowledge of the semantics of `Accept-Language` and `Content-Language`, it will know that a French representation is available and might be able to infer that an English representation is not available. But, it does not know (for example) whether a Japanese representation is available without making another request, thereby incurring possibly unnecessary latency.
 
-This specification introduces the HTTP `Variants` response header field to provide caches with enough information to properly serve responses -- either selected from cache or by forwarding them towards the origin -- for content negotiation mechanisms with known semantics.
+This specification introduces the HTTP `Variants` response header field to enumerate the available variant representations on the origin server, to provide clients and caches with enough information to properly satisfy requests -- either by selecting a response from cache or by forwarding the request towards the origin.
 
-`Variants` is best used when content negotiation takes place over a known, constrained set of representations. Since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations. Likewise, it works best for content negotiation over header fields whose semantics are well-understood, since it requires a selection algorithm to be specified ahead of time.
+`Variants` is best used when content negotiation takes place over a constrained set of representations; since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations. Likewise, it works best for content negotiation over header fields whose semantics are well-understood, since it requires a selection algorithm to be specified ahead of time.
 
 
 ## Notational Conventions
