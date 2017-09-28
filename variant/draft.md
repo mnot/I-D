@@ -49,7 +49,7 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-HTTP proactive content negotiation ({{!RFC7231}}, Section 3.4.1) is increasingly being used to determine not only a response's content-coding, but also its language, as well as newer axes (for example, see {{?I-D.ietf-httpbis-client-hints}}).
+HTTP proactive content negotiation ({{!RFC7231}}, Section 3.4.1) is starting to be used more widely again. The most widely seen use -- determining a response's content-coding -- is being joined by renewed interest in negotiation for language and other, newer attributes (for example, see {{?I-D.ietf-httpbis-client-hints}}).
 
 Successfully reusing negotiated responses that have been stored in a HTTP cache requires establishment of a secondary cache key ({{!RFC7234}}, Section 4.1) using the Vary header ({{!RFC7231}}, Section 7.1.4), which identifies the request headers that form the secondary cache key for a given response.
 
