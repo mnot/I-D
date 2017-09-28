@@ -92,7 +92,7 @@ Additionally, it uses the "field-name", "OWS" and "token" rules from {{!RFC7230}
 
 # The "Variants" HTTP Header Field
 
-The `Variant` HTTP response header field is used to indicate what other representations are available for a given resource at the time that the response is produced.
+The `Variants` HTTP response header field is used to indicate what other representations are available for a given resource at the time that the response is produced.
 
 ~~~
 Variants        = 1#variant
