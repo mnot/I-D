@@ -77,6 +77,8 @@ This specification introduces the HTTP `Variants` response header field to enume
 
 `Variants` is best used when content negotiation takes place over a constrained set of representations; since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations. Likewise, it works best for content negotiation over header fields whose semantics are well-understood, since it requires a selection algorithm to be specified ahead of time.
 
+This header field is a simpler version of the `Alternates` header field introduced by {{?RFC2295}}; unlike that mechanism, `Variants` does not require specification of each combination of attributes, and does not assume that each combination has a unique URL.
+
 
 ## Notational Conventions
 
