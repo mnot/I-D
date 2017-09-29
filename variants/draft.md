@@ -1,5 +1,5 @@
 ---
-title: HTTP Variants
+title: HTTP Representation Variants
 abbrev:
 docname: draft-nottingham-variants-01
 date: 2017
