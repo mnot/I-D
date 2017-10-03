@@ -36,14 +36,14 @@ This specification introduces the HTTP `Variants` response header field to commu
 
 *RFC EDITOR: please remove this section before publication*
 
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/variant>.
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/variants>.
 
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/variant/>.
+The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/variants/>.
 
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/variant>.
+Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/variants>.
 
 See also the draft's current status in the IETF datatracker, at
-<https://datatracker.ietf.org/doc/draft-nottingham-variant/>.
+<https://datatracker.ietf.org/doc/draft-nottingham-variants/>.
 
 --- middle
 
