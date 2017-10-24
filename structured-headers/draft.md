@@ -212,13 +212,13 @@ Given an ASCII string input_string, return an unquoted string. input_string is m
 Labels are short (up to 256 characters) textual identifiers; their abstract model is identical to their expression in the textual HTTP serialisation.
 
 ~~~ abnf
-label = ALPHA *255( ALPHA / DIGIT / "_" / "-" )
+label = ALPHA *255( ALPHA / DIGIT / "_" / "-"/ "*" / "/" )
 ~~~
 
 For example, a header whose value is defined as a label could look like:
 
 ~~~
-ExampleLabelHeader: foo
+ExampleLabelHeader: foo/bar
 ~~~
 
 
@@ -231,7 +231,7 @@ Given an ASCII string input_string, return a label. input_string is modified to 
 3. Let output_string be an empty string.
 4. While input_string is not empty:
    1. Let char be the result of removing the first character of input_string.
-   2. If char is not one of ALPHA, DIGIT, "_", or "-":
+   2. If char is not one of ALPHA, DIGIT, "_", "-", "*" or "/":
       1. Prepend char to input_string.
       2. Return output_string.
    3. Append char to output_string.
