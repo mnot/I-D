@@ -121,7 +121,7 @@ When a receiving implementation parses textual HTTP header fields (e.g., in HTTP
 Given an ASCII string input_string that represents the chosen header's field-value, return the parsed header value. Note that input_string may incorporate multiple header lines combined into one comma-separated field-value, as per {{?RFC7230}}, Section 3.2.2.
 
 1. Discard any OWS from the beginning of input_string.
-2. If the field-value is defined to be a dictionary, return the result of Parsing a Dictionary from Textual heaers ({{dictionary}}).
+2. If the field-value is defined to be a dictionary, return the result of Parsing a Dictionary from Textual headers ({{dictionary}}).
 3. If the field-value is defined to be a list, return the result of Parsing a List from Textual Headers ({{list}}).
 4. Otherwise, return the result of Parsing an Item from Textual Headers ({{item}}).
 
