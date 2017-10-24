@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                          October 24, 2017
+Internet-Draft                                          October 25, 2017
 Intended status: Informational
-Expires: April 27, 2018
+Expires: April 28, 2018
 
 
                       Structured Headers for HTTP
@@ -42,7 +42,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on April 27, 2018.
+   This Internet-Draft will expire on April 28, 2018.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Nottingham               Expires April 27, 2018                 [Page 1]
+Nottingham               Expires April 28, 2018                 [Page 1]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -78,22 +78,22 @@ Table of Contents
      4.1.  Numbers . . . . . . . . . . . . . . . . . . . . . . . . .   5
        4.1.1.  Parsing Numbers from Textual Headers  . . . . . . . .   6
      4.2.  Strings . . . . . . . . . . . . . . . . . . . . . . . . .   6
-       4.2.1.  Parsing a String from Textual Headers . . . . . . . .   6
-     4.3.  Labels  . . . . . . . . . . . . . . . . . . . . . . . . .   7
-       4.3.1.  Parsing a Label from Textual Headers  . . . . . . . .   7
-     4.4.  Binary Content  . . . . . . . . . . . . . . . . . . . . .   8
-       4.4.1.  Parsing Binary Content from Textual Headers . . . . .   8
+       4.2.1.  Parsing a String from Textual Headers . . . . . . . .   7
+     4.3.  Labels  . . . . . . . . . . . . . . . . . . . . . . . . .   8
+       4.3.1.  Parsing a Label from Textual Headers  . . . . . . . .   8
+     4.4.  Binary Content  . . . . . . . . . . . . . . . . . . . . .   9
+       4.4.1.  Parsing Binary Content from Textual Headers . . . . .   9
      4.5.  Items . . . . . . . . . . . . . . . . . . . . . . . . . .   9
-       4.5.1.  Parsing an Item from Textual Headers  . . . . . . . .   9
-     4.6.  Dictionaries  . . . . . . . . . . . . . . . . . . . . . .   9
-       4.6.1.  Parsing a Dictionary from Textual Headers . . . . . .  10
+       4.5.1.  Parsing an Item from Textual Headers  . . . . . . . .  10
+     4.6.  Dictionaries  . . . . . . . . . . . . . . . . . . . . . .  10
+       4.6.1.  Parsing a Dictionary from Textual Headers . . . . . .  11
      4.7.  Lists . . . . . . . . . . . . . . . . . . . . . . . . . .  11
-       4.7.1.  Parsing a List from Textual Headers . . . . . . . . .  11
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  11
+       4.7.1.  Parsing a List from Textual Headers . . . . . . . . .  12
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .  12
    7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
      7.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .  12
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  13
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Nottingham               Expires April 27, 2018                 [Page 2]
+Nottingham               Expires April 28, 2018                 [Page 2]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -153,7 +153,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    This document uses the Augmented Backus-Naur Form (ABNF) notation of
    [RFC5234], including the DIGIT, ALPHA and DQUOTE rules from that
-   document.
+   document.  It also includes the OWS rule from [RFC7230].
 
 2.  Specifying Structured Headers
 
@@ -165,7 +165,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
 
 
-Nottingham               Expires April 27, 2018                 [Page 3]
+Nottingham               Expires April 28, 2018                 [Page 3]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -189,9 +189,17 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 The FooExample HTTP header field conveys a list of numbers about how much Foo the
 sender has.
 
-FooExample is a Structured header [RFCxxxx]. Its value MUST be a list ([RFCxxxx],
-{{list}}) of numbers ([RFCxxxx], {{numbers}}). These numbers MUST be positive
-integers. Values that violate these requirements MUST be ignored.
+FooExample is a Structured header [RFCxxxx]. Its value MUST be a dictionary ([RFCxxxx],
+Section Y.Y).
+
+The dictionary MUST contain:
+
+* A member whose key is "foo", and whose value is an integer ([RFCxxxx], Section Y.Y),
+  indicating the number of foos in the message.
+* A member whose key is "bar", and whose value is a string ([RFCxxxx], Section Y.Y),
+  conveying the characteristic bar-ness of the message.
+
+If the parsed header field does not contain both, it MUST be ignored.
 
    Note that empty header field values are not allowed by the syntax,
    and therefore will be considered errors.
@@ -211,20 +219,19 @@ integers. Values that violate these requirements MUST be ignored.
 
    1.  Discard any OWS from the beginning of input_string.
 
-   2.  If the field-value is defined to be a dictionary, return the
-       result of Parsing a Dictionary from Textual heaers (Section 4.6).
-
-   3.  If the field-value is defined to be a list, return the result of
-       Parsing a List from Textual Headers (Section 4.7).
 
 
-
-
-
-Nottingham               Expires April 27, 2018                 [Page 4]
+Nottingham               Expires April 28, 2018                 [Page 4]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
+
+   2.  If the field-value is defined to be a dictionary, return the
+       result of Parsing a Dictionary from Textual headers
+       (Section 4.6).
+
+   3.  If the field-value is defined to be a list, return the result of
+       Parsing a List from Textual Headers (Section 4.7).
 
    4.  Otherwise, return the result of Parsing an Item from Textual
        Headers (Section 4.5).
@@ -251,36 +258,53 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    Abstractly, numbers are integers within the range -(2**53)+1 to
    (2**53)-1, with an optional fractional part.  They MUST NOT express
    greater magnitude or precision than an IEEE 754 double precision
-   number ([IEEE754]) provides.
+   number (binary64) ([IEEE754]) provides.
 
    The textual HTTP serialisation of numbers allows a maximum of fifteen
    digits between the integer and fractional part, along with an
    optional "-" indicating negative numbers.
 
-   number = ["-"] ( "." 1*15DIGIT /
-              DIGIT "." 1*14DIGIT /
-             2DIGIT "." 1*13DIGIT /
-             3DIGIT "." 1*12DIGIT /
-             4DIGIT "." 1*11DIGIT /
-             5DIGIT "." 1*10DIGIT /
-             6DIGIT "." 1*9DIGIT /
-             7DIGIT "." 1*8DIGIT /
-             8DIGIT "." 1*7DIGIT /
-             9DIGIT "." 1*6DIGIT /
-            10DIGIT "." 1*5DIGIT /
-            11DIGIT "." 1*4DIGIT /
-            12DIGIT "." 1*3DIGIT /
-            13DIGIT "." 1*2DIGIT /
-            14DIGIT "." 1DIGIT /
-            15DIGIT )
 
 
 
 
-Nottingham               Expires April 27, 2018                 [Page 5]
+
+
+
+
+
+
+
+
+
+Nottingham               Expires April 28, 2018                 [Page 5]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
+
+   number   = ["-"] ( "." 1*15DIGIT /
+                DIGIT "." 1*14DIGIT /
+               2DIGIT "." 1*13DIGIT /
+               3DIGIT "." 1*12DIGIT /
+               4DIGIT "." 1*11DIGIT /
+               5DIGIT "." 1*10DIGIT /
+               6DIGIT "." 1*9DIGIT /
+               7DIGIT "." 1*8DIGIT /
+               8DIGIT "." 1*7DIGIT /
+               9DIGIT "." 1*6DIGIT /
+              10DIGIT "." 1*5DIGIT /
+              11DIGIT "." 1*4DIGIT /
+              12DIGIT "." 1*3DIGIT /
+              13DIGIT "." 1*2DIGIT /
+              14DIGIT "." 1DIGIT /
+              15DIGIT )
+
+   integer  = ["-"] 1*15DIGIT
+   unsigned = 1*15DIGIT
+
+   integer and unsigned are defined as conveniences to specification
+   authors; if their use is specified and their ABNF is not matched, a
+   parser MUST consider it to be invalid.
 
    For example, a header whose value is defined as a number could look
    like:
@@ -306,10 +330,21 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    unescaped = %x20-21 / %x23-5B / %x5D-7E
    escape    = "\"
 
+
+
+
+Nottingham               Expires April 28, 2018                 [Page 6]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
    For example, a header whose value is defined as a string could look
    like:
 
    ExampleStringHeader: "hello world"
+
+   Note that strings only use DQUOTE as a delimiter; single quotes do
+   not delimit strings.
 
    Unicode is not directly supported in Structured Headers, because it
    causes a number of interoperability issues, and - with few exceptions
@@ -330,13 +365,6 @@ Internet-Draft         Structured Headers for HTTP          October 2017
        error.
 
    3.  Discard the first character of input_string.
-
-
-
-Nottingham               Expires April 27, 2018                 [Page 6]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
 
    4.  If input_string contains more than 1025 characters, throw an
        error.
@@ -359,6 +387,13 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
                3.  Append next_char to output_string.
 
+
+
+Nottingham               Expires April 28, 2018                 [Page 7]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
        3.  Else, if char is DQUOTE, remove the first character of
            input_string and return output_string.
 
@@ -372,12 +407,15 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    abstract model is identical to their expression in the textual HTTP
    serialisation.
 
-   label = ALPHA *255( ALPHA / DIGIT / "_" / "-" )
+   label = lcalpha *255( lcalpha / DIGIT / "_" / "-"/ "*" / "/" )
+   lcalpha = %x61-7A ; a-z
+
+   Note that labels can only contain lowercase letters.
 
    For example, a header whose value is defined as a label could look
    like:
 
-   ExampleLabelHeader: foo
+   ExampleLabelHeader: foo/bar
 
 4.3.1.  Parsing a Label from Textual Headers
 
@@ -386,13 +424,6 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    1.  If input_string contains more than 256 characters, throw an
        error.
-
-
-
-Nottingham               Expires April 27, 2018                 [Page 7]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
 
    2.  If the first character of input_string is not ALPHA, throw an
        error.
@@ -404,13 +435,20 @@ Internet-Draft         Structured Headers for HTTP          October 2017
        1.  Let char be the result of removing the first character of
            input_string.
 
-       2.  If char is not one of ALPHA, DIGIT, "_", or "-":
+       2.  If char is not one of ALPHA, DIGIT, "_", "-", "*" or "/":
 
            1.  Prepend char to input_string.
 
            2.  Return output_string.
 
        3.  Append char to output_string.
+
+
+
+Nottingham               Expires April 28, 2018                 [Page 8]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
 
    5.  Return output_string.
 
@@ -441,15 +479,6 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    2.  Discard the first character of input_string.
 
-
-
-
-
-Nottingham               Expires April 27, 2018                 [Page 8]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
-
    3.  Let b64_content be the result of removing content of input_string
        up to but not including the first character that is not in ALPHA,
        DIGIT, "+" or "/".
@@ -466,6 +495,16 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    (Section 4.3) or binary content (Section 4.4).
 
    item = number / string / label / binary
+
+
+
+
+
+
+Nottingham               Expires April 28, 2018                 [Page 9]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
 
 4.5.1.  Parsing an Item from Textual Headers
 
@@ -499,13 +538,6 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    There can be between 1 and 1024 members, and keys are required to be
    unique.
 
-
-
-Nottingham               Expires April 27, 2018                 [Page 9]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
-
    In the textual HTTP serialisation, keys and values are separated by
    "=" (without whitespace), and key/value pairs are separated by a
    comma with optional whitespace.
@@ -516,7 +548,19 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    could look like:
 
 ExampleDictHeader: foo=1.232, bar="We hold these truths...", baz=testing1
-    *baz=cHJldGVuZCB0aGlzIGlzIGJpbmFyeSBjb250ZW50Lg
+    baz=*cHJldGVuZCB0aGlzIGlzIGJpbmFyeSBjb250ZW50Lg
+
+   Typically, a header field specification will define the semantics of
+   individual keys, as well as whether their presence is required or
+   optional.  Recipients MUST ignore keys that are undefined or unknown,
+   unless the header field's specification specifically disallows them.
+
+
+
+Nottingham               Expires April 28, 2018                [Page 10]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
 
 4.6.1.  Parsing a Dictionary from Textual Headers
 
@@ -553,15 +597,6 @@ ExampleDictHeader: foo=1.232, bar="We hold these truths...", baz=testing1
 
    3.  Return dictionary.
 
-
-
-
-
-Nottingham               Expires April 27, 2018                [Page 10]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
-
 4.7.  Lists
 
    Lists are arrays of items (Section 4.5), with one to 1024 members.
@@ -575,6 +610,13 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    labels could look like:
 
    ExampleListHeader: foo, bar, baz_45
+
+
+
+Nottingham               Expires April 28, 2018                [Page 11]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
 
 4.7.1.  Parsing a List from Textual Headers
 
@@ -606,18 +648,6 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    This draft has no actions for IANA.
 
-
-
-
-
-
-
-
-Nottingham               Expires April 27, 2018                [Page 11]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
-
 6.  Security Considerations
 
    TBD
@@ -633,6 +663,17 @@ Internet-Draft         Structured Headers for HTTP          October 2017
               RFC 20, DOI 10.17487/RFC0020, October 1969,
               <https://www.rfc-editor.org/info/rfc20>.
 
+
+
+
+
+
+
+Nottingham               Expires April 28, 2018                [Page 12]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997, <https://www.rfc-
@@ -647,32 +688,21 @@ Internet-Draft         Structured Headers for HTTP          October 2017
               DOI 10.17487/RFC5234, January 2008, <https://www.rfc-
               editor.org/info/rfc5234>.
 
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing",
+              RFC 7230, DOI 10.17487/RFC7230, June 2014,
+              <https://www.rfc-editor.org/info/rfc7230>.
+
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
 7.2.  Informative References
 
-   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <https://www.rfc-editor.org/info/rfc7230>.
-
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
               DOI 10.17487/RFC7231, June 2014, <https://www.rfc-
               editor.org/info/rfc7231>.
-
-
-
-
-
-
-
-Nottingham               Expires April 27, 2018                [Page 12]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
 
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
@@ -695,34 +725,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Nottingham               Expires April 27, 2018                [Page 13]
+Nottingham               Expires April 28, 2018                [Page 13]
