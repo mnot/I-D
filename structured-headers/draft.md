@@ -133,23 +133,28 @@ Abstractly, numbers are integers within the range -(2\*\*53)+1 to (2\*\*53)-1, w
 The textual HTTP serialisation of numbers allows a maximum of fifteen digits between the integer and fractional part, along with an optional "-" indicating negative numbers.
 
 ~~~ abnf
-number = ["-"] ( "." 1*15DIGIT /
-           DIGIT "." 1*14DIGIT /
-          2DIGIT "." 1*13DIGIT /
-          3DIGIT "." 1*12DIGIT /
-          4DIGIT "." 1*11DIGIT /
-          5DIGIT "." 1*10DIGIT /
-          6DIGIT "." 1*9DIGIT /
-          7DIGIT "." 1*8DIGIT /
-          8DIGIT "." 1*7DIGIT /
-          9DIGIT "." 1*6DIGIT /
-         10DIGIT "." 1*5DIGIT /
-         11DIGIT "." 1*4DIGIT /
-         12DIGIT "." 1*3DIGIT /
-         13DIGIT "." 1*2DIGIT /
-         14DIGIT "." 1DIGIT /
-         15DIGIT )
+number   = ["-"] ( "." 1*15DIGIT /
+             DIGIT "." 1*14DIGIT /
+            2DIGIT "." 1*13DIGIT /
+            3DIGIT "." 1*12DIGIT /
+            4DIGIT "." 1*11DIGIT /
+            5DIGIT "." 1*10DIGIT /
+            6DIGIT "." 1*9DIGIT /
+            7DIGIT "." 1*8DIGIT /
+            8DIGIT "." 1*7DIGIT /
+            9DIGIT "." 1*6DIGIT /
+           10DIGIT "." 1*5DIGIT /
+           11DIGIT "." 1*4DIGIT /
+           12DIGIT "." 1*3DIGIT /
+           13DIGIT "." 1*2DIGIT /
+           14DIGIT "." 1DIGIT /
+           15DIGIT )
+
+integer  = ["-"] 1*15DIGIT
+unsigned = 1*15DIGIT
 ~~~
+
+integer and unsigned are defined as conveniences to specification authors; if their use is specified and their ABNF is not matched, a parser MUST consider it to be invalid.
 
 For example, a header whose value is defined as a number could look like:
 
