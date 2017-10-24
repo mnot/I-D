@@ -77,7 +77,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
 shown here.
 
-This document uses the Augmented Backus-Naur Form (ABNF) notation of {{!RFC5234}}, including the DIGIT, ALPHA and DQUOTE rules from that document.
+This document uses the Augmented Backus-Naur Form (ABNF) notation of {{!RFC5234}}, including the DIGIT, ALPHA and DQUOTE rules from that document. It also includes the OWS rule from {{!RFC7230}}.
 
 
 # Specifying Structured Headers {#specify}
