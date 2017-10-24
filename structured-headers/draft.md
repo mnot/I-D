@@ -309,15 +309,15 @@ Given an ASCII string input_string, return a mapping of (label, item). input_str
 
 1. Let dictionary be an empty mapping.
 2. While input_string is not empty:
-  1. Let this_key be the result of running Parse Label from Textual Headers ({{label}}) with input_string. If an error is encountered, throw it.
-  2. If dictionary already contains this_key, raise an error.
-  2. Consume a "=" from input_string; if none is present, raise an error.
-  3. Let this_value be the result of running Parse Item from Textual Headers ({{item}}) with input_string. If an error is encountered, throw it.
-  4. Add key this_key with value this_value to dictionary.
-  3. Discard any leading OWS from input_string.
-  4. If input_string is empty, return dictionary.
-  5. Consume a COMMA from input_string; if no comma is present, raise an error.
-  6. Discard any leading OWS from input_string.
+   1. Let this_key be the result of running Parse Label from Textual Headers ({{label}}) with input_string. If an error is encountered, throw it.
+   2. If dictionary already contains this_key, raise an error.
+   2. Consume a "=" from input_string; if none is present, raise an error.
+   3. Let this_value be the result of running Parse Item from Textual Headers ({{item}}) with input_string. If an error is encountered, throw it.
+   4. Add key this_key with value this_value to dictionary.
+   3. Discard any leading OWS from input_string.
+   4. If input_string is empty, return dictionary.
+   5. Consume a COMMA from input_string; if no comma is present, raise an error.
+   6. Discard any leading OWS from input_string.
 3. Return dictionary.
 
 
@@ -343,12 +343,12 @@ Given an ASCII string input_string, return a list of items. input_string is modi
 
 1. Let items be an empty array.
 2. While input_string is not empty:
-  1. Let item be the result of running Parse Item from Textual Headers ({{item}}) with input_string. If an error is encountered, throw it.
-  2. Append item to items.
-  3. Discard any leading OWS from input_string.
-  4. If input_string is empty, return items.
-  5. Consume a COMMA from input_string; if no comma is present, raise an error.
-  6. Discard any leading OWS from input_string.
+   1. Let item be the result of running Parse Item from Textual Headers ({{item}}) with input_string. If an error is encountered, throw it.
+   2. Append item to items.
+   3. Discard any leading OWS from input_string.
+   4. If input_string is empty, return items.
+   5. Consume a COMMA from input_string; if no comma is present, raise an error.
+   6. Discard any leading OWS from input_string.
 3. Return items.
 
 
