@@ -300,7 +300,7 @@ For example, a header field whose value is defined as a dictionary could look li
 
 ~~~
 ExampleDictHeader: foo=1.232, bar="We hold these truths...", baz=testing1
-    *baz=cHJldGVuZCB0aGlzIGlzIGJpbmFyeSBjb250ZW50Lg
+    baz=*cHJldGVuZCB0aGlzIGlzIGJpbmFyeSBjb250ZW50Lg
 ~~~
 
 ### Parsing a Dictionary from Textual Headers
