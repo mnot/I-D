@@ -128,7 +128,7 @@ This section defines the abstract value types that can be composed into Structur
 
 ## Numbers {#number}
 
-Abstractly, numbers are integers within the range -(2\*\*53)+1 to (2\*\*53)-1, with an optional fractional part. They MUST NOT express greater magnitude or precision than an IEEE 754 double precision number ({{IEEE754}}) provides.
+Abstractly, numbers are integers within the range -(2\*\*53)+1 to (2\*\*53)-1, with an optional fractional part. They MUST NOT express greater magnitude or precision than an IEEE 754 double precision number (binary64) ({{IEEE754}}) provides.
 
 The textual HTTP serialisation of numbers allows a maximum of fifteen digits between the integer and fractional part, along with an optional "-" indicating negative numbers.
 
