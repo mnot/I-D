@@ -228,8 +228,11 @@ Given an ASCII string input_string, return an unquoted string. input_string is m
 Labels are short (up to 256 characters) textual identifiers; their abstract model is identical to their expression in the textual HTTP serialisation.
 
 ~~~ abnf
-label = ALPHA *255( ALPHA / DIGIT / "_" / "-"/ "*" / "/" )
+label = lcalpha *255( lcalpha / DIGIT / "_" / "-"/ "*" / "/" )
+lcalpha = %x61-7A ; a-z
 ~~~
+
+Note that labels can only contain lowercase letters.
 
 For example, a header whose value is defined as a label could look like:
 
