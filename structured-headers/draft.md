@@ -106,6 +106,22 @@ integers. Values that violate these requirements MUST be ignored.
 Note that empty header field values are not allowed by the syntax, and therefore will be considered errors.
 
 
+# Parsing Requirements for Textual Headers {#text}
+
+When a receiving implementation parses textual HTTP header fields (e.g., in HTTP/1 or HTTP/2) that are known to be Structured Headers, it is important that care be taken, as there are a number of edge cases that can cause interoperability or even security problems. This section specifies the algorithm for doing so.
+
+Given an ASCII string input_string that represents the chosen header's field-value, return the parsed header value. Note that input_string may incorporate multiple header lines combined into one comma-separated field-value, as per {{?RFC7230}}, Section 3.2.2.
+
+1. Discard any OWS from the beginning of input_string.
+2. If the field-value is defined to be a dictionary, return the result of Parsing a Dictionary from Textual heaers ({{dictionary}}).
+3. If the field-value is defined to be a list, return the result of Parsing a List from Textual Headers ({{list}}).
+4. Otherwise, return the result of Parsing an Item from Textual Headers ({{item}}).
+
+Note that in the case of lists and dictionaries, this has the effect of combining multiple instances of the header field into one. However, for singular items, it has the effect of selecting the first value and ignoring any subsequent instances of the field, as well as extraneous text after the item.
+
+Additionally, note that the effect of the parsing algorithms as specified is generally intolerant of syntax errors; if one is encountered, the typical response is to throw an error, thereby discarding the entire header field value.
+
+
 # Structured Header Data Types {#types}
 
 This section defines the abstract value types that can be composed into Structured Headers, along with the textual HTTP serialisations of them.
@@ -170,7 +186,7 @@ Unicode is not directly supported in Structured Headers, because it causes a num
 
 When it is necessary for a field value to convey non-ASCII string content, binary content ({{binary}}) SHOULD be specified, along with a character encoding (most likely, UTF-8).
 
-### Parsing Strings from Textual Headers
+### Parsing a String from Textual Headers
 
 Given an ASCII string input_string, return an unquoted string. input_string is modified to remove the parsed value.
 
@@ -206,7 +222,7 @@ ExampleLabelHeader: foo
 ~~~
 
 
-### Parsing Labels from Textual Headers
+### Parsing a Label from Textual Headers
 
 Given an ASCII string input_string, return a label. input_string is modified to remove the parsed value.
 
@@ -258,7 +274,7 @@ An item is can be a number ({{number}}), string ({{string}}), label ({{label}}) 
 item = number / string / label / binary
 ~~~
 
-### Parsing Item from Textual Headers
+### Parsing an Item from Textual Headers
 
 Given an ASCII string input_string, return an item. input_string is modified to remove the parsed value.
 
@@ -287,7 +303,7 @@ ExampleDictHeader: foo=1.232, bar="We hold these truths...", baz=testing1
     *baz=cHJldGVuZCB0aGlzIGlzIGJpbmFyeSBjb250ZW50Lg
 ~~~
 
-### Parsing Dictionaries from Textual Headers
+### Parsing a Dictionary from Textual Headers
 
 Given an ASCII string input_string, return a mapping of (label, item). input_string is modified to remove the parsed value.
 
@@ -321,7 +337,7 @@ For example, a header field whose value is defined as a list of labels could loo
 ExampleListHeader: foo, bar, baz_45
 ~~~
 
-### Parsing Lists from Textual Headers
+### Parsing a List from Textual Headers
 
 Given an ASCII string input_string, return a list of items. input_string is modified to remove the parsed value.
 
@@ -334,14 +350,6 @@ Given an ASCII string input_string, return a list of items. input_string is modi
   5. Consume a COMMA from input_string; if no comma is present, raise an error.
   6. Discard any leading OWS from input_string.
 3. Return items.
-
-
-# Parsing Structured Headers from Textual Headers {#text}
-
-In HTTP/2 and previous versions of the protocol, HTTP headers are strongly encouraged to contain only ASCII characters, to aid interoperability. Therefore, Structured Headers that contain non-ASCII content are encoded to be safe when used over these protocol versions.
-
-
-Given an ASCII string input_string that represents the chosen header's field-value, return the parsed header value. Note that input_string may incorporate multiple header lines, as per {{?RFC7230}}, Section 3.2.2.
 
 
 
