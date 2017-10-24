@@ -98,9 +98,17 @@ For example:
 The FooExample HTTP header field conveys a list of numbers about how much Foo the
 sender has.
 
-FooExample is a Structured header [RFCxxxx]. Its value MUST be a list ([RFCxxxx],
-{{list}}) of numbers ([RFCxxxx], {{numbers}}). These numbers MUST be positive
-integers. Values that violate these requirements MUST be ignored.
+FooExample is a Structured header [RFCxxxx]. Its value MUST be a dictionary ([RFCxxxx],
+Section Y.Y). 
+
+The dictionary MUST contain:
+
+* A member whose key is "foo", and whose value is an integer ([RFCxxxx], Section Y.Y),
+  indicating the number of foos in the message.
+* A member whose key is "bar", and whose value is a string ([RFCxxxx], Section Y.Y),
+  conveying the characteristic bar-ness of the message.
+
+If the parsed header field does not contain both, it MUST be ignored.
 ~~~
 
 Note that empty header field values are not allowed by the syntax, and therefore will be considered errors.
