@@ -195,9 +195,12 @@ For example, a header whose value is defined as a string could look like:
 ExampleStringHeader: "hello world"
 ~~~
 
+Note that strings only use DQUOTE as a delimiter; single quotes do not delimit strings.
+
 Unicode is not directly supported in Structured Headers, because it causes a number of interoperability issues, and -- with few exceptions -- header values do not require it.
 
 When it is necessary for a field value to convey non-ASCII string content, binary content ({{binary}}) SHOULD be specified, along with a character encoding (most likely, UTF-8).
+
 
 ### Parsing a String from Textual Headers
 
