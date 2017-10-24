@@ -316,6 +316,9 @@ ExampleDictHeader: foo=1.232, bar="We hold these truths...", baz=testing1
     baz=*cHJldGVuZCB0aGlzIGlzIGJpbmFyeSBjb250ZW50Lg
 ~~~
 
+Typically, a header field specification will define the semantics of individual keys, as well as whether their presence is required or optional. Recipients MUST ignore keys that are undefined or unknown, unless the header field's specification specifically disallows them.
+
+
 ### Parsing a Dictionary from Textual Headers
 
 Given an ASCII string input_string, return a mapping of (label, item). input_string is modified to remove the parsed value.
