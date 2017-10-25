@@ -3,9 +3,10 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                          October 25, 2017
-Intended status: Informational
-Expires: April 28, 2018
+Internet-Draft                                                    Fastly
+Intended status: Informational                                 P-H. Kamp
+Expires: April 28, 2018                        The Varnish Cache Project
+                                                        October 25, 2017
 
 
                       Structured Headers for HTTP
@@ -19,13 +20,13 @@ Abstract
 Note to Readers
 
    The issues list for this draft can be found at
-   https://github.com/mnot/I-D/labels/structured-headers.
+   https://github.com/mnot/I-D/labels/structured-headers [1].
 
    The most recent (often, unpublished) draft is at
-   https://mnot.github.io/I-D/structured-headers/.
+   https://mnot.github.io/I-D/structured-headers/ [2].
 
    Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
-   pages/structured-headers.
+   pages/structured-headers [3].
 
 Status of This Memo
 
@@ -35,7 +36,7 @@ Status of This Memo
    Internet-Drafts are working documents of the Internet Engineering
    Task Force (IETF).  Note that other groups may also distribute
    working documents as Internet-Drafts.  The list of current Internet-
-   Drafts is at http://datatracker.ietf.org/drafts/current/.
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
 
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
@@ -52,15 +53,14 @@ Copyright Notice
 
 
 
-
-Nottingham               Expires April 28, 2018                 [Page 1]
+Nottingham & Kamp        Expires April 28, 2018                 [Page 1]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents
-   (http://trustee.ietf.org/license-info) in effect on the date of
+   (https://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
@@ -72,7 +72,7 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
-   2.  Specifying Structured Headers . . . . . . . . . . . . . . . .   3
+   2.  Specifying Structured Headers . . . . . . . . . . . . . . . .   4
    3.  Parsing Requirements for Textual Headers  . . . . . . . . . .   4
    4.  Structured Header Data Types  . . . . . . . . . . . . . . . .   5
      4.1.  Numbers . . . . . . . . . . . . . . . . . . . . . . . . .   5
@@ -94,7 +94,8 @@ Table of Contents
    7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
      7.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
      7.2.  Informative References  . . . . . . . . . . . . . . . . .  13
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
+     7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  13
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
 
@@ -103,16 +104,19 @@ Table of Contents
    decisions - and pitfalls - for a prospective HTTP header field
    author.
 
-   Likewise, parsers often need to be written for specific HTTP headers,
-   because each has slightly different handling of what looks like
-   common syntax.
 
 
 
-Nottingham               Expires April 28, 2018                 [Page 2]
+
+
+Nottingham & Kamp        Expires April 28, 2018                 [Page 2]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
+
+   Likewise, parsers often need to be written for specific HTTP headers,
+   because each has slightly different handling of what looks like
+   common syntax.
 
    This document introduces structured HTTP header field values
    (hereafter, Structured Headers) to address these problems.
@@ -155,20 +159,23 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    [RFC5234], including the DIGIT, ALPHA and DQUOTE rules from that
    document.  It also includes the OWS rule from [RFC7230].
 
+
+
+
+
+
+
+Nottingham & Kamp        Expires April 28, 2018                 [Page 3]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
 2.  Specifying Structured Headers
 
    HTTP headers that use Structured Headers need to be defined to do so
    explicitly; recipients and generators need to know that the
    requirements of this document are in effect.  The simplest way to do
    that is by referencing this document in its definition.
-
-
-
-
-Nottingham               Expires April 28, 2018                 [Page 3]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
 
    The field's definition will also need to specify the field-value's
    allowed syntax, in terms of the types described in Section 4, along
@@ -212,19 +219,19 @@ If the parsed header field does not contain both, it MUST be ignored.
    cases that can cause interoperability or even security problems.
    This section specifies the algorithm for doing so.
 
+
+
+Nottingham & Kamp        Expires April 28, 2018                 [Page 4]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
    Given an ASCII string input_string that represents the chosen
    header's field-value, return the parsed header value.  Note that
    input_string may incorporate multiple header lines combined into one
    comma-separated field-value, as per [RFC7230], Section 3.2.2.
 
    1.  Discard any OWS from the beginning of input_string.
-
-
-
-Nottingham               Expires April 28, 2018                 [Page 4]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
 
    2.  If the field-value is defined to be a dictionary, return the
        result of Parsing a Dictionary from Textual headers
@@ -255,10 +262,11 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
 4.1.  Numbers
 
-   Abstractly, numbers are integers within the range -(2**53)+1 to
-   (2**53)-1, with an optional fractional part.  They MUST NOT express
-   greater magnitude or precision than an IEEE 754 double precision
-   number (binary64) ([IEEE754]) provides.
+   Abstractly, numbers are integers with an optional fractional part.
+   They have a maximum of fifteen digits available to be used in one or
+   both of the parts, as reflected in the ABNF below; this allows them
+   to be stored as IEEE 754 double precision numbers (binary64)
+   ([IEEE754]).
 
    The textual HTTP serialisation of numbers allows a maximum of fifteen
    digits between the integer and fractional part, along with an
@@ -269,15 +277,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
 
 
-
-
-
-
-
-
-
-
-Nottingham               Expires April 28, 2018                 [Page 5]
+Nottingham & Kamp        Expires April 28, 2018                 [Page 5]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -333,7 +333,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
 
 
-Nottingham               Expires April 28, 2018                 [Page 6]
+Nottingham & Kamp        Expires April 28, 2018                 [Page 6]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -389,7 +389,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
 
 
-Nottingham               Expires April 28, 2018                 [Page 7]
+Nottingham & Kamp        Expires April 28, 2018                 [Page 7]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -445,7 +445,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
 
 
-Nottingham               Expires April 28, 2018                 [Page 8]
+Nottingham & Kamp        Expires April 28, 2018                 [Page 8]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -501,7 +501,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
 
 
-Nottingham               Expires April 28, 2018                 [Page 9]
+Nottingham & Kamp        Expires April 28, 2018                 [Page 9]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -547,8 +547,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    For example, a header field whose value is defined as a dictionary
    could look like:
 
-ExampleDictHeader: foo=1.232, bar="We hold these truths...", baz=testing1
-    baz=*cHJldGVuZCB0aGlzIGlzIGJpbmFyeSBjb250ZW50Lg
+   ExampleDictHeader: foo=1.23, da="Applepie", en=*w4ZibGV0w6ZydGUK
 
    Typically, a header field specification will define the semantics of
    individual keys, as well as whether their presence is required or
@@ -557,7 +556,8 @@ ExampleDictHeader: foo=1.232, bar="We hold these truths...", baz=testing1
 
 
 
-Nottingham               Expires April 28, 2018                [Page 10]
+
+Nottingham & Kamp        Expires April 28, 2018                [Page 10]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -613,7 +613,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
 
 
-Nottingham               Expires April 28, 2018                [Page 11]
+Nottingham & Kamp        Expires April 28, 2018                [Page 11]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -656,28 +656,23 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
 7.1.  Normative References
 
-   [IEEE754]  IEEE, "IEEE Standard for Floating-Point Arithmetic", 2008,
-              <http://grouper.ieee.org/groups/754/>.
-
    [RFC0020]  Cerf, V., "ASCII format for network interchange", STD 80,
               RFC 20, DOI 10.17487/RFC0020, October 1969,
               <https://www.rfc-editor.org/info/rfc20>.
 
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
 
 
 
 
 
-
-Nottingham               Expires April 28, 2018                [Page 12]
+Nottingham & Kamp        Expires April 28, 2018                [Page 12]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
-
-   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997, <https://www.rfc-
-              editor.org/info/rfc2119>.
 
    [RFC4648]  Josefsson, S., "The Base16, Base32, and Base64 Data
               Encodings", RFC 4648, DOI 10.17487/RFC4648, October 2006,
@@ -685,8 +680,8 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
               Specifications: ABNF", STD 68, RFC 5234,
-              DOI 10.17487/RFC5234, January 2008, <https://www.rfc-
-              editor.org/info/rfc5234>.
+              DOI 10.17487/RFC5234, January 2008,
+              <https://www.rfc-editor.org/info/rfc5234>.
 
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
@@ -699,25 +694,46 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
 7.2.  Informative References
 
+   [IEEE754]  IEEE, "IEEE Standard for Floating-Point Arithmetic", 2008,
+              <http://grouper.ieee.org/groups/754/>.
+
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
-              DOI 10.17487/RFC7231, June 2014, <https://www.rfc-
-              editor.org/info/rfc7231>.
+              DOI 10.17487/RFC7231, June 2014,
+              <https://www.rfc-editor.org/info/rfc7231>.
 
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
-              DOI 10.17487/RFC7540, May 2015, <https://www.rfc-
-              editor.org/info/rfc7540>.
+              DOI 10.17487/RFC7540, May 2015,
+              <https://www.rfc-editor.org/info/rfc7540>.
 
-Author's Address
+7.3.  URIs
+
+   [1] https://github.com/mnot/I-D/labels/structured-headers
+
+   [2] https://mnot.github.io/I-D/structured-headers/
+
+   [3] https://github.com/mnot/I-D/commits/gh-pages/structured-headers
+
+Authors' Addresses
 
    Mark Nottingham
+   Fastly
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
 
 
 
+Nottingham & Kamp        Expires April 28, 2018                [Page 13]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
+   Poul-Henning Kamp
+   The Varnish Cache Project
+
+   Email: phk@varnish-cache.org
 
 
 
@@ -725,4 +741,44 @@ Author's Address
 
 
 
-Nottingham               Expires April 28, 2018                [Page 13]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham & Kamp        Expires April 28, 2018                [Page 14]
