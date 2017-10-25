@@ -40,7 +40,7 @@ informative:
 
 --- abstract
 
-This document describes Structured Headers, a way of simplifying HTTP header field definition and parsing.
+This document describes Structured Headers, a way of simplifying HTTP header field definition and parsing. It is intended for use by new HTTP header fields.
 
 
 --- note_Note_to_Readers
