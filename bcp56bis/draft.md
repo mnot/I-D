@@ -290,7 +290,7 @@ standards cannot usurp this space, since it might conflict with existing resourc
 implementation and deployment.
 
 In other words, applications that use HTTP MUST NOT associate application semantics with specific
-URL paths on arbitrary servers. Doing so inappropriately conflates the identity of the resource (its URL) with te capabilities that resource supports, bringing about many of the same interoperability problems that {{?RFC4367}} warns of.
+URL paths on arbitrary servers. Doing so inappropriately conflates the identity of the resource (its URL) with the capabilities that resource supports, bringing about many of the same interoperability problems that {{?RFC4367}} warns of.
 
 For example, specifying that a "GET to the URL /foo retrieves a bar document" is bad practice.
 Likewise, specifying "The widget API is at the path /bar" violates {{!RFC7320}}.
