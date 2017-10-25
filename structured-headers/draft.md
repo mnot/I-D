@@ -17,9 +17,14 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization:
+    organization: Fastly
     email: mnot@mnot.net
     uri: https://www.mnot.net/
+ -
+    ins: P-H. Kamp
+    name: Poul-Henning Kamp
+    organization: The Varnish Cache Project
+    email: phk@varnish-cache.org
 
 normative:
   IEEE754:
