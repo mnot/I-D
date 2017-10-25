@@ -27,6 +27,8 @@ author:
     email: phk@varnish-cache.org
 
 normative:
+
+informative:
   IEEE754:
     target: http://grouper.ieee.org/groups/754/
     title: IEEE Standard for Floating-Point Arithmetic
@@ -34,8 +36,6 @@ normative:
     -
       organization: IEEE
     date: 2008
-
-informative:
 
 
 --- abstract
@@ -141,7 +141,7 @@ This section defines the abstract value types that can be composed into Structur
 
 ## Numbers {#number}
 
-Abstractly, numbers are integers within the range -(2\*\*53)+1 to (2\*\*53)-1, with an optional fractional part. They MUST NOT express greater magnitude or precision than an IEEE 754 double precision number (binary64) ({{IEEE754}}) provides.
+Abstractly, numbers are integers with an optional fractional part. They have a maximum of fifteen digits available to be used in one or both of the parts, as reflected in the ABNF below; this allows them to be stored as IEEE 754 double precision numbers (binary64) ({{IEEE754}}).
 
 The textual HTTP serialisation of numbers allows a maximum of fifteen digits between the integer and fractional part, along with an optional "-" indicating negative numbers.
 
