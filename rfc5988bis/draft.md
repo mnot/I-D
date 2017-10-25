@@ -1,7 +1,7 @@
 ---
 title: Web Linking
 abbrev:
-date: September 2017
+date: October 2017
 category: std
 obsoletes: 5988
 number: 8288
