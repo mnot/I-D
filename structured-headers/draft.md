@@ -128,9 +128,10 @@ Given an ASCII string input_string that represents the chosen header's field-val
 1. Discard any OWS from the beginning of input_string.
 2. If the field-value is defined to be a dictionary, return the result of Parsing a Dictionary from Textual headers ({{dictionary}}).
 3. If the field-value is defined to be a list, return the result of Parsing a List from Textual Headers ({{list}}).
-4. Otherwise, return the result of Parsing an Item from Textual Headers ({{item}}).
+4. If the field-value is defined to be a parameterised label, return the result of Parsing a Parameterised Label from Textual headers ({{param}}).
+5. Otherwise, return the result of Parsing an Item from Textual Headers ({{item}}).
 
-Note that in the case of lists and dictionaries, this has the effect of combining multiple instances of the header field into one. However, for singular items, it has the effect of selecting the first value and ignoring any subsequent instances of the field, as well as extraneous text after the item.
+Note that in the case of lists and dictionaries, this has the effect of combining multiple instances of the header field into one. However, for singular items and parameterised labels, it has the effect of selecting the first value and ignoring any subsequent instances of the field, as well as extraneous text afterwards.
 
 Additionally, note that the effect of the parsing algorithms as specified is generally intolerant of syntax errors; if one is encountered, the typical response is to throw an error, thereby discarding the entire header field value.
 
@@ -262,6 +263,43 @@ Given an ASCII string input_string, return a label. input_string is modified to 
 5. Return output_string.
 
 
+## Parameterised Labels {#param}
+
+Parameterised Labels are labels ({{label}}) with up to 256 parameters; each parameter has a label and an optional value that is an item ({{item}}). Ordering between parameters is not significant, and duplicate parameters MUST be considered an error.
+
+The textual HTTP serialisation uses semicolons (";") to delimit the parameters from each other, and equals ("=") to delimit the parameter name from its value.
+
+~~~ abnf
+parameterised = label *( OWS ";" OWS label [ "=" item ] )
+~~~
+
+For example,
+
+~~~
+ExampleParamHeader: abc; a=1; b=2; c
+~~~
+
+### Parsing a Parameterised Label from Textual Headers
+
+Given an ASCII string input_string, return a label with an mapping of parameters. input_string is modified to remove the parsed value.
+
+1. Let 'label' be the result of Parsing a Label from Textual Headers ({{label}}) from input_string.
+2. Let 'parameters' be an empty mapping.
+3. In a loop:
+   1. Consume any OWS from the beginning of input_string.
+   2. If the first character of input_string is not ";", exit the loop.
+   3. Consume a ";" character from the beginning of input_string.
+   4. Consume any OWS from the beginning of input_string.
+   5. let param_name be the result of Parsing a Label from Textual Headers ({{label}}) from input_string.
+   6. If param_name is already present in parameters, throw an error.
+   7. Let param_value be a null value.
+   8. If the first character of input_string is "=":
+      1. Consume the "=" character at the beginning of input_string.
+      2. Let param_value be the result of Parsing an Item from Textual Headers ({{item}}) from input_string.
+   9. Add param_name to parameters with the value param_value.
+4. Return the tuple (label, parameters).
+
+
 ## Binary Content {#binary}
 
 Arbitrary binary content up to 16K in size can be conveyed in Structured Headers.
@@ -297,6 +335,7 @@ An item is can be a number ({{number}}), string ({{string}}), label ({{label}}) 
 ~~~ abnf
 item = number / string / label / binary
 ~~~
+
 
 ### Parsing an Item from Textual Headers
 
@@ -349,19 +388,27 @@ Given an ASCII string input_string, return a mapping of (label, item). input_str
 
 ## Lists {#list}
 
-Lists are arrays of items ({{item}}), with one to 1024 members.
+Lists are arrays of items ({{item}}) or parameterised labels ({{param}}, with one to 1024 members.
 
-In the textual HTTP serialisation, each item is separated by a comma and optional whitespace.
+In the textual HTTP serialisation, each member is separated by a comma and optional whitespace.
 
 ~~~ abnf
-list = item 1*1024( OWS "," OWS item )
+list = list_member 1*1024( OWS "," OWS list_member )
+list_member = item / paramterised_label
 ~~~
 
 For example, a header field whose value is defined as a list of labels could look like:
 
 ~~~
-ExampleListHeader: foo, bar, baz_45
+ExampleLabelListHeader: foo, bar, baz_45
 ~~~
+
+and a header field whose value is defined as a list of parameterised labels could look like:
+
+~~~
+ExampleParamListHeader: abc/def; g="hi";j, klm/nop
+~~~
+
 
 ### Parsing a List from Textual Headers
 

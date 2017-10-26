@@ -30,7 +30,7 @@ informative:
 
 --- abstract
 
-This specification introduces the HTTP `Variants` response header field to communicate what representations are available for a given resource.
+This specification introduces the HTTP "Variants response header field to communicate what representations are available for a given resource, and the "Variant-Key" to indicate which representation was selected. It is an augmentation of the "Vary" mechanism in HTTP caching.
 
 --- note_Note_to_Readers
 
@@ -71,13 +71,15 @@ Transfer-Encoding: chunked
 [French content]
 ~~~
 
-Provided that the cache has full knowledge of the semantics of `Accept-Language` and `Content-Language`, it will know that a French representation is available and might be able to infer that an English representation is not available. But, it does not know (for example) whether a Japanese representation is available without making another request, thereby incurring possibly unnecessary latency.
+Provided that the cache has full knowledge of the semantics of Accept-Language and Content-Language, it will know that a French representation is available and might be able to infer that an English representation is not available. But, it does not know (for example) whether a Japanese representation is available without making another request, thereby incurring possibly unnecessary latency.
 
-This specification introduces the HTTP `Variants` response header field to enumerate the available variant representations on the origin server, to provide clients and caches with enough information to properly satisfy requests -- either by selecting a response from cache or by forwarding the request towards the origin.
+This specification introduces the HTTP Variants response header field to enumerate the available variant representations on the origin server, to provide clients and caches with enough information to properly satisfy requests -- either by selecting a response from cache or by forwarding the request towards the origin.
 
-`Variants` is best used when content negotiation takes place over a constrained set of representations; since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations. Likewise, it works best for content negotiation over header fields whose semantics are well-understood, since it requires a selection algorithm to be specified ahead of time.
+Its companion the Variant-Key response header field indicates which representation was selected, so that it can be reliably reused in the future.
 
-This header field is a simpler version of the `Alternates` header field introduced by {{?RFC2295}}; unlike that mechanism, `Variants` does not require specification of each combination of attributes, and does not assume that each combination has a unique URL.
+Variants is best used when content negotiation takes place over a constrained set of representations; since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations. Likewise, it works best for content negotiation over header fields whose semantics are well-understood, since it requires a selection algorithm to be specified ahead of time.
+
+This header field is a simpler version of the Alternates header field introduced by {{?RFC2295}}; unlike that mechanism, Variants does not require specification of each combination of attributes, and does not assume that each combination has a unique URL.
 
 
 ## Notational Conventions
@@ -94,20 +96,20 @@ Additionally, it uses the "field-name", "OWS" and "token" rules from {{!RFC7230}
 
 # The "Variants" HTTP Header Field
 
-The `Variants` HTTP response header field is used to indicate what other representations are available for a given resource at the time that the response is produced.
+The Variants HTTP response header field is used to indicate what other representations are available for a given resource at the time that the response is produced.
 
 ~~~
-Variants        = 1#variant
-variant         = field-name *( OWS ";" OWS available-value )
+Variants        = 1#variant-item
+variant-item    = field-name *( OWS ";" OWS available-value )
 available-value = token
 ~~~
 
-Each `variant` indicates a response header field that carries a value that clients might proactively negotiate for; each parameter on it indicates a value for which there is an available representation on the origin server.
+Each "variant-item" indicates a request header field that carries a value that clients might proactively negotiate for; each parameter on it indicates a value for which there is an available representation on the origin server.
 
 So, given this example header field:
 
 ~~~
-Variants: Content-Encoding;gzip
+Variants: Accept-Encoding;gzip
 ~~~
 
 a recipient can infer that the only content-coding available for that resource is "gzip" (along with the "identity" non-encoding; see {{content-encoding}).
@@ -115,29 +117,52 @@ a recipient can infer that the only content-coding available for that resource i
 Given:
 
 ~~~
-Variants: content-encoding
+Variants: accept-encoding
 ~~~
 
-a recipient can infer that no content-codings are supported. Note that as always with header field names, it is case-insensitive.
+a recipient can infer that no content-codings (beyond identity) are supported. Note that as always with header field names, it is case-insensitive.
 
 A more complex example:
 
 ~~~
-Variants: Content-Encoding;gzip;brotli, Content-Language;en ;fr
+Variants: Accept-Encoding;gzip;br, Accept-Language;en ;fr
 ~~~
 
-Here, recipients can infer that two Content-Encodings are available, as well as two content languages. Note that, as with all HTTP header fields that use the "#" list rule (see {{!RFC7230}}, Section 7), they might occur in the same header field or separately, like this:
+Here, recipients can infer that two content-codings are available, as well as two content languages. Note that, as with all HTTP header fields that use the "#" list rule (see {{!RFC7230}}, Section 7), they might occur in the same header field or separately, like this:
 
 ~~~
-Variants: Content-Encoding;gzip;brotli
-Variants: Content-Language;en ;fr
+Variants: Accept-Encoding;gzip;brotli
+Variants: Accept-Language;en ;fr
 ~~~
 
-The ordering of available-values after the field-name is significant, as it might be used by the header's algorithm for selecting a response.
+The ordering of available-values after the field-name is significant, as it might be used by the header's algorithm for selecting a response. The ordering of variants is only significant to the Variant-Key header field.
 
-Senders SHOULD consistently send `Variant` header fields on all cacheable (as per {{!RFC7234}}, Section 3) responses for a resource, since its absence will trigger caches to fall back to `Vary` processing.
+Origin servers SHOULD consistently send Variant header fields on all cacheable (as per {{!RFC7234}}, Section 3) responses for a resource, since its absence will trigger caches to fall back to Vary processing.
 
-Likewise, servers MUST send the `Content-*` response headers nominated by `Variants` when sending that header.
+Likewise, servers MUST send the Variant-Key response header field when sending that Variants.
+
+
+# The "Variant-Key" HTTP Header Field
+
+The Variant-Key HTTP response header field is used to indicate the value(s) from the Variants header field that identify the representation it occurs within.
+
+~~~
+Variant-Key     = 1#available-value
+~~~
+
+Each value indicates the selected available-value, in the same order as the variants listed in the Variants header field.
+
+For example:
+
+~~~
+Variants: Content-Encoding;gzip;br, Content-Language;en ;fr
+Variant-Key: gzip, fr
+~~~
+
+This header pair indicates that the representation is used for responses that have a "gzip" content-coding and "fr" content-language.
+
+Note that this is different than the semantics of any Content-* header that might be associated with the response; in the example above, it might be that the a gzip'd version of the French content is not available, so it does not include Content-Encoding: gzip.
+
 
 
 ## Defining Content Negotiation Using Variants
@@ -145,19 +170,40 @@ Likewise, servers MUST send the `Content-*` response headers nominated by `Varia
 To be usable with Variants, proactive content negotiation mechanisms need to be specified to take advantage of it. Specifically, they:
 
 * MUST define a request header field that advertises the clients preferences or capabilities, whose field-name SHOULD begin with "Accept-".
-* MUST define a response header field that indicates the result of selection, whose field-name SHOULD begin with "Content-" and whose field-value SHOULD be a token.
-* MUST define an algorithm for selecting a result. It MUST return an ordered list of selected responses, given the incoming request, a list of selected responses, and the list of available values from `Variants`. If the result is an empty list, it implies that the cache does not contain an appropriate response.
+* MUST define the syntax of available-values that will occur in Variants and Variant-Key.
+* MUST define an algorithm for selecting a result. It MUST return an ordered list of selected responses, given the incoming request, a list of selected responses, and the list of available values from Variants. If the result is an empty list, it implies that the cache does not contain an appropriate response.
 
 {{backports}} fulfils these requirements for some existing proactive content negotiation mechanisms in HTTP.
-
-Note that unlike Vary, Variants does not use stored request headers to help select a response; this is why defining a response header to aid identification and selection is required.
 
 
 ## Cache Behaviour {#cache}
 
-Caches that implement the `Variants` header field and the relevant semantics of the field-name it contains can use that knowledge to either select an appropriate stored representation, or forward the request if no appropriate representation is stored.
+Caches that implement the Variants header field and the relevant semantics of the field-name it contains can use that knowledge to either select an appropriate stored representation, or forward the request if no appropriate representation is stored.
 
-They do so by running this algorithm (or its functional equivalent) upon receiving a request, `incoming-request`:
+They do so by running this algorithm (or its functional equivalent) upon receiving a request, incoming-request:
+
+1. Let selected-responses be a list of the stored responses suitable for reuse as defined in {{!RFC7234}} Section 4, excepting the requirement to calculate a secondary cache key.
+2. Order selected-responses by the "Date" header field, most recent to least recent.
+3. If the freshest (as per {{!RFC7234}}, Section 4.2) has one or more "Variants" header field(s):
+   1. Select one member of selected_responses and let its "Variants" header field-value(s) be variants-header. This SHOULD be the most recent response, but MAY be from an older one as long as it is still fresh.
+   1. Let possible-values be an empty list.
+   2. For each variant in variants-header:
+      1. If variant's field-name corresponds to the response header field identified by a content negotiation mechanism that the implementation supports:
+         1. Let request-value be the field-value of the request header field(s) identified by the content negotiation mechanism.
+         2. Let available-values be a list containing all available-value for the variant.
+         3. Let selected-values be the result of running the algorithm defined by the content negotiation mechanism with request-value and available-values.
+         4. Append selected-values to possible-values.
+         
+         At this point, possible-values will be a list of lists, each member of the top-level list corresponding to a variant-item in the Variants header field-value, containing zero or more items indicating available-values that are actually present and fresh in the cache, in order of preference, greatest to least.
+
+   3. If any member of possible-values is an empty list, stop processing and forward the request towards the origin, since an acceptable response is not stored in the cache.
+   4. 
+
+
+
+         4. For the purposes of selecting a response, ignore the content negotiation's identified request header field-name in the "Vary" header field of each member of `selected-responses`, if present.
+
+
 
 1. Let `selected-responses` be a list of the stored responses suitable for reuse as defined in {{!RFC7234}} Section 4, excepting the requirement to calculate a secondary cache key.
 2. Order `selected-responses` by the "Date" header field, most recent to least recent.
@@ -198,13 +244,14 @@ Content-Type: image/gif
 Content-Language: en
 Cache-Control: max-age=3600
 Variants: Content-Language;en;de
+Variant-Key: en
 Vary: Accept-Language
 Transfer-Encoding: chunked
 ~~~
 
 Upon receipt of this response, the cache knows that two representations of this resource are available, one with a `Content-Language` of "en", and another whose `Content-Language` is "de".
 
-Subsequent requests (while this response is fresh) will cause the cache to either reuse this response or forward the request, depending on what the selection algorithm `Accept-Language` and `Content-Language` determines.
+Subsequent requests (while this response is fresh) will cause the cache to either reuse this response or forward the request, depending on what the selection algorithm determines.
 
 So, a request with "en" in `Accept-Language` is received and its q-value indicates that it is acceptable, the stored response is used. A request that indicates that "de" is acceptable will be forwarded to the origin, thereby populating the cache. A cache receiving a request that indicates both languages are acceptable will use the q-value to make a determination of what response to return.
 
@@ -212,7 +259,7 @@ A cache receiving a request that does not list either language as acceptable (or
 
 Note that `Accept-Language` is listed in Vary, to assure backwards-compatibility with caches that do not support `Variants`.
 
-Also, note that is is the response header which is listed in Variants, not the request header (the opposite of Vary).
+Also, note that is is the appropriate value from `Variant-Key` which is listed in Variants, not the request header (the opposite of Vary).
 
 
 ### Multiple Variants
@@ -231,6 +278,7 @@ Content-Language: en
 Content-Encoding: br
 Variants: Content-Language;en;jp;de
 Variants: Content-Encoding;br;gzip
+Variant-Key: en, br
 Vary: Accept-Language, Accept-Encoding
 Transfer-Encoding: chunked
 ~~~
@@ -255,6 +303,7 @@ Content-Type: image/gif
 Content-Language: en
 Content-Encoding: br
 Variants: Content-Encoding;br;gzip
+Variant-Key: br
 Vary: Accept-Language, Accept-Encoding
 Transfer-Encoding: chunked
 ~~~
