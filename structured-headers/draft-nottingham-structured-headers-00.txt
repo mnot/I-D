@@ -5,8 +5,8 @@
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                    Fastly
 Intended status: Informational                                 P-H. Kamp
-Expires: April 29, 2018                        The Varnish Cache Project
-                                                        October 26, 2017
+Expires: April 30, 2018                        The Varnish Cache Project
+                                                        October 27, 2017
 
 
                       Structured Headers for HTTP
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on April 29, 2018.
+   This Internet-Draft will expire on April 30, 2018.
 
 
 
@@ -53,7 +53,7 @@ Status of This Memo
 
 
 
-Nottingham & Kamp        Expires April 29, 2018                 [Page 1]
+Nottingham & Kamp        Expires April 30, 2018                 [Page 1]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -80,36 +80,36 @@ Table of Contents
    2.  Specifying Structured Headers . . . . . . . . . . . . . . . .   4
    3.  Parsing Requirements for Textual Headers  . . . . . . . . . .   5
    4.  Structured Header Data Types  . . . . . . . . . . . . . . . .   5
-     4.1.  Numbers . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     4.1.  Numbers . . . . . . . . . . . . . . . . . . . . . . . . .   6
        4.1.1.  Parsing Numbers from Textual Headers  . . . . . . . .   6
-     4.2.  Strings . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     4.2.  Strings . . . . . . . . . . . . . . . . . . . . . . . . .   7
        4.2.1.  Parsing a String from Textual Headers . . . . . . . .   7
      4.3.  Labels  . . . . . . . . . . . . . . . . . . . . . . . . .   8
        4.3.1.  Parsing a Label from Textual Headers  . . . . . . . .   8
-     4.4.  Binary Content  . . . . . . . . . . . . . . . . . . . . .   9
-       4.4.1.  Parsing Binary Content from Textual Headers . . . . .   9
-     4.5.  Items . . . . . . . . . . . . . . . . . . . . . . . . . .  10
-       4.5.1.  Parsing an Item from Textual Headers  . . . . . . . .  10
-     4.6.  Dictionaries  . . . . . . . . . . . . . . . . . . . . . .  10
-       4.6.1.  Parsing a Dictionary from Textual Headers . . . . . .  11
-     4.7.  Lists . . . . . . . . . . . . . . . . . . . . . . . . . .  12
-       4.7.1.  Parsing a List from Textual Headers . . . . . . . . .  12
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  12
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  13
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .  13
-     7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  14
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  14
+     4.4.  Parameterised Labels  . . . . . . . . . . . . . . . . . .   9
+       4.4.1.  Parsing a Parameterised Label from Textual Headers  .   9
+     4.5.  Binary Content  . . . . . . . . . . . . . . . . . . . . .  10
+       4.5.1.  Parsing Binary Content from Textual Headers . . . . .  11
+     4.6.  Items . . . . . . . . . . . . . . . . . . . . . . . . . .  11
+       4.6.1.  Parsing an Item from Textual Headers  . . . . . . . .  11
+     4.7.  Dictionaries  . . . . . . . . . . . . . . . . . . . . . .  12
+       4.7.1.  Parsing a Dictionary from Textual Headers . . . . . .  12
+     4.8.  Lists . . . . . . . . . . . . . . . . . . . . . . . . . .  13
+       4.8.1.  Parsing a List from Textual Headers . . . . . . . . .  13
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  14
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  14
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  15
+     7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  15
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  15
 
 
 
 
 
 
-
-
-Nottingham & Kamp        Expires April 29, 2018                 [Page 2]
+Nottingham & Kamp        Expires April 30, 2018                 [Page 2]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -165,7 +165,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
 
 
-Nottingham & Kamp        Expires April 29, 2018                 [Page 3]
+Nottingham & Kamp        Expires April 30, 2018                 [Page 3]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -195,22 +195,24 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    For example:
 
-# FooExample Header
+   # FooExample Header
 
-The FooExample HTTP header field conveys a list of numbers about how much Foo the
-sender has.
+   The FooExample HTTP header field conveys a list of numbers about how
+   much Foo the sender has.
 
-FooExample is a Structured header [RFCxxxx]. Its value MUST be a dictionary ([RFCxxxx],
-Section Y.Y).
+   FooExample is a Structured header [RFCxxxx]. Its value MUST be a
+   dictionary ([RFCxxxx], Section Y.Y).
 
-The dictionary MUST contain:
+   The dictionary MUST contain:
 
-* A member whose key is "foo", and whose value is an integer ([RFCxxxx], Section Y.Y),
-  indicating the number of foos in the message.
-* A member whose key is "bar", and whose value is a string ([RFCxxxx], Section Y.Y),
-  conveying the characteristic bar-ness of the message.
+   * A member whose key is "foo", and whose value is an integer
+     ([RFCxxxx], Section Y.Y), indicating the number of foos in
+     the message.
+   * A member whose key is "bar", and whose value is a string
+     ([RFCxxxx], Section Y.Y), conveying the characteristic bar-ness
+     of the message.
 
-If the parsed header field does not contain both, it MUST be ignored.
+   If the parsed header field does not contain both, it MUST be ignored.
 
    Note that empty header field values are not allowed by the syntax,
    and therefore will be considered errors.
@@ -219,9 +221,7 @@ If the parsed header field does not contain both, it MUST be ignored.
 
 
 
-
-
-Nottingham & Kamp        Expires April 29, 2018                 [Page 4]
+Nottingham & Kamp        Expires April 30, 2018                 [Page 4]
 
 Internet-Draft         Structured Headers for HTTP          October 2017
 
@@ -243,19 +243,23 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    2.  If the field-value is defined to be a dictionary, return the
        result of Parsing a Dictionary from Textual headers
-       (Section 4.6).
+       (Section 4.7).
 
    3.  If the field-value is defined to be a list, return the result of
-       Parsing a List from Textual Headers (Section 4.7).
+       Parsing a List from Textual Headers (Section 4.8).
 
-   4.  Otherwise, return the result of Parsing an Item from Textual
-       Headers (Section 4.5).
+   4.  If the field-value is defined to be a parameterised label, return
+       the result of Parsing a Parameterised Label from Textual headers
+       (Section 4.4).
+
+   5.  Otherwise, return the result of Parsing an Item from Textual
+       Headers (Section 4.6).
 
    Note that in the case of lists and dictionaries, this has the effect
    of combining multiple instances of the header field into one.
-   However, for singular items, it has the effect of selecting the first
-   value and ignoring any subsequent instances of the field, as well as
-   extraneous text after the item.
+   However, for singular items and parameterised labels, it has the
+   effect of selecting the first value and ignoring any subsequent
+   instances of the field, as well as extraneous text afterwards.
 
    Additionally, note that the effect of the parsing algorithms as
    specified is generally intolerant of syntax errors; if one is
@@ -268,20 +272,21 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    into Structured Headers, along with the textual HTTP serialisations
    of them.
 
+
+
+
+
+
+Nottingham & Kamp        Expires April 30, 2018                 [Page 5]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
 4.1.  Numbers
 
    Abstractly, numbers are integers with an optional fractional part.
    They have a maximum of fifteen digits available to be used in one or
    both of the parts, as reflected in the ABNF below; this allows them
-
-
-
-
-Nottingham & Kamp        Expires April 29, 2018                 [Page 5]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
-
    to be stored as IEEE 754 double precision numbers (binary64)
    ([IEEE754]).
 
@@ -322,21 +327,23 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    TBD
 
+
+
+
+
+
+
+Nottingham & Kamp        Expires April 30, 2018                 [Page 6]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
 4.2.  Strings
 
    Abstractly, strings are ASCII strings [RFC0020], excluding control
    characters (i.e., the range 0x20 to 0x7E).  Note that this excludes
    tabs, newlines and carriage returns.  They may be at most 1024
    characters long.
-
-
-
-
-
-Nottingham & Kamp        Expires April 29, 2018                 [Page 6]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
 
    The textual HTTP serialisation of strings uses a backslash ("") to
    escape double quotes and backslashes in strings.
@@ -359,7 +366,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    - header values do not require it.
 
    When it is necessary for a field value to convey non-ASCII string
-   content, binary content (Section 4.4) SHOULD be specified, along with
+   content, binary content (Section 4.5) SHOULD be specified, along with
    a character encoding (most likely, UTF-8).
 
 4.2.1.  Parsing a String from Textual Headers
@@ -379,20 +386,20 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    5.  While input_string is not empty:
 
+
+
+
+Nottingham & Kamp        Expires April 30, 2018                 [Page 7]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
        1.  Let char be the result of removing the first character of
            input_string.
 
        2.  If char is a backslash ("\"):
 
            1.  If input_string is now empty, throw an error.
-
-
-
-
-Nottingham & Kamp        Expires April 29, 2018                 [Page 7]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
 
            2.  Else:
 
@@ -434,21 +441,21 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    1.  If input_string contains more than 256 characters, throw an
        error.
 
+
+
+
+
+Nottingham & Kamp        Expires April 30, 2018                 [Page 8]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
    2.  If the first character of input_string is not ALPHA, throw an
        error.
 
    3.  Let output_string be an empty string.
 
    4.  While input_string is not empty:
-
-
-
-
-
-Nottingham & Kamp        Expires April 29, 2018                 [Page 8]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
 
        1.  Let char be the result of removing the first character of
            input_string.
@@ -463,7 +470,72 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    5.  Return output_string.
 
-4.4.  Binary Content
+4.4.  Parameterised Labels
+
+   Parameterised Labels are labels (Section 4.3) with up to 256
+   parameters; each parameter has a label and an optional value that is
+   an item (Section 4.6).  Ordering between parameters is not
+   significant, and duplicate parameters MUST be considered an error.
+
+   The textual HTTP serialisation uses semicolons (";") to delimit the
+   parameters from each other, and equals ("=") to delimit the parameter
+   name from its value.
+
+   parameterised = label *( OWS ";" OWS label [ "=" item ] )
+
+   For example,
+
+   ExampleParamHeader: abc; a=1; b=2; c
+
+4.4.1.  Parsing a Parameterised Label from Textual Headers
+
+   Given an ASCII string input_string, return a label with an mapping of
+   parameters. input_string is modified to remove the parsed value.
+
+   1.  Let 'label' be the result of Parsing a Label from Textual Headers
+       (Section 4.3) from input_string.
+
+   2.  Let 'parameters' be an empty mapping.
+
+   3.  In a loop:
+
+
+
+Nottingham & Kamp        Expires April 30, 2018                 [Page 9]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
+       1.  Consume any OWS from the beginning of input_string.
+
+       2.  If the first character of input_string is not ";", exit the
+           loop.
+
+       3.  Consume a ";" character from the beginning of input_string.
+
+       4.  Consume any OWS from the beginning of input_string.
+
+       5.  let param_name be the result of Parsing a Label from Textual
+           Headers (Section 4.3) from input_string.
+
+       6.  If param_name is already present in parameters, throw an
+           error.
+
+       7.  Let param_value be a null value.
+
+       8.  If the first character of input_string is "=":
+
+           1.  Consume the "=" character at the beginning of
+               input_string.
+
+           2.  Let param_value be the result of Parsing an Item from
+               Textual Headers (Section 4.6) from input_string.
+
+       9.  Add param_name to parameters with the value param_value.
+
+   4.  Return the tuple (label, parameters).
+
+4.5.  Binary Content
 
    Arbitrary binary content up to 16K in size can be conveyed in
    Structured Headers.
@@ -480,7 +552,17 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    ExampleBinaryHeader: *cHJldGVuZCB0aGlzIGlzIGJpbmFyeSBjb250ZW50Lg
 
-4.4.1.  Parsing Binary Content from Textual Headers
+
+
+
+
+
+Nottingham & Kamp        Expires April 30, 2018                [Page 10]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
+4.5.1.  Parsing Binary Content from Textual Headers
 
    Given an ASCII string input_string, return binary content.
    input_string is modified to remove the parsed value.
@@ -498,24 +580,16 @@ Internet-Draft         Structured Headers for HTTP          October 2017
        b64_content, synthesising padding if necessary.  If an error is
        encountered, throw it.
 
-
-
-
-Nottingham & Kamp        Expires April 29, 2018                 [Page 9]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
-
    5.  Return binary_content.
 
-4.5.  Items
+4.6.  Items
 
    An item is can be a number (Section 4.1), string (Section 4.2), label
-   (Section 4.3) or binary content (Section 4.4).
+   (Section 4.3) or binary content (Section 4.5).
 
    item = number / string / label / binary
 
-4.5.1.  Parsing an Item from Textual Headers
+4.6.1.  Parsing an Item from Textual Headers
 
    Given an ASCII string input_string, return an item. input_string is
    modified to remove the parsed value.
@@ -531,8 +605,18 @@ Internet-Draft         Structured Headers for HTTP          October 2017
        throwing any errors encountered.
 
    4.  If the first character of input_string is "*", process
-       input_string as binary content (Section 4.4) and return the
+       input_string as binary content (Section 4.5) and return the
        result, throwing any errors encountered.
+
+
+
+
+
+
+Nottingham & Kamp        Expires April 30, 2018                [Page 11]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
 
    5.  If the first character of input_string is an ALPHA, process
        input_string as a label (Section 4.3) and return the result,
@@ -540,10 +624,10 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    6.  Otherwise, throw an error.
 
-4.6.  Dictionaries
+4.7.  Dictionaries
 
    Dictionaries are unordered maps of key-value pairs, where the keys
-   are labels (Section 4.3) and the values are items (Section 4.5).
+   are labels (Section 4.3) and the values are items (Section 4.6).
    There can be between 1 and 1024 members, and keys are required to be
    unique.
 
@@ -552,15 +636,6 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    comma with optional whitespace.
 
    dictionary = label "=" item *1023( OWS "," OWS label "=" item )
-
-
-
-
-
-Nottingham & Kamp        Expires April 29, 2018                [Page 10]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
 
    For example, a header field whose value is defined as a dictionary
    could look like:
@@ -572,7 +647,7 @@ Internet-Draft         Structured Headers for HTTP          October 2017
    optional.  Recipients MUST ignore keys that are undefined or unknown,
    unless the header field's specification specifically disallows them.
 
-4.6.1.  Parsing a Dictionary from Textual Headers
+4.7.1.  Parsing a Dictionary from Textual Headers
 
    Given an ASCII string input_string, return a mapping of (label,
    item). input_string is modified to remove the parsed value.
@@ -590,8 +665,17 @@ Internet-Draft         Structured Headers for HTTP          October 2017
        3.  Consume a "=" from input_string; if none is present, raise an
            error.
 
+
+
+
+
+Nottingham & Kamp        Expires April 30, 2018                [Page 12]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
        4.  Let this_value be the result of running Parse Item from
-           Textual Headers (Section 4.5) with input_string.  If an error
+           Textual Headers (Section 4.6) with input_string.  If an error
            is encountered, throw it.
 
        5.  Add key this_key with value this_value to dictionary.
@@ -607,32 +691,28 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    3.  Return dictionary.
 
+4.8.  Lists
 
+   Lists are arrays of items (Section 4.6) or parameterised labels
+   (Section 4.4, with one to 1024 members.
 
+   In the textual HTTP serialisation, each member is separated by a
+   comma and optional whitespace.
 
-
-
-
-Nottingham & Kamp        Expires April 29, 2018                [Page 11]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
-
-4.7.  Lists
-
-   Lists are arrays of items (Section 4.5), with one to 1024 members.
-
-   In the textual HTTP serialisation, each item is separated by a comma
-   and optional whitespace.
-
-   list = item 1*1024( OWS "," OWS item )
+   list = list_member 1*1024( OWS "," OWS list_member )
+   list_member = item / paramterised_label
 
    For example, a header field whose value is defined as a list of
    labels could look like:
 
-   ExampleListHeader: foo, bar, baz_45
+   ExampleLabelListHeader: foo, bar, baz_45
 
-4.7.1.  Parsing a List from Textual Headers
+   and a header field whose value is defined as a list of parameterised
+   labels could look like:
+
+   ExampleParamListHeader: abc/def; g="hi";j, klm/nop
+
+4.8.1.  Parsing a List from Textual Headers
 
    Given an ASCII string input_string, return a list of items.
    input_string is modified to remove the parsed value.
@@ -641,8 +721,17 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 
    2.  While input_string is not empty:
 
+
+
+
+
+Nottingham & Kamp        Expires April 30, 2018                [Page 13]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
        1.  Let item be the result of running Parse Item from Textual
-           Headers (Section 4.5) with input_string.  If an error is
+           Headers (Section 4.6) with input_string.  If an error is
            encountered, throw it.
 
        2.  Append item to items.
@@ -661,18 +750,6 @@ Internet-Draft         Structured Headers for HTTP          October 2017
 5.  IANA Considerations
 
    This draft has no actions for IANA.
-
-
-
-
-
-
-
-
-Nottingham & Kamp        Expires April 29, 2018                [Page 12]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
 
 6.  Security Considerations
 
@@ -700,6 +777,15 @@ Internet-Draft         Structured Headers for HTTP          October 2017
               DOI 10.17487/RFC5234, January 2008,
               <https://www.rfc-editor.org/info/rfc5234>.
 
+
+
+
+
+Nottingham & Kamp        Expires April 30, 2018                [Page 14]
+
+Internet-Draft         Structured Headers for HTTP          October 2017
+
+
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
@@ -718,17 +804,6 @@ Internet-Draft         Structured Headers for HTTP          October 2017
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
               DOI 10.17487/RFC7231, June 2014,
               <https://www.rfc-editor.org/info/rfc7231>.
-
-
-
-
-
-
-
-Nottingham & Kamp        Expires April 29, 2018                [Page 13]
-
-Internet-Draft         Structured Headers for HTTP          October 2017
-
 
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
@@ -762,23 +837,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Nottingham & Kamp        Expires April 29, 2018                [Page 14]
+Nottingham & Kamp        Expires April 30, 2018                [Page 15]
