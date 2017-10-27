@@ -285,8 +285,8 @@ ExampleParamHeader: abc; a=1; b=2; c
 
 Given an ASCII string input_string, return a label with an mapping of parameters. input_string is modified to remove the parsed value.
 
-1. Let 'label' be the result of Parsing a Label from Textual Headers ({{label}}) from input_string.
-2. Let 'parameters' be an empty mapping.
+1. Let primary_label be the result of Parsing a Label from Textual Headers ({{label}}) from input_string.
+2. Let parameters be an empty mapping.
 3. In a loop:
    1. Consume any OWS from the beginning of input_string.
    2. If the first character of input_string is not ";", exit the loop.
@@ -300,7 +300,7 @@ Given an ASCII string input_string, return a label with an mapping of parameters
       2. Let param_value be the result of Parsing an Item from Textual Headers ({{item}}) from input_string.
    9. If parameters has more than 255 members, throw an error.
    0. Add param_name to parameters with the value param_value.
-4. Return the tuple (label, parameters).
+4. Return the tuple (primary_label, parameters).
 
 
 ## Binary Content {#binary}
