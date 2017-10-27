@@ -272,7 +272,7 @@ Parameterised Labels are labels ({{label}}) with up to 256 parameters; each para
 The textual HTTP serialisation uses semicolons (";") to delimit the parameters from each other, and equals ("=") to delimit the parameter name from its value.
 
 ~~~ abnf
-parameterised = label *( OWS ";" OWS label [ "=" item ] )
+parameterised = label *256( OWS ";" OWS label [ "=" item ] )
 ~~~
 
 For example,
@@ -298,7 +298,8 @@ Given an ASCII string input_string, return a label with an mapping of parameters
    8. If the first character of input_string is "=":
       1. Consume the "=" character at the beginning of input_string.
       2. Let param_value be the result of Parsing an Item from Textual Headers ({{item}}) from input_string.
-   9. Add param_name to parameters with the value param_value.
+   9. If parameters has more than 255 members, throw an error.
+   0. Add param_name to parameters with the value param_value.
 4. Return the tuple (label, parameters).
 
 
