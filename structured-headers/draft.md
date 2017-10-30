@@ -314,7 +314,7 @@ Arbitrary binary content up to 16K in size can be conveyed in Structured Headers
 The textual HTTP serialisation indicates their presence by a leading "*", with the data encoded using Base 64 Encoding {{!RFC4648}}, without padding (as "=" might be confused with the use of dictionaries).
 
 ~~~ abnf
-binary = '*' 1*21846(base64)
+binary = "*" 1*21846(base64)
 base64 = ALPHA / DIGIT / "+" / "/"
 ~~~
 
