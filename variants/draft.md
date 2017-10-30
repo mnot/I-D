@@ -96,7 +96,7 @@ Additionally, it uses the "field-name", "OWS" and "token" rules from {{!RFC7230}
 
 # The "Variants" HTTP Header Field {#variants}
 
-The Variants HTTP response header field is used to indicate what other representations are available for a given resource at the time that the response is produced.
+The Variants HTTP response header field indicates what representations are available for a given resource at the time that the response is produced, by enumerating the request header fields that it varies on, along with the values that are available for each.
 
 ~~~
 Variants        = 1#variant-item
@@ -120,7 +120,7 @@ Given:
 Variants: accept-encoding
 ~~~
 
-a recipient can infer that no content-codings (beyond identity) are supported. Note that as always with header field names, it is case-insensitive.
+a recipient can infer that no content-codings (beyond identity) are supported. Note that as always, field-name is case-insensitive.
 
 A more complex example:
 
@@ -135,7 +135,7 @@ Variants: Accept-Encoding;gzip;brotli
 Variants: Accept-Language;en ;fr
 ~~~
 
-The ordering of available-values after the field-name is significant, as it might be used by the header's algorithm for selecting a response. 
+The ordering of available-values after the field-name is significant, as it might be used by the header's algorithm for selecting a response (see {{content-encoding}} for an example of this). 
 
 The ordering of the request header fields themselves indicates descending application of preferences; for example, in the headers above, a cache will serve gzip'd content regardless of language if it is available.
 
@@ -146,7 +146,7 @@ Likewise, servers MUST send the Variant-Key response header field when sending V
 
 ## Relationship to Vary {#vary}
 
-Caches that fully implement this specification SHOULD ignore request header fields in the `Vary` header for the purposes of secondary cache key calculation ({{!RFC7234}}, Section 4.1) when their semantics are understood, implemented as per this specification, and their corresponding response header field is listed in `Variants`.
+Caches that fully implement this specification SHOULD ignore request header fields in the `Vary` header for the purposes of secondary cache key calculation ({{!RFC7234}}, Section 4.1) when their semantics are implemented as per this specification and their corresponding response header field is listed in `Variants`.
 
 If any member of the Vary header does not have a corresponding variant that is understood by the implementation, it is still subject to the requirements there.
 
@@ -161,6 +161,8 @@ Variant-Key     = 1#available-value
 
 Each value indicates the selected available-value, in the same order as the variants listed in the Variants header field.
 
+Therefore, Variant-Key MUST be the same length (in comma-separated members) as Variants, and each member MUST correspond in position to its companion in Variants.
+
 For example:
 
 ~~~
@@ -170,8 +172,7 @@ Variant-Key: gzip, fr
 
 This header pair indicates that the representation is used for responses that have a "gzip" content-coding and "fr" content-language.
 
-Note that this is different than the semantics of any Content-* header that might be associated with the response; in the example above, it might be that a gzip'd version of the French content is not available, in which case it will not include "Content-Encoding: gzip".
-
+Note that the contents of Variant-Key are only used to indicate what request attributes are identified with the response containing it; this is different from headers like Content-Encoding, which indicate attributes of the response. In the example above, it might be that a gzip'd version of the French content is not available, in which case it will not include "Content-Encoding: gzip", but still have "gzip" in Variant-Key.
 
 
 # Defining Content Negotiation Using Variants {#define}
@@ -180,7 +181,7 @@ To be usable with Variants, proactive content negotiation mechanisms need to be 
 
 * MUST define a request header field that advertises the clients preferences or capabilities, whose field-name SHOULD begin with "Accept-".
 * MUST define the syntax of available-values that will occur in Variants and Variant-Key.
-* MUST define an algorithm for selecting a result. It MUST return a list of available-values that are suitable for the request, in order of preference, given the value of the request header nominated above and an available-values-list from the Variants header. If the result is an empty list, it implies that the cache cannot satisfy the request.
+* MUST define an algorithm for selecting a result. It MUST return a list of available-values that are suitable for the request, in order of preference, given the value of the request header nominated above and an available-values list from the Variants header. If the result is an empty list, it implies that the cache cannot satisfy the request.
 
 {{backports}} fulfils these requirements for some existing proactive content negotiation mechanisms in HTTP.
 
@@ -213,6 +214,22 @@ This will result in a list of lists, where each member of the top-level list ind
 A Cache MAY satisfy the request with any response whose Variant-Key header corresponds to a member of sorted-keys; when doing so, it SHOULD use the most preferred available response.
 
 See also {{vary}} regarding handling of Vary.
+
+
+## Find Available Keys {#find}
+
+Given sorted-variants, a list of lists, and key-stub, a list representing a partial key, and possible-keys, a list:
+
+1. Let sorted-values be the first member of sorted-variants.
+2. For each sorted-value in sorted-values:
+   1. Let this-key be a copy of key-stub.
+   2. Append sorted-value to this-key.
+   3. Let remaining-variants be a copy of all of the members of sorted-variants except the first.
+   4. If remaining-variants is empty, append this-key to possible-keys.
+   5. Else, run Find Available Keys on remaining-variants, this-key and possible-keys.
+   6. Return possible-keys.
+
+
 
 
 ## Example of Cache Behaviour
@@ -258,19 +275,6 @@ Variant-Key: fr, gzip
 
 it could be used to satisfy the first preference.
 
-
-## Find Available Keys {#find}
-
-Given sorted-variants, a list of lists, and key-stub, a list representing a partial key, and possible-keys, a list:
-
-1. Let sorted-values be the first member of sorted-variants.
-2. For each sorted-value in sorted-values:
-   1. Let this-key be a copy of key-stub.
-   2. Append sorted-value to this-key.
-   3. Let remaining-variants be a copy of all of the members of sorted-variants except the first.
-   4. If remaining-variants is empty, append this-key to possible-keys.
-   5. Else, run Find Available Keys on remaining-variants, this-key and possible-keys.
-   6. Return possible-keys.
 
 
 # Example Headers {#examples}
@@ -396,11 +400,11 @@ Thanks to Hooman Beheshti for his review and input.
 This appendix defines the required information to use existing proactive content negotiation mechanisms (as defined in {{!RFC7231}}, Section 5.3) with the `Variants` header field.
 
 
-## Content-Encoding {#content-encoding}
+## Accept-Encoding {#content-encoding}
 
-When negotiating for the `Content-Encoding` response header field's value, the applicable request header field is `Accept-Encoding`, as per {{!RFC7231}} Section 5.3.4.
+This section defines handling for `Accept-Encoding` variants, as per {{!RFC7231}} Section 5.3.4.
 
-To perform content negotiation for Content-Encoding given an request-value and available-values:
+To perform content negotiation for Accept-Encoding given an request-value and available-values:
 
 1. Let preferred-codings be a list of the codings in the request-value, ordered by their weight, highest to lowest, as per {{!RFC7231}} Section 5.3.1 (omitting any coding with a weight of 0). If "Accept-Encoding" is not present or empty, preferred-codings will be empty.
 2. If "identity" is not a member of preferred-codings, append "identity".
@@ -411,11 +415,11 @@ To perform content negotiation for Content-Encoding given an request-value and a
 Implementations MAY remove other members of `available-responses` based upon their `weight` or other criteria before returning. For example, they might wish to return an empty list when the client's most-preferred available response is not stored, so as to populate the cache as well as honour the client's preferences.
 
 
-## Content-Language {#content-language}
+## Accept-Language {#content-language}
 
-When negotiating for the `Content-Language` response header field's value, the applicable request header field is `Accept-Language`, as per {{!RFC7231}} Section 5.3.5.
+This section defines handling for `Accept-Language` variants, as per {{!RFC7231}} Section 5.3.5.
 
-To perform content negotiation for Content-Language given an request-value and available-values:
+To perform content negotiation for Accept-Language given an request-value and available-values:
 
 1. Let preferred-langs be a list of the language-ranges in the request-value, ordered by their weight, highest to lowest, as per {{!RFC7231}} Section 5.3.1 (omitting any language-range with a weight of 0).
 2. If preferred-langs is empty, append "*".
