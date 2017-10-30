@@ -273,7 +273,7 @@ Representing a first preference of a French, gzip'd response. Thus, if a cache h
 Variant-Key: fr, gzip
 ~~~
 
-it could be used to satisfy the first preference.
+it could be used to satisfy the first preference. If not, responses corresponding to the other keys could be returned, or the request could be forwarded towards the origin.
 
 
 
