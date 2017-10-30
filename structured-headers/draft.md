@@ -45,12 +45,16 @@ This document describes Structured Headers, a way of simplifying HTTP header fie
 
 --- note_Note_to_Readers
 
+*RFC EDITOR: please remove this section before publication*
+
 The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/structured-headers>.
 
 The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/structured-headers/>.
 
 Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/structured-headers>.
 
+See also the draft's current status in the IETF datatracker, at
+<https://datatracker.ietf.org/doc/draft-nottingham-structured-headers/>.
 
 --- middle
 
