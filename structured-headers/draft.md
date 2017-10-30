@@ -139,7 +139,7 @@ Given an ASCII string input_string that represents the chosen header's field-val
 
 Note that in the case of lists and dictionaries, this has the effect of combining multiple instances of the header field into one. However, for singular items and parameterised labels, it has the effect of selecting the first value and ignoring any subsequent instances of the field, as well as extraneous text afterwards.
 
-Additionally, note that the effect of the parsing algorithms as specified is generally intolerant of syntax errors; if one is encountered, the typical response is to throw an error, thereby discarding the entire header field value.
+Additionally, note that the effect of the parsing algorithms as specified is generally intolerant of syntax errors; if one is encountered, the typical response is to throw an error, thereby discarding the entire header field value. This includes any non-ASCII characters in input_string.
 
 
 # Structured Header Data Types {#types}
@@ -207,7 +207,7 @@ For example, a header whose value is defined as a string could look like:
 ExampleStringHeader: "hello world"
 ~~~
 
-Note that strings only use DQUOTE as a delimiter; single quotes do not delimit strings.
+Note that strings only use DQUOTE as a delimiter; single quotes do not delimit strings. Furthermore, only DQUOTE and "\" can be escaped; other sequences MUST generate an error.
 
 Unicode is not directly supported in Structured Headers, because it causes a number of interoperability issues, and -- with few exceptions -- header values do not require it.
 
