@@ -93,7 +93,7 @@ This document uses the Augmented Backus-Naur Form (ABNF) notation of {{!RFC5234}
 
 HTTP headers that use Structured Headers need to be defined to do so explicitly; recipients and generators need to know that the requirements of this document are in effect. The simplest way to do that is by referencing this document in its definition.
 
-The field's definition will also need to specify the field-value's allowed syntax, in terms of the types described in {{types}}, along with their associated semantics. 
+The field's definition will also need to specify the field-value's allowed syntax, in terms of the types described in {{types}}, along with their associated semantics.
 
 Field definitions MUST NOT relax or otherwise modify the requirements of this specification; doing so would preclude handling by generic software.
 
@@ -401,7 +401,7 @@ In the textual HTTP serialisation, each member is separated by a comma and optio
 
 ~~~ abnf
 list = list_member 1*1024( OWS "," OWS list_member )
-list_member = item / paramterised_label
+list_member = item / parameterised
 ~~~
 
 For example, a header field whose value is defined as a list of labels could look like:
