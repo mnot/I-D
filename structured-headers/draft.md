@@ -258,11 +258,11 @@ ExampleLabelHeader: foo/bar
 Given an ASCII string input_string, return a label. input_string is modified to remove the parsed value.
 
 1. If input_string contains more than 256 characters, throw an error.
-2. If the first character of input_string is not ALPHA, throw an error.
+2. If the first character of input_string is not lcalpha, throw an error.
 3. Let output_string be an empty string.
 4. While input_string is not empty:
    1. Let char be the result of removing the first character of input_string.
-   2. If char is not one of ALPHA, DIGIT, "_", "-", "*" or "/":
+   2. If char is not one of lcalpha, DIGIT, "_", "-", "*" or "/":
       1. Prepend char to input_string.
       2. Return output_string.
    3. Append char to output_string.
@@ -352,7 +352,7 @@ Given an ASCII string input_string, return an item. input_string is modified to 
 2. If the first character of input_string is a "-" or a DIGIT, process input_string as a number ({{number}}) and return the result, throwing any errors encountered.
 3. If the first character of input_string is a DQUOTE, process input_string as a string ({{string}}) and return the result, throwing any errors encountered.
 4. If the first character of input_string is "*", process input_string as binary content ({{binary}}) and return the result, throwing any errors encountered.
-5. If the first character of input_string is an ALPHA, process input_string as a label ({{label}}) and return the result, throwing any errors encountered.
+5. If the first character of input_string is an lcalpha, process input_string as a label ({{label}}) and return the result, throwing any errors encountered.
 5. Otherwise, throw an error.
 
 
