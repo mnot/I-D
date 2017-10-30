@@ -412,8 +412,6 @@ To perform content negotiation for Accept-Encoding given an request-value and av
 4. Remove any member of available-values not present in preferred-codings, comparing in a case-insensitive fashion.
 5. Return available-values.
 
-Implementations MAY remove other members of `available-responses` based upon their `weight` or other criteria before returning. For example, they might wish to return an empty list when the client's most-preferred available response is not stored, so as to populate the cache as well as honour the client's preferences.
-
 
 ## Accept-Language {#content-language}
 
@@ -426,4 +424,3 @@ To perform content negotiation for Accept-Language given an request-value and av
 3. Filter available-values using preferred-langs with either the Basic Filtering scheme defined in {{!RFC4647}} Section 3.3.1, or the Lookup scheme defined in Section 3.4 of that document. Use the first member of available-values as the default.
 4. Return available-values.
 
-Implementations MAY remove members of available-values based upon their weight or other criteria before returning. For example, they might wish to return an empty list when the client's most-preferred available response is not stored, so as to populate the cache as well as honour the client's preferences.
