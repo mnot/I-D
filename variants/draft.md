@@ -395,7 +395,7 @@ Thanks to Hooman Beheshti for his review and input.
 --- back
 
 
-# Variants and Defined Content Negotiation Mechanisms {#backports}
+# Variants for Existing Content Negotiation Mechanisms {#backports}
 
 This appendix defines the required information to use existing proactive content negotiation mechanisms (as defined in {{!RFC7231}}, Section 5.3) with the `Variants` header field.
 
