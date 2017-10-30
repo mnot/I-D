@@ -1,7 +1,7 @@
 ---
 title: Structured Headers for HTTP
 abbrev:
-docname: draft-nottingham-structured-headers-00
+docname: draft-nottingham-structured-headers-01
 date: 2017
 category: info
 
