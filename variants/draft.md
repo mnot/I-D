@@ -79,7 +79,7 @@ Its companion the Variant-Key response header field ({{variant-key}}) indicates 
 
 This mechanism requires that proactive content negotiation mechanisms define how they use it; see {{define}}. It is best suited for negotiation over request headers that are well-understood. It also works best when content negotiation takes place over a constrained set of representations; since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations.
 
-It is a simpler version of the Alternates header field introduced by {{?RFC2295}}; unlike that mechanism, Variants does not require specification of each combination of attributes, and does not assume that each combination has a unique URL.
+It can be seen as a simpler version of the Alternates header field introduced by {{?RFC2295}}; unlike that mechanism, Variants does not require specification of each combination of attributes, and does not assume that each combination has a unique URL.
 
 
 ## Notational Conventions
