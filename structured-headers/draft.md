@@ -62,7 +62,7 @@ See also the draft's current status in the IETF datatracker, at
 
 Specifying the syntax of new HTTP header fields is an onerous task; even with the guidance in {{?RFC7231}}, Section 8.3.1, there are many decisions -- and pitfalls -- for a prospective HTTP header field author.
 
-Likewise, parsers often need to be written for specific HTTP headers, because each has slightly different handling of what looks like common syntax.
+Likewise, bespoke parsers often need to be written for specific HTTP headers, because each has slightly different handling of what looks like common syntax.
 
 This document introduces structured HTTP header field values (hereafter, Structured Headers) to address these problems. Structured Headers define a generic, abstract model for data, along with a concrete serialisation for expressing that model in textual HTTP headers, as used by HTTP/1 {{?RFC7230}} and HTTP/2 {{?RFC7540}}.
 
