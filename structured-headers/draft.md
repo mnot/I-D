@@ -66,9 +66,9 @@ Likewise, bespoke parsers often need to be written for specific HTTP headers, be
 
 This document introduces structured HTTP header field values (hereafter, Structured Headers) to address these problems. Structured Headers define a generic, abstract model for data, along with a concrete serialisation for expressing that model in textual HTTP headers, as used by HTTP/1 {{?RFC7230}} and HTTP/2 {{?RFC7540}}.
 
-In doing so, it allows new headers to be defined much more easily and reliably. Likewise, it offers a single parsing model for the headers that use the syntax.
+HTTP headers that are defined as Structured Headers use the types defined in this specification to define their syntax and basic handling rules, thereby simplifying both their definition and parsing.
 
-Additionally, future versions of HTTP can define alternative serialisations of the abstract model, allowing headers that use it to be transmitted more efficiently without being redefined.
+Additionally, future versions of HTTP can define alternative serialisations of the abstract model of Structured Headers, allowing headers that use it to be transmitted more efficiently without being redefined.
 
 Note that it is not a goal of this document to redefine the syntax of existing HTTP headers; the mechanisms described herein are only intended to be used with headers that explicitly opt into them.
 
