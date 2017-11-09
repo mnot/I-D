@@ -227,9 +227,7 @@ Given sorted-variants, a list of lists, and key-stub, a list representing a part
    3. Let remaining-variants be a copy of all of the members of sorted-variants except the first.
    4. If remaining-variants is empty, append this-key to possible-keys.
    5. Else, run Find Available Keys on remaining-variants, this-key and possible-keys.
-   6. Return possible-keys.
-
-
+3. Return possible-keys.
 
 
 ## Example of Cache Behaviour
@@ -330,7 +328,7 @@ Vary: Accept-Language, Accept-Encoding
 Transfer-Encoding: chunked
 ~~~
 
-Here, the cache knows that there are two axes that the response varies upon; `Content-Language` and `Content-Encoding`. Thus, there are a total of six possible representations for the resource, and the cache needs to consider the selection algorithms for both axes.
+Here, the cache knows that there are two axes that the response varies upon; `Content-Language` and `Content-Encoding`. Thus, there are a total of nine possible representations for the resource (including the `identity` encoding), and the cache needs to consider the selection algorithms for both axes.
 
 Upon a subsequent request, if both selection algorithms return a stored representation, it can be served from cache; otherwise, the request will need to be forwarded to origin.
 
