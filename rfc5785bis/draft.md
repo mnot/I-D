@@ -33,7 +33,7 @@ Resource Identifier (URI) schemes.
 
 *RFC EDITOR: please remove this section before publication*
 
-This draft is a proposed revision of RFC5875. Version -00 is a copy of the original RFC.
+This draft is a proposed revision of RFC5875.
 
 The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/5785bis>.
 
