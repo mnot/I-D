@@ -174,13 +174,6 @@ Related information:
 --- back
 
 
-# Acknowledgements
-
-We would like to acknowledge the contributions of everyone who provided feedback and use cases for
-this document; in particular, Phil Archer, Dirk Balfanz, Adam Barth, Tim Bray, Brian Eaton, Brad
-Fitzpatrick, Joe Gregorio, Paul Hoffman, Barry Leiba, Ashok Malhotra, Breno de Medeiros, John
-Panzer, and Drummond Reed. However, they are not responsible for errors and omissions.
-
 
 # Frequently Asked Questions
 
