@@ -32,6 +32,8 @@ Resource Identifier (URI) schemes.
 
 *RFC EDITOR: please remove this section before publication*
 
+This draft is a proposed revision of RFC5875. Version -00 is a copy of the original RFC.
+
 The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/5785bis>.
 
 The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/5785bis/>.
