@@ -135,7 +135,7 @@ server grants the ability to affect how well-known URIs are served.
 
 ## The Well-Known URI Registry
 
-This document establishes the well-known URI registry.
+This document specifies procedures for the well-known URI registry, first defined in {{?RFC5785}}.
 
 Well-known URIs are registered on the advice of one or more Designated Experts (appointed by the
 IESG or their delegate), with a Specification Required (using terminology from {{!RFC5226}}).
@@ -144,13 +144,6 @@ approve registration once they are satisfied that such a specification will be p
 
 Registration requests should be sent to the wellknown-uri-review@ietf.org mailing list for review
 and comment, with an appropriate subject (e.g., "Request for well-known URI: example").
-
-Before a period of 14 days has passed, the Designated Expert(s) will either approve or deny the
-registration request, communicating this decision both to the review list and to IANA. Denials
-should include an explanation and, if applicable, suggestions as to how to make the
-
-request successful. Registration requests that are undetermined for a period longer than 21 days
-can be brought to the IESG's attention (using the iesg@iesg.org mailing list) for resolution.
 
 
 ### Registration Template
@@ -198,4 +191,4 @@ Related information:
 
 # Changes from RFC5785
 
-TBD
+* Adjusted IANA instructions
