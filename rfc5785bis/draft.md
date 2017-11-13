@@ -186,8 +186,7 @@ Panzer, and Drummond Reed. However, they are not responsible for errors and omis
 
 1. Aren't well-known locations bad for the Web?
 
-   They are, but for various reasons -- both technical and social -- they are commonly used and
-   their use is increasing. This memo defines a "sandbox" for them, to reduce the risks of collision
+   They are, but for various reasons -- both technical and social -- they are sometimes necessary. This memo defines a "sandbox" for them, to reduce the risks of collision
    and to minimise the impact upon pre-existing URIs on sites.
 
 2. Why /.well-known?
