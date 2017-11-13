@@ -105,7 +105,7 @@ Section 5.1.
 For example, if an application registers the name 'example', the corresponding well-known URI on
 'http://www.example.com/' would be 'http://www.example.com/.well-known/example'.
 
-Registered names MUST conform to the segment-nz production in {{!RFC3986}}.
+Registered names MUST conform to the segment-nz production in {{!RFC3986}}. This means they cannot contain the "/" character.
 
 Note that this specification defines neither how to determine the authority to use for a particular
 context, nor the scope of the metadata discovered by dereferencing the well-known URI; both should
