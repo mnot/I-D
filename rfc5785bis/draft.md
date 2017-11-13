@@ -195,3 +195,5 @@ Related information:
 # Changes from RFC5785
 
 * Adjusted IANA instructions
+* Updated references
+* Various other clarifications
