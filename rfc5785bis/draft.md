@@ -59,9 +59,9 @@ While there are several ways to access per-resource metadata (e.g., HTTP headers
 {{?RFC4918}}), the perceived overhead (either in terms of client-perceived latency and/or
 deployment difficulties) associated with them often precludes their use in these scenarios.
 
-When this happens, it is common to designate a "well-known location" for such data, so that it can
-be easily located. However, this approach has the drawback of risking collisions, both with other
-such designated "well-known locations" and with pre-existing resources.
+When this happens, one solution is designating a "well-known location" for such data, so that it
+can be easily located. However, this approach has the drawback of risking collisions, both with
+other such designated "well-known locations" and with pre-existing resources.
 
 To address this, this memo defines a path prefix in HTTP(S) URIs for these "well-known locations",
 "/.well-known/". Future specifications that need to define a resource for such site-wide metadata
