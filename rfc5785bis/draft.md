@@ -85,8 +85,8 @@ As such, the well-known URI space was created with the expectation that it will 
 site-wide policy information and other site-related metadata available directly (if sufficiently
 concise), or provide references to other URIs that provide such metadata.
 
-It's also inappropriate to use well-known URIs as a means of identifying or locating a new protocol
-built on top of HTTP, since they are intended for metadata about their origin.
+Therefore, it's inappropriate to use well-known URIs as a means of identifying or locating a new
+protocol built on top of HTTP, since they are intended for metadata about their origin.
 
 In particular, locating information using a hostname instead of a URI is, on its own, insufficient reason to register a well-known URI.
 
