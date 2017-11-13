@@ -49,19 +49,19 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-Some Web-based protocols require the discovery of policy or other information about a host
-("site-wide metadata") before making a request. For example, the Robots Exclusion Protocol
-(<http://www.robotstxt.org/>) specifies a way for automated processes to obtain permission to
-access resources; likewise, the Platform for Privacy Preferences {{?W3C.REC-P3P-20020416}} tells
-user-agents how to discover privacy policy before interacting with a site.
+Some applications on the Web require the discovery of policy or other information about an origin
+{{!RFC6454}} (sometimes called "site-wide metadata") before making a request. For example, the
+Robots Exclusion Protocol (<http://www.robotstxt.org/>) specifies a way for automated processes to
+obtain permission to access resources; likewise, the Platform for Privacy Preferences
+{{?W3C.REC-P3P-20020416}} tells user-agents how to discover privacy policy before interacting with
+a site.
 
 While there are several ways to access per-resource metadata (e.g., HTTP headers, WebDAV's PROPFIND
 {{?RFC4918}}), the perceived overhead (either in terms of client-perceived latency and/or
 deployment difficulties) associated with them often precludes their use in these scenarios.
 
-When this happens, one solution is designating a "well-known location" for such data, so that it
-can be easily located. However, this approach has the drawback of risking collisions, both with
-other such designated "well-known locations" and with pre-existing resources.
+When this happens, one solution is designating a "well-known location" for data or services related to the origin, so that it can be easily located. However, this approach has the drawback of risking
+collisions, both with other such designated "well-known locations" and with pre-existing resources.
 
 To address this, this memo defines a path prefix in HTTP(S) URIs for these "well-known locations",
 "/.well-known/". Future specifications that need to define a resource for such site-wide metadata
@@ -82,13 +82,14 @@ before a resource is accessed, or when using multiple round-trips is judged detr
 performance.
 
 As such, the well-known URI space was created with the expectation that it will be used to make
-site-wide policy information and other site-related metadata available directly (if sufficiently
-concise), or provide references to other URIs that provide such metadata.
+policy information and other metadata about the origin available directly (if sufficiently
+concise), or provide references to other URIs that provide it.
 
-Therefore, it's inappropriate to use well-known URIs as a means of identifying or locating a new
+Therefore, it is inappropriate to use well-known URIs as a means of identifying or locating a new
 protocol built on top of HTTP, since they are intended for metadata about their origin.
 
-In particular, locating information using a hostname instead of a URI is, on its own, insufficient reason to register a well-known URI.
+In particular, locating information using a hostname instead of a URI is, on its own, insufficient
+reason to register a well-known URI.
 
 
 # Notational Conventions
