@@ -140,9 +140,9 @@ server grants the ability to affect how well-known URIs are served.
 
 This document specifies procedures for the well-known URI registry, first defined in {{?RFC5785}}.
 
-Well-known URIs are registered on the advice of one or more Designated Experts (appointed by the
-IESG or their delegate), with a Specification Required (using terminology from {{!RFC5226}}).
-However, to allow for the allocation of values prior to publication, the Designated Expert(s) may
+Well-known URIs are registered on the advice of one or more experts (appointed by the
+IESG or their delegate), with a Specification Required (using terminology from {{!RFC8126}}).
+However, to allow for the allocation of values prior to publication, the expert(s) may
 approve registration once they are satisfied that such a specification will be published.
 
 Registration requests should be sent to the wellknown-uri-review@ietf.org mailing list for review
