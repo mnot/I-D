@@ -67,6 +67,9 @@ To address this, this memo defines a path prefix in HTTP(S) URIs for these "well
 "/.well-known/". Future specifications that need to define a resource for such site-wide metadata
 can register their use to avoid collisions and minimise impingement upon sites' URI space.
 
+Well-known locations can also be used with other URI schemes, but only when those schemes'
+definitions explicitly allow it.
+
 
 ## Appropriate Use of Well-Known URIs
 
