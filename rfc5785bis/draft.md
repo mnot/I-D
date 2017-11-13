@@ -97,7 +97,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 A well-known URI is a URI {{!RFC3986}} whose path component begins with the characters
 "/.well-known/", and whose scheme is "HTTP", "HTTPS", or another scheme that has explicitly been
-specified to use well- known URIs.
+specified to use well-known URIs.
 
 Applications that wish to mint new well-known URIs MUST register them, following the procedures in
 Section 5.1.
