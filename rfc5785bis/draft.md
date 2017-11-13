@@ -4,6 +4,7 @@ abbrev: Defining Well-Known URIs
 docname: draft-nottingham-5785bis-00
 date: 2017
 category: std
+obsoletes: 5785
 
 ipr: trust200902
 area: General
