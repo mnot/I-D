@@ -193,8 +193,7 @@ Panzer, and Drummond Reed. However, they are not responsible for errors and omis
 
    It's short, descriptive, and according to search indices, not widely used.
 
-3. What impact does this have on existing mechanisms, such as P3P and
-   robots.txt?
+3. What impact does this have on existing mechanisms, such as P3P and robots.txt?
 
    None, until they choose to use this mechanism.
 
