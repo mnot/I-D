@@ -116,7 +116,7 @@ media type to be obtained by dereferencing the well-known URI.
 
 It MAY also contain additional information, such as the syntax of additional path components, query
 strings and/or fragment identifiers to be appended to the well-known URI, or protocol-specific
-details (e.g., HTTP {{?RFC2616}} method handling).
+details (e.g., HTTP {{?RFC7231}} method handling).
 
 Note that this specification does not define a format or media-type for the resource located at
 "/.well-known/" and clients should not expect a resource to exist at that location.
