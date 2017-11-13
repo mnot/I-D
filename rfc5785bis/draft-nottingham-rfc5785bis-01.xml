@@ -14,7 +14,7 @@
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
 
-<rfc ipr="trust200902" docName="draft-nottingham-rfc5785bis-00" category="std" obsoletes="5785">
+<rfc ipr="trust200902" docName="draft-nottingham-rfc5785bis-01" category="std" obsoletes="5785">
 
   <front>
     <title abbrev="Defining Well-Known URIs">Defining Well-Known Uniform Resource Identifiers (URIs)</title>
@@ -49,7 +49,7 @@ Resource Identifier (URI) schemes.</t>
 
 <t><spanx style="emph">RFC EDITOR: please remove this section before publication</spanx></t>
 
-<t>This draft is a proposed revision of RFC5875. Version -00 is a copy of the original RFC.</t>
+<t>This draft is a proposed revision of RFC5875.</t>
 
 <t>The issues list for this draft can be found at <eref target="https://github.com/mnot/I-D/labels/5785bis">https://github.com/mnot/I-D/labels/5785bis</eref>.</t>
 
@@ -71,28 +71,31 @@ Resource Identifier (URI) schemes.</t>
 
 <section anchor="introduction" title="Introduction">
 
-<t>It is increasingly common for Web-based protocols to require the discovery of policy or other
-information about a host (“site-wide metadata”) before making a request. For example, the Robots
-Exclusion Protocol (<eref target="http://www.robotstxt.org/">http://www.robotstxt.org/</eref>) specifies a way for automated processes to obtain
-permission to access resources; likewise, the Platform for Privacy Preferences
-<xref target="W3C.REC-P3P-20020416"/> tells user-agents how to discover privacy policy beforehand.</t>
+<t>Some applications on the Web require the discovery of policy or other information about an origin
+<xref target="RFC6454"/> (sometimes called “site-wide metadata”) before making a request. For example, the
+Robots Exclusion Protocol (<eref target="http://www.robotstxt.org/">http://www.robotstxt.org/</eref>) specifies a way for automated processes to
+obtain permission to access resources; likewise, the Platform for Privacy Preferences
+<xref target="W3C.REC-P3P-20020416"/> tells user-agents how to discover privacy policy before interacting with
+a site.</t>
 
 <t>While there are several ways to access per-resource metadata (e.g., HTTP headers, WebDAV’s PROPFIND
 <xref target="RFC4918"/>), the perceived overhead (either in terms of client-perceived latency and/or
 deployment difficulties) associated with them often precludes their use in these scenarios.</t>
 
-<t>When this happens, it is common to designate a “well-known location” for such data, so that it can
-be easily located. However, this approach has the drawback of risking collisions, both with other
-such designated “well-known locations” and with pre-existing resources.</t>
+<t>When this happens, one solution is designating a “well-known location” for data or services related to the origin, so that it can be easily located. However, this approach has the drawback of risking
+collisions, both with other such designated “well-known locations” and with pre-existing resources.</t>
 
 <t>To address this, this memo defines a path prefix in HTTP(S) URIs for these “well-known locations”,
 “/.well-known/”. Future specifications that need to define a resource for such site-wide metadata
 can register their use to avoid collisions and minimise impingement upon sites’ URI space.</t>
 
+<t>Well-known URIs can also be used with other URI schemes, but only when those schemes’
+definitions explicitly allow it.</t>
+
 <section anchor="appropriate-use-of-well-known-uris" title="Appropriate Use of Well-Known URIs">
 
-<t>There are a number of possible ways that applications could use Well- known URIs. However, in
-keeping with the Architecture of the World- Wide Web [W3C.REC-webarch-20041215], well-known URIs
+<t>There are a number of possible ways that applications could use well-known URIs. However, in
+keeping with the Architecture of the World-Wide Web [W3C.REC-webarch-20041215], well-known URIs
 are not intended for general information retrieval or establishment of large URI namespaces on the
 Web. Rather, they are designed to facilitate discovery of information on a site when it isn’t
 practical to use other mechanisms; for example, when discovering policy that needs to be evaluated
@@ -100,8 +103,14 @@ before a resource is accessed, or when using multiple round-trips is judged detr
 performance.</t>
 
 <t>As such, the well-known URI space was created with the expectation that it will be used to make
-site-wide policy information and other metadata available directly (if sufficiently concise), or
-provide references to other URIs that provide such metadata.</t>
+policy information and other metadata about the origin available directly (if sufficiently
+concise), or provide references to other URIs that provide it.</t>
+
+<t>Therefore, it is inappropriate to use well-known URIs as a means of identifying or locating a new
+protocol built on top of HTTP, since they are intended for metadata about their origin.</t>
+
+<t>In particular, locating information using a hostname instead of a URI is, on its own, insufficient
+reason to register a well-known URI.</t>
 
 </section>
 </section>
@@ -116,7 +125,7 @@ provide references to other URIs that provide such metadata.</t>
 
 <t>A well-known URI is a URI <xref target="RFC3986"/> whose path component begins with the characters
 “/.well-known/”, and whose scheme is “HTTP”, “HTTPS”, or another scheme that has explicitly been
-specified to use well- known URIs.</t>
+specified to use well-known URIs.</t>
 
 <t>Applications that wish to mint new well-known URIs MUST register them, following the procedures in
 Section 5.1.</t>
@@ -124,7 +133,7 @@ Section 5.1.</t>
 <t>For example, if an application registers the name ‘example’, the corresponding well-known URI on
 ‘http://www.example.com/’ would be ‘http://www.example.com/.well-known/example’.</t>
 
-<t>Registered names MUST conform to the segment-nz production in <xref target="RFC3986"/>.</t>
+<t>Registered names MUST conform to the segment-nz production in <xref target="RFC3986"/>. This means they cannot contain the “/” character.</t>
 
 <t>Note that this specification defines neither how to determine the authority to use for a particular
 context, nor the scope of the metadata discovered by dereferencing the well-known URI; both should
@@ -135,7 +144,7 @@ media type to be obtained by dereferencing the well-known URI.</t>
 
 <t>It MAY also contain additional information, such as the syntax of additional path components, query
 strings and/or fragment identifiers to be appended to the well-known URI, or protocol-specific
-details (e.g., HTTP <xref target="RFC2616"/> method handling).</t>
+details (e.g., HTTP <xref target="RFC7231"/> method handling).</t>
 
 <t>Note that this specification does not define a format or media-type for the resource located at
 “/.well-known/” and clients should not expect a resource to exist at that location.</t>
@@ -158,22 +167,15 @@ server grants the ability to affect how well-known URIs are served.</t>
 
 <section anchor="the-well-known-uri-registry" title="The Well-Known URI Registry">
 
-<t>This document establishes the well-known URI registry.</t>
+<t>This document specifies procedures for the well-known URI registry, first defined in <xref target="RFC5785"/>.</t>
 
-<t>Well-known URIs are registered on the advice of one or more Designated Experts (appointed by the
-IESG or their delegate), with a Specification Required (using terminology from <xref target="RFC5226"/>).
-However, to allow for the allocation of values prior to publication, the Designated Expert(s) may
+<t>Well-known URIs are registered on the advice of one or more experts (appointed by the
+IESG or their delegate), with a Specification Required (using terminology from <xref target="RFC8126"/>).
+However, to allow for the allocation of values prior to publication, the expert(s) may
 approve registration once they are satisfied that such a specification will be published.</t>
 
-<t>Registration requests should be sent to the wellknown-uri-review@ietf.org mailing list for review
+<t>Registration requests can be sent to the wellknown-uri-review@ietf.org mailing list for review
 and comment, with an appropriate subject (e.g., “Request for well-known URI: example”).</t>
-
-<t>Before a period of 14 days has passed, the Designated Expert(s) will either approve or deny the
-registration request, communicating this decision both to the review list and to IANA. Denials
-should include an explanation and, if applicable, suggestions as to how to make the</t>
-
-<t>request successful. Registration requests that are undetermined for a period longer than 21 days
-can be brought to the IESG’s attention (using the iesg@iesg.org mailing list) for resolution.</t>
 
 <section anchor="registration-template" title="Registration Template">
 
@@ -203,6 +205,19 @@ but is not required.</t>
     <references title='Normative References'>
 
 
+
+
+
+<reference  anchor='RFC6454' target='https://www.rfc-editor.org/info/rfc6454'>
+<front>
+<title>The Web Origin Concept</title>
+<author initials='A.' surname='Barth' fullname='A. Barth'><organization /></author>
+<date year='2011' month='December' />
+<abstract><t>This document defines the concept of an &quot;origin&quot;, which is often used as the scope of authority or privilege by user agents.  Typically, user agents isolate content retrieved from different origins to prevent malicious web site operators from interfering with the operation of benign web sites.  In addition to outlining the principles that underlie the concept of origin, this document details how to determine the origin of a URI and how to serialize an origin into a string.  It also defines an HTTP header field, named &quot;Origin&quot;, that indicates which origins are associated with an HTTP request.   [STANDARDS-TRACK]</t></abstract>
+</front>
+<seriesInfo name='RFC' value='6454'/>
+<seriesInfo name='DOI' value='10.17487/RFC6454'/>
+</reference>
 
 
 
@@ -236,16 +251,18 @@ but is not required.</t>
 
 
 
-<reference  anchor='RFC5226' target='https://www.rfc-editor.org/info/rfc5226'>
+<reference  anchor='RFC8126' target='https://www.rfc-editor.org/info/rfc8126'>
 <front>
 <title>Guidelines for Writing an IANA Considerations Section in RFCs</title>
+<author initials='M.' surname='Cotton' fullname='M. Cotton'><organization /></author>
+<author initials='B.' surname='Leiba' fullname='B. Leiba'><organization /></author>
 <author initials='T.' surname='Narten' fullname='T. Narten'><organization /></author>
-<author initials='H.' surname='Alvestrand' fullname='H. Alvestrand'><organization /></author>
-<date year='2008' month='May' />
-<abstract><t>Many protocols make use of identifiers consisting of constants and other well-known values.  Even after a protocol has been defined and deployment has begun, new values may need to be assigned (e.g., for a new option type in DHCP, or a new encryption or authentication transform for IPsec).  To ensure that such quantities have consistent values and interpretations across all implementations, their assignment must be administered by a central authority.  For IETF protocols, that role is provided by the Internet Assigned Numbers Authority (IANA).</t><t>In order for IANA to manage a given namespace prudently, it needs guidelines describing the conditions under which new values can be assigned or when modifications to existing values can be made.  If IANA is expected to play a role in the management of a namespace, IANA must be given clear and concise instructions describing that role.  This document discusses issues that should be considered in formulating a policy for assigning values to a namespace and provides guidelines for authors on the specific text that must be included in documents that place demands on IANA.</t><t>This document obsoletes RFC 2434.  This document specifies an Internet Best  Current Practices for the Internet Community, and requests discussion and  suggestions for improvements.</t></abstract>
+<date year='2017' month='June' />
+<abstract><t>Many protocols make use of points of extensibility that use constants to identify various protocol parameters.  To ensure that the values in these fields do not have conflicting uses and to promote interoperability, their allocations are often coordinated by a central record keeper.  For IETF protocols, that role is filled by the Internet Assigned Numbers Authority (IANA).</t><t>To make assignments in a given registry prudently, guidance describing the conditions under which new values should be assigned, as well as when and how modifications to existing values can be made, is needed.  This document defines a framework for the documentation of these guidelines by specification authors, in order to assure that the provided guidance for the IANA Considerations is clear and addresses the various issues that are likely in the operation of a registry.</t><t>This is the third edition of this document; it obsoletes RFC 5226.</t></abstract>
 </front>
-<seriesInfo name='RFC' value='5226'/>
-<seriesInfo name='DOI' value='10.17487/RFC5226'/>
+<seriesInfo name='BCP' value='26'/>
+<seriesInfo name='RFC' value='8126'/>
+<seriesInfo name='DOI' value='10.17487/RFC8126'/>
 </reference>
 
 
@@ -290,21 +307,30 @@ but is not required.</t>
 
 
 
-<reference  anchor='RFC2616' target='https://www.rfc-editor.org/info/rfc2616'>
+<reference  anchor='RFC7231' target='https://www.rfc-editor.org/info/rfc7231'>
 <front>
-<title>Hypertext Transfer Protocol -- HTTP/1.1</title>
-<author initials='R.' surname='Fielding' fullname='R. Fielding'><organization /></author>
-<author initials='J.' surname='Gettys' fullname='J. Gettys'><organization /></author>
-<author initials='J.' surname='Mogul' fullname='J. Mogul'><organization /></author>
-<author initials='H.' surname='Frystyk' fullname='H. Frystyk'><organization /></author>
-<author initials='L.' surname='Masinter' fullname='L. Masinter'><organization /></author>
-<author initials='P.' surname='Leach' fullname='P. Leach'><organization /></author>
-<author initials='T.' surname='Berners-Lee' fullname='T. Berners-Lee'><organization /></author>
-<date year='1999' month='June' />
-<abstract><t>HTTP has been in use by the World-Wide Web global information initiative since 1990. This specification defines the protocol referred to as &quot;HTTP/1.1&quot;, and is an update to RFC 2068.  [STANDARDS-TRACK]</t></abstract>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+<author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
+<author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
+<date year='2014' month='June' />
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t></abstract>
 </front>
-<seriesInfo name='RFC' value='2616'/>
-<seriesInfo name='DOI' value='10.17487/RFC2616'/>
+<seriesInfo name='RFC' value='7231'/>
+<seriesInfo name='DOI' value='10.17487/RFC7231'/>
+</reference>
+
+
+
+<reference  anchor='RFC5785' target='https://www.rfc-editor.org/info/rfc5785'>
+<front>
+<title>Defining Well-Known Uniform Resource Identifiers (URIs)</title>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'><organization /></author>
+<author initials='E.' surname='Hammer-Lahav' fullname='E. Hammer-Lahav'><organization /></author>
+<date year='2010' month='April' />
+<abstract><t>This memo defines a path prefix for &quot;well-known locations&quot;, &quot;/.well-known/&quot;, in selected Uniform Resource Identifier (URI) schemes.   [STANDARDS-TRACK]</t></abstract>
+</front>
+<seriesInfo name='RFC' value='5785'/>
+<seriesInfo name='DOI' value='10.17487/RFC5785'/>
 </reference>
 
 
@@ -313,30 +339,30 @@ but is not required.</t>
     </references>
 
 
-<section anchor="acknowledgements" title="Acknowledgements">
-
-<t>We would like to acknowledge the contributions of everyone who provided feedback and use cases for
-this document; in particular, Phil Archer, Dirk Balfanz, Adam Barth, Tim Bray, Brian Eaton, Brad
-Fitzpatrick, Joe Gregorio, Paul Hoffman, Barry Leiba, Ashok Malhotra, Breno de Medeiros, John
-Panzer, and Drummond Reed. However, they are not responsible for errors and omissions.</t>
-
-</section>
 <section anchor="frequently-asked-questions" title="Frequently Asked Questions">
 
 <t><list style="numbers">
   <t>Aren’t well-known locations bad for the Web?  <vspace blankLines='1'/>
-They are, but for various reasons – both technical and social – they are commonly used and
-their use is increasing. This memo defines a “sandbox” for them, to reduce the risks of collision
+They are, but for various reasons – both technical and social – they are sometimes necessary. This memo defines a “sandbox” for them, to reduce the risks of collision
 and to minimise the impact upon pre-existing URIs on sites.</t>
   <t>Why /.well-known?  <vspace blankLines='1'/>
 It’s short, descriptive, and according to search indices, not widely used.</t>
-  <t>What impact does this have on existing mechanisms, such as P3P and
-robots.txt?  <vspace blankLines='1'/>
+  <t>What impact does this have on existing mechanisms, such as P3P and robots.txt?  <vspace blankLines='1'/>
 None, until they choose to use this mechanism.</t>
   <t>Why aren’t per-directory well-known locations defined?  <vspace blankLines='1'/>
 Allowing every URI path segment to have a well-known location (e.g., “/images/.well-known/”)
 would increase the risks of colliding with a pre-existing URI on a site, and generally these
 solutions are found not to scale well, because they’re too “chatty”.</t>
+</list></t>
+
+</section>
+<section anchor="changes-from-rfc5785" title="Changes from RFC5785">
+
+<t><list style="symbols">
+  <t>Discuss inappropriate uses more fully</t>
+  <t>Adjusted IANA instructions</t>
+  <t>Updated references</t>
+  <t>Various other clarifications</t>
 </list></t>
 
 </section>
