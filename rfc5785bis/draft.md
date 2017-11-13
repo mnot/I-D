@@ -203,3 +203,6 @@ Panzer, and Drummond Reed. However, they are not responsible for errors and omis
    would increase the risks of colliding with a pre-existing URI on a site, and generally these
    solutions are found not to scale well, because they're too "chatty".
 
+# Changes from RFC5785
+
+TBD
