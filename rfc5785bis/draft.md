@@ -145,7 +145,7 @@ IESG or their delegate), with a Specification Required (using terminology from {
 However, to allow for the allocation of values prior to publication, the expert(s) may
 approve registration once they are satisfied that such a specification will be published.
 
-Registration requests should be sent to the wellknown-uri-review@ietf.org mailing list for review
+Registration requests can be sent to the wellknown-uri-review@ietf.org mailing list for review
 and comment, with an appropriate subject (e.g., "Request for well-known URI: example").
 
 
