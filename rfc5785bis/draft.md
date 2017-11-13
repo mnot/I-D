@@ -70,8 +70,8 @@ can register their use to avoid collisions and minimise impingement upon sites' 
 
 ## Appropriate Use of Well-Known URIs
 
-There are a number of possible ways that applications could use Well- known URIs. However, in
-keeping with the Architecture of the World- Wide Web [W3C.REC-webarch-20041215], well-known URIs
+There are a number of possible ways that applications could use well-known URIs. However, in
+keeping with the Architecture of the World-Wide Web [W3C.REC-webarch-20041215], well-known URIs
 are not intended for general information retrieval or establishment of large URI namespaces on the
 Web. Rather, they are designed to facilitate discovery of information on a site when it isn't
 practical to use other mechanisms; for example, when discovering policy that needs to be evaluated
