@@ -53,7 +53,7 @@ Some Web-based protocols require the discovery of policy or other information ab
 ("site-wide metadata") before making a request. For example, the Robots Exclusion Protocol
 (<http://www.robotstxt.org/>) specifies a way for automated processes to obtain permission to
 access resources; likewise, the Platform for Privacy Preferences {{?W3C.REC-P3P-20020416}} tells
-user-agents how to discover privacy policy beforehand.
+user-agents how to discover privacy policy before interacting with a site.
 
 While there are several ways to access per-resource metadata (e.g., HTTP headers, WebDAV's PROPFIND
 {{?RFC4918}}), the perceived overhead (either in terms of client-perceived latency and/or
