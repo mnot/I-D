@@ -30,7 +30,7 @@ informative:
 
 --- abstract
 
-This specification introduces the HTTP "Variants" response header field to communicate what representations are available for a given resource, and the companion "Variant-Key" response header field to indicate which representation was selected. It is an augmentation of the "Vary" mechanism in HTTP caching.
+This specification introduces an alternative way to communicate a secondary cache key for a HTTP resource, using the HTTP "Variants" and "Variant-Key" response header fields. Its aim is to make HTTP proactive content negotiation more cache-friendly.
 
 --- note_Note_to_Readers
 
@@ -49,11 +49,11 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-HTTP proactive content negotiation ({{!RFC7231}}, Section 3.4.1) is starting to be used more widely again. The most widely seen use -- determining a response's content-coding -- is being joined by renewed interest in negotiation for language and other, newer attributes (for example, see {{?I-D.ietf-httpbis-client-hints}}).
+HTTP proactive content negotiation ({{!RFC7231}}, Section 3.4.1) is seeing renewed interest in negotiation for language and other, newer attributes (for example, see {{?I-D.ietf-httpbis-client-hints}}).
 
-Successfully reusing negotiated responses that have been stored in a HTTP cache requires establishment of a secondary cache key ({{!RFC7234}}, Section 4.1) using the Vary header ({{!RFC7231}}, Section 7.1.4), which identifies the request headers that form the secondary cache key for a given response.
+Successfully reusing negotiated responses that have been stored in a HTTP cache requires establishment of a secondary cache key ({{!RFC7234}}, Section 4.1). Currently, the Vary header ({{!RFC7231}}, Section 7.1.4) does this by nominating a set of request headers.
 
-HTTP's caching model allows a certain amount of latitude in normalising request header fields identified by Vary to match those stored in the cache, so as to increase the chances of a cache hit while still respecting the semantics of that header. However, this is often inadequate; even with understanding of the headers' semantics to facilitate such normalisation, a cache does not know enough about the possible alternative representations available on the origin server to make an appropriate decision.
+HTTP's caching model allows a certain amount of latitude in normalising request header field values, so as to increase the chances of a cache hit while still respecting the semantics of that header. However, this is often inadequate; even when the headers' semantics are understood, a cache does not know enough about the possible alternative representations available on the origin server to make an appropriate decision.
 
 For example, if a cache has stored the following request/response pair:
 
@@ -71,15 +71,31 @@ Transfer-Encoding: chunked
 [French content]
 ~~~
 
-Provided that the cache has full knowledge of the semantics of Accept-Language and Content-Language, it will know that a French representation is available and might be able to infer that an English representation is not available. But, it does not know (for example) whether a Japanese representation is available without making another request, thereby incurring possibly unnecessary latency.
+Provided that the cache has full knowledge of the semantics of Accept-Language and Content-Language, it will know that a French representation is available and might be able to infer that an English representation is not available. But, it does not know (for example) whether a Japanese representation is available without making another request, incurring possibly unnecessary latency.
 
 This specification introduces the HTTP Variants response header field ({{variants}}) to enumerate the available variant representations on the origin server, to provide clients and caches with enough information to properly satisfy requests -- either by selecting a response from cache or by forwarding the request towards the origin -- by following an algorithm defined in {{cache}}.
 
-Its companion the Variant-Key response header field ({{variant-key}}) indicates which representation was selected, so that it can be reliably reused in the future.
+Its companion the Variant-Key response header field ({{variant-key}}) indicates which representation was selected, so that it can be reliably reused in the future. When this specification is in use, the example above might become:
 
-This mechanism requires that proactive content negotiation mechanisms define how they use it; see {{define}}. It is best suited for negotiation over request headers that are well-understood. It also works best when content negotiation takes place over a constrained set of representations; since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations.
+~~~
+GET /foo HTTP/1.1
+Host: www.example.com
+Accept-Language: en;q=1.0, fr;q=0.5
 
-It can be seen as a simpler version of the Alternates header field introduced by {{?RFC2295}}; unlike that mechanism, Variants does not require specification of each combination of attributes, and does not assume that each combination has a unique URL.
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Language: fr
+Vary: Accept-Language
+Variants: Accept-Language;fr;de;en;jp
+Variant-Key: fr
+Transfer-Encoding: chunked
+
+[French content]
+~~~
+
+Proactive content negotiation mechanisms that wish to be used with Variants need to define how to do so explicitly; see {{define}}. It is best suited for negotiation over request headers that are well-understood. Variants also works best when content negotiation takes place over a constrained set of representations; since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations.
+
+Variants can be seen as a simpler version of the Alternates header field introduced by {{?RFC2295}}; unlike that mechanism, Variants does not require specification of each combination of attributes, and does not assume that each combination has a unique URL.
 
 
 ## Notational Conventions
