@@ -144,6 +144,10 @@ details (e.g., HTTP {{?RFC7231}} method handling).
 Note that this specification does not define a format or media-type for the resource located at
 "/.well-known/" and clients should not expect a resource to exist at that location.
 
+Well-know URIs are only valid when rooted in the top of the path's hierarchy; they MUST NOT be used
+in other parts of the path. For example, "/.well-known/example" is a valid use, but
+"/foo/.well-known/example" is not.
+
 # Security Considerations
 
 This memo does not specify the scope of applicability of metadata or policy obtained from a
