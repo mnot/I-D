@@ -142,6 +142,12 @@ data, denial-of-service attacks (in addition to normal load issues), server and 
 authentication, vulnerability to DNS rebinding attacks, and attacks where limited access to a
 server grants the ability to affect how well-known URIs are served.
 
+Security-sensitive applications using well-known locations should consider that some server
+administrators might be unaware of its existence (especially on operating systems that hide
+directories whose names begin with "."). This means that if an attacker has write access to the
+.well-known directory, they would be able to control its contents, possibly without the
+administrator realising it.
+
 
 # IANA Considerations
 
