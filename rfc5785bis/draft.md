@@ -76,20 +76,19 @@ definitions explicitly allow it.
 There are a number of possible ways that applications could use well-known URIs. However, in
 keeping with the Architecture of the World-Wide Web [W3C.REC-webarch-20041215], well-known URIs
 are not intended for general information retrieval or establishment of large URI namespaces on the
-Web. Rather, they are designed to facilitate discovery of information on a site when it isn't
-practical to use other mechanisms; for example, when discovering policy that needs to be evaluated
-before a resource is accessed, or when using multiple round-trips is judged detrimental to
-performance.
+Web.
+
+Rather, they are designed to facilitate discovery of information on a site when it isn't practical
+to use other mechanisms; for example, when discovering policy that needs to be evaluated before a
+resource on the site is accessed.
 
 As such, the well-known URI space was created with the expectation that it will be used to make
 policy information and other metadata about the origin available directly (if sufficiently
 concise), or provide references to other URIs that provide it.
 
-Therefore, it is inappropriate to use well-known URIs as a means of identifying or locating a new
-protocol built on top of HTTP, since they are intended for metadata about their origin.
-
-In particular, locating information using a hostname instead of a URI is, on its own, insufficient
-reason to register a well-known URI.
+It is inappropriate to use well-known URIs as a means of identifying or locating a new protocol
+built on top of HTTP. In particular, locating information using a hostname instead of a URI is, on
+its own, insufficient reason to register a well-known URI.
 
 
 # Notational Conventions
