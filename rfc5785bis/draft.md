@@ -87,8 +87,12 @@ policy information and other metadata about the origin available directly (if su
 concise), or provide references to other URIs that provide it.
 
 It is inappropriate to use well-known URIs as a means of identifying or locating a new protocol
-built on top of HTTP. In particular, locating information using a hostname instead of a URI is, on
-its own, insufficient reason to register a well-known URI.
+built on top of HTTP; such applications are encouraged to use a complete URI to achieve this,
+rather than hard-coding a well-known location.
+
+If a protocol has a use case where it is not possible to convey a URI, but it is possible to
+convey a hostname, it might be appropriate to use a well-known location. Making it easier to
+locate the resource is not a sufficient reason.
 
 
 # Notational Conventions
