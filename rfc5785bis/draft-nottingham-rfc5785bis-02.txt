@@ -3,10 +3,10 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                          February 2, 2018
+Internet-Draft                                          February 3, 2018
 Obsoletes: 5785 (if approved)
 Intended status: Standards Track
-Expires: August 6, 2018
+Expires: August 7, 2018
 
 
         Defining Well-Known Uniform Resource Identifiers (URIs)
@@ -53,12 +53,12 @@ Status of This Memo
 
 
 
-Nottingham               Expires August 6, 2018                 [Page 1]
+Nottingham               Expires August 7, 2018                 [Page 1]
 
 Internet-Draft          Defining Well-Known URIs           February 2018
 
 
-   This Internet-Draft will expire on August 6, 2018.
+   This Internet-Draft will expire on August 7, 2018.
 
 Copyright Notice
 
@@ -89,7 +89,7 @@ Table of Contents
      6.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
      6.2.  Informative References  . . . . . . . . . . . . . . . . .   7
      6.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   7
-   Appendix A.  Frequently Asked Questions . . . . . . . . . . . . .   7
+   Appendix A.  Frequently Asked Questions . . . . . . . . . . . . .   8
    Appendix B.  Changes from RFC5785 . . . . . . . . . . . . . . . .   8
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   8
 
@@ -102,14 +102,14 @@ Table of Contents
    for automated processes to obtain permission to access resources;
    likewise, the Platform for Privacy Preferences [W3C.REC-P3P-20020416]
    tells user-agents how to discover privacy policy before interacting
-   with a site.
+   with an origin server.
 
    While there are several ways to access per-resource metadata (e.g.,
    HTTP headers, WebDAV's PROPFIND [RFC4918]), the perceived overhead
 
 
 
-Nottingham               Expires August 6, 2018                 [Page 2]
+Nottingham               Expires August 7, 2018                 [Page 2]
 
 Internet-Draft          Defining Well-Known URIs           February 2018
 
@@ -126,9 +126,9 @@ Internet-Draft          Defining Well-Known URIs           February 2018
 
    To address this, this memo defines a path prefix in HTTP(S) URIs for
    these "well-known locations", "/.well-known/".  Future specifications
-   that need to define a resource for such site-wide metadata can
-   register their use to avoid collisions and minimise impingement upon
-   sites' URI space.
+   that need to define a resource for such metadata can register their
+   use to avoid collisions and minimise impingement upon origins' URI
+   space.
 
    Well-known URIs can also be used with other URI schemes, but only
    when those schemes' definitions explicitly allow it.
@@ -141,31 +141,31 @@ Internet-Draft          Defining Well-Known URIs           February 2018
    for general information retrieval or establishment of large URI
    namespaces on the Web.
 
-   Rather, they are designed to facilitate discovery of information on a
-   site when it isn't practical to use other mechanisms; for example,
-   when discovering policy that needs to be evaluated before a resource
-   on the site is accessed, or when the information applies to many (or
-   all) of its resources.
+   Rather, they are designed to facilitate discovery of information on
+   an origin when it isn't practical to use other mechanisms; for
+   example, when discovering policy that needs to be evaluated before a
+   resource is accessed, or when the information applies to many (or
+   all) of the origin' resources.
 
    As such, the well-known URI space was created with the expectation
    that it will be used to make policy information and other metadata
    about the origin available directly (if sufficiently concise), or
    provide references to other URIs that provide it.  In general, the
-   information it conveys should be applicable to most Web sites (while
-   acknowledging that many Web sites will not use a particular well-
-   known location, for various reasons).
+   information it conveys should be applicable to most Web origins
+   (while acknowledging that many will not use a particular well-known
+   location, for various reasons).
 
    In particular, well-known URIs are not a "protocol registry" for
    applications and protocols that wish to use HTTP as a substrate.
-   Even if a particular Web site is dedicated to the protocol in
-   question, it is inappropriate to devote a URL on all Web sites to a
-   specialist protocol that has little or no potential benefit for them.
+   Even if a particular origin is dedicated to the protocol in question,
+   it is inappropriate to devote a URL on all origins to a specialist
+   protocol that has little or no potential benefit for them.
 
 
 
 
 
-Nottingham               Expires August 6, 2018                 [Page 3]
+Nottingham               Expires August 7, 2018                 [Page 3]
 
 Internet-Draft          Defining Well-Known URIs           February 2018
 
@@ -221,7 +221,7 @@ Internet-Draft          Defining Well-Known URIs           February 2018
 
 
 
-Nottingham               Expires August 6, 2018                 [Page 4]
+Nottingham               Expires August 7, 2018                 [Page 4]
 
 Internet-Draft          Defining Well-Known URIs           February 2018
 
@@ -238,6 +238,11 @@ Internet-Draft          Defining Well-Known URIs           February 2018
    Note that this specification does not define a format or media-type
    for the resource located at "/.well-known/" and clients should not
    expect a resource to exist at that location.
+
+   Well-know URIs are only valid when rooted in the top of the path's
+   hierarchy; they MUST NOT be used in other parts of the path.  For
+   example, "/.well-known/example" is a valid use, but "/foo/.well-
+   known/example" is not.
 
 4.  Security Considerations
 
@@ -269,18 +274,17 @@ Internet-Draft          Defining Well-Known URIs           February 2018
    This document specifies procedures for the well-known URI registry,
    first defined in [RFC5785].
 
-   Well-known URIs are registered on the advice of one or more experts
-   (appointed by the IESG or their delegate), with a Specification
-   Required (using terminology from [RFC8126]).
 
 
 
-
-
-Nottingham               Expires August 6, 2018                 [Page 5]
+Nottingham               Expires August 7, 2018                 [Page 5]
 
 Internet-Draft          Defining Well-Known URIs           February 2018
 
+
+   Well-known URIs are registered on the advice of one or more experts
+   (appointed by the IESG or their delegate), with a Specification
+   Required (using terminology from [RFC8126]).
 
    To allow for the allocation of values prior to publication, the
    expert(s) may approve registration once they are satisfied that such
@@ -327,16 +331,16 @@ Internet-Draft          Defining Well-Known URIs           February 2018
               DOI 10.17487/RFC5741, December 2009,
               <https://www.rfc-editor.org/info/rfc5741>.
 
-   [RFC6454]  Barth, A., "The Web Origin Concept", RFC 6454,
-              DOI 10.17487/RFC6454, December 2011,
-              <https://www.rfc-editor.org/info/rfc6454>.
 
 
-
-Nottingham               Expires August 6, 2018                 [Page 6]
+Nottingham               Expires August 7, 2018                 [Page 6]
 
 Internet-Draft          Defining Well-Known URIs           February 2018
 
+
+   [RFC6454]  Barth, A., "The Web Origin Concept", RFC 6454,
+              DOI 10.17487/RFC6454, December 2011,
+              <https://www.rfc-editor.org/info/rfc6454>.
 
    [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
               Writing an IANA Considerations Section in RFCs", BCP 26,
@@ -378,6 +382,18 @@ Internet-Draft          Defining Well-Known URIs           February 2018
 
    [5] http://www.robotstxt.org/
 
+
+
+
+
+
+
+
+Nottingham               Expires August 7, 2018                 [Page 7]
+
+Internet-Draft          Defining Well-Known URIs           February 2018
+
+
 Appendix A.  Frequently Asked Questions
 
    1.  Aren't well-known locations bad for the Web?
@@ -386,13 +402,6 @@ Appendix A.  Frequently Asked Questions
        they are sometimes necessary.  This memo defines a "sandbox" for
        them, to reduce the risks of collision and to minimise the impact
        upon pre-existing URIs on sites.
-
-
-
-Nottingham               Expires August 6, 2018                 [Page 7]
-
-Internet-Draft          Defining Well-Known URIs           February 2018
-
 
    2.  Why /.well-known?
 
@@ -419,11 +428,11 @@ Internet-Draft          Defining Well-Known URIs           February 2018
 
 Appendix B.  Changes from RFC5785
 
-   o  Discuss inappropriate uses more fully
+   o  Discuss appropriate and inappropriate uses more fully
 
-   o  Adjusted IANA instructions
+   o  Adjust IANA instructions
 
-   o  Updated references
+   o  Update references
 
    o  Various other clarifications
 
@@ -436,13 +445,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-Nottingham               Expires August 6, 2018                 [Page 8]
+Nottingham               Expires August 7, 2018                 [Page 8]
