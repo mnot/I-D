@@ -54,7 +54,7 @@ Some applications on the Web require the discovery of policy or other informatio
 Robots Exclusion Protocol (<http://www.robotstxt.org/>) specifies a way for automated processes to
 obtain permission to access resources; likewise, the Platform for Privacy Preferences
 {{?W3C.REC-P3P-20020416}} tells user-agents how to discover privacy policy before interacting with
-a site.
+an origin server.
 
 While there are several ways to access per-resource metadata (e.g., HTTP headers, WebDAV's PROPFIND
 {{?RFC4918}}), the perceived overhead (either in terms of client-perceived latency and/or
@@ -64,8 +64,8 @@ When this happens, one solution is designating a "well-known location" for data 
 collisions, both with other such designated "well-known locations" and with pre-existing resources.
 
 To address this, this memo defines a path prefix in HTTP(S) URIs for these "well-known locations",
-"/.well-known/". Future specifications that need to define a resource for such site-wide metadata
-can register their use to avoid collisions and minimise impingement upon sites' URI space.
+"/.well-known/". Future specifications that need to define a resource for such metadata can
+register their use to avoid collisions and minimise impingement upon origins' URI space.
 
 Well-known URIs can also be used with other URI schemes, but only when those schemes'
 definitions explicitly allow it.
@@ -78,19 +78,20 @@ keeping with the Architecture of the World-Wide Web [W3C.REC-webarch-20041215], 
 are not intended for general information retrieval or establishment of large URI namespaces on the
 Web.
 
-Rather, they are designed to facilitate discovery of information on a site when it isn't practical
-to use other mechanisms; for example, when discovering policy that needs to be evaluated before a
-resource on the site is accessed, or when the information applies to many (or all) of its resources.
+Rather, they are designed to facilitate discovery of information on an origin when it isn't
+practical to use other mechanisms; for example, when discovering policy that needs to be evaluated
+before a resource is accessed, or when the information applies to many (or all) of the origin'
+resources.
 
 As such, the well-known URI space was created with the expectation that it will be used to make
 policy information and other metadata about the origin available directly (if sufficiently
 concise), or provide references to other URIs that provide it. In general, the information it
-conveys should be applicable to most Web sites (while acknowledging that many Web sites will not
-use a particular well-known location, for various reasons).
+conveys should be applicable to most Web origins (while acknowledging that many will not use a
+particular well-known location, for various reasons).
 
 In particular, well-known URIs are not a "protocol registry" for applications and protocols that
-wish to use HTTP as a substrate. Even if a particular Web site is dedicated to the protocol in
-question, it is inappropriate to devote a URL on all Web sites to a specialist protocol that has
+wish to use HTTP as a substrate. Even if a particular origin is dedicated to the protocol in
+question, it is inappropriate to devote a URL on all origins to a specialist protocol that has
 little or no potential benefit for them.
 
 Instead, such applications and protocols are encouraged to used a URI to bootstrap their operation,
