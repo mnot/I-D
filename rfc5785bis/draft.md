@@ -71,7 +71,7 @@ Well-known URIs can also be used with other URI schemes, but only when those sch
 definitions explicitly allow it.
 
 
-## Appropriate Use of Well-Known URIs
+## Appropriate Use of Well-Known URIs {#appropriate}
 
 There are a number of possible ways that applications could use well-known URIs. However, in
 keeping with the Architecture of the World-Wide Web [W3C.REC-webarch-20041215], well-known URIs
@@ -80,7 +80,7 @@ Web.
 
 Rather, they are designed to facilitate discovery of information on a site when it isn't practical
 to use other mechanisms; for example, when discovering policy that needs to be evaluated before a
-resource on the site is accessed.
+resource on the site is accessed, or when the information applies to many (or all) of its resources.
 
 As such, the well-known URI space was created with the expectation that it will be used to make
 policy information and other metadata about the origin available directly (if sufficiently
@@ -90,9 +90,16 @@ It is inappropriate to use well-known URIs as a means of identifying or locating
 built on top of HTTP; such applications are encouraged to use a complete URI to achieve this,
 rather than hard-coding a well-known location.
 
-If a protocol has a use case where it is not possible to convey a URI, but it is possible to
-convey a hostname, it might be appropriate to use a well-known location. Making it easier to
-locate the resource is not a sufficient reason. Likewise, future use unsupported by the proposed specification is not sufficient reason to register a well known location.
+If a protocol cannot be bootstrapped with a URI (e.g., the discovery mechanism can only carry a
+hostname), it might be appropriate to use a well-known location, even if the resource is not
+conveying metadata about the whole origin. However, merely making it easier to locate it is not a
+sufficient reason. Likewise, future use unsupported by the proposed specification is not sufficient
+reason to register a well known location.
+
+Well-known locations are also not suited for resources about things other than the origin that they
+are located upon; for example, creating a well-known resource about a business entity or
+organisational structure presumes that Internet hosts and organisations share structure, and are
+likely to have significant deployment issues in environments where this is not true.
 
 
 # Notational Conventions
@@ -102,7 +109,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 2119 {{!RFC2119}}.
 
 
-# Well-Known URIs
+# Well-Known URIs {#well-known}
 
 A well-known URI is a URI {{!RFC3986}} whose path component begins with the characters
 "/.well-known/", and whose scheme is "HTTP", "HTTPS", or another scheme that has explicitly been
@@ -157,7 +164,8 @@ This document specifies procedures for the well-known URI registry, first define
 
 Well-known URIs are registered on the advice of one or more experts (appointed by the
 IESG or their delegate), with a Specification Required (using terminology from {{!RFC8126}}).
-However, to allow for the allocation of values prior to publication, the expert(s) may
+
+To allow for the allocation of values prior to publication, the expert(s) may
 approve registration once they are satisfied that such a specification will be published.
 
 Registration requests can be sent to the wellknown-uri-review@ietf.org mailing list for review
@@ -206,6 +214,12 @@ Related information:
    Allowing every URI path segment to have a well-known location (e.g., "/images/.well-known/")
    would increase the risks of colliding with a pre-existing URI on a site, and generally these
    solutions are found not to scale well, because they're too "chatty".
+
+5. I want to use a well-known location to make it easy to configure my protocol that uses HTTP.
+
+   This is not what well-known locations are for; see {{appropriate}}.
+
+
 
 # Changes from RFC5785
 
