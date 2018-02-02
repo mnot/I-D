@@ -84,19 +84,25 @@ resource on the site is accessed, or when the information applies to many (or al
 
 As such, the well-known URI space was created with the expectation that it will be used to make
 policy information and other metadata about the origin available directly (if sufficiently
-concise), or provide references to other URIs that provide it.
+concise), or provide references to other URIs that provide it. In general, the information it
+conveys should be applicable to most Web sites (while acknowledging that many Web sites will not
+use a particular well-known location, for various reasons).
 
-It is inappropriate to use well-known URIs as a means of identifying or locating a new protocol
-built on top of HTTP; such applications are encouraged to use a complete URI to achieve this,
-rather than hard-coding a well-known location.
+In particular, well-known URIs are not a "protocol registry" for applications and protocols that
+wish to use HTTP as a substrate. Even if a particular Web site is dedicated to the protocol in
+question, it is inappropriate to devote a URL on all Web sites to a specialist protocol that has
+little or no potential benefit for them.
 
-If a protocol cannot be bootstrapped with a URI (e.g., the discovery mechanism can only carry a
-hostname), it might be appropriate to use a well-known location, even if the resource is not
-conveying metadata about the whole origin. However, merely making it easier to locate it is not a
-sufficient reason. Likewise, future use unsupported by the proposed specification is not sufficient
-reason to register a well known location.
+Instead, such applications and protocols are encouraged to used a URI to bootstrap their operation,
+rather than using a hostname and a well-known URI.
 
-Well-known locations are also not suited for resources about things other than the origin that they
+Exceptionally, the registry expert(s) may approve such a registration for documents in the IETF
+Stream {{!RFC5741}}, in consultation with the IESG, provided that the protocol in question cannot
+be bootstrapped with a URI (e.g., the discovery mechanism can only carry a hostname). However,
+merely making it easier to locate it is not a sufficient reason. Likewise, future use unsupported
+by the specification in question is not sufficient reason to register a well-known location.
+
+Well-known locations are also not suited for information on topics other than the origin that they
 are located upon; for example, creating a well-known resource about a business entity or
 organisational structure presumes that Internet hosts and organisations share structure, and are
 likely to have significant deployment issues in environments where this is not true.
