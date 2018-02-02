@@ -234,7 +234,7 @@ Related information:
 
 # Changes from RFC5785
 
-* Discuss inappropriate uses more fully
-* Adjusted IANA instructions
-* Updated references
+* Discuss appropriate and inappropriate uses more fully
+* Adjust IANA instructions
+* Update references
 * Various other clarifications
