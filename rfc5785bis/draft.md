@@ -92,7 +92,7 @@ rather than hard-coding a well-known location.
 
 If a protocol has a use case where it is not possible to convey a URI, but it is possible to
 convey a hostname, it might be appropriate to use a well-known location. Making it easier to
-locate the resource is not a sufficient reason.
+locate the resource is not a sufficient reason. Likewise, future use unsupported by the proposed specification is not sufficient reason to register a well known location.
 
 
 # Notational Conventions
