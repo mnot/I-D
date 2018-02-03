@@ -78,7 +78,7 @@ keeping with the Architecture of the World-Wide Web [W3C.REC-webarch-20041215], 
 are not intended for general information retrieval or establishment of large URI namespaces on the
 Web.
 
-Rather, they are designed to facilitate discovery of information on an origin when it isn't
+Rather, they are designed to facilitate discovery of information about an origin when it isn't
 practical to use other mechanisms; for example, when discovering policy that needs to be evaluated
 before a resource is accessed, or when the information applies to many (or all) of the origin'
 resources.
