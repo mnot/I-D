@@ -85,7 +85,7 @@ resources.
 As such, the well-known URI space was created with the expectation that it will be used to make
 policy information and other metadata about the origin available directly (if sufficiently
 concise), or provide references to other URIs that provide it. In general, the information it
-conveys should be applicable to most Web origins (while acknowledging that many will not use a
+contains should be applicable to most Web origins (while acknowledging that many will not use a
 particular well-known location, for various reasons).
 
 In particular, well-known URIs are not a "protocol registry" for applications and protocols that
