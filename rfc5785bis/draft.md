@@ -75,8 +75,7 @@ definitions explicitly allow it.
 
 There are a number of possible ways that applications could use well-known URIs. However, in
 keeping with the Architecture of the World-Wide Web [W3C.REC-webarch-20041215], well-known URIs
-are not intended for general information retrieval or establishment of large URI namespaces on the
-Web.
+are not intended for general information retrieval or establishment of large URI namespaces.
 
 Rather, they are designed to facilitate discovery of information about an origin when it isn't
 practical to use other mechanisms; for example, when discovering policy that needs to be evaluated
