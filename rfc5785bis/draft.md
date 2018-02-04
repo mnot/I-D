@@ -79,7 +79,7 @@ are not intended for general information retrieval or establishment of large URI
 
 Rather, they are designed to facilitate discovery of information about an origin when it isn't
 practical to use other mechanisms; for example, when discovering policy that needs to be evaluated
-before a resource is accessed, or when the information applies to many (or all) of the origin'
+before a resource is accessed, or when the information applies to many (or all) of the origin's
 resources.
 
 As such, the well-known URI space was created with the expectation that it will be used to make
