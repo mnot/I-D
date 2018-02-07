@@ -1,7 +1,7 @@
 ---
 title: Defining Well-Known Uniform Resource Identifiers (URIs)
 abbrev: Defining Well-Known URIs
-docname: draft-nottingham-rfc5785bis-03
+docname: draft-nottingham-rfc5785bis-04
 date: 2018
 category: std
 obsoletes: 5785
@@ -49,19 +49,20 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-Some applications on the Web require the discovery of policy or other information about an origin
-{{!RFC6454}} (sometimes called "site-wide metadata") before making a request. For example, the
-Robots Exclusion Protocol (<http://www.robotstxt.org/>) specifies a way for automated processes to
-obtain permission to access resources; likewise, the Platform for Privacy Preferences
-{{?W3C.REC-P3P-20020416}} tells user-agents how to discover privacy policy before interacting with
-an origin server.
+Some applications on the Web require the discovery of information about an origin {{!RFC6454}}
+(sometimes called "site-wide metadata") before making a request. For example, the Robots Exclusion
+Protocol (<http://www.robotstxt.org/>) specifies a way for automated processes to obtain permission
+to access resources; likewise, the Platform for Privacy Preferences {{?W3C.REC-P3P-20020416}} tells
+user-agents how to discover privacy policy before interacting with an origin server.
 
 While there are several ways to access per-resource metadata (e.g., HTTP headers, WebDAV's PROPFIND
 {{?RFC4918}}), the perceived overhead (either in terms of client-perceived latency and/or
 deployment difficulties) associated with them often precludes their use in these scenarios.
 
-When this happens, one solution is designating a "well-known location" for data or services related to the origin, so that it can be easily located. However, this approach has the drawback of risking
-collisions, both with other such designated "well-known locations" and with pre-existing resources.
+When this happens, one solution is designating a "well-known location" for data or services related
+to the origin overall, so that it can be easily located. However, this approach has the drawback of
+risking collisions, both with other such designated "well-known locations" and with
+resources that the origin has created (or wishes to create).
 
 To address this, this memo defines a path prefix in HTTP(S) URIs for these "well-known locations",
 "/.well-known/". Future specifications that need to define a resource for such metadata can
