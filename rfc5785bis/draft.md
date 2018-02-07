@@ -74,28 +74,26 @@ definitions explicitly allow it.
 
 ## Appropriate Use of Well-Known URIs {#appropriate}
 
-There are a number of possible ways that applications could use well-known URIs. However, in
-keeping with the Architecture of the World-Wide Web [W3C.REC-webarch-20041215], well-known URIs
-are not intended for general information retrieval or establishment of large URI namespaces.
+As per {{!RFC7320}}, "publishing independent standards that mandate particular forms of URI
+substructure is inappropriate, because that essentially usurps ownership." Well-known URIs are not
+an escape hatch from the requirements therein; they are a very limited carve-out of the path name
+space owned by the authority, ceded to standard use for a designated purpose.
 
-Rather, they are designed to facilitate discovery of information about an origin when it isn't
-practical to use other mechanisms; for example, when discovering policy that needs to be evaluated
-before a resource is accessed, or when the information applies to many (or all) of the origin's
-resources.
+That purpose is to facilitate discovery of information about an origin when it isn't practical to
+use other mechanisms; for example, when discovering policy that needs to be evaluated before a
+resource is accessed, or when the information applies to many (or all) of the origin's resources.
 
-As such, the well-known URI space was created with the expectation that it will be used to make
-policy information and other metadata about the origin available directly (if sufficiently
-concise), or provide references to other URIs that provide it. In general, the information it
-contains should be applicable to most Web origins (while acknowledging that many will not use a
-particular well-known location, for various reasons).
+Typically, the resource(s) identified by a well-known URI will make information about the origin
+(e.g., policy) available directly, or provide references to other URIs that provide it. In general,
+that information should be applicable to most origins (i.e., Web sites -- while acknowledging that
+some origins might not use a particular well-known location, for various reasons).
 
-In particular, well-known URIs are not a "protocol registry" for applications and protocols that
-wish to use HTTP as a substrate. Even if a particular origin is dedicated to the protocol in
-question, it is inappropriate to devote a URL on all origins to a specialist protocol that has
-little or no potential benefit for them.
+In keeping with the Architecture of the World-Wide Web {{?W3C.REC-webarch-20041215}}, well-known
+URIs are not intended for general information retrieval or establishment of large URI namespaces.
 
-Instead, such applications and protocols are encouraged to used a URI to bootstrap their operation,
-rather than using a hostname and a well-known URI.
+Specifically, well-known URIs are not a "protocol registry" for applications and protocols that
+wish to use HTTP as a substrate. Instead, such applications and protocols are encouraged to used an
+absolute URI to bootstrap their operation, rather than using a hostname and a well-known URI.
 
 Exceptionally, the registry expert(s) may approve such a registration for documents in the IETF
 Stream {{!RFC5741}}, in consultation with the IESG, provided that the protocol in question cannot
