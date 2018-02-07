@@ -14,7 +14,7 @@
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
 
-<rfc ipr="trust200902" docName="draft-nottingham-rfc5785bis-03" category="std" obsoletes="5785">
+<rfc ipr="trust200902" docName="draft-nottingham-rfc5785bis-04" category="std" obsoletes="5785">
 
   <front>
     <title abbrev="Defining Well-Known URIs">Defining Well-Known Uniform Resource Identifiers (URIs)</title>
@@ -71,19 +71,20 @@ Resource Identifier (URI) schemes.</t>
 
 <section anchor="introduction" title="Introduction">
 
-<t>Some applications on the Web require the discovery of policy or other information about an origin
-<xref target="RFC6454"/> (sometimes called “site-wide metadata”) before making a request. For example, the
-Robots Exclusion Protocol (<eref target="http://www.robotstxt.org/">http://www.robotstxt.org/</eref>) specifies a way for automated processes to
-obtain permission to access resources; likewise, the Platform for Privacy Preferences
-<xref target="W3C.REC-P3P-20020416"/> tells user-agents how to discover privacy policy before interacting with
-an origin server.</t>
+<t>Some applications on the Web require the discovery of information about an origin <xref target="RFC6454"/>
+(sometimes called “site-wide metadata”) before making a request. For example, the Robots Exclusion
+Protocol (<eref target="http://www.robotstxt.org/">http://www.robotstxt.org/</eref>) specifies a way for automated processes to obtain permission
+to access resources; likewise, the Platform for Privacy Preferences <xref target="W3C.REC-P3P-20020416"/> tells
+user-agents how to discover privacy policy before interacting with an origin server.</t>
 
 <t>While there are several ways to access per-resource metadata (e.g., HTTP headers, WebDAV’s PROPFIND
 <xref target="RFC4918"/>), the perceived overhead (either in terms of client-perceived latency and/or
 deployment difficulties) associated with them often precludes their use in these scenarios.</t>
 
-<t>When this happens, one solution is designating a “well-known location” for data or services related to the origin, so that it can be easily located. However, this approach has the drawback of risking
-collisions, both with other such designated “well-known locations” and with pre-existing resources.</t>
+<t>When this happens, one solution is designating a “well-known location” for data or services related
+to the origin overall, so that it can be easily located. However, this approach has the drawback of
+risking collisions, both with other such designated “well-known locations” and with
+resources that the origin has created (or wishes to create).</t>
 
 <t>To address this, this memo defines a path prefix in HTTP(S) URIs for these “well-known locations”,
 “/.well-known/”. Future specifications that need to define a resource for such metadata can
@@ -94,28 +95,26 @@ definitions explicitly allow it.</t>
 
 <section anchor="appropriate" title="Appropriate Use of Well-Known URIs">
 
-<t>There are a number of possible ways that applications could use well-known URIs. However, in
-keeping with the Architecture of the World-Wide Web [W3C.REC-webarch-20041215], well-known URIs
-are not intended for general information retrieval or establishment of large URI namespaces.</t>
+<t>As per <xref target="RFC7320"/>, “publishing independent standards that mandate particular forms of URI
+substructure is inappropriate, because that essentially usurps ownership.” Well-known URIs are not
+an escape hatch from the requirements therein; they are a very limited carve-out of the path name
+space owned by the authority, ceded to standard use for a designated purpose.</t>
 
-<t>Rather, they are designed to facilitate discovery of information about an origin when it isn’t
-practical to use other mechanisms; for example, when discovering policy that needs to be evaluated
-before a resource is accessed, or when the information applies to many (or all) of the origin’s
-resources.</t>
+<t>That purpose is to facilitate discovery of information about an origin when it isn’t practical to
+use other mechanisms; for example, when discovering policy that needs to be evaluated before a
+resource is accessed, or when the information applies to many (or all) of the origin’s resources.</t>
 
-<t>As such, the well-known URI space was created with the expectation that it will be used to make
-policy information and other metadata about the origin available directly (if sufficiently
-concise), or provide references to other URIs that provide it. In general, the information it
-contains should be applicable to most Web origins (while acknowledging that many will not use a
-particular well-known location, for various reasons).</t>
+<t>Typically, the resource(s) identified by a well-known URI will make information about the origin
+(e.g., policy) available directly, or provide references to other URIs that provide it. In general,
+that information should be applicable to most origins (i.e., Web sites – while acknowledging that
+some origins might not use a particular well-known location, for various reasons).</t>
 
-<t>In particular, well-known URIs are not a “protocol registry” for applications and protocols that
-wish to use HTTP as a substrate. Even if a particular origin is dedicated to the protocol in
-question, it is inappropriate to devote a URL on all origins to a specialist protocol that has
-little or no potential benefit for them.</t>
+<t>In keeping with the Architecture of the World-Wide Web <xref target="W3C.REC-webarch-20041215"/>, well-known
+URIs are not intended for general information retrieval or establishment of large URI namespaces.</t>
 
-<t>Instead, such applications and protocols are encouraged to used a URI to bootstrap their operation,
-rather than using a hostname and a well-known URI.</t>
+<t>Specifically, well-known URIs are not a “protocol registry” for applications and protocols that
+wish to use HTTP as a substrate. Instead, such applications and protocols are encouraged to used an
+absolute URI to bootstrap their operation, rather than using a hostname and a well-known URI.</t>
 
 <t>Exceptionally, the registry expert(s) may approve such a registration for documents in the IETF
 Stream <xref target="RFC5741"/>, in consultation with the IESG, provided that the protocol in question cannot
@@ -248,6 +247,20 @@ but is not required.</t>
 
 
 
+<reference  anchor="RFC7320" target='https://www.rfc-editor.org/info/rfc7320'>
+<front>
+<title>URI Design and Ownership</title>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'><organization /></author>
+<date year='2014' month='July' />
+<abstract><t>Section 1.1.1 of RFC 3986 defines URI syntax as &quot;a federated and extensible naming system wherein each scheme's specification may further restrict the syntax and semantics of identifiers using that scheme.&quot;  In other words, the structure of a URI is defined by its scheme.  While it is common for schemes to further delegate their substructure to the URI's owner, publishing independent standards that mandate particular forms of URI substructure is inappropriate, because that essentially usurps ownership.  This document further describes this problematic practice and provides some acceptable alternatives for use in standards.</t></abstract>
+</front>
+<seriesInfo name='BCP' value='190'/>
+<seriesInfo name='RFC' value='7320'/>
+<seriesInfo name='DOI' value='10.17487/RFC7320'/>
+</reference>
+
+
+
 <reference  anchor="RFC5741" target='https://www.rfc-editor.org/info/rfc5741'>
 <front>
 <title>RFC Streams, Headers, and Boilerplates</title>
@@ -349,6 +362,28 @@ but is not required.</t>
 
 
 
+<reference anchor="W3C.REC-webarch-20041215"
+           target='http://www.w3.org/TR/2004/REC-webarch-20041215'>
+<front>
+<title>Architecture of the World Wide Web, Volume One</title>
+
+<author initials='I.' surname='Jacobs' fullname='Ian Jacobs'>
+    <organization />
+</author>
+
+<author initials='N.' surname='Walsh' fullname='Norman Walsh'>
+    <organization />
+</author>
+
+<date month='December' day='15' year='2004' />
+</front>
+
+<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-webarch-20041215' />
+<format type='HTML' target='http://www.w3.org/TR/2004/REC-webarch-20041215' />
+</reference>
+
+
+
 <reference  anchor="RFC7231" target='https://www.rfc-editor.org/info/rfc7231'>
 <front>
 <title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
@@ -415,108 +450,109 @@ This is not what well-known locations are for; see <xref target="appropriate"/>.
   </back>
 
 <!-- ##markdown-source:
-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
-fPfXxBjS7pZo2zavJhT/D11C8yoKKgAA
+H4sIAGRxeloAA41aXXPbOJZ956/AKg+2uyQ5duJJ2tmaHlecTLs2Hx7bmdTW
+1lYXREISxhShJUjLmi7/9z3nAqAoWemZPMSSSAL3+5x7wdFolDW2Kc25ujRT
+W9lqpr6bshz9V+VWlfpW2amrF+rGeNfWuVFXhakaO7Wm9urw282VP8r0ZFKb
+hx88jzuywuWVXmCHotbTZlS5psFtc70Y1dP87M3bs4n1o5evs0I3uOn05cnb
+LMfHmavX58o3ReYm3pWmMf5c8fYss8v6XDV165vTly9/fnma6droc/VXU5la
+l9nK1fez2rXL8+zerPGtOFdXVWPqyjSjSwqRZb7RVfGbLl2FPdfGZ0t7rv6n
+cflQ4T9bUc+h8q5uajP1+LRexA9NbXNcyt1iqeOHBW7GJVuVtjL/m2W6beau
+Ps/UKFP4ZytI/nmsvnSay8/BKJ91fb97xdUzXdl/6sa66lx+MQtty3O1gPH+
+wv/GUEUutDXknjfN0p8fH69Wq3G6epxl2Wg0UnoCiSFolt3NrVcLs3CqoKuM
+V1otdTNXS2hmHxU8rQYrOu9enFe6XCTwg6EaHI83V44H1FV5U5q8MUWKkmxP
+lEiQHCmfz83C+HGUCSKa377wv8b9dmN0gXDKsp9uPr5XHy6v7r7enKtlabQ3
+qoa4D0Y1FN1jN4ijJga7GbVsJ6UNEv4UlZMAU1YUq93SeQiH2LSej7mpwgZn
+b9+cjXm7wX2+hRFK6xvRvdkskWtug1/bqlC6Uf+ZLDyzzbydjOHzYxr6+Gp0
+eVzqiSn98SaY/xw3WDisXJscxlCHbtqYaqjaSuT2c1Mc9eTtbSEOjPtYJzts
+lj7m2jdhyXyuqxm9CGNQCfOvRWWs2sYfz+ajpcazO0LfGqN06R1MYYJwB17l
+bV1zO2RM03o6nlevPtx9VMhYzeC6N/UQe2fd3r0LY2ua6RgRfYw6cPwHJUBU
+Y3QsbFGUBqHygllbu6IVv0M8t4B8y2Vyu1cuCPPdTGDn/2ttbYLo1ucIm3pN
+p9uKwSkPIBlc2yg419V2Bk1+//0/EBN/en32+ukpO/RYv7GIU/i/LGHOgbeN
+Ga1sAV+aRlOrwVGKv4W+Z7XTsrPxzVh9RBCZR71A7A5Fjhs3cY1XHx7zsmUM
+Zte1Q3VxpToUU8WUreW25rERM/0Z6bI0OdOHgbzSa4lO1BQHLSAVQjs33uNq
+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
+bdu8uZD9PxwGfHxGKgAA
 
 -->
 
