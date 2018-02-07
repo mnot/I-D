@@ -35,14 +35,14 @@ Resource Identifier (URI) schemes.
 
 This draft is a proposed revision of RFC5875.
 
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/5785bis>.
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/rfc5785bis>.
 
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/5785bis/>.
+The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/rfc5785bis/>.
 
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/5785bis>.
+Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/rfc5785bis>.
 
 See also the draft's current status in the IETF datatracker, at
-<https://datatracker.ietf.org/doc/draft-nottingham-5785bis/>.
+<https://datatracker.ietf.org/doc/draft-nottingham-rfc5785bis/>.
 
 --- middle
 
