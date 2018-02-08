@@ -225,7 +225,7 @@ They do so by running this algorithm (or its functional equivalent) upon receivi
    1. Select one member of selected_responses and let its "Variants" header field-value(s) be variants-header. This SHOULD be the most recent response, but MAY be from an older one as long as it is still fresh.
    2. Let sorted-variants be an empty list.
    3. For each variant in variants-header:
-      1. If variant's field-name corresponds to the response header field identified by a content negotiation mechanism that the implementation supports:
+      1. If variant's field-name corresponds to the request header field identified by a content negotiation mechanism that the implementation supports:
          1. Let request-value be the field-value of the request header field(s) identified by the content negotiation mechanism.
          2. Let available-values be a list containing all available-value for variant.
          3. Let sorted-values be the result of running the algorithm defined by the content negotiation mechanism with request-value and available-values.
