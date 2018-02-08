@@ -45,6 +45,8 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/varia
 See also the draft's current status in the IETF datatracker, at
 <https://datatracker.ietf.org/doc/draft-nottingham-variants/>.
 
+There is a prototype implementation of the algorithms herein at <https://github.com/mnot/variants-toy>.
+
 --- middle
 
 # Introduction
