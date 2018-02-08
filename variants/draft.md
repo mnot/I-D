@@ -225,9 +225,9 @@ They do so by running this algorithm (or its functional equivalent) upon receivi
    4. If any member of sorted-variants is an empty list, stop processing and forward the request towards the origin, since an acceptable response is not stored in the cache.
    5. Let sorted-keys be the result of running Find Available Keys ({{find}}) on sorted-variants and two empty lists.
 
-This will result in a list of lists, where each member of the top-level list indicates, in preference order, a key for an acceptable response to the request.
+This will result in a list of lists, where each member of the top-level list indicates, in client preference order, a key for an acceptable response to the request.
 
-A Cache MAY satisfy the request with any response whose Variant-Key header corresponds to a member of sorted-keys; when doing so, it SHOULD use the most preferred available response.
+A Cache MAY satisfy the request with any response whose Variant-Key header corresponds to a member of sorted-keys; when doing so, it SHOULD use the most preferred available response, but MAY use a less-preferred response.
 
 See also {{vary}} regarding handling of Vary.
 
@@ -420,12 +420,11 @@ This section defines handling for `Accept-Encoding` variants, as per {{!RFC7231}
 
 To perform content negotiation for Accept-Encoding given an request-value and available-values:
 
-1. Let preferred-codings be a list of the codings in the request-value, ordered by their weight, highest to lowest, as per {{!RFC7231}} Section 5.3.1 (omitting any coding with a weight of 0). If "Accept-Encoding" is not present or empty, preferred-codings will be empty.
+1. Let preferred-codings be a list of the codings in the request-value, ordered by their weight, highest to lowest, as per {{!RFC7231}} Section 5.3.1 (omitting any coding with a weight of 0). If "Accept-Encoding" is not present or empty, preferred-codings will be empty. If a coding lacks an explicit weight, an implementation MAY assign one.
 2. If "identity" is not a member of preferred-codings, append "identity".
 3. Append "identity" to available-values.
 4. Remove any member of available-values not present in preferred-codings, comparing in a case-insensitive fashion.
 5. Return available-values.
-
 
 ## Accept-Language {#content-language}
 
@@ -433,7 +432,7 @@ This section defines handling for `Accept-Language` variants, as per {{!RFC7231}
 
 To perform content negotiation for Accept-Language given an request-value and available-values:
 
-1. Let preferred-langs be a list of the language-ranges in the request-value, ordered by their weight, highest to lowest, as per {{!RFC7231}} Section 5.3.1 (omitting any language-range with a weight of 0).
+1. Let preferred-langs be a list of the language-ranges in the request-value, ordered by their weight, highest to lowest, as per {{!RFC7231}} Section 5.3.1 (omitting any language-range with a weight of 0). If a language-range lacks a weight, an implementation MAY assign one.
 2. If preferred-langs is empty, append "*".
 3. Filter available-values using preferred-langs with either the Basic Filtering scheme defined in {{!RFC4647}} Section 3.3.1, or the Lookup scheme defined in Section 3.4 of that document. Use the first member of available-values as the default.
 4. Return available-values.
