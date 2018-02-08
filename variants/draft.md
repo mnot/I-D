@@ -437,22 +437,26 @@ This appendix defines the required information to use existing proactive content
 
 This section defines handling for `Accept-Encoding` variants, as per {{!RFC7231}} Section 5.3.4.
 
-To perform content negotiation for Accept-Encoding given an request-value and available-values:
+To perform content negotiation for Accept-Encoding given a request-value and available-values:
 
-1. Let preferred-codings be a list of the codings in the request-value, ordered by their weight, highest to lowest, as per {{!RFC7231}} Section 5.3.1 (omitting any coding with a weight of 0). If "Accept-Encoding" is not present or empty, preferred-codings will be empty. If a coding lacks an explicit weight, an implementation MAY assign one.
-2. If "identity" is not a member of preferred-codings, append "identity".
-3. Append "identity" to available-values.
-4. Remove any member of available-values not present in preferred-codings, comparing in a case-insensitive fashion.
-5. Return available-values.
+1. Let preferred-available be an empty list.
+2. Let preferred-codings be a list of the codings in the request-value, ordered by their weight, highest to lowest, as per {{!RFC7231}} Section 5.3.1 (omitting any coding with a weight of 0). If "Accept-Encoding" is not present or empty, preferred-codings will be empty. If a coding lacks an explicit weight, an implementation MAY assign one.
+3. If "identity" is not a member of preferred-codings, append "identity".
+4. Append "identity" to available-values.
+5. For each preferred-coding in preferred-codings:
+   1. If there is a case-insensitive, character-for-character match for preferred-coding in available-values, append that member of available-values to preferred-available.
+6. Return preferred-available.
 
 ## Accept-Language {#content-language}
 
 This section defines handling for `Accept-Language` variants, as per {{!RFC7231}} Section 5.3.5.
 
-To perform content negotiation for Accept-Language given an request-value and available-values:
+To perform content negotiation for Accept-Language given a request-value and available-values:
 
-1. Let preferred-langs be a list of the language-ranges in the request-value, ordered by their weight, highest to lowest, as per {{!RFC7231}} Section 5.3.1 (omitting any language-range with a weight of 0). If a language-range lacks a weight, an implementation MAY assign one.
-2. If preferred-langs is empty, append "*".
-3. Filter available-values using preferred-langs with either the Basic Filtering scheme defined in {{!RFC4647}} Section 3.3.1, or the Lookup scheme defined in Section 3.4 of that document. Use the first member of available-values as the default.
-4. Return available-values.
+1. Let preferred-available be an empty list.
+2. Let preferred-langs be a list of the language-ranges in the request-value, ordered by their weight, highest to lowest, as per {{!RFC7231}} Section 5.3.1 (omitting any language-range with a weight of 0). If a language-range lacks a weight, an implementation MAY assign one.
+3. Append the first member of available-values to preferred-langs (thus making it the default).
+4. For each preferred-lang in preferred-langs:
+   1. If any member of available-values matches preferred-lang, using either the Basic Filtering scheme defined in {{!RFC4647}} Section 3.3.1, or the Lookup scheme defined in Section 3.4 of that document, append those members of available-values to preferred-available (preserving their order).
+5. Return preferred-available.
 
