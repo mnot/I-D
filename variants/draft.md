@@ -216,7 +216,7 @@ They do so by running this algorithm (or its functional equivalent) upon receivi
    3. For each variant in variants-header:
       1. If variant's field-name corresponds to the response header field identified by a content negotiation mechanism that the implementation supports:
          1. Let request-value be the field-value of the request header field(s) identified by the content negotiation mechanism.
-         2. Let available-values be a list containing all available-value for the variant.
+         2. Let available-values be a list containing all available-value for variant.
          3. Let sorted-values be the result of running the algorithm defined by the content negotiation mechanism with request-value and available-values.
          4. Append sorted-values to sorted-variants.
                   
