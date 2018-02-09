@@ -443,6 +443,9 @@ To perform content negotiation for Accept given a request-value and available-va
    1. If any member of available-values matches preferred-type, using the media-range matching mechanism specified in {{!RFC7231}} Section 5.3.2 (which is case-insensitive), append those members of available-values to preferred-available (preserving the precedence order implied by the media ranges' specificity).
 5. Return preferred-available.
 
+Note that this algorithm explicitly ignores extension parameters on media types (e.g., "charset").
+
+
 ## Accept-Encoding {#content-encoding}
 
 This section defines handling for `Accept-Encoding` variants, as per {{!RFC7231}} Section 5.3.4.
