@@ -4,9 +4,9 @@
 
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                    Fastly
-Updates: 7234 (if approved)                             February 8, 2018
+Updates: 7234 (if approved)                             February 9, 2018
 Intended status: Standards Track
-Expires: August 12, 2018
+Expires: August 13, 2018
 
 
                       HTTP Representation Variants
@@ -53,7 +53,7 @@ Status of This Memo
 
 
 
-Nottingham               Expires August 12, 2018                [Page 1]
+Nottingham               Expires August 13, 2018                [Page 1]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -61,7 +61,7 @@ Internet-Draft        HTTP Representation Variants         February 2018
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on August 12, 2018.
+   This Internet-Draft will expire on August 13, 2018.
 
 Copyright Notice
 
@@ -90,8 +90,8 @@ Table of Contents
    5.  Cache Behaviour . . . . . . . . . . . . . . . . . . . . . . .   8
      5.1.  Find Available Keys . . . . . . . . . . . . . . . . . . .   9
      5.2.  Example of Cache Behaviour  . . . . . . . . . . . . . . .  10
-   6.  Example Headers . . . . . . . . . . . . . . . . . . . . . . .  11
-     6.1.  Single Variant  . . . . . . . . . . . . . . . . . . . . .  11
+   6.  Example Headers . . . . . . . . . . . . . . . . . . . . . . .  10
+     6.1.  Single Variant  . . . . . . . . . . . . . . . . . . . . .  10
      6.2.  Multiple Variants . . . . . . . . . . . . . . . . . . . .  11
      6.3.  Partial Coverage  . . . . . . . . . . . . . . . . . . . .  12
    7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Nottingham               Expires August 12, 2018                [Page 2]
+Nottingham               Expires August 13, 2018                [Page 2]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -165,7 +165,7 @@ Internet-Draft        HTTP Representation Variants         February 2018
 
 
 
-Nottingham               Expires August 12, 2018                [Page 3]
+Nottingham               Expires August 13, 2018                [Page 3]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -221,7 +221,7 @@ Internet-Draft        HTTP Representation Variants         February 2018
 
 
 
-Nottingham               Expires August 12, 2018                [Page 4]
+Nottingham               Expires August 13, 2018                [Page 4]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -277,7 +277,7 @@ Internet-Draft        HTTP Representation Variants         February 2018
 
 
 
-Nottingham               Expires August 12, 2018                [Page 5]
+Nottingham               Expires August 13, 2018                [Page 5]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -333,7 +333,7 @@ Internet-Draft        HTTP Representation Variants         February 2018
 
 
 
-Nottingham               Expires August 12, 2018                [Page 6]
+Nottingham               Expires August 13, 2018                [Page 6]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -389,7 +389,7 @@ Internet-Draft        HTTP Representation Variants         February 2018
 
 
 
-Nottingham               Expires August 12, 2018                [Page 7]
+Nottingham               Expires August 13, 2018                [Page 7]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -408,10 +408,12 @@ Internet-Draft        HTTP Representation Variants         February 2018
        for reuse as defined in [RFC7234] Section 4, excepting the
        requirement to calculate a secondary cache key.
 
-   2.  Order selected-responses by the "Date" header field, most recent
+   2.  If selected-responses is empty, return an empty list.
+
+   3.  Order selected-responses by the "Date" header field, most recent
        to least recent.
 
-   3.  If the freshest (as per [RFC7234], Section 4.2) has one or more
+   4.  If the freshest (as per [RFC7234], Section 4.2) has one or more
        "Variants" header field(s):
 
        1.  Select one member of selected_responses and let its
@@ -427,9 +429,8 @@ Internet-Draft        HTTP Representation Variants         February 2018
                field identified by a content negotiation mechanism that
                the implementation supports:
 
-               1.  Let request-value be the field-value of the request
-                   header field(s) identified by the content negotiation
-                   mechanism.
+               1.  Let request-value be the field-value(s) associated
+                   with field-name in incoming-request.
 
                2.  Let available-values be a list containing all
                    available-value for variant.
@@ -440,25 +441,22 @@ Internet-Draft        HTTP Representation Variants         February 2018
 
                4.  Append sorted-values to sorted-variants.
 
-           At this point, sorted-variants will be a list of lists, each
-           member of the top-level list corresponding to a variant-item
 
 
 
-Nottingham               Expires August 12, 2018                [Page 8]
+
+Nottingham               Expires August 13, 2018                [Page 8]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
 
+           At this point, sorted-variants will be a list of lists, each
+           member of the top-level list corresponding to a variant-item
            in the Variants header field-value, containing zero or more
            items indicating available-values that are acceptable to the
            client, in order of preference, greatest to least.
 
-       4.  If any member of sorted-variants is an empty list, stop
-           processing and forward the request towards the origin, since
-           an acceptable response is not stored in the cache.
-
-       5.  Let sorted-keys be the result of running Find Available Keys
+       4.  Let sorted-keys be the result of running Find Available Keys
            (Section 5.1) on sorted-variants, an empty string and an
            empty list.
 
@@ -497,20 +495,19 @@ Internet-Draft        HTTP Representation Variants         February 2018
        3.  Let remaining-variants be a copy of all of the members of
            sorted-variants except the first.
 
+       4.  If remaining-variants is empty, append this-key to possible-
+           keys.
 
 
 
 
-Nottingham               Expires August 12, 2018                [Page 9]
+Nottingham               Expires August 13, 2018                [Page 9]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
 
-       4.  If remaining-variants is empty, append this-key to possible-
-           keys.
-
-       5.  Else, run Find Available Keys on remaining-variants, this-key
-           and possible-keys.
+       5.  Otherwise, run Find Available Keys on remaining-variants,
+           this-key and possible-keys.
 
    3.  Return possible-keys.
 
@@ -550,23 +547,20 @@ Internet-Draft        HTTP Representation Variants         February 2018
    corresponding to the other keys could be returned, or the request
    could be forwarded towards the origin.
 
-
-
-
-
-
-
-
-Nottingham               Expires August 12, 2018               [Page 10]
-
-Internet-Draft        HTTP Representation Variants         February 2018
-
-
 6.  Example Headers
 
 6.1.  Single Variant
 
    Given a request/response pair:
+
+
+
+
+
+Nottingham               Expires August 13, 2018               [Page 10]
+
+Internet-Draft        HTTP Representation Variants         February 2018
+
 
    GET /foo HTTP/1.1
    Host: www.example.com
@@ -613,7 +607,13 @@ Internet-Draft        HTTP Representation Variants         February 2018
 
 
 
-Nottingham               Expires August 12, 2018               [Page 11]
+
+
+
+
+
+
+Nottingham               Expires August 13, 2018               [Page 11]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -669,7 +669,7 @@ Internet-Draft        HTTP Representation Variants         February 2018
 
 
 
-Nottingham               Expires August 12, 2018               [Page 12]
+Nottingham               Expires August 13, 2018               [Page 12]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -725,7 +725,7 @@ Internet-Draft        HTTP Representation Variants         February 2018
 
 
 
-Nottingham               Expires August 12, 2018               [Page 13]
+Nottingham               Expires August 13, 2018               [Page 13]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -781,7 +781,7 @@ Internet-Draft        HTTP Representation Variants         February 2018
 
 
 
-Nottingham               Expires August 12, 2018               [Page 14]
+Nottingham               Expires August 13, 2018               [Page 14]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -837,7 +837,7 @@ A.1.  Accept
 
 
 
-Nottingham               Expires August 12, 2018               [Page 15]
+Nottingham               Expires August 13, 2018               [Page 15]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
@@ -846,6 +846,9 @@ Internet-Draft        HTTP Representation Variants         February 2018
            specificity).
 
    5.  Return preferred-available.
+
+   Note that this algorithm explicitly ignores extension parameters on
+   media types (e.g., "charset").
 
 A.2.  Accept-Encoding
 
@@ -887,17 +890,17 @@ A.3.  Accept-Language
 
    1.  Let preferred-available be an empty list.
 
-   2.  Let preferred-langs be a list of the language-ranges in the
-       request-value, ordered by their weight, highest to lowest, as per
-       [RFC7231] Section 5.3.1 (omitting any language-range with a
 
 
 
-Nottingham               Expires August 12, 2018               [Page 16]
+Nottingham               Expires August 13, 2018               [Page 16]
 
 Internet-Draft        HTTP Representation Variants         February 2018
 
 
+   2.  Let preferred-langs be a list of the language-ranges in the
+       request-value, ordered by their weight, highest to lowest, as per
+       [RFC7231] Section 5.3.1 (omitting any language-range with a
        weight of 0).  If a language-range lacks a weight, an
        implementation MAY assign one.
 
@@ -946,7 +949,4 @@ Author's Address
 
 
 
-
-
-
-Nottingham               Expires August 12, 2018               [Page 17]
+Nottingham               Expires August 13, 2018               [Page 17]
