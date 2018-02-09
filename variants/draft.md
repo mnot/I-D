@@ -222,8 +222,9 @@ Caches that implement the Variants header field and the relevant semantics of th
 They do so by running this algorithm (or its functional equivalent) upon receiving a request, incoming-request:
 
 1. Let selected-responses be a list of the stored responses suitable for reuse as defined in {{!RFC7234}} Section 4, excepting the requirement to calculate a secondary cache key.
-2. Order selected-responses by the "Date" header field, most recent to least recent.
-3. If the freshest (as per {{!RFC7234}}, Section 4.2) has one or more "Variants" header field(s):
+2. If selected-responses is empty, return an empty list.
+3. Order selected-responses by the "Date" header field, most recent to least recent.
+4. If the freshest (as per {{!RFC7234}}, Section 4.2) has one or more "Variants" header field(s):
    1. Select one member of selected_responses and let its "Variants" header field-value(s) be variants-header. This SHOULD be the most recent response, but MAY be from an older one as long as it is still fresh.
    2. Let sorted-variants be an empty list.
    3. For each variant in variants-header:
