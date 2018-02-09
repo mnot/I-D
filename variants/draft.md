@@ -468,7 +468,7 @@ To perform content negotiation for Accept-Language given a request-value and ava
 
 1. Let preferred-available be an empty list.
 2. Let preferred-langs be a list of the language-ranges in the request-value, ordered by their weight, highest to lowest, as per {{!RFC7231}} Section 5.3.1 (omitting any language-range with a weight of 0). If a language-range lacks a weight, an implementation MAY assign one.
-3. Append the first member of available-values to preferred-langs (thus making it the default).
+3. If the first member of available-values is not a member of preferred-langs, append it to preferred-langs (thus making it the default).
 4. For each preferred-lang in preferred-langs:
    1. If any member of available-values matches preferred-lang, using either the Basic or Extended Filtering scheme defined in {{!RFC4647}} Section 3.3, append those members of available-values to preferred-available (preserving their order).
 5. Return preferred-available.
