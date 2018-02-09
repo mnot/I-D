@@ -228,15 +228,14 @@ They do so by running this algorithm (or its functional equivalent) upon receivi
    2. Let sorted-variants be an empty list.
    3. For each variant in variants-header:
       1. If variant's field-name corresponds to the request header field identified by a content negotiation mechanism that the implementation supports:
-         1. Let request-value be the field-value of the request header field(s) identified by the content negotiation mechanism.
+         1. Let request-value be the field-value(s) associated with field-name in incoming-request.
          2. Let available-values be a list containing all available-value for variant.
          3. Let sorted-values be the result of running the algorithm defined by the content negotiation mechanism with request-value and available-values.
          4. Append sorted-values to sorted-variants.
                   
       At this point, sorted-variants will be a list of lists, each member of the top-level list corresponding to a variant-item in the Variants header field-value, containing zero or more items indicating available-values that are acceptable to the client, in order of preference, greatest to least.
 
-   4. If any member of sorted-variants is an empty list, stop processing and forward the request towards the origin, since an acceptable response is not stored in the cache.
-   5. Let sorted-keys be the result of running Find Available Keys ({{find}}) on sorted-variants, an empty string and an empty list.
+   4. Let sorted-keys be the result of running Find Available Keys ({{find}}) on sorted-variants, an empty string and an empty list.
 
 This will result in a list of strings, where each member of the list indicates, in client preference order, a key for an acceptable response to the request.
 
