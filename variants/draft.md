@@ -219,12 +219,13 @@ To be usable with Variants, proactive content negotiation mechanisms need to be 
 
 Caches that implement the Variants header field and the relevant semantics of the field-name it contains can use that knowledge to either select an appropriate stored representation, or forward the request if no appropriate representation is stored.
 
-They do so by running this algorithm (or its functional equivalent) upon receiving a request, incoming-request:
+They do so by running this algorithm (or its functional equivalent) upon receiving a request:
 
-1. Let selected-responses be a list of the stored responses suitable for reuse as defined in {{!RFC7234}} Section 4, excepting the requirement to calculate a secondary cache key.
-2. If selected-responses is empty, return an empty list.
-3. Order selected-responses by the "Date" header field, most recent to least recent.
-4. If the freshest (as per {{!RFC7234}}, Section 4.2) has one or more "Variants" header field(s):
+Given incoming-request, a mapping of field-names to lists of field values, and selected-responses, a list of stored responses suitable for reuse as defined in {{!RFC7234}} Section 4, excepting the requirement to calculate a secondary cache key:
+
+1. If selected-responses is empty, return an empty list.
+2. Order selected-responses by the "Date" header field, most recent to least recent.
+3. If the freshest (as per {{!RFC7234}}, Section 4.2) has one or more "Variants" header field(s):
    1. Select one member of selected_responses and let its "Variants" header field-value(s) be variants-header. This SHOULD be the most recent response, but MAY be from an older one as long as it is still fresh.
    2. Let sorted-variants be an empty list.
    3. For each variant in variants-header:
@@ -238,9 +239,9 @@ They do so by running this algorithm (or its functional equivalent) upon receivi
 
    4. Let sorted-keys be the result of running Find Available Keys ({{find}}) on sorted-variants, an empty string and an empty list.
 
-This will result in a list of strings, where each member of the list indicates, in client preference order, a key for an acceptable response to the request.
+This returns in a list of strings that represents the variant-keys, in client preference order, that can be used to satisfy the request.
 
-A Cache MAY satisfy the request with any response whose Variant-Key header, after normalisation (see {{gen-variant-key}}), is a character-for-character match of a member of sorted-keys. When doing so, it SHOULD use the most preferred available response, but MAY use a less-preferred response.
+A Cache MAY satisfy the request with any stored response whose Variant-Key header, after normalisation (see {{gen-variant-key}}), is a character-for-character match of a member of sorted-keys. When doing so, it SHOULD use the most preferred available response, but MAY use a less-preferred response.
 
 See also {{vary}} regarding handling of Vary.
 
