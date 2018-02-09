@@ -257,7 +257,7 @@ Given sorted-variants, a list of lists, and key-stub, a string representing a pa
       3. Append sorted-value to this-key.
    3. Let remaining-variants be a copy of all of the members of sorted-variants except the first.
    4. If remaining-variants is empty, append this-key to possible-keys.
-   5. Else, run Find Available Keys on remaining-variants, this-key and possible-keys.
+   5. Otherwise, run Find Available Keys on remaining-variants, this-key and possible-keys.
 3. Return possible-keys.
 
 
