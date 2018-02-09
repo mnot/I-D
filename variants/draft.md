@@ -168,6 +168,8 @@ Caches that fully implement this specification SHOULD ignore request header fiel
 
 If any member of the Vary header does not have a corresponding variant that is understood by the implementation, it is still subject to the requirements there.
 
+See {{partial}} for an example.
+
 
 # The "Variant-Key" HTTP Header Field {#variant-key}
 
@@ -366,7 +368,7 @@ Here, the cache knows that there are two axes that the response varies upon; `Co
 Upon a subsequent request, if both selection algorithms return a stored representation, it can be served from cache; otherwise, the request will need to be forwarded to origin.
 
 
-## Partial Coverage
+## Partial Coverage {#partial}
 
 Now, consider the previous example, but where only one of the Vary'd axes is listed in `Variants`:
 
