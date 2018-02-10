@@ -170,6 +170,8 @@ If any member of the Vary header does not have a corresponding variant that is u
 
 See {{partial}} for an example.
 
+In practice, implementation of Vary varies considerably. As a result, cache efficiency might drop considerably when Variants does not contain all of the headers referenced by Vary, because some implementations might choose to disable Variants processing when this is the case.
+
 
 # The "Variant-Key" HTTP Header Field {#variant-key}
 
@@ -223,29 +225,46 @@ Caches that implement the Variants header field and the relevant semantics of th
 
 They do so by running this algorithm (or its functional equivalent) upon receiving a request:
 
-Given incoming-request, a mapping of field-names to lists of field values, and selected-responses, a list of stored responses suitable for reuse as defined in {{!RFC7234}} Section 4, excepting the requirement to calculate a secondary cache key:
+Given incoming-request, a mapping of field-names to lists of field values, and stored-responses, a list of stored responses suitable for reuse as defined in {{!RFC7234}} Section 4, excepting the requirement to calculate a secondary cache key:
 
-1. If selected-responses is empty, return an empty list.
-2. Order selected-responses by the "Date" header field, most recent to least recent.
-3. If the freshest (as per {{!RFC7234}}, Section 4.2) has one or more "Variants" header field(s):
-   1. Select one member of selected_responses and let its "Variants" header field-value(s) be variants-header. This SHOULD be the most recent response, but MAY be from an older one as long as it is still fresh.
-   2. Let sorted-variants be an empty list.
+1. If stored-responses is empty, return an empty list.
+2. Order stored-responses by the "Date" header field, most recent to least recent.
+3. Let processed-variants be an empty list.
+4. Let sorted-variants be an empty list.
+5. If the freshest member of stored-responses (as per {{!RFC7234}}, Section 4.2) has one or more "Variants" header field(s):
+   1. Select one member of stored-responses and let its "Variants" header field-value(s) be variants-header. This SHOULD be the most recent response, but MAY be from an older one as long as it is still fresh.
    3. For each variant in variants-header:
       1. If variant's field-name corresponds to the request header field identified by a content negotiation mechanism that the implementation supports:
-         1. Let request-value be the field-value(s) associated with field-name in incoming-request.
-         2. Let available-values be a list containing all available-value for variant.
-         3. Let sorted-values be the result of running the algorithm defined by the content negotiation mechanism with request-value and available-values.
-         4. Append sorted-values to sorted-variants.
-                  
+         1. Append field-name to processed-variants.
+         2. Let request-value be the field-value(s) associated with field-name in incoming-request.
+         3. Let available-values be a list containing all available-value for variant.
+         4. Let sorted-values be the result of running the algorithm defined by the content negotiation mechanism with request-value and available-values.
+         5. Append sorted-values to sorted-variants.
+
       At this point, sorted-variants will be a list of lists, each member of the top-level list corresponding to a variant-item in the Variants header field-value, containing zero or more items indicating available-values that are acceptable to the client, in order of preference, greatest to least.
 
-   4. Let sorted-keys be the result of running Find Available Keys ({{find}}) on sorted-variants, an empty string and an empty list.
+6. Let sorted-keys be the result of running Find Available Keys ({{find}}) on sorted-variants, an empty string and an empty list.
 
-This returns in a list of strings that represents the variant-keys, in client preference order, that can be used to satisfy the request.
+Now, we find the stored responses that match those keys, and do Vary processing for anything that isn't covered by Variants.
 
-A Cache MAY satisfy the request with any stored response whose Variant-Key header, after normalisation (see {{gen-variant-key}}), is a character-for-character match of a member of sorted-keys. When doing so, it SHOULD use the most preferred available response, but MAY use a less-preferred response.
+7. Let acceptable-stored be an empty list.
+8. For each variant-key in sorted-keys:
+   1. Let selected-responses be the member(s) of stored-responses whose "Variant-Key" header value after normalization (as per {{gen-variant-key}}) correspond to variant-key.
+   2. If selected-responses is empty, skip to the next variant-key.
+   2. For each selected-response in selected-responses:
+      1. Let filtered-vary be the field-value(s) of selected-response's "Vary" header field.
+      2. Remove any member of filtered-vary that is a case-insensitive match for a member of processed-variants.
+      3. If the secondary cache key (as calculated in {{!RFC7234}}, Section 4.1) for selected-response does not match incoming-request, using filtered-vary for the value of the "Vary" response header, skip to the next variant-key.
+      4. Append selected-response to acceptable-stored.
+9. Return sorted-keys, acceptable-stored.
 
-See also {{vary}} regarding handling of Vary.
+This returns a tuple of (sorted-keys, acceptable-stored).
+
+sorted-keys is a list of normalised variant-keys that could satisfy incoming-request, regardless of whether they are stored in the cache. This information can be used to determine if forwarding the request would result in a usable response.
+
+acceptable-stored is the subset of stored-responses, in client preference order, that can be used to satisfy incoming-request. If the list is empty, there is not a suitable stored response.
+    
+Note that implementation of the Vary header field varies in practice, and the algorithm above illustrates only one way to apply it.
 
 
 ## Find Available Keys {#find}
