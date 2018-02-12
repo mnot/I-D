@@ -51,16 +51,18 @@ There is a prototype implementation of the algorithms herein at <https://github.
 
 # Introduction
 
-HTTP proactive content negotiation ({{!RFC7231}}, Section 3.4.1) is seeing renewed interest in negotiation for language and other, newer attributes (for example, see {{?I-D.ietf-httpbis-client-hints}}).
+HTTP proactive content negotiation ({{!RFC7231}}, Section 3.4.1) is seeing renewed interest, both for existing request headers like Content-Language and for newer ones (for example, see {{?I-D.ietf-httpbis-client-hints}}).
 
 Successfully reusing negotiated responses that have been stored in a HTTP cache requires establishment of a secondary cache key ({{!RFC7234}}, Section 4.1). Currently, the Vary header ({{!RFC7231}}, Section 7.1.4) does this by nominating a set of request headers.
 
-HTTP's caching model allows a certain amount of latitude in normalising request header field values, so as to increase the chances of a cache hit while still respecting the semantics of that header. However, this is often inadequate; even when the headers' semantics are understood, a cache does not know enough about the possible alternative representations available on the origin server to make an appropriate decision.
+HTTP's caching model allows a certain amount of latitude in normalising those request header field values, so as to increase the chances of a cache hit while still respecting the semantics of that header. However, normalisation is not formally defined, leading to divergence in cache behaviours.
+
+Even when the headers' semantics are understood, a cache does not know enough about the possible alternative representations available on the origin server to make an appropriate decision.
 
 For example, if a cache has stored the following request/response pair:
 
 ~~~
-GET /foo HTTP/1.1
+GET /clancy HTTP/1.1
 Host: www.example.com
 Accept-Language: en;q=1.0, fr;q=0.5
 
@@ -75,12 +77,12 @@ Transfer-Encoding: chunked
 
 Provided that the cache has full knowledge of the semantics of Accept-Language and Content-Language, it will know that a French representation is available and might be able to infer that an English representation is not available. But, it does not know (for example) whether a Japanese representation is available without making another request, incurring possibly unnecessary latency.
 
-This specification introduces the HTTP Variants response header field ({{variants}}) to enumerate the available variant representations on the origin server, to provide clients and caches with enough information to properly satisfy requests -- either by selecting a response from cache or by forwarding the request towards the origin -- by following an algorithm defined in {{cache}}.
+This specification introduces the HTTP Variants response header field ({{variants}}) to enumerate the available variant representations on the origin server, to provide clients and caches with enough information to properly satisfy requests -- either by selecting a response from cache or by forwarding the request towards the origin -- by following the algorithm defined in {{cache}}.
 
 Its companion the Variant-Key response header field ({{variant-key}}) indicates which representation was selected, so that it can be reliably reused in the future. When this specification is in use, the example above might become:
 
 ~~~
-GET /foo HTTP/1.1
+GET /clancy HTTP/1.1
 Host: www.example.com
 Accept-Language: en;q=1.0, fr;q=0.5
 
@@ -95,7 +97,9 @@ Transfer-Encoding: chunked
 [French content]
 ~~~
 
-Proactive content negotiation mechanisms that wish to be used with Variants need to define how to do so explicitly; see {{define}}. It is best suited for negotiation over request headers that are well-understood. Variants also works best when content negotiation takes place over a constrained set of representations; since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations.
+Proactive content negotiation mechanisms that wish to be used with Variants need to define how to do so explicitly; see {{define}}. As a result, it is best suited for negotiation over request headers that are well-understood.
+
+Variants also works best when content negotiation takes place over a constrained set of representations; since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations.
 
 Variants can be seen as a simpler version of the Alternates header field introduced by {{?RFC2295}}; unlike that mechanism, Variants does not require specification of each combination of attributes, and does not assume that each combination has a unique URL.
 
@@ -153,13 +157,13 @@ Variants: Accept-Encoding;gzip;brotli
 Variants: Accept-Language;en ;fr
 ~~~
 
-The ordering of available-values after the field-name is significant, as it might be used by the header's algorithm for selecting a response (see {{content-encoding}} for an example of this). 
+The ordering of available-values after the field-name is significant, as it might be used by the header's algorithm for selecting a response (in this example, the first language is the default; see {{content-language}}).
 
-The ordering of the request header fields themselves indicates descending application of preferences; for example, in the headers above, a cache will serve gzip'd content regardless of language if it is available.
+The ordering of the request header fields themselves indicates descending application of preferences; in the example above, a cache that has all of the possible permutations stored will honour the client's preferences for Accept-Encoding before honouring Accept-Language.
 
 Origin servers SHOULD consistently send Variant header fields on all cacheable (as per {{!RFC7234}}, Section 3) responses for a resource, since its absence will trigger caches to fall back to Vary processing.
 
-Likewise, servers MUST send the Variant-Key response header field when sending Variants.
+Likewise, servers MUST send the Variant-Key response header field when sending Variants, since its absence means that the stored response will not be reused when this specification is implemented.
 
 
 ## Relationship to Vary {#vary}
@@ -192,9 +196,15 @@ Variants: Content-Encoding;gzip;br, Content-Language;en ;fr
 Variant-Key: gzip, fr
 ~~~
 
-This header pair indicates that the representation is used for responses that have a "gzip" content-coding and "fr" content-language.
+This header pair indicates that the representation has a "gzip" content-coding and "fr" content-language.
 
-Note that the contents of Variant-Key are only used to indicate what request attributes are identified with the response containing it; this is different from headers like Content-Encoding, which indicate attributes of the response. In the example above, it might be that a gzip'd version of the French content is not available, in which case it will not include "Content-Encoding: gzip", but still have "gzip" in Variant-Key.
+Note that Variant-Key is only used to indicate what request attributes are associated with the response containing it; this is different from headers like Content-Encoding, which indicate attributes of the response itself. In the example above, it might be that a gzip'd version of the French content is not available, in which case the response will include:
+
+~~~
+Variant-Key: gzip, fr
+~~~
+
+even though Content-Encoding does not contain "gzip".
 
 
 ## Generating a Normalised Variant-Key {#gen-variant-key}
@@ -263,7 +273,7 @@ This returns a tuple of (sorted-keys, acceptable-stored).
 sorted-keys is a list of normalised variant-keys that could satisfy incoming-request, regardless of whether they are stored in the cache. This information can be used to determine if forwarding the request would result in a usable response.
 
 acceptable-stored is the subset of stored-responses, in client preference order, that can be used to satisfy incoming-request. If the list is empty, there is not a suitable stored response.
-    
+
 Note that implementation of the Vary header field varies in practice, and the algorithm above illustrates only one way to apply it.
 
 
@@ -312,9 +322,9 @@ Which means that the sorted-keys would be:
 
 ~~~
 [
-  'fr gzip', 
-  'fr identity', 
-  'en gzip', 
+  'fr gzip',
+  'fr identity',
+  'en gzip',
   'en identity'
 ]
 ~~~
