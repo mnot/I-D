@@ -70,16 +70,18 @@
 
 <section anchor="introduction" title="Introduction">
 
-<t>HTTP proactive content negotiation (<xref target="RFC7231"/>, Section 3.4.1) is seeing renewed interest in negotiation for language and other, newer attributes (for example, see <xref target="I-D.ietf-httpbis-client-hints"/>).</t>
+<t>HTTP proactive content negotiation (<xref target="RFC7231"/>, Section 3.4.1) is seeing renewed interest, both for existing request headers like Content-Language and for newer ones (for example, see <xref target="I-D.ietf-httpbis-client-hints"/>).</t>
 
 <t>Successfully reusing negotiated responses that have been stored in a HTTP cache requires establishment of a secondary cache key (<xref target="RFC7234"/>, Section 4.1). Currently, the Vary header (<xref target="RFC7231"/>, Section 7.1.4) does this by nominating a set of request headers.</t>
 
-<t>HTTP’s caching model allows a certain amount of latitude in normalising request header field values, so as to increase the chances of a cache hit while still respecting the semantics of that header. However, this is often inadequate; even when the headers’ semantics are understood, a cache does not know enough about the possible alternative representations available on the origin server to make an appropriate decision.</t>
+<t>HTTP’s caching model allows a certain amount of latitude in normalising those request header field values, so as to increase the chances of a cache hit while still respecting the semantics of that header. However, normalisation is not formally defined, leading to divergence in cache behaviours.</t>
+
+<t>Even when the headers’ semantics are understood, a cache does not know enough about the possible alternative representations available on the origin server to make an appropriate decision.</t>
 
 <t>For example, if a cache has stored the following request/response pair:</t>
 
 <figure><artwork><![CDATA[
-GET /foo HTTP/1.1
+GET /clancy HTTP/1.1
 Host: www.example.com
 Accept-Language: en;q=1.0, fr;q=0.5
 
@@ -94,12 +96,12 @@ Transfer-Encoding: chunked
 
 <t>Provided that the cache has full knowledge of the semantics of Accept-Language and Content-Language, it will know that a French representation is available and might be able to infer that an English representation is not available. But, it does not know (for example) whether a Japanese representation is available without making another request, incurring possibly unnecessary latency.</t>
 
-<t>This specification introduces the HTTP Variants response header field (<xref target="variants"/>) to enumerate the available variant representations on the origin server, to provide clients and caches with enough information to properly satisfy requests – either by selecting a response from cache or by forwarding the request towards the origin – by following an algorithm defined in <xref target="cache"/>.</t>
+<t>This specification introduces the HTTP Variants response header field (<xref target="variants"/>) to enumerate the available variant representations on the origin server, to provide clients and caches with enough information to properly satisfy requests – either by selecting a response from cache or by forwarding the request towards the origin – by following the algorithm defined in <xref target="cache"/>.</t>
 
 <t>Its companion the Variant-Key response header field (<xref target="variant-key"/>) indicates which representation was selected, so that it can be reliably reused in the future. When this specification is in use, the example above might become:</t>
 
 <figure><artwork><![CDATA[
-GET /foo HTTP/1.1
+GET /clancy HTTP/1.1
 Host: www.example.com
 Accept-Language: en;q=1.0, fr;q=0.5
 
@@ -114,7 +116,9 @@ Transfer-Encoding: chunked
 [French content]
 ]]></artwork></figure>
 
-<t>Proactive content negotiation mechanisms that wish to be used with Variants need to define how to do so explicitly; see <xref target="define"/>. It is best suited for negotiation over request headers that are well-understood. Variants also works best when content negotiation takes place over a constrained set of representations; since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations.</t>
+<t>Proactive content negotiation mechanisms that wish to be used with Variants need to define how to do so explicitly; see <xref target="define"/>. As a result, it is best suited for negotiation over request headers that are well-understood.</t>
+
+<t>Variants also works best when content negotiation takes place over a constrained set of representations; since each variant needs to be listed in the header field, it is ill-suited for open-ended sets of representations.</t>
 
 <t>Variants can be seen as a simpler version of the Alternates header field introduced by <xref target="RFC2295"/>; unlike that mechanism, Variants does not require specification of each combination of attributes, and does not assume that each combination has a unique URL.</t>
 
@@ -172,17 +176,17 @@ Variants: Accept-Encoding;gzip;brotli
 Variants: Accept-Language;en ;fr
 ]]></artwork></figure>
 
-<t>The ordering of available-values after the field-name is significant, as it might be used by the header’s algorithm for selecting a response (see <xref target="content-encoding"/> for an example of this).</t>
+<t>The ordering of available-values after the field-name is significant, as it might be used by the header’s algorithm for selecting a response (in this example, the first language is the default; see <xref target="content-language"/>).</t>
 
-<t>The ordering of the request header fields themselves indicates descending application of preferences; for example, in the headers above, a cache will serve gzip’d content regardless of language if it is available.</t>
+<t>The ordering of the request header fields themselves indicates descending application of preferences; in the example above, a cache that has all of the possible permutations stored will honour the client’s preferences for Accept-Encoding before honouring Accept-Language.</t>
 
 <t>Origin servers SHOULD consistently send Variant header fields on all cacheable (as per <xref target="RFC7234"/>, Section 3) responses for a resource, since its absence will trigger caches to fall back to Vary processing.</t>
 
-<t>Likewise, servers MUST send the Variant-Key response header field when sending Variants.</t>
+<t>Likewise, servers MUST send the Variant-Key response header field when sending Variants, since its absence means that the stored response will not be reused when this specification is implemented.</t>
 
 <section anchor="vary" title="Relationship to Vary">
 
-<t>Caches that implement this specification SHOULD ignore request header fields in the <spanx style="verb">Vary</spanx> header for the purposes of secondary cache key calculation (<xref target="RFC7234"/>, Section 4.1) when their semantics are implemented as per this specification and their corresponding response header field is listed in <spanx style="verb">Variants</spanx>.</t>
+<t>Caches that implement this specification SHOULD ignore request header fields in the Vary header for the purposes of secondary cache key calculation (<xref target="RFC7234"/>, Section 4.1) when their semantics are implemented as per this specification and their corresponding response header field is listed in Variants.</t>
 
 <t>If any member of the Vary header does not have a corresponding variant that is understood by the implementation, it is still subject to the requirements there.</t>
 
@@ -211,9 +215,15 @@ Variants: Content-Encoding;gzip;br, Content-Language;en ;fr
 Variant-Key: gzip, fr
 ]]></artwork></figure>
 
-<t>This header pair indicates that the representation is used for responses that have a “gzip” content-coding and “fr” content-language.</t>
+<t>This header pair indicates that the representation has a “gzip” content-coding and “fr” content-language.</t>
 
-<t>Note that the contents of Variant-Key are only used to indicate what request attributes are identified with the response containing it; this is different from headers like Content-Encoding, which indicate attributes of the response. In the example above, it might be that a gzip’d version of the French content is not available, in which case it will not include “Content-Encoding: gzip”, but still have “gzip” in Variant-Key.</t>
+<t>Note that Variant-Key is only used to indicate what request attributes are associated with the response containing it; this is different from headers like Content-Encoding, which indicate attributes of the response itself. In the example above, it might be that a gzip’d version of the French content is not available, in which case the response will include:</t>
+
+<figure><artwork><![CDATA[
+Variant-Key: gzip, fr
+]]></artwork></figure>
+
+<t>even though Content-Encoding does not contain “gzip”.</t>
 
 <section anchor="gen-variant-key" title="Generating a Normalised Variant-Key">
 
@@ -253,7 +263,6 @@ Variant-Key: gzip, fr
 <t><list style="numbers">
   <t>If stored-responses is empty, return an empty list.</t>
   <t>Order stored-responses by the “Date” header field, most recent to least recent.</t>
-  <t>Let processed-variants be an empty list.</t>
   <t>Let sorted-variants be an empty list.</t>
   <t>If the freshest member of stored-responses (as per <xref target="RFC7234"/>, Section 4.2) has one or more “Variants” header field(s):
   <list style="numbers">
@@ -262,7 +271,6 @@ Variant-Key: gzip, fr
       <list style="numbers">
           <t>If variant’s field-name corresponds to the request header field identified by a content negotiation mechanism that the implementation supports:
           <list style="numbers">
-              <t>Append field-name to processed-variants.</t>
               <t>Let request-value be the field-value(s) associated with field-name in incoming-request.</t>
               <t>Let available-values be a list containing all available-value for variant.</t>
               <t>Let sorted-values be the result of running the algorithm defined by the content negotiation mechanism with request-value and available-values.</t>
@@ -271,35 +279,10 @@ Variant-Key: gzip, fr
         </list>
 At this point, sorted-variants will be a list of lists, each member of the top-level list corresponding to a variant-item in the Variants header field-value, containing zero or more items indicating available-values that are acceptable to the client, in order of preference, greatest to least.</t>
     </list></t>
-  <t>Let sorted-keys be the result of running Find Available Keys (<xref target="find"/>) on sorted-variants, an empty string and an empty list.</t>
+  <t>Return result of running Find Available Keys (<xref target="find"/>) on sorted-variants, an empty string and an empty list.</t>
 </list></t>
 
-<t>Now, we find the stored responses that match those keys, and do Vary processing for anything that isn’t covered by Variants.</t>
-
-<t><list style="numbers">
-  <t>Let acceptable-stored be an empty list.</t>
-  <t>For each variant-key in sorted-keys:
-  <list style="numbers">
-      <t>Let selected-responses be the member(s) of stored-responses whose “Variant-Key” header value after normalization (as per <xref target="gen-variant-key"/>) correspond to variant-key.</t>
-      <t>If selected-responses is empty, skip to the next variant-key.</t>
-      <t>For each selected-response in selected-responses:
-      <list style="numbers">
-          <t>Let filtered-vary be the field-value(s) of selected-response’s “Vary” header field.</t>
-          <t>Remove any member of filtered-vary that is a case-insensitive match for a member of processed-variants.</t>
-          <t>If the secondary cache key (as calculated in <xref target="RFC7234"/>, Section 4.1) for selected-response does not match incoming-request, using filtered-vary for the value of the “Vary” response header, skip to the next variant-key.</t>
-          <t>Append selected-response to acceptable-stored.</t>
-        </list></t>
-    </list></t>
-  <t>Return sorted-keys, acceptable-stored.</t>
-</list></t>
-
-<t>This returns a tuple of (sorted-keys, acceptable-stored).</t>
-
-<t>sorted-keys is a list of normalised variant-keys that could satisfy incoming-request, regardless of whether they are stored in the cache. This information can be used to determine if forwarding the request would result in a usable response.</t>
-
-<t>acceptable-stored is the subset of stored-responses, in client preference order, that can be used to satisfy incoming-request. If the list is empty, there is not a suitable stored response.</t>
-
-<t>Note that implementation of the Vary header field varies in practice, and the algorithm above illustrates only one way to apply it.</t>
+<t>This returns a list of strings suitable for comparing to normalised Variant-Keys (<xref target="gen-variant-key"/>) that represent possible responses on the server that can be used to satisfy the request, in preference order, provided that their secondary cache key (after removing the headers covered by Variants) matches. <xref target="check_vary"/> illustrates one way to do this.</t>
 
 <section anchor="find" title="Find Available Keys">
 
@@ -322,6 +305,25 @@ At this point, sorted-variants will be a list of lists, each member of the top-l
     </list></t>
   <t>Return possible-keys.</t>
 </list></t>
+
+</section>
+<section anchor="check_vary" title="Check Vary">
+
+<t>This algorithm is an example of how an implementation can meet the requirement to apply the members of the Vary header field that are not covered by Variants.</t>
+
+<t>Given a stored response, stored-response:</t>
+
+<t><list style="numbers">
+  <t>Let filtered-vary be the field-value(s) of stored-response’s “Vary” header field.</t>
+  <t>Let processed-variants be a list containing the request header fields that identify the content negotiation mechanisms supported by the implementation.</t>
+  <t>Remove any member of filtered-vary that is a case-insensitive match for a member of processed-variants.</t>
+  <t>If the secondary cache key (as calculated in <xref target="RFC7234"/>, Section 4.1) for stored_response matches incoming-request, using filtered-vary for the value of the “Vary” response header, return True.</t>
+  <t>Return False.</t>
+</list></t>
+
+<t>This returns a Boolean that indicates whether stored-response can be used to satisfy the request.</t>
+
+<t>Note that implementation of the Vary header field varies in practice, and the algorithm above illustrates only one way to apply it. It is equally viable to forward the request if there is a request header listed in Vary but not Variants.</t>
 
 </section>
 <section anchor="example-of-cache-behaviour" title="Example of Cache Behaviour">
@@ -352,9 +354,9 @@ Accept-Encoding: gzip
 
 <figure><artwork><![CDATA[
 [
-  'fr gzip', 
-  'fr identity', 
-  'en gzip', 
+  'fr gzip',
+  'fr identity',
+  'en gzip',
   'en identity'
 ]
 ]]></artwork></figure>
@@ -390,15 +392,15 @@ Vary: Accept-Language
 Transfer-Encoding: chunked
 ]]></artwork></figure>
 
-<t>Upon receipt of this response, the cache knows that two representations of this resource are available, one with a <spanx style="verb">Content-Language</spanx> of “en”, and another whose <spanx style="verb">Content-Language</spanx> is “de”.</t>
+<t>Upon receipt of this response, the cache knows that two representations of this resource are available, one with a Content-Language of “en”, and another whose Content-Language is “de”.</t>
 
 <t>Subsequent requests (while this response is fresh) will cause the cache to either reuse this response or forward the request, depending on what the selection algorithm determines.</t>
 
-<t>So, if a request with “en” in <spanx style="verb">Accept-Language</spanx> is received and its q-value indicates that it is acceptable, the stored response is used. A request that indicates that “de” is acceptable will be forwarded to the origin, thereby populating the cache. A cache receiving a request that indicates both languages are acceptable will use the q-value to make a determination of what response to return.</t>
+<t>So, if a request with “en” in Accept-Language is received and its q-value indicates that it is acceptable, the stored response is used. A request that indicates that “de” is acceptable will be forwarded to the origin, thereby populating the cache. A cache receiving a request that indicates both languages are acceptable will use the q-value to make a determination of what response to return.</t>
 
-<t>A cache receiving a request that does not list either language as acceptable (or does not contain an Accept-Language at all) will return the “en” representation (possibly fetching it from the origin), since it is listed first in the <spanx style="verb">Variants</spanx> list.</t>
+<t>A cache receiving a request that does not list either language as acceptable (or does not contain an Accept-Language at all) will return the “en” representation (possibly fetching it from the origin), since it is listed first in the Variants list.</t>
 
-<t>Note that <spanx style="verb">Accept-Language</spanx> is listed in Vary, to assure backwards-compatibility with caches that do not support <spanx style="verb">Variants</spanx>.</t>
+<t>Note that Accept-Language is listed in Vary, to assure backwards-compatibility with caches that do not support Variants.</t>
 
 </section>
 <section anchor="multiple-variants" title="Multiple Variants">
@@ -422,14 +424,14 @@ Vary: Accept-Language, Accept-Encoding
 Transfer-Encoding: chunked
 ]]></artwork></figure>
 
-<t>Here, the cache knows that there are two axes that the response varies upon; <spanx style="verb">Content-Language</spanx> and <spanx style="verb">Content-Encoding</spanx>. Thus, there are a total of nine possible representations for the resource (including the <spanx style="verb">identity</spanx> encoding), and the cache needs to consider the selection algorithms for both axes.</t>
+<t>Here, the cache knows that there are two axes that the response varies upon; Content-Language and Content-Encoding. Thus, there are a total of nine possible representations for the resource (including the identity encoding), and the cache needs to consider the selection algorithms for both axes.</t>
 
 <t>Upon a subsequent request, if both selection algorithms return a stored representation, it can be served from cache; otherwise, the request will need to be forwarded to origin.</t>
 
 </section>
 <section anchor="partial" title="Partial Coverage">
 
-<t>Now, consider the previous example, but where only one of the Vary’d axes is listed in <spanx style="verb">Variants</spanx>:</t>
+<t>Now, consider the previous example, but where only one of the Vary’d axes is listed in Variants:</t>
 
 <figure><artwork><![CDATA[
 GET /bar HTTP/1.1
@@ -447,7 +449,7 @@ Vary: Accept-Language, Accept-Encoding
 Transfer-Encoding: chunked
 ]]></artwork></figure>
 
-<t>Here, the cache will need to calculate a secondary cache key as per <xref target="RFC7234"/>, Section 4.1 – but considering only <spanx style="verb">Accept-Language</spanx> to be in its field-value – and then continue processing <spanx style="verb">Variants</spanx> for the set of stored responses that the algorithm described there selects.</t>
+<t>Here, the cache will need to calculate a secondary cache key as per <xref target="RFC7234"/>, Section 4.1 – but considering only Accept-Language to be in its field-value – and then continue processing Variants for the set of stored responses that the algorithm described there selects.</t>
 
 </section>
 </section>
@@ -473,9 +475,9 @@ Transfer-Encoding: chunked
 </section>
 <section anchor="security-considerations" title="Security Considerations">
 
-<t>If the number or advertised characteristics of the representations available for a resource are considered sensitive, the <spanx style="verb">Variants</spanx> header by its nature will leak them.</t>
+<t>If the number or advertised characteristics of the representations available for a resource are considered sensitive, the Variants header by its nature will leak them.</t>
 
-<t>Note that the <spanx style="verb">Variants</spanx> header is not a commitment to make representations of a certain nature available; the runtime behaviour of the server always overrides hints like <spanx style="verb">Variants</spanx>.</t>
+<t>Note that the Variants header is not a commitment to make representations of a certain nature available; the runtime behaviour of the server always overrides hints like Variants.</t>
 
 </section>
 <section anchor="acknowledgments" title="Acknowledgments">
@@ -666,11 +668,11 @@ Transfer-Encoding: chunked
 
 <section anchor="backports" title="Variants for Existing Content Negotiation Mechanisms">
 
-<t>This appendix defines the required information to use existing proactive content negotiation mechanisms (as defined in <xref target="RFC7231"/>, Section 5.3) with the <spanx style="verb">Variants</spanx> header field.</t>
+<t>This appendix defines the required information to use existing proactive content negotiation mechanisms (as defined in <xref target="RFC7231"/>, Section 5.3) with the Variants header field.</t>
 
 <section anchor="content-type" title="Accept">
 
-<t>This section defines handling for <spanx style="verb">Accept</spanx> variants, as per <xref target="RFC7231"/> Section 5.3.2.</t>
+<t>This section defines handling for Accept variants, as per <xref target="RFC7231"/> Section 5.3.2.</t>
 
 <t>To perform content negotiation for Accept given a request-value and available-values:</t>
 
@@ -690,7 +692,7 @@ Transfer-Encoding: chunked
 </section>
 <section anchor="content-encoding" title="Accept-Encoding">
 
-<t>This section defines handling for <spanx style="verb">Accept-Encoding</spanx> variants, as per <xref target="RFC7231"/> Section 5.3.4.</t>
+<t>This section defines handling for Accept-Encoding variants, as per <xref target="RFC7231"/> Section 5.3.4.</t>
 
 <t>To perform content negotiation for Accept-Encoding given a request-value and available-values:</t>
 
@@ -711,7 +713,7 @@ Transfer-Encoding: chunked
 </section>
 <section anchor="content-language" title="Accept-Language">
 
-<t>This section defines handling for <spanx style="verb">Accept-Language</spanx> variants, as per <xref target="RFC7231"/> Section 5.3.5.</t>
+<t>This section defines handling for Accept-Language variants, as per <xref target="RFC7231"/> Section 5.3.5.</t>
 
 <t>To perform content negotiation for Accept-Language given a request-value and available-values:</t>
 
@@ -733,176 +735,175 @@ Transfer-Encoding: chunked
   </back>
 
 <!-- ##markdown-source:
-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
-QPrVy61ZWj2tyRfS3fTRuDD4E8eze/bUl5C8bzF8T/owaZ5gGS1pzgwnZapR
-FT0gEdbvPM07rJEsY/tTxn/DLBOdSdGZ8Htw4s7xvW+aHvStlOFOPZfXmUGN
-n8uRlyFd/IpG/BoAtXd4fxb4gZmtZ7maoGeHsBKn+RNkCUF1AjHhLd/PgJmY
-tn4G3tz7HLyJlP4Tgce/2D6AnuSN938w+Bz/TeATuPVJKORPM4ZDst/fj0TJ
-1wBC2JbOxvSIiQAVniOUOuv/SuW4wRzg/VE8k8N0EE32SzCtid9G7YNJHiPk
-KejmNPyVjPyMbdcnMMEk3VwHoOOINMMhvE+GEfwIJRl1bLnG8o68npe+pNV9
-xZsVLcwApeJIcCRUdCOO+NLwZ+FIzKc/HUfufxaOBEr/iTiCrBhBEc8hdn//
-CjTpUnAlquj+jQIHnw0CY/MnA52/Fh6IlcF8bNO1EGb0QbNpnf/8pGUTAK3T
-bdEcXhXq4JNdYKC1/p5QBxfwoY60S5CSb7WzC0W5TMMfdntMY3d4m4MltmaY
-Q9z74t6XiSjvzu7+j0c1tmZN+4QY5b8B/O3oQ/9eAAA=
+H4sIAEhEgVoAA91caXPbRpr+zl/RS3+w5AIpS7ZzyJvZla+xd3xkbWdSU6lU
+CiSaZMcgwKAByYzK89v3vfoCIMme2Zk95kPGIoHufq/nPZuz2WzSmrbUp+r5
++/ffq7d612irqzZvTV2pP+eNyavWTvLFotHnp5OiXlb5Fp4umnzVzqq6bU21
+3uTb2bk8Ort7MinyFh45uXv8zWQJ/1zXzf5U2baYdDv8yp6qr0/u3Z9MzK45
+VW3T2fbk7t1v4cW80fmp+qOudJOXk4u6+bBu6m53Ovmg9/BXcapeVK1uKt3O
+nuABJhPb5lXxS17WFey413ayM6fqp7ZeZgr+Y6oCaMmUrZu20SsL/9pv5R9t
+Y5bw1bLe7nL5xxYehq9MVZpK/zyZ5F27qZvTiZpNFPzPVHDyV3P12lNNHzND
+XuXNh/43dbPOK/M78fJUPcttW+7pC73NTXmqtsC/f8f/zIEi+qJr4Pibtt3Z
+06Oji4uLufv2aDKp6mYLS51rOJB6++zxyfHxt6fAxGoVvphMZrOZyhdAHRA1
+mbzfGKvsTi/NyixZpqZqm7roltqqvFJ5ifykt9VFvgemESO6Ch/XKldWL+uq
+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
+EY1pWNM+Iz75LwmETY/PXgAA
 
 -->
 
