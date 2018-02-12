@@ -168,7 +168,7 @@ Likewise, servers MUST send the Variant-Key response header field when sending V
 
 ## Relationship to Vary {#vary}
 
-Caches that implement this specification SHOULD ignore request header fields in the `Vary` header for the purposes of secondary cache key calculation ({{!RFC7234}}, Section 4.1) when their semantics are implemented as per this specification and their corresponding response header field is listed in `Variants`.
+Caches that implement this specification SHOULD ignore request header fields in the Vary header for the purposes of secondary cache key calculation ({{!RFC7234}}, Section 4.1) when their semantics are implemented as per this specification and their corresponding response header field is listed in Variants.
 
 If any member of the Vary header does not have a corresponding variant that is understood by the implementation, it is still subject to the requirements there.
 
@@ -353,15 +353,15 @@ Vary: Accept-Language
 Transfer-Encoding: chunked
 ~~~
 
-Upon receipt of this response, the cache knows that two representations of this resource are available, one with a `Content-Language` of "en", and another whose `Content-Language` is "de".
+Upon receipt of this response, the cache knows that two representations of this resource are available, one with a Content-Language of "en", and another whose Content-Language is "de".
 
 Subsequent requests (while this response is fresh) will cause the cache to either reuse this response or forward the request, depending on what the selection algorithm determines.
 
-So, if a request with "en" in `Accept-Language` is received and its q-value indicates that it is acceptable, the stored response is used. A request that indicates that "de" is acceptable will be forwarded to the origin, thereby populating the cache. A cache receiving a request that indicates both languages are acceptable will use the q-value to make a determination of what response to return.
+So, if a request with "en" in Accept-Language is received and its q-value indicates that it is acceptable, the stored response is used. A request that indicates that "de" is acceptable will be forwarded to the origin, thereby populating the cache. A cache receiving a request that indicates both languages are acceptable will use the q-value to make a determination of what response to return.
 
-A cache receiving a request that does not list either language as acceptable (or does not contain an Accept-Language at all) will return the "en" representation (possibly fetching it from the origin), since it is listed first in the `Variants` list.
+A cache receiving a request that does not list either language as acceptable (or does not contain an Accept-Language at all) will return the "en" representation (possibly fetching it from the origin), since it is listed first in the Variants list.
 
-Note that `Accept-Language` is listed in Vary, to assure backwards-compatibility with caches that do not support `Variants`.
+Note that Accept-Language is listed in Vary, to assure backwards-compatibility with caches that do not support Variants.
 
 
 ## Multiple Variants
@@ -385,14 +385,14 @@ Vary: Accept-Language, Accept-Encoding
 Transfer-Encoding: chunked
 ~~~
 
-Here, the cache knows that there are two axes that the response varies upon; `Content-Language` and `Content-Encoding`. Thus, there are a total of nine possible representations for the resource (including the `identity` encoding), and the cache needs to consider the selection algorithms for both axes.
+Here, the cache knows that there are two axes that the response varies upon; Content-Language and Content-Encoding. Thus, there are a total of nine possible representations for the resource (including the identity encoding), and the cache needs to consider the selection algorithms for both axes.
 
 Upon a subsequent request, if both selection algorithms return a stored representation, it can be served from cache; otherwise, the request will need to be forwarded to origin.
 
 
 ## Partial Coverage {#partial}
 
-Now, consider the previous example, but where only one of the Vary'd axes is listed in `Variants`:
+Now, consider the previous example, but where only one of the Vary'd axes is listed in Variants:
 
 ~~~
 GET /bar HTTP/1.1
@@ -410,7 +410,7 @@ Vary: Accept-Language, Accept-Encoding
 Transfer-Encoding: chunked
 ~~~
 
-Here, the cache will need to calculate a secondary cache key as per {{!RFC7234}}, Section 4.1 -- but considering only `Accept-Language` to be in its field-value -- and then continue processing `Variants` for the set of stored responses that the algorithm described there selects.
+Here, the cache will need to calculate a secondary cache key as per {{!RFC7234}}, Section 4.1 -- but considering only Accept-Language to be in its field-value -- and then continue processing Variants for the set of stored responses that the algorithm described there selects.
 
 
 # IANA Considerations
@@ -434,9 +434,9 @@ This specification registers two values in the Permanent Message Header Field Na
 
 # Security Considerations
 
-If the number or advertised characteristics of the representations available for a resource are considered sensitive, the `Variants` header by its nature will leak them.
+If the number or advertised characteristics of the representations available for a resource are considered sensitive, the Variants header by its nature will leak them.
 
-Note that the `Variants` header is not a commitment to make representations of a certain nature available; the runtime behaviour of the server always overrides hints like `Variants`.
+Note that the Variants header is not a commitment to make representations of a certain nature available; the runtime behaviour of the server always overrides hints like Variants.
 
 
 # Acknowledgments
@@ -452,12 +452,12 @@ Thanks to Hooman Beheshti for his review and input.
 
 # Variants for Existing Content Negotiation Mechanisms {#backports}
 
-This appendix defines the required information to use existing proactive content negotiation mechanisms (as defined in {{!RFC7231}}, Section 5.3) with the `Variants` header field.
+This appendix defines the required information to use existing proactive content negotiation mechanisms (as defined in {{!RFC7231}}, Section 5.3) with the Variants header field.
 
 
 ## Accept {#content-type}
 
-This section defines handling for `Accept` variants, as per {{!RFC7231}} Section 5.3.2.
+This section defines handling for Accept variants, as per {{!RFC7231}} Section 5.3.2.
 
 To perform content negotiation for Accept given a request-value and available-values:
 
@@ -473,7 +473,7 @@ Note that this algorithm explicitly ignores extension parameters on media types 
 
 ## Accept-Encoding {#content-encoding}
 
-This section defines handling for `Accept-Encoding` variants, as per {{!RFC7231}} Section 5.3.4.
+This section defines handling for Accept-Encoding variants, as per {{!RFC7231}} Section 5.3.4.
 
 To perform content negotiation for Accept-Encoding given a request-value and available-values:
 
@@ -489,7 +489,7 @@ Note that the unencoded variant needs to have a Variant-Key header field with a 
 
 ## Accept-Language {#content-language}
 
-This section defines handling for `Accept-Language` variants, as per {{!RFC7231}} Section 5.3.5.
+This section defines handling for Accept-Language variants, as per {{!RFC7231}} Section 5.3.5.
 
 To perform content negotiation for Accept-Language given a request-value and available-values:
 
