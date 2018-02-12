@@ -254,27 +254,20 @@ Given incoming-request, a mapping of field-names to lists of field values, and s
       At this point, sorted-variants will be a list of lists, each member of the top-level list corresponding to a variant-item in the Variants header field-value, containing zero or more items indicating available-values that are acceptable to the client, in order of preference, greatest to least.
 
 6. Let sorted-keys be the result of running Find Available Keys ({{find}}) on sorted-variants, an empty string and an empty list.
-
-Now, we find the stored responses that match those keys, and do Vary processing for anything that isn't covered by Variants.
-
 7. Let acceptable-stored be an empty list.
 8. For each variant-key in sorted-keys:
    1. Let selected-responses be the member(s) of stored-responses whose "Variant-Key" header value after normalization (as per {{gen-variant-key}}) correspond to variant-key.
    2. If selected-responses is empty, skip to the next variant-key.
-   2. For each selected-response in selected-responses:
+   3. For each selected-response in selected-responses:
       1. Let filtered-vary be the field-value(s) of selected-response's "Vary" header field.
       2. Remove any member of filtered-vary that is a case-insensitive match for a member of processed-variants.
       3. If the secondary cache key (as calculated in {{!RFC7234}}, Section 4.1) for selected-response does not match incoming-request, using filtered-vary for the value of the "Vary" response header, skip to the next variant-key.
       4. Append selected-response to acceptable-stored.
-9. Return sorted-keys, acceptable-stored.
+9. Return acceptable-stored.
 
-This returns a tuple of (sorted-keys, acceptable-stored).
-
-sorted-keys is a list of normalised variant-keys that could satisfy incoming-request, regardless of whether they are stored in the cache. This information can be used to determine if forwarding the request would result in a usable response.
-
-acceptable-stored is the subset of stored-responses, in client preference order, that can be used to satisfy incoming-request. If the list is empty, there is not a suitable stored response.
-
-Note that implementation of the Vary header field varies in practice, and the algorithm above illustrates only one way to apply it.
+This returns the subset of stored-responses, in client preference order, that can be used to satisfy incoming-request. If the list is empty, there is not a suitable stored response.
+    
+Note that implementation of the Vary header field varies in practice, and the algorithm above illustrates only one way to apply it. See {{vary}}.
 
 
 ## Find Available Keys {#find}
