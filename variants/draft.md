@@ -218,17 +218,6 @@ Given stored-headers, a set of headers from a stored response, a normalised vari
 3. Return variant-key-header.
 
 
-# Defining Content Negotiation Using Variants {#define}
-
-To be usable with Variants, proactive content negotiation mechanisms need to be specified to take advantage of it. Specifically, they:
-
-* MUST define a request header field that advertises the clients preferences or capabilities, whose field-name SHOULD begin with "Accept-".
-* MUST define the syntax of available-values that will occur in Variants and Variant-Key.
-* MUST define an algorithm for selecting a result. It MUST return a list of available-values that are suitable for the request, in order of preference, given the value of the request header nominated above and an available-values list from the Variants header. If the result is an empty list, it implies that the cache cannot satisfy the request.
-
-{{backports}} fulfils these requirements for some existing proactive content negotiation mechanisms in HTTP.
-
-
 # Cache Behaviour {#cache}
 
 Caches that implement the Variants header field and the relevant semantics of the field-name it contains can use that knowledge to either select an appropriate stored representation, or forward the request if no appropriate representation is stored.
@@ -428,6 +417,18 @@ Transfer-Encoding: chunked
 ~~~
 
 Here, the cache will need to calculate a secondary cache key as per {{!RFC7234}}, Section 4.1 -- but considering only Accept-Language to be in its field-value -- and then continue processing Variants for the set of stored responses that the algorithm described there selects.
+
+
+
+# Defining Content Negotiation Using Variants {#define}
+
+To be usable with Variants, proactive content negotiation mechanisms need to be specified to take advantage of it. Specifically, they:
+
+* MUST define a request header field that advertises the clients preferences or capabilities, whose field-name SHOULD begin with "Accept-".
+* MUST define the syntax of available-values that will occur in Variants and Variant-Key.
+* MUST define an algorithm for selecting a result. It MUST return a list of available-values that are suitable for the request, in order of preference, given the value of the request header nominated above and an available-values list from the Variants header. If the result is an empty list, it implies that the cache cannot satisfy the request.
+
+{{backports}} fulfils these requirements for some existing proactive content negotiation mechanisms in HTTP.
 
 
 # IANA Considerations
