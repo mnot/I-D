@@ -91,21 +91,21 @@ Table of Contents
      5.1.  Find Available Keys . . . . . . . . . . . . . . . . . . .   9
      5.2.  Check Vary  . . . . . . . . . . . . . . . . . . . . . . .  10
      5.3.  Example of Cache Behaviour  . . . . . . . . . . . . . . .  11
-   6.  Example Headers . . . . . . . . . . . . . . . . . . . . . . .  12
-     6.1.  Single Variant  . . . . . . . . . . . . . . . . . . . . .  12
-     6.2.  Multiple Variants . . . . . . . . . . . . . . . . . . . .  12
-     6.3.  Partial Coverage  . . . . . . . . . . . . . . . . . . . .  13
+   6.  Origin Server Behaviour . . . . . . . . . . . . . . . . . . .  12
+     6.1.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .  12
+       6.1.1.  Single Variant  . . . . . . . . . . . . . . . . . . .  12
+       6.1.2.  Multiple Variants . . . . . . . . . . . . . . . . . .  13
+       6.1.3.  Partial Coverage  . . . . . . . . . . . . . . . . . .  14
    7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
-   9.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  14
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
+   9.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  15
    10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
      10.1.  Normative References . . . . . . . . . . . . . . . . . .  15
-     10.2.  Informative References . . . . . . . . . . . . . . . . .  15
+     10.2.  Informative References . . . . . . . . . . . . . . . . .  16
      10.3.  URIs . . . . . . . . . . . . . . . . . . . . . . . . . .  16
-   Appendix A.  Variants for Existing Content Negotiation Mechanisms  16
-     A.1.  Accept  . . . . . . . . . . . . . . . . . . . . . . . . .  16
+   Appendix A.  Variants for Existing Content Negotiation Mechanisms  17
+     A.1.  Accept  . . . . . . . . . . . . . . . . . . . . . . . . .  17
      A.2.  Accept-Encoding . . . . . . . . . . . . . . . . . . . . .  17
-     A.3.  Accept-Language . . . . . . . . . . . . . . . . . . . . .  17
 
 
 
@@ -114,7 +114,8 @@ Nottingham               Expires August 17, 2018                [Page 2]
 Internet-Draft        HTTP Representation Variants         February 2018
 
 
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  18
+     A.3.  Accept-Language . . . . . . . . . . . . . . . . . . . . .  18
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  19
 
 1.  Introduction
 
@@ -160,8 +161,7 @@ Internet-Draft        HTTP Representation Variants         February 2018
    example) whether a Japanese representation is available without
    making another request, incurring possibly unnecessary latency.
 
-   This specification introduces the HTTP Variants response header field
-   (Section 2) to enumerate the available variant representations on the
+
 
 
 
@@ -170,6 +170,8 @@ Nottingham               Expires August 17, 2018                [Page 3]
 Internet-Draft        HTTP Representation Variants         February 2018
 
 
+   This specification introduces the HTTP Variants response header field
+   (Section 2) to enumerate the available variant representations on the
    origin server, to provide clients and caches with enough information
    to properly satisfy requests - either by selecting a response from
    cache or by forwarding the request towards the origin - by following
@@ -216,8 +218,6 @@ Internet-Draft        HTTP Representation Variants         February 2018
    "OPTIONAL" in this document are to be interpreted as described in BCP
    14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
-
-
 
 
 
@@ -320,7 +320,7 @@ Internet-Draft        HTTP Representation Variants         February 2018
    variant that is understood by the implementation, it is still subject
    to the requirements there.
 
-   See Section 6.3 for an example.
+   See Section 6.1.3 for an example.
 
    In practice, implementation of Vary varies considerably.  As a
    result, cache efficiency might drop considerably when Variants does
@@ -618,9 +618,38 @@ Nottingham               Expires August 17, 2018               [Page 11]
 Internet-Draft        HTTP Representation Variants         February 2018
 
 
-6.  Example Headers
+6.  Origin Server Behaviour
 
-6.1.  Single Variant
+   Origin servers that wish to take advantage of Variants will need to
+   generate both the Variants (Section 2) and Variant-Key (Section 3)
+   header fields in all cacheable responses for a given resource.  If
+   either is omitted and the response is stored, it will have the effect
+   of disabling caching for that resource until it is no longer stored
+   (e.g., it expires, or is evicted).
+
+   Likewise, origin servers will need to assure that the members of both
+   header field values are in the same order and have the same length,
+   since discrepancies will cause caches to avoid using the responses
+   they occur in.
+
+   The value of the Variants header should be relatively stable for a
+   given resource over time; when it changes, it can have the effect of
+   invalidating previously stored responses.
+
+   As per Section 2.1, the Vary header is required to be set
+   appropriately when Variants is in use, so that caches that do not
+   implement this specification still operate correctly.
+
+   Origin servers are advised to carefully consider which content
+   negotiation mechanisms to enumerate in Variants; if a mechanism is
+   not supported by a receiving cache, it will "downgrade" to Vary
+   handling, which can negatively impact cache efficiency.
+
+6.1.  Examples
+
+   The operation of Variants is illustrated by the examples below.
+
+6.1.1.  Single Variant
 
    Given a request/response pair:
 
@@ -636,6 +665,14 @@ Internet-Draft        HTTP Representation Variants         February 2018
    Variant-Key: en
    Vary: Accept-Language
    Transfer-Encoding: chunked
+
+
+
+
+Nottingham               Expires August 17, 2018               [Page 12]
+
+Internet-Draft        HTTP Representation Variants         February 2018
+
 
    Upon receipt of this response, the cache knows that two
    representations of this resource are available, one with a Content-
@@ -660,19 +697,9 @@ Internet-Draft        HTTP Representation Variants         February 2018
    Note that Accept-Language is listed in Vary, to assure backwards-
    compatibility with caches that do not support Variants.
 
-6.2.  Multiple Variants
+6.1.2.  Multiple Variants
 
    A more complicated request/response pair:
-
-
-
-
-
-
-Nottingham               Expires August 17, 2018               [Page 12]
-
-Internet-Draft        HTTP Representation Variants         February 2018
-
 
    GET /murray HTTP/1.1
    Host: www.example.net
@@ -695,11 +722,19 @@ Internet-Draft        HTTP Representation Variants         February 2018
    the identity encoding), and the cache needs to consider the selection
    algorithms for both axes.
 
+
+
+
+Nottingham               Expires August 17, 2018               [Page 13]
+
+Internet-Draft        HTTP Representation Variants         February 2018
+
+
    Upon a subsequent request, if both selection algorithms return a
    stored representation, it can be served from cache; otherwise, the
    request will need to be forwarded to origin.
 
-6.3.  Partial Coverage
+6.1.3.  Partial Coverage
 
    Now, consider the previous example, but where only one of the Vary'd
    axes is listed in Variants:
@@ -723,13 +758,6 @@ Internet-Draft        HTTP Representation Variants         February 2018
    in its field-value - and then continue processing Variants for the
    set of stored responses that the algorithm described there selects.
 
-
-
-Nottingham               Expires August 17, 2018               [Page 13]
-
-Internet-Draft        HTTP Representation Variants         February 2018
-
-
 7.  IANA Considerations
 
    This specification registers two values in the Permanent Message
@@ -750,6 +778,13 @@ Internet-Draft        HTTP Representation Variants         February 2018
    o  Header field name: Variant-Key
 
    o  Applicable protocol: http
+
+
+
+Nottingham               Expires August 17, 2018               [Page 14]
+
+Internet-Draft        HTTP Representation Variants         February 2018
+
 
    o  Status: standard
 
@@ -778,14 +813,6 @@ Internet-Draft        HTTP Representation Variants         February 2018
    It is also a generalisation of a Fastly VCL feature designed by
    Rogier 'DocWilco' Mulhuijzen.
 
-
-
-
-Nottingham               Expires August 17, 2018               [Page 14]
-
-Internet-Draft        HTTP Representation Variants         February 2018
-
-
    Thanks to Hooman Beheshti for his review and input.
 
 10.  References
@@ -805,6 +832,15 @@ Internet-Draft        HTTP Representation Variants         February 2018
               Specifications: ABNF", STD 68, RFC 5234,
               DOI 10.17487/RFC5234, January 2008,
               <https://www.rfc-editor.org/info/rfc5234>.
+
+
+
+
+
+Nottingham               Expires August 17, 2018               [Page 15]
+
+Internet-Draft        HTTP Representation Variants         February 2018
+
 
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
@@ -835,13 +871,6 @@ Internet-Draft        HTTP Representation Variants         February 2018
               in HTTP", RFC 2295, DOI 10.17487/RFC2295, March 1998,
               <https://www.rfc-editor.org/info/rfc2295>.
 
-
-
-Nottingham               Expires August 17, 2018               [Page 15]
-
-Internet-Draft        HTTP Representation Variants         February 2018
-
-
    [RFC3864]  Klyne, G., Nottingham, M., and J. Mogul, "Registration
               Procedures for Message Header Fields", BCP 90, RFC 3864,
               DOI 10.17487/RFC3864, September 2004,
@@ -858,6 +887,16 @@ Internet-Draft        HTTP Representation Variants         February 2018
    [4] https://datatracker.ietf.org/doc/draft-nottingham-variants/
 
    [5] https://github.com/mnot/variants-toy
+
+
+
+
+
+
+Nottingham               Expires August 17, 2018               [Page 16]
+
+Internet-Draft        HTTP Representation Variants         February 2018
+
 
 Appendix A.  Variants for Existing Content Negotiation Mechanisms
 
@@ -890,14 +929,6 @@ A.1.  Accept
 
        1.  If any member of available-values matches preferred-type,
            using the media-range matching mechanism specified in
-
-
-
-Nottingham               Expires August 17, 2018               [Page 16]
-
-Internet-Draft        HTTP Representation Variants         February 2018
-
-
            [RFC7231] Section 5.3.2 (which is case-insensitive), append
            those members of available-values to preferred-available
            (preserving the precedence order implied by the media ranges'
@@ -915,6 +946,13 @@ A.2.  Accept-Encoding
 
    To perform content negotiation for Accept-Encoding given a request-
    value and available-values:
+
+
+
+Nottingham               Expires August 17, 2018               [Page 17]
+
+Internet-Draft        HTTP Representation Variants         February 2018
+
 
    1.  Let preferred-available be an empty list.
 
@@ -946,14 +984,6 @@ A.3.  Accept-Language
    This section defines handling for Accept-Language variants, as per
    [RFC7231] Section 5.3.5.
 
-
-
-
-Nottingham               Expires August 17, 2018               [Page 17]
-
-Internet-Draft        HTTP Representation Variants         February 2018
-
-
    To perform content negotiation for Accept-Language given a request-
    value and available-values:
 
@@ -970,6 +1000,15 @@ Internet-Draft        HTTP Representation Variants         February 2018
        default).
 
    4.  For each preferred-lang in preferred-langs:
+
+
+
+
+
+Nottingham               Expires August 17, 2018               [Page 18]
+
+Internet-Draft        HTTP Representation Variants         February 2018
+
 
        1.  If any member of available-values matches preferred-lang,
            using either the Basic or Extended Filtering scheme defined
@@ -1005,4 +1044,21 @@ Author's Address
 
 
 
-Nottingham               Expires August 17, 2018               [Page 18]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham               Expires August 17, 2018               [Page 19]
