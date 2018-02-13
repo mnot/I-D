@@ -334,10 +334,24 @@ Variant-Key: fr, gzip
 it could be used to satisfy the first preference. If not, responses corresponding to the other keys could be returned, or the request could be forwarded towards the origin.
 
 
+# Origin Server Behaviour {#origin}
 
-# Example Headers {#examples}
+Origin servers that wish to take advantage of Variants will need to generate both the Variants ({{variants}}) and Variant-Key ({{variant-key}}) header fields in all cacheable responses for a given resource. If either is omitted and the response is stored, it will have the effect of disabling caching for that resource until it is no longer stored (e.g., it expires, or is evicted).
 
-## Single Variant
+Likewise, origin servers will need to assure that the members of both header field values are in the same order and have the same length, since discrepancies will cause caches to avoid using the responses they occur in.
+
+The value of the Variants header should be relatively stable for a given resource over time; when it changes, it can have the effect of invalidating previously stored responses.
+
+As per {{vary}}, the Vary header is required to be set appropriately when Variants is in use, so that caches that do not implement this specification still operate correctly.
+
+Origin servers are advised to carefully consider which content negotiation mechanisms to enumerate in Variants; if a mechanism is not supported by a receiving cache, it will "downgrade" to Vary handling, which can negatively impact cache efficiency.
+
+
+## Examples {#examples}
+
+The operation of Variants is illustrated by the examples below.
+
+### Single Variant
 
 Given a request/response pair:
 
@@ -367,7 +381,7 @@ A cache receiving a request that does not list either language as acceptable (or
 Note that Accept-Language is listed in Vary, to assure backwards-compatibility with caches that do not support Variants.
 
 
-## Multiple Variants
+### Multiple Variants
 
 A more complicated request/response pair:
 
@@ -393,7 +407,7 @@ Here, the cache knows that there are two axes that the response varies upon; Con
 Upon a subsequent request, if both selection algorithms return a stored representation, it can be served from cache; otherwise, the request will need to be forwarded to origin.
 
 
-## Partial Coverage {#partial}
+### Partial Coverage {#partial}
 
 Now, consider the previous example, but where only one of the Vary'd axes is listed in Variants:
 
