@@ -62,7 +62,7 @@ Even when the headers' semantics are understood, a cache does not know enough ab
 For example, if a cache has stored the following request/response pair:
 
 ~~~
-GET /clancy HTTP/1.1
+GET /foo HTTP/1.1
 Host: www.example.com
 Accept-Language: en;q=1.0, fr;q=0.5
 
@@ -82,7 +82,7 @@ This specification introduces the HTTP Variants response header field ({{variant
 Its companion the Variant-Key response header field ({{variant-key}}) indicates which representation was selected, so that it can be reliably reused in the future. When this specification is in use, the example above might become:
 
 ~~~
-GET /clancy HTTP/1.1
+GET /foo HTTP/1.1
 Host: www.example.com
 Accept-Language: en;q=1.0, fr;q=0.5
 
@@ -342,7 +342,7 @@ it could be used to satisfy the first preference. If not, responses correspondin
 Given a request/response pair:
 
 ~~~
-GET /foo HTTP/1.1
+GET /clancy HTTP/1.1
 Host: www.example.com
 Accept-Language: en;q=1.0, fr;q=0.5
 
@@ -372,7 +372,7 @@ Note that Accept-Language is listed in Vary, to assure backwards-compatibility w
 A more complicated request/response pair:
 
 ~~~
-GET /bar HTTP/1.1
+GET /murray HTTP/1.1
 Host: www.example.net
 Accept-Language: en;q=1.0, fr;q=0.5
 Accept-Encoding: gzip, br
