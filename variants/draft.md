@@ -503,7 +503,7 @@ To perform content negotiation for Accept-Encoding given a request-value and ava
    1. If there is a case-insensitive, character-for-character match for preferred-coding in available-values, append that member of available-values to preferred-available.
 6. Return preferred-available.
 
-Note that the unencoded variant needs to have a Variant-Key header field with a value of "identity".
+Note that the unencoded variant needs to have a Variant-Key header field with a value of "identity" (as defined in {{!RFC7231}} Section 5.3.4).
 
 ## Accept-Language {#content-language}
 
