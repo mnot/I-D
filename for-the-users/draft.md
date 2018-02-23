@@ -45,8 +45,8 @@ informative:
 
 --- abstract
 
-This document requires that, when a conflict cannot be avoided, Internet Standards consider end
-users as their highest priority concern.
+This document why, when a conflict cannot be avoided, the IETF considers end users as their highest
+priority concern.
 
 
 --- note_Note_to_Readers
@@ -98,10 +98,12 @@ vendors, specification authors, specification implementers, content owners, gove
 non-governmental organisations, social movements, employers, and parents.
 
 Successful specifications will provide some benefit to all of the relevant parties, because
-standards do not represent a zero-sum game. However, there are often situations where we need to
+standards do not represent a zero-sum game. However, there are sometimes situations where we need to
 balance the benefits of a decision between two (or more) parties.
 
-To help clarify such decisions, {{users}} mandates that end users have the highest priority.
+In these situations, when one of those parties is the "end user" of the Internet -- for example, a
+person using a Web browser, mail client, or other agent that connects to the Internet -- we tend to
+favour their needs over that of parties such as network operators or equipement vendors.
 
 Our goal is not to avoid all potential harm to or constraint of end users; rather, it's to give
 guidance in a particular situation -- when we've identified a conflict between the interests of end
@@ -122,18 +124,13 @@ Doing so helps the IETF achieve its mission, and also helps to assure the long-t
 Internet. By prioritising the concerns of end users, we assure that it reaches the greatest number
 of people, thereby delivering greater utility by maximising its network effect.
 
-
-## Notational Conventions
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
-"RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
-{{RFC2119}}.
+Prioritising end users' needs also helps to assure that the Internet itself retains end users' trust, preserving the benefit its network effect brings.
 
 
-# The Internet is for End Users {#users}
+# Guidelines for IETF Decisions
 
-When there are unresolvable conflicts between the interests of different parties, Internet
-standards MUST consider the end users of the Internet to have priority over every other party.
+When there are unresolvable conflicts between the interests of different parties, we consider the
+end users of the Internet to have priority over other parties.
 
 While networks need to be managed, employers and equipment vendors need to meet business goals, and
 so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
@@ -159,17 +156,12 @@ of end users, we will find a different solution or find another way to frame the
 
 There may be cases where genuine technical need requires compromise. However, such tradeoffs need
 to be carefully examined, and avoided when there are alternate means of achieving the desired
-goals. If they cannot be, these choices and reasoning SHOULD be carefully documented.
+goals. If they cannot be, these choices and reasoning ought to be carefully documented.
 
 For example, IPv6 {{?RFC8200}} can be used to assign a client with a unique address prefix -- even
 though this provides a way to track end user activity and helps identify them -- because it is
 technically necessary to provide networking (and despite this, there are mechanisms like
 {{RFC4941}} to mitigate this effect, for those users who desire it).
-
-Finally, this requirement only comes into force when an explicit conflict between the interests of
-end users and other relevant parties is encountered (e.g., by being brought up in the Working
-Group). It does not imply that a standards effort needs to be audited for user impact, or every
-decision weighed against end user interests.
 
 
 
@@ -195,65 +187,5 @@ Thanks to Harald Alvestrand for his substantial feedback and Mohamed Boucadair, 
 Joe Hildebrand, Lee Howard, Russ Housley, Niels ten Oever, Mando Rachovitsa, Martin Thomson, and
 Brian Trammell for their suggestions.
 
-
-# Frequently Asked Questions
-
-
-## Why do we need this?
-
-It's not uncommon for proposals to be made in the IETF for a change to a protocol -- one that's
-being designed or already deployed -- to make certain tasks easier, but in a way that causes q concern about impact upon end users.
-
-For example, network operators approached the HTTP Working Group in 2014 with a proposal to allow
-an "explicitly authenticated proxy" to be involved in HTTPS connections, so that operators could
-interpose new services, improve network efficiency and meet regulatory mandates.
-
-After much discussion, the Working Group declined the new work, on the grounds that HTTPS was
-explicitly documented as an end-to-end encrypted protocol {{?RFC7230}}, and couldn't be changed
-retroactively.
-
-Having a policy like this in place would have given the Working Group a way to hold a more
-productive and limited discussion, because it would be focused on the question "Does intercepting
-HTTPS have an unacceptable potential for harming end users?"
-
-Achieving even rough consensus {{?RFC7282}} on that would allow the Working Group to conclude
-discussion more quickly, while still giving the proposal a fair hearing.
-
-That discussion would still necessarily need to encompass the nature of the harm, various tradeoffs
-and possible alternatives, as discussed above. Nevertheless, having *some* form of guidance
-regarding the overall goals and priorities does help Working Groups in this situation.
-
-
-## How will this impact my Working Group?
-
-When someone identifies a potential negative impact upon end users in a document or proposal, the
-Working Group should assess it. If the Working Group does reach consensus (even rough, as per
-{{?RFC7282}}) that this is the case, the risk will need to be mitigated, or an alternative approach
-found.
-
-As explained above, there might be cases where the Working Group determines that there is potential
-for end user impact, but that it is the "least worst" option. {{users}} requires these situations
-to be documented (e.g., in Security Considerations), to help contextualise the decision, warn
-deployers and users of potential problems, and encourage further protocol development to mitigate
-the risk.
-
-
-## How do Working Groups decide what's in the interest of end users?
-
-Using the same process of discussion and consensus-gathering as they do now, but focused on the
-issue of what the impact upon users is.
-
-Doing so might include broadening participation in the working group to include new perspectives
-that are not well-represented, to assure diversity and better represent end user concerns.
-
-In many Working Groups, implementers have a strong voice, since implementation is necessary for
-successful deployment. When assessing end-user impact, however, the desires of implementers might
-conflict with the needs of end users, and so care must be taken to avoid assigning too much weight
-to the availability of implementations.
-
-Finally, as discussed, the IETF has a variety of specific guidance regarding privacy, security and
-other areas that potentially impact end users, and it is expected to grow over time. This document
-provides a more general goal in areas that are not yet covered by such guidance; it does not
-override it.
 
 
