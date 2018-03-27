@@ -79,16 +79,16 @@ Table of Contents
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  HTTP Link Hints . . . . . . . . . . . . . . . . . . . . . . .   4
    3.  Pre-Defined HTTP Link Hints . . . . . . . . . . . . . . . . .   4
-     3.1.  allow . . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     3.1.  allow . . . . . . . . . . . . . . . . . . . . . . . . . .   5
      3.2.  formats . . . . . . . . . . . . . . . . . . . . . . . . .   5
      3.3.  links . . . . . . . . . . . . . . . . . . . . . . . . . .   5
      3.4.  accept-post . . . . . . . . . . . . . . . . . . . . . . .   6
-     3.5.  accept-patch  . . . . . . . . . . . . . . . . . . . . . .   6
+     3.5.  accept-patch  . . . . . . . . . . . . . . . . . . . . . .   7
      3.6.  accept-ranges . . . . . . . . . . . . . . . . . . . . . .   7
      3.7.  accept-prefer . . . . . . . . . . . . . . . . . . . . . .   7
-     3.8.  precondition-req  . . . . . . . . . . . . . . . . . . . .   7
+     3.8.  precondition-req  . . . . . . . . . . . . . . . . . . . .   8
      3.9.  auth-schemes  . . . . . . . . . . . . . . . . . . . . . .   8
-     3.10. status  . . . . . . . . . . . . . . . . . . . . . . . . .   8
+     3.10. status  . . . . . . . . . . . . . . . . . . . . . . . . .   9
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
      5.1.  HTTP Link Hint Registry . . . . . . . . . . . . . . . . .   9
@@ -96,16 +96,16 @@ Table of Contents
      6.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
      6.2.  Informative References  . . . . . . . . . . . . . . . . .  11
      6.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  11
-   Appendix A.  Representing Link Hints in Link Headers  . . . . . .  11
-   Appendix B.  Acknowledgements . . . . . . . . . . . . . . . . . .  12
-   Appendix C.  Open Issues  . . . . . . . . . . . . . . . . . . . .  13
+   Appendix A.  Representing Link Hints in Link Headers  . . . . . .  12
+   Appendix B.  Acknowledgements . . . . . . . . . . . . . . . . . .  13
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
 
-   Clients can discover a variety of information about a HTTP [RFC7230]
+   HTTP [RFC7230] clients can discover a variety of information about a
    resource by interacting with it.  For example, the methods supported
-   can be learned through the Allow response header field, whereas the
+   can be learned through the Allow response header field, and the need
+
 
 
 
@@ -114,8 +114,8 @@ Nottingham             Expires September 28, 2018               [Page 2]
 Internet-Draft               HTTP Link Hints                  March 2018
 
 
-   need for authentication is conveyed with a 401 Authentication
-   Required status code.
+   for authentication is conveyed with a 401 Authentication Required
+   status code.
 
    In some situations, it can be beneficial to know this information
    before interacting with the resource; not only can it save time
@@ -131,12 +131,10 @@ Internet-Draft               HTTP Link Hints                  March 2018
    [RFC8288], thereby making it available before the link is followed.
    It also establishes a registry for future hints.
 
-   It does not recommend a single serialisation format for link hints;
-   rather, it is expected that this will be done by individual link
-   serialisations that use hints (whether they be in a representation
-   body, message headers or elsewhere).  However, Appendix A does
-   recommend how to include link hints in the existing Link HTTP header
-   field.
+   It does not recommend a single way to express link hints; rather, it
+   is expected that this will be done by individual link serialisations
+   (see [RFC8288], Section 3.4.1).  However, Appendix A does recommend
+   how to include link hints in the existing Link HTTP header field.
 
    Hints are just that - they are not a "contract", and are to only be
    taken as advisory.  The runtime behaviour of the resource always
@@ -147,10 +145,10 @@ Internet-Draft               HTTP Link Hints                  March 2018
    client can PUT to them, but a specific resource might reject a PUT
    based upon access control or other considerations.
 
-   More fine-grained information might be gathered by interacting with
-   the resource (e.g., via a GET), or by another resource "containing"
-   it (such as a "widgets" collection) or describing it (e.g., one
-   linked to it with a "describedby" link relation).
+   More fine-grained information might also be gathered by interacting
+   with the resource (e.g., via a GET), or by another resource
+   "containing" it (such as a "widgets" collection) or describing it
+   (e.g., one linked to it with a "describedby" link relation).
 
 1.1.  Notational Conventions
 
@@ -159,6 +157,8 @@ Internet-Draft               HTTP Link Hints                  March 2018
    "OPTIONAL" in this document are to be interpreted as described in BCP
    14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
+
+
 
 
 
@@ -174,10 +174,11 @@ Internet-Draft               HTTP Link Hints                  March 2018
 
    A HTTP link hint is a (key, value) tuple that describes the target
    resource of a Web link [RFC8288], or the link itself.  The value's
-   canonical form is a JSON [RFC8259] data structure, whose form is
-   defined by the hint's definition.
+   canonical form is a JSON [RFC8259] data structure specific to that
+   hint.
 
-   Typically, they are serialised in links as target attributes.
+   Typically, link hints are serialised in links as target attributes
+   ([RFC8288], Section 3.4.1).
 
    In JSON-based formats, this can be achieved by simply serialising
    link hints as an object; for example:
@@ -198,8 +199,8 @@ Internet-Draft               HTTP Link Hints                  March 2018
    }
 
    In other link formats, this requires a mapping from the canonical
-   JSON data model.  One such mapping for the Link HTTP header is
-   described in Appendix A.
+   JSON data model.  One such mapping is described in Appendix A for the
+   Link HTTP header field.
 
    The information in a link hint SHOULD NOT be considered valid for
    longer than the freshness lifetime ([RFC7234], Section 4.2) of the
@@ -213,9 +214,8 @@ Internet-Draft               HTTP Link Hints                  March 2018
 
 3.  Pre-Defined HTTP Link Hints
 
-3.1.  allow
 
-   o  Hint Name: allow
+
 
 
 
@@ -225,6 +225,10 @@ Nottingham             Expires September 28, 2018               [Page 4]
 
 Internet-Draft               HTTP Link Hints                  March 2018
 
+
+3.1.  allow
+
+   o  Hint Name: allow
 
    o  Description: Hints the HTTP methods that can be used to interact
       with the target resource; equivalent to the Allow HTTP response
@@ -270,10 +274,6 @@ Internet-Draft               HTTP Link Hints                  March 2018
 
    o  Description: Hints at links whose context is the target resource.
 
-   o  Content Model: object
-
-   o  Specification: [this document]
-
 
 
 
@@ -281,6 +281,10 @@ Nottingham             Expires September 28, 2018               [Page 5]
 
 Internet-Draft               HTTP Link Hints                  March 2018
 
+
+   o  Content Model: object
+
+   o  Specification: [this document]
 
    The "links" hint contains links (in the sense of [RFC8288]) whose
    context is the hinted target resource, which are stable for the
@@ -323,13 +327,9 @@ Internet-Draft               HTTP Link Hints                  March 2018
    When this hint is present, "POST" SHOULD be listed in the "allow"
    hint.
 
-3.5.  accept-patch
 
-   o  Hint Name: accept-patch
 
-   o  Description: Hints the PATCH [RFC5789] request format(s) that the
-      target resource can consume; equivalent to the Accept-Patch HTTP
-      response header.
+
 
 
 
@@ -337,6 +337,14 @@ Nottingham             Expires September 28, 2018               [Page 6]
 
 Internet-Draft               HTTP Link Hints                  March 2018
 
+
+3.5.  accept-patch
+
+   o  Hint Name: accept-patch
+
+   o  Description: Hints the PATCH [RFC5789] request format(s) that the
+      target resource can consume; equivalent to the Accept-Patch HTTP
+      response header.
 
    o  Content Model: array (of strings)
 
@@ -378,14 +386,6 @@ Internet-Draft               HTTP Link Hints                  March 2018
    Content MUST be an array of strings, contain preferences.  Note that,
    by its nature, a preference can be ignored by the server.
 
-3.8.  precondition-req
-
-   o  Hint Name: precondition-req
-
-   o  Description: Hints that the target resource requires state-
-      changing requests (e.g., PUT, PATCH) to include a precondition, as
-      per [RFC7232], to avoid conflicts due to concurrent updates.
-
 
 
 
@@ -393,6 +393,14 @@ Nottingham             Expires September 28, 2018               [Page 7]
 
 Internet-Draft               HTTP Link Hints                  March 2018
 
+
+3.8.  precondition-req
+
+   o  Hint Name: precondition-req
+
+   o  Description: Hints that the target resource requires state-
+      changing requests (e.g., PUT, PATCH) to include a precondition, as
+      per [RFC7232], to avoid conflicts due to concurrent updates.
 
    o  Content Model: array (of strings)
 
@@ -431,6 +439,17 @@ Internet-Draft               HTTP Link Hints                  March 2018
        ]
      }
 
+
+
+
+
+
+
+Nottingham             Expires September 28, 2018               [Page 8]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
 3.10.  status
 
    o  Hint Name: status
@@ -442,13 +461,6 @@ Internet-Draft               HTTP Link Hints                  March 2018
    o  Specification: [this document]
 
    Content MUST be a string; possible values are:
-
-
-
-Nottingham             Expires September 28, 2018               [Page 8]
-
-Internet-Draft               HTTP Link Hints                  March 2018
-
 
    o  "deprecated" - indicates that use of the resource is not
       recommended, but it is still available.
@@ -485,6 +497,15 @@ Internet-Draft               HTTP Link Hints                  March 2018
    Hint semantics SHOULD be described in terms of the framework defined
    in [RFC8288].
 
+
+
+
+
+Nottingham             Expires September 28, 2018               [Page 9]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
    New hints are registered using the Expert Review process described in
    [RFC8126] to enforce the criteria above.  Requests for registration
    of new resource hints are to use the following template:
@@ -496,15 +517,6 @@ Internet-Draft               HTTP Link Hints                  March 2018
    o  Content Model: [valid JSON value types; see RFC627 Section 2.1]
 
    o  Specification: [reference to specification document]
-
-
-
-
-
-Nottingham             Expires September 28, 2018               [Page 9]
-
-Internet-Draft               HTTP Link Hints                  March 2018
-
 
    Initial registrations are enumerated in Section 3.  The "rel", "rev",
    "hreflang", "media", "title", and "type" hint names are reserved, so
@@ -542,6 +554,14 @@ Internet-Draft               HTTP Link Hints                  March 2018
               DOI 10.17487/RFC7232, June 2014,
               <https://www.rfc-editor.org/info/rfc7232>.
 
+
+
+
+Nottingham             Expires September 28, 2018              [Page 10]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
    [RFC7233]  Fielding, R., Ed., Lafon, Y., Ed., and J. Reschke, Ed.,
               "Hypertext Transfer Protocol (HTTP/1.1): Range Requests",
               RFC 7233, DOI 10.17487/RFC7233, June 2014,
@@ -551,16 +571,6 @@ Internet-Draft               HTTP Link Hints                  March 2018
               Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
               RFC 7234, DOI 10.17487/RFC7234, June 2014,
               <https://www.rfc-editor.org/info/rfc7234>.
-
-
-
-
-
-
-Nottingham             Expires September 28, 2018              [Page 10]
-
-Internet-Draft               HTTP Link Hints                  March 2018
-
 
    [RFC7235]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Authentication", RFC 7235,
@@ -601,6 +611,13 @@ Internet-Draft               HTTP Link Hints                  March 2018
 
    [2] https://mnot.github.io/I-D/link-hint/
 
+
+
+Nottingham             Expires September 28, 2018              [Page 11]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
    [3] https://github.com/mnot/I-D/commits/gh-pages/link-hint
 
    [4] https://datatracker.ietf.org/doc/draft-nottingham-link-hint/
@@ -609,14 +626,6 @@ Appendix A.  Representing Link Hints in Link Headers
 
    A link hint can be represented in a Link header ([RFC8288],
    Section 3) as a link-extension.
-
-
-
-
-Nottingham             Expires September 28, 2018              [Page 11]
-
-Internet-Draft               HTTP Link Hints                  March 2018
-
 
    When doing so, the JSON of the hint's content SHOULD be normalised to
    reduce extraneous spaces (%x20), and MUST NOT contain horizontal tabs
@@ -657,15 +666,6 @@ Internet-Draft               HTTP Link Hints                  March 2018
    Link: </>; rel="sample"; example="\"foo\", -1.23, true,
          [\"charlie\", \"bennet\"], {"cat": \"thor\"}, false"
 
-Appendix B.  Acknowledgements
-
-   Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Graham Klyne,
-   Leif Hedstrom, Jeni Tennison, Erik Wilde and Jorge Williams for their
-   suggestions and feedback.
-
-
-
-
 
 
 
@@ -674,27 +674,11 @@ Nottingham             Expires September 28, 2018              [Page 12]
 Internet-Draft               HTTP Link Hints                  March 2018
 
 
-Appendix C.  Open Issues
+Appendix B.  Acknowledgements
 
-   The following is a list of placeholders for open issues.
-
-   o  Resource Hints
-
-      *  indicate a POST to 201 Created pattern
-
-      *  indicate an "action" POST
-
-      *  outbound links
-
-      *  forms?
-
-   o  Representation Hints
-
-      *  format profiles
-
-      *  schema?
-
-      *  deprecation
+   Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Graham Klyne,
+   Leif Hedstrom, Jeni Tennison, Erik Wilde and Jorge Williams for their
+   suggestions and feedback.
 
 Author's Address
 
@@ -702,6 +686,22 @@ Author's Address
 
    Email: mnot@mnot.net
    URI:   http://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
