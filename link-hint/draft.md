@@ -59,64 +59,56 @@ This draft should be discussed on the apps-discuss mailing list; see
 
 # Introduction
 
-Clients can discover a variety of information about a HTTP
-{{RFC7230}} resource by interacting with it. For
-example, the methods supported can be learned through the Allow response header
-field, whereas the need for authentication is conveyed with a 401
-Authentication Required status code.
+Clients can discover a variety of information about a HTTP {{RFC7230}} resource by interacting with
+it. For example, the methods supported can be learned through the Allow response header field,
+whereas the need for authentication is conveyed with a 401 Authentication Required status code.
 
-In some situations, it can be beneficial to know this information before
-interacting with the resource; not only can it save time (through reduced round
-trips), but it can also affect the choices given to the code or user driving
-the interaction.
+In some situations, it can be beneficial to know this information before interacting with the
+resource; not only can it save time (through reduced round trips), but it can also affect the
+choices given to the code or user driving the interaction.
 
-For example, a user interface that presents the data from an HTTP-based API
-might need to know which resources the user has write access to, so that it can
-present the appropriate interface.
+For example, a user interface that presents the data from an HTTP-based API might need to know
+which resources the user has write access to, so that it can present the appropriate interface.
 
-This specification defines a vocabulary of "HTTP link hints" that allow such
-metadata about HTTP resources to be attached to Web links {{RFC5988}}, thereby
-making it available before the link is followed. It also establishes a registry
-for future hints.
+This specification defines a vocabulary of "HTTP link hints" that allow such metadata about HTTP
+resources to be attached to Web links {{RFC5988}}, thereby making it available before the link is
+followed. It also establishes a registry for future hints.
 
-It does not recommend a single serialisation format for link hints; rather, it
-is expected that this will be done by individual link serialisations that use
-hints (whether they be in a representation body, message headers or elsewhere). However, {{link_header}} does recommend how to include link hints in the
-existing Link HTTP header field.
+It does not recommend a single serialisation format for link hints; rather, it is expected that
+this will be done by individual link serialisations that use hints (whether they be in a
+representation body, message headers or elsewhere). However, {{link_header}} does recommend how to
+include link hints in the existing Link HTTP header field.
 
-Hints are just that -- they are not a "contract", and are to only be taken as
-advisory. The runtime behaviour of the resource always overrides hinted
-information.
+Hints are just that -- they are not a "contract", and are to only be taken as advisory. The runtime
+behaviour of the resource always overrides hinted information.
 
-For example, a client might receive a hint that the PUT method is allowed on
-all "widget" resources. This means that generally, the client can PUT to them,
-but a specific resource might reject a PUT based upon access control or other
-considerations. 
+For example, a client might receive a hint that the PUT method is allowed on all "widget"
+resources. This means that generally, the client can PUT to them, but a specific resource might
+reject a PUT based upon access control or other considerations.
 
-More fine-grained information might be gathered by interacting with the
-resource (e.g., via a GET), or by another resource "containing" it (such as a
-"widgets" collection) or describing it (e.g., one linked to it with a
-"describedby" link relation).
+More fine-grained information might be gathered by interacting with the resource (e.g., via a GET),
+or by another resource "containing" it (such as a "widgets" collection) or describing it (e.g., one
+linked to it with a "describedby" link relation).
 
 
 ## Notational Conventions
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in {{RFC2119}}.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
+"RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
+{{RFC2119}}.
 
 
 # HTTP Link Hints {#link_hints}
 
-A HTTP link hint is a (key, value) tuple that describes the target resource of
-a Web link {{RFC5988}}, or the link itself. The value's canonical form is a
-JSON {{RFC4627}} data structure, whose form is defined by the hint's
-definition. 
+A HTTP link hint is a (key, value) tuple that describes the target resource of a Web link
+{{RFC5988}}, or the link itself. The value's canonical form is a JSON {{RFC4627}} data structure,
+whose form is defined by the hint's definition.
 
 Typically, they are serialised in links as target attributes.
 
-In JSON-based formats, this can be achieved by simply serialising link hints as
-an object; for example:
+In JSON-based formats, this can be achieved by simply serialising link hints as an object; for
+example:
+
 
 ~~~
 {
@@ -135,18 +127,17 @@ an object; for example:
 }
 ~~~
 
-In other link formats, this requires a mapping from the canonical JSON data
-model. One such mapping for the Link HTTP header is described in
-{{link_header}}.
+In other link formats, this requires a mapping from the canonical JSON data model. One such mapping
+for the Link HTTP header is described in {{link_header}}.
 
-The information in a link hint SHOULD NOT be considered valid for longer than
-the freshness lifetime ({{I-D.ietf-httpbis-p6-cache}}) of the representation
-that the link occurred within, and in some cases, it might be valid for a
-considerably shorter period.
+The information in a link hint SHOULD NOT be considered valid for longer than the freshness
+lifetime ({{I-D.ietf-httpbis-p6-cache}}) of the representation that the link occurred within, and
+in some cases, it might be valid for a considerably shorter period.
 
-Likewise, the information in a link hint is specific to the link it is attached
-to. This means that if a representation is specific to a particular user, the
-hints on links in that representation are also specific to that user.
+Likewise, the information in a link hint is specific to the link it is attached to. This means that
+if a representation is specific to a particular user, the hints on links in that representation are
+also specific to that user.
+
 
 
 # Pre-Defined HTTP Link Hints {#hints}
@@ -154,8 +145,8 @@ hints on links in that representation are also specific to that user.
 ## allow
 
 * Hint Name: allow
-* Description: Hints the HTTP methods that can be used to interact with the
-  target resource; equivalent to the Allow HTTP response header.
+* Description: Hints the HTTP methods that can be used to interact with the target resource;
+  equivalent to the Allow HTTP response header.
 * Content Model: array (of strings)
 * Specification: [this document]
 
@@ -164,24 +155,22 @@ Content MUST be an array of strings, containing HTTP methods.
 ## formats
 
 * Hint Name: formats
-* Description: Hints the representation type(s) that the target resource can
-  produce and consume, using the GET and PUT (if allowed) methods respectively.
+* Description: Hints the representation type(s) that the target resource can produce and consume,
+  using the GET and PUT (if allowed) methods respectively.
 * Content Model: object
 * Specification: [this document]
 
 Content MUST be an object, whose keys are media types, and values are objects.
 
-The object MAY have a "links" member, whose value is an object representing
-links (in the sense of {{RFC5988}}) whose context is any document that uses
-that format. Generally, this will be schema or profile ({{RFC6906}})
-information. The "links" member has the same format as the "links" hint.
+The object MAY have a "links" member, whose value is an object representing links (in the sense of
+{{RFC5988}}) whose context is any document that uses that format. Generally, this will be schema or
+profile ({{RFC6906}}) information. The "links" member has the same format as the "links" hint.
 
-Furthermore, the object MAY have a "deprecated" member, whose value is either
-true or false, indicating whether support for the format might be removed in
-the near future.
+Furthermore, the object MAY have a "deprecated" member, whose value is either true or false,
+indicating whether support for the format might be removed in the near future.
 
-All other members of the object are under control of the corresponding media
-type's definition.
+All other members of the object are under control of the corresponding media type's definition.
+
 
 ## links
 
@@ -190,14 +179,13 @@ type's definition.
 * Content Model: object
 * Specification: [this document]
 
-The "links" hint contains links (in the sense of {{RFC5988}}) whose context is
-the hinted target resource, which are stable for the lifetime of the hint.
+The "links" hint contains links (in the sense of {{RFC5988}}) whose context is the hinted target
+resource, which are stable for the lifetime of the hint.
 
-Content MUST be an object, whose member names are link relations ({{RFC5988}})
-and values are objects that MUST have an "href" member whose value is a
-URI-reference ({{RFC3986}}, using the original link as the base for resolution)
-for the link hint's target resource, and MAY itself contain link hints,
-serialised as the value for a "hints" member.
+Content MUST be an object, whose member names are link relations ({{RFC5988}}) and values are
+objects that MUST have an "href" member whose value is a URI-reference ({{RFC3986}}, using the
+original link as the base for resolution) for the link hint's target resource, and MAY itself
+contain link hints, serialised as the value for a "hints" member.
 
 For example:
 
@@ -229,22 +217,21 @@ When this hint is present, "POST" SHOULD be listed in the "allow" hint.
 ## accept-patch
 
 * Hint Name: accept-patch
-* Description: Hints the PATCH {{RFC5789}} request format(s) that the target
-  resource can consume; equivalent to the Accept-Patch HTTP response header.
+* Description: Hints the PATCH {{RFC5789}} request format(s) that the target resource can consume;
+  equivalent to the Accept-Patch HTTP response header.
 * Content Model: array (of strings)
 * Specification: [this document]
 
-Content MUST be an array of strings, containing media types. Note that there is
-no opportunity to communicate format-specific hints for PATCH formats.
+Content MUST be an array of strings, containing media types. Note that there is no opportunity to
+communicate format-specific hints for PATCH formats.
 
 When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
 
 ## accept-ranges
 
 * Hint Name: accept-ranges
-* Description: Hints the range-specifier(s) available for the target resource;
-  equivalent to the Accept-Ranges HTTP response header
-  {{RFC7233}}.
+* Description: Hints the range-specifier(s) available for the target resource; equivalent to the
+  Accept-Ranges HTTP response header {{RFC7233}}.
 * Content Model: array (of strings)
 * Specification: [this document]
 
@@ -253,8 +240,8 @@ Content MUST be an array of strings, containing HTTP range-specifiers.
 ## accept-prefer
 
 * Hint Name: accept-prefer
-* Description: Hints the preference(s) {{RFC7240}} that the
-  target resource understands (and might act upon) in requests.
+* Description: Hints the preference(s) {{RFC7240}} that the target resource understands (and might
+  act upon) in requests.
 * Content Model: array (of strings)
 * Specification: [this document]
 
@@ -264,30 +251,27 @@ nature, a preference can be ignored by the server.
 ## precondition-req
 
 * Hint Name: precondition-req
-* Description: Hints that the target resource requires state-changing requests
-  (e.g., PUT, PATCH) to include a precondition, as per
-  {{RFC7232}}, to avoid conflicts due to concurrent
-  updates.
+* Description: Hints that the target resource requires state-changing requests (e.g., PUT, PATCH)
+  to include a precondition, as per {{RFC7232}}, to avoid conflicts due to concurrent updates.
 * Content Model: array (of strings)
 * Specification: [this document]
 
-Content MUST be an array of strings, with possible values "etag" and
-"last-modified" indicating type of precondition expected.
+Content MUST be an array of strings, with possible values "etag" and "last-modified" indicating
+type of precondition expected.
 
 See also the 428 Precondition Required status code ({{RFC6585}}).
 
 ## auth-schemes
 
 * Hint Name: auth-schemes
-* Description: Hints that the target resource requires authentication using the
-  HTTP Authentication Framework {{RFC7235}}.
+* Description: Hints that the target resource requires authentication using the HTTP Authentication
+  Framework {{RFC7235}}.
 * Content Model: array (of objects)
 * Specification: [this document]
 
-Content MUST be an array of objects, each with a "scheme" member containing
-a string that corresponds to a HTTP authentication scheme, and optionally a
-"realms" member containing an array of zero to many strings that identify
-protection spaces that the resource is a member of.
+Content MUST be an array of objects, each with a "scheme" member containing a string that
+corresponds to a HTTP authentication scheme, and optionally a "realms" member containing an array
+of zero to many strings that identify protection spaces that the resource is a member of.
 
 For example:
 
@@ -311,75 +295,66 @@ For example:
 
 Content MUST be a string; possible values are:
 
-* "deprecated" - indicates that use of the resource is not recommended, but it
-  is still available.
-* "gone" - indicates that the resource is no longer available; i.e., it will
-  return a 410 Gone HTTP status code if accessed.
+* "deprecated" - indicates that use of the resource is not recommended, but it is still available.
+* "gone" - indicates that the resource is no longer available; i.e., it will return a 410 Gone HTTP
+  status code if accessed.
 
 
 
 # Security Considerations
 
-Clients need to exercise care when using hints. For example, a naive client
-might send credentials to a server that uses the auth-req hint, without
-checking to see if those credentials are appropriate for that server.
+Clients need to exercise care when using hints. For example, a naive client might send credentials
+to a server that uses the auth-req hint, without checking to see if those credentials are
+appropriate for that server.
 
 
 # IANA Considerations
 
 ## HTTP Link Hint Registry {#hint_registry}
 
-This specification defines the HTTP Link Hint Registry. See {{link_hints}}
-for a general description of the function of link hints.
+This specification defines the HTTP Link Hint Registry. See {{link_hints}} for a general
+description of the function of link hints.
 
-Link hints are generic; that is, they are potentially applicable to any HTTP
-resource, not specific to one application of HTTP, nor to one particular
-format. Generally, they ought to be information that would otherwise be
-discoverable by interacting with the resource.
+Link hints are generic; that is, they are potentially applicable to any HTTP resource, not specific
+to one application of HTTP, nor to one particular format. Generally, they ought to be information
+that would otherwise be discoverable by interacting with the resource.
 
-Hint names MUST be composed of the lowercase letters (a-z), digits (0-9),
-underscores ("_") and hyphens ("-"), and MUST begin with a lowercase letter.
+Hint names MUST be composed of the lowercase letters (a-z), digits (0-9), underscores ("_") and
+hyphens ("-"), and MUST begin with a lowercase letter.
 
-Hint content MUST be described in terms of JSON values ({{RFC4627}}, Section
-2.1).
+Hint content MUST be described in terms of JSON values ({{RFC4627}}, Section 2.1).
 
-Hint semantics SHOULD be described in terms of the framework defined in
-{{RFC5988}}.
+Hint semantics SHOULD be described in terms of the framework defined in {{RFC5988}}.
 
-New hints are registered using the Expert Review process described in
-{{RFC5226}} to enforce the criteria above. Requests for registration of new
-resource hints are to use the following template:
+New hints are registered using the Expert Review process described in {{RFC5226}} to enforce the
+criteria above. Requests for registration of new resource hints are to use the following template:
 
 * Hint Name: [hint name]
 * Description: [a short description of the hint's semantics]
 * Content Model: [valid JSON value types; see RFC627 Section 2.1]
 * Specification: [reference to specification document]
 
-Initial registrations are enumerated in {{hints}}. The "rel", "rev",
-"hreflang", "media", "title", and "type" hint names are reserved, so as to
-avoid potential clashes with link serialisations.
+Initial registrations are enumerated in {{hints}}. The "rel", "rev", "hreflang", "media", "title",
+and "type" hint names are reserved, so as to avoid potential clashes with link serialisations.
 
 
 --- back
 
 # Representing Link Hints in Link Headers {#link_header}
 
-A link hint can be represented in a Link header ({{RFC5988}}, Section 5) as a
-link-extension.
+A link hint can be represented in a Link header ({{RFC5988}}, Section 5) as a link-extension.
 
-When doing so, the JSON of the hint's content SHOULD be normalised to reduce
-extraneous spaces (%x20), and MUST NOT contain horizontal tabs (%x09), line
-feeds (%x0A) or carriage returns (%x0D). When they are part of a string value,
-these characters MUST be escaped as described in {{RFC4627}} Section 2.5;
-otherwise, they MUST be discarded.
+When doing so, the JSON of the hint's content SHOULD be normalised to reduce extraneous spaces
+(%x20), and MUST NOT contain horizontal tabs (%x09), line feeds (%x0A) or carriage returns (%x0D).
+When they are part of a string value, these characters MUST be escaped as described in {{RFC4627}}
+Section 2.5; otherwise, they MUST be discarded.
 
-Furthermore, if the content is an array or an object, the surrounding
-delimiters MUST be removed before serialisation. In other words, the outermost
-object or array is represented without the braces ("{}") or brackets ("[]")
-respectively, but this does not apply to inner objects or arrays.
+Furthermore, if the content is an array or an object, the surrounding delimiters MUST be removed
+before serialisation. In other words, the outermost object or array is represented without the
+braces ("{}") or brackets ("[]") respectively, but this does not apply to inner objects or arrays.
 
-
-For example, the two JSON values below are those of the fictitious "example" and "example1" hints, respectively:
+For example, the two JSON values below are those of the fictitious "example" and "example1" hints,
+respectively:
 
 ~~~
 "The Example Value"
@@ -417,9 +392,8 @@ Link: </>; rel="sample"; example="\"foo\", -1.23, true,
 
 # Acknowledgements
 
-Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Graham Klyne, Leif
-Hedstrom, Jeni Tennison, Erik Wilde and Jorge Williams for their suggestions
-and feedback.
+Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Graham Klyne, Leif Hedstrom, Jeni Tennison,
+Erik Wilde and Jorge Williams for their suggestions and feedback.
 
 # Open Issues
 
