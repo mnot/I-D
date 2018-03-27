@@ -88,10 +88,9 @@ shown here.
 # HTTP Link Hints {#link_hints}
 
 A HTTP link hint is a (key, value) tuple that describes the target resource of a Web link
-{{!RFC8288}}, or the link itself. The value's canonical form is a JSON {{!RFC8259}} data structure,
-whose form is defined by the hint's definition.
+{{!RFC8288}}, or the link itself. The value's canonical form is a JSON {{!RFC8259}} data structure specific to that hint.
 
-Typically, they are serialised in links as target attributes.
+Typically, link hints are serialised in links as target attributes ({{!RFC8288}}, Section 3.4.1).
 
 In JSON-based formats, this can be achieved by simply serialising link hints as an object; for
 example:
@@ -115,7 +114,7 @@ example:
 ~~~
 
 In other link formats, this requires a mapping from the canonical JSON data model. One such mapping
-for the Link HTTP header is described in {{link_header}}.
+is described in {{link_header}} for the Link HTTP header field.
 
 The information in a link hint SHOULD NOT be considered valid for longer than the freshness
 lifetime ({{!RFC7234}}, Section 4.2) of the representation that the link occurred within, and
@@ -192,8 +191,7 @@ For example:
 ## accept-post
 
 * Hint Name: accept-post
-* Description: Hints the POST request format(s) that the target resource can
-  consume.
+* Description: Hints the POST request format(s) that the target resource can consume.
 * Content Model: object
 * Specification: [this document]
 
@@ -232,8 +230,7 @@ Content MUST be an array of strings, containing HTTP range-specifiers.
 * Content Model: array (of strings)
 * Specification: [this document]
 
-Content MUST be an array of strings, contain preferences. Note that, by its
-nature, a preference can be ignored by the server.
+Content MUST be an array of strings, contain preferences. Note that, by its nature, a preference can be ignored by the server.
 
 ## precondition-req
 
