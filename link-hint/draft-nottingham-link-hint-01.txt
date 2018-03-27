@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                         November 14, 2015
+Internet-Draft                                            March 27, 2018
 Intended status: Informational
-Expires: May 17, 2016
+Expires: September 28, 2018
 
 
                             HTTP Link Hints
@@ -19,8 +19,19 @@ Abstract
 
 Note to Readers
 
-   This draft should be discussed on the apps-discuss mailing list; see
-   [apps-discuss].
+   _RFC EDITOR: please remove this section before publication_
+
+   The issues list for this draft can be found at
+   https://github.com/mnot/I-D/labels/link-hint [1].
+
+   The most recent (often, unpublished) draft is at
+   https://mnot.github.io/I-D/link-hint/ [2].
+
+   Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
+   pages/link-hint [3].
+
+   See also the draft's current status in the IETF datatracker, at
+   https://datatracker.ietf.org/doc/draft-nottingham-link-hint/ [4].
 
 Status of This Memo
 
@@ -30,34 +41,34 @@ Status of This Memo
    Internet-Drafts are working documents of the Internet Engineering
    Task Force (IETF).  Note that other groups may also distribute
    working documents as Internet-Drafts.  The list of current Internet-
-   Drafts is at http://datatracker.ietf.org/drafts/current/.
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
 
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 17, 2016.
+   This Internet-Draft will expire on September 28, 2018.
+
+
+
+
+Nottingham             Expires September 28, 2018               [Page 1]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
 
 Copyright Notice
 
-   Copyright (c) 2015 IETF Trust and the persons identified as the
+   Copyright (c) 2018 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents
-   (http://trustee.ietf.org/license-info) in effect on the date of
+   (https://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
-
-
-
-Nottingham                Expires May 17, 2016                  [Page 1]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
-
    include Simplified BSD License text as described in Section 4.e of
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
@@ -66,7 +77,7 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
-   2.  HTTP Link Hints . . . . . . . . . . . . . . . . . . . . . . .   3
+   2.  HTTP Link Hints . . . . . . . . . . . . . . . . . . . . . . .   4
    3.  Pre-Defined HTTP Link Hints . . . . . . . . . . . . . . . . .   4
      3.1.  allow . . . . . . . . . . . . . . . . . . . . . . . . . .   4
      3.2.  formats . . . . . . . . . . . . . . . . . . . . . . . . .   5
@@ -83,10 +94,11 @@ Table of Contents
      5.1.  HTTP Link Hint Registry . . . . . . . . . . . . . . . . .   9
    6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
      6.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
-     6.2.  Informative References  . . . . . . . . . . . . . . . . .  10
+     6.2.  Informative References  . . . . . . . . . . . . . . . . .  11
+     6.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  11
    Appendix A.  Representing Link Hints in Link Headers  . . . . . .  11
    Appendix B.  Acknowledgements . . . . . . . . . . . . . . . . . .  12
-   Appendix C.  Open Issues  . . . . . . . . . . . . . . . . . . . .  12
+   Appendix C.  Open Issues  . . . . . . . . . . . . . . . . . . . .  13
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
@@ -94,6 +106,14 @@ Table of Contents
    Clients can discover a variety of information about a HTTP [RFC7230]
    resource by interacting with it.  For example, the methods supported
    can be learned through the Allow response header field, whereas the
+
+
+
+Nottingham             Expires September 28, 2018               [Page 2]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
    need for authentication is conveyed with a 401 Authentication
    Required status code.
 
@@ -106,17 +126,9 @@ Table of Contents
    based API might need to know which resources the user has write
    access to, so that it can present the appropriate interface.
 
-
-
-
-Nottingham                Expires May 17, 2016                  [Page 2]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
-
    This specification defines a vocabulary of "HTTP link hints" that
    allow such metadata about HTTP resources to be attached to Web links
-   [RFC5988], thereby making it available before the link is followed.
+   [RFC8288], thereby making it available before the link is followed.
    It also establishes a registry for future hints.
 
    It does not recommend a single serialisation format for link hints;
@@ -143,32 +155,32 @@ Internet-Draft               HTTP Link Hints               November 2015
 1.1.  Notational Conventions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-   document are to be interpreted as described in [RFC2119].
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+
+
+
+
+
+Nottingham             Expires September 28, 2018               [Page 3]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
 
 2.  HTTP Link Hints
 
    A HTTP link hint is a (key, value) tuple that describes the target
-   resource of a Web link [RFC5988], or the link itself.  The value's
-   canonical form is a JSON [RFC4627] data structure, whose form is
+   resource of a Web link [RFC8288], or the link itself.  The value's
+   canonical form is a JSON [RFC8259] data structure, whose form is
    defined by the hint's definition.
 
    Typically, they are serialised in links as target attributes.
 
    In JSON-based formats, this can be achieved by simply serialising
    link hints as an object; for example:
-
-
-
-
-
-
-
-
-Nottingham                Expires May 17, 2016                  [Page 3]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
 
    {
      "_links": {
@@ -190,9 +202,9 @@ Internet-Draft               HTTP Link Hints               November 2015
    described in Appendix A.
 
    The information in a link hint SHOULD NOT be considered valid for
-   longer than the freshness lifetime ([I-D.ietf-httpbis-p6-cache]) of
-   the representation that the link occurred within, and in some cases,
-   it might be valid for a considerably shorter period.
+   longer than the freshness lifetime ([RFC7234], Section 4.2) of the
+   representation that the link occurred within, and in some cases, it
+   might be valid for a considerably shorter period.
 
    Likewise, the information in a link hint is specific to the link it
    is attached to.  This means that if a representation is specific to a
@@ -205,6 +217,15 @@ Internet-Draft               HTTP Link Hints               November 2015
 
    o  Hint Name: allow
 
+
+
+
+
+Nottingham             Expires September 28, 2018               [Page 4]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
    o  Description: Hints the HTTP methods that can be used to interact
       with the target resource; equivalent to the Allow HTTP response
       header.
@@ -214,17 +235,6 @@ Internet-Draft               HTTP Link Hints               November 2015
    o  Specification: [this document]
 
    Content MUST be an array of strings, containing HTTP methods.
-
-
-
-
-
-
-
-Nottingham                Expires May 17, 2016                  [Page 4]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
 
 3.2.  formats
 
@@ -242,7 +252,7 @@ Internet-Draft               HTTP Link Hints               November 2015
    objects.
 
    The object MAY have a "links" member, whose value is an object
-   representing links (in the sense of [RFC5988]) whose context is any
+   representing links (in the sense of [RFC8288]) whose context is any
    document that uses that format.  Generally, this will be schema or
    profile ([RFC6906]) information.  The "links" member has the same
    format as the "links" hint.
@@ -264,23 +274,24 @@ Internet-Draft               HTTP Link Hints               November 2015
 
    o  Specification: [this document]
 
-   The "links" hint contains links (in the sense of [RFC5988]) whose
+
+
+
+Nottingham             Expires September 28, 2018               [Page 5]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
+   The "links" hint contains links (in the sense of [RFC8288]) whose
    context is the hinted target resource, which are stable for the
    lifetime of the hint.
 
    Content MUST be an object, whose member names are link relations
-   ([RFC5988]) and values are objects that MUST have an "href" member
+   ([RFC8288]) and values are objects that MUST have an "href" member
    whose value is a URI-reference ([RFC3986], using the original link as
    the base for resolution) for the link hint's target resource, and MAY
    itself contain link hints, serialised as the value for a "hints"
    member.
-
-
-
-Nottingham                Expires May 17, 2016                  [Page 5]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
 
    For example:
 
@@ -320,6 +331,13 @@ Internet-Draft               HTTP Link Hints               November 2015
       target resource can consume; equivalent to the Accept-Patch HTTP
       response header.
 
+
+
+Nottingham             Expires September 28, 2018               [Page 6]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
    o  Content Model: array (of strings)
 
    o  Specification: [this document]
@@ -330,13 +348,6 @@ Internet-Draft               HTTP Link Hints               November 2015
 
    When this hint is present, "PATCH" SHOULD be listed in the "allow"
    hint.
-
-
-
-Nottingham                Expires May 17, 2016                  [Page 6]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
 
 3.6.  accept-ranges
 
@@ -375,6 +386,14 @@ Internet-Draft               HTTP Link Hints               November 2015
       changing requests (e.g., PUT, PATCH) to include a precondition, as
       per [RFC7232], to avoid conflicts due to concurrent updates.
 
+
+
+
+Nottingham             Expires September 28, 2018               [Page 7]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
    o  Content Model: array (of strings)
 
    o  Specification: [this document]
@@ -383,16 +402,6 @@ Internet-Draft               HTTP Link Hints               November 2015
    "last-modified" indicating type of precondition expected.
 
    See also the 428 Precondition Required status code ([RFC6585]).
-
-
-
-
-
-
-Nottingham                Expires May 17, 2016                  [Page 7]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
 
 3.9.  auth-schemes
 
@@ -434,21 +443,18 @@ Internet-Draft               HTTP Link Hints               November 2015
 
    Content MUST be a string; possible values are:
 
+
+
+Nottingham             Expires September 28, 2018               [Page 8]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
    o  "deprecated" - indicates that use of the resource is not
       recommended, but it is still available.
 
    o  "gone" - indicates that the resource is no longer available; i.e.,
       it will return a 410 Gone HTTP status code if accessed.
-
-
-
-
-
-
-Nottingham                Expires May 17, 2016                  [Page 8]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
 
 4.  Security Considerations
 
@@ -473,14 +479,14 @@ Internet-Draft               HTTP Link Hints               November 2015
    (0-9), underscores ("_") and hyphens ("-"), and MUST begin with a
    lowercase letter.
 
-   Hint content MUST be described in terms of JSON values ([RFC4627],
-   Section 2.1).
+   Hint content MUST be described in terms of JSON values ([RFC8259],
+   Section 3).
 
    Hint semantics SHOULD be described in terms of the framework defined
-   in [RFC5988].
+   in [RFC8288].
 
    New hints are registered using the Expert Review process described in
-   [RFC5226] to enforce the criteria above.  Requests for registration
+   [RFC8126] to enforce the criteria above.  Requests for registration
    of new resource hints are to use the following template:
 
    o  Hint Name: [hint name]
@@ -491,114 +497,132 @@ Internet-Draft               HTTP Link Hints               November 2015
 
    o  Specification: [reference to specification document]
 
+
+
+
+
+Nottingham             Expires September 28, 2018               [Page 9]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
    Initial registrations are enumerated in Section 3.  The "rel", "rev",
    "hreflang", "media", "title", and "type" hint names are reserved, so
    as to avoid potential clashes with link serialisations.
-
-
-
-
-
-
-
-Nottingham                Expires May 17, 2016                  [Page 9]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
 
 6.  References
 
 6.1.  Normative References
 
-   [I-D.ietf-httpbis-p6-cache]
-              Fielding, R., Nottingham, M., and J. Reschke, "Hypertext
-              Transfer Protocol (HTTP/1.1): Caching", draft-ietf-
-              httpbis-p6-cache-26 (work in progress), February 2014.
-
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
-              <http://www.rfc-editor.org/info/rfc2119>.
+              <https://www.rfc-editor.org/info/rfc2119>.
 
    [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
               Resource Identifier (URI): Generic Syntax", STD 66,
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
-              <http://www.rfc-editor.org/info/rfc3986>.
+              <https://www.rfc-editor.org/info/rfc3986>.
 
-   [RFC4627]  Crockford, D., "The application/json Media Type for
-              JavaScript Object Notation (JSON)", RFC 4627,
-              DOI 10.17487/RFC4627, July 2006,
-              <http://www.rfc-editor.org/info/rfc4627>.
+   [RFC5789]  Dusseault, L. and J. Snell, "PATCH Method for HTTP",
+              RFC 5789, DOI 10.17487/RFC5789, March 2010,
+              <https://www.rfc-editor.org/info/rfc5789>.
 
-   [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
-              IANA Considerations Section in RFCs", BCP 26, RFC 5226,
-              DOI 10.17487/RFC5226, May 2008,
-              <http://www.rfc-editor.org/info/rfc5226>.
-
-   [RFC5988]  Nottingham, M., "Web Linking", RFC 5988,
-              DOI 10.17487/RFC5988, October 2010,
-              <http://www.rfc-editor.org/info/rfc5988>.
+   [RFC6585]  Nottingham, M. and R. Fielding, "Additional HTTP Status
+              Codes", RFC 6585, DOI 10.17487/RFC6585, April 2012,
+              <https://www.rfc-editor.org/info/rfc6585>.
 
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <http://www.rfc-editor.org/info/rfc7230>.
-
-6.2.  Informative References
-
-   [apps-discuss]
-              IETF, "IETF Apps-Discuss Mailing List", n.d.,
-              <https://www.ietf.org/mailman/listinfo/apps-discuss>.
-
-   [RFC5789]  Dusseault, L. and J. Snell, "PATCH Method for HTTP",
-              RFC 5789, DOI 10.17487/RFC5789, March 2010,
-              <http://www.rfc-editor.org/info/rfc5789>.
-
-
-
-
-Nottingham                Expires May 17, 2016                 [Page 10]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
-
-   [RFC6585]  Nottingham, M. and R. Fielding, "Additional HTTP Status
-              Codes", RFC 6585, DOI 10.17487/RFC6585, April 2012,
-              <http://www.rfc-editor.org/info/rfc6585>.
-
-   [RFC6906]  Wilde, E., "The 'profile' Link Relation Type", RFC 6906,
-              DOI 10.17487/RFC6906, March 2013,
-              <http://www.rfc-editor.org/info/rfc6906>.
+              <https://www.rfc-editor.org/info/rfc7230>.
 
    [RFC7232]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Conditional Requests", RFC 7232,
               DOI 10.17487/RFC7232, June 2014,
-              <http://www.rfc-editor.org/info/rfc7232>.
+              <https://www.rfc-editor.org/info/rfc7232>.
 
    [RFC7233]  Fielding, R., Ed., Lafon, Y., Ed., and J. Reschke, Ed.,
               "Hypertext Transfer Protocol (HTTP/1.1): Range Requests",
               RFC 7233, DOI 10.17487/RFC7233, June 2014,
-              <http://www.rfc-editor.org/info/rfc7233>.
+              <https://www.rfc-editor.org/info/rfc7233>.
+
+   [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
+              RFC 7234, DOI 10.17487/RFC7234, June 2014,
+              <https://www.rfc-editor.org/info/rfc7234>.
+
+
+
+
+
+
+Nottingham             Expires September 28, 2018              [Page 10]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
 
    [RFC7235]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Authentication", RFC 7235,
               DOI 10.17487/RFC7235, June 2014,
-              <http://www.rfc-editor.org/info/rfc7235>.
+              <https://www.rfc-editor.org/info/rfc7235>.
 
    [RFC7240]  Snell, J., "Prefer Header for HTTP", RFC 7240,
               DOI 10.17487/RFC7240, June 2014,
-              <http://www.rfc-editor.org/info/rfc7240>.
+              <https://www.rfc-editor.org/info/rfc7240>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+   [RFC8259]  Bray, T., Ed., "The JavaScript Object Notation (JSON) Data
+              Interchange Format", STD 90, RFC 8259,
+              DOI 10.17487/RFC8259, December 2017,
+              <https://www.rfc-editor.org/info/rfc8259>.
+
+   [RFC8288]  Nottingham, M., "Web Linking", RFC 8288,
+              DOI 10.17487/RFC8288, October 2017,
+              <https://www.rfc-editor.org/info/rfc8288>.
+
+6.2.  Informative References
+
+   [RFC6906]  Wilde, E., "The 'profile' Link Relation Type", RFC 6906,
+              DOI 10.17487/RFC6906, March 2013,
+              <https://www.rfc-editor.org/info/rfc6906>.
+
+   [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
+              Writing an IANA Considerations Section in RFCs", BCP 26,
+              RFC 8126, DOI 10.17487/RFC8126, June 2017,
+              <https://www.rfc-editor.org/info/rfc8126>.
+
+6.3.  URIs
+
+   [1] https://github.com/mnot/I-D/labels/link-hint
+
+   [2] https://mnot.github.io/I-D/link-hint/
+
+   [3] https://github.com/mnot/I-D/commits/gh-pages/link-hint
+
+   [4] https://datatracker.ietf.org/doc/draft-nottingham-link-hint/
 
 Appendix A.  Representing Link Hints in Link Headers
 
-   A link hint can be represented in a Link header ([RFC5988],
-   Section 5) as a link-extension.
+   A link hint can be represented in a Link header ([RFC8288],
+   Section 3) as a link-extension.
+
+
+
+
+Nottingham             Expires September 28, 2018              [Page 11]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
 
    When doing so, the JSON of the hint's content SHOULD be normalised to
    reduce extraneous spaces (%x20), and MUST NOT contain horizontal tabs
    (%x09), line feeds (%x0A) or carriage returns (%x0D).  When they are
    part of a string value, these characters MUST be escaped as described
-   in [RFC4627] Section 2.5; otherwise, they MUST be discarded.
+   in [RFC8259] Section 7; otherwise, they MUST be discarded.
 
    Furthermore, if the content is an array or an object, the surrounding
    delimiters MUST be removed before serialisation.  In other words, the
@@ -608,15 +632,6 @@ Appendix A.  Representing Link Hints in Link Headers
 
    For example, the two JSON values below are those of the fictitious
    "example" and "example1" hints, respectively:
-
-
-
-
-
-Nottingham                Expires May 17, 2016                 [Page 11]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
 
    "The Example Value"
    1.2
@@ -648,6 +663,17 @@ Appendix B.  Acknowledgements
    Leif Hedstrom, Jeni Tennison, Erik Wilde and Jorge Williams for their
    suggestions and feedback.
 
+
+
+
+
+
+
+Nottingham             Expires September 28, 2018              [Page 12]
+
+Internet-Draft               HTTP Link Hints                  March 2018
+
+
 Appendix C.  Open Issues
 
    The following is a list of placeholders for open issues.
@@ -665,14 +691,6 @@ Appendix C.  Open Issues
    o  Representation Hints
 
       *  format profiles
-
-
-
-
-Nottingham                Expires May 17, 2016                 [Page 12]
-
-Internet-Draft               HTTP Link Hints               November 2015
-
 
       *  schema?
 
@@ -707,22 +725,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Nottingham                Expires May 17, 2016                 [Page 13]
+Nottingham             Expires September 28, 2018              [Page 13]
