@@ -379,16 +379,4 @@ Link: </>; rel="sample"; example="\"foo\", -1.23, true,
 Thanks to Jan Algermissen, Mike Amundsen, Bill Burke, Graham Klyne, Leif Hedstrom, Jeni Tennison,
 Erik Wilde and Jorge Williams for their suggestions and feedback.
 
-# Open Issues
 
-The following is a list of placeholders for open issues.
-
-* Resource Hints
-  * indicate a POST to 201 Created pattern
-  * indicate an "action" POST
-  * outbound links
-  * forms?
-* Representation Hints
-  * format profiles
-  * schema?
-  * deprecation
