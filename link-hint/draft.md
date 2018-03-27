@@ -38,11 +38,6 @@ informative:
   RFC7233:
   RFC7235:
   RFC7240:
-  apps-discuss:
-    target: https://www.ietf.org/mailman/listinfo/apps-discuss
-    title: IETF Apps-Discuss Mailing List
-    author:
-      - organization: IETF
 
 --- abstract
 
@@ -52,8 +47,16 @@ interacting with them.
 
 --- note_Note_to_Readers
 
-This draft should be discussed on the apps-discuss mailing list; see
-{{apps-discuss}}.
+*RFC EDITOR: please remove this section before publication*
+
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/link-hint>.
+
+The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/link-hint/>.
+
+Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/link-hint>.
+
+See also the draft's current status in the IETF datatracker, at
+<https://datatracker.ietf.org/doc/draft-nottingham-link-hint/>.
 
 --- middle
 
@@ -94,8 +97,9 @@ linked to it with a "describedby" link relation).
 ## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
-"RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
-{{RFC2119}}.
+"RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
+described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
+shown here.
 
 
 # HTTP Link Hints {#link_hints}
