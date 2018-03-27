@@ -46,9 +46,9 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-Clients can discover a variety of information about a HTTP {{!RFC7230}} resource by interacting with
+HTTP {{!RFC7230}} clients can discover a variety of information about a resource by interacting with
 it. For example, the methods supported can be learned through the Allow response header field,
-whereas the need for authentication is conveyed with a 401 Authentication Required status code.
+and the need for authentication is conveyed with a 401 Authentication Required status code.
 
 In some situations, it can be beneficial to know this information before interacting with the
 resource; not only can it save time (through reduced round trips), but it can also affect the
@@ -61,10 +61,9 @@ This specification defines a vocabulary of "HTTP link hints" that allow such met
 resources to be attached to Web links {{!RFC8288}}, thereby making it available before the link is
 followed. It also establishes a registry for future hints.
 
-It does not recommend a single serialisation format for link hints; rather, it is expected that
-this will be done by individual link serialisations that use hints (whether they be in a
-representation body, message headers or elsewhere). However, {{link_header}} does recommend how to
-include link hints in the existing Link HTTP header field.
+It does not recommend a single way to express link hints; rather, it is expected that this will be
+done by individual link serialisations (see {{!RFC8288}}, Section 3.4.1). However, {{link_header}}
+does recommend how to include link hints in the existing Link HTTP header field.
 
 Hints are just that -- they are not a "contract", and are to only be taken as advisory. The runtime
 behaviour of the resource always overrides hinted information.
@@ -73,9 +72,9 @@ For example, a client might receive a hint that the PUT method is allowed on all
 resources. This means that generally, the client can PUT to them, but a specific resource might
 reject a PUT based upon access control or other considerations.
 
-More fine-grained information might be gathered by interacting with the resource (e.g., via a GET),
-or by another resource "containing" it (such as a "widgets" collection) or describing it (e.g., one
-linked to it with a "describedby" link relation).
+More fine-grained information might also be gathered by interacting with the resource (e.g., via a
+GET), or by another resource "containing" it (such as a "widgets" collection) or describing it
+(e.g., one linked to it with a "describedby" link relation).
 
 
 ## Notational Conventions
