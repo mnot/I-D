@@ -136,7 +136,7 @@ also specific to that user.
 * Content Model: array (of strings)
 * Specification: [this document]
 
-Content MUST be an array of strings, containing HTTP methods.
+Content MUST be an array of strings, containing HTTP methods ({{!RFC7231}}, Section 4).
 
 ## formats
 
@@ -146,7 +146,8 @@ Content MUST be an array of strings, containing HTTP methods.
 * Content Model: object
 * Specification: [this document]
 
-Content MUST be an object, whose keys are media types, and values are objects.
+Content MUST be an object, whose keys are media types ({{!RFC7231}}, Section 3.1.1.1), and values
+are objects.
 
 The object MAY have a "links" member, whose value is an object representing links (in the sense of
 {{!RFC8288}}) whose context is any document that uses that format. Generally, this will be schema or
@@ -207,8 +208,7 @@ When this hint is present, "POST" SHOULD be listed in the "allow" hint.
 * Content Model: array (of strings)
 * Specification: [this document]
 
-Content MUST be an array of strings, containing media types. Note that there is no opportunity to
-communicate format-specific hints for PATCH formats.
+Content MUST be an array of strings, containing media types ({{!RFC7231}}, Section 3.1.1.1).
 
 When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
 
@@ -220,7 +220,7 @@ When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
 * Content Model: array (of strings)
 * Specification: [this document]
 
-Content MUST be an array of strings, containing HTTP range-specifiers.
+Content MUST be an array of strings, containing HTTP range-specifiers ({{!RFC7233}}, Section 3.1).
 
 ## accept-prefer
 
@@ -230,7 +230,8 @@ Content MUST be an array of strings, containing HTTP range-specifiers.
 * Content Model: array (of strings)
 * Specification: [this document]
 
-Content MUST be an array of strings, contain preferences. Note that, by its nature, a preference can be ignored by the server.
+Content MUST be an array of strings, contain preferences ({{!RFC7240}}, Section 2). Note that, by
+its nature, a preference can be ignored by the server.
 
 ## precondition-req
 
@@ -254,8 +255,9 @@ See also the 428 Precondition Required status code ({{!RFC6585}}).
 * Specification: [this document]
 
 Content MUST be an array of objects, each with a "scheme" member containing a string that
-corresponds to a HTTP authentication scheme, and optionally a "realms" member containing an array
-of zero to many strings that identify protection spaces that the resource is a member of.
+corresponds to a HTTP authentication scheme ({{!RFC7235}}), and optionally a "realms" member
+containing an array of zero to many strings that identify protection spaces that the resource is a
+member of.
 
 For example:
 
