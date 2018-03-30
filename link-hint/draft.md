@@ -61,10 +61,6 @@ This specification defines a vocabulary of "HTTP link hints" that allow such met
 resources to be attached to Web links {{!RFC8288}}, thereby making it available before the link is
 followed. It also establishes a registry for future hints.
 
-It does not recommend a single way to express link hints; rather, it is expected that this will be
-done by individual link serialisations (see {{!RFC8288}}, Section 3.4.1). However, {{link_header}}
-does recommend how to include link hints in the existing Link HTTP header field.
-
 Hints are just that -- they are not a "contract", and are to only be taken as advisory. The runtime
 behaviour of the resource always overrides hinted information.
 
@@ -75,6 +71,10 @@ reject a PUT based upon access control or other considerations.
 More fine-grained information might also be gathered by interacting with the resource (e.g., via a
 GET), or by another resource "containing" it (such as a "widgets" collection) or describing it
 (e.g., one linked to it with a "describedby" link relation).
+
+There is not a single way to carry hints in a link; rather, it is expected that this will be done
+by individual link serialisations (see {{!RFC8288}}, Section 3.4.1). However, {{link_header}} does
+recommend how to include link hints in the existing Link HTTP header field.
 
 
 ## Notational Conventions
