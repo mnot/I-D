@@ -50,9 +50,9 @@ HTTP {{!RFC7230}} clients can discover a variety of information about a resource
 it. For example, the methods supported can be learned through the Allow response header field,
 and the need for authentication is conveyed with a 401 Authentication Required status code.
 
-In some situations, it can be beneficial to know this information before interacting with the
-resource; not only can it save time (through reduced round trips), but it can also affect the
-choices given to the code or user driving the interaction.
+Often, it can be beneficial to know this information before interacting with the resource; not only
+can it save time (through reduced round trips), but it can also affect the choices given to the
+code or user driving the interaction.
 
 For example, a user interface that presents the data from an HTTP-based API might need to know
 which resources the user has write access to, so that it can present the appropriate interface.
