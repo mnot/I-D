@@ -125,7 +125,8 @@ Internet-Draft               Well-Known URIs                  April 2018
    it can be easily located.  However, this approach has the drawback of
    risking collisions, both with other such designated "well-known
    locations" and with resources that the origin has created (or wishes
-   to create).
+   to create).  Furthermore, defining well-known locations usurp's the
+   origin's control over its own URI space [RFC7320].
 
    At the same time, it has become more popular to use HTTP as a
    substrate for non-Web protocols.  Sometimes, such protocols need a
@@ -160,8 +161,7 @@ Internet-Draft               Well-Known URIs                  April 2018
    corresponding well-known URI on 'http://www.example.com/' would be
    'http://www.example.com/.well-known/example'.
 
-   Registered names MUST conform to the segment-nz production in
-   [RFC3986].  This means they cannot contain the "/" character.
+
 
 
 
@@ -169,6 +169,9 @@ Nottingham               Expires October 7, 2018                [Page 3]
 
 Internet-Draft               Well-Known URIs                  April 2018
 
+
+   Registered names MUST conform to the segment-nz production in
+   [RFC3986].  This means they cannot contain the "/" character.
 
    Registered names for a specific application SHOULD be correspondingly
    precise; "squatting" on generic terms is not encouraged.  For
@@ -215,9 +218,6 @@ Internet-Draft               Well-Known URIs                  April 2018
 
    Registration requests consist of at least the following information:
 
-   URI suffix:  The name requested for the well-known URI, relative to
-      "/.well-known/"; e.g., "example".
-
 
 
 
@@ -225,6 +225,9 @@ Nottingham               Expires October 7, 2018                [Page 4]
 
 Internet-Draft               Well-Known URIs                  April 2018
 
+
+   URI suffix:  The name requested for the well-known URI, relative to
+      "/.well-known/"; e.g., "example".
 
    Change controller:  For Standards-Track RFCs, state "IETF".  For
       others, give the name of the responsible party.  Other details
@@ -272,9 +275,6 @@ Internet-Draft               Well-Known URIs                  April 2018
    vulnerability), they will be able to make potentially arbitrary
    requests to the well-known resource.
 
-   HTTP and HTTPS also use origins as a security boundary for many other
-   mechanisms, including (but not limited to) Cookies [RFC6265], Web
-
 
 
 Nottingham               Expires October 7, 2018                [Page 5]
@@ -282,6 +282,8 @@ Nottingham               Expires October 7, 2018                [Page 5]
 Internet-Draft               Well-Known URIs                  April 2018
 
 
+   HTTP and HTTPS also use origins as a security boundary for many other
+   mechanisms, including (but not limited to) Cookies [RFC6265], Web
    Storage [WEBSTORAGE] and many capabilities.  Applications defining
    well-known locations should not assume that they have sole access to
    these mechanisms.
@@ -328,8 +330,6 @@ Internet-Draft               Well-Known URIs                  April 2018
    "https://department.example.com", "https://www.example.com" or even
    "https://www.example.com:8000" assumes a relationship between hosts
    where there may be none, or there may be conflicting motivations.
-
-
 
 
 
@@ -455,6 +455,10 @@ Internet-Draft               Well-Known URIs                  April 2018
               DOI 10.17487/RFC7231, June 2014,
               <https://www.rfc-editor.org/info/rfc7231>.
 
+   [RFC7320]  Nottingham, M., "URI Design and Ownership", BCP 190,
+              RFC 7320, DOI 10.17487/RFC7320, July 2014,
+              <https://www.rfc-editor.org/info/rfc7320>.
+
    [WEBSTORAGE]
               Hickson, I., "Web Storage (Second Edition)", World Wide
               Web Consortium Recommendation REC-webstorage-20160419,
@@ -494,10 +498,6 @@ Appendix A.  Frequently Asked Questions
 
    4.  Why aren't per-directory well-known locations defined?
 
-       Allowing every URI path segment to have a well-known location
-       (e.g., "/images/.well-known/") would increase the risks of
-       colliding with a pre-existing URI on a site, and generally these
-
 
 
 
@@ -506,6 +506,9 @@ Nottingham               Expires October 7, 2018                [Page 9]
 Internet-Draft               Well-Known URIs                  April 2018
 
 
+       Allowing every URI path segment to have a well-known location
+       (e.g., "/images/.well-known/") would increase the risks of
+       colliding with a pre-existing URI on a site, and generally these
        solutions are found not to scale well, because they're too
        "chatty".
 
@@ -525,9 +528,6 @@ Author's Address
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
-
-
-
 
 
 
