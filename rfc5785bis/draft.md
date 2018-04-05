@@ -52,8 +52,8 @@ See also the draft's current status in the IETF datatracker, at
 Some applications on the Web require the discovery of information about an origin {{!RFC6454}}
 (sometimes called "site-wide metadata") before making a request. For example, the Robots Exclusion
 Protocol (<http://www.robotstxt.org/>) specifies a way for automated processes to obtain permission
-to access resources; likewise, the Platform for Privacy Preferences {{?W3C.REC-P3P-20020416}} tells
-user-agents how to discover privacy policy before interacting with an origin server.
+to access resources; likewise, the Platform for Privacy Preferences {{?P3P=W3C.REC-P3P-20020416}}
+tells user-agents how to discover privacy policy before interacting with an origin server.
 
 While there are several ways to access per-resource metadata (e.g., HTTP headers, WebDAV's PROPFIND
 {{?RFC4918}}), the perceived overhead (either in terms of client-perceived latency and/or
@@ -173,8 +173,8 @@ content (e.g., through a Cross-Site Scripting vulnerability), they will be able 
 arbitrary requests to the well-known resource.
 
 HTTP and HTTPS also use origins as a security boundary for many other mechanisms, including (but
-not limited to) Cookies {{?RFC6265}}, Web Storage {{?W3C.REC-webstorage-20160419}} and many
-capabilities. Applications defining well-known locations should not assume that they have sole
+not limited to) Cookies {{?RFC6265}}, Web Storage {{?WEBSTORAGE=W3C.REC-webstorage-20160419}} and
+many capabilities. Applications defining well-known locations should not assume that they have sole
 access to these mechanisms.
 
 Applications defining well-known URIs should not assume or require that they are the only
@@ -183,9 +183,9 @@ appropriate mechanisms to mitigate the risks of co-existing with Web application
 limited to):
 
 * Using Strict Transport Security {{?RFC6797}} to assure that HTTPS is used
-* Using Content-Security-Policy {{?W3C.WD-CSP3-20160913}} to constrain the capabilities of content, thereby mitigating Cross-Site Scripting attacks (which are possible if client-provided data is exposed in any part of a response in the application)
+* Using Content-Security-Policy {{?CSP=W3C.WD-CSP3-20160913}} to constrain the capabilities of content, thereby mitigating Cross-Site Scripting attacks (which are possible if client-provided data is exposed in any part of a response in the application)
 * Using X-Frame-Options {{?RFC7034}} to prevent content from being included in a HTML frame from another origin, thereby enabling "clickjacking"
-* Using Referrer-Policy {{?W3C.CR-referrer-policy-20170126}} to prevent sensitive data in URLs from being leaked in the Referer request header
+* Using Referrer-Policy {{?REFERRER-POLICY=W3C.CR-referrer-policy-20170126}} to prevent sensitive data in URLs from being leaked in the Referer request header
 * Using the 'HttpOnly' flag on Cookies to assure that cookies are not exposed to browser scripting languages {{?RFC6265}}
 
 ## Scoping Applications
