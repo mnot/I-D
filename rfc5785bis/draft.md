@@ -64,47 +64,14 @@ to the origin overall, so that it can be easily located. However, this approach 
 risking collisions, both with other such designated "well-known locations" and with
 resources that the origin has created (or wishes to create).
 
-To address this, this memo defines a path prefix in HTTP(S) URIs for these "well-known locations",
-"/.well-known/". Future specifications that need to define a resource for such metadata can
-register their use to avoid collisions and minimise impingement upon origins' URI space.
+At the same time, it has become more popular to use HTTP as a substrate for non-Web protocols. Sometimes, such protocols need a way to locate one or more resources on a given host.
+
+To address these uses, this memo defines a path prefix in HTTP(S) URIs for these "well-known
+locations", "/.well-known/". Future specifications that need to define a resource for such metadata
+can register their use to avoid collisions and minimise impingement upon origins' URI space.
 
 Well-known URIs can also be used with other URI schemes, but only when those schemes'
 definitions explicitly allow it.
-
-
-## Appropriate Use of Well-Known URIs {#appropriate}
-
-As per {{!RFC7320}}, "publishing independent standards that mandate particular forms of URI
-substructure is inappropriate, because that essentially usurps ownership." Well-known URIs are not
-an escape hatch from the requirements therein; they are a very limited carve-out of the path name
-space owned by the authority, ceded to standard use for a designated purpose.
-
-That purpose is to facilitate discovery of information about an origin when it isn't practical to
-use other mechanisms; for example, when discovering policy that needs to be evaluated before a
-resource is accessed, or when the information applies to many (or all) of the origin's resources.
-
-Typically, the resource(s) identified by a well-known URI will make information about the origin
-(e.g., policy) available directly, or provide references to other URIs that provide it. In general,
-that information should be applicable to most origins (i.e., Web sites -- while acknowledging that
-some origins might not use a particular well-known location, for various reasons).
-
-In keeping with the Architecture of the World-Wide Web {{?W3C.REC-webarch-20041215}}, well-known
-URIs are not intended for general information retrieval or establishment of large URI namespaces.
-
-Specifically, well-known URIs are not a "protocol registry" for applications and protocols that
-wish to use HTTP as a substrate. Instead, such applications and protocols are encouraged to used an
-absolute URI to bootstrap their operation, rather than using a hostname and a well-known URI.
-
-Exceptionally, the registry expert(s) may approve such a registration for documents in the IETF
-Stream {{!RFC5741}}, in consultation with the IESG, provided that the protocol in question cannot
-be bootstrapped with a URI (e.g., the discovery mechanism can only carry a hostname). However,
-merely making it easier to locate it is not a sufficient reason. Likewise, future use unsupported
-by the specification in question is not sufficient reason to register a well-known location.
-
-Well-known locations are also not suited for information on topics other than the origin that they
-are located upon; for example, creating a well-known resource about a business entity or
-organisational structure presumes that Internet hosts and organisations share structure, and are
-likely to have significant deployment issues in environments where this is not true.
 
 
 # Notational Conventions
@@ -121,67 +88,48 @@ A well-known URI is a URI {{!RFC3986}} whose path component begins with the char
 specified to use well-known URIs.
 
 Applications that wish to mint new well-known URIs MUST register them, following the procedures in
-Section 5.1.
+{{register}}.
 
 For example, if an application registers the name 'example', the corresponding well-known URI on
 'http://www.example.com/' would be 'http://www.example.com/.well-known/example'.
 
-Registered names MUST conform to the segment-nz production in {{!RFC3986}}. This means they cannot contain the "/" character.
+Registered names MUST conform to the segment-nz production in {{!RFC3986}}. This means they cannot
+contain the "/" character.
 
-Note that this specification defines neither how to determine the authority to use for a particular
-context, nor the scope of the metadata discovered by dereferencing the well-known URI; both should
-be defined by the application itself.
+Registered names for a specific application SHOULD be correspondingly precise; "squatting" on
+generic terms is not encouraged. For example, if the Example application wants a well-known
+location for metadata, an appropriate registered name might be "example-metadata" or even
+"example.com-metadata", not "metadata".
 
-Typically, a registration will reference a specification that defines the format and associated
-media type to be obtained by dereferencing the well-known URI.
+At a minimum, a registration will reference a specification that defines the format and associated
+media type to be obtained by dereferencing the well-known URI, along with the URI scheme(s) that
+the well-known URI can be used with. If no URI schemes are explicitly specified, "HTTP" and "HTTPS" are assumed.
 
 It MAY also contain additional information, such as the syntax of additional path components, query
 strings and/or fragment identifiers to be appended to the well-known URI, or protocol-specific
 details (e.g., HTTP {{?RFC7231}} method handling).
 
-Note that this specification does not define a format or media-type for the resource located at
+Note that this specification defines neither how to determine the hostname to use to find the
+well-known URI for a particular application, nor the scope of the metadata discovered by
+dereferencing the well-known URI; both should be defined by the application itself.
+
+Also, this specification does not define a format or media-type for the resource located at
 "/.well-known/" and clients should not expect a resource to exist at that location.
 
 Well-known URIs are only valid when rooted in the top of the path's hierarchy; they MUST NOT be used
 in other parts of the path. For example, "/.well-known/example" is a valid use, but
 "/foo/.well-known/example" is not.
 
-# Security Considerations
-
-This memo does not specify the scope of applicability of metadata or policy obtained from a
-well-known URI, and does not specify how to discover a well-known URI for a particular application.
-Individual applications using this mechanism must define both aspects.
-
-Applications minting new well-known URIs, as well as administrators deploying them, will need to
-consider several security-related issues, including (but not limited to) exposure of sensitive
-data, denial-of-service attacks (in addition to normal load issues), server and client
-authentication, vulnerability to DNS rebinding attacks, and attacks where limited access to a
-server grants the ability to affect how well-known URIs are served.
-
-Security-sensitive applications using well-known locations should consider that some server
-administrators might be unaware of its existence (especially on operating systems that hide
-directories whose names begin with "."). This means that if an attacker has write access to the
-.well-known directory, they would be able to control its contents, possibly without the
-administrator realising it.
+See also {{sec}} for Security Considerations regarding well-known locations.
 
 
-# IANA Considerations
+## Registering Well-Known URIs {#procedure}
 
-## The Well-Known URI Registry
+The "Well-Known URIs" registry is located at "https://www.iana.org/assignments/well-known-uris/".
+Registration requests can be made by following the instructions located there or by sending an
+email to the "wellknown-uri-review@ietf.org" mailing list.
 
-This document specifies procedures for the well-known URI registry, first defined in {{?RFC5785}}.
-
-Well-known URIs are registered on the advice of one or more experts (appointed by the
-IESG or their delegate), with a Specification Required (using terminology from {{!RFC8126}}).
-
-To allow for the allocation of values prior to publication, the expert(s) may
-approve registration once they are satisfied that such a specification will be published.
-
-Registration requests can be sent to the wellknown-uri-review@ietf.org mailing list for review
-and comment, with an appropriate subject (e.g., "Request for well-known URI: example").
-
-
-### Registration Template
+Registration requests consist of at least the following information:
 
 URI suffix:
 : The name requested for the well-known URI, relative to "/.well-known/"; e.g., "example".
@@ -197,6 +145,93 @@ but is not required.
 
 Related information:
 : Optionally, citations to additional documents containing further relevant information.
+
+General requirements for registered relation types are described in {{well-known}}.
+
+Registrations MUST reference a freely available, stable specification.
+
+Note that well-known URIs can be registered by third parties (including the expert(s)), if the
+expert(s) determines that an unregistered well-known URI is widely deployed and not likely to be
+registered in a timely manner otherwise. Such registrations still are subject to the requirements
+defined, including the need to reference a specification.
+
+
+# Security Considerations {#sec}
+
+Applications minting new well-known URIs, as well as administrators deploying them, will need to
+consider several security-related issues, including (but not limited to) exposure of sensitive
+data, denial-of-service attacks (in addition to normal load issues), server and client
+authentication, vulnerability to DNS rebinding attacks, and attacks where limited access to a
+server grants the ability to affect how well-known URIs are served.
+
+## Interaction with the Web
+
+In particular, applications using well-known URIs for HTTP or HTTPS URLs need to be aware that
+well-known resources will be accessible to Web browsers, and therefore is potentially able to be
+manipulated by content obtained from other parts of that origin. If an attacker is able to inject
+content (e.g., through a Cross-Site Scripting vulnerability), they will be able to make potentially
+arbitrary requests to the well-known resource.
+
+HTTP and HTTPS also use origins as a security boundary for many other mechanisms, including (but
+not limited to) Cookies {{?RFC6265}}, Web Storage {{?W3C.REC-webstorage-20160419}} and many
+capabilities. Applications defining well-known locations should not assume that they have sole
+access to these mechanisms.
+
+Applications defining well-known URIs should not assume or require that they are the only
+application using the origin, since this is a common deployment pattern; instead, they should use
+appropriate mechanisms to mitigate the risks of co-existing with Web applications, such as (but not
+limited to):
+
+* Using Strict Transport Security {{?RFC6797}} to assure that HTTPS is used
+* Using Content-Security-Policy {{?W3C.WD-CSP3-20160913}} to constrain the capabilities of content, thereby mitigating Cross-Site Scripting attacks (which are possible if client-provided data is exposed in any part of a response in the application)
+* Using X-Frame-Options {{?RFC7034}} to prevent content from being included in a HTML frame from another origin, thereby enabling "clickjacking"
+* Using Referrer-Policy {{?W3C.CR-referrer-policy-20170126}} to prevent sensitive data in URLs from being leaked in the Referer request header
+* Using the 'HttpOnly' flag on Cookies to assure that cookies are not exposed to browser scripting languages {{?RFC6265}}
+
+## Scoping Applications
+
+This memo does not specify the scope of applicability of metadata or policy obtained from a
+well-known URI, and does not specify how to discover a well-known URI for a particular application.
+
+Individual applications using this mechanism must define both aspects; if this is not specified,
+security issues can arise from implementation deviations and confusion about boundaries between
+applications.
+
+Applying metadata discovered in a well-known URI to resources other than those co-located on the
+same origin risks administrative as well as security issues. For example, allowing
+"https://example.com/.well-known/example" to apply policy to "https://department.example.com",
+"https://www.example.com" or even "https://www.example.com:8000" assumes a relationship between
+hosts where there may be none, or there may be conflicting motivations.
+
+## Hidden Capabilities
+
+Applications using well-known locations should consider that some server administrators might be
+unaware of its existence (especially on operating systems that hide directories whose names begin
+with "."). This means that if an attacker has write access to the .well-known directory, they would
+be able to control its contents, possibly without the administrator realising it.
+
+
+# IANA Considerations
+
+## The Well-Known URI Registry {#register}
+
+This specification updates the registration procedures for the "Well-Known URI" registry, first
+defined in {{?RFC5785}}; see {{procedure}}.
+
+Well-known URIs are registered on the advice of one or more experts (appointed by the
+IESG or their delegate), with a Specification Required (using terminology from {{!RFC8126}}).
+
+The Experts' primary considerations in evaluating registration requests are:
+ * Conformance to the requirements in {{well-known}}
+ * The availability and stability of the specifying document
+ * The security considerations outlined in {{sec}}
+
+IANA will direct any incoming requests regarding the registry to this document and, if defined, the
+processes established by the expert(s); typically, this will mean referring them to the registry
+Web page.
+
+IANA should replace all references to RFC 5988 in that registry have been replaced with references
+to this document.
 
 
 --- back
@@ -224,15 +259,11 @@ Related information:
    would increase the risks of colliding with a pre-existing URI on a site, and generally these
    solutions are found not to scale well, because they're too "chatty".
 
-5. I want to use a well-known location to make it easy to configure my protocol that uses HTTP.
-
-   This is not what well-known locations are for; see {{appropriate}}.
-
 
 
 # Changes from RFC5785
 
-* Discuss appropriate and inappropriate uses more fully
+* Allow non-Web well-known locations
 * Adjust IANA instructions
 * Update references
 * Various other clarifications
