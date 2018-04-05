@@ -61,8 +61,9 @@ deployment difficulties) associated with them often precludes their use in these
 
 When this happens, one solution is designating a "well-known location" for data or services related
 to the origin overall, so that it can be easily located. However, this approach has the drawback of
-risking collisions, both with other such designated "well-known locations" and with
-resources that the origin has created (or wishes to create).
+risking collisions, both with other such designated "well-known locations" and with resources that
+the origin has created (or wishes to create). Furthermore, defining well-known locations usurp's
+the origin's control over its own URI space {{?RFC7320}}.
 
 At the same time, it has become more popular to use HTTP as a substrate for non-Web protocols. Sometimes, such protocols need a way to locate one or more resources on a given host.
 
