@@ -249,24 +249,25 @@ to this document.
 
 # Frequently Asked Questions
 
-1. Aren't well-known locations bad for the Web?
+Aren't well-known locations bad for the Web?
 
-   They are, but for various reasons -- both technical and social -- they are sometimes necessary. This memo defines a "sandbox" for them, to reduce the risks of collision
-   and to minimise the impact upon pre-existing URIs on sites.
+: They are, but for various reasons -- both technical and social -- they are sometimes necessary.
+This memo defines a "sandbox" for them, to reduce the risks of collision and to minimise the impact
+upon pre-existing URIs on sites.
 
-2. Why /.well-known?
+Why /.well-known?
 
-   It's short, descriptive, and according to search indices, not widely used.
+: It's short, descriptive, and according to search indices, not widely used.
 
-3. What impact does this have on existing mechanisms, such as P3P and robots.txt?
+What impact does this have on existing mechanisms, such as P3P and robots.txt?
 
-   None, until they choose to use this mechanism.
+: None, until they choose to use this mechanism.
 
-4. Why aren't per-directory well-known locations defined?
+Why aren't per-directory well-known locations defined?
 
-   Allowing every URI path segment to have a well-known location (e.g., "/images/.well-known/")
-   would increase the risks of colliding with a pre-existing URI on a site, and generally these
-   solutions are found not to scale well, because they're too "chatty".
+: Allowing every URI path segment to have a well-known location (e.g., "/images/.well-known/") would
+increase the risks of colliding with a pre-existing URI on a site, and generally these solutions
+are found not to scale well, because they're too "chatty".
 
 
 
