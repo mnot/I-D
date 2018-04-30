@@ -230,9 +230,10 @@ Well-known URIs are registered on the advice of one or more experts (appointed b
 IESG or their delegate), with a Specification Required (using terminology from {{!RFC8126}}).
 
 The Experts' primary considerations in evaluating registration requests are:
+
  * Conformance to the requirements in {{well-known}}
  * The availability and stability of the specifying document
- * The security considerations outlined in {{sec}}
+ * The considerations outlined in {{sec}}
 
 IANA will direct any incoming requests regarding the registry to this document and, if defined, the
 processes established by the expert(s); typically, this will mean referring them to the registry
