@@ -192,7 +192,7 @@ limited to):
 
 ## Scoping Applications
 
-This memo does not specify the scope of applicability of metadata or policy obtained from a
+This memo does not specify the scope of applicability for the information obtained from a
 well-known URI, and does not specify how to discover a well-known URI for a particular application.
 
 Individual applications using this mechanism must define both aspects; if this is not specified,
@@ -203,7 +203,13 @@ Applying metadata discovered in a well-known URI to resources other than those c
 same origin risks administrative as well as security issues. For example, allowing
 "https://example.com/.well-known/example" to apply policy to "https://department.example.com",
 "https://www.example.com" or even "https://www.example.com:8000" assumes a relationship between
-hosts where there may be none, or there may be conflicting motivations.
+hosts where there might be none, giving control to a potential attacker.
+
+Likewise, specifying that a well-known URI on a particular hostname is to be used to bootstrap a
+protocol can cause a large number of undesired requests. For example, if a well-known HTTPS URI is
+used to find policy about a separate service such as e-mail, it can result in a flood of requests
+to Web servers, even if they don't implement the well-known URI. Such undesired requests can
+resemble a denial-of-services attack.
 
 ## Hidden Capabilities
 
