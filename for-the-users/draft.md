@@ -2,7 +2,7 @@
 title: The Internet is for End Users
 docname: draft-nottingham-for-the-users-07
 date: 2018
-category: bcp
+category: info
 
 ipr: trust200902
 area: General
@@ -98,58 +98,57 @@ vendors, specification authors, specification implementers, content owners, gove
 non-governmental organisations, social movements, employers, and parents.
 
 Successful specifications will provide some benefit to all of the relevant parties, because
-standards do not represent a zero-sum game. However, there are sometimes situations where we need to
-balance the benefits of a decision between two (or more) parties.
+standards do not represent a zero-sum game. However, there are sometimes situations where there is
+a need to balance the benefits of a decision between two (or more) parties.
 
 In these situations, when one of those parties is the "end user" of the Internet -- for example, a
-person using a Web browser, mail client, or other agent that connects to the Internet -- we tend to
-favour their needs over that of parties such as network operators or equipement vendors.
+person using a Web browser, mail client, or other agent that connects to the Internet -- the IETF
+tends to favour their needs over that of parties such as network operators or equipement vendors.
 
-Our goal is not to avoid all potential harm to or constraint of end users; rather, it's to give
-guidance in a particular situation -- when we've identified a conflict between the interests of end
-users and another stakeholder (e.g., a network operator), and need a "tiebreaker", we should err on
-the side of finding a solution that doesn't harm end users.
-
-Note that "harm" is not defined in this document; that is something that the relevant body (e.g.,
-Working Group) needs to discuss. The IETF has already established a body of guidance for such
-decisions, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}}
-on pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy
-considerations.
-
-Over time, additional guidance is likely to be defined. In the absence of specific guidance on a
-given topic (such as that referenced above), this document provides a general approach to making
-such decisions.
-
-Doing so helps the IETF achieve its mission, and also helps to assure the long-term health of the
-Internet. By prioritising the concerns of end users, we assure that it reaches the greatest number
-of people, thereby delivering greater utility by maximising its network effect.
-
-Prioritising end users' needs also helps to assure that the Internet itself retains end users' trust, preserving the benefit its network effect brings.
+This document explains what is meant by "end users" in {{end}}, why they tend to be prioritised in
+IETF work in {{why}}, and how that is done in {{how}}.
 
 
-# Guidelines for IETF Decisions
+# What Are "End Users"? {#end}
 
-When there are unresolvable conflicts between the interests of different parties, we consider the
-end users of the Internet to have priority over other parties.
+In this document, "end users," means non-technical users whose activities IETF protocols are
+designed to support, sometimes indirectly. Thus, the end user of a protocol to manage routers is
+not a router administrator; it is the people using the network that the router operates within.
+
+The IETF community has any specific insight into what is "good for end users"; to help make
+decisions involving them, it interacts with the greater Internet community. Because end users are
+typically not technical experts, the IETF has a responsibility to consider their interests, and
+engages with those who understand how IETF work will affect end users, such as civil society
+organisations, as well as governments, businesses and other groups representing some aspect of end
+user interests.
+
+
+# Why End Users are Prioritised {#why}
 
 While networks need to be managed, employers and equipment vendors need to meet business goals, and
 so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
 -- society is composed of end users, along with groups of them forming business, governments,
 clubs, civil society organizations, and other institutions that influence it.
 
-By "end users," we mean non-technical users whose activities our protocols are designed to support.
-Thus, the end user of a protocol to manage routers is not a router administrator; it is the people
-using the network that the router operates within.
+Doing so helps the IETF achieve its mission, and also helps to assure the long-term health of the
+Internet. By prioritising the concerns of end users, we assure that it reaches the greatest number
+of people, thereby delivering greater utility by maximising its network effect.
 
-This does not mean that the IETF community has any specific insight into what is "good for end
-users"; as always, we will need to interact with the greater Internet community and apply our
-process to help us make decisions, deploy our protocols, and ultimately determine their success or
-failure.
+Prioritising end users' needs also helps to assure that the Internet itself retains end users'
+trust, preserving the benefit its network effect brings.
 
-It does means that, because end users are not technical experts, we have a responsibility to
-consider their interests, and will need to engage with those who understand how our work will affect
-end users, such as civil society organisations, as well as governments, businesses and other groups
-representing some aspect of end user interests.
+
+# How End Users are Prioritised {#how}
+
+When we've identified a conflict between the interests of end users and another stakeholder (e.g.,
+a network operator), and need a "tiebreaker", we should err on the side of finding a solution that
+doesn't harm end users.
+
+Note that "harm" is not defined in this document; that is something that the relevant body (e.g.,
+Working Group) needs to discuss. The IETF has already established a body of guidance for such
+decisions, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}}
+on pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy
+considerations.
 
 When a proposed solution to a problem has a benefit to some other party at the identified expense
 of end users, we will find a different solution or find another way to frame the problem.
@@ -158,11 +157,12 @@ There may be cases where genuine technical need requires compromise. However, su
 to be carefully examined, and avoided when there are alternate means of achieving the desired
 goals. If they cannot be, these choices and reasoning ought to be carefully documented.
 
+## Examples
+
 For example, IPv6 {{?RFC8200}} can be used to assign a client with a unique address prefix -- even
 though this provides a way to track end user activity and helps identify them -- because it is
 technically necessary to provide networking (and despite this, there are mechanisms like
 {{RFC4941}} to mitigate this effect, for those users who desire it).
-
 
 
 # IANA Considerations
@@ -186,6 +186,3 @@ Thanks to the WHATWG for blazing the trail with the Priority of Constituencies.
 Thanks to Harald Alvestrand for his substantial feedback and Mohamed Boucadair, Stephen Farrell,
 Joe Hildebrand, Lee Howard, Russ Housley, Niels ten Oever, Mando Rachovitsa, Martin Thomson, and
 Brian Trammell for their suggestions.
-
-
-
