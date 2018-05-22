@@ -167,7 +167,7 @@ server grants the ability to affect how well-known URIs are served.
 ## Interaction with the Web
 
 Applications using well-known URIs for HTTP or HTTPS URLs need to be aware that well-known
-resources will be accessible to Web browsers, and therefore is potentially able to be manipulated
+resources will be accessible to Web browsers, and therefore are potentially able to be manipulated
 by content obtained from other parts of that origin. If an attacker is able to inject content
 (e.g., through a Cross-Site Scripting vulnerability), they will be able to make potentially
 arbitrary requests to the well-known resource.
