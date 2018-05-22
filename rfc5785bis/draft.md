@@ -150,8 +150,6 @@ Related information:
 
 General requirements for registered relation types are described in {{well-known}}.
 
-Registrations MUST reference a freely available, stable specification.
-
 Note that well-known URIs can be registered by third parties (including the expert(s)), if the
 expert(s) determines that an unregistered well-known URI is widely deployed and not likely to be
 registered in a timely manner otherwise. Such registrations still are subject to the requirements
