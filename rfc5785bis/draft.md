@@ -164,7 +164,7 @@ data, denial-of-service attacks (in addition to normal load issues), server and 
 authentication, vulnerability to DNS rebinding attacks, and attacks where limited access to a
 server grants the ability to affect how well-known URIs are served.
 
-## Interaction with the Web
+## Interaction with Web Browsing
 
 Applications using well-known URIs for HTTP or HTTPS URLs need to be aware that well-known
 resources will be accessible to Web browsers, and therefore are able to be manipulated by content
@@ -174,19 +174,23 @@ the well-known resource.
 
 HTTP and HTTPS also use origins as a security boundary for many other mechanisms, including (but
 not limited to) Cookies {{?RFC6265}}, Web Storage {{?WEBSTORAGE=W3C.REC-webstorage-20160419}} and
-many capabilities. Applications defining well-known locations should not assume that they have sole
-access to these mechanisms.
+many capabilities.
 
-Applications defining well-known URIs should not assume or require that they are the only
-application using the origin, since this is a common deployment pattern; instead, they should use
-appropriate mechanisms to mitigate the risks of co-existing with Web applications, such as (but not
-limited to):
+Applications defining well-known locations should not assume that they have sole access to these
+mechanisms, or that they are the only application using the origin. Depending on the nature of the application, mitigations can include:
 
-* Using Strict Transport Security {{?RFC6797}} to assure that HTTPS is used
-* Using Content-Security-Policy {{?CSP=W3C.WD-CSP3-20160913}} to constrain the capabilities of content, thereby mitigating Cross-Site Scripting attacks (which are possible if client-provided data is exposed in any part of a response in the application)
-* Using X-Frame-Options {{?RFC7034}} to prevent content from being included in a HTML frame from another origin, thereby enabling "clickjacking"
-* Using Referrer-Policy {{?REFERRER-POLICY=W3C.CR-referrer-policy-20170126}} to prevent sensitive data in URLs from being leaked in the Referer request header
+* Encrypting sensitive information
+* Allowing flexibility in the use of identifiers (e.g., Cookie names) to avoid collisions with other applications
 * Using the 'HttpOnly' flag on Cookies to assure that cookies are not exposed to browser scripting languages {{?RFC6265}}
+* Using the 'Path' parameter on Cookies to assure that they are not available to other parts of the origin {{?RFC6265}}
+* Using X-Content-Type-Options: nosniff {{FETCH}} to assure that content under attacker control can't be coaxed into a form that is interpreted as active content by a Web browser
+
+Other good practices include:
+
+* Using an application-specific media type in the Content-Type header, and requiring clients to fail if it is not used
+* Using Content-Security-Policy {{?CSP=W3C.WD-CSP3-20160913}} to constrain the capabilities of active content (such as HTML {{HTML5}}), thereby mitigating Cross-Site Scripting attacks
+* Using Referrer-Policy {{?REFERRER-POLICY=W3C.CR-referrer-policy-20170126}} to prevent sensitive data in URLs from being leaked in the Referer request header
+* Avoiding use of compression on any sensitive information (e.g., authentication tokens, passwords), as the scripting environment offered by Web browsers allows an attacker to repeatedly probe the compression space; if the attacker has access to the path of the communication, they can use this capability to recover that information.
 
 ## Scoping Applications
 
