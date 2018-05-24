@@ -103,7 +103,7 @@ location for metadata, an appropriate registered name might be "example-metadata
 "example.com-metadata", not "metadata".
 
 At a minimum, a registration will reference a specification that defines the format and associated
-media type to be obtained by dereferencing the well-known URI, along with the URI scheme(s) that
+media type(s) to be obtained by dereferencing the well-known URI, along with the URI scheme(s) that
 the well-known URI can be used with. If no URI schemes are explicitly specified, "HTTP" and "HTTPS"
 are assumed.
 
