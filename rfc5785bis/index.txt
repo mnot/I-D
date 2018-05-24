@@ -3,10 +3,10 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                              May 22, 2018
+Internet-Draft                                              May 24, 2018
 Obsoletes: 5785 (if approved)
 Intended status: Standards Track
-Expires: November 23, 2018
+Expires: November 25, 2018
 
 
              Well-Known Uniform Resource Identifiers (URIs)
@@ -53,12 +53,12 @@ Status of This Memo
 
 
 
-Nottingham              Expires November 23, 2018               [Page 1]
+Nottingham              Expires November 25, 2018               [Page 1]
 
 Internet-Draft               Well-Known URIs                    May 2018
 
 
-   This Internet-Draft will expire on November 23, 2018.
+   This Internet-Draft will expire on November 25, 2018.
 
 Copyright Notice
 
@@ -82,7 +82,7 @@ Table of Contents
    3.  Well-Known URIs . . . . . . . . . . . . . . . . . . . . . . .   3
      3.1.  Registering Well-Known URIs . . . . . . . . . . . . . . .   4
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
-     4.1.  Interaction with the Web  . . . . . . . . . . . . . . . .   5
+     4.1.  Interaction with Web Browsing . . . . . . . . . . . . . .   5
      4.2.  Scoping Applications  . . . . . . . . . . . . . . . . . .   6
      4.3.  Hidden Capabilities . . . . . . . . . . . . . . . . . . .   7
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Nottingham              Expires November 23, 2018               [Page 2]
+Nottingham              Expires November 25, 2018               [Page 2]
 
 Internet-Draft               Well-Known URIs                    May 2018
 
@@ -165,7 +165,7 @@ Internet-Draft               Well-Known URIs                    May 2018
 
 
 
-Nottingham              Expires November 23, 2018               [Page 3]
+Nottingham              Expires November 25, 2018               [Page 3]
 
 Internet-Draft               Well-Known URIs                    May 2018
 
@@ -180,7 +180,7 @@ Internet-Draft               Well-Known URIs                    May 2018
    or even "example.com-metadata", not "metadata".
 
    At a minimum, a registration will reference a specification that
-   defines the format and associated media type to be obtained by
+   defines the format and associated media type(s) to be obtained by
    dereferencing the well-known URI, along with the URI scheme(s) that
    the well-known URI can be used with.  If no URI schemes are
    explicitly specified, "HTTP" and "HTTPS" are assumed.
@@ -221,7 +221,7 @@ Internet-Draft               Well-Known URIs                    May 2018
 
 
 
-Nottingham              Expires November 23, 2018               [Page 4]
+Nottingham              Expires November 25, 2018               [Page 4]
 
 Internet-Draft               Well-Known URIs                    May 2018
 
@@ -262,59 +262,81 @@ Internet-Draft               Well-Known URIs                    May 2018
    and attacks where limited access to a server grants the ability to
    affect how well-known URIs are served.
 
-4.1.  Interaction with the Web
+4.1.  Interaction with Web Browsing
 
    Applications using well-known URIs for HTTP or HTTPS URLs need to be
    aware that well-known resources will be accessible to Web browsers,
-   and therefore are potentially able to be manipulated by content
-   obtained from other parts of that origin.  If an attacker is able to
-   inject content (e.g., through a Cross-Site Scripting vulnerability),
-   they will be able to make potentially arbitrary requests to the well-
-   known resource.
-
-   HTTP and HTTPS also use origins as a security boundary for many other
-   mechanisms, including (but not limited to) Cookies [RFC6265], Web
+   and therefore are able to be manipulated by content obtained from
+   other parts of that origin.  If an attacker is able to inject content
+   (e.g., through a Cross-Site Scripting vulnerability), they will be
+   able to make potentially arbitrary requests to the well-known
+   resource.
 
 
 
-Nottingham              Expires November 23, 2018               [Page 5]
+
+
+
+Nottingham              Expires November 25, 2018               [Page 5]
 
 Internet-Draft               Well-Known URIs                    May 2018
 
 
-   Storage [WEBSTORAGE] and many capabilities.  Applications defining
-   well-known locations should not assume that they have sole access to
-   these mechanisms.
+   HTTP and HTTPS also use origins as a security boundary for many other
+   mechanisms, including (but not limited to) Cookies [RFC6265], Web
+   Storage [WEBSTORAGE] and many capabilities.
 
-   Applications defining well-known URIs should not assume or require
-   that they are the only application using the origin, since this is a
-   common deployment pattern; instead, they should use appropriate
-   mechanisms to mitigate the risks of co-existing with Web
-   applications, such as (but not limited to):
+   Applications defining well-known locations should not assume that
+   they have sole access to these mechanisms, or that they are the only
+   application using the origin.  Depending on the nature of the
+   application, mitigations can include:
 
-   o  Using Strict Transport Security [RFC6797] to assure that HTTPS is
-      used
+   o  Encrypting sensitive information
+
+   o  Allowing flexibility in the use of identifiers (e.g., Cookie
+      names) to avoid collisions with other applications
+
+   o  Using the 'HttpOnly' flag on Cookies to assure that cookies are
+      not exposed to browser scripting languages [RFC6265]
+
+   o  Using the 'Path' parameter on Cookies to assure that they are not
+      available to other parts of the origin [RFC6265]
+
+   o  Using X-Content-Type-Options: nosniff [FETCH] to assure that
+      content under attacker control can't be coaxed into a form that is
+      interpreted as active content by a Web browser
+
+   Other good practices include:
+
+   o  Using an application-specific media type in the Content-Type
+      header, and requiring clients to fail if it is not used
 
    o  Using Content-Security-Policy [CSP] to constrain the capabilities
-      of content, thereby mitigating Cross-Site Scripting attacks (which
-      are possible if client-provided data is exposed in any part of a
-      response in the application)
-
-   o  Using X-Frame-Options [RFC7034] to prevent content from being
-      included in a HTML frame from another origin, thereby enabling
-      "clickjacking"
+      of active content (such as HTML [HTML5]), thereby mitigating
+      Cross-Site Scripting attacks
 
    o  Using Referrer-Policy [REFERRER-POLICY] to prevent sensitive data
       in URLs from being leaked in the Referer request header
 
-   o  Using the 'HttpOnly' flag on Cookies to assure that cookies are
-      not exposed to browser scripting languages [RFC6265]
+   o  Avoiding use of compression on any sensitive information (e.g.,
+      authentication tokens, passwords), as the scripting environment
+      offered by Web browsers allows an attacker to repeatedly probe the
+      compression space; if the attacker has access to the path of the
+      communication, they can use this capability to recover that
+      information.
 
 4.2.  Scoping Applications
 
    This memo does not specify the scope of applicability for the
    information obtained from a well-known URI, and does not specify how
    to discover a well-known URI for a particular application.
+
+
+
+Nottingham              Expires November 25, 2018               [Page 6]
+
+Internet-Draft               Well-Known URIs                    May 2018
+
 
    Individual applications using this mechanism must define both
    aspects; if this is not specified, security issues can arise from
@@ -328,15 +350,6 @@ Internet-Draft               Well-Known URIs                    May 2018
    "https://department.example.com", "https://www.example.com" or even
    "https://www.example.com:8000" assumes a relationship between hosts
    where there might be none, giving control to a potential attacker.
-
-
-
-
-
-Nottingham              Expires November 23, 2018               [Page 6]
-
-Internet-Draft               Well-Known URIs                    May 2018
-
 
    Likewise, specifying that a well-known URI on a particular hostname
    is to be used to bootstrap a protocol can cause a large number of
@@ -373,6 +386,14 @@ Internet-Draft               Well-Known URIs                    May 2018
 
    o  The availability and stability of the specifying document
 
+
+
+
+Nottingham              Expires November 25, 2018               [Page 7]
+
+Internet-Draft               Well-Known URIs                    May 2018
+
+
    o  The considerations outlined in Section 4
 
    IANA will direct any incoming requests regarding the registry to this
@@ -381,18 +402,6 @@ Internet-Draft               Well-Known URIs                    May 2018
 
    IANA should replace all references to RFC 5988 in that registry have
    been replaced with references to this document.
-
-
-
-
-
-
-
-
-Nottingham              Expires November 23, 2018               [Page 7]
-
-Internet-Draft               Well-Known URIs                    May 2018
-
 
 6.  References
 
@@ -423,10 +432,23 @@ Internet-Draft               Well-Known URIs                    May 2018
               Web Consortium WD WD-CSP3-20160913, September 2016,
               <https://www.w3.org/TR/2016/WD-CSP3-20160913>.
 
+   [FETCH]    WHATWG, "Fetch - Living Standard", n.d.,
+              <https://fetch.spec.whatwg.org>.
+
+   [HTML5]    WHATWG, "HTML - Living Standard", n.d.,
+              <https://html.spec.whatwg.org>.
+
    [P3P]      Marchiori, M., "The Platform for Privacy Preferences 1.0
               (P3P1.0) Specification", World Wide Web Consortium
               Recommendation REC-P3P-20020416, April 2002,
               <http://www.w3.org/TR/2002/REC-P3P-20020416>.
+
+
+
+Nottingham              Expires November 25, 2018               [Page 8]
+
+Internet-Draft               Well-Known URIs                    May 2018
+
 
    [REFERRER-POLICY]
               Eisinger, J. and E. Stark, "Referrer Policy", World Wide
@@ -439,17 +461,6 @@ Internet-Draft               Well-Known URIs                    May 2018
               DOI 10.17487/RFC4918, June 2007,
               <https://www.rfc-editor.org/info/rfc4918>.
 
-
-
-
-
-
-
-Nottingham              Expires November 23, 2018               [Page 8]
-
-Internet-Draft               Well-Known URIs                    May 2018
-
-
    [RFC5785]  Nottingham, M. and E. Hammer-Lahav, "Defining Well-Known
               Uniform Resource Identifiers (URIs)", RFC 5785,
               DOI 10.17487/RFC5785, April 2010,
@@ -458,15 +469,6 @@ Internet-Draft               Well-Known URIs                    May 2018
    [RFC6265]  Barth, A., "HTTP State Management Mechanism", RFC 6265,
               DOI 10.17487/RFC6265, April 2011,
               <https://www.rfc-editor.org/info/rfc6265>.
-
-   [RFC6797]  Hodges, J., Jackson, C., and A. Barth, "HTTP Strict
-              Transport Security (HSTS)", RFC 6797,
-              DOI 10.17487/RFC6797, November 2012,
-              <https://www.rfc-editor.org/info/rfc6797>.
-
-   [RFC7034]  Ross, D. and T. Gondrom, "HTTP Header Field X-Frame-
-              Options", RFC 7034, DOI 10.17487/RFC7034, October 2013,
-              <https://www.rfc-editor.org/info/rfc7034>.
 
    [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
@@ -499,9 +501,7 @@ Internet-Draft               Well-Known URIs                    May 2018
 
 
 
-
-
-Nottingham              Expires November 23, 2018               [Page 9]
+Nottingham              Expires November 25, 2018               [Page 9]
 
 Internet-Draft               Well-Known URIs                    May 2018
 
@@ -557,4 +557,4 @@ Author's Address
 
 
 
-Nottingham              Expires November 23, 2018              [Page 10]
+Nottingham              Expires November 25, 2018              [Page 10]
