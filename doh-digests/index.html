@@ -1,0 +1,137 @@
+<!DOCTYPE html
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>DOH Digests</title><script type="application/javascript">
+function anchorRewrite() {
+  map = { };
+  if (window.location.hash.length >= 1) {
+    var fragid = window.location.hash.substr(1);
+    if (fragid) {
+      if (! document.getElementById(fragid)) {
+        var prefix = "rfc.";
+        var mapped = map[fragid];
+        if (mapped) {
+          window.location.hash = mapped;
+        } else if (fragid.indexOf("section-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(8);
+        } else if (fragid.indexOf("appendix-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(9);
+        } else if (fragid.indexOf("s-") == 0) {
+          var postfix = fragid.substring(2);
+          if (postfix.startsWith("abstract")) {
+            window.location.hash = prefix + postfix;
+          } else if (postfix.startsWith("note-")) {
+            window.location.hash = prefix + "note." + postfix.substring(5);
+          } else {
+            window.location.hash = prefix + "section." + postfix;
+          }
+        } else if (fragid.indexOf("p-") == 0) {
+          var r = fragid.substring(2);
+          var p = r.indexOf("-");
+          if (p >= 0) {
+            window.location.hash = prefix + "section." + r.substring(0, p) + ".p." + r.substring(p + 1);
+          }
+        }
+      }
+    }  
+  }
+}
+window.addEventListener('hashchange', anchorRewrite);
+window.addEventListener('DOMContentLoaded', anchorRewrite);
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" type="text/css" href="../Tools/bower_components/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      #rfc\.toc > ul ul {
+        list-style: none;
+      }
+      #sidebar {
+        position: fixed;
+        height: 90%;
+        overflow-y: auto;
+        font-size: 90%;
+      }
+      .container .nav-sublist {
+        padding-left: 20px;
+        padding-right: 10px;
+        font-size: 90%;
+      }
+      .container .navbar-brand {
+        padding-top: 0;
+      }
+      .container .nav > li > a {
+        padding: 10px 7px 5px 15px;
+        display: inline-block;
+      }
+      .container .nav > li > a + a {
+        padding: 10px 15px 5px 7px;
+        display: inline-block;
+      }
+      .container .nav > li > a {
+        padding: 5px 10px;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+      span.tt {
+        font: 11pt consolas, monospace;
+        font-size-adjust: none;
+      }
+    </style><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Conventions and Definitions" href="#rfc.section.2"><link rel="Chapter" title="3 DOH Digests" href="#rfc.section.3"><link rel="Chapter" title="4 Security Considerations" href="#rfc.section.4"><link rel="Chapter" title="5 IANA Considerations" href="#rfc.section.5"><link rel="Chapter" href="#rfc.section.6" title="6 References"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: SAXON 9.1.0.8 from Saxonica http://www.saxonica.com/"><meta name="keywords" content="Internet-Draft"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Nottingham, M."><meta name="dcterms.identifier" content="urn:ietf:id:draft-nottingham-doh-digests-00"><meta name="dcterms.issued" content="2018-07-02"><meta name="dcterms.abstract" content="The lack of flexible configuration and selection mechanisms for DOH servers is identified as suboptimal for privacy and performance in some applications.This document makes a straw-man proposal for an improvement."><meta name="description" content="The lack of flexible configuration and selection mechanisms for DOH servers is identified as suboptimal for privacy and performance in some applications.This document makes a straw-man proposal for an improvement."></head><body><div class="container" id="top"><div class="row"><div class="col-md-4 col-md-push-8 hidden-sm hidden-xs" id="sidebar" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top">draft-nottingham-doh-digests-00</a></div><br clear="all"><div class=""><div id="rfc.toc"><ul class="nav"><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1.</a>&nbsp;&nbsp;&nbsp;<a href="#dohs-additional-benefits-for-associated-services">DOH’s Additional Benefits for Associated Services</a></li><li><a href="#rfc.section.1.2">1.2.</a>&nbsp;&nbsp;&nbsp;<a href="#achieving-dohs-privacy-goals-through-diversity">Achieving DOH’s Privacy Goals through Diversity</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#conventions-and-definitions">Conventions and Definitions</a></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#doh-digests">DOH Digests</a><ul><li><a href="#rfc.section.3.1">3.1.</a>&nbsp;&nbsp;&nbsp;<a href="#using-doh-digests">Using DOH Digests</a></li><li><a href="#rfc.section.3.2">3.2.</a>&nbsp;&nbsp;&nbsp;<a href="#the-doh-digest-format">The DOH Digest Format</a></li><li><a href="#rfc.section.3.3">3.3.</a>&nbsp;&nbsp;&nbsp;<a href="#hostname-normalisation">Hostname Normalisation</a></li></ul></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#security-considerations">Security Considerations</a></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#iana-considerations">IANA Considerations</a></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.6.1">6.1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.1">Normative References</a></li><li><a href="#rfc.section.6.2">6.2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Informative References</a></li></ul></li><li><a href="#rfc.authors">Author's Address</a></li></ul></div></div></div></div><div class="col-md-8 main" role="main"><header><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Network Working Group</td><td class="text-right">M. Nottingham</td></tr><tr><td class="text-left">Internet-Draft</td><td class="text-right">July 2, 2018</td></tr><tr><td class="text-left">Intended status: Informational</td><td class="text-right"></td></tr><tr><td class="text-left">Expires: January 3, 2019</td><td class="text-right"></td></tr></tbody></table><div id="rfc.title"><h1>DOH Digests</h1><div class="filename">draft-nottingham-doh-digests-00</div></div></header><hr><h2 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h2><div class="lead"><div id="rfc.abstract.p.1"><p>The lack of flexible configuration and selection mechanisms for DOH servers is identified as suboptimal for privacy and performance in some applications.</p></div><div id="rfc.abstract.p.2"><p>This document makes a straw-man proposal for an improvement.</p></div></div><section id="rfc.status"><h2><a href="#rfc.status">Status of this Memo</a></h2><div id="rfc.boilerplate.1.p.1"><p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p></div><div id="rfc.boilerplate.1.p.2"><p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF). Note that other groups may also distribute working documents as Internet-Drafts. The list of current Internet-Drafts is at <a href="http://datatracker.ietf.org/drafts/current/">http://datatracker.ietf.org/drafts/current/</a>.</p></div><div id="rfc.boilerplate.1.p.3"><p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time. It is inappropriate to use Internet-Drafts as reference material or to cite them other than as “work in progress”.</p></div><div id="rfc.boilerplate.1.p.4"><p>This Internet-Draft will expire on January 3, 2019.</p></div></section><section id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><div id="rfc.boilerplate.2.p.1"><p>Copyright © 2018 IETF Trust and the persons identified as the document authors. All rights reserved.</p></div><div id="rfc.boilerplate.2.p.2"><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p></div></section><hr class="hidden-print"><section id="introduction"><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h2><div id="rfc.section.1.p.1"><p>One of the core motivations for DOH <a href="#I-D.ietf-doh-dns-over-https"><cite title="DNS Queries over HTTPS (DoH)">[I-D.ietf-doh-dns-over-https]</cite></a> is to improve end-user privacy by obfuscating the stream of DNS requests that the DOH client makes. It does this by mixing DOH requests into a stream of “normal” HTTP requests to a configured Web server; for example, a large Web site or a Content Delivery Network.</p></div><div id="rfc.section.1.p.2"><p>However, DOH intentionally avoids defining a mechanism for configuring a particular DOH server for a given application or host. So far, the most common way to do so is to select one from a pre-configured list of services in an application, such as a Web browser.</p></div><div id="rfc.section.1.p.3"><p>Typically, the list of available DOH services is vetted by the application’s vendor to assure that they will honour the application’s requirements for handling of sensitive data (i.e., the client’s DNS request stream) and similar concerns.</p></div><div id="rfc.section.1.p.4"><p>This document proposes a means of selecting a DOH server that encourages the deployment of DOH servers by sharing some of its additional benefits with servers that are good candidates for serving DOH traffic.</p></div><section id="dohs-additional-benefits-for-associated-services"><h3 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a>&nbsp;<a href="#dohs-additional-benefits-for-associated-services">DOH’s Additional Benefits for Associated Services</a></h3><div id="rfc.section.1.1.p.1"><p>When a DOH server is colocated with (or closely coordinated with) other network services – especially HTTP services – those associated services enjoy a few additional benefits beyond those seen by adopting DOH in the first place.</p></div><div id="rfc.section.1.1.p.2"><ul><li>Associated services have an additional privacy benefit; there is one less party involved in the interaction, whereas “normal” DNS and DOH to an unassociated HTTP server require a third party to resolve names.</li><li>Removing a third party also removes a separate point of potential failure, improving control over service quality and availability. See <a href="#fragile"><cite title="Oh, What a Fragile Web We Weave: Third-party Service Dependencies In Modern Webservices and Implications">[fragile]</cite></a> for further discussion.</li><li>Finally, the DOH server can use DNS to optimise the provision of associated services. For example, DNS results can be optimised based on the client’s request stream with a higher degree of certainty.</li></ul></div><div id="rfc.section.1.1.p.3"><p>In the future, a DOH server might might use Secondary Certificates <a href="#I-D.ietf-httpbis-http2-secondary-certs"><cite title="Secondary Certificate Authentication in HTTP/2">[I-D.ietf-httpbis-http2-secondary-certs]</cite></a> to further optimise performance of associated services, by using the information in the DNS request stream to aggregate all of its traffic into a small number of connections (possibly only one), thereby allowing greater coordination of congestion control and avoiding connection setup costs.</p></div></section><section id="achieving-dohs-privacy-goals-through-diversity"><h3 id="rfc.section.1.2"><a href="#rfc.section.1.2">1.2.</a>&nbsp;<a href="#achieving-dohs-privacy-goals-through-diversity">Achieving DOH’s Privacy Goals through Diversity</a></h3><div id="rfc.section.1.2.p.1"><p>Overall, a major goal for deployment of DOH is to assure that DNS connectivity is robust and private. Arguably, this is best served by having a diverse set of available DOH servers that are colocated with popular HTTP content, so that it’s more difficult to discriminate DOH from “regular” HTTP, and so the it’s more difficult to block DOH services, due to the high impact of blocking a popular site.</p></div><div id="rfc.section.1.2.p.2"><p>One way to encourage the development of such a set is to offer the additional benefits above to parties that are good candidates for serving such traffic. When clients can direct their DOH queries to the HTTP server which will eventually serve their traffic, it provides both better privacy properties and better performance and availability to a broader set of servers.</p></div><div id="rfc.section.1.2.p.3"><p>This is a marked improvement over the static configuration mechanism commonly in place now; accruing such privacy, availability, and performance benefits to whatever DOH server the application or user selects means that only parties who have a relationship with that service will realise these benefits.</p></div><div id="rfc.section.1.2.p.4"><p>This document proposes one way to achieve this.</p></div></section></section><hr class="hidden-print"><section id="conventions-and-definitions"><h2 id="rfc.section.2" class="np"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#conventions-and-definitions">Conventions and Definitions</a></h2><div id="rfc.section.2.p.1"><p>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “NOT RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in BCP 14 <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a> <a href="#RFC8174"><cite title="Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words">[RFC8174]</cite></a> when, and only when, they appear in all capitals, as shown here.</p></div></section><hr class="hidden-print"><section id="doh-digests"><h2 id="rfc.section.3" class="np"><a href="#rfc.section.3">3.</a>&nbsp;<a href="#doh-digests">DOH Digests</a></h2><div id="rfc.section.3.p.1"><p>A DOH Digest is a Bloom filter indicating the set of hosts a given DOH server should be used for.</p></div><section id="using-doh-digests"><h3 id="rfc.section.3.1"><a href="#rfc.section.3.1">3.1.</a>&nbsp;<a href="#using-doh-digests">Using DOH Digests</a></h3><div id="rfc.section.3.1.p.1"><p>When an application has a valid DOH digest for a given DOH server, it tests the digest for each DNS request it makes by hostname; if the hostname (after normalisation) is found in the digest, all DNS requests regarding that hostname SHOULD be sent to the corresponding DOH server. If multiple DOH digests match a given hostname, any matching DOH server MAY be used; the client SHOULD select one of the candidates randomly.</p></div><div id="rfc.section.3.1.p.2"><p>If the DOH service is unavailable, produces errors (HTTP or DNS), or the application otherwise fails to obtain an answer from it, the application MAY (but is not required to) fall back to using another configured DOH server, or to using “normal” DNS.</p></div><div id="rfc.section.3.1.p.3"><p>Likewise, hosts that do not match any configured bloom filter SHOULD be sent to a randomly selected DOH server that is available.</p></div><div id="rfc.section.3.1.p.4"><p>The means of discovering a DOH digest for a given DOH server is out of scope for this document, but generally it will be pre-arranged between the application and the DOH server.</p></div><div id="rfc.section.3.1.p.5"><p>The nature of this arrangment is highly dependent upon the application and its desired properties. That said, a number of requirements are placed upon this arrangement.</p></div><div id="rfc.section.3.1.p.6"><ul><li>The digest MUST be conveyed in a manner that is secure and authenticated; e.g., TLS with appropriate certificate checks. Clients MUST enforce this.</li><li>The application MUST consider the DOH service as meeting whatever criteria it deems fit for configuring a “catch-all” DOH service (e.g., in terms of privacy, service availability, etc.), since false positives might be sent to the service, and hosts not matched by any configured bloom filter might be sent to it.</li><li>The digest MUST be updated on a periodic basis; e.g., once a day. Clients SHOULD NOT use stale digests.</li></ul></div></section><section id="the-doh-digest-format"><h3 id="rfc.section.3.2"><a href="#rfc.section.3.2">3.2.</a>&nbsp;<a href="#the-doh-digest-format">The DOH Digest Format</a></h3><div id="rfc.section.3.2.p.1"><p>TBD - likely just a bloom filter.</p></div></section><section id="hostname-normalisation"><h3 id="rfc.section.3.3"><a href="#rfc.section.3.3">3.3.</a>&nbsp;<a href="#hostname-normalisation">Hostname Normalisation</a></h3><div id="rfc.section.3.3.p.1"><p>TBD</p></div></section></section><hr class="hidden-print"><section id="security-considerations"><h2 id="rfc.section.4" class="np"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#security-considerations">Security Considerations</a></h2><div id="rfc.section.4.p.1"><p>Because a DOH digest allows a DOH server to claim traffic from an arbitrary hostname, applications need to take extreme care in selecting the DOH servers they will be accepted from, as well as assuring that their integrity and authentication have not been compromised.</p></div><div id="rfc.section.4.p.2"><p>Applications might mitigate this by monitoring DOH servers for such abuse and terminating their ability to use DOH digests when it is found.</p></div><div id="rfc.section.4.p.3"><p>TBD - more advanced mitigations</p></div><div id="rfc.section.4.p.4"><p>A hostname is effectively captured by a DOH server until the digest that reflects any change in its status is updated in the application. This delay should not result in any loss of functionality, since the “old” configuration will still direct requests to a functional DOH server.</p></div></section><hr class="hidden-print"><section id="iana-considerations"><h2 id="rfc.section.5" class="np"><a href="#rfc.section.5">5.</a>&nbsp;<a href="#iana-considerations">IANA Considerations</a></h2><div id="rfc.section.5.p.1"><p>This document currently has no IANA actions, but may grow some as the document progresses.</p></div></section><hr class="hidden-print"><section id="rfc.references" class="np"><h2 id="rfc.section.6"><a href="#rfc.section.6">6.</a> References</h2><section id="rfc.references.1" class="np"><h3 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> Normative References</h3><dl class="dl-horizontal"><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP&nbsp;14, RFC&nbsp;2119, <a href="http://dx.doi.org/10.17487/RFC2119">DOI&nbsp;10.17487/RFC2119</a>, March&nbsp;1997, &lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC8174">[RFC8174]</dt><dd>Leiba, B., “<a href="https://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>”, BCP&nbsp;14, RFC&nbsp;8174, <a href="http://dx.doi.org/10.17487/RFC8174">DOI&nbsp;10.17487/RFC8174</a>, May&nbsp;2017, &lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;.</dd></dl></section><section id="rfc.references.2"><h3 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> Informative References</h3><dl class="dl-horizontal"><dt id="I-D.ietf-doh-dns-over-https">[I-D.ietf-doh-dns-over-https]</dt><dd>Hoffman, P. and P. McManus, “<a href="https://tools.ietf.org/html/draft-ietf-doh-dns-over-https-12">DNS Queries over HTTPS (DoH)</a>”, Internet-Draft&nbsp;draft-ietf-doh-dns-over-https-12 (work in progress), June&nbsp;2018.</dd><dt id="I-D.ietf-httpbis-http2-secondary-certs">[I-D.ietf-httpbis-http2-secondary-certs]</dt><dd>Bishop, M., Sullivan, N., and M. Thomson, “<a href="https://tools.ietf.org/html/draft-ietf-httpbis-http2-secondary-certs-02">Secondary Certificate Authentication in HTTP/2</a>”, Internet-Draft&nbsp;draft-ietf-httpbis-http2-secondary-certs-02 (work in progress), June&nbsp;2018.</dd><dt id="fragile">[fragile]</dt><dd>Kashaf, A., Zarate, C., Wang, H., Agarwal, Y., and V. Sekar, “<a href="https://arxiv.org/pdf/1806.08420.pdf">Oh, What a Fragile Web We Weave: Third-party Service Dependencies In Modern Webservices and Implications</a>”, June&nbsp;2018, &lt;<a href="https://arxiv.org/pdf/1806.08420.pdf">https://arxiv.org/pdf/1806.08420.pdf</a>&gt;.</dd></dl></section></section><hr class="hidden-print"><section id="rfc.authors" class="np"><h2><a href="#rfc.authors">Author's Address</a></h2><address><b>Mark Nottingham</b><br>EMail: <a href="mailto:mnot@mnot.net">mnot@mnot.net</a><br>URI: <a href="https://www.mnot.net/">https://www.mnot.net/</a></address></section></div></div></div><script src="../Tools/bower_components/jquery/dist/jquery.min.js"></script><script src="../Tools/bower_components/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
