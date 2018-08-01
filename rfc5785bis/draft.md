@@ -4,7 +4,7 @@ abbrev: Well-Known URIs
 docname: draft-nottingham-rfc5785bis-07
 date: 2018
 category: std
-obsoletes: 5785
+obsoletes: 5785, 8307
 
 ipr: trust200902
 area: General
@@ -98,8 +98,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 # Well-Known URIs {#well-known}
 
 A well-known URI is a URI {{!RFC3986}} whose path component begins with the characters
-"/.well-known/", and whose scheme is "HTTP", "HTTPS", or another scheme that has explicitly been
-specified to use well-known URIs.
+"/.well-known/", and whose scheme is "http", "https", "ws", "wss", or another scheme that has
+explicitly been specified to use well-known URIs.
 
 Applications that wish to mint new well-known URIs MUST register them, following the procedures in
 {{register}}.
@@ -117,7 +117,7 @@ location for metadata, an appropriate registered name might be "example-metadata
 
 At a minimum, a registration will reference a specification that defines the format and associated
 media type(s) to be obtained by dereferencing the well-known URI, along with the URI scheme(s) that
-the well-known URI can be used with. If no URI schemes are explicitly specified, "HTTP" and "HTTPS"
+the well-known URI can be used with. If no URI schemes are explicitly specified, "http" and "https"
 are assumed.
 
 Typically, applications will use the default port for the given scheme; if an alternative port is
@@ -182,7 +182,7 @@ server grants the ability to affect how well-known URIs are served.
 
 ## Interaction with Web Browsing
 
-Applications using well-known URIs for HTTP or HTTPS URLs need to be aware that well-known
+Applications using well-known URIs for "http" or "https" URLs need to be aware that well-known
 resources will be accessible to Web browsers, and therefore are able to be manipulated by content
 obtained from other parts of that origin. If an attacker is able to inject content (e.g., through a
 Cross-Site Scripting vulnerability), they will be able to make potentially arbitrary requests to
@@ -295,3 +295,4 @@ are found not to scale well, because they're too "chatty".
 * Adjust IANA instructions
 * Update references
 * Various other clarifications
+* Add "ws" and "wss" schemes
