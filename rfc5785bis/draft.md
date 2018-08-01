@@ -134,9 +134,9 @@ dereferencing the well-known URI; both should be defined by the application itse
 Also, this specification does not define a format or media-type for the resource located at
 "/.well-known/" and clients should not expect a resource to exist at that location.
 
-Well-known URIs are only valid when rooted in the top of the path's hierarchy; they MUST NOT be used
-in other parts of the path. For example, "/.well-known/example" is a valid use, but
-"/foo/.well-known/example" is not.
+Well-known URIs are rooted in the top of the path's hierarchy; they are not well-known by
+definition in other parts of the path. For example, "/.well-known/example" is a well-known URI,
+whereas "/foo/.well-known/example" is not.
 
 See also {{sec}} for Security Considerations regarding well-known locations.
 
