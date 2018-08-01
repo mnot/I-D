@@ -120,6 +120,9 @@ media type(s) to be obtained by dereferencing the well-known URI, along with the
 the well-known URI can be used with. If no URI schemes are explicitly specified, "HTTP" and "HTTPS"
 are assumed.
 
+Typically, applications will use the default port for the given scheme; if an alternative port is
+used, it MUST be explicitly specified by the application in question.
+
 It MAY also contain additional information, such as the syntax of additional path components, query
 strings and/or fragment identifiers to be appended to the well-known URI, or protocol-specific
 details (e.g., HTTP {{?RFC7231}} method handling).
