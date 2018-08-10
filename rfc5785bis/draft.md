@@ -1,7 +1,7 @@
 ---
 title: Well-Known Uniform Resource Identifiers (URIs)
 abbrev: Well-Known URIs
-docname: draft-nottingham-rfc5785bis-07
+docname: draft-nottingham-rfc5785bis-08
 date: 2018
 category: std
 obsoletes: 5785, 8307
