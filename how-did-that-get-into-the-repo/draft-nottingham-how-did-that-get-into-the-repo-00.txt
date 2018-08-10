@@ -1,0 +1,280 @@
+
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                           August 10, 2018
+Intended status: Standards Track
+Expires: February 11, 2019
+
+
+                      The secret-token URI scheme
+           draft-nottingham-how-did-that-get-into-the-repo-00
+
+Abstract
+
+   This document registers the "secret-token" URI scheme, to aid in the
+   identification of authentication tokens.
+
+Note to Readers
+
+   _RFC EDITOR: please remove this section before publication_
+
+   The issues list for this draft can be found at
+   https://github.com/mnot/I-D/labels/how-did-that-get-into-the-repo
+   [1].
+
+   The most recent (often, unpublished) draft is at
+   https://mnot.github.io/I-D/how-did-that-get-into-the-repo/ [2].
+
+   Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
+   pages/how-did-that-get-into-the-repo [3].
+
+   See also the draft's current status in the IETF datatracker, at
+   https://datatracker.ietf.org/doc/draft-nottingham-how-did-that-get-
+   into-the-repo/ [4].
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on February 11, 2019.
+
+
+
+Nottingham              Expires February 11, 2019               [Page 1]
+
+Internet-Draft         The secret-token URI scheme           August 2018
+
+
+Copyright Notice
+
+   Copyright (c) 2018 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+   2.  The secret-token URI scheme . . . . . . . . . . . . . . . . .   3
+   3.  Iana Considerations . . . . . . . . . . . . . . . . . . . . .   3
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   4
+     5.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   4
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   5
+
+1.  Introduction
+
+   It has become increasingly common to use Bearer tokens as an
+   authentication mechanism.
+
+   Unfortunately, the number of security incidents involving accidental
+   disclosure of these tokens has also increased.  For example, we now
+   regularly hear about a developer committing an access token to a
+   public source code repository, either because they didn't realise it
+   was included in the committed code, or because they didn't realise
+   the implications of its disclosure.
+
+   This specification registers the "secret-token" URI scheme to aid
+   prevention of such accidental disclosures.  When tokens are easier to
+   unambiguously identify, they can trigger warnings in Continuous
+   Integration systems, or be used in source code repositories
+   themselves.  They can also be scanned for separately.
+
+   For example, if cloud.example.net issues access tokens to its clients
+   for later use, and it does so by formatting them as secret-token
+   URIs, this enables its clients to more easily find tokens that "leak"
+
+
+
+Nottingham              Expires February 11, 2019               [Page 2]
+
+Internet-Draft         The secret-token URI scheme           August 2018
+
+
+   into places that they don't belong.  If repo.example.com can be
+   configured to refuse commits containing secret-token URIs, it helps
+   its customers avoid accidental disclosures.
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+   This document uses ABNF [RFC5234], including by reference the
+   following rules: ALPHA, DIGIT.
+
+2.  The secret-token URI scheme
+
+   The secret-token URI scheme identifies a token that is intended to be
+   a secret.
+
+   secret-token-URI    = secret-token-scheme ":" token
+   secret-token-scheme = "secret-token"
+   token               = 1*tchar
+   tchar               = ALPHA / DIGIT / "-" / "_" / "." / "~"
+
+   Note that characters outside the range allowed by tchar MUST be
+   percent-encoded ([RFC3986], Section 2.1.
+
+   When a token is presented for authentication, the entire URI MUST be
+   presented, without changes.
+
+   For example, given the URI:
+
+   secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
+
+   This string (character-for-character, case-sensitive) will both be
+   issued by the token authority, and required for later access.
+
+3.  Iana Considerations
+
+   This document registers the following value in the URI Scheme
+   registry:
+
+   o  Scheme name: secret-token
+
+   o  Status: permanent
+
+   o  Applications / protocols that use this scheme: none yet
+
+
+
+Nottingham              Expires February 11, 2019               [Page 3]
+
+Internet-Draft         The secret-token URI scheme           August 2018
+
+
+   o  Contact: iesg@iesg.org
+
+   o  Change Controller: IESG
+
+   o  References: [this document]
+
+4.  Security Considerations
+
+   The token ABNF rule allows tokens as small as one character.  This is
+   not recommended practice; applications should evaluate their
+   requirements for entropy and issue tokens correspondingly.
+
+   This URI scheme is intended to prevent accidental disclosure; it
+   cannot prevent intentional disclosure.
+
+   If it is difficult to correctly handle secret material, or unclear as
+   to what the appropriate handling is, users might choose to obfuscate
+   their secret tokens in order to evade detection.  Clear guidelines
+   and helpful tools are good mitigations here.
+
+5.  References
+
+5.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+              Resource Identifier (URI): Generic Syntax", STD 66,
+              RFC 3986, DOI 10.17487/RFC3986, January 2005,
+              <https://www.rfc-editor.org/info/rfc3986>.
+
+   [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
+              Specifications: ABNF", STD 68, RFC 5234,
+              DOI 10.17487/RFC5234, January 2008,
+              <https://www.rfc-editor.org/info/rfc5234>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+5.2.  URIs
+
+   [1] https://github.com/mnot/I-D/labels/how-did-that-get-into-the-repo
+
+   [2] https://mnot.github.io/I-D/how-did-that-get-into-the-repo/
+
+
+
+Nottingham              Expires February 11, 2019               [Page 4]
+
+Internet-Draft         The secret-token URI scheme           August 2018
+
+
+   [3] https://github.com/mnot/I-D/commits/gh-pages/how-did-that-get-
+       into-the-repo
+
+   [4] https://datatracker.ietf.org/doc/draft-nottingham-how-did-that-
+       get-into-the-repo/
+
+Author's Address
+
+   Mark Nottingham
+
+   Email: mnot@mnot.net
+   URI:   https://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 11, 2019               [Page 5]
