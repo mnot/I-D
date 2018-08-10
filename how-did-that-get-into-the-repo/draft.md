@@ -91,7 +91,7 @@ secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
 This string (character-for-character, case-sensitive) will both be issued by the token authority, and required for later access.
 
 
-# Iana Considerations
+# IANA Considerations
 
 This document registers the following value in the URI Scheme registry:
 
