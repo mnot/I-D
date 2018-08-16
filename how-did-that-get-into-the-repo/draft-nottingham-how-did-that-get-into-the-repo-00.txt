@@ -3,12 +3,12 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                           August 10, 2018
+Internet-Draft                                           August 16, 2018
 Intended status: Standards Track
-Expires: February 11, 2019
+Expires: February 17, 2019
 
 
-                      The secret-token URI scheme
+                      The secret-token URI Scheme
            draft-nottingham-how-did-that-get-into-the-repo-00
 
 Abstract
@@ -49,13 +49,13 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on February 11, 2019.
+   This Internet-Draft will expire on February 17, 2019.
 
 
 
-Nottingham              Expires February 11, 2019               [Page 1]
+Nottingham              Expires February 17, 2019               [Page 1]
 
-Internet-Draft         The secret-token URI scheme           August 2018
+Internet-Draft         The secret-token URI Scheme           August 2018
 
 
 Copyright Notice
@@ -78,11 +78,11 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The secret-token URI scheme . . . . . . . . . . . . . . . . .   3
-   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   3
+   3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
    5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   4
      5.1.  Normative References  . . . . . . . . . . . . . . . . . .   4
-     5.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     5.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   5
 
 1.  Introduction
@@ -105,18 +105,24 @@ Table of Contents
 
    For example, if cloud.example.net issues access tokens to its clients
    for later use, and it does so by formatting them as secret-token
-   URIs, this enables its clients to more easily find tokens that "leak"
+   URIs, tokens that "leak" into places that they don't belong are
 
 
 
-Nottingham              Expires February 11, 2019               [Page 2]
+Nottingham              Expires February 17, 2019               [Page 2]
 
-Internet-Draft         The secret-token URI scheme           August 2018
+Internet-Draft         The secret-token URI Scheme           August 2018
 
 
-   into places that they don't belong.  If repo.example.com can be
-   configured to refuse commits containing secret-token URIs, it helps
-   its customers avoid accidental disclosures.
+   easier to identify.  This could be through a variety of mechanisms;
+   for example, if repo.example.com can be configured to refuse commits
+   containing secret-token URIs, it helps its customers avoid accidental
+   disclosures.
+
+   secret-token URIs are intended to aid in identification of generated
+   secrets like API keys and similar tokens.  They are not intended for
+   use in controlled situations where ephemeral tokens are used, such as
+   things ike CSRF tokens.
 
 1.1.  Notational Conventions
 
@@ -142,8 +148,8 @@ Internet-Draft         The secret-token URI scheme           August 2018
    Note that characters outside the range allowed by tchar MUST be
    percent-encoded ([RFC3986], Section 2.1.
 
-   When a token is presented for authentication, the entire URI MUST be
-   presented, without changes.
+   When a token is both generated and presented for authentication, the
+   entire URI MUST be used, without changes.
 
    For example, given the URI:
 
@@ -151,6 +157,18 @@ Internet-Draft         The secret-token URI scheme           August 2018
 
    This string (character-for-character, case-sensitive) will both be
    issued by the token authority, and required for later access.
+
+
+
+
+
+
+
+
+Nottingham              Expires February 17, 2019               [Page 3]
+
+Internet-Draft         The secret-token URI Scheme           August 2018
+
 
 3.  IANA Considerations
 
@@ -162,13 +180,6 @@ Internet-Draft         The secret-token URI scheme           August 2018
    o  Status: permanent
 
    o  Applications / protocols that use this scheme: none yet
-
-
-
-Nottingham              Expires February 11, 2019               [Page 3]
-
-Internet-Draft         The secret-token URI scheme           August 2018
-
 
    o  Contact: iesg@iesg.org
 
@@ -187,8 +198,9 @@ Internet-Draft         The secret-token URI scheme           August 2018
 
    If it is difficult to correctly handle secret material, or unclear as
    to what the appropriate handling is, users might choose to obfuscate
-   their secret tokens in order to evade detection.  Clear guidelines
-   and helpful tools are good mitigations here.
+   their secret tokens in order to evade detection (for example,
+   removing the URI scheme for storage).  Clear guidelines and helpful
+   tools are good mitigations here.
 
 5.  References
 
@@ -204,6 +216,16 @@ Internet-Draft         The secret-token URI scheme           August 2018
               RFC 3986, DOI 10.17487/RFC3986, January 2005,
               <https://www.rfc-editor.org/info/rfc3986>.
 
+
+
+
+
+
+Nottingham              Expires February 17, 2019               [Page 4]
+
+Internet-Draft         The secret-token URI Scheme           August 2018
+
+
    [RFC5234]  Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
               Specifications: ABNF", STD 68, RFC 5234,
               DOI 10.17487/RFC5234, January 2008,
@@ -218,13 +240,6 @@ Internet-Draft         The secret-token URI scheme           August 2018
    [1] https://github.com/mnot/I-D/labels/how-did-that-get-into-the-repo
 
    [2] https://mnot.github.io/I-D/how-did-that-get-into-the-repo/
-
-
-
-Nottingham              Expires February 11, 2019               [Page 4]
-
-Internet-Draft         The secret-token URI scheme           August 2018
-
 
    [3] https://github.com/mnot/I-D/commits/gh-pages/how-did-that-get-
        into-the-repo
@@ -262,19 +277,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Nottingham              Expires February 11, 2019               [Page 5]
+Nottingham              Expires February 17, 2019               [Page 5]

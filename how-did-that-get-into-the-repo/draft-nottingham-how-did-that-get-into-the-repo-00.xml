@@ -17,7 +17,7 @@
 <rfc ipr="trust200902" docName="draft-nottingham-how-did-that-get-into-the-repo-00" category="std">
 
   <front>
-    <title>The secret-token URI scheme</title>
+    <title>The secret-token URI Scheme</title>
 
     <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
       <organization></organization>
@@ -75,7 +75,9 @@ of authentication tokens.</t>
 
 <t>This specification registers the “secret-token” URI scheme to aid prevention of such accidental disclosures. When tokens are easier to unambiguously identify, they can trigger warnings in Continuous Integration systems, or be used in source code repositories themselves. They can also be scanned for separately.</t>
 
-<t>For example, if cloud.example.net issues access tokens to its clients for later use, and it does so by formatting them as secret-token URIs, this enables its clients to more easily find tokens that “leak” into places that they don’t belong. If repo.example.com can be configured to refuse commits containing secret-token URIs, it helps its customers avoid accidental disclosures.</t>
+<t>For example, if cloud.example.net issues access tokens to its clients for later use, and it does so by formatting them as secret-token URIs, tokens that “leak” into places that they don’t belong are easier to identify. This could be through a variety of mechanisms; for example, if repo.example.com can be configured to refuse commits containing secret-token URIs, it helps its customers avoid accidental disclosures.</t>
+
+<t>secret-token URIs are intended to aid in identification of generated secrets like API keys and similar tokens. They are not intended for use in controlled situations where ephemeral tokens are used, such as things ike CSRF tokens.</t>
 
 <section anchor="notational-conventions" title="Notational Conventions">
 
@@ -101,7 +103,8 @@ tchar               = ALPHA / DIGIT / "-" / "_" / "." / "~"
 
 <t>Note that characters outside the range allowed by tchar MUST be percent-encoded (<xref target="RFC3986"/>, Section 2.1.</t>
 
-<t>When a token is presented for authentication, the entire URI MUST be presented, without changes.</t>
+<t>When a token is both generated and presented for authentication, the entire URI MUST be used,
+without changes.</t>
 
 <t>For example, given the URI:</t>
 
@@ -132,7 +135,7 @@ secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
 
 <t>This URI scheme is intended to prevent accidental disclosure; it cannot prevent intentional disclosure.</t>
 
-<t>If it is difficult to correctly handle secret material, or unclear as to what the appropriate handling is, users might choose to obfuscate their secret tokens in order to evade detection. Clear guidelines and helpful tools are good mitigations here.</t>
+<t>If it is difficult to correctly handle secret material, or unclear as to what the appropriate handling is, users might choose to obfuscate their secret tokens in order to evade detection (for example, removing the URI scheme for storage). Clear guidelines and helpful tools are good mitigations here.</t>
 
 </section>
 
@@ -215,52 +218,55 @@ secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
   </back>
 
 <!-- ##markdown-source:
-H4sIAGUobVsAA5VXa2/bOBb9zl/BdbGYTmHZiZu2qWa7GOfR1kAenSTFYrEY
-FLRES0QkUkNS8XoH098+55KU42S62Vl/kCW+7r3nnvtglmXMK9/InN/UkjtZ
-WOkzb26l5p+vFtwVtWwlE8ullXc5K02hRYvFpRUrn2njvdJVLdqsNuusVGXm
-a+GzCmco7Q2+ZGZlZ7K9PVYKj42zvf1DVuC1MnaTc+dLxlRnc+5t7/xsb+/t
-3owJK0XOP0gtrWjY2tjbypq+y9mt3OCrzPlCe2k1xJyQIow5L3T5RTRGQ8ZG
-OtapnP/Lm2LM8VC6lNqPuTPWW7lyeNu06cVbVWCqMG0n0kuLxZhSulFa/syY
-6H1tbM54xjh+Srucn0/4xdb6MByBORf29vGMsZXQ6j/CK6PzMCJboZqctwDw
-R3pMYEqY6C30rr3vXD6drtfryTA7ZUwb2+KMO0lnXL0/nu3vv82Bnl7dTzCW
-ZRkXS5gFaxi7qZXj8FpPNnErK+UAnONwDB/tenu0427CjAtVwtKwUBF6aqWK
-YAEzK06I0Fgc4eEEN4nCobD8ckEPb75cSVFCHmMvoDA/PVncXF7lvGukcBLq
-tOZOQgR0hC7hqKWENZJ3/bJJp78gK6CEc710vIEBHEvirkBDXgjah9Fel1x4
-/rcBwEr5ul9O4NIp4ThdZCfTRixl46ZP8/Xvkyi0NY5QKwi852blpR7zXgfl
-XC3L75MC0GRXbPBZkq1MkPq0uCnJu4piilroCoYiBoKx8n+bRJRV3k2rOusE
-9v4J466l5KJxJvg3GPGd40VvLamAYPK9G7y/OL15zxG8gih1K+0Y+rCtPjsT
-EyX9agKyT0G46f+ZIQIERJ9WlWUjGXtGMW5N2QdeMLbwvBYOfoa1YIMGdYXD
-0c0mhGxgIe/BqqUEdDZxkmML2PGIr60klJVrIfMzhY/vNVJSsxkHi3XfLnEC
-eA5WIiL9huSFKCBU7kxzB8FcFHFMNLxUrmiM6+Ez7MIZ0CMpQEoHpJPKspzw
-9+Cv/LdoEQdjvoZAs6bY7BthYU4NAxDCpvdc8FLeycZ0UCd62QfJmoRL56KQ
-EK4pZJDjeltIrC4pwDrjlEemHXMJ4uAU4CcIJXxsoHapvyOCCzANoHq+FmRh
-0fSl3IZ/EowBOnSMdPbkKSFjwLQEtiNEwM4djCYpL7lOFtu08meT05CbOhQk
-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
+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
 
 -->
 
