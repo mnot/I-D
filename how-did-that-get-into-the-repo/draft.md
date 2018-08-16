@@ -1,5 +1,5 @@
 ---
-title: The secret-token URI scheme
+title: The secret-token URI Scheme
 abbrev:
 docname: draft-nottingham-how-did-that-get-into-the-repo-00
 date: 2018
@@ -55,8 +55,9 @@ Unfortunately, the number of security incidents involving accidental disclosure 
 
 This specification registers the "secret-token" URI scheme to aid prevention of such accidental disclosures. When tokens are easier to unambiguously identify, they can trigger warnings in Continuous Integration systems, or be used in source code repositories themselves. They can also be scanned for separately.
 
-For example, if cloud.example.net issues access tokens to its clients for later use, and it does so by formatting them as secret-token URIs, this enables its clients to more easily find tokens that "leak" into places that they don't belong. If repo.example.com can be configured to refuse commits containing secret-token URIs, it helps its customers avoid accidental disclosures.
+For example, if cloud.example.net issues access tokens to its clients for later use, and it does so by formatting them as secret-token URIs, tokens that "leak" into places that they don't belong are easier to identify. This could be through a variety of mechanisms; for example, if repo.example.com can be configured to refuse commits containing secret-token URIs, it helps its customers avoid accidental disclosures.
 
+secret-token URIs are intended to aid in identification of generated secrets like API keys and similar tokens. They are not intended for use in controlled situations where ephemeral tokens are used, such as things ike CSRF tokens.
 
 ## Notational Conventions
 
@@ -80,7 +81,8 @@ tchar               = ALPHA / DIGIT / "-" / "_" / "." / "~"
 
 Note that characters outside the range allowed by tchar MUST be percent-encoded ({{!RFC3986}}, Section 2.1.
 
-When a token is presented for authentication, the entire URI MUST be presented, without changes.
+When a token is both generated and presented for authentication, the entire URI MUST be used,
+without changes.
 
 For example, given the URI:
 
@@ -109,6 +111,6 @@ The token ABNF rule allows tokens as small as one character. This is not recomme
 
 This URI scheme is intended to prevent accidental disclosure; it cannot prevent intentional disclosure.
 
-If it is difficult to correctly handle secret material, or unclear as to what the appropriate handling is, users might choose to obfuscate their secret tokens in order to evade detection. Clear guidelines and helpful tools are good mitigations here.
+If it is difficult to correctly handle secret material, or unclear as to what the appropriate handling is, users might choose to obfuscate their secret tokens in order to evade detection (for example, removing the URI scheme for storage). Clear guidelines and helpful tools are good mitigations here.
 
 --- back
