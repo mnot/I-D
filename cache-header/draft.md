@@ -58,10 +58,10 @@ This specification defines a single, new HTTP response header field, "Cache" for
 For example:
 
 ~~~ example
-Cache: MISS; node="FooCDN edge"; fresh=-45; age=200; latency=98,
-       HIT_STALE; node="FooCDN parent"; fresh=-45; age=200; latency=3,
-       HIT_FRESH; node="reverse-proxy.example.com:80";
+Cache: HIT_FRESH; node="reverse-proxy.example.com:80";
                   key="https://example.com/foo|Accept-Encoding:gzip"
+       HIT_STALE; node="FooCDN parent"; fresh=-45; age=200; latency=3,
+       MISS; node="FooCDN edge"; fresh=-45; age=200; latency=98,
 ~~~
 
 
