@@ -66,7 +66,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
 shown here.
 
-This document uses ABNF {{!RFC5234}}, including by reference the following rules: ALPHA, DIGIT.
+This document uses ABNF {{!RFC5234}}, including by reference the following rules: ALPHA, DIGIT. It also uses the pchar rule from {{!RFCX3986}}.
+
 
 # The secret-token URI scheme
 
@@ -75,11 +76,10 @@ The secret-token URI scheme identifies a token that is intended to be a secret.
 ~~~ abnf
 secret-token-URI    = secret-token-scheme ":" token
 secret-token-scheme = "secret-token"
-token               = 1*tchar
-tchar               = ALPHA / DIGIT / "-" / "_" / "." / "~"
+token               = 1*pchar
 ~~~
 
-Note that characters outside the range allowed by tchar MUST be percent-encoded ({{!RFC3986}}, Section 2.1.
+See {{!RFC3986}}, Section 3.3 for a definition of pchar.
 
 When a token is both generated and presented for authentication, the entire URI MUST be used,
 without changes.
