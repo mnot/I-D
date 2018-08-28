@@ -86,7 +86,6 @@ Cache   = sh-param-list
 
 Each member of the parameterised list represents a cache that has handled the request.
 
-
 The first member of the list represents the cache closest to the origin server, and the last member of the list represents the cache closest to the user agent (possibly including the user agent's cache itself, if it chooses to append a value).
 
 Caches determine when it is appropriate to add the Cache header field to a response. Some might decide to add it to all responses, whereas others might only do so when specifically configured to, or when the request contains a header that activates a debugging mode.
@@ -115,7 +114,7 @@ The semantics of cache-actions are:
 * HIT_REFRESH_NOT_MODIFIED - The cache had a stale stored response, went forward to validate it, and used the stored response to satisfy the request
 * HIT_REFRESH_STALE - The cache had a stale stored response, went forward to validate it, and encountered a problem, so the stored response was used to satisfy the request
 * MISS - The cache did not have a stored response, so the request was forwarded
-* MISS_CLIENT - The cache had a stored response, but the client included directives (e.g., Pragma, Cache-Control) that prevented its use, so the request was forwarded
+* MISS_CLIENT - The client included request directives (e.g., Pragma, Cache-Control) that prevented the cache from returning a response, so the request was forwarded
 * BYPASS - The cache was configured to forward the request without attempting to use a stored response
 * ERROR - The cache was unable to use a stored response or obtain one by going forward
 
