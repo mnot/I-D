@@ -5,6 +5,7 @@ docname: draft-nottingham-rfc5785bis-08
 date: 2018
 category: std
 obsoletes: 5785, 8307
+updates: 7230, 6455
 
 ipr: trust200902
 area: General
@@ -98,8 +99,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 # Well-Known URIs {#well-known}
 
 A well-known URI is a URI {{!RFC3986}} whose path component begins with the characters
-"/.well-known/", and whose scheme is "http", "https", "ws", "wss", or another scheme that has
-explicitly been specified to use well-known URIs.
+"/.well-known/", and whose scheme is "http" {{!RFC7230}}, "https" {{!RFC7230}}, "ws" {{!RFC6455}},
+"wss" {{!RFC6455}}, or another scheme that has explicitly been specified to use well-known URIs.
 
 Applications that wish to mint new well-known URIs MUST register them, following the procedures in
 {{register}}.
