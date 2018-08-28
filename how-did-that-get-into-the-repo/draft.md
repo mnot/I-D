@@ -79,7 +79,7 @@ secret-token-scheme = "secret-token"
 token               = 1*pchar
 ~~~
 
-See {{!RFC3986}}, Section 3.3 for a definition of pchar.
+See {{!RFC3986}}, Section 3.3 for a definition of pchar. Disallowed characters -- including non-ASCII characters -- MUST be encoded into UTF-8 {{!RFC3629}} and then percent-encoded ({{!RFC3986}}, Section 2.1).
 
 When a token is both generated and presented for authentication, the entire URI MUST be used,
 without changes.
