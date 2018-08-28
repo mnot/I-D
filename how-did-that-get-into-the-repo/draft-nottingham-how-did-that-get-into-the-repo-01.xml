@@ -14,7 +14,7 @@
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
 
-<rfc ipr="trust200902" docName="draft-nottingham-how-did-that-get-into-the-repo-00" category="std">
+<rfc ipr="trust200902" docName="draft-nottingham-how-did-that-get-into-the-repo-01" category="std">
 
   <front>
     <title>The secret-token URI Scheme</title>
@@ -86,7 +86,7 @@ of authentication tokens.</t>
 described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all capitals, as
 shown here.</t>
 
-<t>This document uses ABNF <xref target="RFC5234"/>, including by reference the following rules: ALPHA, DIGIT.</t>
+<t>This document uses ABNF <xref target="RFC5234"/>, including by reference the following rules: ALPHA, DIGIT. It also uses the pchar rule from <xref target="RFC3986"/>.</t>
 
 </section>
 </section>
@@ -97,11 +97,10 @@ shown here.</t>
 <figure><artwork type="abnf"><![CDATA[
 secret-token-URI    = secret-token-scheme ":" token
 secret-token-scheme = "secret-token"
-token               = 1*tchar
-tchar               = ALPHA / DIGIT / "-" / "_" / "." / "~"
+token               = 1*pchar
 ]]></artwork></figure>
 
-<t>Note that characters outside the range allowed by tchar MUST be percent-encoded (<xref target="RFC3986"/>, Section 2.1.</t>
+<t>See <xref target="RFC3986"/>, Section 3.3 for a definition of pchar. Disallowed characters – including non-ASCII characters – MUST be encoded into UTF-8 <xref target="RFC3629"/> and then percent-encoded (<xref target="RFC3986"/>, Section 2.1).</t>
 
 <t>When a token is both generated and presented for authentication, the entire URI MUST be used,
 without changes.</t>
@@ -209,6 +208,20 @@ secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
 
 
 
+<reference  anchor="RFC3629" target='https://www.rfc-editor.org/info/rfc3629'>
+<front>
+<title>UTF-8, a transformation format of ISO 10646</title>
+<author initials='F.' surname='Yergeau' fullname='F. Yergeau'><organization /></author>
+<date year='2003' month='November' />
+<abstract><t>ISO/IEC 10646-1 defines a large character set called the Universal Character Set (UCS) which encompasses most of the world's writing systems.  The originally proposed encodings of the UCS, however, were not compatible with many current applications and protocols, and this has led to the development of UTF-8, the object of this memo.  UTF-8 has the characteristic of preserving the full US-ASCII range, providing compatibility with file systems, parsers and other software that rely on US-ASCII values but are transparent to other values.  This memo obsoletes and replaces RFC 2279.</t></abstract>
+</front>
+<seriesInfo name='STD' value='63'/>
+<seriesInfo name='RFC' value='3629'/>
+<seriesInfo name='DOI' value='10.17487/RFC3629'/>
+</reference>
+
+
+
 
     </references>
 
@@ -218,55 +231,56 @@ secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
   </back>
 
 <!-- ##markdown-source:
-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
+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
 
 -->
 
