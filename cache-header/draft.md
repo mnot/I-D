@@ -59,9 +59,9 @@ For example:
 
 ~~~ example
 Cache: HIT_FRESH; node="reverse-proxy.example.com:80";
-                  key="https://example.com/foo|Accept-Encoding:gzip"
+                  key="https://example.com/foo|Accept-Encoding:gzip",
        HIT_STALE; node="FooCDN parent"; fresh=-45; age=200; latency=3,
-       MISS; node="FooCDN edge"; fresh=-45; age=200; latency=98,
+       MISS; node="FooCDN edge"; fresh=-45; age=200; latency=98
 ~~~
 
 
