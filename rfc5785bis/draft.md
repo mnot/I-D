@@ -162,10 +162,17 @@ Specification document(s):
 to retrieve a copy of the document. An indication of the relevant sections may also be included,
 but is not required.
 
+Status:
+: One of "permanent" or "provisional". See guidance below.
+
 Related information:
 : Optionally, citations to additional documents containing further relevant information.
 
 General requirements for registered relation types are described in {{well-known}}.
+
+Standards-defined values have a status of "permanent". Other values can also be registered as permanent, if in Experts find that they are in use. Other values should be registered as "provisional".
+
+Provisional entries can be removed from the Experts if -- in consultation with the appropriate communities -- find that they are not in use. The Experts can change a provisional entry's status to permanent at any time.
 
 Note that well-known URIs can be registered by third parties (including the expert(s)), if the
 expert(s) determines that an unregistered well-known URI is widely deployed and not likely to be
@@ -258,8 +265,12 @@ IANA will direct any incoming requests regarding the registry to this document a
 processes established by the expert(s); typically, this will mean referring them to the registry
 Web page.
 
-IANA should replace all references to RFC 5988 in that registry have been replaced with references
+Upon publication, IANA should:
+
+* Replace all references to RFC 5988 in that registry have been replaced with references
 to this document.
+* Update the status of all existing registrations to "permanent".
+
 
 
 --- back
