@@ -172,7 +172,7 @@ General requirements for registered relation types are described in {{well-known
 
 Standards-defined values have a status of "permanent". Other values can also be registered as permanent, if the Experts find that they are in use, in consultation with the community. Other values should be registered as "provisional".
 
-Provisional entries can be removed from the Experts if -- in consultation with the community -- find that they are not in use. The Experts can change a provisional entry's status to permanent at any time.
+Provisional entries can be removed by the Experts if -- in consultation with the community -- the Experts find that they are not in use. The Experts can change a provisional entry's status to permanent at any time.
 
 Note that well-known URIs can be registered by third parties (including the expert(s)), if the
 expert(s) determines that an unregistered well-known URI is widely deployed and not likely to be
