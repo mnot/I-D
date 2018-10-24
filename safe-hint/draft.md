@@ -227,7 +227,13 @@ computer's administrator (e.g., a parent). If the site has such a means of confi
 stored user preferences) and the safe preference is received in a request, the "safer"
 interpretation ought to be used.
 
-Likewise, sites might offer different levels of "safeness" through Web configuration, they will need to either inform their users of what level the "safe" hint corresponds to, or provide them with some means of adjusting it.
+The appropriate level of "safety" is a site-specific decision. When selecting it, sites ought to
+bear in mind that disabling the preference might be considerably more onerous than through other
+means, especially if the preference is generated based upon Operating System configuration.
+
+Sites might offer different levels of "safeness" through Web configuration, they will need to
+either inform their users of what level the "safe" hint corresponds to, or provide them with some
+means of adjusting it.
 
 If the user expresses a wish to disable "safe" mode, the site can remind them that the safe
 preference is being sent, and ask them to consult their administrator (since "safe" might be set by
