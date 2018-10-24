@@ -46,31 +46,31 @@ This specification defines a "safe" preference for HTTP requests that expresses 
 # Introduction
 
 Many Web sites have a "safe" mode, to assist those who don't want to be exposed (or have their
-children exposed) to "objectionable" content.
+children exposed) to objectionable content.
 
-However, that goal is often difficult to achieve, because of the need to go to each Web site in
-turn, navigate to the appropriate page (possibly creating an account along the way) to get a cookie
-{{?RFC6265}} set in the browser, for each browser on every device used.
+However, that goal is often difficult to achieve, because of the need to go to every Web site that
+might be used, navigate to the appropriate page (possibly creating an account along the way) to get
+a cookie {{?RFC6265}} set in the browser, for each browser on every device used.
 
-Often, the complete set of sites that can be configured in this manner is unknown, further
-complicating the task.
-
-If this desire is proactively advertised by the user agent, things become much simpler. A user
-agent that supports doing so (whether it be an individual browser, or through an Operating System
-HTTP library) need only be configured once to assure that the preference is advertised to a set of
-sites, or even all sites.
+A more manageable approach is for the browser to proactively indicate a preference for safe
+content. A user agent that supports doing so (whether it be an individual browser, or through an
+Operating System HTTP library) need only be configured once to assure that the preference is
+advertised to a set of sites, or even all sites.
 
 This specification defines how to declare this desire in requests as a HTTP Preference {{!RFC7240}}.
 
 Note that this specification does not precisely define what "safe" is; rather, it is interpreted
-within the scope of each Web site that chooses to act upon this information. Furthermore, sending
-"safe" does not guarantee that the Web site will use it. As such, its effect can be described as
-"best effort," but not to be relied upon.
+within the scope of each Web site that chooses to act upon this information.
 
 That said, the intent of "safe" is to allow end users (or those acting on their behalf) to express
-a desire to avoid content that is considered "objectionable" within the cultural context of that
+a desire to avoid content that is considered objectionable within the cultural context of that
 site; usually (but not always) content that is unsuitable for minors. The "safe" preference ought
 not be used for other purposes.
+
+Furthermore, sending "safe" does not guarantee that the Web site will use it. As such, its effect
+can be described as "best effort," but not to be relied upon. In other words, sending the
+preference is no more reliable than going to each Web site and manually selecting a "safe" mode,
+but it is considerably easier.
 
 It is also important to note that the "safe" preference is not a reliable indicator that the end
 user is a child; other users might have a desire for unobjectionable content, and some children
@@ -138,17 +138,15 @@ See {{servers}} for additional advice specific to Web servers wishing to use "sa
 *Note to RFC Editor: Please remove this section before publication.*
 
 This section records the status of known implementations of the protocol defined by this
-specification at the time of posting of this Internet-Draft. The description of implementations in
-this section is intended to assist the IETF in its decision processes in progressing drafts to
-RFCs. Please note that the listing of any individual implementation here does not imply endorsement
-by the IETF. Furthermore, no effort has been spent to verify the information presented here that
-was supplied by IETF contributors. This is not intended as, and must not be construed to be, a
-catalog of available implementations or their features. Readers are advised to note that other
-implementations may exist.
+specification at the time of posting of this Internet-Draft. Please note that the listing of any
+individual implementation here does not imply endorsement by the IETF. Furthermore, no effort has
+been spent to verify the information presented here that was supplied by IETF contributors. This is
+not intended as, and must not be construed to be, a catalog of available implementations or their
+features. Readers are advised to note that other implementations may exist.
 
-* Microsoft Internet Explorer - see http://support.microsoft.com/kb/2980016
-* Microsoft Bing
-* Mozilla Firefox - see https://bugzilla.mozilla.org/show_bug.cgi?id=995070
+* Microsoft Internet Explorer - see https://support.microsoft.com/en-hk/help/2980016/
+* Microsoft Bing - see https://developer.microsoft.com/en-us/microsoft-edge/testdrive/demos/familysearch/
+* Mozilla Firefox - see https://support.mozilla.org/en-US/kb/block-and-unblock-websites-parental-controls-firef
 * Cisco - see http://blogs.cisco.com/security/filtering-explicit-content
 
 
