@@ -2,13 +2,13 @@
 title: The "safe" HTTP Preference
 abbrev: Preference for Safe Browsing
 docname: draft-nottingham-safe-hint-07
-date: 2016
+date: 2018
 category: std
 
 ipr: trust200902
 area: General
-workgroup: 
-keyword: 
+workgroup:
+keyword:
  - safe
  - preference
  - child-protection
@@ -26,23 +26,20 @@ pi:
 author:
  -  ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
-    uri: http://www.mnot.net/
+    uri: https://www.mnot.net/
 
 normative:
-  RFC2119:
-  RFC7240:
-  
+
 informative:
-  RFC6265:
-  RFC7234:
 
 
 --- abstract
 
 This specification defines a "safe" preference for HTTP requests, expressing a
-desire to avoid "objectionable" content.
+desire to avoid "objectionable" content, according to the definition of that
+term by the origin server.
 
 
 --- middle
@@ -54,7 +51,7 @@ Many Web sites have a "safe" mode, to assist those who don't want to be exposed
 
 However, that goal is often difficult to achieve, because of the need to go to
 each Web site in turn, navigate to the appropriate page (possibly creating an
-account along the way) to get a cookie {{RFC6265}} set in the browser, for each
+account along the way) to get a cookie {{?RFC6265}} set in the browser, for each
 browser on every device used.
 
 Often, the complete set of sites that can be configured in this manner is
@@ -67,7 +64,7 @@ once to assure that the preference is advertised to a set of sites, or even all
 sites.
 
 This specification defines how to declare this desire in requests as a HTTP
-Preference {{RFC7240}}.
+Preference {{!RFC7240}}.
 
 Note that this specification does not precisely define what "safe" is; rather,
 it is interpreted within the scope of each Web site that chooses to act upon
@@ -93,16 +90,17 @@ according to your definition of the term."
 
 ## Notational Conventions
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-document are to be interpreted as described in {{RFC2119}}.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
+"RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
+described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
+shown here.
 
 
 # The "safe" Preference {#safe}
 
 When present in a request, the "safe" preference indicates that the
 content which is not objectionable is preferred, according to the server's
-definition of the concept. 
+definition of the concept.
 
 For example, a request that includes the "safe" preference:
 
@@ -126,7 +124,7 @@ Origin servers that utilize the "safe" preference ought to document that they do
 so, along with the criteria that they use to denote objectionable content. If a
 server has more fine-grained degrees of "safety", it SHOULD select a reasonable
 default to use, and document that; it MAY use additional mechanisms (e.g.,
-cookies {{RFC6265}}) to fine-tune.
+cookies {{?RFC6265}}) to fine-tune.
 
 A response corresponding to the request above might have headers that look
 like this:
@@ -144,7 +142,7 @@ cacheable and might change depending on the value of the "Prefer" header. This
 is not only true for those responses that are "safe", but also the default
 "unsafe" response.
 
-See {{RFC7234}} Section 4.1 for more information the interaction between Vary
+See {{!RFC7234}} Section 4.1 for more information the interaction between Vary
 and Web caching.
 
 See {{servers}} for additional advice specific to Web servers wishing to use
@@ -169,6 +167,7 @@ exist.
 * Microsoft Bing
 * Mozilla Firefox - see https://bugzilla.mozilla.org/show_bug.cgi?id=995070
 * Cisco - see http://blogs.cisco.com/security/filtering-explicit-content
+
 
 # Security Considerations
 
@@ -199,13 +198,13 @@ change.
 
 # IANA Considerations
 
-This specification registers the "safe" preference {{RFC7240}}:
+This specification registers the "safe" preference {{!RFC7240}}:
 
 * Preference: safe
 * Value: (no value)
 * Description: Indicates that "safe" / "unobjectionable" content is preferred.
 * Reference: (this document)
-* Notes: 
+* Notes:
 
 
 --- back
@@ -214,6 +213,7 @@ This specification registers the "safe" preference {{RFC7240}}:
 
 Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso, Jeff Hughes, Lorrie
 Cranor, Doug Turner and Dave Crocker for their comments.
+
 
 # Setting "safe" from Web Browsers {#browsers}
 
