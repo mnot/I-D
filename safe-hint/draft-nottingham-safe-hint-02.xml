@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
+
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+]>
+
+<rfc ipr="trust200902" docName="draft-nottingham-safe-hint-02" category="info">
+
+<?rfc toc="yes"?>
+<?rfc tocindent="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc strict="yes"?>
+<?rfc compact="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<?rfc rfcedstyle="yes"?>
+
+  <front>
+    <title abbrev="safe browsing preference">The "safe" HTTP Preference</title>
+
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization></organization>
+      <address>
+        <email>mnot@mnot.net</email>
+        <uri>http://www.mnot.net/</uri>
+      </address>
+    </author>
+
+    <date year="2014"/>
+
+    <area>General</area>
+    
+    <keyword>safe</keyword> <keyword>preference</keyword> <keyword>child-protection</keyword>
+
+    <abstract>
+
+
+<t>This specification defines a “safe” preference for HTTP, expressing a user
+preference to avoid “objectionable” content.</t>
+
+
+
+    </abstract>
+
+
+  </front>
+
+  <middle>
+
+
+<section anchor="introduction" title="Introduction">
+
+<t>Many Web sites have a “safe” mode, to assist those who don’t want to be exposed
+(or have their children exposed) to “objectionable” content. YouTube
+<xref target="youtube"/>, Yahoo! Search <xref target="yahoo"/>, Google Search <xref target="google"/>, Bing Search
+<xref target="bing"/>, and many other services have such a setting.</t>
+
+<t>However, those who wish to have this preference honoured need to go to each Web
+site in turn, navigate to the appropriate page, (possibly creating an account
+along the way) to get a cookie <xref target="RFC6265"/> set in the browser. They would need
+to do this for each browser on every device they use. </t>
+
+<t>This is onerous to achieve effectively, because there are so many permutations
+of sites, user agents and devices.</t>
+
+<t>If this preference is proactively advertised by the user agent, things become
+much simpler. A user agent that supports doing so (whether it be an individual
+browser, or through an Operating System HTTP library) need only be configured
+once to assure that the preference is advertised to all sites that understand
+and choose to act upon it. It’s no longer necessary to go to each site that has
+potentially “unsafe” content and configure a “safe” mode.</t>
+
+<t>Furthermore, a proxy (for example, at a school) can be used to ensure that the
+preference is associated with all (unencrypted) requests flowing through it,
+helping to assure that clients behind it are not exposed to “objectionable”
+content.</t>
+
+<t>This specification defines how to associate this preference with a request,
+as a HTTP Preference <xref target="I-D.snell-http-prefer"/>.</t>
+
+<t>Note that this approach does not define what “safe” is; rather, it is
+interpreted within the scope of each Web site that chooses to act upon this
+information (or not). As such, it does not require agreement upon what “safe”
+is, nor does it require application of policy in the user agent or an 
+intermediary (which can be problematic for many reasons).</t>
+
+<section anchor="notational-conventions" title="Notational Conventions">
+
+<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”,
+“SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL” in this
+document are to be interpreted as described in <xref target="RFC2119"/>.</t>
+
+</section>
+</section>
+<section anchor="safe" title="The “safe” Preference">
+
+<t>When present in a request, the “safe” preference indicates that the
+user prefers content which is not objectionable, according to the server’s
+definition of the concept. </t>
+
+<t>For example, a request that includes the “safe” preference:</t>
+
+<figure><artwork><![CDATA[
+GET /foo.html HTTP/1.1
+Host: www.example.org
+User-Agent: ExampleBrowser/1.0
+Prefer: safe
+]]></artwork></figure>
+
+<t>When configured to do so, user agents SHOULD include the “safe” preference in
+every request, to ensure that the preference is applied (where possible) to all
+resources.</t>
+
+<t>For example, a Web browser might have a “Request Safe Browsing”
+option. </t>
+
+<t>Additionally, other clients MAY insert it; e.g., an operating system might
+choose to insert the preference in requests based upon system-wide
+configuration, or a proxy might do so based upon its configuration.</t>
+
+<t>Origin servers that utilize the “safe” preference SHOULD document that they do
+so, along with the criteria that they use to denote objectionable content. If a
+server has more fine-grained degrees of “safety”, it SHOULD select a reasonable
+default to use, and document that; it MAY use additional mechanisms (e.g.,
+cookies) to fine-tune.</t>
+
+<t>A response corresponding to the request above might have headers that look
+like this:</t>
+
+<figure><artwork><![CDATA[
+HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Content-Type: text/html
+Server: ExampleServer/2.0
+Vary: Prefer
+]]></artwork></figure>
+
+<t>Note that the Vary response header needs to be sent if cacheable responses
+associated with the resource might change depending on the value of the
+“Prefer” header. This is not only true for those responses that are “safe”,
+but also the default “unsafe” response.</t>
+
+<t>See <xref target="I-D.ietf-httpbis-p6-cache"/> for more information.</t>
+
+</section>
+<section anchor="security-considerations" title="Security Considerations">
+
+<t>The “safe” preference is not a secure mechanism; it can be inserted or
+removed by intermediaries with access to the data stream. Its presence reveals
+information about the user, which may be of small assistance in
+“fingerprinting” the user (1 bit of information, to be precise).</t>
+
+<t>Due to its nature, including “safe” in requests does not assure that all
+content will actually be safe; it is only when servers elect to honour it that
+content might be “safe”.</t>
+
+<t>Even then, a malicious server might adapt content so that it is even less
+“safe” (by some definition of the word). As such, this mechanism on its own is
+not enough to assure that only “safe” content is seen; users who wish to
+ensure that will need to combine its use with other techniques (e.g., content
+filtering).</t>
+
+<t>Furthermore, the server and user may have differing ideas regarding the
+semantics of “safe.” As such, the “safety” of the user’s experience when 
+browsing from site to site might (and probably will) change. </t>
+
+</section>
+<section anchor="iana-considerations" title="IANA Considerations">
+
+<t>This specification registers the “safe” preference
+<xref target="I-D.snell-http-prefer"/>:</t>
+
+<t><list style="symbols">
+  <t>Preference: safe</t>
+  <t>Value: (no value)</t>
+  <t>Description: Indicates that the user (or one responsible for them) prefers
+“safe” or “unobjectionable” content.</t>
+  <t>Reference: (this document)</t>
+  <t>Notes: </t>
+</list></t>
+
+</section>
+
+
+  </middle>
+
+  <back>
+
+    <references title='Normative References'>
+
+
+
+
+
+<reference anchor='RFC2119'>
+
+<front>
+<title abbrev='RFC Key Words'>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='Scott Bradner'>
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<street>Cambridge</street>
+<street>MA 02138</street></postal>
+<phone>- +1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year='1997' month='March' />
+<area>General</area>
+<keyword>keyword</keyword>
+<abstract>
+<t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list>
+<t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+<t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t></abstract></front>
+
+<seriesInfo name='BCP' value='14' />
+<seriesInfo name='RFC' value='2119' />
+<format type='TXT' octets='4723' target='http://www.rfc-editor.org/rfc/rfc2119.txt' />
+<format type='HTML' octets='17970' target='http://xml.resource.org/public/rfc/html/rfc2119.html' />
+<format type='XML' octets='5777' target='http://xml.resource.org/public/rfc/xml/rfc2119.xml' />
+</reference>
+
+
+
+<reference anchor='I-D.snell-http-prefer'>
+<front>
+<title>Prefer Header for HTTP</title>
+
+<author initials='J' surname='Snell' fullname='James Snell'>
+    <organization />
+</author>
+
+<date month='January' day='7' year='2013' />
+
+<abstract><t>This specification defines an HTTP header field that can be used by a client to request that certain behaviors be employed by a server while processing a request.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-snell-http-prefer-18' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-snell-http-prefer-18.txt' />
+</reference>
+
+
+
+
+    </references>
+
+    <references title='Informative References'>
+
+
+
+
+
+<reference anchor='RFC6265'>
+
+<front>
+<title>HTTP State Management Mechanism</title>
+<author initials='A.' surname='Barth' fullname='A. Barth'>
+<organization /></author>
+<date year='2011' month='April' />
+<abstract>
+<t>This document defines the HTTP Cookie and Set-Cookie header fields.  These header fields can be used by HTTP servers to store state (called cookies) at HTTP user agents, letting the servers maintain a stateful session over the mostly stateless HTTP protocol.  Although cookies have many historical infelicities that degrade their security and privacy, the Cookie and Set-Cookie header fields are widely used on the Internet.  This document obsoletes RFC 2965. [STANDARDS-TRACK]</t></abstract></front>
+
+<seriesInfo name='RFC' value='6265' />
+<format type='TXT' octets='79724' target='http://www.rfc-editor.org/rfc/rfc6265.txt' />
+</reference>
+
+
+
+<reference anchor='I-D.ietf-httpbis-p6-cache'>
+<front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Caching</title>
+
+<author initials='R' surname='Fielding' fullname='Roy Fielding'>
+    <organization />
+</author>
+
+<author initials='M' surname='Nottingham' fullname='Mark Nottingham'>
+    <organization />
+</author>
+
+<author initials='J' surname='Reschke' fullname='Julian Reschke'>
+    <organization />
+</author>
+
+<date month='February' day='6' year='2014' />
+
+<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application- level protocol for distributed, collaborative, hypertext information systems.  This document defines HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages.</t></abstract>
+
+</front>
+
+<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-p6-cache-26' />
+<format type='TXT'
+        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-p6-cache-26.txt' />
+</reference>
+
+
+<reference anchor="yahoo" target="http://search.yahoo.com/preferences/preferences">
+  <front>
+    <title>Yahoo! Search Preferences</title>
+    <author >
+      <organization>Yahoo! Inc.</organization>
+    </author>
+    <date year="2013"/>
+  </front>
+</reference>
+<reference anchor="bing" target="http://onlinehelp.microsoft.com/en-AU/bing/ff808441.aspx">
+  <front>
+    <title>Bing Help: Block Explicit Web Sites</title>
+    <author >
+      <organization>Microsoft</organization>
+    </author>
+    <date year="2013"/>
+  </front>
+</reference>
+<reference anchor="google" target="http://support.google.com/websearch/bin/answer.py?p=settings_safesearch&amp;answer=510">
+  <front>
+    <title>SafeSearch: turn on or off</title>
+    <author >
+      <organization>Google</organization>
+    </author>
+    <date year="2013"/>
+  </front>
+</reference>
+<reference anchor="youtube" target="http://support.google.com/youtube/bin/answer.py?answer=174084">
+  <front>
+    <title>How to access and turn on Safety Mode?</title>
+    <author >
+      <organization>Google</organization>
+    </author>
+    <date year="2013"/>
+  </front>
+</reference>
+
+
+    </references>
+
+
+<section anchor="acknowledgements" title="Acknowledgements">
+
+<t>Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso, Jeff Hughes and Loorie
+Cranor for their comments.</t>
+
+</section>
+<section anchor="setting-safe-from-web-browsers" title="Setting “safe” from Web Browsers">
+
+<t>As discussed in <xref target="safe"/>, there are many possible ways for the “safe”
+preference to be generated. One possibility is for a Web browser to allow its
+users to configure the preference to be sent.</t>
+
+<t>When doing so, it is important not to misrepresent the preference as binding to Web sites. For example, an appropriate setting might be a checkbox with wording such as:</t>
+
+<figure><artwork><![CDATA[
+  [] Request "safe" content from Web sites
+]]></artwork></figure>
+
+<t>… along with further information available upon request (e.g., from a “help”
+system).</t>
+
+<t>Browsers might also allow the “safe” preference to be “locked” – that is,
+prevent modification without administrative access, or a passcode.</t>
+
+</section>
+<section anchor="using-safe-on-your-web-site" title="Using “safe” on Your Web Site">
+
+<t>Web sites that allow configuration of a “safe” mode (for example, using a
+cookie) can add support for the “safe” preference incrementally; since the
+preference will not be supported by all clients immediately, it is necessary to
+still have a fallback configuration option.</t>
+
+<t>When honouring the safe preference, it is important that it not be possible to
+disable it through the Web interface, since “safe” may be inserted by an
+intermediary (e.g., at a school) or configured and locked down by an
+administrator (e.g., a parent). When both the “safe” preference and per-site
+configuration are present, the preference takes precedence.</t>
+
+<t>The safe preference is designed to make as much of the Web a “safe” experience
+as possible; it is not intended to be configured site-by-site. Therefore, if
+the user expresses a wish to disable “safe” mode, the site should remind them
+that the safe preference is being sent, and ask them to consult their
+administrator (since “safe” might be set by an intermediary or locked-down
+Operating System configuration).</t>
+
+<t>As explained in <xref target="safe"/>, responses that change based upon the presence of the
+“safe” preference need to either carry the “Vary: Prefer” response header
+field, or be uncacheable by shared caches (e.g., with a “Cache-Control:
+private” response header field). This is to avoid an unsafe cached response
+being served to a client that prefers safe content (or vice versa).</t>
+
+</section>
+
+
+  </back>
+</rfc>
+
