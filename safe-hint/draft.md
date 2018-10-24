@@ -37,7 +37,7 @@ informative:
 
 --- abstract
 
-This specification defines a "safe" preference for HTTP requests, expressing a desire to avoid
+This specification defines a "safe" preference for HTTP requests that expresses a desire to avoid
 "objectionable" content, according to the definition of that term by the origin server.
 
 
