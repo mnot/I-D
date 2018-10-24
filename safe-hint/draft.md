@@ -3,7 +3,7 @@ title: The "safe" HTTP Preference
 abbrev: Preference for Safe Browsing
 docname: draft-nottingham-safe-hint-07
 date: 2018
-category: std
+category: info
 
 ipr: trust200902
 area: General
