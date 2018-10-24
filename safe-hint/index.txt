@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                          November 4, 2016
-Intended status: Standards Track
-Expires: May 8, 2017
+Internet-Draft                                          October 24, 2018
+Intended status: Informational
+Expires: April 27, 2019
 
 
                        The "safe" HTTP Preference
@@ -13,8 +13,9 @@ Expires: May 8, 2017
 
 Abstract
 
-   This specification defines a "safe" preference for HTTP requests,
-   expressing a desire to avoid "objectionable" content.
+   This specification defines a "safe" preference for HTTP requests that
+   expresses a desire to avoid "objectionable" content, according to the
+   definition of that term by the origin server.
 
 Status of This Memo
 
@@ -24,23 +25,23 @@ Status of This Memo
    Internet-Drafts are working documents of the Internet Engineering
    Task Force (IETF).  Note that other groups may also distribute
    working documents as Internet-Drafts.  The list of current Internet-
-   Drafts is at http://datatracker.ietf.org/drafts/current/.
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
 
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 8, 2017.
+   This Internet-Draft will expire on April 27, 2019.
 
 Copyright Notice
 
-   Copyright (c) 2016 IETF Trust and the persons identified as the
+   Copyright (c) 2018 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents
-   (http://trustee.ietf.org/license-info) in effect on the date of
+   (https://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
@@ -52,10 +53,9 @@ Copyright Notice
 
 
 
-
-Nottingham                 Expires May 8, 2017                  [Page 1]
+Nottingham               Expires April 27, 2019                 [Page 1]
 
-Internet-Draft        Preference for Safe Browsing         November 2016
+Internet-Draft        Preference for Safe Browsing          October 2018
 
 
 Table of Contents
@@ -63,55 +63,55 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
    2.  The "safe" Preference . . . . . . . . . . . . . . . . . . . .   3
    3.  Implementation Status . . . . . . . . . . . . . . . . . . . .   4
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
    6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   7
-   Appendix B.  Setting "safe" from Web Browsers . . . . . . . . . .   7
+   Appendix B.  Sending "safe" from Web Browsers . . . . . . . . . .   7
    Appendix C.  Supporting "safe" on Web Sites . . . . . . . . . . .   7
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   8
 
 1.  Introduction
 
    Many Web sites have a "safe" mode, to assist those who don't want to
-   be exposed (or have their children exposed) to "objectionable"
-   content.
+   be exposed (or have their children exposed) to objectionable content.
 
    However, that goal is often difficult to achieve, because of the need
-   to go to each Web site in turn, navigate to the appropriate page
-   (possibly creating an account along the way) to get a cookie
-   [RFC6265] set in the browser, for each browser on every device used.
+   to go to every Web site that might be used, navigate to the
+   appropriate page (possibly creating an account along the way) to get
+   a cookie [RFC6265] set in the browser, for each browser on every
+   device used.
 
-   Often, the complete set of sites that can be configured in this
-   manner is unknown, further complicating the task.
-
-   If this desire is proactively advertised by the user agent, things
-   become much simpler.  A user agent that supports doing so (whether it
-   be an individual browser, or through an Operating System HTTP
-   library) need only be configured once to assure that the preference
-   is advertised to a set of sites, or even all sites.
+   A more manageable approach is for the browser to proactively indicate
+   a preference for safe content.  A user agent that supports doing so
+   (whether it be an individual browser, or through an Operating System
+   HTTP library) need only be configured once to assure that the
+   preference is advertised to a set of sites, or even all sites.
 
    This specification defines how to declare this desire in requests as
    a HTTP Preference [RFC7240].
 
    Note that this specification does not precisely define what "safe"
    is; rather, it is interpreted within the scope of each Web site that
-   chooses to act upon this information.  Furthermore, sending "safe"
-   does not guarantee that the Web site will use it.  As such, its
-   effect can be described as "best effort," but not to be relied upon.
+   chooses to act upon this information.
 
    That said, the intent of "safe" is to allow end users (or those
    acting on their behalf) to express a desire to avoid content that is
-   considered "objectionable" within the cultural context of that site;
+   considered objectionable within the cultural context of that site;
    usually (but not always) content that is unsuitable for minors.  The
    "safe" preference ought not be used for other purposes.
 
+   Furthermore, sending "safe" does not guarantee that the Web site will
+   use it.  As such, its effect can be described as "best effort," but
+   not to be relied upon.  In other words, sending the preference is no
+   more reliable than going to each Web site and manually selecting a
+   "safe" mode, but it is considerably easier.
 
 
 
-Nottingham                 Expires May 8, 2017                  [Page 2]
+Nottingham               Expires April 27, 2019                 [Page 2]
 
-Internet-Draft        Preference for Safe Browsing         November 2016
+Internet-Draft        Preference for Safe Browsing          October 2018
 
 
    It is also important to note that the "safe" preference is not a
@@ -126,14 +126,16 @@ Internet-Draft        Preference for Safe Browsing         November 2016
 1.1.  Notational Conventions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-   document are to be interpreted as described in [RFC2119].
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
 
 2.  The "safe" Preference
 
    When present in a request, the "safe" preference indicates that the
    content which is not objectionable is preferred, according to the
-   server's definition of the concept.
+   origin server's definition of the concept.
 
    For example, a request that includes the "safe" preference:
 
@@ -163,11 +165,9 @@ Internet-Draft        Preference for Safe Browsing         November 2016
 
 
 
-
-
-Nottingham                 Expires May 8, 2017                  [Page 3]
+Nottingham               Expires April 27, 2019                 [Page 3]
 
-Internet-Draft        Preference for Safe Browsing         November 2016
+Internet-Draft        Preference for Safe Browsing          October 2018
 
 
    HTTP/1.1 200 OK
@@ -193,43 +193,39 @@ Internet-Draft        Preference for Safe Browsing         November 2016
 
    This section records the status of known implementations of the
    protocol defined by this specification at the time of posting of this
-   Internet-Draft.  The description of implementations in this section
-   is intended to assist the IETF in its decision processes in
-   progressing drafts to RFCs.  Please note that the listing of any
-   individual implementation here does not imply endorsement by the
-   IETF.  Furthermore, no effort has been spent to verify the
-   information presented here that was supplied by IETF contributors.
-   This is not intended as, and must not be construed to be, a catalog
-   of available implementations or their features.  Readers are advised
-   to note that other implementations may exist.
+   Internet-Draft.  Please note that the listing of any individual
+   implementation here does not imply endorsement by the IETF.
+   Furthermore, no effort has been spent to verify the information
+   presented here that was supplied by IETF contributors.  This is not
+   intended as, and must not be construed to be, a catalog of available
+   implementations or their features.  Readers are advised to note that
+   other implementations may exist.
 
-   o  Microsoft Internet Explorer - see http://support.microsoft.com/
-      kb/2980016
+   o  Microsoft Internet Explorer - see https://support.microsoft.com/
+      en-hk/help/2980016/
 
-   o  Microsoft Bing
+   o  Microsoft Bing - see https://developer.microsoft.com/en-us/
+      microsoft-edge/testdrive/demos/familysearch/
 
-   o  Mozilla Firefox - see https://bugzilla.mozilla.org/
-      show_bug.cgi?id=995070
+   o  Mozilla Firefox - see https://support.mozilla.org/en-US/kb/block-
+      and-unblock-websites-parental-controls-firef
 
    o  Cisco - see http://blogs.cisco.com/security/filtering-explicit-
       content
-
-
-
-
-
-
-
-
-Nottingham                 Expires May 8, 2017                  [Page 4]
-
-Internet-Draft        Preference for Safe Browsing         November 2016
-
 
 4.  Security Considerations
 
    The "safe" preference is not a secure mechanism; it can be inserted
    or removed by intermediaries with access to the request stream (e.g.
+
+
+
+
+Nottingham               Expires April 27, 2019                 [Page 4]
+
+Internet-Draft        Preference for Safe Browsing          October 2018
+
+
    for "http" URLs).  Therefore, it SHOULD NOT be included in requests
    with the "http" scheme.
 
@@ -271,38 +267,39 @@ Internet-Draft        Preference for Safe Browsing         November 2016
 
 6.  References
 
-
-
-
-
-
-
-Nottingham                 Expires May 8, 2017                  [Page 5]
-
-Internet-Draft        Preference for Safe Browsing         November 2016
-
-
 6.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
-              <http://www.rfc-editor.org/info/rfc2119>.
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+
+
+
+Nottingham               Expires April 27, 2019                 [Page 5]
+
+Internet-Draft        Preference for Safe Browsing          October 2018
+
+
+   [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
+              RFC 7234, DOI 10.17487/RFC7234, June 2014,
+              <https://www.rfc-editor.org/info/rfc7234>.
 
    [RFC7240]  Snell, J., "Prefer Header for HTTP", RFC 7240,
               DOI 10.17487/RFC7240, June 2014,
-              <http://www.rfc-editor.org/info/rfc7240>.
+              <https://www.rfc-editor.org/info/rfc7240>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
 6.2.  Informative References
 
    [RFC6265]  Barth, A., "HTTP State Management Mechanism", RFC 6265,
               DOI 10.17487/RFC6265, April 2011,
-              <http://www.rfc-editor.org/info/rfc6265>.
-
-   [RFC7234]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
-              Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
-              RFC 7234, DOI 10.17487/RFC7234, June 2014,
-              <http://www.rfc-editor.org/info/rfc7234>.
+              <https://www.rfc-editor.org/info/rfc6265>.
 
 
 
@@ -333,9 +330,12 @@ Internet-Draft        Preference for Safe Browsing         November 2016
 
 
 
-Nottingham                 Expires May 8, 2017                  [Page 6]
+
+
+
+Nottingham               Expires April 27, 2019                 [Page 6]
 
-Internet-Draft        Preference for Safe Browsing         November 2016
+Internet-Draft        Preference for Safe Browsing          October 2018
 
 
 Appendix A.  Acknowledgements
@@ -343,7 +343,7 @@ Appendix A.  Acknowledgements
    Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso, Jeff Hughes,
    Lorrie Cranor, Doug Turner and Dave Crocker for their comments.
 
-Appendix B.  Setting "safe" from Web Browsers
+Appendix B.  Sending "safe" from Web Browsers
 
    As discussed in Section 2, there are many possible ways for the
    "safe" preference to be generated.  One possibility is for a Web
@@ -361,9 +361,9 @@ Appendix B.  Setting "safe" from Web Browsers
    is, prevent modification without administrative access, or a
    passcode.
 
-   Note that this specification does not constrain browsers to send
-   "safe" on all requests, although that is one possible implementation;
-   e.g., alternate implementation strategies include blacklists and
+   Note that this specification does not require browsers to send "safe"
+   on all requests, although that is one possible implementation; e.g.,
+   alternate implementation strategies include blacklists and
    whitelists.
 
 Appendix C.  Supporting "safe" on Web Sites
@@ -376,23 +376,31 @@ Appendix C.  Supporting "safe" on Web Sites
 
    When honoring the safe preference, it is important that it not be
    possible to disable it through the Web site's interface, since "safe"
-   may be configured and locked down by the browser's administrator
-   (e.g., a parent).  If the site has such a means of configuration
-   (e.g., stored user preferences) and the safe preference is received
-   in a request, the "safer" interpretation ought to be used.
+   may be configured and locked down by the browser or computer's
+   administrator (e.g., a parent).  If the site has such a means of
+   configuration (e.g., stored user preferences) and the safe preference
+   is received in a request, the "safer" interpretation ought to be
+   used.
 
-   Likewise, sites might offer different levels of "safeness" through
-   Web configuration, they will need to either inform their users of
-   what level the "safe" hint corresponds to, or provide them with some
-   means of adjusting it.
-
-
+   The appropriate level of "safety" is a site-specific decision.  When
+   selecting it, sites ought to bear in mind that disabling the
+   preference might be considerably more onerous than through other
 
 
-Nottingham                 Expires May 8, 2017                  [Page 7]
+
+
+Nottingham               Expires April 27, 2019                 [Page 7]
 
-Internet-Draft        Preference for Safe Browsing         November 2016
+Internet-Draft        Preference for Safe Browsing          October 2018
 
+
+   means, especially if the preference is generated based upon Operating
+   System configuration.
+
+   Sites might offer different levels of "safeness" through Web
+   configuration, they will need to either inform their users of what
+   level the "safe" hint corresponds to, or provide them with some means
+   of adjusting it.
 
    If the user expresses a wish to disable "safe" mode, the site can
    remind them that the safe preference is being sent, and ask them to
@@ -411,7 +419,7 @@ Author's Address
    Mark Nottingham
 
    EMail: mnot@mnot.net
-   URI:   http://www.mnot.net/
+   URI:   https://www.mnot.net/
 
 
 
@@ -437,12 +445,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-Nottingham                 Expires May 8, 2017                  [Page 8]
+Nottingham               Expires April 27, 2019                 [Page 8]
