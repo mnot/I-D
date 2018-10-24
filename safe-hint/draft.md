@@ -91,7 +91,7 @@ shown here.
 # The "safe" Preference {#safe}
 
 When present in a request, the "safe" preference indicates that the content which is not
-objectionable is preferred, according to the server's definition of the concept.
+objectionable is preferred, according to the origin server's definition of the concept.
 
 For example, a request that includes the "safe" preference:
 
@@ -195,7 +195,7 @@ Thanks to Alissa Cooper, Ilya Grigorik, Emma Llanso, Jeff Hughes, Lorrie Cranor,
 Dave Crocker for their comments.
 
 
-# Setting "safe" from Web Browsers {#browsers}
+# Sending "safe" from Web Browsers {#browsers}
 
 As discussed in {{safe}}, there are many possible ways for the "safe" preference to be generated.
 One possibility is for a Web browser to allow its users to configure the preference to be sent.
@@ -212,7 +212,7 @@ example, an appropriate setting might be a checkbox with wording such as:
 Browsers might also allow the "safe" preference to be "locked" -- that is, prevent modification
 without administrative access, or a passcode.
 
-Note that this specification does not constrain browsers to send "safe" on all requests, although
+Note that this specification does not require browsers to send "safe" on all requests, although
 that is one possible implementation; e.g., alternate implementation strategies include blacklists
 and whitelists.
 
@@ -224,10 +224,10 @@ for the "safe" preference incrementally; since the preference will not be suppor
 immediately, it is necessary to have another way to configure it.
 
 When honoring the safe preference, it is important that it not be possible to disable it through
-the Web site's interface, since "safe" may be configured and locked down by the browser's
-administrator (e.g., a parent). If the site has such a means of configuration (e.g., stored user
-preferences) and the safe preference is received in a request, the "safer" interpretation ought to
-be used.
+the Web site's interface, since "safe" may be configured and locked down by the browser or
+computer's administrator (e.g., a parent). If the site has such a means of configuration (e.g.,
+stored user preferences) and the safe preference is received in a request, the "safer"
+interpretation ought to be used.
 
 Likewise, sites might offer different levels of "safeness" through Web configuration, they will need to either inform their users of what level the "safe" hint corresponds to, or provide them with some means of adjusting it.
 
