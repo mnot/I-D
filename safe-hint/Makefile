@@ -3,7 +3,7 @@ id_base = ..
 xml2rfc ?= xml2rfc
 saxpath ?= /usr/local/share/saxon-b/saxon9.jar
 kramdown-rfc2629 ?= kramdown-rfc2629
-bootstrap ?= ../../rfcbootstrap/rfcbootstrap.xslt
+bootstrap ?= ../Tools/rfcbootstrap/rfcbootstrap.xslt
 idnits ?= idnits
 
 title = nottingham-$(shell basename ${CURDIR})
@@ -35,7 +35,7 @@ idnits: $(target).txt
 	$(kramdown-rfc2629) $< > $@
 	
 %.html: %.xml
-	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfc2629xslt\/rfc2629.dtd/" $<
+	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfcbootstrap\/rfc2629.dtd/" $<
 	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) \
 	bootstrapJsUrl='../Tools/bower_components/bootstrap/dist/js/bootstrap.min.js' \
 	bootstrapCssUrl='../Tools/bower_components/bootstrap/dist/css/bootstrap.min.css' \
