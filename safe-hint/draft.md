@@ -120,9 +120,14 @@ A response corresponding to the request above might have headers that look like 
 HTTP/1.1 200 OK
 Transfer-Encoding: chunked
 Content-Type: text/html
+Preference-Applied: safe
 Server: ExampleServer/2.0
 Vary: Prefer
 ~~~
+
+Here, the Preference-Applied response header ({{!RFC7240}}) indicates that the site has applied the
+preference. Servers are not required to send Preference-Applied, but are encouraged to where
+possible.
 
 Note that the Vary response header needs to be sent if the response is cacheable and might change
 depending on the value of the "Prefer" header. This is not only true for those responses that are
