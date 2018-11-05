@@ -1,7 +1,7 @@
 ---
 title: A Registry for HTTP Header Fields
 abbrev: HTTP Header Registry
-docname: draft-nottingham-httpbis-header-registry-00
+docname: draft-nottingham-httpbis-header-registry-01
 date: 2018
 category: std
 updates: 3864, 7231
