@@ -2,7 +2,7 @@
 title: A Registry for HTTP Header Fields
 abbrev: HTTP Header Registry
 docname: draft-nottingham-httpbis-header-registry-00
-date: 2017
+date: 2018
 category: std
 updates: 3864, 7231
 
@@ -78,8 +78,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 # The HTTP Header Field Registry {#registry}
 
 The "Hypertext Transfer Protocol (HTTP) Header Field Registry" defines the namespace for HTTP
-header fields (as per {{RFC7230}}, Section 3.2). It is maintained at
-<http://www.iana.org/assignments/http-headers>.
+header fields (as per {{RFC7230}}, Section 3.2).
 
 
 ## Requesting Registration
@@ -87,9 +86,13 @@ header fields (as per {{RFC7230}}, Section 3.2). It is maintained at
 Any party can request registration of a HTTP header field. See {{?RFC7231}} Section 8.3.1 for
 considerations to take into account when creating a new HTTP header field.
 
-Registration requests can be sent to the "http-registrations@ietf.org" mailing list. The Expert(s)
-MAY establish alternate means of requesting registrations, which SHOULD be linked to from the
-registry page.
+The "HTTP Header Field Name" registry is located at "https://www.iana.org/assignments/http-headers/".
+Registration requests can be made by following the instructions located there or by sending an
+email to the "ietf-http-wg@ietf.org" mailing list.
+
+Header field names are registered on the advice of a Designated Expert (appointed by the IESG or
+their delegate). Header fields with the status 'permanent' are Specification Required (using
+terminology from {{!RFC8126}}).
 
 Registration requests consist of at least the following information:
 
@@ -105,52 +108,18 @@ Registration requests consist of at least the following information:
 
 * **Specification document(s)**: Reference to the document that specifies the header field,
   preferably including a URI that can be used to retrieve a copy of the document. An indication of
-  the relevant section(s) MAY also be included, but is not required.
+  the relevant section(s) can also be included, but is not required.
 
-The Expert(s) MAY define additional fields to be collected in the registry, in consultation with
+The Expert(s) can define additional fields to be collected in the registry, in consultation with
 the community.
 
-Header fields that are defined in an IETF standards-track document, have a comparable amount of
-review (typically, as an Open Standard in the sense of {{!RFC2026}}, section 7), or are generally
-recognised to be in widespread use (in the judgment of the Expert(s)) MAY be registered with the
-status "permanent". Such registrations MUST have a defining specification that is publicly
-available.
+Standards-defined names have a status of "permanent". Other names can also be registered as permanent, if the Expert(s) find that they are in use, in consultation with the community. Other names should be registered as "provisional".
 
-Other header fields MUST be registered with the status "provisional".
+Provisional entries can be removed by the Expert(s) if -- in consultation with the community -- the Expert(s) find that they are not in use. The Experts can change a provisional entry's status to permanent at any time.
 
-
-## Registration Request Processing {#processing}
-
-Header fields are registered on the advice of a Designated Expert (appointed by the IESG or their
-delegate). Header fields with the status 'permanent' are Specification Required (using terminology
-from {{!RFC5226}}).
-
-The goal of the registry is to reflect common use of HTTP on the Internet. Therefore, the Expert(s)
-SHOULD be strongly biased towards approving registrations, unless they are abusive, frivolous, not
-likely to be used on the Internet, or actively harmful to the Internet and/or the Web (not merely
-aesthetically displeasing, or architecturally dubious).
-
-The Expert(s) MUST clearly identify any issues which cause a registration to be refused. Advice
-about the syntax or semantics of a proposed header can be given, but if it does not block
-registration, this SHOULD be explicitly stated.
-
-When a request is approved, the Expert(s) will inform IANA, and the registration will be processed.
-The IESG is the final arbiter of any objection.
-
-
-## Updating Registrations {#update}
-
-After registration, the change controller MAY request that the status of a registration be changed
-to "obsoleted", request that the change controller be updated, and/or request that the
-specification document(s) be updated.
-
-Likewise, the IESG MAY request changes to the registry at any time. The Expert(s) MAY act on the
-IESG's behalf to update incorrect or out-of-date permanent entries.
-
-All such requests are subject to the same conditions and processes described in {{processing}}.
-
-If the Expert(s) make reasonable attempts to contact a change controller but cannot contact them,
-they MAY update a registration.
+Note that names can be registered by third parties (including the Expert(s)), if the Expert(s)
+determines that an unregistered name is widely deployed and not likely to be registered in a timely
+manner otherwise.
 
 
 
@@ -168,36 +137,11 @@ with the protocol 'http' are to be moved to it, with the following changes appli
    'permanent'.
 3. Entries with a status of 'deprecated' are to have a status of 'obsoleted'.
 4. Provisional entries without a status are to have a status of 'provisional'.
-5. Permanent entries without a status (after confirmation that the registration document did not define one) will have a status of 'provisional'. The Expert(s) MAY choose to update their status if there is evidence that another is more appropriate.
+5. Permanent entries without a status (after confirmation that the registration document did not define one) will have a status of 'provisional'. The Expert(s) can choose to update their status if there is evidence that another is more appropriate.
 
 The Permanent and Provisional Message Header registries will be annotated to indicate that HTTP
 header field registrations have moved, with an appropriate link.
 
-
-## Registry Operation
-
-IANA will direct any incoming requests regarding the registry to this document and, if defined, the
-processes established by the Expert(s); typically, this will mean referring them to the registry
-Web page.
-
-The Expert(s) will provide registry data to IANA in an agreed form (e.g. a specific XML format).
-IANA will publish:
-
-  * The raw registry data
-  * The registry data, transformed into HTML
-  * The registry data in any alternative formats provided by the Expert(s)
-
-Each published document will be at a URL agreed to by IANA and the Expert(s), and IANA will
-set HTTP response headers on them as (reasonably) requested by the Expert(s).
-
-Additionally, the HTML generated by IANA will:
-
- * Take directions from the Expert(s) as to the content of the HTML page's introductory text
-
- * Include a stable HTML fragment identifier for each registered header field
-
-All registry data documents MUST include Simplified BSD License text as described in Section 4.e of
-the Trust Legal Provisions (<eref target="http://trustee.ietf.org/license-info"/>).
 
 
 # Security Considerations
