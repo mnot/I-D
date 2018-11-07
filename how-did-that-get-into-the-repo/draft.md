@@ -3,7 +3,7 @@ title: The secret-token URI Scheme
 abbrev:
 docname: draft-nottingham-how-did-that-get-into-the-repo-01
 date: 2018
-category: std
+category: info
 
 ipr: trust200902
 area: General
@@ -98,7 +98,7 @@ This string (character-for-character, case-sensitive) will both be issued by the
 This document registers the following value in the URI Scheme registry:
 
 * Scheme name: secret-token
-* Status: permanent
+* Status: provisional
 * Applications / protocols that use this scheme: none yet
 * Contact: iesg@iesg.org
 * Change Controller: IESG
