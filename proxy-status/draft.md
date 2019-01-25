@@ -76,6 +76,8 @@ shown here.
 
 This specification uses Structured Headers {{!I-D.ietf-httpbis-header-structure}} to specify syntax. The terms sh-param-list, sh-item, sh-string, sh-token and sh-integer refer to the structured types defined therein.
 
+Note that in this specification, "proxy" is used to indicate both forward and "reverse" proxies, otherwise known as gateways. "Forward" indicates the connection in the direction leading to the origin server for the request.
+
 
 # The Proxy-Status HTTP Header Field {#header}
 
@@ -91,7 +93,7 @@ For example:
 
 ~~~ example
 HTTP/1.1 504 Gateway Timeout
-Proxy-Status: origin_connect_timeout; proxy_id=FooCDN;
+Proxy-Status: connect_timeout; proxy_id=FooCDN;
   origin_id=abc; origin_tries=3
 ~~~
 
@@ -120,10 +122,10 @@ Origin servers MUST NOT generate the Proxy-Status header field.
 This section lists parameters that are potentially applicable to most Proxy Status Types.
 
 * proxy_id - a sh-token identifying the HTTP intermediary generating this response.
-* origin_id - a sh-token identifying the origin whose behaviour triggered this response.
-* origin_protocol - a sh-token indicating the ALPN protocol identifier {{!RFC7301}} used to connect to the origin. This is only applicable when the origin connection was actually established.
-* origins_tried - a sh-integer indicating the number of origins that have been tried before generating this error.
-* origin_tries - a sh-integer indicating the number of times that the error specified has occurred on the origin XXX.
+* origin_id - a sh-token identifying the origin server whose behaviour triggered this response.
+* forward_protocol - a sh-token indicating the ALPN protocol identifier {{!RFC7301}} used to connect to the next hop. This is only applicable when that connection was actually established.
+* paths_tried - a sh-integer indicating the number of forward paths that have been tried before generating this error.
+* forward_tries - a sh-integer indicating the number of times that the error specified has occurred on the XXX.
 * note - a sh-string containing additional information not captured anywhere else. This can include implementation-specific or deployment-specific information.
 
 
@@ -131,167 +133,167 @@ This section lists parameters that are potentially applicable to most Proxy Stat
 
 This section lists the Proxy Status Types defined by this document. See {{register}} for information about defining new Proxy Status Types.
 
-## Origin Not Found
+## Backend Not Found
 
-* Name: origin_not_found
-* Description: The intermediary cannot determine the appropriate origin to use for this request; for example, it may not be configured.
+* Name: backend_not_found
+* Description: The intermediary cannot determine the appropriate origin to use for this request; for example, it may not be configured. Note that this error is specific to gateways, which typically require specific configuration to identify the "back end" server; forward proxies use in-band information to identify the origin server.
 * Extra Parameters: None.
 * Recommended HTTP status code: 500
 
-## Origin DNS Timeout
+## Forward DNS Timeout
 
-* Name: origin_dns_timeout
-* Description: The intermediary encountered a timeout when trying to find an IP address for the origin's hostname.
+* Name: forward_dns_timeout
+* Description: The intermediary encountered a timeout when trying to find an IP address for the forward hostname.
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
 
-## Origin DNS Error
+## Forward DNS Error
 
-* Name: origin_dns_error
-* Description: The intermediary encountered a DNS error when trying to find an IP address for the origin's hostname.
+* Name: forward__dns_error
+* Description: The intermediary encountered a DNS error when trying to find an IP address for forward connection.
 * Extra Parameters:
   - rcode: A sh-string conveying the DNS RCODE that indicates the error type. See {{!RFC8499}}, Section 3.
 * Recommended HTTP status code: 502
 
-## Origin IP Prohibited
+## Forward IP Prohibited
 
-* Name: origin_ip_prohibited
-* Description: The intermediary is configured to prohibit connections to the origin's IP address.
+* Name: forward_ip_prohibited
+* Description: The intermediary is configured to prohibit connections to the forward IP address.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
-## Origin IP Unroutable
+## Forward IP Unroutable
 
-* Name: origin_ip_unroutable
-* Description: The intermediary cannot find a route to the origin's IP address.
+* Name: forward_ip_unroutable
+* Description: The intermediary cannot find a route to the forward IP address.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
-## Origin Connection Refused
+## Forward Connection Refused
 
-* Name: origin_connection_refused
-* Description: The intermediary's connection to the origin was refused by the origin or an intervening network element.
+* Name: forward_connection_refused
+* Description: The intermediary's forward connection was refused.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
-## Origin Connection Closed
+## Forward Connection Closed
 
-* Name: origin_connection_closed
-* Description: The intermediary's connection to the origin was closed before any part of the response was received. If some part was received, see origin_http_incomplete.
+* Name: forward_connection_closed
+* Description: The intermediary's forward connection was closed before any part of the response was received. If some part was received, see forward_http_incomplete.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
-## Origin Connect Timeout
+## Forward Connect Timeout
 
-* Name: origin_connect_timeout
-* Description: The intermediary's attempt to connect to the origin timed out.
+* Name: forward_connect_timeout
+* Description: The intermediary's attempt to open a forward connection timed out.
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
 
-## Origin Read Timeout
+## Forward Read Timeout
 
-* Name: origin_read_timeout
+* Name: forward_read_timeout
 * Description: The intermediary expect
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
 
-## Origin Write Timeout
+## Forward Write Timeout
 
 * Name: origin_write_timeout
 * Description:
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
 
-## Origin Down
+## Forward Node Down
 
-* Name: origin_down
-* Description: The intermediary considers the origin to be unavailable; e.g., recent attempts to communicate with it may have failed, or a health check may indicate that it is down.
+* Name: forward_node_down
+* Description: The intermediary considers the next hop to be unavailable; e.g., recent attempts to communicate with it may have failed, or a health check may indicate that it is down.
 * Extra Parameters:
 
 * Recommended HTTP status code: 500
 
-## Origin Connection Limit Reached
+## Forward Connection Limit Reached
 
-* Name: origin_connnection_limit
-* Description: The intermediary is configured to limit the number of connections it has to the origin, and that limit has been passed.
+* Name: Forward_connnection_limit
+* Description: The intermediary is configured to limit the number of connections it has to the next hop, and that limit has been passed.
 * Extra Parameters: None.
 * Recommended HTTP status code:
 
-## Origin HTTP Error Status
+## HTTP Response Status
 
-* Name: origin_http_error_status
-* Description: The intermediary has encountered a 4xx or 5xx status code from the origin server, and
+* Name: http_response_status
+* Description: The intermediary has received a 4xx or 5xx status code from the next hop, and
 * Extra Parameters: None.
 * Recommended HTTP status code:
 
-## Origin HTTP Incomplete Response
+## HTTP Incomplete Response
 
-* Name: origin_http_incomplete
-* Description: The intermediary received an incomplete response to the request from the origin.
+* Name: http_response_incomplete
+* Description: The intermediary received an incomplete response to the request from the next hop forward.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
-## Origin HTTP Protocol Error
+## Forward HTTP Protocol Error
 
-* Name: origin_http_protocol
-* Description: The intermediary encountered a HTTP protocol error when communicating with the origin. This error should only be used when a more specific one is not defined.
+* Name: foreward_http_protocol
+* Description: The intermediary encountered a HTTP protocol error when communicating with the next hop forward. This error should only be used when a more specific one is not defined.
 * Extra Parameters:
   - details: a sh-string containing details about the error condition. For example, this might be the HTTP/2 error code or free-form text describing the condition.
 * Recommended HTTP status code: 502
 
-## Origin HTTP Response Header Block Too Large
+## HTTP Response Header Block Too Large
 
-* Name: origin_http_response_header_block_size
+* Name: http_response_header_block_size
 * Description: The intermediary received a response to the request whose header block was considered too large.
 * Extra Parameters:
   - header_block_size: a sh-integer indicating how large the headers received were. Note that they might not be complete; i.e., the intermediary may have discarded or refused additional data.
 * Recommended HTTP status code: 502
 
-## Origin HTTP Response Header Too Large
+## HTTP Response Header Too Large
 
-* Name: origin_http_response_header_size
+* Name: http_response_header_size
 * Description: The intermediary received a response to the request containing an individual header line that was considered too large.
 * Extra Parameters:
   - header_name: a sh-string indicating the name of the header that triggered the error.
 * Recommended HTTP status code: 502
 
-## Origin HTTP Response Body Too Large
+## HTTP Response Body Too Large
 
-* Name: origin_http_response_body_size
+* Name: http_response_body_size
 * Description: The intermediary received a response to the request whose body was considered too large.
 * Extra Parameters:
   - body_size: a sh-integer indicating how large the body received was. Note that it may not have been complete; i.e., the intermediary may have discarded or refused additional data.
 * Recommended HTTP status code: 502
 
-## Origin HTTP Transfer-Coding Error
+## HTTP Response Transfer-Coding Error
 
-* Name: origin_http_transfer_coding
-* Description: The intermediary encountered an error decoding the transfer-coding of the origin's response.
+* Name: http_response_transfer_coding
+* Description: The intermediary encountered an error decoding the transfer-coding of the response.
 * Extra Parameters:
   - coding: a sh-token containing the specific coding that caused the error.
   - details: a sh-string containing details about the error condition.
 * Recommended HTTP status code: 502
 
-## Origin HTTP Content-Coding Error
+## HTTP Response Content-Coding Error
 
-* Name: origin_http_content_coding
-* Description: The intermediary encountered an error decoding the content-coding of the origin's response.
+* Name: http_response_content_coding
+* Description: The intermediary encountered an error decoding the content-coding of the response.
 * Extra Parameters:
   - coding: a sh-token containing the specific coding that caused the error.
   - details: a sh-string containing details about the error condition.
 * Recommended HTTP status code: 502
 
-## Origin TLS Error
+## Forward TLS Error
 
-* Name: origin_tls_error
-* Description: The intermediary encountered a TLS error when communicating with the origin.
+* Name: forward_tls_error
+* Description: The intermediary encountered a TLS error when communicating with the next hop forward.
 * Extra Parameters:
   - alert_message: a sh-token containing the applicable description string from the TLS Alerts registry.
 * Recommended HTTP status code: 502
 
-## Intermediary Internal Error
+## Proxy Internal Error
 
-* Name: intermediary_internal_error
+* Name: proxy_internal_error
 * Description: The intermediary encountered an internal error unrelated to the origin.
 * Extra Parameters:
   - details: a sh-string containing details about the error condition.
