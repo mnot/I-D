@@ -20,6 +20,11 @@ author:
     organization: Fastly
     email: mnot@mnot.net
     uri: https://www.mnot.net/
+ -
+    ins: P. Sikora
+    name: Piotr Sikora
+    organization: Google
+    email: piotrsikora@google.com
 
 normative:
   RFC2119:
