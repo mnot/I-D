@@ -26,6 +26,12 @@
         <uri>https://www.mnot.net/</uri>
       </address>
     </author>
+    <author initials="P." surname="Sikora" fullname="Piotr Sikora">
+      <organization>Google</organization>
+      <address>
+        <email>piotrsikora@google.com</email>
+      </address>
+    </author>
 
     <date year="2019"/>
 
@@ -95,6 +101,8 @@ shown here.</t>
 
 <t>This specification uses Structured Headers <xref target="I-D.ietf-httpbis-header-structure"/> to specify syntax. The terms sh-param-list, sh-item, sh-string, sh-token and sh-integer refer to the structured types defined therein.</t>
 
+<t>Note that in this specification, “proxy” is used to indicate both forward and “reverse” proxies, otherwise known as gateways. “Forward” indicates the connection in the direction leading to the origin server for the request.</t>
+
 </section>
 </section>
 <section anchor="header" title="The Proxy-Status HTTP Header Field">
@@ -140,10 +148,10 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
 
 <t><list style="symbols">
   <t>proxy_id - a sh-token identifying the HTTP intermediary generating this response.</t>
-  <t>origin_id - a sh-token identifying the origin whose behaviour triggered this response.</t>
-  <t>origin_protocol - a sh-token indicating the ALPN protocol identifier <xref target="RFC7301"/> used to connect to the origin. This is only applicable when the origin connection was actually established.</t>
-  <t>origins_tried - a sh-integer indicating the number of origins that have been tried before generating this error.</t>
-  <t>origin_tries - a sh-integer indicating the number of times that the error specified has occurred on the origin XXX.</t>
+  <t>origin_id - a sh-token identifying the origin server whose behaviour triggered this response.</t>
+  <t>forward_protocol - a sh-token indicating the ALPN protocol identifier <xref target="RFC7301"/> used to connect to the next hop. This is only applicable when that connection was actually established.</t>
+  <t>paths_tried - a sh-integer indicating the number of forward paths that have been tried before generating this error.</t>
+  <t>forward_tries - a sh-integer indicating the number of times that the error specified has occurred on the XXX.</t>
   <t>note - a sh-string containing additional information not captured anywhere else. This can include implementation-specific or deployment-specific information.</t>
 </list></t>
 
@@ -153,31 +161,31 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
 
 <t>This section lists the Proxy Status Types defined by this document. See <xref target="register"/> for information about defining new Proxy Status Types.</t>
 
-<section anchor="origin-not-found" title="Origin Not Found">
+<section anchor="backend-not-found" title="Backend Not Found">
 
 <t><list style="symbols">
-  <t>Name: origin_not_found</t>
-  <t>Description: The intermediary cannot determine the appropriate origin to use for this request; for example, it may not be configured.</t>
+  <t>Name: backend_not_found</t>
+  <t>Description: The intermediary cannot determine the appropriate origin to use for this request; for example, it may not be configured. Note that this error is specific to gateways, which typically require specific configuration to identify the “back end” server; forward proxies use in-band information to identify the origin server.</t>
   <t>Extra Parameters: None.</t>
   <t>Recommended HTTP status code: 500</t>
 </list></t>
 
 </section>
-<section anchor="dns-timeout" title="DNS Timeout">
+<section anchor="forward-dns-timeout" title="Forward DNS Timeout">
 
 <t><list style="symbols">
-  <t>Name: origin_dns_timeout</t>
-  <t>Description: The intermediary encountered a timeout when trying to find an IP address for the origin’s hostname.</t>
+  <t>Name: forward_dns_timeout</t>
+  <t>Description: The intermediary encountered a timeout when trying to find an IP address for the forward hostname.</t>
   <t>Extra Parameters: None.</t>
   <t>Recommended HTTP status code: 504</t>
 </list></t>
 
 </section>
-<section anchor="origin-dns-error" title="Origin DNS Error">
+<section anchor="forward-dns-error" title="Forward DNS Error">
 
 <t><list style="symbols">
-  <t>Name: origin_dns_error</t>
-  <t>Description: The intermediary encountered a DNS error when trying to find an IP address for the origin’s hostname.</t>
+  <t>Name: forward__dns_error</t>
+  <t>Description: The intermediary encountered a DNS error when trying to find an IP address for forward connection.</t>
   <t>Extra Parameters:
   <list style="symbols">
       <t>rcode: A sh-string conveying the DNS RCODE that indicates the error type. See <xref target="RFC8499"/>, Section 3.</t>
@@ -186,67 +194,67 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
 </list></t>
 
 </section>
-<section anchor="origin-ip-prohibited" title="Origin IP Prohibited">
+<section anchor="forward-ip-prohibited" title="Forward IP Prohibited">
 
 <t><list style="symbols">
-  <t>Name: origin_ip_prohibited</t>
-  <t>Description: The intermediary is configured to prohibit connections to the origin’s IP address.</t>
+  <t>Name: forward_ip_prohibited</t>
+  <t>Description: The intermediary is configured to prohibit connections to the forward IP address.</t>
   <t>Extra Parameters: None.</t>
   <t>Recommended HTTP status code: 502</t>
 </list></t>
 
 </section>
-<section anchor="origin-ip-unroutable" title="Origin IP Unroutable">
+<section anchor="forward-ip-unroutable" title="Forward IP Unroutable">
 
 <t><list style="symbols">
-  <t>Name: origin_ip_unroutable</t>
-  <t>Description: The intermediary cannot find a route to the origin’s IP address.</t>
+  <t>Name: forward_ip_unroutable</t>
+  <t>Description: The intermediary cannot find a route to the forward IP address.</t>
   <t>Extra Parameters: None.</t>
   <t>Recommended HTTP status code: 502</t>
 </list></t>
 
 </section>
-<section anchor="origin-connection-refused" title="Origin Connection Refused">
+<section anchor="forward-connection-refused" title="Forward Connection Refused">
 
 <t><list style="symbols">
-  <t>Name: origin_connection_refused</t>
-  <t>Description: The intermediary’s connection to the origin was refused by the origin or an intervening network element.</t>
+  <t>Name: forward_connection_refused</t>
+  <t>Description: The intermediary’s forward connection was refused.</t>
   <t>Extra Parameters: None.</t>
   <t>Recommended HTTP status code: 502</t>
 </list></t>
 
 </section>
-<section anchor="origin-connection-closed" title="Origin Connection Closed">
+<section anchor="forward-connection-closed" title="Forward Connection Closed">
 
 <t><list style="symbols">
-  <t>Name: origin_connection_closed</t>
-  <t>Description: The intermediary’s connection to the origin was closed before any part of the response was received. If some part was received, see origin_http_incomplete.</t>
+  <t>Name: forward_connection_closed</t>
+  <t>Description: The intermediary’s forward connection was closed before any part of the response was received. If some part was received, see forward_http_incomplete.</t>
   <t>Extra Parameters: None.</t>
   <t>Recommended HTTP status code: 502</t>
 </list></t>
 
 </section>
-<section anchor="origin-connect-timeout" title="Origin Connect Timeout">
+<section anchor="forward-connect-timeout" title="Forward Connect Timeout">
 
 <t><list style="symbols">
-  <t>Name: origin_connect_timeout</t>
-  <t>Description: The intermediary’s attempt to connect to the origin timed out.</t>
+  <t>Name: forward_connect_timeout</t>
+  <t>Description: The intermediary’s attempt to open a forward connection timed out.</t>
   <t>Extra Parameters: None.</t>
   <t>Recommended HTTP status code: 504</t>
 </list></t>
 
 </section>
-<section anchor="origin-read-timeout" title="Origin Read Timeout">
+<section anchor="forward-read-timeout" title="Forward Read Timeout">
 
 <t><list style="symbols">
-  <t>Name: origin_read_timeout</t>
+  <t>Name: forward_read_timeout</t>
   <t>Description: The intermediary expect</t>
   <t>Extra Parameters: None.</t>
   <t>Recommended HTTP status code: 504</t>
 </list></t>
 
 </section>
-<section anchor="origin-write-timeout" title="Origin Write Timeout">
+<section anchor="forward-write-timeout" title="Forward Write Timeout">
 
 <t><list style="symbols">
   <t>Name: origin_write_timeout</t>
@@ -256,51 +264,51 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
 </list></t>
 
 </section>
-<section anchor="origin-down" title="Origin Down">
+<section anchor="forward-node-down" title="Forward Node Down">
 
 <t><list style="symbols">
-  <t>Name: origin_down</t>
-  <t>Description: The intermediary considers the origin to be unavailable; e.g., recent attempts to communicate with it may have failed, or a health check may indicate that it is down.</t>
+  <t>Name: forward_node_down</t>
+  <t>Description: The intermediary considers the next hop to be unavailable; e.g., recent attempts to communicate with it may have failed, or a health check may indicate that it is down.</t>
   <t>Extra Parameters:</t>
   <t>Recommended HTTP status code: 500</t>
 </list></t>
 
 </section>
-<section anchor="origin-connection-limit-reached" title="Origin Connection Limit Reached">
+<section anchor="forward-connection-limit-reached" title="Forward Connection Limit Reached">
 
 <t><list style="symbols">
-  <t>Name: origin_connnection_limit</t>
-  <t>Description: The intermediary is configured to limit the number of connections it has to the origin, and that limit has been passed.</t>
+  <t>Name: Forward_connnection_limit</t>
+  <t>Description: The intermediary is configured to limit the number of connections it has to the next hop, and that limit has been passed.</t>
   <t>Extra Parameters: None.</t>
   <t>Recommended HTTP status code:</t>
 </list></t>
 
 </section>
-<section anchor="origin-http-error-status" title="Origin HTTP Error Status">
+<section anchor="http-response-status" title="HTTP Response Status">
 
 <t><list style="symbols">
-  <t>Name: origin_http_error_status</t>
-  <t>Description: The intermediary has encountered a 4xx or 5xx status code from the origin server, and</t>
+  <t>Name: http_response_status</t>
+  <t>Description: The intermediary has received a 4xx or 5xx status code from the next hop, and</t>
   <t>Extra Parameters: None.</t>
   <t>Recommended HTTP status code:</t>
 </list></t>
 
 </section>
-<section anchor="origin-http-incomplete-response" title="Origin HTTP Incomplete Response">
+<section anchor="http-incomplete-response" title="HTTP Incomplete Response">
 
 <t><list style="symbols">
-  <t>Name: origin_http_incomplete</t>
-  <t>Description: The intermediary received an incomplete response to the request from the origin.</t>
+  <t>Name: http_response_incomplete</t>
+  <t>Description: The intermediary received an incomplete response to the request from the next hop forward.</t>
   <t>Extra Parameters: None.</t>
   <t>Recommended HTTP status code: 502</t>
 </list></t>
 
 </section>
-<section anchor="origin-http-protocol-error" title="Origin HTTP Protocol Error">
+<section anchor="forward-http-protocol-error" title="Forward HTTP Protocol Error">
 
 <t><list style="symbols">
-  <t>Name: origin_http_protocol</t>
-  <t>Description: The intermediary encountered a HTTP protocol error when communicating with the origin. This error should only be used when a more specific one is not defined.</t>
+  <t>Name: foreward_http_protocol</t>
+  <t>Description: The intermediary encountered a HTTP protocol error when communicating with the next hop forward. This error should only be used when a more specific one is not defined.</t>
   <t>Extra Parameters:
   <list style="symbols">
       <t>details: a sh-string containing details about the error condition. For example, this might be the HTTP/2 error code or free-form text describing the condition.</t>
@@ -309,10 +317,10 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
 </list></t>
 
 </section>
-<section anchor="origin-http-response-header-block-too-large" title="Origin HTTP Response Header Block Too Large">
+<section anchor="http-response-header-block-too-large" title="HTTP Response Header Block Too Large">
 
 <t><list style="symbols">
-  <t>Name: origin_http_response_header_block_size</t>
+  <t>Name: http_response_header_block_size</t>
   <t>Description: The intermediary received a response to the request whose header block was considered too large.</t>
   <t>Extra Parameters:
   <list style="symbols">
@@ -322,10 +330,10 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
 </list></t>
 
 </section>
-<section anchor="origin-http-response-header-too-large" title="Origin HTTP Response Header Too Large">
+<section anchor="http-response-header-too-large" title="HTTP Response Header Too Large">
 
 <t><list style="symbols">
-  <t>Name: origin_http_response_header_size</t>
+  <t>Name: http_response_header_size</t>
   <t>Description: The intermediary received a response to the request containing an individual header line that was considered too large.</t>
   <t>Extra Parameters:
   <list style="symbols">
@@ -335,10 +343,10 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
 </list></t>
 
 </section>
-<section anchor="origin-http-response-body-too-large" title="Origin HTTP Response Body Too Large">
+<section anchor="http-response-body-too-large" title="HTTP Response Body Too Large">
 
 <t><list style="symbols">
-  <t>Name: origin_http_response_body_size</t>
+  <t>Name: http_response_body_size</t>
   <t>Description: The intermediary received a response to the request whose body was considered too large.</t>
   <t>Extra Parameters:
   <list style="symbols">
@@ -348,11 +356,11 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
 </list></t>
 
 </section>
-<section anchor="origin-http-transfer-coding-error" title="Origin HTTP Transfer-Coding Error">
+<section anchor="http-response-transfer-coding-error" title="HTTP Response Transfer-Coding Error">
 
 <t><list style="symbols">
-  <t>Name: origin_http_transfer_coding</t>
-  <t>Description: The intermediary encountered an error decoding the transfer-coding of the origin’s response.</t>
+  <t>Name: http_response_transfer_coding</t>
+  <t>Description: The intermediary encountered an error decoding the transfer-coding of the response.</t>
   <t>Extra Parameters:
   <list style="symbols">
       <t>coding: a sh-token containing the specific coding that caused the error.</t>
@@ -362,11 +370,11 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
 </list></t>
 
 </section>
-<section anchor="origin-http-content-coding-error" title="Origin HTTP Content-Coding Error">
+<section anchor="http-response-content-coding-error" title="HTTP Response Content-Coding Error">
 
 <t><list style="symbols">
-  <t>Name: origin_http_content_coding</t>
-  <t>Description: The intermediary encountered an error decoding the content-coding of the origin’s response.</t>
+  <t>Name: http_response_content_coding</t>
+  <t>Description: The intermediary encountered an error decoding the content-coding of the response.</t>
   <t>Extra Parameters:
   <list style="symbols">
       <t>coding: a sh-token containing the specific coding that caused the error.</t>
@@ -376,11 +384,11 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
 </list></t>
 
 </section>
-<section anchor="origin-tls-error" title="Origin TLS Error">
+<section anchor="forward-tls-error" title="Forward TLS Error">
 
 <t><list style="symbols">
-  <t>Name: origin_tls_error</t>
-  <t>Description: The intermediary encountered a TLS error when communicating with the origin.</t>
+  <t>Name: forward_tls_error</t>
+  <t>Description: The intermediary encountered a TLS error when communicating with the next hop forward.</t>
   <t>Extra Parameters:
   <list style="symbols">
       <t>alert_message: a sh-token containing the applicable description string from the TLS Alerts registry.</t>
@@ -389,10 +397,10 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
 </list></t>
 
 </section>
-<section anchor="intermediary-internal-error" title="Intermediary Internal Error">
+<section anchor="proxy-internal-error" title="Proxy Internal Error">
 
 <t><list style="symbols">
-  <t>Name: intermediary_internal_error</t>
+  <t>Name: proxy_internal_error</t>
   <t>Description: The intermediary encountered an internal error unrelated to the origin.</t>
   <t>Extra Parameters:
   <list style="symbols">
@@ -577,110 +585,114 @@ Proxy-Status: request_error; proxy_id=BarReverseProxy
   </back>
 
 <!-- ##markdown-source:
-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
-YDoAAA==
+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
+3yUj7/I/S2noyC48AAA=
 
 -->
 

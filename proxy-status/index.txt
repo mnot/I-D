@@ -4,8 +4,9 @@
 
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                    Fastly
-Intended status: Informational                          January 24, 2019
-Expires: July 28, 2019
+Intended status: Informational                                 P. Sikora
+Expires: July 28, 2019                                            Google
+                                                        January 24, 2019
 
 
                    The Proxy-Status HTTP Header Field
@@ -52,8 +53,7 @@ Status of This Memo
 
 
 
-
-Nottingham                Expires July 28, 2019                 [Page 1]
+Nottingham & Sikora       Expires July 28, 2019                 [Page 1]
 
 Internet-Draft                Proxy-Status                  January 2019
 
@@ -90,44 +90,44 @@ Table of Contents
    2.  The Proxy-Status HTTP Header Field  . . . . . . . . . . . . .   4
      2.1.  Generic Proxy Status Parameters . . . . . . . . . . . . .   5
    3.  Proxy Status Types  . . . . . . . . . . . . . . . . . . . . .   5
-     3.1.  Origin Not Found  . . . . . . . . . . . . . . . . . . . .   5
-     3.2.  DNS Timeout . . . . . . . . . . . . . . . . . . . . . . .   6
-     3.3.  Origin DNS Error  . . . . . . . . . . . . . . . . . . . .   6
-     3.4.  Origin IP Prohibited  . . . . . . . . . . . . . . . . . .   6
-     3.5.  Origin IP Unroutable  . . . . . . . . . . . . . . . . . .   6
-     3.6.  Origin Connection Refused . . . . . . . . . . . . . . . .   7
-     3.7.  Origin Connection Closed  . . . . . . . . . . . . . . . .   7
-     3.8.  Origin Connect Timeout  . . . . . . . . . . . . . . . . .   7
-     3.9.  Origin Read Timeout . . . . . . . . . . . . . . . . . . .   7
-     3.10. Origin Write Timeout  . . . . . . . . . . . . . . . . . .   8
-     3.11. Origin Down . . . . . . . . . . . . . . . . . . . . . . .   8
-     3.12. Origin Connection Limit Reached . . . . . . . . . . . . .   8
-     3.13. Origin HTTP Error Status  . . . . . . . . . . . . . . . .   8
-     3.14. Origin HTTP Incomplete Response . . . . . . . . . . . . .   9
-     3.15. Origin HTTP Protocol Error  . . . . . . . . . . . . . . .   9
-     3.16. Origin HTTP Response Header Block Too Large . . . . . . .   9
+     3.1.  Backend Not Found . . . . . . . . . . . . . . . . . . . .   6
+     3.2.  Forward DNS Timeout . . . . . . . . . . . . . . . . . . .   6
+     3.3.  Forward DNS Error . . . . . . . . . . . . . . . . . . . .   6
+     3.4.  Forward IP Prohibited . . . . . . . . . . . . . . . . . .   6
+     3.5.  Forward IP Unroutable . . . . . . . . . . . . . . . . . .   7
+     3.6.  Forward Connection Refused  . . . . . . . . . . . . . . .   7
+     3.7.  Forward Connection Closed . . . . . . . . . . . . . . . .   7
+     3.8.  Forward Connect Timeout . . . . . . . . . . . . . . . . .   7
+     3.9.  Forward Read Timeout  . . . . . . . . . . . . . . . . . .   8
+     3.10. Forward Write Timeout . . . . . . . . . . . . . . . . . .   8
+     3.11. Forward Node Down . . . . . . . . . . . . . . . . . . . .   8
+     3.12. Forward Connection Limit Reached  . . . . . . . . . . . .   8
+     3.13. HTTP Response Status  . . . . . . . . . . . . . . . . . .   9
+     3.14. HTTP Incomplete Response  . . . . . . . . . . . . . . . .   9
+     3.15. Forward HTTP Protocol Error . . . . . . . . . . . . . . .   9
+     3.16. HTTP Response Header Block Too Large  . . . . . . . . . .   9
 
 
 
-Nottingham                Expires July 28, 2019                 [Page 2]
+Nottingham & Sikora       Expires July 28, 2019                 [Page 2]
 
 Internet-Draft                Proxy-Status                  January 2019
 
 
-     3.17. Origin HTTP Response Header Too Large . . . . . . . . . .   9
-     3.18. Origin HTTP Response Body Too Large . . . . . . . . . . .  10
-     3.19. Origin HTTP Transfer-Coding Error . . . . . . . . . . . .  10
-     3.20. Origin HTTP Content-Coding Error  . . . . . . . . . . . .  10
-     3.21. Origin TLS Error  . . . . . . . . . . . . . . . . . . . .  11
-     3.22. Intermediary Internal Error . . . . . . . . . . . . . . .  11
-     3.23. Request Error . . . . . . . . . . . . . . . . . . . . . .  11
+     3.17. HTTP Response Header Too Large  . . . . . . . . . . . . .  10
+     3.18. HTTP Response Body Too Large  . . . . . . . . . . . . . .  10
+     3.19. HTTP Response Transfer-Coding Error . . . . . . . . . . .  10
+     3.20. HTTP Response Content-Coding Error  . . . . . . . . . . .  11
+     3.21. Forward TLS Error . . . . . . . . . . . . . . . . . . . .  11
+     3.22. Proxy Internal Error  . . . . . . . . . . . . . . . . . .  11
+     3.23. Request Error . . . . . . . . . . . . . . . . . . . . . .  12
    4.  Defining New Proxy Status Types . . . . . . . . . . . . . . .  12
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
    7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  13
      7.1.  Normative References  . . . . . . . . . . . . . . . . . .  13
      7.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  14
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  14
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  14
 
 1.  Introduction
 
@@ -165,13 +165,18 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham                Expires July 28, 2019                 [Page 3]
+Nottingham & Sikora       Expires July 28, 2019                 [Page 3]
 
 Internet-Draft                Proxy-Status                  January 2019
 
 
    param-list, sh-item, sh-string, sh-token and sh-integer refer to the
    structured types defined therein.
+
+   Note that in this specification, "proxy" is used to indicate both
+   forward and "reverse" proxies, otherwise known as gateways.
+   "Forward" indicates the connection in the direction leading to the
+   origin server for the request.
 
 2.  The Proxy-Status HTTP Header Field
 
@@ -213,18 +218,19 @@ Internet-Draft                Proxy-Status                  January 2019
    indicates that this 429 Too Many Requests response was generated by
    the intermediary, not the origin.
 
+
+
+
+Nottingham & Sikora       Expires July 28, 2019                 [Page 4]
+
+Internet-Draft                Proxy-Status                  January 2019
+
+
    Each Proxy Status Type has a Recommended HTTP Status Code.  When
    generating a HTTP response containing Proxy-Status, its http status
    code SHOULD be set to the Recommended HTTP Status Code.  However,
    there may be circumstances (e.g., for backwards compatibility with
    previous behaviours) when another status code might be used.
-
-
-
-Nottingham                Expires July 28, 2019                 [Page 4]
-
-Internet-Draft                Proxy-Status                  January 2019
-
 
    Section 3 lists the Proxy Status Types defined in this document; new
    ones can be defined using the procedure outlined in Section 4.
@@ -242,18 +248,18 @@ Internet-Draft                Proxy-Status                  January 2019
    o  proxy_id - a sh-token identifying the HTTP intermediary generating
       this response.
 
-   o  origin_id - a sh-token identifying the origin whose behaviour
-      triggered this response.
+   o  origin_id - a sh-token identifying the origin server whose
+      behaviour triggered this response.
 
-   o  origin_protocol - a sh-token indicating the ALPN protocol
-      identifier [RFC7301] used to connect to the origin.  This is only
-      applicable when the origin connection was actually established.
+   o  forward_protocol - a sh-token indicating the ALPN protocol
+      identifier [RFC7301] used to connect to the next hop.  This is
+      only applicable when that connection was actually established.
 
-   o  origins_tried - a sh-integer indicating the number of origins that
-      have been tried before generating this error.
+   o  paths_tried - a sh-integer indicating the number of forward paths
+      that have been tried before generating this error.
 
-   o  origin_tries - a sh-integer indicating the number of times that
-      the error specified has occurred on the origin XXX.
+   o  forward_tries - a sh-integer indicating the number of times that
+      the error specified has occurred on the XXX.
 
    o  note - a sh-string containing additional information not captured
       anywhere else.  This can include implementation-specific or
@@ -264,43 +270,50 @@ Internet-Draft                Proxy-Status                  January 2019
    This section lists the Proxy Status Types defined by this document.
    See Section 4 for information about defining new Proxy Status Types.
 
-3.1.  Origin Not Found
-
-   o  Name: origin_not_found
-
-   o  Description: The intermediary cannot determine the appropriate
-      origin to use for this request; for example, it may not be
-      configured.
-
-   o  Extra Parameters: None.
 
 
 
 
-Nottingham                Expires July 28, 2019                 [Page 5]
+
+
+
+Nottingham & Sikora       Expires July 28, 2019                 [Page 5]
 
 Internet-Draft                Proxy-Status                  January 2019
 
 
+3.1.  Backend Not Found
+
+   o  Name: backend_not_found
+
+   o  Description: The intermediary cannot determine the appropriate
+      origin to use for this request; for example, it may not be
+      configured.  Note that this error is specific to gateways, which
+      typically require specific configuration to identify the "back
+      end" server; forward proxies use in-band information to identify
+      the origin server.
+
+   o  Extra Parameters: None.
+
    o  Recommended HTTP status code: 500
 
-3.2.  DNS Timeout
+3.2.  Forward DNS Timeout
 
-   o  Name: origin_dns_timeout
+   o  Name: forward_dns_timeout
 
    o  Description: The intermediary encountered a timeout when trying to
-      find an IP address for the origin's hostname.
+      find an IP address for the forward hostname.
 
    o  Extra Parameters: None.
 
    o  Recommended HTTP status code: 504
 
-3.3.  Origin DNS Error
+3.3.  Forward DNS Error
 
-   o  Name: origin_dns_error
+   o  Name: forward__dns_error
 
    o  Description: The intermediary encountered a DNS error when trying
-      to find an IP address for the origin's hostname.
+      to find an IP address for forward connection.
 
    o  Extra Parameters:
 
@@ -309,72 +322,81 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.4.  Origin IP Prohibited
+3.4.  Forward IP Prohibited
 
-   o  Name: origin_ip_prohibited
+   o  Name: forward_ip_prohibited
 
    o  Description: The intermediary is configured to prohibit
-      connections to the origin's IP address.
+      connections to the forward IP address.
 
    o  Extra Parameters: None.
 
+
+
+Nottingham & Sikora       Expires July 28, 2019                 [Page 6]
+
+Internet-Draft                Proxy-Status                  January 2019
+
+
    o  Recommended HTTP status code: 502
 
-3.5.  Origin IP Unroutable
+3.5.  Forward IP Unroutable
 
-   o  Name: origin_ip_unroutable
+   o  Name: forward_ip_unroutable
 
-   o  Description: The intermediary cannot find a route to the origin's
+   o  Description: The intermediary cannot find a route to the forward
       IP address.
 
    o  Extra Parameters: None.
 
    o  Recommended HTTP status code: 502
 
+3.6.  Forward Connection Refused
 
+   o  Name: forward_connection_refused
 
-Nottingham                Expires July 28, 2019                 [Page 6]
-
-Internet-Draft                Proxy-Status                  January 2019
-
-
-3.6.  Origin Connection Refused
-
-   o  Name: origin_connection_refused
-
-   o  Description: The intermediary's connection to the origin was
-      refused by the origin or an intervening network element.
+   o  Description: The intermediary's forward connection was refused.
 
    o  Extra Parameters: None.
 
    o  Recommended HTTP status code: 502
 
-3.7.  Origin Connection Closed
+3.7.  Forward Connection Closed
 
-   o  Name: origin_connection_closed
+   o  Name: forward_connection_closed
 
-   o  Description: The intermediary's connection to the origin was
-      closed before any part of the response was received.  If some part
-      was received, see origin_http_incomplete.
+   o  Description: The intermediary's forward connection was closed
+      before any part of the response was received.  If some part was
+      received, see forward_http_incomplete.
 
    o  Extra Parameters: None.
 
    o  Recommended HTTP status code: 502
 
-3.8.  Origin Connect Timeout
+3.8.  Forward Connect Timeout
 
-   o  Name: origin_connect_timeout
+   o  Name: forward_connect_timeout
 
-   o  Description: The intermediary's attempt to connect to the origin
-      timed out.
+   o  Description: The intermediary's attempt to open a forward
+      connection timed out.
 
    o  Extra Parameters: None.
 
    o  Recommended HTTP status code: 504
 
-3.9.  Origin Read Timeout
 
-   o  Name: origin_read_timeout
+
+
+
+
+Nottingham & Sikora       Expires July 28, 2019                 [Page 7]
+
+Internet-Draft                Proxy-Status                  January 2019
+
+
+3.9.  Forward Read Timeout
+
+   o  Name: forward_read_timeout
 
    o  Description: The intermediary expect
 
@@ -382,19 +404,7 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 504
 
-
-
-
-
-
-
-
-Nottingham                Expires July 28, 2019                 [Page 7]
-
-Internet-Draft                Proxy-Status                  January 2019
-
-
-3.10.  Origin Write Timeout
+3.10.  Forward Write Timeout
 
    o  Name: origin_write_timeout
 
@@ -404,11 +414,11 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 504
 
-3.11.  Origin Down
+3.11.  Forward Node Down
 
-   o  Name: origin_down
+   o  Name: forward_node_down
 
-   o  Description: The intermediary considers the origin to be
+   o  Description: The intermediary considers the next hop to be
       unavailable; e.g., recent attempts to communicate with it may have
       failed, or a health check may indicate that it is down.
 
@@ -416,23 +426,13 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 500
 
-3.12.  Origin Connection Limit Reached
+3.12.  Forward Connection Limit Reached
 
-   o  Name: origin_connnection_limit
+   o  Name: Forward_connnection_limit
 
    o  Description: The intermediary is configured to limit the number of
-      connections it has to the origin, and that limit has been passed.
-
-   o  Extra Parameters: None.
-
-   o  Recommended HTTP status code:
-
-3.13.  Origin HTTP Error Status
-
-   o  Name: origin_http_error_status
-
-   o  Description: The intermediary has encountered a 4xx or 5xx status
-      code from the origin server, and
+      connections it has to the next hop, and that limit has been
+      passed.
 
    o  Extra Parameters: None.
 
@@ -445,29 +445,40 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham                Expires July 28, 2019                 [Page 8]
+Nottingham & Sikora       Expires July 28, 2019                 [Page 8]
 
 Internet-Draft                Proxy-Status                  January 2019
 
 
-3.14.  Origin HTTP Incomplete Response
+3.13.  HTTP Response Status
 
-   o  Name: origin_http_incomplete
+   o  Name: http_response_status
+
+   o  Description: The intermediary has received a 4xx or 5xx status
+      code from the next hop, and
+
+   o  Extra Parameters: None.
+
+   o  Recommended HTTP status code:
+
+3.14.  HTTP Incomplete Response
+
+   o  Name: http_response_incomplete
 
    o  Description: The intermediary received an incomplete response to
-      the request from the origin.
+      the request from the next hop forward.
 
    o  Extra Parameters: None.
 
    o  Recommended HTTP status code: 502
 
-3.15.  Origin HTTP Protocol Error
+3.15.  Forward HTTP Protocol Error
 
-   o  Name: origin_http_protocol
+   o  Name: foreward_http_protocol
 
    o  Description: The intermediary encountered a HTTP protocol error
-      when communicating with the origin.  This error should only be
-      used when a more specific one is not defined.
+      when communicating with the next hop forward.  This error should
+      only be used when a more specific one is not defined.
 
    o  Extra Parameters:
 
@@ -477,14 +488,23 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.16.  Origin HTTP Response Header Block Too Large
+3.16.  HTTP Response Header Block Too Large
 
-   o  Name: origin_http_response_header_block_size
+   o  Name: http_response_header_block_size
 
    o  Description: The intermediary received a response to the request
       whose header block was considered too large.
 
    o  Extra Parameters:
+
+
+
+
+
+Nottingham & Sikora       Expires July 28, 2019                 [Page 9]
+
+Internet-Draft                Proxy-Status                  January 2019
+
 
       *  header_block_size: a sh-integer indicating how large the
          headers received were.  Note that they might not be complete;
@@ -493,18 +513,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.17.  Origin HTTP Response Header Too Large
+3.17.  HTTP Response Header Too Large
 
-   o  Name: origin_http_response_header_size
-
-
-
-
-
-Nottingham                Expires July 28, 2019                 [Page 9]
-
-Internet-Draft                Proxy-Status                  January 2019
-
+   o  Name: http_response_header_size
 
    o  Description: The intermediary received a response to the request
       containing an individual header line that was considered too
@@ -517,9 +528,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.18.  Origin HTTP Response Body Too Large
+3.18.  HTTP Response Body Too Large
 
-   o  Name: origin_http_response_body_size
+   o  Name: http_response_body_size
 
    o  Description: The intermediary received a response to the request
       whose body was considered too large.
@@ -532,38 +543,36 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.19.  Origin HTTP Transfer-Coding Error
+3.19.  HTTP Response Transfer-Coding Error
 
-   o  Name: origin_http_transfer_coding
+   o  Name: http_response_transfer_coding
 
    o  Description: The intermediary encountered an error decoding the
-      transfer-coding of the origin's response.
+      transfer-coding of the response.
 
    o  Extra Parameters:
 
       *  coding: a sh-token containing the specific coding that caused
          the error.
 
-      *  details: a sh-string containing details about the error
-         condition.
-
-   o  Recommended HTTP status code: 502
-
-3.20.  Origin HTTP Content-Coding Error
-
-   o  Name: origin_http_content_coding
 
 
-
-
-
-Nottingham                Expires July 28, 2019                [Page 10]
+Nottingham & Sikora       Expires July 28, 2019                [Page 10]
 
 Internet-Draft                Proxy-Status                  January 2019
 
 
+      *  details: a sh-string containing details about the error
+         condition.
+
+   o  Recommended HTTP status code: 502
+
+3.20.  HTTP Response Content-Coding Error
+
+   o  Name: http_response_content_coding
+
    o  Description: The intermediary encountered an error decoding the
-      content-coding of the origin's response.
+      content-coding of the response.
 
    o  Extra Parameters:
 
@@ -575,12 +584,12 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.21.  Origin TLS Error
+3.21.  Forward TLS Error
 
-   o  Name: origin_tls_error
+   o  Name: forward_tls_error
 
    o  Description: The intermediary encountered a TLS error when
-      communicating with the origin.
+      communicating with the next hop forward.
 
    o  Extra Parameters:
 
@@ -589,9 +598,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.22.  Intermediary Internal Error
+3.22.  Proxy Internal Error
 
-   o  Name: intermediary_internal_error
+   o  Name: proxy_internal_error
 
    o  Description: The intermediary encountered an internal error
       unrelated to the origin.
@@ -600,6 +609,14 @@ Internet-Draft                Proxy-Status                  January 2019
 
       *  details: a sh-string containing details about the error
          condition.
+
+
+
+
+Nottingham & Sikora       Expires July 28, 2019                [Page 11]
+
+Internet-Draft                Proxy-Status                  January 2019
+
 
    o  Recommended HTTP status code: 500
 
@@ -610,14 +627,6 @@ Internet-Draft                Proxy-Status                  January 2019
    o  Description: The intermediary is generating a client (4xx)
       response on the origin's behalf.  Applicable status codes include
       (but are not limited to) 400, 403, 405, 406, 408, 411, 413, 414,
-
-
-
-Nottingham                Expires July 28, 2019                [Page 11]
-
-Internet-Draft                Proxy-Status                  January 2019
-
-
       415, 416, 417, 429.  This proxy status type helps distinguish
       between responses generated by intermediaries from those generated
       by the origin.
@@ -656,23 +665,20 @@ Internet-Draft                Proxy-Status                  January 2019
    o  Extra Parameters: [zero or more optional parameters, typed using
       one of the types available in sh-item]
 
+
+
+
+
+Nottingham & Sikora       Expires July 28, 2019                [Page 12]
+
+Internet-Draft                Proxy-Status                  January 2019
+
+
    o  Recommended HTTP status code: [the appropriate HTTP status code
       for this entry]
 
    See the registry at https://iana.org/assignments/http-proxy-statuses
    [4] for details on where to send registration requests.
-
-
-
-
-
-
-
-
-Nottingham                Expires July 28, 2019                [Page 12]
-
-Internet-Draft                Proxy-Status                  January 2019
-
 
 5.  IANA Considerations
 
@@ -717,18 +723,17 @@ Internet-Draft                Proxy-Status                  January 2019
               Negotiation Extension", RFC 7301, DOI 10.17487/RFC7301,
               July 2014, <https://www.rfc-editor.org/info/rfc7301>.
 
+
+
+Nottingham & Sikora       Expires July 28, 2019                [Page 13]
+
+Internet-Draft                Proxy-Status                  January 2019
+
+
    [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
               Writing an IANA Considerations Section in RFCs", BCP 26,
               RFC 8126, DOI 10.17487/RFC8126, June 2017,
               <https://www.rfc-editor.org/info/rfc8126>.
-
-
-
-
-Nottingham                Expires July 28, 2019                [Page 13]
-
-Internet-Draft                Proxy-Status                  January 2019
-
 
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
@@ -750,7 +755,7 @@ Internet-Draft                Proxy-Status                  January 2019
 
    [5] https://iana.org/assignments/http-proxy-statuses
 
-Author's Address
+Authors' Addresses
 
    Mark Nottingham
    Fastly
@@ -759,6 +764,10 @@ Author's Address
    URI:   https://www.mnot.net/
 
 
+   Piotr Sikora
+   Google
+
+   Email: piotrsikora@google.com
 
 
 
@@ -772,13 +781,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-Nottingham                Expires July 28, 2019                [Page 14]
+Nottingham & Sikora       Expires July 28, 2019                [Page 14]
