@@ -141,7 +141,7 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 ## Backend Not Found
 
 * Name: backend_not_found
-* Description: The intermediary cannot determine the appropriate origin to use for this request; for example, it may not be configured. Note that this error is specific to gateways, which typically require specific configuration to identify the "back end" server; forward proxies use in-band information to identify the origin server.
+* Description: The intermediary cannot determine the appropriate origin to use for this request; for example, it may not be configured. Note that this error is specific to gateways, which typically require specific configuration to identify the "backend" server; forward proxies use in-band information to identify the origin server.
 * Extra Parameters: None.
 * Recommended HTTP status code: 500
 
@@ -154,7 +154,7 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 
 ## Forward DNS Error
 
-* Name: forward__dns_error
+* Name: forward_dns_error
 * Description: The intermediary encountered a DNS error when trying to find an IP address for forward connection.
 * Extra Parameters:
   - rcode: A sh-string conveying the DNS RCODE that indicates the error type. See {{!RFC8499}}, Section 3.
@@ -204,7 +204,7 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 
 ## Forward Write Timeout
 
-* Name: origin_write_timeout
+* Name: forward_write_timeout
 * Description:
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
@@ -219,7 +219,7 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 
 ## Forward Connection Limit Reached
 
-* Name: Forward_connnection_limit
+* Name: forward_connnection_limit
 * Description: The intermediary is configured to limit the number of connections it has to the next hop, and that limit has been passed.
 * Extra Parameters: None.
 * Recommended HTTP status code:
@@ -234,14 +234,14 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 ## HTTP Incomplete Response
 
 * Name: http_response_incomplete
-* Description: The intermediary received an incomplete response to the request from the next hop forward.
+* Description: The intermediary received an incomplete response to the request from the next hop.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
 ## Forward HTTP Protocol Error
 
-* Name: foreward_http_protocol
-* Description: The intermediary encountered a HTTP protocol error when communicating with the next hop forward. This error should only be used when a more specific one is not defined.
+* Name: forward_http_protocol
+* Description: The intermediary encountered a HTTP protocol error when communicating with the next hop. This error should only be used when a more specific one is not defined.
 * Extra Parameters:
   - details: a sh-string containing details about the error condition. For example, this might be the HTTP/2 error code or free-form text describing the condition.
 * Recommended HTTP status code: 502
@@ -291,7 +291,7 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 ## Forward TLS Error
 
 * Name: forward_tls_error
-* Description: The intermediary encountered a TLS error when communicating with the next hop forward.
+* Description: The intermediary encountered a TLS error when communicating with the next hop.
 * Extra Parameters:
   - alert_message: a sh-token containing the applicable description string from the TLS Alerts registry.
 * Recommended HTTP status code: 502
