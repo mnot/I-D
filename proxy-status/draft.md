@@ -128,9 +128,9 @@ This section lists parameters that are potentially applicable to most Proxy Stat
 
 * proxy_id - a sh-token identifying the HTTP intermediary generating this response.
 * origin_id - a sh-token identifying the origin server whose behaviour triggered this response.
-* forward_protocol - a sh-token indicating the ALPN protocol identifier {{!RFC7301}} used to connect to the next hop. This is only applicable when that connection was actually established.
+* protocol - a sh-token indicating the ALPN protocol identifier {{!RFC7301}} used to connect to the next hop. This is only applicable when that connection was actually established.
 * paths_tried - a sh-integer indicating the number of forward paths that have been tried before generating this error.
-* forward_tries - a sh-integer indicating the number of times that the error specified has occurred on the XXX.
+* tries - a sh-integer indicating the number of times that the error specified has occurred on the XXX.
 * note - a sh-string containing additional information not captured anywhere else. This can include implementation-specific or deployment-specific information.
 
 
@@ -138,88 +138,87 @@ This section lists parameters that are potentially applicable to most Proxy Stat
 
 This section lists the Proxy Status Types defined by this document. See {{register}} for information about defining new Proxy Status Types.
 
-## Backend Not Found
+## Destination Not Found
 
-* Name: backend_not_found
-* Description: The intermediary cannot determine the appropriate origin to use for this request; for example, it may not be configured. Note that this error is specific to gateways, which typically require specific configuration to identify the "back end" server; forward proxies use in-band information to identify the origin server.
+* Name: destination_not_found
+* Description: The intermediary cannot determine the appropriate destination to use for this request; for example, it may not be configured. Note that this error is specific to gateways, which typically require specific configuration to identify the "back end" server; forward proxies use in-band information to identify the origin server.
 * Extra Parameters: None.
 * Recommended HTTP status code: 500
 
-## Forward DNS Timeout
+## DNS Timeout
 
-* Name: forward_dns_timeout
+* Name: dns_timeout
 * Description: The intermediary encountered a timeout when trying to find an IP address for the forward hostname.
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
 
-## Forward DNS Error
+## DNS Error
 
-* Name: forward__dns_error
+* Name: dns_error
 * Description: The intermediary encountered a DNS error when trying to find an IP address for forward connection.
 * Extra Parameters:
   - rcode: A sh-string conveying the DNS RCODE that indicates the error type. See {{!RFC8499}}, Section 3.
 * Recommended HTTP status code: 502
 
-## Forward IP Prohibited
+## IP Prohibited
 
-* Name: forward_ip_prohibited
+* Name: destination_ip_prohibited
 * Description: The intermediary is configured to prohibit connections to the forward IP address.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
-## Forward IP Unroutable
+## IP Unroutable
 
-* Name: forward_ip_unroutable
+* Name: destination_ip_unroutable
 * Description: The intermediary cannot find a route to the forward IP address.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
-## Forward Connection Refused
+## Connection Refused
 
-* Name: forward_connection_refused
+* Name: connection_refused
 * Description: The intermediary's forward connection was refused.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
-## Forward Connection Closed
+## Connection Closed
 
-* Name: forward_connection_closed
+* Name: connection_closed
 * Description: The intermediary's forward connection was closed before any part of the response was received. If some part was received, see forward_http_incomplete.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
-## Forward Connect Timeout
+## Connection Timeout
 
-* Name: forward_connect_timeout
+* Name: connection_timeout
 * Description: The intermediary's attempt to open a forward connection timed out.
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
 
-## Forward Read Timeout
+## Connection Read Timeout
 
-* Name: forward_read_timeout
+* Name: connection_read_timeout
 * Description: The intermediary expect
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
 
-## Forward Write Timeout
+## Connection Write Timeout
 
-* Name: origin_write_timeout
+* Name: connection_write_timeout
 * Description:
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
 
-## Forward Node Down
+## Destination Unavailable
 
-* Name: forward_node_down
+* Name: destination_unavailable
 * Description: The intermediary considers the next hop to be unavailable; e.g., recent attempts to communicate with it may have failed, or a health check may indicate that it is down.
 * Extra Parameters:
+* Recommended HTTP status code: 503
 
-* Recommended HTTP status code: 500
+## Connection Limit Reached
 
-## Forward Connection Limit Reached
-
-* Name: Forward_connnection_limit
+* Name: connnection_limit_reached
 * Description: The intermediary is configured to limit the number of connections it has to the next hop, and that limit has been passed.
 * Extra Parameters: None.
 * Recommended HTTP status code:
@@ -227,21 +226,21 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 ## HTTP Response Status
 
 * Name: http_response_status
-* Description: The intermediary has received a 4xx or 5xx status code from the next hop, and
+* Description: The intermediary has received a 4xx or 5xx status code from the next hop and forwarded it to the client.
 * Extra Parameters: None.
 * Recommended HTTP status code:
 
 ## HTTP Incomplete Response
 
 * Name: http_response_incomplete
-* Description: The intermediary received an incomplete response to the request from the next hop forward.
+* Description: The intermediary received an incomplete response to the request from the next hop.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
-## Forward HTTP Protocol Error
+## HTTP Protocol Error
 
-* Name: foreward_http_protocol
-* Description: The intermediary encountered a HTTP protocol error when communicating with the next hop forward. This error should only be used when a more specific one is not defined.
+* Name: http_protocol_error
+* Description: The intermediary encountered a HTTP protocol error when communicating with the next hop. This error should only be used when a more specific one is not defined.
 * Extra Parameters:
   - details: a sh-string containing details about the error condition. For example, this might be the HTTP/2 error code or free-form text describing the condition.
 * Recommended HTTP status code: 502
@@ -288,10 +287,10 @@ This section lists the Proxy Status Types defined by this document. See {{regist
   - details: a sh-string containing details about the error condition.
 * Recommended HTTP status code: 502
 
-## Forward TLS Error
+## TLS Error
 
-* Name: forward_tls_error
-* Description: The intermediary encountered a TLS error when communicating with the next hop forward.
+* Name: tls_error
+* Description: The intermediary encountered a TLS error when communicating with the next hop.
 * Extra Parameters:
   - alert_message: a sh-token containing the applicable description string from the TLS Alerts registry.
 * Recommended HTTP status code: 502
