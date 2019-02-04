@@ -102,11 +102,11 @@ A well-known URI is a URI {{!RFC3986}} whose path component begins with the char
 "/.well-known/", and whose scheme is "http" {{!RFC7230}}, "https" {{!RFC7230}}, "ws" {{!RFC6455}},
 "wss" {{!RFC6455}}, or another scheme that has explicitly been specified to use well-known URIs.
 
-Applications that wish to mint new well-known URIs MUST register them, following the procedures in
-{{register}}.
-
 For example, if an application registers the name 'example', the corresponding well-known URI on
 'http://www.example.com/' would be 'http://www.example.com/.well-known/example'.
+
+Applications that wish to mint new well-known URIs MUST register them, following the procedures in
+{{register}}, subject to the following requirements.
 
 Registered names MUST conform to the segment-nz production in {{!RFC3986}}. This means they cannot
 contain the "/" character.
@@ -170,7 +170,7 @@ Related information:
 
 General requirements for registered relation types are described in {{well-known}}.
 
-Standards-defined values have a status of "permanent". Other values can also be registered as permanent, if the Experts find that they are in use, in consultation with the community. Other values should be registered as "provisional".
+Values defined by standards-track RFCs and other open standards (in the sense of {{?RFC206, Section 7.1.1}}) have a status of "permanent". Other values can also be registered as permanent, if the Experts find that they are in use, in consultation with the community. Other values should be registered as "provisional".
 
 Provisional entries can be removed by the Experts if -- in consultation with the community -- the Experts find that they are not in use. The Experts can change a provisional entry's status to permanent at any time.
 
