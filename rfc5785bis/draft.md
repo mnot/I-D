@@ -267,8 +267,6 @@ Web page.
 
 Upon publication, IANA should:
 
-* Replace all references to RFC 5988 in that registry have been replaced with references
-to this document.
 * Update the status of all existing registrations to "permanent".
 
 
