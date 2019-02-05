@@ -252,8 +252,7 @@ be able to control its contents, possibly without the administrator realising it
 This specification updates the registration procedures for the "Well-Known URI" registry, first
 defined in {{?RFC5785}}; see {{procedure}}.
 
-Well-known URIs are registered on the advice of one or more experts (appointed by the
-IESG or their delegate), with a Specification Required (using terminology from {{!RFC8126}}).
+Well-known URIs are registered on the advice of one or more Experts, with a Specification Required (using terminology from {{!RFC8126}}).
 
 The Experts' primary considerations in evaluating registration requests are:
 
