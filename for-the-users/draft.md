@@ -103,7 +103,8 @@ a need to balance the benefits of a decision between two (or more) parties.
 
 In these situations, when one of those parties is the "end user" of the Internet -- for example, a
 person using a Web browser, mail client, or other agent that connects to the Internet -- the IETF
-tends to favour their needs over that of parties such as network operators or equipement vendors.
+tends to protect their interests over those of parties such as network operators or equipement
+vendors.
 
 This document explains what is meant by "end users" in {{end}}, why they tend to be prioritised in
 IETF work in {{why}}, and how that is done in {{how}}.
