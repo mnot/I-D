@@ -156,17 +156,20 @@ a network operator), and need a "tiebreaker", we should err on the side of findi
 doesn't harm end users.
 
 Note that "harm" is not defined in this document; that is something that the relevant body (e.g.,
-Working Group) needs to discuss. The IETF has already established a body of guidance for such
-decisions, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}}
-on pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy
+Working Group) needs to discuss.
+
+The IETF has already established a body of guidance for situations where this soft of conflict is
+common, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}} on
+pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy
 considerations.
 
-When a proposed solution to a problem has a benefit to some other party at the identified expense
-of end users, we will find a different solution or find another way to frame the problem.
+When such advice is not yet available, we try to find a different solution, or another way to frame
+the problem, distilling the underlying principles into more general advice where appropriate.
 
-There may be cases where genuine technical need requires compromise. However, such tradeoffs need
-to be carefully examined, and avoided when there are alternate means of achieving the desired
-goals. If they cannot be, these choices and reasoning ought to be carefully documented.
+There may be cases where genuine technical need requires compromise. However, such tradeoffs are
+carefully examined, and avoided when there are alternate means of achieving the desired goals. If
+they cannot be, these choices and reasoning ought to be carefully documented.
+
 
 ## Examples
 
