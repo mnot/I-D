@@ -166,10 +166,9 @@ they cannot be, these choices and reasoning ought to be carefully documented.
 
 ## Examples
 
-For example, IPv6 {{?RFC8200}} can be used to assign a client with a unique address prefix -- even
-though this provides a way to track end user activity and helps identify them -- because it is
-technically necessary to provide networking (and despite this, there are mechanisms like
-{{RFC4941}} to mitigate this effect, for those users who desire it).
+* IPv6 {{?RFC8200}} can be used to assign a client with a unique address prefix -- even though this provides a way to track end user activity and helps identify them -- because it is technically necessary to provide networking (and despite this, there are mechanisms like {{RFC4941}} to mitigate this effect, for those users who desire it).
+
+* Different network operator communities have, from time to time, asked for a mechanism that would allow them to insert themselves into HTTPS {{?RFC7231}} connections to interpose caching and other performance optimisations. This was rejected for a number of reasons, including that end users' conception of HTTPS as an encrypted end-to-end protocol had already formed, so that changing it would harm user security.
 
 
 # IANA Considerations
