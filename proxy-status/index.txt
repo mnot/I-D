@@ -5,8 +5,8 @@
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                    Fastly
 Intended status: Informational                                 P. Sikora
-Expires: July 28, 2019                                            Google
-                                                        January 24, 2019
+Expires: August 15, 2019                                          Google
+                                                       February 11, 2019
 
 
                    The Proxy-Status HTTP Header Field
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                 [Page 1]
+Nottingham & Sikora      Expires August 15, 2019                [Page 1]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
    working documents as Internet-Drafts.  The list of current Internet-
@@ -66,7 +66,7 @@ Internet-Draft                Proxy-Status                  January 2019
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on July 28, 2019.
+   This Internet-Draft will expire on August 15, 2019.
 
 Copyright Notice
 
@@ -90,35 +90,35 @@ Table of Contents
    2.  The Proxy-Status HTTP Header Field  . . . . . . . . . . . . .   4
      2.1.  Generic Proxy Status Parameters . . . . . . . . . . . . .   5
    3.  Proxy Status Types  . . . . . . . . . . . . . . . . . . . . .   5
-     3.1.  Backend Not Found . . . . . . . . . . . . . . . . . . . .   6
-     3.2.  Forward DNS Timeout . . . . . . . . . . . . . . . . . . .   6
-     3.3.  Forward DNS Error . . . . . . . . . . . . . . . . . . . .   6
-     3.4.  Forward IP Prohibited . . . . . . . . . . . . . . . . . .   6
-     3.5.  Forward IP Unroutable . . . . . . . . . . . . . . . . . .   7
-     3.6.  Forward Connection Refused  . . . . . . . . . . . . . . .   7
-     3.7.  Forward Connection Closed . . . . . . . . . . . . . . . .   7
-     3.8.  Forward Connect Timeout . . . . . . . . . . . . . . . . .   7
-     3.9.  Forward Read Timeout  . . . . . . . . . . . . . . . . . .   8
-     3.10. Forward Write Timeout . . . . . . . . . . . . . . . . . .   8
-     3.11. Forward Node Down . . . . . . . . . . . . . . . . . . . .   8
-     3.12. Forward Connection Limit Reached  . . . . . . . . . . . .   8
+     3.1.  Destination Not Found . . . . . . . . . . . . . . . . . .   6
+     3.2.  DNS Timeout . . . . . . . . . . . . . . . . . . . . . . .   6
+     3.3.  DNS Error . . . . . . . . . . . . . . . . . . . . . . . .   6
+     3.4.  IP Prohibited . . . . . . . . . . . . . . . . . . . . . .   6
+     3.5.  IP Unroutable . . . . . . . . . . . . . . . . . . . . . .   7
+     3.6.  Connection Refused  . . . . . . . . . . . . . . . . . . .   7
+     3.7.  Connection Closed . . . . . . . . . . . . . . . . . . . .   7
+     3.8.  Connection Timeout  . . . . . . . . . . . . . . . . . . .   7
+     3.9.  Connection Read Timeout . . . . . . . . . . . . . . . . .   8
+     3.10. Connection Write Timeout  . . . . . . . . . . . . . . . .   8
+     3.11. Destination Unavailable . . . . . . . . . . . . . . . . .   8
+     3.12. Connection Limit Reached  . . . . . . . . . . . . . . . .   8
      3.13. HTTP Response Status  . . . . . . . . . . . . . . . . . .   9
      3.14. HTTP Incomplete Response  . . . . . . . . . . . . . . . .   9
-     3.15. Forward HTTP Protocol Error . . . . . . . . . . . . . . .   9
+     3.15. HTTP Protocol Error . . . . . . . . . . . . . . . . . . .   9
      3.16. HTTP Response Header Block Too Large  . . . . . . . . . .   9
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                 [Page 2]
+Nottingham & Sikora      Expires August 15, 2019                [Page 2]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
      3.17. HTTP Response Header Too Large  . . . . . . . . . . . . .  10
      3.18. HTTP Response Body Too Large  . . . . . . . . . . . . . .  10
      3.19. HTTP Response Transfer-Coding Error . . . . . . . . . . .  10
      3.20. HTTP Response Content-Coding Error  . . . . . . . . . . .  11
-     3.21. Forward TLS Error . . . . . . . . . . . . . . . . . . . .  11
+     3.21. TLS Error . . . . . . . . . . . . . . . . . . . . . . . .  11
      3.22. Proxy Internal Error  . . . . . . . . . . . . . . . . . .  11
      3.23. Request Error . . . . . . . . . . . . . . . . . . . . . .  12
    4.  Defining New Proxy Status Types . . . . . . . . . . . . . . .  12
@@ -165,9 +165,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                 [Page 3]
+Nottingham & Sikora      Expires August 15, 2019                [Page 3]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
    param-list, sh-item, sh-string, sh-token and sh-integer refer to the
@@ -202,8 +202,8 @@ Internet-Draft                Proxy-Status                  January 2019
    For example:
 
    HTTP/1.1 504 Gateway Timeout
-   Proxy-Status: connect_timeout; proxy_id=FooCDN;
-     origin_id=abc; origin_tries=3
+   Proxy-Status: connect_timeout; proxy=FooCDN;
+     origin=abc; origin_tries=3
 
    indicates the specific nature of the timeout as a connect timeout to
    the origin with the identifier "abc", and that is was generated by
@@ -213,7 +213,7 @@ Internet-Draft                Proxy-Status                  January 2019
    Or:
 
    HTTP/1.1 429 Too Many Requests
-   Proxy-Status: request_error; proxy_id=BarReverseProxy
+   Proxy-Status: request_error; proxy=BarReverseProxy
 
    indicates that this 429 Too Many Requests response was generated by
    the intermediary, not the origin.
@@ -221,9 +221,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                 [Page 4]
+Nottingham & Sikora      Expires August 15, 2019                [Page 4]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
    Each Proxy Status Type has a Recommended HTTP Status Code.  When
@@ -245,21 +245,21 @@ Internet-Draft                Proxy-Status                  January 2019
    This section lists parameters that are potentially applicable to most
    Proxy Status Types.
 
-   o  proxy_id - a sh-token identifying the HTTP intermediary generating
+   o  proxy - a sh-token identifying the HTTP intermediary generating
       this response.
 
-   o  origin_id - a sh-token identifying the origin server whose
-      behaviour triggered this response.
+   o  origin - a sh-token identifying the origin server whose behaviour
+      triggered this response.
 
-   o  forward_protocol - a sh-token indicating the ALPN protocol
-      identifier [RFC7301] used to connect to the next hop.  This is
-      only applicable when that connection was actually established.
+   o  protocol - a sh-token indicating the ALPN protocol identifier
+      [RFC7301] used to connect to the next hop.  This is only
+      applicable when that connection was actually established.
 
    o  paths_tried - a sh-integer indicating the number of forward paths
       that have been tried before generating this error.
 
-   o  forward_tries - a sh-integer indicating the number of times that
-      the error specified has occurred on the XXX.
+   o  tries - a sh-integer indicating the number of times that the error
+      specified has occurred before this result.
 
    o  note - a sh-string containing additional information not captured
       anywhere else.  This can include implementation-specific or
@@ -277,17 +277,17 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                 [Page 5]
+Nottingham & Sikora      Expires August 15, 2019                [Page 5]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
-3.1.  Backend Not Found
+3.1.  Destination Not Found
 
-   o  Name: backend_not_found
+   o  Name: destination_not_found
 
    o  Description: The intermediary cannot determine the appropriate
-      origin to use for this request; for example, it may not be
+      destination to use for this request; for example, it may not be
       configured.  Note that this error is specific to gateways, which
       typically require specific configuration to identify the "back
       end" server; forward proxies use in-band information to identify
@@ -297,9 +297,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 500
 
-3.2.  Forward DNS Timeout
+3.2.  DNS Timeout
 
-   o  Name: forward_dns_timeout
+   o  Name: dns_timeout
 
    o  Description: The intermediary encountered a timeout when trying to
       find an IP address for the forward hostname.
@@ -308,9 +308,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 504
 
-3.3.  Forward DNS Error
+3.3.  DNS Error
 
-   o  Name: forward__dns_error
+   o  Name: dns_error
 
    o  Description: The intermediary encountered a DNS error when trying
       to find an IP address for forward connection.
@@ -322,9 +322,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.4.  Forward IP Prohibited
+3.4.  IP Prohibited
 
-   o  Name: forward_ip_prohibited
+   o  Name: destination_ip_prohibited
 
    o  Description: The intermediary is configured to prohibit
       connections to the forward IP address.
@@ -333,16 +333,16 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                 [Page 6]
+Nottingham & Sikora      Expires August 15, 2019                [Page 6]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
    o  Recommended HTTP status code: 502
 
-3.5.  Forward IP Unroutable
+3.5.  IP Unroutable
 
-   o  Name: forward_ip_unroutable
+   o  Name: destination_ip_unroutable
 
    o  Description: The intermediary cannot find a route to the forward
       IP address.
@@ -351,9 +351,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.6.  Forward Connection Refused
+3.6.  Connection Refused
 
-   o  Name: forward_connection_refused
+   o  Name: connection_refused
 
    o  Description: The intermediary's forward connection was refused.
 
@@ -361,9 +361,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.7.  Forward Connection Closed
+3.7.  Connection Closed
 
-   o  Name: forward_connection_closed
+   o  Name: connection_closed
 
    o  Description: The intermediary's forward connection was closed
       before any part of the response was received.  If some part was
@@ -373,9 +373,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.8.  Forward Connect Timeout
+3.8.  Connection Timeout
 
-   o  Name: forward_connect_timeout
+   o  Name: connection_timeout
 
    o  Description: The intermediary's attempt to open a forward
       connection timed out.
@@ -389,34 +389,37 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                 [Page 7]
+Nottingham & Sikora      Expires August 15, 2019                [Page 7]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
-3.9.  Forward Read Timeout
+3.9.  Connection Read Timeout
 
-   o  Name: forward_read_timeout
+   o  Name: connection_read_timeout
 
-   o  Description: The intermediary expect
-
-   o  Extra Parameters: None.
-
-   o  Recommended HTTP status code: 504
-
-3.10.  Forward Write Timeout
-
-   o  Name: origin_write_timeout
-
-   o  Description:
+   o  Description: The intermediary was expecting data on a connection
+      (e.g., part of a response), but did not receive any.
 
    o  Extra Parameters: None.
 
    o  Recommended HTTP status code: 504
 
-3.11.  Forward Node Down
+3.10.  Connection Write Timeout
 
-   o  Name: forward_node_down
+   o  Name: connection_write_timeout
+
+   o  Description: The intermediary was attempting to write data to a
+      connection, but was not able to (e.g., because its buffers were
+      full).
+
+   o  Extra Parameters: None.
+
+   o  Recommended HTTP status code: 504
+
+3.11.  Destination Unavailable
+
+   o  Name: destination_unavailable
 
    o  Description: The intermediary considers the next hop to be
       unavailable; e.g., recent attempts to communicate with it may have
@@ -424,11 +427,11 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Extra Parameters:
 
-   o  Recommended HTTP status code: 500
+   o  Recommended HTTP status code: 503
 
-3.12.  Forward Connection Limit Reached
+3.12.  Connection Limit Reached
 
-   o  Name: Forward_connnection_limit
+   o  Name: connnection_limit_reached
 
    o  Description: The intermediary is configured to limit the number of
       connections it has to the next hop, and that limit has been
@@ -442,12 +445,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-
-
-
-Nottingham & Sikora       Expires July 28, 2019                 [Page 8]
+Nottingham & Sikora      Expires August 15, 2019                [Page 8]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
 3.13.  HTTP Response Status
@@ -455,7 +455,7 @@ Internet-Draft                Proxy-Status                  January 2019
    o  Name: http_response_status
 
    o  Description: The intermediary has received a 4xx or 5xx status
-      code from the next hop, and
+      code from the next hop and forwarded it to the client.
 
    o  Extra Parameters: None.
 
@@ -466,19 +466,19 @@ Internet-Draft                Proxy-Status                  January 2019
    o  Name: http_response_incomplete
 
    o  Description: The intermediary received an incomplete response to
-      the request from the next hop forward.
+      the request from the next hop.
 
    o  Extra Parameters: None.
 
    o  Recommended HTTP status code: 502
 
-3.15.  Forward HTTP Protocol Error
+3.15.  HTTP Protocol Error
 
-   o  Name: foreward_http_protocol
+   o  Name: http_protocol_error
 
    o  Description: The intermediary encountered a HTTP protocol error
-      when communicating with the next hop forward.  This error should
-      only be used when a more specific one is not defined.
+      when communicating with the next hop.  This error should only be
+      used when a more specific one is not defined.
 
    o  Extra Parameters:
 
@@ -501,9 +501,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                 [Page 9]
+Nottingham & Sikora      Expires August 15, 2019                [Page 9]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
       *  header_block_size: a sh-integer indicating how large the
@@ -557,9 +557,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                [Page 10]
+Nottingham & Sikora      Expires August 15, 2019               [Page 10]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
       *  details: a sh-string containing details about the error
@@ -584,12 +584,12 @@ Internet-Draft                Proxy-Status                  January 2019
 
    o  Recommended HTTP status code: 502
 
-3.21.  Forward TLS Error
+3.21.  TLS Error
 
-   o  Name: forward_tls_error
+   o  Name: tls_error
 
    o  Description: The intermediary encountered a TLS error when
-      communicating with the next hop forward.
+      communicating with the next hop.
 
    o  Extra Parameters:
 
@@ -613,9 +613,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                [Page 11]
+Nottingham & Sikora      Expires August 15, 2019               [Page 11]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
    o  Recommended HTTP status code: 500
@@ -669,9 +669,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                [Page 12]
+Nottingham & Sikora      Expires August 15, 2019               [Page 12]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
    o  Recommended HTTP status code: [the appropriate HTTP status code
@@ -700,7 +700,7 @@ Internet-Draft                Proxy-Status                  January 2019
 
    Likewise, generation of all parameters is optional.
 
-   Special care needs to be taken in generating proxy_id and origin_id
+   Special care needs to be taken in generating proxy and origin
    parameters, as they can expose information about the intermediary's
    configuration and back-end topology.
 
@@ -725,9 +725,9 @@ Internet-Draft                Proxy-Status                  January 2019
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                [Page 13]
+Nottingham & Sikora      Expires August 15, 2019               [Page 13]
 
-Internet-Draft                Proxy-Status                  January 2019
+Internet-Draft                Proxy-Status                 February 2019
 
 
    [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
@@ -781,4 +781,4 @@ Authors' Addresses
 
 
 
-Nottingham & Sikora       Expires July 28, 2019                [Page 14]
+Nottingham & Sikora      Expires August 15, 2019               [Page 14]
