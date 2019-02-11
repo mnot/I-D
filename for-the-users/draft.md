@@ -25,14 +25,7 @@ author:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
-normative:
-  RFC2119:
-
 informative:
-  RFC2460:
-  RFC3935:
-  RFC4941:
-  RFC7282:
   CODELAW:
     target: http://harvardmagazine.com/2000/01/code-is-law-html
     title: "Code Is Law: On Liberty in Cyberspace"
@@ -66,7 +59,7 @@ See also the draft's current status in the IETF datatracker, at
 # Introduction
 
 The IETF, while focused on technical matters, is not neutral about the purpose of its work in
-developing the Internet {{RFC3935}}:
+developing the Internet {{?RFC3935}}:
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
 
@@ -137,7 +130,7 @@ user interests.
 # Why End Users are Prioritised {#why}
 
 While networks need to be managed, employers and equipment vendors need to meet business goals, and
-so on, the IETF's mission is to "build a better human society" {{RFC3935}} and -- on the Internet
+so on, the IETF's mission is to "build a better human society" {{?RFC3935}} and -- on the Internet
 -- society is composed of end users, along with groups of them forming business, governments,
 clubs, civil society organizations, and other institutions that influence it.
 
