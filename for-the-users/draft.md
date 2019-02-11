@@ -100,11 +100,11 @@ person using a Web browser, mail client, or other agent that connects to the Int
 tends to protect their interests over those of parties such as network operators or equipement
 vendors.
 
-This document explains what is meant by "end users" in {{end}}, why they tend to be prioritised in
+This document explains what is meant by "end users" in {{who}}, why they tend to be prioritised in
 IETF work in {{why}}, and how that is done in {{how}}.
 
 
-# What Are "End Users"? {#end}
+# What Are "End Users"? {#who}
 
 In this document, "end users," means non-technical users whose activities IETF protocols are
 designed to support, sometimes indirectly. Thus, the end user of a protocol to manage routers is
