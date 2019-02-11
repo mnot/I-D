@@ -11,6 +11,7 @@ keyword: constituent
 keyword: constituency
 keyword: relevant parties
 keyword: end users
+keyword: endpoint
 keyword: stakeholder
 
 stand_alone: yes
