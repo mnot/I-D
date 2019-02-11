@@ -151,7 +151,7 @@ doesn't harm end users.
 Note that "harm" is not defined in this document; that is something that the relevant body (e.g.,
 Working Group) needs to discuss.
 
-The IETF has already established a body of guidance for situations where this soft of conflict is
+The IETF has already established a body of guidance for situations where this sort of conflict is
 common, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}} on
 pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy
 considerations.
