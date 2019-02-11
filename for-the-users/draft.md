@@ -119,13 +119,6 @@ Likewise, even though we use the term "user" here, this does not necessarily den
 relationship with the Internet; someone producing content, selling goods or providing a service is
 equally a user of the Internet. The emphasis here is on "end" -- as in endpoint {{?RFC3724}}.
 
-The IETF community has any specific insight into what is "good for end users"; to help make
-decisions involving them, it interacts with the greater Internet community. Because end users are
-typically not technical experts, the IETF has a responsibility to consider their interests, and
-engages with those who understand how IETF work will affect end users, such as civil society
-organisations, as well as governments, businesses and other groups representing some aspect of end
-user interests.
-
 
 # Why End Users are Prioritised {#why}
 
@@ -143,6 +136,13 @@ trust, preserving the benefit its network effect brings.
 
 
 # How End Users are Prioritised {#how}
+
+The IETF community has any specific insight into what is "good for end users"; to help make
+decisions involving them, it interacts with the greater Internet community. Because end users are
+typically not technical experts, the IETF has a responsibility to consider their interests, and
+engages with those who understand how IETF work will affect end users, such as civil society
+organisations, as well as governments, businesses and other groups representing some aspect of end
+user interests.
 
 When we've identified a conflict between the interests of end users and another stakeholder (e.g.,
 a network operator), and need a "tiebreaker", we should err on the side of finding a solution that
