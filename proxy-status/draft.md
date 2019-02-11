@@ -130,7 +130,7 @@ This section lists parameters that are potentially applicable to most Proxy Stat
 * origin_id - a sh-token identifying the origin server whose behaviour triggered this response.
 * protocol - a sh-token indicating the ALPN protocol identifier {{!RFC7301}} used to connect to the next hop. This is only applicable when that connection was actually established.
 * paths_tried - a sh-integer indicating the number of forward paths that have been tried before generating this error.
-* tries - a sh-integer indicating the number of times that the error specified has occurred on the XXX.
+* tries - a sh-integer indicating the number of times that the error specified has occurred before this result.
 * note - a sh-string containing additional information not captured anywhere else. This can include implementation-specific or deployment-specific information.
 
 
@@ -198,14 +198,14 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 ## Connection Read Timeout
 
 * Name: connection_read_timeout
-* Description: The intermediary expect
+* Description: The intermediary was expecting data on a connection (e.g., part of a response), but did not receive any.
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
 
 ## Connection Write Timeout
 
 * Name: connection_write_timeout
-* Description:
+* Description: The intermediary was attempting to write data to a connection, but was not able to (e.g., because its buffers were full).
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
 
