@@ -137,9 +137,9 @@ trust, preserving the benefit its network effect brings.
 
 # How End Users are Prioritised {#how}
 
-The IETF community has any specific insight into what is "good for end users"; to help make
-decisions involving them, it interacts with the greater Internet community. Because end users are
-typically not technical experts, the IETF has a responsibility to consider their interests, and
+The IETF community does not have any specific insight into what is "good for end users"; to help
+make decisions involving them, it interacts with the greater Internet community. Because end users
+are typically not technical experts, the IETF has a responsibility to consider their interests, and
 engages with those who understand how IETF work will affect end users, such as civil society
 organisations, as well as governments, businesses and other groups representing some aspect of end
 user interests.
