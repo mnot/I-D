@@ -287,6 +287,13 @@ This section lists the Proxy Status Types defined by this document. See {{regist
   - details: a sh-string containing details about the error condition.
 * Recommended HTTP status code: 502
 
+## HTTP Response Timeout
+
+* Name: http_response_timeout
+* Description: The intermediary reached a configured time limit waiting for the complete response.
+* Extra Parameters: None.
+* Recommended HTTP status code: 504
+
 ## TLS Error
 
 * Name: tls_error
