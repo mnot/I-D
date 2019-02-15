@@ -168,7 +168,7 @@ Status:
 Related information:
 : Optionally, citations to additional documents containing further relevant information.
 
-General requirements for registered relation types are described in {{well-known}}.
+General requirements for registered values are described in {{well-known}}.
 
 Values defined by standards-track RFCs and other open standards (in the sense of {{?RFC206, Section 7.1.1}}) have a status of "permanent". Other values can also be registered as permanent, if the Experts find that they are in use, in consultation with the community. Other values should be registered as "provisional".
 
