@@ -59,7 +59,7 @@ See also the draft's current status in the IETF datatracker, at
 # Introduction
 
 The IETF, while focused on technical matters, is not neutral about the purpose of its work in
-developing the Internet {{?RFC3935}}:
+developing the Internet; in "A Mission Statement for the IETF" {{?RFC3935}}, the definitions include:
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
 
