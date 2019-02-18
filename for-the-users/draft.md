@@ -110,14 +110,17 @@ In this document, "end users," means non-technical users whose activities IETF p
 designed to support, sometimes indirectly. Thus, the end user of a protocol to manage routers is
 not a router administrator; it is the people using the network that the router operates within.
 
+An end user could be an individual, or it could be a collection of them; whether that be a social
+movement, a business, or a government that represents a large number of people.
+
 That said, end users are not necessarily a homogenous group; often, but not always, interactions on
 the Internet are characterised by a seller/buyer, publisher/reader, or service provider/consumer
-relationship. Conflicts in these interests are out of scope in this document; from the point of
-view of the Internet, all of these parties are end users.
+relationship.
 
-Likewise, even though we use the term "user" here, this does not necessarily denote a passive
-relationship with the Internet; someone producing content, selling goods or providing a service is
-equally a user of the Internet. The emphasis here is on "end" -- as in endpoint {{?RFC3724}}.
+Also, it's important to note that even though we use the term "user" here, this does not
+necessarily denote a passive relationship with the Internet; someone producing content, selling
+goods or providing a service is equally a user of the Internet. The emphasis here is on "end" -- as
+in endpoint {{?RFC3724}}.
 
 
 # Why End Users are Prioritised {#why}
@@ -158,6 +161,11 @@ considerations.
 
 When such advice is not yet available, we try to find a different solution, or another way to frame
 the problem, distilling the underlying principles into more general advice where appropriate.
+
+When the needs of different end users conflict; for example, between governments and individuals,
+we again try to minimise harm -- this time, to the greatest number and most specific of end users.
+In other words, when a decision improves the Internet for end users in one jurisdiction, but at the
+cost of potential harm to others elsewhere, that is not a good tradeoff.
 
 There may be cases where genuine technical need requires compromise. However, such tradeoffs are
 carefully examined, and avoided when there are alternate means of achieving the desired goals. If
