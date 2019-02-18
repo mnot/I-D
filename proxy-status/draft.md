@@ -292,6 +292,58 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
 
+## TLS Handshake Error
+
+* Name: tls_handshake_error
+* Description: The intermediary encountered an error during TLS handshake with the next hop.
+* Extra Parameters:
+  - alert_message: a sh-token containing the applicable description string from the TLS Alerts registry.
+* Recommended HTTP status code: 502
+
+## TLS Untrusted Peer Certificate
+
+* Name: tls_untrusted_peer_certificate
+* Description: The intermediary received untrusted peer certificate during TLS handshake with the next hop.
+* Extra Parameters: None.
+* Recommended HTTP status code: 502
+
+## TLS Expired Peer Certificate
+
+* Name: tls_expired_peer_certificate
+* Description: The intermediary received expired peer certificate during TLS handshake with the next hop.
+* Extra Parameters: None.
+* Recommended HTTP status code: 502
+
+## TLS Unexpected Peer Certificate
+
+* Name: tls_unexpected_peer_certificate
+* Description: The intermediary received unexpected peer certificate (e.g., SPKI doesn't match) during TLS handshake with the next hop.
+* Extra Parameters:
+  - details: a sh-string containing the checksum or SPKI of the certificate received from the next hop.
+* Recommended HTTP status code: 502
+
+## TLS Unexpected Peer Identity
+
+* Name: tls_unexpected_peer_identity
+* Description: The intermediary received peer certificate with unexpected identity (e.g., Subject Alternative Name doesn't match) during TLS handshake with the next hop.
+* Extra Parameters:
+  - details: a sh-string containing the identity of the next hop.
+* Recommended HTTP status code: 502
+
+## TLS Missing Proxy Certificate
+
+* Name: tls_missing_proxy_certificate
+* Description: The next hop requested client certificate from the intermediary during TLS handshake, but it wasn't configured with one.
+* Extra Parameters: None.
+* Recommended HTTP status code: 500
+
+## TLS Rejected Proxy Certificate
+
+* Name: tls_rejected_proxy_certificate
+* Description: The next hop rejected client certificate provided by the intermediary during TLS handshake.
+* Extra Parameters: None.
+* Recommended HTTP status code: 500
+
 ## TLS Error
 
 * Name: tls_error
