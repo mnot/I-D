@@ -122,6 +122,16 @@ necessarily denote a passive relationship with the Internet; someone producing c
 goods or providing a service is equally a user of the Internet. The emphasis here is on "end" -- as
 in endpoint {{?RFC3724}}.
 
+Similarly, a person whose interests we need to consider might not directly be an end-user of 
+a specific system connected to the Internet. For example, if a child is using a browser, the 
+interests of that child's parents or guardians may be relevant; if a person is pictured in 
+a photograph, that person may have an interest in systems that process that protograph, or 
+if a person entering a room triggers sensors that send data to the Internet than that person's 
+interests may be invovled in our deliberations about how those sensor readings are handled. 
+While such less-direct interactions between people and the Internet may be harder to evaluate 
+compared to those involving people with accounts on some web service, such people are nonetheless 
+included in this document's concept of end-user.
+
 
 # Why End Users are Prioritised {#why}
 
