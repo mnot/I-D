@@ -130,9 +130,9 @@ so on, the IETF's mission is to "build a better human society" {{?RFC3935}} and 
 -- society is composed of end users, along with groups of them forming business, governments,
 clubs, civil society organizations, and other institutions that influence it.
 
-Doing so helps the IETF achieve its mission, and also helps to assure the long-term health of the
-Internet. By prioritising the concerns of end users, we assure that it reaches the greatest number
-of people, thereby delivering greater utility by maximising its network effect.
+Prioritising end users helps the IETF achieve its mission, and also helps to assure the long-term
+health of the Internet. By prioritising their concerns, we assure that the Internet reaches the
+greatest number of people, thereby delivering greater utility by maximising its network effect.
 
 Prioritising end users' needs also helps to assure that the Internet itself retains end users'
 trust, preserving the benefit its network effect brings.
