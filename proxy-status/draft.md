@@ -369,6 +369,13 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 * Extra Parameters: None.
 * Recommended HTTP status code: The applicable 4xx status code
 
+## HTTP Upgrade Failed
+
+* Name: http_upgrade_failed
+* Description: The HTTP Upgrade between the intermediary and the next hop failed.
+* Extra Parameters: None.
+* Recommended HTTP status code: 502
+
 
 # Defining New Proxy Status Types {#register}
 
