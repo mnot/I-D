@@ -243,6 +243,14 @@ Internet-Draft                Proxy-Status                 February 2019
    Section 3 lists the Proxy Status Types defined in this document; new
    ones can be defined using the procedure outlined in Section 4.
 
+   Proxy-Status MAY be sent in HTTP trailers, but - as with all trailers
+   - it might be silently discarded along the path to the user agent,
+   this SHOULD NOT be done unless it is not possible to send it in
+   headers.  For example, if an intermediary is streaming a response and
+   the upstream connection suddenly terminates, Proxy-Status can be
+   appended to the trailers of the outgoing message (since the headers
+   have already been sent).
+
    Note that there are various security considerations for
    intermediaries using the Proxy-Status header field; see Section 6.
 
@@ -266,14 +274,6 @@ Internet-Draft                Proxy-Status                 February 2019
    o  tries - a sh-integer indicating the number of times that the error
       has occurred before this response.
 
-   o  details - a sh-string containing additional information not
-      captured anywhere else.  This can include implementation-specific
-      or deployment-specific information.
-
-
-
-
-
 
 
 
@@ -281,6 +281,10 @@ Nottingham & Sikora      Expires August 23, 2019                [Page 5]
 
 Internet-Draft                Proxy-Status                 February 2019
 
+
+   o  details - a sh-string containing additional information not
+      captured anywhere else.  This can include implementation-specific
+      or deployment-specific information.
 
 3.  Proxy Status Types
 
@@ -326,10 +330,6 @@ Internet-Draft                Proxy-Status                 February 2019
          error type.  See [RFC8499], Section 3.
 
    o  Recommended HTTP status code: 502
-
-
-
-
 
 
 
