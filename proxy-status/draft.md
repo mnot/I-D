@@ -116,6 +116,8 @@ Each Proxy Status Type has a Recommended HTTP Status Code. When generating a HTT
 
 {{types}} lists the Proxy Status Types defined in this document; new ones can be defined using the procedure outlined in {{register}}.
 
+Proxy-Status MAY be sent in HTTP trailers, but -- as with all trailers -- it might be silently discarded along the path to the user agent, this SHOULD NOT be done unless it is not possible to send it in headers. For example, if an intermediary is streaming a response and the upstream connection suddenly terminates, Proxy-Status can be appended to the trailers of the outgoing message (since the headers have already been sent).
+
 Note that there are various security considerations for intermediaries using the Proxy-Status header field; see {{security}}.
 
 Origin servers MUST NOT generate the Proxy-Status header field.
