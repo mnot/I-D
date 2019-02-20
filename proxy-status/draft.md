@@ -369,6 +369,13 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 * Extra Parameters: None.
 * Recommended HTTP status code: The applicable 4xx status code
 
+## HTTP Request Denied
+
+* Name: http_request_denied
+* Description: The intermediary rejected HTTP request based on its configuration and/or policy settings. The request wasn't forwarded to the next hop.
+* Extra Parameters: None.
+* Recommended HTTP status code: 400
+
 ## HTTP Upgrade Failed
 
 * Name: http_upgrade_failed
