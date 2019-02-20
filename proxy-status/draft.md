@@ -138,13 +138,6 @@ This section lists parameters that are potentially applicable to most Proxy Stat
 
 This section lists the Proxy Status Types defined by this document. See {{register}} for information about defining new Proxy Status Types.
 
-## Destination Not Found
-
-* Name: destination_not_found
-* Description: The intermediary cannot determine the appropriate destination to use for this request; for example, it may not be configured. Note that this error is specific to gateways, which typically require specific configuration to identify the "backend" server; forward proxies use in-band information to identify the origin server.
-* Extra Parameters: None.
-* Recommended HTTP status code: 500
-
 ## DNS Timeout
 
 * Name: dns_timeout
@@ -159,6 +152,20 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 * Extra Parameters:
   - rcode: A sh-string conveying the DNS RCODE that indicates the error type. See {{!RFC8499}}, Section 3.
 * Recommended HTTP status code: 502
+
+## Destination Not Found
+
+* Name: destination_not_found
+* Description: The intermediary cannot determine the appropriate destination to use for this request; for example, it may not be configured. Note that this error is specific to gateways, which typically require specific configuration to identify the "backend" server; forward proxies use in-band information to identify the origin server.
+* Extra Parameters: None.
+* Recommended HTTP status code: 500
+
+## Destination Unavailable
+
+* Name: destination_unavailable
+* Description: The intermediary considers the next hop to be unavailable; e.g., recent attempts to communicate with it may have failed, or a health check may indicate that it is down.
+* Extra Parameters:
+* Recommended HTTP status code: 503
 
 ## Destination IP Prohibited
 
@@ -208,13 +215,6 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 * Description: The intermediary was attempting to write data to a connection, but was not able to (e.g., because its buffers were full).
 * Extra Parameters: None.
 * Recommended HTTP status code: 504
-
-## Destination Unavailable
-
-* Name: destination_unavailable
-* Description: The intermediary considers the next hop to be unavailable; e.g., recent attempts to communicate with it may have failed, or a health check may indicate that it is down.
-* Extra Parameters:
-* Recommended HTTP status code: 503
 
 ## Connection Limit Reached
 
@@ -354,14 +354,6 @@ This section lists the Proxy Status Types defined by this document. See {{regist
   - alert_message: a sh-token containing the applicable description string from the TLS Alerts registry.
 * Recommended HTTP status code: 502
 
-## Proxy Internal Error
-
-* Name: proxy_internal_error
-* Description: The intermediary encountered an internal error unrelated to the origin.
-* Extra Parameters:
-  - details: a sh-string containing details about the error condition.
-* Recommended HTTP status code: 500
-
 ## HTTP Request Error
 
 * Name: http_request_error
@@ -382,6 +374,14 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 * Description: The HTTP Upgrade between the intermediary and the next hop failed.
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
+
+## Proxy Internal Error
+
+* Name: proxy_internal_error
+* Description: The intermediary encountered an internal error unrelated to the origin.
+* Extra Parameters:
+  - details: a sh-string containing details about the error condition.
+* Recommended HTTP status code: 500
 
 
 # Defining New Proxy Status Types {#register}
