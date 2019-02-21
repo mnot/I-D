@@ -155,7 +155,7 @@ URI suffix:
 
 Change controller:
 : For Standards-Track RFCs, state "IETF". For others, give the name of the responsible party. Other
-details (e.g., postal address, e-mail address, home page URI) may also be included.
+details (e.g., e-mail address, home page URI) may also be included.
 
 Specification document(s):
 : Reference to the document that specifies the field, preferably including a URI that can be used
