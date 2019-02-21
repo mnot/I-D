@@ -69,8 +69,8 @@ Protocol (<http://www.robotstxt.org/>) specifies a way for automated processes t
 to access resources; likewise, the Platform for Privacy Preferences {{?P3P=W3C.REC-P3P-20020416}}
 tells user-agents how to discover privacy policy before interacting with an origin server.
 
-While there are several ways to access per-resource metadata (e.g., HTTP headers, WebDAV's PROPFIND
-{{?RFC4918}}), the perceived overhead (either in terms of client-perceived latency and/or
+While there are several ways to access per-resource metadata (e.g., HTTP header fields, WebDAV's
+PROPFIND {{?RFC4918}}), the perceived overhead (either in terms of client-perceived latency and/or
 deployment difficulties) associated with them often precludes their use in these scenarios.
 
 At the same time, it has become more popular to use HTTP as a substrate for non-Web protocols. Sometimes, such protocols need a way to locate one or more resources on a given host.
@@ -211,9 +211,9 @@ mechanisms, or that they are the only application using the origin. Depending on
 
 Other good practices include:
 
-* Using an application-specific media type in the Content-Type header, and requiring clients to fail if it is not used
+* Using an application-specific media type in the Content-Type header field, and requiring clients to fail if it is not used
 * Using Content-Security-Policy {{?CSP=W3C.WD-CSP3-20160913}} to constrain the capabilities of active content (such as HTML {{HTML5}}), thereby mitigating Cross-Site Scripting attacks
-* Using Referrer-Policy {{?REFERRER-POLICY=W3C.CR-referrer-policy-20170126}} to prevent sensitive data in URLs from being leaked in the Referer request header
+* Using Referrer-Policy {{?REFERRER-POLICY=W3C.CR-referrer-policy-20170126}} to prevent sensitive data in URLs from being leaked in the Referer request header field
 * Avoiding use of compression on any sensitive information (e.g., authentication tokens, passwords), as the scripting environment offered by Web browsers allows an attacker to repeatedly probe the compression space; if the attacker has access to the path of the communication, they can use this capability to recover that information.
 
 ## Scoping Applications
