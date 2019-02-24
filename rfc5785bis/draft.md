@@ -125,9 +125,9 @@ are assumed.
 Typically, applications will use the default port for the given scheme; if an alternative port is
 used, it MUST be explicitly specified by the application in question.
 
-It MAY also contain additional information, such as the syntax of additional path components, query
-strings and/or fragment identifiers to be appended to the well-known URI, or protocol-specific
-details (e.g., HTTP {{?RFC7231}} method handling).
+Registrations MAY also contain additional information, such as the syntax of additional path
+components, query strings and/or fragment identifiers to be appended to the well-known URI, or
+protocol-specific details (e.g., HTTP {{?RFC7231}} method handling).
 
 Note that this specification defines neither how to determine the hostname to use to find the
 well-known URI for a particular application, nor the scope of the metadata discovered by
