@@ -174,7 +174,7 @@ Related information:
 
 General requirements for registered values are described in {{well-known}}.
 
-Values defined by standards-track RFCs and other open standards (in the sense of {{?RFC206, Section 7.1.1}}) have a status of "permanent". Other values can also be registered as permanent, if the Experts find that they are in use, in consultation with the community. Other values should be registered as "provisional".
+Values defined by standards-track RFCs and other open standards (in the sense of {{?RFC2026}}, Section 7.1.1) have a status of "permanent". Other values can also be registered as permanent, if the Experts find that they are in use, in consultation with the community. Other values should be registered as "provisional".
 
 Provisional entries can be removed by the Experts if -- in consultation with the community -- the Experts find that they are not in use. The Experts can change a provisional entry's status to permanent at any time.
 
