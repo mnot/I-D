@@ -383,6 +383,13 @@ This section lists the Proxy Status Types defined by this document. See {{regist
   - details: a sh-string containing details about the error condition.
 * Recommended HTTP status code: 500
 
+## Proxy Loop Detected
+
+* Name: proxy_loop_detected
+* Description: The intermediary tried to forward the request to itself, or a loop has been detected using different means (e.g. {{I-D.ietf-httpbis-cdn-loop}}).
+* Extra Parameters: None.
+* Recommended HTTP status code: 502
+
 
 # Defining New Proxy Status Types {#register}
 
