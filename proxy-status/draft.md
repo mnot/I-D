@@ -386,7 +386,7 @@ This section lists the Proxy Status Types defined by this document. See {{regist
 ## Proxy Loop Detected
 
 * Name: proxy_loop_detected
-* Description: The intermediary tried to forward the request to itself, or a loop has been detected using different means (e.g. {{I-D.ietf-httpbis-cdn-loop}}).
+* Description: The intermediary tried to forward the request to itself, or a loop has been detected using different means (e.g. {{?I-D.ietf-httpbis-cdn-loop}}).
 * Extra Parameters: None.
 * Recommended HTTP status code: 502
 
