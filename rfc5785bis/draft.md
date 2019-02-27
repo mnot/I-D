@@ -199,6 +199,9 @@ data, denial-of-service attacks (in addition to normal load issues), server and 
 authentication, vulnerability to DNS rebinding attacks, and attacks where limited access to a
 server grants the ability to affect how well-known URIs are served.
 
+{{?RFC3552}} contains some examples of potential security considerations that may be relevant to
+application protocols and administrators deploying them.
+
 ## Interaction with Web Browsing
 
 Applications using well-known URIs for "http" or "https" URLs need to be aware that well-known
