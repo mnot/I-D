@@ -84,9 +84,10 @@ risking collisions, both with other such designated "well-known locations" and w
 the origin has created (or wishes to create). Furthermore, defining well-known locations usurp's
 the origin's control over its own URI space {{?RFC7320}}.
 
-To address these uses, this memo defines a path prefix in HTTP(S) URIs for these "well-known
-locations", "/.well-known/". Future specifications that need to define a resource for such metadata
-can register their use to avoid collisions and minimise impingement upon origins' URI space.
+To address these uses, this memo reserves a path prefix in HTTP, HTTPS, WS and WSS URIs for these
+"well-known locations", "/.well-known/". Future specifications that need to define a resource for
+such metadata can register their use to avoid collisions and minimise impingement upon origins' URI
+space.
 
 Well-known URIs can also be used with other URI schemes, but only when those schemes'
 definitions explicitly allow it.
@@ -201,6 +202,17 @@ server grants the ability to affect how well-known URIs are served.
 
 {{?RFC3552}} contains some examples of potential security considerations that may be relevant to
 application protocols and administrators deploying them.
+
+
+## Protecting Well-Known Resources
+
+Because well-known locations effectively represent the entire origin, server operators should
+appropriately control the ability to write to them. This is especially true when more than one
+entity is co-located on the same origin. Even for origins that are controlled by and represent a
+single entity, due care should be taken to assure that write access to well-known locations is not
+granted unwittingly, either externally through server configuration, or locally through
+implementation permissions (e.g., on a filesystem).
+
 
 ## Interaction with Web Browsing
 
