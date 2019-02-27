@@ -181,10 +181,14 @@ Experts find that they are not in use. The Experts can change a provisional entr
 permanent; in doing so, the Experts should consider how widely used a value is, and consult the
 community beforehand.
 
-Note that well-known URIs can be registered by third parties (including the expert(s)), if the
-expert(s) determines that an unregistered well-known URI is widely deployed and not likely to be
-registered in a timely manner otherwise. Such registrations still are subject to the requirements
-defined, including the need to reference a specification.
+Note that "consult with the community" above refers to those responsible for the URI scheme(s) in
+question. Generally, this would take place on the mailing list(s) of the appropriate Working
+Group(s) (possibly historical), or on art@ietf.org if no such list exists.
+
+Well-known URIs can be registered by third parties (including the expert(s)), if the expert(s)
+determine that an unregistered well-known URI is widely deployed and not likely to be registered
+in a timely manner otherwise. Such registrations still are subject to the requirements defined,
+including the need to reference a specification.
 
 
 # Security Considerations {#sec}
