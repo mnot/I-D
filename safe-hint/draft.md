@@ -40,13 +40,15 @@ informative:
 This specification defines a "safe" preference for HTTP requests that expresses a desire to avoid
 objectionable content, according to the definition of that term by the origin server.
 
+Support for this preference by clients and servers is optional.
+
 
 --- middle
 
 # Introduction
 
 Many Web sites have a "safe" mode, to assist those who don't want to be exposed (or have their
-children exposed) to objectionable content.
+children exposed) to content to which they might object.
 
 However, that goal is often difficult to achieve, because of the need to go to every Web site that
 might be used, navigate to the appropriate page (possibly creating an account along the way) to get
@@ -59,22 +61,28 @@ advertised to a set of sites, or even all sites.
 
 This specification defines how to declare this desire in requests as a HTTP Preference {{!RFC7240}}.
 
-Note that this specification does not precisely define what "safe" is; rather, it is interpreted
-within the scope of each Web site that chooses to act upon this information.
+Note that this specification does not define what content might be considered objectionable, and so
+the concept of "safe" is also not precisely defined. Rather, the term is interpreted by the server
+and within the scope of each Web site that chooses to act upon this information.
 
 That said, the intent of "safe" is to allow end users (or those acting on their behalf) to express
 a desire to avoid content that is considered objectionable within the cultural context of that
-site; usually (but not always) content that is unsuitable for minors. The "safe" preference ought
-not be used for other purposes.
+site; usually (but not always) content that is unsuitable for minors. The "safe" preference is not
+intended to be used for other purposes.
 
-Furthermore, sending "safe" does not guarantee that the Web site will use it. As such, its effect
-can be described as "best effort," but not to be relied upon. In other words, sending the
+Furthermore, sending "safe" does not guarantee that the Web site will use it, nor that it will
+apply a concept of "objectionable" that is consistent with the requester's views. As such, its
+effect can be described as "best effort," and not to be relied upon. In other words, sending the
 preference is no more reliable than going to each Web site and manually selecting a "safe" mode,
 but it is considerably easier.
 
 It is also important to note that the "safe" preference is not a reliable indicator that the end
 user is a child; other users might have a desire for unobjectionable content, and some children
 might browse without the preference being set.
+
+Note also that the cultural context applies to the hosting location of a site, the content
+provider, and the source of the content. It cannot be guaranteed that a user-agent and origin
+server will have the same view of the concept of what is objectionable.
 
 Simply put, it is a statement by (or on behalf of) the end user to the effect "If your site has a
 'safe' setting, this user is hereby opting into that, according to your definition of the term."
@@ -90,8 +98,9 @@ shown here.
 
 # The "safe" Preference {#safe}
 
-When present in a request, the "safe" preference indicates that the content which is not
-objectionable is preferred, according to the origin server's definition of the concept.
+When present in a request, the "safe" preference indicates that the user prefers that the origin
+server to not respond with content which is designated as objectionable, according to the origin
+server's definition of the concept.
 
 For example, a request that includes the "safe" preference:
 
@@ -128,6 +137,10 @@ Vary: Prefer
 Here, the Preference-Applied response header ({{!RFC7240}}) indicates that the site has applied the
 preference. Servers are not required to send Preference-Applied, but are encouraged to where
 possible.
+
+Here, the Preference-Applied response header ({{!RFC7240}}) indicates that the site has applied the
+preference. Servers are not required to send Preference-Applied (even when they have applied the
+preference), but are encouraged to where possible.
 
 Note that the Vary response header needs to be sent if the response is cacheable and might change
 depending on the value of the "Prefer" header. This is not only true for those responses that are
