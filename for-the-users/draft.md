@@ -189,6 +189,8 @@ they cannot be, these choices and reasoning ought to be carefully documented.
 
 * Different network operator communities have, from time to time, asked for a mechanism that would allow them to insert themselves into HTTPS {{?RFC7231}} connections to interpose caching and other performance optimisations. This was rejected for a number of reasons, including that end users' conception of HTTPS as an encrypted end-to-end protocol had already formed, so that changing it would harm user security.
 
+TODO: more examples.
+
 
 # IANA Considerations
 
