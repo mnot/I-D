@@ -63,7 +63,7 @@ developing the Internet; in "A Mission Statement for the IETF" {{?RFC3935}}, the
 
 > The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
 
-and:
+and later in Section 2.1, "The Scope of the Internet" it says:
 
 > The Internet isn't value-neutral, and neither is the IETF. We want the Internet to be useful for communities that share our commitment to openness and fairness. We embrace technical concepts such as decentralized control, edge-user empowerment and sharing of resources, because those concepts resonate with the core values of the IETF community. These concepts have little to do with the technology that's possible, and much to do with the technology that we choose to create.
 
@@ -122,14 +122,14 @@ necessarily denote a passive relationship with the Internet; someone producing c
 goods or providing a service is equally a user of the Internet. The emphasis here is on "end" -- as
 in endpoint {{?RFC3724}}.
 
-Similarly, a person whose interests we need to consider might not directly be an end-user of 
-a specific system connected to the Internet. For example, if a child is using a browser, the 
-interests of that child's parents or guardians may be relevant; if a person is pictured in 
-a photograph, that person may have an interest in systems that process that protograph, or 
-if a person entering a room triggers sensors that send data to the Internet than that person's 
-interests may be invovled in our deliberations about how those sensor readings are handled. 
-While such less-direct interactions between people and the Internet may be harder to evaluate 
-compared to those involving people with accounts on some web service, such people are nonetheless 
+Similarly, a person whose interests we need to consider might not directly be an end-user of
+a specific system connected to the Internet. For example, if a child is using a browser, the
+interests of that child's parents or guardians may be relevant; if a person is pictured in
+a photograph, that person may have an interest in systems that process that protograph, or
+if a person entering a room triggers sensors that send data to the Internet than that person's
+interests may be invovled in our deliberations about how those sensor readings are handled.
+While such less-direct interactions between people and the Internet may be harder to evaluate
+compared to those involving people with accounts on some web service, such people are nonetheless
 included in this document's concept of end-user.
 
 
