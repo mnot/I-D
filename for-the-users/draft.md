@@ -67,9 +67,9 @@ and later in Section 2.1, "The Scope of the Internet" it says:
 
 > The Internet isn't value-neutral, and neither is the IETF. We want the Internet to be useful for communities that share our commitment to openness and fairness. We embrace technical concepts such as decentralized control, edge-user empowerment and sharing of resources, because those concepts resonate with the core values of the IETF community. These concepts have little to do with the technology that's possible, and much to do with the technology that we choose to create.
 
-However, the IETF is most comfortable making what we believe to be purely technical decisions; our
-process is defined to favor technical merit, through our well-known bias towards "rough consensus
-and running code".
+However, many in the IETF are most comfortable making what we believe to be purely technical
+decisions; our process is defined to favor technical merit, through our well-known bias towards
+"rough consensus and running code".
 
 Nevertheless, the running code that results from our process (when things work well) inevitably has
 an impact beyond technical considerations, because the underlying decisions afford some uses while
