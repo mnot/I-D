@@ -128,6 +128,7 @@ interests of that child's parents or guardians may be relevant; if a person is p
 a photograph, that person may have an interest in systems that process that photograph, or
 if a person entering a room triggers sensors that send data to the Internet than that person's
 interests may be involved in our deliberations about how those sensor readings are handled.
+
 While such less-direct interactions between people and the Internet may be harder to evaluate
 compared to those involving people with accounts on some web service, such people are nonetheless
 included in this document's concept of end-user.
