@@ -135,10 +135,6 @@ Vary: Prefer
 ~~~
 
 Here, the Preference-Applied response header ({{!RFC7240}}) indicates that the site has applied the
-preference. Servers are not required to send Preference-Applied, but are encouraged to where
-possible.
-
-Here, the Preference-Applied response header ({{!RFC7240}}) indicates that the site has applied the
 preference. Servers are not required to send Preference-Applied (even when they have applied the
 preference), but are encouraged to where possible.
 
