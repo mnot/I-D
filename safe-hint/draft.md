@@ -167,7 +167,7 @@ features. Readers are advised to note that other implementations may exist.
 # Security Considerations
 
 The "safe" preference is not a secure mechanism; it can be inserted or removed by intermediaries
-with access to the request stream (e.g. for "http" URLs). Therefore, it SHOULD NOT be included in
+with access to the request stream (e.g. for "http" URLs). Therefore, it MUST NOT be included in
 requests with the "http" scheme.
 
 Its presence reveals limited information about the user, which may be of small assistance in
