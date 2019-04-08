@@ -4,8 +4,8 @@ abbrev: Well-Known URIs
 docname: draft-nottingham-rfc5785bis-11
 date: 2019
 category: std
-obsoletes: 5785, 8307
-updates: 7230, 6455
+obsoletes: 5785
+updates: 7595, 7230, 6455
 
 ipr: trust200902
 area: General
@@ -104,11 +104,16 @@ shown here.
 # Well-Known URIs {#well-known}
 
 A well-known URI is a URI {{!RFC3986}} whose path component begins with the characters
-"/.well-known/", and whose scheme is "http" {{!RFC7230}}, "https" {{!RFC7230}}, "ws" {{!RFC6455}},
-"wss" {{!RFC6455}}, or another scheme that has explicitly been specified to use well-known URIs.
+"/.well-known/", provided that the scheme is explicitly defined to support well-known URIs.
 
 For example, if an application registers the name 'example', the corresponding well-known URI on
 'http://www.example.com/' would be 'http://www.example.com/.well-known/example'.
+
+This specification updates the "http" {{!RFC7230}} and "https" {{!RFC7230}} schemes to support
+well-known URIs. Other existing schemes can use the appropriate process for updating their
+definitions; for example, {{?RFC8307}} does so for the "ws" and "wss" schemes. The Uniform Resource
+Identifier (URI) Schemes Registry tracks which schemes support well-known URIs; see
+{{register-scheme}}.
 
 Applications that wish to mint new well-known URIs MUST register them, following the procedures in
 {{register}}, subject to the following requirements.
@@ -294,6 +299,28 @@ Upon publication, IANA should:
 
 * Update the status of all existing registrations to "permanent".
 
+
+## The Uniform Resource Identifier (URI) Schemes Registry {#register-scheme}
+
+This specification adds a field to the registration template of the Uniform Resource Identifier
+(URI) Schemes Registry, with the name "Well-Known URI Support" and a default value of "-".
+
+If a URI scheme explicitly has been specified to use well-known URIs as per {{well-known}}, the
+value changes to a reference to that specification. Initial values not equal to "-" are given in
+{{tab-initial}}.
+
+| URI Scheme | Well-Known URI Support |
+| coap       | [RFC7252]              |
+| coap+tcp   | [RFC8323]              |
+| coap+ws    | [RFC8323]              |
+| coaps      | [RFC7252]              |
+| coaps+tcp  | [RFC8323]              |
+| coaps+ws   | [RFC8323]              |
+| http       | [this document]        |
+| https      | [this document]        |
+| ws         | [this document]        |
+| wss        | [this document]        |
+{: #tab-initial title="Rows in URI scheme registry with nonempty new column"}
 
 
 --- back
