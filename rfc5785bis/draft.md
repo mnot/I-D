@@ -5,7 +5,7 @@ docname: draft-nottingham-rfc5785bis-11
 date: 2019
 category: std
 obsoletes: 5785
-updates: 7595, 7230, 6455
+updates: 7595, 7230
 
 ipr: trust200902
 area: General
@@ -42,8 +42,9 @@ informative:
 This memo defines a path prefix for "well-known locations", "/.well-known/", in selected Uniform
 Resource Identifier (URI) schemes.
 
-In doing so, it obsoletes RFC 5785 and RFC 8307, and updates the URI schemes defined in RFC 7230 and
-RFC 6455 to reserve that space.
+In doing so, it obsoletes RFC 5785, and updates the URI schemes defined in RFC 7230 to reserve that
+space. It also updates RFC 7595 to add track URI schemes that support well-known URIs in their
+registry.
 
 
 --- note_Note_to_Readers
