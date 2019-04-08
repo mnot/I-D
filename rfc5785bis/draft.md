@@ -43,7 +43,7 @@ This memo defines a path prefix for "well-known locations", "/.well-known/", in 
 Resource Identifier (URI) schemes.
 
 In doing so, it obsoletes RFC 5785, and updates the URI schemes defined in RFC 7230 to reserve that
-space. It also updates RFC 7595 to add track URI schemes that support well-known URIs in their
+space. It also updates RFC 7595 to track URI schemes that support well-known URIs in their
 registry.
 
 
@@ -319,8 +319,8 @@ value changes to a reference to that specification. Initial values not equal to 
 | coaps+ws   | [RFC8323]              |
 | http       | [this document]        |
 | https      | [this document]        |
-| ws         | [this document]        |
-| wss        | [this document]        |
+| ws         | [RFC8307]              |
+| wss        | [RFC8307]              |
 {: #tab-initial title="Rows in URI scheme registry with nonempty new column"}
 
 
