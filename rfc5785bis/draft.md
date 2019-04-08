@@ -358,4 +358,4 @@ are found not to scale well, because they're too "chatty".
 * Adjust IANA instructions
 * Update references
 * Various other clarifications
-* Add "ws" and "wss" schemes
+* Track supporting schemes in the URI Scheme registry
