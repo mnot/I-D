@@ -192,7 +192,7 @@ might (and probably will) change.
 
 # IANA Considerations
 
-This specification registers the "safe" preference {{!RFC7240}}:
+This specification registers the following entry in the "HTTP Preferences" registry {{!RFC7240}}:
 
 * Preference: safe
 * Value: (no value)
