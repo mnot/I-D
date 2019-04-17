@@ -111,9 +111,11 @@ User-Agent: ExampleBrowser/1.0
 Prefer: safe
 ~~~
 
-User agents SHOULD include the "safe" preference in all HTTPS requests unless otherwise configured,
-to ensure that the preference is available to the applicable resources. See {{browsers}} for more
-information about configuring the set of resources "safe" is sent to.
+Typically, user agents that emit the "safe" preference will include it in all requests with the
+"https" URI scheme, although some might expose finer-grained controls over when it is sent; this
+ensures that the preference is available to the applicable resources. User agents MUST NOT emit the
+"safe" preference on requests with the "http" URI scheme (see {{security}}). See {{browsers}} for
+more information about configuring the set of resources "safe" is sent to.
 
 Safe MAY be implemented in common HTTP libraries (e.g., an operating system might choose to insert
 the preference in requests based upon system-wide configuration).
@@ -164,11 +166,11 @@ features. Readers are advised to note that other implementations may exist.
 * Cisco - see http://blogs.cisco.com/security/filtering-explicit-content
 
 
-# Security Considerations
+# Security Considerations {#security}
 
 The "safe" preference is not a secure mechanism; it can be inserted or removed by intermediaries
-with access to the request stream (e.g. for "http" URLs). Therefore, it MUST NOT be included in
-requests with the "http" scheme.
+with access to the request stream (e.g. for "http" URLs). Therefore, it is prohibited from being
+included in requests with the "http" scheme.
 
 Its presence reveals limited information about the user, which may be of small assistance in
 "fingerprinting" the user by sites. Therefore, user agents SHOULD NOT include it in requests when
