@@ -14,7 +14,7 @@ drafts = $(filter-out $(reserved), $(files))
 	sed -i '' -e"s/SHORTNAME/$@/g" \
 		$@/draft.md
 
-index.html: $(drafts)
+index.html: $(drafts) Tools/index.py
 	cat draft_head.html > $@
 	echo "$(foreach draft,$(drafts),\n<li><a href='$(draft)'>$(draft)</a> - $(shell Tools/index.py $(draft)/draft.md)</li>)" >> $@
 	cat draft_foot.html >> $@
