@@ -6,7 +6,8 @@ kramdown-rfc2629 ?= kramdown-rfc2629
 bootstrap ?= ../Tools/rfcbootstrap/rfcbootstrap.xslt
 idnits ?= idnits
 
-title = nottingham-$(shell basename ${CURDIR})
+shortname = $(shell basename ${CURDIR})
+title = nottingham-${shortname}
 latest = $(shell (ls draft-${title}-*.xml || echo "draft-${title}-00.xml") | sort | tail -1)
 version = $(shell basename ${latest} .xml | awk -F- '{print $$NF}')
 
@@ -40,6 +41,8 @@ idnits: $(target).txt
 	bootstrapJsUrl='../Tools/bower_components/bootstrap/dist/js/bootstrap.min.js' \
 	bootstrapCssUrl='../Tools/bower_components/bootstrap/dist/css/bootstrap.min.css' \
 	jqueryJsUrl='../Tools/bower_components/jquery/dist/jquery.min.js' \
+	pageUrl='https://mnot.github.io/I-D/${shortname}/' \
+	siteName="mnot's Internet Drafts" \
 	navbar='../Tools/navbar.html' \
 	> $@
 #	$(xml2rfc) --html $< $@
