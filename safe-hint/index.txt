@@ -3,13 +3,13 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                            March 25, 2019
+Internet-Draft                                              May 21, 2019
 Intended status: Informational
-Expires: September 26, 2019
+Expires: November 22, 2019
 
 
                        The "safe" HTTP Preference
-                     draft-nottingham-safe-hint-08
+                     draft-nottingham-safe-hint-09
 
 Abstract
 
@@ -34,7 +34,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 26, 2019.
+   This Internet-Draft will expire on November 22, 2019.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Nottingham             Expires September 26, 2019               [Page 1]
+Nottingham              Expires November 22, 2019               [Page 1]
 
-Internet-Draft        Preference for Safe Browsing            March 2019
+Internet-Draft        Preference for Safe Browsing              May 2019
 
 
 Table of Contents
@@ -64,7 +64,7 @@ Table of Contents
    2.  The "safe" Preference . . . . . . . . . . . . . . . . . . . .   3
    3.  Implementation Status . . . . . . . . . . . . . . . . . . . .   4
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
    6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   7
    Appendix B.  Sending "safe" from Web Browsers . . . . . . . . . .   7
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Nottingham             Expires September 26, 2019               [Page 2]
+Nottingham              Expires November 22, 2019               [Page 2]
 
-Internet-Draft        Preference for Safe Browsing            March 2019
+Internet-Draft        Preference for Safe Browsing              May 2019
 
 
    consistent with the requester's views.  As such, its effect can be
@@ -156,19 +156,22 @@ Internet-Draft        Preference for Safe Browsing            March 2019
    User-Agent: ExampleBrowser/1.0
    Prefer: safe
 
-   User agents SHOULD include the "safe" preference in all HTTPS
-   requests unless otherwise configured, to ensure that the preference
-   is available to the applicable resources.  See Appendix B for more
-   information about configuring the set of resources "safe" is sent to.
+   Typically, user agents that emit the "safe" preference will include
+   it in all requests with the "https" URI scheme, although some might
+   expose finer-grained controls over when it is sent; this ensures that
+   the preference is available to the applicable resources.  User agents
+   MUST NOT emit the "safe" preference on requests with the "http" URI
 
 
 
 
-
-Nottingham             Expires September 26, 2019               [Page 3]
+Nottingham              Expires November 22, 2019               [Page 3]
 
-Internet-Draft        Preference for Safe Browsing            March 2019
+Internet-Draft        Preference for Safe Browsing              May 2019
 
+
+   scheme (see Section 4).  See Appendix B for more information about
+   configuring the set of resources "safe" is sent to.
 
    Safe MAY be implemented in common HTTP libraries (e.g., an operating
    system might choose to insert the preference in requests based upon
@@ -215,17 +218,17 @@ Internet-Draft        Preference for Safe Browsing            March 2019
    protocol defined by this specification at the time of posting of this
    Internet-Draft.  Please note that the listing of any individual
    implementation here does not imply endorsement by the IETF.
+
+
+
+Nottingham              Expires November 22, 2019               [Page 4]
+
+Internet-Draft        Preference for Safe Browsing              May 2019
+
+
    Furthermore, no effort has been spent to verify the information
    presented here that was supplied by IETF contributors.  This is not
    intended as, and must not be construed to be, a catalog of available
-
-
-
-Nottingham             Expires September 26, 2019               [Page 4]
-
-Internet-Draft        Preference for Safe Browsing            March 2019
-
-
    implementations or their features.  Readers are advised to note that
    other implementations may exist.
 
@@ -245,8 +248,8 @@ Internet-Draft        Preference for Safe Browsing            March 2019
 
    The "safe" preference is not a secure mechanism; it can be inserted
    or removed by intermediaries with access to the request stream (e.g.
-   for "http" URLs).  Therefore, it MUST NOT be included in requests
-   with the "http" scheme.
+   for "http" URLs).  Therefore, it is prohibited from being included in
+   requests with the "http" scheme.
 
    Its presence reveals limited information about the user, which may be
    of small assistance in "fingerprinting" the user by sites.
@@ -269,18 +272,22 @@ Internet-Draft        Preference for Safe Browsing            March 2019
    experience when browsing from site to site as well as over time might
    (and probably will) change.
 
+
+
+
+
+
+Nottingham              Expires November 22, 2019               [Page 5]
+
+Internet-Draft        Preference for Safe Browsing              May 2019
+
+
 5.  IANA Considerations
 
-   This specification registers the "safe" preference [RFC7240]:
+   This specification registers the following entry in the "HTTP
+   Preferences" registry [RFC7240]:
 
    o  Preference: safe
-
-
-
-Nottingham             Expires September 26, 2019               [Page 5]
-
-Internet-Draft        Preference for Safe Browsing            March 2019
-
 
    o  Value: (no value)
 
@@ -326,16 +333,9 @@ Internet-Draft        Preference for Safe Browsing            March 2019
 
 
 
-
-
-
-
-
-
-
-Nottingham             Expires September 26, 2019               [Page 6]
+Nottingham              Expires November 22, 2019               [Page 6]
 
-Internet-Draft        Preference for Safe Browsing            March 2019
+Internet-Draft        Preference for Safe Browsing              May 2019
 
 
 Appendix A.  Acknowledgements
@@ -389,9 +389,9 @@ Appendix C.  Supporting "safe" on Web Sites
 
 
 
-Nottingham             Expires September 26, 2019               [Page 7]
+Nottingham              Expires November 22, 2019               [Page 7]
 
-Internet-Draft        Preference for Safe Browsing            March 2019
+Internet-Draft        Preference for Safe Browsing              May 2019
 
 
    means, especially if the preference is generated based upon Operating
@@ -445,4 +445,4 @@ Author's Address
 
 
 
-Nottingham             Expires September 26, 2019               [Page 8]
+Nottingham              Expires November 22, 2019               [Page 8]
