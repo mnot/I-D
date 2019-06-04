@@ -87,6 +87,18 @@ server will have the same view of the concept of what is objectionable.
 Simply put, it is a statement by (or on behalf of) the end user to the effect "If your site has a
 'safe' setting, this user is hereby opting into that, according to your definition of the term."
 
+The mechanism described in this document does not have IETF consensus and is not a standard. It is
+a widely deployed approach that has turned out to be useful, and is presented here so that server
+and browser implementations can have a common understanding of how it operates.
+
+This mechanism was presented for publication as an IETF Proposed Standard, but was not approved for
+publication by the IESG despite having IETF consensus at that time. Concerns raised by the IESG
+included the vagueness of the meaning of "safe", the ability of a proxy to insert the hint outside
+of a user's control, and the fact that there is no way to know whether the hint was or was not
+applied to the response returned by the server. While the current text is clear about these issues,
+they remain as factors that block the IESG's approval of this mechanism as an IETF Proposed
+Standard.
+
 
 ## Notational Conventions
 
