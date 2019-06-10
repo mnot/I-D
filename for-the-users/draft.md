@@ -122,7 +122,7 @@ and later in Section 2.1, "The Scope of the Internet" it says:
 
 In other words, the IETF is concerned with developing and maintaining the Internet to promote the social good, and the society that the IETF is attempting to improve is composed of end users, along with groups of them forming businesses, governments, clubs, civil society organizations, and other institutions.
 
-Merely advancing the measurable success of the Internet (e.g., deployment size, bandwidth, latency, number of users) is not adequate; technology is a means, not an end.
+Merely advancing the measurable success of the Internet (e.g., deployment size, bandwidth, latency, number of users) is not adequate; doing so ignores how technology so often used as a lever to assert power over users, rather than empower them.
 
 Beyond fulfilling the IETF's mission, prioritising end users also helps to ensure the long-term health of the Internet. Many aspects of the Internet are user-focused, and it will (deservedly) lose their trust if prioritises others' interests. Because one of the primary mechanisms of the Internet is the "network effect", such trust is crucial to maintain; the Internet itself depends upon it.
 
