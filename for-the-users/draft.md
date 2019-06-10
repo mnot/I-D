@@ -114,9 +114,7 @@ The IETF community does not have any unique insight into what is "good for end u
 
 End users are typically not technical experts; their experience of the Internet is often based upon inadequate models of its properties, operation, and administration. Therefore, the IETF should primarily engage with those who understand how changes to it will affect end users; in particular civil society organisations, as well as governments, businesses and other groups representing some aspect of end-user interests.
 
-When we've identified a conflict between the interests of end users and another stakeholder and need a "tiebreaker", we should err on the side of finding a solution that doesn't harm end users.
-
-Note that "harm" is not defined in this document; that is something that the relevant body (e.g., Working Group) needs to discuss.
+When we've identified a conflict between the interests of end users and another stakeholder and need a "tiebreaker", we should err on the side of finding a solution that doesn't harm end users. Note that "harm" is not defined in this document; that is something that the relevant body (e.g., Working Group) needs to discuss.
 
 The IETF has already established a body of guidance for situations where this sort of conflict is common, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}} on pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy considerations.
 
