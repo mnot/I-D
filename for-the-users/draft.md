@@ -73,14 +73,14 @@ Successful specifications will provide some benefit to all of the relevant parti
 
 In these situations, when one of those parties is an "end user" of the Internet -- for example, a person using a Web browser, mail client, or another agent that connects to the Internet -- this document argues that the IETF should protect their interests over those of parties such as network operators, governments, or equipment vendors.
 
-{{who}} explains what is meant by "end users"; {{why}} outlines why they should be prioritised in IETF work, and {{how}} outlines how that can be done.
+{{who}} explains what is meant by "end users"; {{why}} outlines why they should be prioritised in IETF work, and {{how}} describes how that can be done.
 
 
 # What Are "End Users"? {#who}
 
 In this document, "end users," means non-technical users whose activities IETF protocols are designed to support, sometimes indirectly. Thus, the end user of a protocol to manage routers is not a router administrator; it is the people using the network that the router operates within.
 
-End users are not necessarily a homogenous group; they might have different views of how the Internet should work (from their viewpoint), and might occupy a number of roles, such as seller, buyer, publisher, reader, service provider and consumer.
+End users are not necessarily a homogenous group; they might have different views of how the Internet should work (from their viewpoint) and might occupy several roles, such as a seller, buyer, publisher, reader, service provider and consumer.
 
 Likewise, an individual end user might have many interests (e.g., privacy, security, flexibility, reachability) that are sometimes in tension.
 
@@ -112,7 +112,7 @@ The IETF community does not have any unique insight into what is "good for end u
 
 End users are typically not technical experts; their experience of the Internet is often based upon inadequate models of its properties, operation, and administration. Therefore, the IETF should primarily engage with those who understand how changes to it will affect end users; in particular civil society organisations, as well as governments, businesses and other groups representing some aspect of end-user interests.
 
-At our best, we will select work that promotes the social good. At the very least, however, we must refrain from work where we've identified a harm to end users.
+At our best, we will select work that promotes the social good. At the very least, however, we must refrain from work where we've identified harm to end users.
 
 In particular, when we've identified a conflict between the interests of end users and another stakeholder, we should err on the side of finding a solution that avoids that harm. Note that "harm" is not defined in this document; that is something that the relevant body (e.g., Working Group) needs to discuss.
 
