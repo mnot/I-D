@@ -92,7 +92,7 @@ An end user could be an individual, or it could be a collection of them; whether
 
 That said, end users are not necessarily a homogenous group; often, but not always, interactions on the Internet are characterised by a seller/buyer, publisher/reader, or service provider/consumer relationship.
 
-Also, it's important to note that even though we use the term "user" here, this does not necessarily denote a passive relationship with the Internet; someone producing content, selling goods or providing a service is equally a user of the Internet. The emphasis here is on "end" -- as in endpoint {{?RFC3724}}.
+Also, it's important to note that even though we use the term "user" here, this does not necessarily denote a passive relationship with the Internet; someone producing content, selling goods or providing a service is equally a user of the Internet. The emphasis here is on "end" -- as in endpoint {{?RFC3724}}. Indeed, a single user might have many interests (e.g., privacy, security, flexibility, reachability) that are sometimes in tension.
 
 Similarly, a person whose interests we need to consider might not directly be an end-user of a specific system connected to the Internet. For example, if a child is using a browser, the interests of that child's parents or guardians may be relevant; if a person is pictured in a photograph, that person may have an interest in systems that process that photograph, or if a person entering a room triggers sensors that send data to the Internet than that person's interests may be involved in our deliberations about how those sensor readings are handled.
 
@@ -110,15 +110,17 @@ Prioritising end-users' needs also helps to assure that the Internet itself reta
 
 # How End Users are Prioritised {#how}
 
-The IETF community does not have any specific insight into what is "good for end users"; to help make decisions involving them, it interacts with the greater Internet community. Because end users are typically not technical experts, the IETF has a responsibility to consider their interests and engages with those who understand how IETF work will affect end users, such as civil society organisations, as well as governments, businesses and other groups representing some aspect of end-user interests.
+The IETF community does not have any unique insight into what is "good for end users." To inform its decisions, it has a responsibility to interact with the greater Internet community, soliciting input and considering the issues raised.
 
-When we've identified a conflict between the interests of end users and another stakeholder (e.g., a network operator), and need a "tiebreaker", we should err on the side of finding a solution that doesn't harm end users.
+End users are typically not technical experts; their experience of the Internet is often based upon inadequate models of its properties, operation, and administration. Therefore, the IETF should primarily engage with those who understand how changes to it will affect end users; in particular civil society organisations, as well as governments, businesses and other groups representing some aspect of end-user interests.
+
+When we've identified a conflict between the interests of end users and another stakeholder and need a "tiebreaker", we should err on the side of finding a solution that doesn't harm end users.
 
 Note that "harm" is not defined in this document; that is something that the relevant body (e.g., Working Group) needs to discuss.
 
 The IETF has already established a body of guidance for situations where this sort of conflict is common, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}} on pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy considerations.
 
-Much of our work so far has focused on maintaining the end-to-end security properties of a connection. This does not mean that our responsibility to users stops there; protocols decisions might affect users in other ways. For example, inappropriate concentration of power on the Internet has become a very visible and concerning phenomenon -- one that protocol design might have some influence upon.
+Much of our work so far has focused on maintaining the end-to-end security properties of a connection. This does not mean that our responsibility to users stops there; protocols decisions might affect users in other ways. For example, inappropriate concentration of power on the Internet has become a concerning phenomenon -- one that protocol design might have some influence upon.
 
 When specific advice is not yet available, we try to find a different solution or another way to frame the problem, distilling the underlying principles into more general advice where appropriate.
 
