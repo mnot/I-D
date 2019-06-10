@@ -92,7 +92,7 @@ After all, there are a variety of identifiable parties in the broader Internet c
 
 Successful specifications will provide some benefit to all of the relevant parties because standards do not represent a zero-sum game. However, there are sometimes situations where there is a need to balance the benefits of a decision between two (or more) parties.
 
-In these situations, when one of those parties is an "end user" of the Internet -- for example, a person using a Web browser, mail client, or another agent that connects to the Internet -- this document argues that the IETF should protect their interests over those of parties such as network operators, governments, or equipment vendors.
+In these situations, when one of those parties is an "end user" of the Internet -- for example, a person using a Web browser, mail client, or another agent that connects to the Internet -- this document argues that the IETF should protect their interests over those of parties.
 
 {{who}} explains what is meant by "end users"; {{why}} outlines why they should be prioritised in IETF work, and {{how}} describes how that can be done.
 
