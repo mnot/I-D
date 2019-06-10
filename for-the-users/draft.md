@@ -39,7 +39,7 @@ informative:
 
 --- abstract
 
-This document explains why the IETF should consider end-users as its highest priority concern.
+This document explains why the IETF should consider end-users as its highest priority concern, and how.
 
 
 --- note_Note_to_Readers
@@ -120,7 +120,7 @@ The IETF has already established a body of guidance for situations where this so
 
 Much of our work so far has focused on maintaining the end-to-end security properties of a connection. This does not mean that our responsibility to users stops there; protocols decisions might affect users in other ways. For example, inappropriate concentration of power on the Internet has become a concerning phenomenon -- one that protocol design might have some influence upon.
 
-When the needs of different end users conflict (for example, between governments and individuals) we again try to minimise harm -- this time, to the highest number and most specific of end users. In other words, when a decision improves the Internet for end users in one jurisdiction, but at the cost of potential harm to others elsewhere, that is not a good tradeoff.
+When the needs of different end users conflict (for example, two sets of end users both have reasonable desires) we again should try to minimise harm -- this time, to the highest number and most specific of end users. For example, when a decision improves the Internet for end users in one jurisdiction, but at the cost of potential harm to others elsewhere, that is not a good tradeoff.
 
 There may be cases where genuine technical need requires compromise. However, such tradeoffs are carefully examined and avoided when there are alternate means of achieving the desired goals. If they cannot be, these choices and reasoning ought to be thoroughly documented.
 
