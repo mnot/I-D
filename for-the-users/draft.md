@@ -59,7 +59,7 @@ See also the draft's current status in the IETF datatracker, at
 
 Many who participate in the IETF are most comfortable making what we believe to be purely technical decisions; our process is defined to favor technical merit, through our well-known bias towards "rough consensus and running code".
 
-Nevertheless, the running code that results from our process (when things work well) inevitably has an impact beyond technical considerations, because the underlying decisions afford some uses while discouraging others; while we believe we are making purely technical decisions, in reality, that may not be possible. Or, in the words of Lawrence Lessig {{CODELAW}}:
+Nevertheless, the running code that results from our process (when things work well) inevitably has an impact beyond technical considerations, because the underlying decisions afford some uses while discouraging others; while we believe we are making purely technical decisions, in reality, we are defining what is possible on the Internet itself. Or, in the words of Lawrence Lessig {{CODELAW}}:
 
 > Ours is the age of cyberspace. It, too, has a regulator... This regulator is code — the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
 
@@ -71,7 +71,7 @@ After all, there are a variety of identifiable parties in the broader Internet c
 
 Successful specifications will provide some benefit to all of the relevant parties because standards do not represent a zero-sum game. However, there are sometimes situations where there is a need to balance the benefits of a decision between two (or more) parties.
 
-In these situations, when one of those parties is an "end user" of the Internet -- for example, a person using a Web browser, mail client, or another agent that connects to the Internet -- this document argues that the IETF should protect their interests over those of parties such as network operators or equipment vendors.
+In these situations, when one of those parties is an "end user" of the Internet -- for example, a person using a Web browser, mail client, or another agent that connects to the Internet -- this document argues that the IETF should protect their interests over those of parties such as network operators, governments, or equipment vendors.
 
 {{who}} explains what is meant by "end users"; {{why}} outlines why they should be prioritised in IETF work, and {{how}} outlines how that can be done.
 
@@ -80,13 +80,11 @@ In these situations, when one of those parties is an "end user" of the Internet 
 
 In this document, "end users," means non-technical users whose activities IETF protocols are designed to support, sometimes indirectly. Thus, the end user of a protocol to manage routers is not a router administrator; it is the people using the network that the router operates within.
 
-An end user could be an individual, or it could be a collection of them; whether that be a social movement, a business, or a government that represents a large number of people.
+End users are not necessarily a homogenous group; they might have different views of how the Internet should work (from their viewpoint), and might occupy a number of roles, such as seller, buyer, publisher, reader, service provider and consumer.
 
-That said, end users are not necessarily a homogenous group; often, but not always, interactions on the Internet are characterised by a seller/buyer, publisher/reader, or service provider/consumer relationship.
+Likewise, an individual end user might have many interests (e.g., privacy, security, flexibility, reachability) that are sometimes in tension.
 
-Also, it's important to note that even though we use the term "user" here, this does not necessarily denote a passive relationship with the Internet; someone producing content, selling goods or providing a service is equally a user of the Internet. The emphasis here is on "end" -- as in endpoint {{?RFC3724}}. Indeed, a single user might have many interests (e.g., privacy, security, flexibility, reachability) that are sometimes in tension.
-
-Similarly, a person whose interests we need to consider might not directly be an end-user of a specific system connected to the Internet. For example, if a child is using a browser, the interests of that child's parents or guardians may be relevant; if a person is pictured in a photograph, that person may have an interest in systems that process that photograph, or if a person entering a room triggers sensors that send data to the Internet than that person's interests may be involved in our deliberations about how those sensor readings are handled.
+A person whose interests we need to consider might not directly be an end-user of a specific system connected to the Internet. For example, if a child is using a browser, the interests of that child's parents or guardians may be relevant; if a person is pictured in a photograph, that person may have an interest in systems that process that photograph, or if a person entering a room triggers sensors that send data to the Internet than that person's interests may be involved in our deliberations about how those sensor readings are handled.
 
 While such less-direct interactions between people and the Internet may be harder to evaluate, such people are nonetheless included in this document's concept of end-user.
 
