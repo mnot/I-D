@@ -99,7 +99,7 @@ Similarly, a person whose interests we need to consider might not directly be an
 While such less-direct interactions between people and the Internet may be harder to evaluate, such people are nonetheless included in this document's concept of end-user.
 
 
-# Why End Users are Prioritised {#why}
+# Why End Users Should Be Prioritised {#why}
 
 While networks need to be managed, employers and equipment vendors need to meet business goals, and so on, the IETF's mission is to "build a better human society" {{?RFC3935}} and -- on the Internet -- society is composed of end users, along with groups of them forming business, governments, clubs, civil society organizations, and other institutions that influence it.
 
