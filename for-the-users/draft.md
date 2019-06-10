@@ -39,7 +39,7 @@ informative:
 
 --- abstract
 
-This document explains why, when a conflict cannot be avoided, the IETF considers end users as
+This document explains why, when a conflict cannot be avoided, the IETF should consider end users as
 its highest priority concern.
 
 
