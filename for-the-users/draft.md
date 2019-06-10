@@ -80,7 +80,7 @@ In these situations, when one of those parties is an "end user" of the Internet 
 
 In this document, "end users," means non-technical users whose activities IETF protocols are designed to support, sometimes indirectly. Thus, the end user of a protocol to manage routers is not a router administrator; it is the people using the network that the router operates within.
 
-End users are not necessarily a homogenous group; they might have different views of how the Internet should work (from their viewpoint) and might occupy several roles, such as a seller, buyer, publisher, reader, service provider and consumer.
+End users are not necessarily a homogenous group; they might have different views of how the Internet should work (from their viewpoint) and might occupy several roles, such as a seller, buyer, publisher, reader, service provider and consumer. An end user might be browsing the Web, monitoring remote equipement, playing a game, video conferencing with colleagues, sending messages to friends, or performing an operation in a remote surgery theatre.
 
 Likewise, an individual end user might have many interests (e.g., privacy, security, flexibility, reachability) that are sometimes in tension.
 
