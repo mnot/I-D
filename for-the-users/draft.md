@@ -103,7 +103,7 @@ In other words, the IETF is concerned with developing and maintaining the Intern
 
 Merely advancing the measurable success of the Internet (e.g., deployment size, bandwidth, latency, number of users) is not adequate; technology is a means, not an end.
 
-Beyond fulfilling the IETF's mission, prioritising end users also helps to ensure the long-term health of the Internet. If the Internet is not user-focused, it will (deservedly) lose their trust, once people see that others' interests are being prioritised over theirs. Because one of the primary mechanisms of the Internet is the "network effect", such trust is crucial to maintain.
+Beyond fulfilling the IETF's mission, prioritising end users also helps to ensure the long-term health of the Internet. Many aspects of the Internet are user-focused, and it will (deservedly) lose their trust if prioritises others' interests. Because one of the primary mechanisms of the Internet is the "network effect", such trust is crucial to maintain; the Internet itself depends upon it.
 
 
 # How End Users are Prioritised {#how}
