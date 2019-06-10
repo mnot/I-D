@@ -101,13 +101,11 @@ and later in Section 2.1, "The Scope of the Internet" it says:
 
 > The Internet isn't value-neutral, and neither is the IETF. We want the Internet to be useful for communities that share our commitment to openness and fairness. We embrace technical concepts such as decentralized control, edge-user empowerment and sharing of resources, because those concepts resonate with the core values of the IETF community. These concepts have little to do with the technology that's possible, and much to do with the technology that we choose to create.
 
-In other words, the IETF is concerned with developing and maintaining the Internet to promote the social good.
+In other words, the IETF is concerned with developing and maintaining the Internet to promote the social good, and the society that the IETF is attempting to improve is composed of end users, along with groups of them forming businesses, governments, clubs, civil society organizations, and other institutions.
 
-While networks need to be managed, employers and equipment vendors need to meet business goals, and so on, the society that the IETF is attempting to improve is composed of end users, along with groups of them forming business, governments, clubs, civil society organizations, and other institutions that influence it.
+Merely advancing the measurable success of the Internet (e.g., deployment size, bandwidth, latency, number of users) is not adequate; technology is a means, not an end.
 
-Prioritising end users helps the IETF achieve its mission, and also helps to ensure the long-term health of the Internet. By prioritising their concerns, we assure that the Internet reaches the highest number of people, thereby delivering greater utility by maximising its network effect.
-
-Prioritising end-users' needs also helps to assure that the Internet itself retains their trust, preserving the benefit its network effect brings.
+Prioritising end users also helps to ensure the long-term health of the Internet. If the Internet is not user-focused, it will (deservedly) lose their trust, once people see that others' interests are being prioritised over theirs. Because one of the primary mechanisms of the Internet is the "network effect", such trust is crucial to maintain.
 
 
 # How End Users are Prioritised {#how}
@@ -116,7 +114,9 @@ The IETF community does not have any unique insight into what is "good for end u
 
 End users are typically not technical experts; their experience of the Internet is often based upon inadequate models of its properties, operation, and administration. Therefore, the IETF should primarily engage with those who understand how changes to it will affect end users; in particular civil society organisations, as well as governments, businesses and other groups representing some aspect of end-user interests.
 
-When we've identified a conflict between the interests of end users and another stakeholder and need a "tiebreaker", we should err on the side of finding a solution that doesn't harm end users. Note that "harm" is not defined in this document; that is something that the relevant body (e.g., Working Group) needs to discuss.
+At our best, we will select work that promotes the social good. At the very least, however, we must refrain from work where we've identified a harm to end users.
+
+In particular, when we've identified a conflict between the interests of end users and another stakeholder, we should err on the side of finding a solution that avoids that harm. Note that "harm" is not defined in this document; that is something that the relevant body (e.g., Working Group) needs to discuss.
 
 The IETF has already established a body of guidance for situations where this sort of conflict is common, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}} on pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy considerations.
 
