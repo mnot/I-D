@@ -80,7 +80,7 @@ In these situations, when one of those parties is an "end user" of the Internet 
 
 In this document, "end users," means non-technical users whose activities IETF protocols are designed to support, sometimes indirectly. Thus, the end user of a protocol to manage routers is not a router administrator; it is the people using the network that the router operates within.
 
-End users are not necessarily a homogenous group; they might have different views of how the Internet should work (from their viewpoint) and might occupy several roles, such as a seller, buyer, publisher, reader, service provider and consumer. An end user might be browsing the Web, monitoring remote equipement, playing a game, video conferencing with colleagues, sending messages to friends, or performing an operation in a remote surgery theatre.
+End users are not necessarily a homogenous group; they might have different views of how the Internet should work (from their viewpoint) and might occupy several roles, such as a seller, buyer, publisher, reader, service provider and consumer. An end user might be browsing the Web, monitoring remote equipment, playing a game, video conferencing with colleagues, sending messages to friends, or performing an operation in a remote surgery theatre.
 
 Likewise, an individual end user might have many interests (e.g., privacy, security, flexibility, reachability) that are sometimes in tension.
 
@@ -108,7 +108,7 @@ Beyond fulfilling the IETF's mission, prioritising end users also helps to ensur
 
 # How End Users are Prioritised {#how}
 
-The IETF community does not have any unique insight into what is "good for end users." To inform its decisions, it has a responsibility to interact with the greater Internet community, soliciting input and considering the issues raised.
+The IETF community does not have any unique insight into what is "good for end users." To inform its decisions, it has a responsibility to interact with the greater Internet community, soliciting input from others and considering the issues raised.
 
 End users are typically not technical experts; their experience of the Internet is often based upon inadequate models of its properties, operation, and administration. Therefore, the IETF should primarily engage with those who understand how changes to it will affect end users; in particular civil society organisations, as well as governments, businesses and other groups representing some aspect of end-user interests.
 
