@@ -135,9 +135,9 @@ End users are typically not technical experts; their experience of the Internet 
 
 The onus is on us to engage with these parties on terms that suit them; it is not acceptable to require them to understand the mores and peculiarities of the IETF community -- even as we attempt to enculture them into it. This means that when appropriate, we should take the initiative to contact these communities and explain our work, solicit their feedback, and encourage their participation. In cases where it is not reasonable a stakeholder community to engage in the IETF, we should go to them -- for example, holding workshops.
 
-At our best, we will select work that promotes the social good. In many cases, we will decide to be neutral and open-ended, allowing the "tussle" among stakeholders to produce a range of results (see {{TUSSLE}} for further discussion).
+At our best, we will perform work that promotes the social good. In many cases, we will decide to be neutral and open-ended, allowing the "tussle" among stakeholders to produce a range of results (see {{TUSSLE}} for further discussion).
 
-At the very least, however, we must examine our work for harm to end users, and take positive steps to avoid it where possible. In particular, when we've identified a conflict between the interests of end users and another stakeholder, we should err on the side of finding a solution that avoids that harm.
+At the very least, however, we must examine our work for harm to end users, and take positive steps to avoid it where we see it. In particular, when we've identified a conflict between the interests of end users and another stakeholder, we should err on the side of finding a solution that avoids that harm.
 
 Note that "harm" is not defined in this document; that is something that the relevant body (e.g., Working Group) needs to discuss. Furthermore, harm to end users is judged just like any other decision in the IETF, with consensus gathering and the normal appeals process; merely asserting that something is harmful is not adequate. The converse is also true, though; it's not permissible to avoid identifying harms, nor is it acceptable to ignore them when brought to us.
 
