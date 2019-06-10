@@ -78,7 +78,7 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-Many who participate in the IETF are most comfortable making what we believe to be purely technical decisions; our process is defined to favor technical merit, through our well-known bias towards "rough consensus and running code".
+Many who participate in the IETF are most comfortable making what we believe to be purely technical decisions; our process is defined to favor technical merit, through our well-known mantra of "rough consensus and running code".
 
 Nevertheless, the running code that results from our process (when things work well) inevitably has an impact beyond technical considerations, because the underlying decisions afford some uses while discouraging others; while we believe we are making purely technical decisions, in reality, we are defining what is possible on the Internet itself. Or, in the words of Lawrence Lessig {{CODELAW}}:
 
