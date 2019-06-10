@@ -39,7 +39,7 @@ informative:
 
 --- abstract
 
-This document explains why, when a conflict cannot be avoided, the IETF should consider end-users as its highest priority concern.
+This document explains why the IETF should consider end-users as its highest priority concern.
 
 
 --- note_Note_to_Readers
@@ -57,15 +57,7 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-The IETF, while focused on technical matters, is not neutral about the purpose of its work in developing the Internet; in "A Mission Statement for the IETF" {{?RFC3935}}, the definitions include:
-
-> The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
-
-and later in Section 2.1, "The Scope of the Internet" it says:
-
-> The Internet isn't value-neutral, and neither is the IETF. We want the Internet to be useful for communities that share our commitment to openness and fairness. We embrace technical concepts such as decentralized control, edge-user empowerment and sharing of resources, because those concepts resonate with the core values of the IETF community. These concepts have little to do with the technology that's possible, and much to do with the technology that we choose to create.
-
-However, many in the IETF are most comfortable making what we believe to be purely technical decisions; our process is defined to favor technical merit, through our well-known bias towards "rough consensus and running code".
+Many who participate in the IETF are most comfortable making what we believe to be purely technical decisions; our process is defined to favor technical merit, through our well-known bias towards "rough consensus and running code".
 
 Nevertheless, the running code that results from our process (when things work well) inevitably has an impact beyond technical considerations, because the underlying decisions afford some uses while discouraging others; while we believe we are making purely technical decisions, in reality, that may not be possible. Or, in the words of Lawrence Lessig {{CODELAW}}:
 
@@ -75,13 +67,13 @@ This impact has become significant. As the Internet increasingly mediates essent
 
 All of this raises the question: Who do we go through the pain of gathering rough consensus and writing running code for?
 
-There are a variety of identifiable parties in the broader Internet community that standards can provide benefit to, such as (but not limited to) end users, network operators, schools, equipment vendors, specification authors, specification implementers, content owners, governments, non-governmental organisations, social movements, employers, and parents.
+After all, there are a variety of identifiable parties in the broader Internet community that standards can provide benefit to, such as (but not limited to) end users, network operators, schools, equipment vendors, specification authors, specification implementers, content owners, governments, non-governmental organisations, social movements, employers, and parents.
 
 Successful specifications will provide some benefit to all of the relevant parties because standards do not represent a zero-sum game. However, there are sometimes situations where there is a need to balance the benefits of a decision between two (or more) parties.
 
-In these situations, when one of those parties is an "end user" of the Internet -- for example, a person using a Web browser, mail client, or another agent that connects to the Internet -- the IETF should protect their interests over those of parties such as network operators or equipment vendors.
+In these situations, when one of those parties is an "end user" of the Internet -- for example, a person using a Web browser, mail client, or another agent that connects to the Internet -- this document argues that the IETF should protect their interests over those of parties such as network operators or equipment vendors.
 
-This document explains what is meant by "end users" in {{who}}, why they should be prioritised in IETF work in {{why}}, and how that is done in {{how}}.
+{{who}} explains what is meant by "end users"; {{why}} outlines why they should be prioritised in IETF work, and {{how}} outlines how that can be done.
 
 
 # What Are "End Users"? {#who}
@@ -101,7 +93,17 @@ While such less-direct interactions between people and the Internet may be harde
 
 # Why End Users Should Be Prioritised {#why}
 
-While networks need to be managed, employers and equipment vendors need to meet business goals, and so on, the IETF's mission is to "build a better human society" {{?RFC3935}} and -- on the Internet -- society is composed of end users, along with groups of them forming business, governments, clubs, civil society organizations, and other institutions that influence it.
+While focused on technical matters, the IETF is not neutral about the purpose of its work in developing the Internet; in "A Mission Statement for the IETF" {{?RFC3935}}, the definitions include:
+
+> The IETF community wants the Internet to succeed because we believe that the existence of the Internet, and its influence on economics, communication, and education, will help us to build a better human society.
+
+and later in Section 2.1, "The Scope of the Internet" it says:
+
+> The Internet isn't value-neutral, and neither is the IETF. We want the Internet to be useful for communities that share our commitment to openness and fairness. We embrace technical concepts such as decentralized control, edge-user empowerment and sharing of resources, because those concepts resonate with the core values of the IETF community. These concepts have little to do with the technology that's possible, and much to do with the technology that we choose to create.
+
+In other words, the IETF is concerned with developing and maintaining the Internet to promote the social good.
+
+While networks need to be managed, employers and equipment vendors need to meet business goals, and so on, the society that the IETF is attempting to improve is composed of end users, along with groups of them forming business, governments, clubs, civil society organizations, and other institutions that influence it.
 
 Prioritising end users helps the IETF achieve its mission, and also helps to ensure the long-term health of the Internet. By prioritising their concerns, we assure that the Internet reaches the highest number of people, thereby delivering greater utility by maximising its network effect.
 
