@@ -97,10 +97,10 @@ a need to balance the benefits of a decision between two (or more) parties.
 
 In these situations, when one of those parties is an "end user" of the Internet -- for example, a
 person using a Web browser, mail client, or other agent that connects to the Internet -- the IETF
-tends to protect their interests over those of parties such as network operators or equipement
+should protect their interests over those of parties such as network operators or equipement
 vendors.
 
-This document explains what is meant by "end users" in {{who}}, why they tend to be prioritised in
+This document explains what is meant by "end users" in {{who}}, why they should be prioritised in
 IETF work in {{why}}, and how that is done in {{how}}.
 
 
@@ -129,9 +129,8 @@ a photograph, that person may have an interest in systems that process that phot
 if a person entering a room triggers sensors that send data to the Internet than that person's
 interests may be involved in our deliberations about how those sensor readings are handled.
 
-While such less-direct interactions between people and the Internet may be harder to evaluate
-compared to those involving people with accounts on some web service, such people are nonetheless
-included in this document's concept of end-user.
+While such less-direct interactions between people and the Internet may be harder to evaluate, such
+people are nonetheless included in this document's concept of end-user.
 
 
 # Why End Users are Prioritised {#why}
