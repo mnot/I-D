@@ -105,7 +105,7 @@ End users are not necessarily a homogenous group; they might have different view
 
 Likewise, an individual end user might have many interests (e.g., privacy, security, flexibility, reachability) that are sometimes in tension.
 
-A person whose interests we need to consider might not directly be an end-user of a specific system connected to the Internet. For example, if a child is using a browser, the interests of that child's parents or guardians may be relevant; if a person is pictured in a photograph, that person may have an interest in systems that process that photograph, or if a person entering a room triggers sensors that send data to the Internet than that person's interests may be involved in our deliberations about how those sensor readings are handled.
+A person whose interests we need to consider might not directly be using a specific system connected to the Internet. For example, if a child is using a browser, the interests of that child's parents or guardians may be relevant; if a person is pictured in a photograph, that person may have an interest in systems that process that photograph, or if a person entering a room triggers sensors that send data to the Internet than that person's interests may be involved in our deliberations about how those sensor readings are handled.
 
 While such less-direct interactions between people and the Internet may be harder to evaluate, such people are nonetheless included in this document's concept of end-user.
 
