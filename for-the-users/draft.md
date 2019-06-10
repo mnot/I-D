@@ -83,8 +83,8 @@ societies, it has unavoidably become profoundly political; it has helped people 
 governments and revolutionize social orders, control populations and reveal secrets. It has created
 wealth for some individuals and companies, while destroying others'.
 
-All of this raises the question: For whom do we go through the pain of gathering rough consensus
-and writing running code?
+All of this raises the question: Who do we go through the pain of gathering rough consensus
+and writing running code for?
 
 There are a variety of identifiable parties in the larger Internet community that standards can
 provide benefit to, such as (but not limited to) end users, network operators, schools, equipment
@@ -96,7 +96,7 @@ standards do not represent a zero-sum game. However, there are sometimes situati
 a need to balance the benefits of a decision between two (or more) parties.
 
 In these situations, when one of those parties is an "end user" of the Internet -- for example, a
-person using a Web browser, mail client, or other agent that connects to the Internet -- the IETF
+person using a Web browser, mail client, or another agent that connects to the Internet -- the IETF
 should protect their interests over those of parties such as network operators or equipement
 vendors.
 
