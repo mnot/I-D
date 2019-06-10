@@ -116,11 +116,9 @@ At our best, we will select work that promotes the social good. At the very leas
 
 In particular, when we've identified a conflict between the interests of end users and another stakeholder, we should err on the side of finding a solution that avoids that harm. Note that "harm" is not defined in this document; that is something that the relevant body (e.g., Working Group) needs to discuss.
 
-The IETF has already established a body of guidance for situations where this sort of conflict is common, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}} on pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy considerations.
+The IETF has already established a body of guidance for situations where this sort of conflict is common, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}} on pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy considerations. When specific advice is not yet available, we try to find a different solution or another way to frame the problem, distilling the underlying principles into more general advice where appropriate.
 
 Much of our work so far has focused on maintaining the end-to-end security properties of a connection. This does not mean that our responsibility to users stops there; protocols decisions might affect users in other ways. For example, inappropriate concentration of power on the Internet has become a concerning phenomenon -- one that protocol design might have some influence upon.
-
-When specific advice is not yet available, we try to find a different solution or another way to frame the problem, distilling the underlying principles into more general advice where appropriate.
 
 When the needs of different end users conflict (for example, between governments and individuals) we again try to minimise harm -- this time, to the highest number and most specific of end users. In other words, when a decision improves the Internet for end users in one jurisdiction, but at the cost of potential harm to others elsewhere, that is not a good tradeoff.
 
