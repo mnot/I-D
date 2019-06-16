@@ -163,10 +163,6 @@ This document does not have any direct security impact; however, failing to prio
 
 # Acknowledgements
 
-Thanks to Edward Snowden for his comments regarding the priority of end users at IETF93.
+This document was influenced by many discussions, both inside and outside of the IETF and IAB. In particular, Edward Snowden's comments regarding the priority of end users at IETF 93 suggested that it was necessary. Additionally, the WHATWG's Priority of Constituencies for HTML was influential in its genesis, even if the final outcome is somewhat different in form.
 
-Thanks to the WHATWG for blazing the trail with the Priority of Constituencies.
-
-Thanks to Harald Alvestrand for his substantial feedback and Mohamed Boucadair, Stephen Farrell,
-Joe Hildebrand, Lee Howard, Russ Housley, Niels ten Oever, Mando Rachovitsa, Martin Thomson, and
-Brian Trammell for their suggestions.
+Many people gave feedback and input, including Harald Alvestrand, Mohamed Boucadair, Stephen Farrell, Joe Hildebrand, Lee Howard, Russ Housley, Niels ten Oever, Mando Rachovitsa, Martin Thomson, and Brian Trammell.
