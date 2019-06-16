@@ -7,7 +7,7 @@ bootstrap ?= ../Tools/rfcbootstrap/rfcbootstrap.xslt
 idnits ?= idnits
 
 shortname = $(shell basename ${CURDIR})
-title = nottingham-${shortname}
+title = iab-${shortname}
 latest = $(shell (ls draft-${title}-*.xml || echo "draft-${title}-00.xml") | sort | tail -1)
 version = $(shell basename ${latest} .xml | awk -F- '{print $$NF}')
 

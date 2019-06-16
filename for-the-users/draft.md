@@ -1,12 +1,11 @@
 ---
 title: The Internet is for End Users
-docname: draft-nottingham-for-the-users-08
+docname: draft-iab-for-the-users-00
 date: 2019
 category: info
 
 ipr: trust200902
-area: General
-workgroup:
+submissionType: IAB
 keyword: constituent
 keyword: constituency
 keyword: relevant parties
