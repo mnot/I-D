@@ -132,7 +132,7 @@ The IETF community does not have any unique insight into what is "good for end u
 
 End users are typically not technical experts; their experience of the Internet is often based upon inadequate models of its properties, operation, and administration. Therefore, the IETF should primarily engage with those who understand how changes to it will affect end users; in particular civil society organisations, as well as governments, businesses and other groups representing some aspect of end-user interests.
 
-The onus is on us to engage with these parties on terms that suit them; it is not acceptable to require them to understand the mores and peculiarities of the IETF community -- even as we attempt to enculture them into it. This means that when appropriate, we should take the initiative to contact these communities and explain our work, solicit their feedback, and encourage their participation. In cases where it is not reasonable a stakeholder community to engage in the IETF, we should go to them -- for example, holding workshops.
+The IAB encourages the IETF to engage with these parties on terms that suit them; it is not reasonable to require them to understand the mores and peculiarities of the IETF community – even though we encourage them to participate in it.  That means, when appropriate, the technical community should take the initiative to contact these communities and explain our work, solicit their feedback, and encourage their participation. In cases where it is not reasonable for a stakeholder community to engage in the IETF process, the technical community should meet with them. IAB workshops can serve this purpose and the IAB encourages suggestions for topics where this would be of benefit.
 
 At our best, this will result in work that promotes the social good. In some cases, we will consciously decide to be neutral and open-ended, allowing the "tussle" among stakeholders to produce a range of results (see {{TUSSLE}} for further discussion).
 
@@ -165,4 +165,4 @@ This document does not have any direct security impact; however, failing to prio
 
 This document was influenced by many discussions, both inside and outside of the IETF and IAB. In particular, Edward Snowden's comments regarding the priority of end users at IETF 93 and the WHATWG's Priority of Constituencies for HTML were both influential.
 
-Many people gave feedback and input, including Harald Alvestrand, Mohamed Boucadair, Stephen Farrell, Joe Hildebrand, Lee Howard, Russ Housley, Niels ten Oever, Mando Rachovitsa, Martin Thomson, Brian Trammell, John Klensin, and Eliot Lear.
+Many people gave feedback and input, including Harald Alvestrand, Mohamed Boucadair, Stephen Farrell, Joe Hildebrand, Lee Howard, Russ Housley, Niels ten Oever, Mando Rachovitsa, Martin Thomson, Brian Trammell, John Klensin, Eliot Lear, and Ted Hardie.
