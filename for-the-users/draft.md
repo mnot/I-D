@@ -83,7 +83,7 @@ Nevertheless, the running code that results from our process (when things work w
 
 > Ours is the age of cyberspace. It, too, has a regulator... This regulator is code — the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
 
-This impact has become significant. As the Internet increasingly mediates essential functions in societies, it has unavoidably become profoundly political; it has helped people overthrow governments and revolutionize social orders, control populations and reveal secrets. It has created wealth for some individuals and companies while destroying others'.
+This impact has become significant. As the Internet increasingly mediates essential functions in societies, it has unavoidably become profoundly political; it has helped people overthrow governments and revolutionize social orders, control populations, collect data about individuals, and reveal secrets. It has created wealth for some individuals and companies while destroying others'.
 
 All of this raises the question: Who do we go through the pain of gathering rough consensus and writing running code for?
 
@@ -128,21 +128,23 @@ Beyond fulfilling the IETF's mission, prioritising end users also helps to ensur
 
 # How End Users are Prioritised {#how}
 
-The IETF community does not have any unique insight into what is "good for end users." To inform its decisions, it has a responsibility to interact with the greater Internet community, soliciting input from others and considering the issues raised.
+The IETF community does not have any unique insight into what is "good for end users." To inform its decisions, it has a responsibility to analyse and consider the impacts of its work, as well as, where needed, interact with the greater Internet community, soliciting input from others and considering the issues raised.
 
 End users are typically not technical experts; their experience of the Internet is often based upon inadequate models of its properties, operation, and administration. Therefore, the IETF should primarily engage with those who understand how changes to it will affect end users; in particular civil society organisations, as well as governments, businesses and other groups representing some aspect of end-user interests.
 
-The IAB encourages the IETF to engage with these parties on terms that suit them; it is not reasonable to require them to understand the mores and peculiarities of the IETF community – even though we encourage them to participate in it.  That means, when appropriate, the technical community should take the initiative to contact these communities and explain our work, solicit their feedback, and encourage their participation. In cases where it is not reasonable for a stakeholder community to engage in the IETF process, the technical community should meet with them. IAB workshops can serve this purpose and the IAB encourages suggestions for topics where this would be of benefit.
+The IAB encourages the IETF to explicitly consider user impacts and points of view in any IETF work. The IAB also encourages the IETF to engage with the above parties on terms that suit them; it is not reasonable to require them to understand the mores and peculiarities of the IETF community - even though we encourage them to participate in it.
+
+That means, when appropriate, the technical community should take the initiative to contact these communities and explain our work, solicit their feedback, and encourage their participation. In cases where it is not reasonable for a stakeholder community to engage in the IETF process, the technical community should meet with them. IAB workshops can serve this purpose and the IAB encourages suggestions for topics where this would be of benefit.
 
 At our best, this will result in work that promotes the social good. In some cases, we will consciously decide to be neutral and open-ended, allowing the "tussle" among stakeholders to produce a range of results (see {{TUSSLE}} for further discussion).
 
-At the very least, however, we must examine our work for harm to end users, and take positive steps to avoid it where we see it. In particular, when we've identified a conflict between the interests of end users and another stakeholder, we should err on the side of finding a solution that avoids that harm.
+At the very least, however, we must examine our work for impact on end users, and take positive steps to avoid it where we see it. In particular, when we've identified a conflict between the interests of end users and another stakeholder, we should err on the side of finding a solution that avoids harmful consequences to end sers.
 
-Note that "harm" is not defined in this document; that is something that the relevant body (e.g., Working Group) needs to discuss. Furthermore, harm to end users is judged just like any other decision in the IETF, with consensus gathering and the normal appeals process; merely asserting that something is harmful is not adequate. The converse is also true, though; it's not permissible to avoid identifying harms, nor is it acceptable to ignore them when brought to us.
+Note that "harmful" is not defined in this document; that is something that the relevant body (e.g., Working Group) needs to discuss. Furthermore, harm to end users is judged just like any other decision in the IETF, with consensus gathering and the normal appeals process; merely asserting that something is harmful is not adequate. The converse is also true, though; it's not permissible to avoid identifying harms, nor is it acceptable to ignore them when brought to us.
 
 The IETF has already established a body of guidance for situations where this sort of conflict is common, including (but not limited to) {{?RFC7754}} on filtering, {{?RFC7258}} and {{?RFC7624}} on pervasive surveillance, {{?RFC7288}} on host firewalls, and {{?RFC6973}} regarding privacy considerations. When specific advice is not yet available, we try to find a different solution or another way to frame the problem, distilling the underlying principles into more general advice where appropriate.
 
-Much of that advice has focused on maintaining the end-to-end security properties of a connection. This does not mean that our responsibility to users stops there; protocols decisions might affect users in other ways. For example, inappropriate concentration of power on the Internet has become a concerning phenomenon -- one that protocol design might have some influence upon.
+Much of that advice has focused on maintaining the end-to-end security properties of a connection. This does not mean that our responsibility to users stops there; protocol decisions might affect users in other ways. For example, data collection by various applications even inside otherwise secure connections is a major problem in the Internet today. Also, inappropriate concentration of power on the Internet has become a concerning phenomenon -- one that protocol design might have some influence upon.
 
 When the needs of different end users conflict (for example, two sets of end users both have reasonable desires) we again should try to minimise harm. For example, when a decision improves the Internet for end users in one jurisdiction, but at the cost of potential harm to others elsewhere, that is not a good tradeoff. As such, we effectively design the Internet for the pessimal environment; if a user can be harmed, they probably will be.
 
@@ -165,4 +167,4 @@ This document does not have any direct security impact; however, failing to prio
 
 This document was influenced by many discussions, both inside and outside of the IETF and IAB. In particular, Edward Snowden's comments regarding the priority of end users at IETF 93 and the WHATWG's Priority of Constituencies for HTML were both influential.
 
-Many people gave feedback and input, including Harald Alvestrand, Mohamed Boucadair, Stephen Farrell, Joe Hildebrand, Lee Howard, Russ Housley, Niels ten Oever, Mando Rachovitsa, Martin Thomson, Brian Trammell, John Klensin, Eliot Lear, and Ted Hardie.
+Many people gave feedback and input, including Harald Alvestrand, Mohamed Boucadair, Stephen Farrell, Joe Hildebrand, Lee Howard, Russ Housley, Niels ten Oever, Mando Rachovitsa, Martin Thomson, Brian Trammell, John Klensin, Eliot Lear, Ted Hardie, and Jari Arkko.
