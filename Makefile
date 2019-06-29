@@ -18,3 +18,7 @@ index.html: $(drafts) Tools/index.py
 	cat draft_head.html > $@
 	echo "$(foreach draft,$(drafts),\n<li><a href='$(draft)'>$(draft)</a> - $(shell Tools/index.py $(draft)/draft.md)</li>)" >> $@
 	cat draft_foot.html >> $@
+
+.PHONY: Tools/style.css
+Tools/style.css:
+	scss Tools/scss/style.scss > $@
