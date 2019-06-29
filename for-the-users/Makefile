@@ -38,9 +38,9 @@ idnits: $(target).txt
 %.html: %.xml
 	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfcbootstrap\/rfc2629.dtd/" $<
 	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) \
-	bootstrapJsUrl='../Tools/bower_components/bootstrap/dist/js/bootstrap.min.js' \
-	bootstrapCssUrl='../Tools/bower_components/bootstrap/dist/css/bootstrap.min.css' \
-	jqueryJsUrl='../Tools/bower_components/jquery/dist/jquery.min.js' \
+	bootstrapJsUrl='../Tools/node_modules/bootstrap/dist/js/bootstrap.min.js' \
+	bootstrapCssUrl='../Tools/node_modules/bootstrap/dist/css/bootstrap.min.css' \
+	jqueryJsUrl='../Tools/node_modules/jquery/dist/jquery.min.js' \
 	pageUrl='https://mnot.github.io/I-D/${shortname}/' \
 	siteName="mnot's Internet Drafts" \
 	navbar='../Tools/navbar.html' \
