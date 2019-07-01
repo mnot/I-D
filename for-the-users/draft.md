@@ -127,7 +127,7 @@ That means, when appropriate, the technical community should take the initiative
 
 At our best, this will result in work that promotes the social good. In some cases, we will consciously decide to be neutral and open-ended, allowing the "tussle" among stakeholders to produce a range of results (see {{TUSSLE}} for further discussion).
 
-At the very least, however, we must examine our work for impact on end users, and take positive steps to avoid it where we see it. In particular, when we've identified a conflict between the interests of end users and another stakeholder, we should err on the side of finding a solution that avoids harmful consequences to end sers.
+At the very least, however, we must examine our work for impact on end users, and take positive steps to avoid it where we see it. In particular, when we've identified a conflict between the interests of end users and another stakeholder, we should err on the side of finding a solution that avoids harmful consequences to end users.
 
 Note that "harmful" is not defined in this document; that is something that the relevant body (e.g., Working Group) needs to discuss. Furthermore, harm to end users is judged just like any other decision in the IETF, with consensus gathering and the normal appeals process; merely asserting that something is harmful is not adequate. The converse is also true, though; it's not permissible to avoid identifying harms, nor is it acceptable to ignore them when brought to us.
 
