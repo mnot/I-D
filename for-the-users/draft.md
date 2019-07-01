@@ -25,15 +25,6 @@ author:
     uri: https://www.mnot.net/
 
 informative:
-  CODELAW:
-    target: http://harvardmagazine.com/2000/01/code-is-law-html
-    title: "Code Is Law: On Liberty in Cyberspace"
-    author:
-      -
-        ins: L. Lessig
-        name: Lawrence Lessig
-        organization: Harvard Magazine
-    date: 2000
   TUSSLE:
     target: http://groups.csail.mit.edu/ana/Publications/PubPDFs/Tussle2002.pdf
     title: "Tussle in Cyberspace: Defining Tomorrow's Internet"
@@ -79,9 +70,7 @@ See also the draft's current status in the IETF datatracker, at
 
 Many who participate in the IETF are most comfortable making what we believe to be purely technical decisions; our process is defined to favor technical merit, through our well-known mantra of "rough consensus and running code."
 
-Nevertheless, the running code that results from our process (when things work well) inevitably has an impact beyond technical considerations, because the underlying decisions afford some uses while discouraging others; while we believe we are making purely technical decisions, in reality, we are defining what is possible on the Internet itself. Or, in the words of Lawrence Lessig {{CODELAW}}:
-
-> Ours is the age of cyberspace. It, too, has a regulator... This regulator is code — the software and hardware that make cyberspace as it is. This code, or architecture, sets the terms on which life in cyberspace is experienced. It determines how easy it is to protect privacy, or how easy it is to censor speech. It determines whether access to information is general or whether information is zoned. It affects who sees what, or what is monitored. In a host of ways that one cannot begin to see unless one begins to understand the nature of this code, the code of cyberspace regulates.
+Nevertheless, the running code that results from our process (when things work well) inevitably has an impact beyond technical considerations, because the underlying decisions afford some uses while discouraging others; while we believe we are making purely technical decisions, in reality, we are defining what is possible on the Internet itself.
 
 This impact has become significant. As the Internet increasingly mediates essential functions in societies, it has unavoidably become profoundly political; it has helped people overthrow governments and revolutionize social orders, control populations, collect data about individuals, and reveal secrets. It has created wealth for some individuals and companies while destroying others'.
 
