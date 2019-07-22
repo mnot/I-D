@@ -4,6 +4,7 @@ xml2rfc ?= xml2rfc
 saxpath ?= /usr/local/share/saxon-b/saxon9.jar
 kramdown-rfc2629 ?= kramdown-rfc2629
 bootstrap ?= ../Tools/rfcbootstrap/rfcbootstrap.xslt
+extra_css ?= ../Tools/style.css
 idnits ?= idnits
 
 shortname = $(shell basename ${CURDIR})
@@ -35,11 +36,11 @@ idnits: $(target).txt
 %.xml: draft.md
 	$(kramdown-rfc2629) $< > $@
 	
-%.html: %.xml
+%.html: %.xml $(bootstrap) $(extra_css)
 	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfcbootstrap\/rfc2629.dtd/" $<
 	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) \
 	bootstrapJsUrl='../Tools/node_modules/bootstrap/dist/js/bootstrap.min.js' \
-	bootstrapCssUrl='../Tools/style.css' \
+	bootstrapCssUrl=$(extra_css) \
 	jqueryJsUrl='../Tools/node_modules/jquery/dist/jquery.min.js' \
 	pageUrl='https://mnot.github.io/I-D/${shortname}/' \
 	siteName="mnot's Internet Drafts" \
