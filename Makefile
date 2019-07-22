@@ -23,6 +23,12 @@ index.html: $(drafts) Tools/index.py
 Tools/style.css: $(scss_files)
 	scss Tools/scss/style.scss > $@
 
+.PHONY: all
+all:
+	for target in $(drafts) ; do \
+		cd $$target && make && cd .. ; \
+	done
+
 .PHONY: bootstrap
 bootstrap:
 	git submodule update --remote
