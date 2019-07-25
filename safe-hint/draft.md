@@ -40,6 +40,9 @@ informative:
 This specification defines a "safe" preference for HTTP requests that expresses a desire to avoid
 objectionable content, according to the definition of that term by the origin server.
 
+This specification does not define a precise semantic for "safe". Rather, the term is interpreted
+by the server and within the scope of each Web site that chooses to act upon this information.
+
 Support for this preference by clients and servers is optional.
 
 
