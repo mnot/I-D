@@ -187,9 +187,12 @@ The "safe" preference is not a secure mechanism; it can be inserted or removed b
 with access to the request stream (e.g. for "http" URLs). Therefore, it is prohibited from being
 included in requests with the "http" scheme.
 
-Its presence reveals limited information about the user, which may be of small assistance in
-"fingerprinting" the user by sites. Therefore, user agents SHOULD NOT include it in requests when
-the user has expressed a desire to avoid such attacks (e.g., some forms of "private mode" browsing).
+Its presence reveals information about the user, which may be of assistance in "fingerprinting" the
+user by sites and other entities in the network. This information which provides insight into the
+preferences of the user, might be used to make assumptions about the user and so could be used to
+target categories of user for purposes such as targeting (including advertising and identification
+of minors). Therefore, user agents SHOULD NOT include it in requests when the user has expressed a
+desire to avoid such attacks (e.g., some forms of "private mode" browsing).
 
 By its nature, including "safe" in requests does not assure that all content will actually be safe;
 it is only when servers elect to honor it that content might be "safe".
