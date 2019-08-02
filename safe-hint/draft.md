@@ -95,12 +95,14 @@ a widely deployed approach that has turned out to be useful, and is presented he
 and browser implementations can have a common understanding of how it operates.
 
 This mechanism was presented for publication as an IETF Proposed Standard, but was not approved for
-publication by the IESG despite having IETF consensus at that time. Concerns raised by the IESG
-included the vagueness of the meaning of "safe", the ability of a proxy to insert the hint outside
-of a user's control, and the fact that there is no way to know whether the hint was or was not
-applied to the response returned by the server. While the current text is clear about these issues,
-they remain as factors that block the IESG's approval of this mechanism as an IETF Proposed
-Standard.
+publication by the IESG because of concerns that included the vagueness of the meaning of "safe",
+the ability of a proxy to insert the hint outside of a user's control, the fact that there is no
+way to know whether the hint was or was not applied to the response returned by the server, and how
+the use of this preference may incentivize increased censorship and/or targeting of minors.
+
+The specification has been updated to address those concerns, but the IESG has not approved
+progressing this document as an IETF Proposed Standard. As a result, it is published in the
+Independent Stream.
 
 
 ## Notational Conventions
