@@ -96,7 +96,7 @@ and browser implementations can have a common understanding of how it operates.
 
 This mechanism was presented for publication as an IETF Proposed Standard, but was not approved for
 publication by the IESG because of concerns that included the vagueness of the meaning of "safe",
-the ability of a proxy to insert the hint outside of a user's control, the fact that there is no
+the ability of a proxy to insert the hint outside of a user's control, the fact that there was no
 way to know whether the hint was or was not applied to the response returned by the server, and how
 the use of this preference may incentivize increased censorship and/or targeting of minors.
 
