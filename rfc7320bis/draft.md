@@ -5,10 +5,11 @@ docname: draft-nottingham-rfc7320bis-00
 date: 2019
 category: bcp
 updates: 3986
+obsoletes: 7320
 
 ipr: trust200902
-area: General
-workgroup: appsawg
+area: ART
+workgroup:
 keyword: URI structure
 
 stand_alone: yes
@@ -20,7 +21,7 @@ author:
     name: Mark Nottingham
     organization:
     email: mnot@mnot.net
-    uri: http://www.mnot.net/
+    uri: https://www.mnot.net/
 
 normative:
   RFC2119:
