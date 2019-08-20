@@ -1,8 +1,8 @@
 ---
 title: URI Design and Ownership
 abbrev: URI Design Ownership
-docname: draft-ietf-appsawg-uri-get-off-my-lawn-05
-date: 2014
+docname: draft-nottingham-rfc7230bis-00
+date: 2019
 category: bcp
 updates: 3986
 
@@ -18,7 +18,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: 
+    organization:
     email: mnot@mnot.net
     uri: http://www.mnot.net/
 
@@ -33,7 +33,7 @@ normative:
      -
         ins: I. Jacobs
         name: Ian Jacobs
-        org: 
+        org:
      -
         ins: N. Walsh
         name: Norman Walsh
@@ -44,7 +44,7 @@ informative:
   BCP115:
     target: https://tools.ietf.org/html/bcp115
     title: Guidelines and Registration Procedures for New URI Schemes
-    author: 
+    author:
      -
         ins: T. Hansen
         name: Tony Hansen
@@ -65,7 +65,7 @@ informative:
   RFC5988:
   RFC6570:
   RFC6943:
-  W3C.REC-html401-19991224: 
+  W3C.REC-html401-19991224:
 
 
 --- abstract
@@ -190,7 +190,7 @@ authorities, unless they update the scheme registration itself.
 For example, an extension or application ought not say that the "foo" prefix in
 "foo_app.example.com" is meaningful or triggers special handling in URIs.
 
-However, applications MAY nominate or constrain the port they use, when applicable. For example, 
+However, applications MAY nominate or constrain the port they use, when applicable. For example,
 BarApp could run over port nnnn (provided that it is properly registred).
 
 
