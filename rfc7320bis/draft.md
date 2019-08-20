@@ -70,8 +70,8 @@ informative:
 
 --- abstract
 
-RFC3986 Section 1.1.1 defines URI syntax as "a federated and extensible naming system wherein each
-scheme's specification may further restrict the syntax and semantics of identifiers using that
+Section 1.1.1 of RFC 3986 defines URI syntax as "a federated and extensible naming system wherein
+each scheme's specification may further restrict the syntax and semantics of identifiers using that
 scheme." In other words, the structure of a URI is defined by its scheme. While it is common for
 schemes to further delegate their substructure to the URI's owner, publishing independent standards
 that mandate particular forms of URI substructure is inappropriate, because that essentially usurps
@@ -83,24 +83,25 @@ alternatives for use in standards.
 # Introduction {#intro}
 
 URIs {{RFC3986}} very often include structured application data. This might include artifacts
-from filesystems (often occurring in the path component), and user information (often in the query
+from filesystems (often occurring in the path component) and user information (often in the query
 component). In some cases, there can even be application-specific data in the authority component
 (e.g., some applications are spread across several hostnames to enable a form of partitioning or
 dispatch).
 
 Furthermore, constraints upon the structure of URIs can be imposed by an implementation; for
 example, many Web servers use the filename extension of the last path segment to determine the
-media type of the response. Likewise, pre-packaged applications often have highly structured URIs
-that can only be changed in limited ways (often, just the hostname and port they are deployed upon).
+media type of the response. Likewise, prepackaged applications often have highly structured URIs
+that can only be changed in limited ways (often, just the hostname and port on which they are
+deployed).
 
 Because the owner of the URI (as defined in {{webarch}} Section 2.2.2.1) is choosing to use the
-server or the application, this can be seen as reasonable delegation of authority. When such
-conventions are mandated by a party other than the owner, however, it can have several potentially
+server or the application, this can be seen as reasonable delegation of authority. However, when
+such conventions are mandated by a party other than the owner, it can have several potentially
 detrimental effects:
 
 * Collisions - As more ad hoc conventions for URI structure become standardized, it becomes more
   likely that there will be collisions between them (especially considering that servers,
-  applications and individual deployments will have their own conventions).
+  applications, and individual deployments will have their own conventions).
 
 * Dilution - When the information added to a URI is ephemeral, this dilutes its utility by reducing
   its stability (see {{webarch}} Section 3.5.1), and can cause several alternate forms of the URI
@@ -121,17 +122,17 @@ detrimental effects:
   problems; for example, if a specification documents that the "sig" URI query parameter indicates
   that its payload is a cryptographic signature for the URI, it can lead to undesirable behavior.
 
-Publishing a standard that constrains an existing URI structure in ways which aren't explicitly
+Publishing a standard that constrains an existing URI structure in ways that aren't explicitly
 allowed by {{RFC3986}} (usually, by updating the URI scheme definition) is inappropriate, because
 the structure of a URI needs to be firmly under the control of its owner, and the IETF (as well as
 other organizations) should not usurp it.
 
-This document explains some best current practices for establishing URI structures, conventions and
+This document explains some best current practices for establishing URI structures, conventions, and
 formats in standards. It also offers strategies for specifications to avoid violating these
 guidelines in {{alternatives}}.
 
 
-## Who This Document Is For
+## Intended Audience
 
 This document's requirements target the authors of specifications that constrain the syntax or structure of URIs or parts of them. Two classes of such specifications are called out specifically:
 
@@ -140,18 +141,18 @@ This document's requirements target the authors of specifications that constrain
   for 'http' URIs, or metadata for any URI.
 
 * Applications Using URIs ("applications") - specifications that use URIs to meet specific needs;
-  e.g., a HTTP interface to particular information on a host.
+  e.g., an HTTP interface to particular information on a host.
 
 Requirements that target the generic class "Specifications" apply to all specifications, including
 both those enumerated above and others.
 
 Note that this specification ought not be interpreted as preventing the allocation of control of
 URIs by parties that legitimately own them, or have delegated that ownership; for example, a
-specification might legitimately define the semantics of a URI on the IANA.ORG Web site as part of
+specification might legitimately define the semantics of a URI on IANA's Web site as part of
 the establishment of a registry.
 
 There may be existing IETF specifications that already deviate from the guidance in this document.
-In these cases, it is up to the relevant communities (i.e. those of the URI scheme as well as that
+In these cases, it is up to the relevant communities (i.e., those of the URI scheme as well as that
 which produced the specification in question) to determine an appropriate outcome; e.g., updating
 the scheme definition, or changing the specification.
 
@@ -191,7 +192,7 @@ For example, an extension or application ought not say that the "foo" prefix in
 "foo_app.example.com" is meaningful or triggers special handling in URIs.
 
 However, applications MAY nominate or constrain the port they use, when applicable. For example,
-BarApp could run over port nnnn (provided that it is properly registred).
+BarApp could run over port nnnn (provided that it is properly registered).
 
 
 
@@ -225,7 +226,7 @@ difficulties for deployments that do not support a particular form of a query. F
 Extensions MUST NOT constrain the format or semantics of queries.
 
 For example, an extension that indicates that all query parameters with the name "sig" indicate a
-cryptographic signature would collide with potentially pre-existing query parameters on sites, and
+cryptographic signature would collide with potentially preexisting query parameters on sites and
 lead clients to assume that any matching query parameter is a signature.
 
 HTML {{W3C.REC-html401-19991224}} constrains the syntax of query strings used in form submission.
