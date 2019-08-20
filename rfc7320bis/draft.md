@@ -8,7 +8,7 @@ updates: 3986
 obsoletes: 7320
 
 ipr: trust200902
-area: ART
+area: art
 workgroup:
 keyword: URI structure
 
