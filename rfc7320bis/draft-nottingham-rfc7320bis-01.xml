@@ -14,10 +14,10 @@
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
 
-<rfc ipr="trust200902" docName="draft-nottingham-rfc7320bis-00" category="bcp" obsoletes="7320" updates="3986">
+<rfc ipr="trust200902" docName="draft-nottingham-rfc7320bis-01" category="bcp" obsoletes="7320" updates="3986">
 
   <front>
-    <title abbrev="URI Design Ownership">URI Design and Ownership</title>
+    <title>URI Design and Ownership</title>
 
     <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
       <organization></organization>
@@ -40,9 +40,9 @@
 each scheme’s specification may further restrict the syntax and semantics of identifiers using that
 scheme.” In other words, the structure of a URI is defined by its scheme. While it is common for
 schemes to further delegate their substructure to the URI’s owner, publishing independent standards
-that mandate particular forms of URI substructure is inappropriate, because that essentially usurps
-ownership. This document further describes this problematic practice and provides some acceptable
-alternatives for use in standards.</t>
+that mandate particular forms of substructure in URIs is often problematic.</t>
+
+<t>This document provides guidance on the specification of URI substructure in standards.</t>
 
 
 
@@ -83,11 +83,10 @@ component). In some cases, there can even be application-specific data in the au
 (e.g., some applications are spread across several hostnames to enable a form of partitioning or
 dispatch).</t>
 
-<t>Furthermore, constraints upon the structure of URIs can be imposed by an implementation; for
-example, many Web servers use the filename extension of the last path segment to determine the
-media type of the response. Likewise, prepackaged applications often have highly structured URIs
-that can only be changed in limited ways (often, just the hostname and port on which they are
-deployed).</t>
+<t>Implementations can impose further constraints upon the structure of URIs; for example, many Web
+servers use the filename extension of the last path segment to determine the media type of the
+response. Likewise, prepackaged applications often have highly structured URIs that can only be
+changed in limited ways (often, just the hostname and port on which they are deployed).</t>
 
 <t>Because the owner of the URI (as defined in <xref target="webarch"/> Section 2.2.2.1) is choosing to use the
 server or the application, this can be seen as reasonable delegation of authority. However, when
@@ -116,27 +115,28 @@ that its payload is a cryptographic signature for the URI, it can lead to undesi
 </list></t>
 
 <t>Publishing a standard that constrains an existing URI structure in ways that aren’t explicitly
-allowed by <xref target="RFC3986"/> (usually, by updating the URI scheme definition) is inappropriate, because
-the structure of a URI needs to be firmly under the control of its owner, and the IETF (as well as
-other organizations) should not usurp it.</t>
+allowed by <xref target="RFC3986"/> (usually, by updating the URI scheme definition) is therefore sometimes
+problematic, both for these reasons, and because the structure of a URI needs to be firmly under
+the control of its owner.</t>
 
 <t>This document explains some best current practices for establishing URI structures, conventions, and
-formats in standards. It also offers strategies for specifications to avoid violating these
-guidelines in <xref target="alternatives"/>.</t>
+formats in standards. It also offers strategies for specifications <xref target="alternatives"/>.</t>
 
 <section anchor="intended-audience" title="Intended Audience">
 
-<t>This document’s requirements target the authors of specifications that constrain the syntax or structure of URIs or parts of them. Two classes of such specifications are called out specifically:</t>
+<t>This document’s guidelines and requirements target the authors of specifications that constrain the
+syntax or structure of URIs or parts of them. Two classes of such specifications are called out
+specifically:</t>
 
 <t><list style="symbols">
   <t>Protocol Extensions (“extensions”) - specifications that offer new capabilities that could apply
 to any identifier, or to a large subset of possible identifiers; e.g., a new signature mechanism
-for ‘http’ URIs, or metadata for any URI.</t>
+for ‘http’ URIs, metadata for any URI, or a new format.</t>
   <t>Applications Using URIs (“applications”) - specifications that use URIs to meet specific needs;
 e.g., an HTTP interface to particular information on a host.</t>
 </list></t>
 
-<t>Requirements that target the generic class “Specifications” apply to all specifications, including
+<t>Requirements that target the generic class “specifications” apply to all specifications, including
 both those enumerated above and others.</t>
 
 <t>Note that this specification ought not be interpreted as preventing the allocation of control of
@@ -153,90 +153,92 @@ the scheme definition, or changing the specification.</t>
 <section anchor="notational-conventions" title="Notational Conventions">
 
 <t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”,
-“RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in
-<xref target="RFC2119"/>.</t>
+“RECOMMENDED”, “NOT RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as
+described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all capitals, as
+shown here.</t>
 
 </section>
 </section>
 <section anchor="best-current-practices-for-standardizing-structured-uris" title="Best Current Practices for Standardizing Structured URIs">
 
-<t>This section updates <xref target="RFC3986"/> by setting limitations on how other specifications may define
+<t>This section updates <xref target="RFC3986"/> by advising other specifications how they should define
 structure and semantics within URIs. Best practices differ depending on the URI component, as
 described below.</t>
 
 <section anchor="uri-schemes" title="URI Schemes">
 
-<t>Applications and extensions MAY require use of specific URI scheme(s); for example, it is perfectly
+<t>Applications and extensions can require use of specific URI scheme(s); for example, it is perfectly
 acceptable to require that an application support ‘http’ and ‘https’ URIs. However, applications
-SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly only usable
+ought not preclude the use of other URI schemes in the future, unless they are clearly only usable
 with the nominated schemes.</t>
 
-<t>A specification that defines substructure within a specific URI scheme MUST do so in the defining
-document for that URI scheme. A specification that defines substructure for URI schemes overall
-MUST do so by modifying <xref target="BCP115"/> (an exceptional circumstance).</t>
+<t>A specification that defines substructure for URI schemes overall (e.g., a prefix or suffix for URI
+scheme names) MUST do so by modifying <xref target="BCP115"/> (an exceptional circumstance).</t>
 
 </section>
 <section anchor="uri-authorities" title="URI Authorities">
 
 <t>Scheme definitions define the presence, format and semantics of an authority component in URIs; all
 other specifications MUST NOT constrain, or define the structure or the semantics for URI
-authorities, unless they update the scheme registration itself.</t>
+authorities, unless they update the scheme registration itself, or the structures it relies upon
+(e.g., DNS name syntax, defined in Section 3.5 of <xref target="RFC1034"/>).</t>
 
-<t>For example, an extension or application ought not say that the “foo” prefix in
-“foo_app.example.com” is meaningful or triggers special handling in URIs.</t>
+<t>For example, an extension or application cannot say that the “foo” prefix in
+“http://foo_app.example.com” is meaningful or triggers special handling in URIs, unless they update either the HTTP URI scheme, or the DNS hostname syntax.</t>
 
-<t>However, applications MAY nominate or constrain the port they use, when applicable. For example,
+<t>Applications can nominate or constrain the port they use, when applicable. For example,
 BarApp could run over port nnnn (provided that it is properly registered).</t>
 
 </section>
 <section anchor="uri-paths" title="URI Paths">
 
-<t>Scheme definitions define the presence, format, and semantics of a path component in URIs; all
-other specifications MUST NOT constrain, or define the structure or the semantics for any path
-component.</t>
+<t>Scheme definitions define the presence, format, and semantics of a path component in URIs. To avoid
+collisions, rigidity, and erroneous client assumptions, specifications MUST NOT define a fixed
+prefix for their URIs; for example, “/myapp”.</t>
 
-<t>The only exception to this requirement is registered “well-known” URIs, as specified by <xref target="RFC5785"/>.
-See that document for a description of the applicability of that mechanism.</t>
+<t>The only exception to this requirement is registered “well-known” URIs, as specified by
+<xref target="RFC8615"/>. See that document for a description of the applicability of that mechanism.</t>
 
-<t>For example, an application ought not specify a fixed URI path “/myapp”, since this usurps the
-host’s control of that space.</t>
+<t>Note that this does not apply to applications defining a structure of URIs paths “under” a resource
+under control of the server. For example, an application might define “app_root” as a
+deployment-defined URI. Application-defined resources might then be assumed to be present at
+“{app_root}/foo” and “{app_root}/bar”. Because the prefix is under control of the party
+deploying the application, collisions and rigidity are avoided, and the risk of erroneous client
+assumptions is reduced.</t>
 
-<t>Specifying a fixed path relative to another (e.g., {whatever}/myapp) is also bad practice (even if
-“whatever” is discovered as suggested in <xref target="alternatives"/>); while doing so might prevent
-collisions, it does not avoid the potential for operational difficulties (for example, an
-implementation that prefers to use query processing instead, because of implementation constraints).</t>
+<t>Extensions MUST NOT define a structure within individual URI components (e.g., a prefix or suffix),
+again to avoid collisions and erroneous client assumptions.</t>
 
 </section>
 <section anchor="uri-queries" title="URI Queries">
 
 <t>The presence, format and semantics of the query component of URIs is dependent upon many factors,
-and MAY be constrained by a scheme definition. Often, they are determined by the implementation of
+and can be constrained by a scheme definition. Often, they are determined by the implementation of
 a resource itself.</t>
 
-<t>Applications MUST NOT directly specify the syntax of queries, as this can cause operational
-difficulties for deployments that do not support a particular form of a query. For example, a site may wish to support an application using “static” files that do not support query parameters.</t>
+<t>Applications can specify the syntax of queries for the resources under their control. However,
+doing so can cause operational difficulties for deployments that do not support a particular form
+of a query. For example, a site may wish to support an application using “static” files that do not
+support query parameters.</t>
 
-<t>Extensions MUST NOT constrain the format or semantics of queries.</t>
-
-<t>For example, an extension that indicates that all query parameters with the name “sig” indicate a
-cryptographic signature would collide with potentially preexisting query parameters on sites and
-lead clients to assume that any matching query parameter is a signature.</t>
+<t>Extensions MUST NOT constrain the format or semantics of queries, to avoid collisions and erroneous
+client assumptions. For example, an extension that indicates that all query parameters with the
+name “sig” indicate a cryptographic signature would collide with potentially preexisting query
+parameters on sites and lead clients to assume that any matching query parameter is a signature.</t>
 
 <t>HTML <xref target="W3C.REC-html401-19991224"/> constrains the syntax of query strings used in form submission.
-New form languages SHOULD NOT emulate it, but instead allow creation of a broader variety of URIs
+New form languages are encouraged to allow creation of a broader variety of URIs
 (e.g., by allowing the form to create new path components, and so forth).</t>
-
-<t>Note that “well-known” URIs (see <xref target="RFC5785"/>) MAY constrain their own query syntax, since these
-name spaces are effectively delegated to the registering party.</t>
 
 </section>
 <section anchor="uri-fragment-identifiers" title="URI Fragment Identifiers">
 
-<t>Media type definitions (as per <xref target="RFC6838"/>) SHOULD specify the fragment identifier syntax(es) to be
-used with them; other specifications MUST NOT define structure within the fragment identifier,
-unless they are explicitly defining one for reuse by media type definitions.</t>
+<t>Section 3.5 of <xref target="RFC3986"/> specifies fragment identiers’ syntax and semantics as being dependent
+upon the media type of a potentially retrieved resource. As a result, other specifications MUST NOT
+define structure within the fragment identifier, unless they are explicitly defining one for reuse
+by media types in their definitions (for example, as JSON Pointer <xref target="RFC6901"/> does).</t>
 
-<t>For example, an application that defines common fragment identifiers across media types not
+<t>An application that defines common fragment identifiers across media types not
 controlled by it would engender interoperability problems with handlers for those media types
 (because the new, non-standard syntax is not expected).</t>
 
@@ -249,7 +251,7 @@ extensions that wish to use URIs is to use them in the fashion they were designe
 are exchanged as part of the protocol, rather than statically specified syntax. Several existing
 specifications can aid in this.</t>
 
-<t><xref target="RFC5988"/> specifies relation types for Web links. By providing a framework for linking on the
+<t><xref target="RFC8288"/> specifies relation types for Web links. By providing a framework for linking on the
 Web, where every link has a relation type, context and target, it allows applications to define a
 link’s semantics and connectivity.</t>
 
@@ -257,7 +259,7 @@ link’s semantics and connectivity.</t>
 application-specific variables into a URI to enable such applications while avoiding impinging upon
 URI owners’ control of them.</t>
 
-<t><xref target="RFC5785"/> allows specific paths to be ‘reserved’ for standard use on URI schemes that opt into
+<t><xref target="RFC8615"/> allows specific paths to be ‘reserved’ for standard use on URI schemes that opt into
 that mechanism (‘http’ and ‘https’ by default). Note, however, that this is not a general “escape
 valve” for applications that need structured URIs; see that specification for more information.</t>
 
@@ -289,21 +291,19 @@ positives might be encountered (due to sites that already use the chosen string)
 
     <references title='Normative References'>
 
-
-
-
-
-<reference  anchor="RFC2119" target='https://www.rfc-editor.org/info/rfc2119'>
-<front>
-<title>Key words for use in RFCs to Indicate Requirement Levels</title>
-<author initials='S.' surname='Bradner' fullname='S. Bradner'><organization /></author>
-<date year='1997' month='March' />
-<abstract><t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract>
-</front>
-<seriesInfo name='BCP' value='14'/>
-<seriesInfo name='RFC' value='2119'/>
-<seriesInfo name='DOI' value='10.17487/RFC2119'/>
+<reference anchor="webarch" target="http://www.w3.org/TR/2004/REC-webarch-20041215">
+  <front>
+    <title>Architecture of the World Wide Web, Volume One</title>
+    <author initials="I." surname="Jacobs" fullname="Ian Jacobs">
+      <organization></organization>
+    </author>
+    <author initials="N." surname="Walsh" fullname="Norman Walsh">
+      <organization></organization>
+    </author>
+    <date year="2004" month="December" day="15"/>
+  </front>
 </reference>
+
 
 
 
@@ -323,33 +323,33 @@ positives might be encountered (due to sites that already use the chosen string)
 
 
 
-<reference  anchor="RFC6838" target='https://www.rfc-editor.org/info/rfc6838'>
+<reference  anchor="RFC2119" target='https://www.rfc-editor.org/info/rfc2119'>
 <front>
-<title>Media Type Specifications and Registration Procedures</title>
-<author initials='N.' surname='Freed' fullname='N. Freed'><organization /></author>
-<author initials='J.' surname='Klensin' fullname='J. Klensin'><organization /></author>
-<author initials='T.' surname='Hansen' fullname='T. Hansen'><organization /></author>
-<date year='2013' month='January' />
-<abstract><t>This document defines procedures for the specification and registration of media types for use in HTTP, MIME, and other Internet protocols.  This memo documents an Internet Best Current Practice.</t></abstract>
+<title>Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials='S.' surname='Bradner' fullname='S. Bradner'><organization /></author>
+<date year='1997' month='March' />
+<abstract><t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract>
 </front>
-<seriesInfo name='BCP' value='13'/>
-<seriesInfo name='RFC' value='6838'/>
-<seriesInfo name='DOI' value='10.17487/RFC6838'/>
+<seriesInfo name='BCP' value='14'/>
+<seriesInfo name='RFC' value='2119'/>
+<seriesInfo name='DOI' value='10.17487/RFC2119'/>
 </reference>
 
 
-<reference anchor="webarch" target="http://www.w3.org/TR/2004/REC-webarch-20041215">
-  <front>
-    <title>Architecture of the World Wide Web, Volume One</title>
-    <author initials="I." surname="Jacobs" fullname="Ian Jacobs">
-      <organization></organization>
-    </author>
-    <author initials="N." surname="Walsh" fullname="Norman Walsh">
-      <organization></organization>
-    </author>
-    <date year="2004" month="December" day="15"/>
-  </front>
+
+<reference  anchor="RFC8174" target='https://www.rfc-editor.org/info/rfc8174'>
+<front>
+<title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+<author initials='B.' surname='Leiba' fullname='B. Leiba'><organization /></author>
+<date year='2017' month='May' />
+<abstract><t>RFC 2119 specifies common key words that may be used in protocol  specifications.  This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the  defined special meanings.</t></abstract>
+</front>
+<seriesInfo name='BCP' value='14'/>
+<seriesInfo name='RFC' value='8174'/>
+<seriesInfo name='DOI' value='10.17487/RFC8174'/>
 </reference>
+
+
 
 
     </references>
@@ -370,36 +370,90 @@ positives might be encountered (due to sites that already use the chosen string)
     </author>
     <date year="2006" month="February"/>
   </front>
-  <seriesInfo name="RFC" value="4395"/>
   <seriesInfo name="BCP" value="115"/>
+  <seriesInfo name="RFC" value="4395"/>
 </reference>
 
 
 
 
-<reference  anchor="RFC5785" target='https://www.rfc-editor.org/info/rfc5785'>
+<reference anchor="W3C.REC-html401-19991224"
+           target='http://www.w3.org/TR/1999/REC-html401-19991224'>
 <front>
-<title>Defining Well-Known Uniform Resource Identifiers (URIs)</title>
-<author initials='M.' surname='Nottingham' fullname='M. Nottingham'><organization /></author>
-<author initials='E.' surname='Hammer-Lahav' fullname='E. Hammer-Lahav'><organization /></author>
-<date year='2010' month='April' />
-<abstract><t>This memo defines a path prefix for &quot;well-known locations&quot;, &quot;/.well-known/&quot;, in selected Uniform Resource Identifier (URI) schemes.   [STANDARDS-TRACK]</t></abstract>
+<title>HTML 4.01 Specification</title>
+
+<author initials='D.' surname='Raggett' fullname='Dave Raggett'>
+    <organization />
+</author>
+
+<author initials='A.' surname='Hors' fullname='Arnaud Le Hors'>
+    <organization />
+</author>
+
+<author initials='I.' surname='Jacobs' fullname='Ian Jacobs'>
+    <organization />
+</author>
+
+<date month='December' day='24' year='1999' />
 </front>
-<seriesInfo name='RFC' value='5785'/>
-<seriesInfo name='DOI' value='10.17487/RFC5785'/>
+
+<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-html401-19991224' />
+<format type='HTML' target='http://www.w3.org/TR/1999/REC-html401-19991224' />
 </reference>
 
 
 
-<reference  anchor="RFC5988" target='https://www.rfc-editor.org/info/rfc5988'>
+<reference  anchor="RFC1034" target='https://www.rfc-editor.org/info/rfc1034'>
+<front>
+<title>Domain names - concepts and facilities</title>
+<author initials='P.V.' surname='Mockapetris' fullname='P.V. Mockapetris'><organization /></author>
+<date year='1987' month='November' />
+<abstract><t>This RFC is the revised basic definition of The Domain Name System.  It obsoletes RFC-882.  This memo describes the domain style names and their used for host address look up and electronic mail forwarding.  It discusses the clients and servers in the domain name system and the protocol used between them.</t></abstract>
+</front>
+<seriesInfo name='STD' value='13'/>
+<seriesInfo name='RFC' value='1034'/>
+<seriesInfo name='DOI' value='10.17487/RFC1034'/>
+</reference>
+
+
+
+<reference  anchor="RFC8615" target='https://www.rfc-editor.org/info/rfc8615'>
+<front>
+<title>Well-Known Uniform Resource Identifiers (URIs)</title>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham'><organization /></author>
+<date year='2019' month='May' />
+<abstract><t>This memo defines a path prefix for &quot;well-known locations&quot;, &quot;/.well-known/&quot;, in selected Uniform Resource Identifier (URI) schemes.</t><t>In doing so, it obsoletes RFC 5785 and updates the URI schemes defined in RFC 7230 to reserve that space.  It also updates RFC 7595 to track URI schemes that support well-known URIs in their registry.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='8615'/>
+<seriesInfo name='DOI' value='10.17487/RFC8615'/>
+</reference>
+
+
+
+<reference  anchor="RFC6901" target='https://www.rfc-editor.org/info/rfc6901'>
+<front>
+<title>JavaScript Object Notation (JSON) Pointer</title>
+<author initials='P.' surname='Bryan' fullname='P. Bryan' role='editor'><organization /></author>
+<author initials='K.' surname='Zyp' fullname='K. Zyp'><organization /></author>
+<author initials='M.' surname='Nottingham' fullname='M. Nottingham' role='editor'><organization /></author>
+<date year='2013' month='April' />
+<abstract><t>JSON Pointer defines a string syntax for identifying a specific value within a JavaScript Object Notation (JSON) document.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='6901'/>
+<seriesInfo name='DOI' value='10.17487/RFC6901'/>
+</reference>
+
+
+
+<reference  anchor="RFC8288" target='https://www.rfc-editor.org/info/rfc8288'>
 <front>
 <title>Web Linking</title>
 <author initials='M.' surname='Nottingham' fullname='M. Nottingham'><organization /></author>
-<date year='2010' month='October' />
-<abstract><t>This document specifies relation types for Web links, and defines a registry for them.  It also defines the use of such links in HTTP headers with the Link header field.  [STANDARDS-TRACK]</t></abstract>
+<date year='2017' month='October' />
+<abstract><t>This specification defines a model for the relationships between resources on the Web (&quot;links&quot;) and the type of those relationships (&quot;link relation types&quot;).</t><t>It also defines the serialisation of such links in HTTP headers with the Link header field.</t></abstract>
 </front>
-<seriesInfo name='RFC' value='5988'/>
-<seriesInfo name='DOI' value='10.17487/RFC5988'/>
+<seriesInfo name='RFC' value='8288'/>
+<seriesInfo name='DOI' value='10.17487/RFC8288'/>
 </reference>
 
 
@@ -434,32 +488,6 @@ positives might be encountered (due to sites that already use the chosen string)
 
 
 
-<reference anchor="W3C.REC-html401-19991224"
-           target='http://www.w3.org/TR/1999/REC-html401-19991224'>
-<front>
-<title>HTML 4.01 Specification</title>
-
-<author initials='D.' surname='Raggett' fullname='Dave Raggett'>
-    <organization />
-</author>
-
-<author initials='A.' surname='Hors' fullname='Arnaud Le Hors'>
-    <organization />
-</author>
-
-<author initials='I.' surname='Jacobs' fullname='Ian Jacobs'>
-    <organization />
-</author>
-
-<date month='December' day='24' year='1999' />
-</front>
-
-<seriesInfo name='World Wide Web Consortium Recommendation' value='REC-html401-19991224' />
-<format type='HTML' target='http://www.w3.org/TR/1999/REC-html401-19991224' />
-</reference>
-
-
-
 
     </references>
 
@@ -475,130 +503,132 @@ Dave Thaler and Barry Leiba for their suggestions and feedback.</t>
   </back>
 
 <!-- ##markdown-source:
-H4sIACigW10AA71bbW8bSXL+3r+iQQOxtCCpF9u7lhwEkWX7Vhe/rSRnEQTB
-ojnTJPs0nJ6bnhHNM/zf81RV97xQcjb5kr3DHsXh9Et11fM8VdU3m81U45rC
-nusv11f6jQ1uVWpT5vrTtrR1WLtKmcWitvejH/QPc5+VZoPX89osm1npm8aV
-q7XZzOpl9suz0+OFC7PjY5WbBj86PT45Uxk+rny9O9eLrFJtRY/CuX529vJn
-5RfBF5b/ppeVclV9rpu6Dc3p8fHZ8akytTXn2tSN2vr6blX7tjpXd3aHv3JZ
-Y8DPs6atrVKhwVb+MIUvMfnOBlW5c/2fjc+mGv9yZW7LZqqDr5vaLgM+7Tbx
-Q1O7DI8yv6lM/LDBj/HIlYUr7X8pZdpm7etzpWdK4x9XYtEf5vpjZwL+Wqzz
-wdR3+098vTKl+4dpnC/P+Ru7Ma441xtY8V/pX/PSNvygrbHuddNU4fzoaLvd
-ztPTI6VKX28wxr2lMa7fXZ6enJzFj2TS+PHnl89e0setXZg6W8t8jalXtpGR
-48DbZ3Os6+j2+gj2fn50/fZyFl+Z0Rcnpycv5FVxmgs8cI1lc2u/1M3a6t99
-XeT6d5fjo11M9b/7ot1Y/am0/GZnNvpHTNeZ72qu/2oyOEH3tZjvypT7D7DK
-x8f4ONe/myKs94b4SGYq9x51gyT3PH4+OzmdYY/KlcuhYV9ffj45efHQbHQg
-jfdFmDvbLNl262ZTHMG1T8am+ksLi5DrBI6va7ty8DI+ff259pnNYcOgMav+
-aLfsyTfZ2m5s+FOz3c71r6YMttzb860vd/tPaMv64vafbvV7s/CY39cuTvHo
-sHXu7P6wNt9/wKP+1pqC4mSqr8ps/uiQ7+cIheDKxtZ7g743db17+FCWm/uF
-1Te70NhNGJ/XzzNgAn0TLO2DTi3aiLz+XD9/dvYi/o0jPNdyKHj04peXL2Js
-vDh7+TKFyYtfjtPHs+fP6OPvzy7nFAZ0rM+PT2YnZ2dnJ6enz8+VUrPZTJsF
-HWPWKHWDOKDTPJnjPxQNGIVhTed2yQfP8LQrG/NVm6AnRi9tbnEGMCj5hP3a
-2DK4RWHJKIAK/Jj2rLdrW1tXKmuytQ7sFU+DDpXN3NJl4kMbs9PLtkYE1hqO
-xADG8ZgmxAQBCFM2Lgu0Okfoh/eB5LoNNFuzNo2S4ecTHKL2PBpBK4CPx0rY
-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
-V/X5vWg2AAA=
+H4sIAOchXl0AA5Vb+3MbuZH+ff4KHF11lrZI6mHvQ/LV3cmynVViS15Je1tX
+V1cucAYkEQ0Hk8GMuIzK/3u+7gbmRTlb2aQ2FIcDNPrx9dfdyGw2S2pb5+Zc
+/Xp7pd4Zb1eF0kWmbraFqfzalknm0kJv8Ius0st6Vri6tsVqrTezapn++Or0
+eGH97PgkyXSNH50en5wlKT6uXLU7V4u0TJqSHvlz9erspx8St/AuN/w3vZwk
+tqzOVV01vj49Pj47Pk10ZfS50lWdbF31sKpcU54nD2aHvzKR0+Pnad1UJkl8
+DWm/6NwV2HxnfFLac/V/tUunCv+yRWaKeqq8q+rKLD0+7TbhQ13ZFI9Styl1
++LDBj/HIFrktzP8niW7qtavOEzVLFP6xBYT+NFfXrQr4a9HOJ109jJ+4aqUL
++3ddW1ec8zdmo21+rjbQ4n/Tv+aFqflBU0HudV2X/vzoaLvdzuPToyQpXLXB
+Go+G1tiaha7StSxX62plankxvLd9Nce2R/e3R1Dn66Pb95ez8MqMvjg5Pfle
+XhWzX+CBrQ1rU7mlqtdG/eaqPFO/2QwfzWKq/sflzcaom8Lwm61W6B/RTKud
+q7n6s05h4/Zr0c6VLsYPIOXza1zP1W869+vREtekhWL0qF0ket/x69nJ6Qxn
+TGyx7Ovt7eXnk5Pv99VG+q6dy/3cmnrJulvXm/wInnsyVNWfGmiEPMNzhNya
+lYUTsXHV58qlJoMOvcKu6tps2VHv0rXZGP+Harufq5914U0xOvO9K3bjJ3Rk
+dXH/7/fqo1447O8qG7Z4dtkqs2a8rMnGD3jVXxqdUxhM1VWRzp9d8uMcnu5t
+UZtqtOhHXVW7/YcibuYWRt3tfG02fmivH2YIefrGGzoHWS3oiEx2rqIRlLr9
+cHmuXr86o79/e3U5J9cmU70+PpmdnJ2dnZyevj5PkmQ2mym9INOkdZLcwbfJ
+Qidz/Ic8HMswEqnMLNmYjCi7ota/K+3VRKulyQz0CiWRnc3vtSm8XeSGDoro
+xo/pHGq7NpWxRWJ0ulaeLf3SK1+a1C5tKn6x0Tu1bCpEVaXgHIw5HGNxQ2zg
+AQpFbVNP0lkCLLwP8FWNp93qta4TWX4+gWGU49UIDYFVvFaEQ1pA83msD8fL
+1GKnbO2DgAittcVJbE0/IVtDSHhs2MADNFt54exmBTXQHrZSvll0G+FntDO2
+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
+AAA=
 
 -->
 
