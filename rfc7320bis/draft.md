@@ -1,6 +1,5 @@
 ---
 title: URI Design and Ownership
-abbrev: URI Design Ownership
 docname: draft-nottingham-rfc7320bis-01
 date: 2019
 category: bcp
@@ -24,9 +23,6 @@ author:
     uri: https://www.mnot.net/
 
 normative:
-  RFC2119:
-  RFC3986:
-  RFC6838:
   webarch:
     target: http://www.w3.org/TR/2004/REC-webarch-20041215
     title: Architecture of the World Wide Web, Volume One
@@ -60,12 +56,8 @@ informative:
         org: Adobe Systems
     date: 2006-02
     seriesinfo:
-      RFC: 4395
       BCP: 115
-  RFC5785:
-  RFC5988:
-  RFC6570:
-  RFC6943:
+      RFC: 4395
   W3C.REC-html401-19991224:
 
 
@@ -75,9 +67,9 @@ Section 1.1.1 of RFC 3986 defines URI syntax as "a federated and extensible nami
 each scheme's specification may further restrict the syntax and semantics of identifiers using that
 scheme." In other words, the structure of a URI is defined by its scheme. While it is common for
 schemes to further delegate their substructure to the URI's owner, publishing independent standards
-that mandate particular forms of URI substructure is inappropriate, because that essentially usurps
-ownership. This document further describes this problematic practice and provides some acceptable
-alternatives for use in standards.
+that mandate particular forms of substructure in URIs is often problematic.
+
+This document provides guidance on the specification of URI substructure in standards.
 
 
 --- note_Note_to_Readers
@@ -101,17 +93,16 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction {#intro}
 
-URIs {{RFC3986}} very often include structured application data. This might include artifacts
+URIs {{!RFC3986}} very often include structured application data. This might include artifacts
 from filesystems (often occurring in the path component) and user information (often in the query
 component). In some cases, there can even be application-specific data in the authority component
 (e.g., some applications are spread across several hostnames to enable a form of partitioning or
 dispatch).
 
-Furthermore, constraints upon the structure of URIs can be imposed by an implementation; for
-example, many Web servers use the filename extension of the last path segment to determine the
-media type of the response. Likewise, prepackaged applications often have highly structured URIs
-that can only be changed in limited ways (often, just the hostname and port on which they are
-deployed).
+Implementations can impose further constraints upon the structure of URIs; for example, many Web
+servers use the filename extension of the last path segment to determine the media type of the
+response. Likewise, prepackaged applications often have highly structured URIs that can only be
+changed in limited ways (often, just the hostname and port on which they are deployed).
 
 Because the owner of the URI (as defined in {{webarch}} Section 2.2.2.1) is choosing to use the
 server or the application, this can be seen as reasonable delegation of authority. However, when
@@ -142,27 +133,28 @@ detrimental effects:
   that its payload is a cryptographic signature for the URI, it can lead to undesirable behavior.
 
 Publishing a standard that constrains an existing URI structure in ways that aren't explicitly
-allowed by {{RFC3986}} (usually, by updating the URI scheme definition) is inappropriate, because
-the structure of a URI needs to be firmly under the control of its owner, and the IETF (as well as
-other organizations) should not usurp it.
+allowed by {{!RFC3986}} (usually, by updating the URI scheme definition) is therefore sometimes
+problematic, both for these reasons, and because the structure of a URI needs to be firmly under
+the control of its owner.
 
 This document explains some best current practices for establishing URI structures, conventions, and
-formats in standards. It also offers strategies for specifications to avoid violating these
-guidelines in {{alternatives}}.
+formats in standards. It also offers strategies for specifications {{alternatives}}.
 
 
 ## Intended Audience
 
-This document's requirements target the authors of specifications that constrain the syntax or structure of URIs or parts of them. Two classes of such specifications are called out specifically:
+This document's guidelines and requirements target the authors of specifications that constrain the
+syntax or structure of URIs or parts of them. Two classes of such specifications are called out
+specifically:
 
 * Protocol Extensions ("extensions") - specifications that offer new capabilities that could apply
   to any identifier, or to a large subset of possible identifiers; e.g., a new signature mechanism
-  for 'http' URIs, or metadata for any URI.
+  for 'http' URIs, metadata for any URI, or a new format.
 
 * Applications Using URIs ("applications") - specifications that use URIs to meet specific needs;
   e.g., an HTTP interface to particular information on a host.
 
-Requirements that target the generic class "Specifications" apply to all specifications, including
+Requirements that target the generic class "specifications" apply to all specifications, including
 both those enumerated above and others.
 
 Note that this specification ought not be interpreted as preventing the allocation of control of
@@ -179,91 +171,94 @@ the scheme definition, or changing the specification.
 ## Notational Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
-"RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in
-{{RFC2119}}.
+"RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
+described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
+shown here.
+
 
 
 # Best Current Practices for Standardizing Structured URIs
 
-This section updates {{RFC3986}} by setting limitations on how other specifications may define
+This section updates {{RFC3986}} by advising other specifications how they should define
 structure and semantics within URIs. Best practices differ depending on the URI component, as
 described below.
 
 ## URI Schemes
 
-Applications and extensions MAY require use of specific URI scheme(s); for example, it is perfectly
+Applications and extensions can require use of specific URI scheme(s); for example, it is perfectly
 acceptable to require that an application support 'http' and 'https' URIs. However, applications
-SHOULD NOT preclude the use of other URI schemes in the future, unless they are clearly only usable
+ought not preclude the use of other URI schemes in the future, unless they are clearly only usable
 with the nominated schemes.
 
-A specification that defines substructure within a specific URI scheme MUST do so in the defining
-document for that URI scheme. A specification that defines substructure for URI schemes overall
-MUST do so by modifying {{BCP115}} (an exceptional circumstance).
+A specification that defines substructure for URI schemes overall (e.g., a prefix or suffix for URI
+scheme names) MUST do so by modifying {{BCP115}} (an exceptional circumstance).
 
 
 ## URI Authorities
 
 Scheme definitions define the presence, format and semantics of an authority component in URIs; all
 other specifications MUST NOT constrain, or define the structure or the semantics for URI
-authorities, unless they update the scheme registration itself.
+authorities, unless they update the scheme registration itself, or the structures it relies upon
+(e.g., DNS name syntax, defined in Section 3.5 of {{?RFC1034}}).
 
-For example, an extension or application ought not say that the "foo" prefix in
-"foo_app.example.com" is meaningful or triggers special handling in URIs.
+For example, an extension or application cannot say that the "foo" prefix in
+"http://foo_app.example.com" is meaningful or triggers special handling in URIs, unless they update either the HTTP URI scheme, or the DNS hostname syntax.
 
-However, applications MAY nominate or constrain the port they use, when applicable. For example,
+Applications can nominate or constrain the port they use, when applicable. For example,
 BarApp could run over port nnnn (provided that it is properly registered).
 
 
 
 ## URI Paths
 
-Scheme definitions define the presence, format, and semantics of a path component in URIs; all
-other specifications MUST NOT constrain, or define the structure or the semantics for any path
-component.
+Scheme definitions define the presence, format, and semantics of a path component in URIs. To avoid
+collisions, rigidity, and erroneous client assumptions, specifications MUST NOT define a fixed
+prefix for their URIs; for example, "/myapp".
 
-The only exception to this requirement is registered "well-known" URIs, as specified by {{RFC5785}}.
-See that document for a description of the applicability of that mechanism.
+The only exception to this requirement is registered "well-known" URIs, as specified by
+{{?RFC8615}}. See that document for a description of the applicability of that mechanism.
 
-For example, an application ought not specify a fixed URI path "/myapp", since this usurps the
-host's control of that space.
+Note that this does not apply to applications defining a structure of URIs paths "under" a resource
+under control of the server. For example, an application might define "app_root" as a
+deployment-defined URI. Application-defined resources might then be assumed to be present at
+"{app_root}/foo" and "{app_root}/bar". Because the prefix is under control of the party
+deploying the application, collisions and rigidity are avoided, and the risk of erroneous client
+assumptions is reduced.
 
-Specifying a fixed path relative to another (e.g., {whatever}/myapp) is also bad practice (even if
-"whatever" is discovered as suggested in {{alternatives}}); while doing so might prevent
-collisions, it does not avoid the potential for operational difficulties (for example, an
-implementation that prefers to use query processing instead, because of implementation constraints).
+Extensions MUST NOT define a structure within individual URI components (e.g., a prefix or suffix),
+again to avoid collisions and erroneous client assumptions.
 
 
 ## URI Queries
 
 The presence, format and semantics of the query component of URIs is dependent upon many factors,
-and MAY be constrained by a scheme definition. Often, they are determined by the implementation of
+and can be constrained by a scheme definition. Often, they are determined by the implementation of
 a resource itself.
 
-Applications MUST NOT directly specify the syntax of queries, as this can cause operational
-difficulties for deployments that do not support a particular form of a query. For example, a site may wish to support an application using "static" files that do not support query parameters.
+Applications can specify the syntax of queries for the resources under their control. However,
+doing so can cause operational difficulties for deployments that do not support a particular form
+of a query. For example, a site may wish to support an application using "static" files that do not
+support query parameters.
 
-Extensions MUST NOT constrain the format or semantics of queries.
+Extensions MUST NOT constrain the format or semantics of queries, to avoid collisions and erroneous
+client assumptions. For example, an extension that indicates that all query parameters with the
+name "sig" indicate a cryptographic signature would collide with potentially preexisting query
+parameters on sites and lead clients to assume that any matching query parameter is a signature.
 
-For example, an extension that indicates that all query parameters with the name "sig" indicate a
-cryptographic signature would collide with potentially preexisting query parameters on sites and
-lead clients to assume that any matching query parameter is a signature.
-
-HTML {{W3C.REC-html401-19991224}} constrains the syntax of query strings used in form submission.
-New form languages SHOULD NOT emulate it, but instead allow creation of a broader variety of URIs
+HTML {{?W3C.REC-html401-19991224}} constrains the syntax of query strings used in form submission.
+New form languages are encouraged to allow creation of a broader variety of URIs
 (e.g., by allowing the form to create new path components, and so forth).
-
-Note that "well-known" URIs (see {{RFC5785}}) MAY constrain their own query syntax, since these
-name spaces are effectively delegated to the registering party.
 
 
 
 ## URI Fragment Identifiers
 
-Media type definitions (as per {{RFC6838}}) SHOULD specify the fragment identifier syntax(es) to be
-used with them; other specifications MUST NOT define structure within the fragment identifier,
-unless they are explicitly defining one for reuse by media type definitions.
+Section 3.5 of {{RFC3986}} specifies fragment identiers' syntax and semantics as being dependent
+upon the media type of a potentially retrieved resource. As a result, other specifications MUST NOT
+define structure within the fragment identifier, unless they are explicitly defining one for reuse
+by media types in their definitions (for example, as JSON Pointer {{?RFC6901}} does).
 
-For example, an application that defines common fragment identifiers across media types not
+An application that defines common fragment identifiers across media types not
 controlled by it would engender interoperability problems with handlers for those media types
 (because the new, non-standard syntax is not expected).
 
@@ -275,15 +270,15 @@ extensions that wish to use URIs is to use them in the fashion they were designe
 are exchanged as part of the protocol, rather than statically specified syntax. Several existing
 specifications can aid in this.
 
-{{RFC5988}} specifies relation types for Web links. By providing a framework for linking on the
+{{?RFC8288}} specifies relation types for Web links. By providing a framework for linking on the
 Web, where every link has a relation type, context and target, it allows applications to define a
 link's semantics and connectivity.
 
-{{RFC6570}} provides a standard syntax for URI Templates that can be used to dynamically insert
+{{?RFC6570}} provides a standard syntax for URI Templates that can be used to dynamically insert
 application-specific variables into a URI to enable such applications while avoiding impinging upon
 URI owners' control of them.
 
-{{RFC5785}} allows specific paths to be 'reserved' for standard use on URI schemes that opt into
+{{?RFC8615}} allows specific paths to be 'reserved' for standard use on URI schemes that opt into
 that mechanism ('http' and 'https' by default). Note, however, that this is not a general "escape
 valve" for applications that need structured URIs; see that specification for more information.
 
@@ -299,7 +294,7 @@ This document does not introduce new protocol artifacts with security considerat
 some practices that might lead to vulnerabilities; for example, if a security-sensitive mechanism
 is introduced by assuming that a URI path component or query string has a particular meaning, false
 positives might be encountered (due to sites that already use the chosen string). See also
-{{RFC6943}}.
+{{?RFC6943}}.
 
 
 # IANA Considerations
