@@ -211,19 +211,22 @@ BarApp could run over port nnnn (provided that it is properly registered).
 
 ## URI Paths
 
-Scheme definitions define the presence, format, and semantics of a path component in URIs. To avoid
-collisions, rigidity, and erroneous client assumptions, specifications MUST NOT define a fixed
-prefix for their URIs; for example, "/myapp".
+Scheme definitions define the presence, format, and semantics of a path component in URIs, although these are often delegated to the application(s) in a given deployment.
 
-The only exception to this requirement is registered "well-known" URIs, as specified by
+To avoid collisions, rigidity, and erroneous client assumptions, specifications MUST NOT define a
+fixed prefix for their URI paths; for example, "/myapp", unless allowed by the scheme definition.
+
+One such exception to this requirement is registered "well-known" URIs, as specified by
 {{?RFC8615}}. See that document for a description of the applicability of that mechanism.
 
 Note that this does not apply to applications defining a structure of URIs paths "under" a resource
-under control of the server. For example, an application might define "app_root" as a
-deployment-defined URI. Application-defined resources might then be assumed to be present at
-"{app_root}/foo" and "{app_root}/bar". Because the prefix is under control of the party
-deploying the application, collisions and rigidity are avoided, and the risk of erroneous client
-assumptions is reduced.
+under control of the server. Because the prefix is under control of the party deploying the
+application, collisions and rigidity are avoided, and the risk of erroneous client assumptions is
+reduced.
+
+For example, an application might define "app_root" as a deployment-controlled URI prefix.
+Application-defined resources might then be assumed to be present at "{app_root}/foo" and
+"{app_root}/bar".
 
 Extensions MUST NOT define a structure within individual URI components (e.g., a prefix or suffix),
 again to avoid collisions and erroneous client assumptions.
