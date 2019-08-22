@@ -285,22 +285,26 @@ Internet-Draft          URI Design and Ownership             August 2019
 2.3.  URI Paths
 
    Scheme definitions define the presence, format, and semantics of a
-   path component in URIs.  To avoid collisions, rigidity, and erroneous
-   client assumptions, specifications MUST NOT define a fixed prefix for
-   their URIs; for example, "/myapp".
+   path component in URIs, although these are often delegated to the
+   application(s) in a given deployment.
 
-   The only exception to this requirement is registered "well-known"
+   To avoid collisions, rigidity, and erroneous client assumptions,
+   specifications MUST NOT define a fixed prefix for their URI paths;
+   for example, "/myapp", unless allowed by the scheme definition.
+
+   One such exception to this requirement is registered "well-known"
    URIs, as specified by [RFC8615].  See that document for a description
    of the applicability of that mechanism.
 
    Note that this does not apply to applications defining a structure of
-   URIs paths "under" a resource under control of the server.  For
-   example, an application might define "app_root" as a deployment-
-   defined URI.  Application-defined resources might then be assumed to
-   be present at "{app_root}/foo" and "{app_root}/bar".  Because the
-   prefix is under control of the party deploying the application,
+   URIs paths "under" a resource under control of the server.  Because
+   the prefix is under control of the party deploying the application,
    collisions and rigidity are avoided, and the risk of erroneous client
    assumptions is reduced.
+
+   For example, an application might define "app_root" as a deployment-
+   controlled URI prefix.  Application-defined resources might then be
+   assumed to be present at "{app_root}/foo" and "{app_root}/bar".
 
    Extensions MUST NOT define a structure within individual URI
    components (e.g., a prefix or suffix), again to avoid collisions and
@@ -326,10 +330,6 @@ Internet-Draft          URI Design and Ownership             August 2019
    potentially preexisting query parameters on sites and lead clients to
    assume that any matching query parameter is a signature.
 
-   HTML [W3C.REC-html401-19991224] constrains the syntax of query
-   strings used in form submission.  New form languages are encouraged
-   to allow creation of a broader variety of URIs (e.g., by allowing the
-   form to create new path components, and so forth).
 
 
 
@@ -337,6 +337,11 @@ Nottingham              Expires February 23, 2020               [Page 6]
 
 Internet-Draft          URI Design and Ownership             August 2019
 
+
+   HTML [W3C.REC-html401-19991224] constrains the syntax of query
+   strings used in form submission.  New form languages are encouraged
+   to allow creation of a broader variety of URIs (e.g., by allowing the
+   form to create new path components, and so forth).
 
 2.5.  URI Fragment Identifiers
 
@@ -381,11 +386,6 @@ Internet-Draft          URI Design and Ownership             August 2019
    issues in Section 1.  For example, prefixing query parameters with
    "myapp_" does not help, because the prefix itself is subject to the
    risk of collision (since it is not "reserved").
-
-
-
-
-
 
 
 
