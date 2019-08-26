@@ -79,14 +79,14 @@ This document provides guidance on the specification of URI substructure in stan
 This is a proposed revision of RFC7320, aka BCP190. The -00 draft is a copy of the published RFC;
 subsequent revisions will update it.
 
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/rfc7320>.
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/rfc7320bis>.
 
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/rfc7320/>.
+The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/rfc7320bis/>.
 
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/rfc7320>.
+Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/rfc7320bis>.
 
 See also the draft's current status in the IETF datatracker, at
-<https://datatracker.ietf.org/doc/draft-nottingham-rfc7320/>.
+<https://datatracker.ietf.org/doc/draft-nottingham-rfc7320bis/>.
 
 
 --- middle
