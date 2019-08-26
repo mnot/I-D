@@ -138,7 +138,7 @@ problematic, both for these reasons, and because the structure of a URI needs to
 the control of its owner.
 
 This document explains some best current practices for establishing URI structures, conventions, and
-formats in standards. It also offers strategies for specifications {{alternatives}}.
+formats in standards. It also offers strategies for specifications in {{alternatives}}.
 
 
 ## Intended Audience
