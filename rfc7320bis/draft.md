@@ -147,14 +147,14 @@ This document's guidelines and requirements target the authors of specifications
 syntax or structure of URIs or parts of them. Two classes of such specifications are called out
 specifically:
 
-* Protocol Extensions ("extensions") - specifications that offer new capabilities that could apply
+* Protocol Extensions ("Extensions") - specifications that offer new capabilities that could apply
   to any identifier, or to a large subset of possible identifiers; e.g., a new signature mechanism
   for 'http' URIs, metadata for any URI, or a new format.
 
-* Applications Using URIs ("applications") - specifications that use URIs to meet specific needs;
+* Applications Using URIs ("Applications") - specifications that use URIs to meet specific needs;
   e.g., an HTTP interface to particular information on a host.
 
-Requirements that target the generic class "specifications" apply to all specifications, including
+Requirements that target the generic class "Specifications" apply to all specifications, including
 both those enumerated above and others.
 
 Note that this specification ought not be interpreted as preventing the allocation of control of
@@ -179,29 +179,29 @@ shown here.
 
 # Best Current Practices for Standardizing Structured URIs
 
-This section updates {{RFC3986}} by advising other specifications how they should define
+This section updates {{RFC3986}} by advising Specifications how they should define
 structure and semantics within URIs. Best practices differ depending on the URI component, as
 described below.
 
 ## URI Schemes
 
-Applications and extensions can require use of specific URI scheme(s); for example, it is perfectly
-acceptable to require that an application support 'http' and 'https' URIs. However, applications
+Applications and Extensions can require use of specific URI scheme(s); for example, it is perfectly
+acceptable to require that an Application support 'http' and 'https' URIs. However, Applications
 ought not preclude the use of other URI schemes in the future, unless they are clearly only usable
 with the nominated schemes.
 
-A specification that defines substructure for URI schemes overall (e.g., a prefix or suffix for URI
+A Specification that defines substructure for URI schemes overall (e.g., a prefix or suffix for URI
 scheme names) MUST do so by modifying {{BCP115}} (an exceptional circumstance).
 
 
 ## URI Authorities
 
 Scheme definitions define the presence, format and semantics of an authority component in URIs; all
-other specifications MUST NOT constrain, or define the structure or the semantics for URI
+other Specifications MUST NOT constrain, or define the structure or the semantics for URI
 authorities, unless they update the scheme registration itself, or the structures it relies upon
 (e.g., DNS name syntax, defined in Section 3.5 of {{?RFC1034}}).
 
-For example, an extension or application cannot say that the "foo" prefix in
+For example, an Extension or Application cannot say that the "foo" prefix in
 "http://foo_app.example.com" is meaningful or triggers special handling in URIs, unless they update either the HTTP URI scheme, or the DNS hostname syntax.
 
 Applications can nominate or constrain the port they use, when applicable. For example,
@@ -213,18 +213,18 @@ BarApp could run over port nnnn (provided that it is properly registered).
 
 Scheme definitions define the presence, format, and semantics of a path component in URIs, although these are often delegated to the application(s) in a given deployment.
 
-To avoid collisions, rigidity, and erroneous client assumptions, specifications MUST NOT define a
+To avoid collisions, rigidity, and erroneous client assumptions, Specifications MUST NOT define a
 fixed prefix for their URI paths; for example, "/myapp", unless allowed by the scheme definition.
 
 One such exception to this requirement is registered "well-known" URIs, as specified by
 {{?RFC8615}}. See that document for a description of the applicability of that mechanism.
 
-Note that this does not apply to applications defining a structure of URIs paths "under" a resource
+Note that this does not apply to Applications defining a structure of URIs paths "under" a resource
 under control of the server. Because the prefix is under control of the party deploying the
 application, collisions and rigidity are avoided, and the risk of erroneous client assumptions is
 reduced.
 
-For example, an application might define "app_root" as a deployment-controlled URI prefix.
+For example, an Application might define "app_root" as a deployment-controlled URI prefix.
 Application-defined resources might then be assumed to be present at "{app_root}/foo" and
 "{app_root}/bar".
 
@@ -240,11 +240,11 @@ a resource itself.
 
 Applications can specify the syntax of queries for the resources under their control. However,
 doing so can cause operational difficulties for deployments that do not support a particular form
-of a query. For example, a site may wish to support an application using "static" files that do not
+of a query. For example, a site may wish to support an Application using "static" files that do not
 support query parameters.
 
 Extensions MUST NOT constrain the format or semantics of queries, to avoid collisions and erroneous
-client assumptions. For example, an extension that indicates that all query parameters with the
+client assumptions. For example, an Extension that indicates that all query parameters with the
 name "sig" indicate a cryptographic signature would collide with potentially preexisting query
 parameters on sites and lead clients to assume that any matching query parameter is a signature.
 
@@ -257,28 +257,28 @@ New form languages are encouraged to allow creation of a broader variety of URIs
 ## URI Fragment Identifiers
 
 Section 3.5 of {{RFC3986}} specifies fragment identiers' syntax and semantics as being dependent
-upon the media type of a potentially retrieved resource. As a result, other specifications MUST NOT
+upon the media type of a potentially retrieved resource. As a result, other Specifications MUST NOT
 define structure within the fragment identifier, unless they are explicitly defining one for reuse
 by media types in their definitions (for example, as JSON Pointer {{?RFC6901}} does).
 
-An application that defines common fragment identifiers across media types not
+An Application that defines common fragment identifiers across media types not
 controlled by it would engender interoperability problems with handlers for those media types
 (because the new, non-standard syntax is not expected).
 
 
 # Alternatives to Specifying Structure in URIs {#alternatives}
 
-Given the issues described in {{intro}}, the most successful strategy for applications and
-extensions that wish to use URIs is to use them in the fashion they were designed: as links that
+Given the issues described in {{intro}}, the most successful strategy for Applications and
+Extensions that wish to use URIs is to use them in the fashion they were designed: as links that
 are exchanged as part of the protocol, rather than statically specified syntax. Several existing
 specifications can aid in this.
 
 {{?RFC8288}} specifies relation types for Web links. By providing a framework for linking on the
-Web, where every link has a relation type, context and target, it allows applications to define a
+Web, where every link has a relation type, context and target, it allows Applications to define a
 link's semantics and connectivity.
 
 {{?RFC6570}} provides a standard syntax for URI Templates that can be used to dynamically insert
-application-specific variables into a URI to enable such applications while avoiding impinging upon
+Application-specific variables into a URI to enable such Applications while avoiding impinging upon
 URI owners' control of them.
 
 {{?RFC8615}} allows specific paths to be 'reserved' for standard use on URI schemes that opt into
