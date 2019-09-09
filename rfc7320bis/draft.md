@@ -1,6 +1,6 @@
 ---
 title: URI Design and Ownership
-docname: draft-nottingham-rfc7320bis-01
+docname: draft-nottingham-rfc7320bis-02
 date: 2019
 category: bcp
 updates: 3986
