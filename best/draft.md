@@ -271,7 +271,7 @@ Note that unlike other binary data types, Textual Field Values rely upon their c
 TODO: huffman coding?
 
 
-# Negotiating and Using Binary Structured Headers in HTTP/2 {#negotiate}
+# Using Binary Structured Headers in HTTP/2 {#negotiate}
 
 When both peers on a connection support this specification, they can take advantage of that knowledge to serialise headers that they know to be Structured Headers (or compatible with them; see {{backport}}).
 
