@@ -112,7 +112,7 @@ Length (10)|  List members...
 --+--------+--------+---------
 ~~~
 
-Each member of the list will be represented as an Item {{item}}, unless it cannot be represented; in these cases, the field value will be serialised as a Textual Field Value ({{TFV}}).
+Each member of the list will be represented as an Item ({{item}}), unless it cannot be represented; in these cases, the field value will be serialised as a Textual Field Value ({{TFV}}).
 
 Binary Structured Headers can represent inner lists with up to 1024 members; fields containing more members will need to be serialised as Textual Field Values ({{TFV}}).
 
@@ -127,7 +127,7 @@ Length (10)|  Parameters...
 --+--------+--------+---------
 ~~~
 
-Each pair will be represented by at least two Binary Structured Types; the parameter-name, represented as a token {{token}}, and the parameter-value, which is represented as a bare item {{item}}.
+Each pair will be represented by at least two Binary Structured Types; the parameter-name, represented as a token ({{token}}), and the parameter-value, which is represented as a bare item ({{item}}).
 
 If the parameters cannot be represented, the field value will be serialised as a Textual Field Value ({{TFV}}).
 
@@ -143,7 +143,7 @@ Length (10)|  Dictionary members...
 --+--------+--------+---------
 ~~~
 
-Each member of the dictionary will be represented by at least two Binary Structured Types; the member-name, represented as a token {{token}}, and the member-value, which is represented as one or more Binary Structured Types as per their definitions.
+Each member of the dictionary will be represented by at least two Binary Structured Types; the member-name, represented as a token ({{token}}), and the member-value, which is represented as one or more Binary Structured Types as per their definitions.
 
 member-values that are Items are represented as per {{item}}; member-values that are inner-lists are represented as per {{inner-list}}.
 
@@ -155,7 +155,7 @@ Binary Structured Headers can represent Dictionaries with up to 1024 members; fi
 
 Items are represented using one to many Binary Structured Types. The bare-item is serialised as the appropriate Binary Structured Type, as per below.
 
-The item's parameters, if present, are serialised as the Parameter type {{parameter}} (which will include zero or more following types).
+The item's parameters, if present, are serialised as the Parameter type ({{parameter}}), which will include zero or more following types.
 
 Bare items are never serialised with parameters.
 
@@ -286,7 +286,7 @@ Receiving SETTINGS_BINARY_STRUCTURED_HEADERS from a peer indicates that:
 1. The peer supports the encoding of Binary Structured Headers defined in {{types}}.
 2. The peer will process HEADERS frames containing the HEADERS indicator as defined in {{indicator}}.
 3. When a downstream consumer does not likewise support that encoding, the peer will transform them into an encoding it does understand (typically, the textual Structured Headers defined in {{!I-D.ietf-httpbis-header-structure}}) where necessary.
-4. The peer will likewise transform all fields defined as Aliased Fields {{aliased}} into their non-aliased forms as necessary.
+4. The peer will likewise transform all fields defined as Aliased Fields ({{aliased}}) into their non-aliased forms as necessary.
 
 The default value of SETTINGS_BINARY_STRUCTURED_HEADERS is 0. Future extensions to Structured Headers might use it to indicate support for new types.
 
