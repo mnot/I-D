@@ -38,14 +38,14 @@ Structured Headers for HTTP offers a set of data types that new headers can comb
 
 *RFC EDITOR: please remove this section before publication*
 
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/hehe>.
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/best>.
 
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/hehe/>.
+The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/best/>.
 
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/hehe>.
+Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/best>.
 
 See also the draft's current status in the IETF datatracker, at
-<https://datatracker.ietf.org/doc/draft-nottingham-hehe/>.
+<https://datatracker.ietf.org/doc/draft-nottingham-best/>.
 
 --- middle
 
