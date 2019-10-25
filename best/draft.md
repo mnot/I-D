@@ -275,7 +275,7 @@ TODO: huffman coding?
 
 When both peers on a connection support this specification, they can take advantage of that knowledge to serialise headers that they know to be Structured Headers (or compatible with them; see {{backport}}).
 
-Peers advertise and discover this support using a HTTP/2 setting defined in {{setting}}; individual HEADERS frames opt into this format using a sigil byte defined in {{indicator}}.
+Peers advertise and discover this support using a HTTP/2 setting defined in {{setting}}, and convey Binary Structured Headers in a frame type defined in {{frame}}.
 
 ## Binary Structured Headers Setting {#setting}
 
@@ -284,19 +284,25 @@ Advertising support for Binary Structured Headers is accomplished using a HTTP/2
 Receiving SETTINGS_BINARY_STRUCTURED_HEADERS from a peer indicates that:
 
 1. The peer supports the encoding of Binary Structured Headers defined in {{types}}.
-2. The peer will process HEADERS frames containing the HEADERS indicator as defined in {{indicator}}.
-3. When a downstream consumer does not likewise support that encoding, the peer will transform them into an encoding it does understand (typically, the textual Structured Headers defined in {{!I-D.ietf-httpbis-header-structure}}) where necessary.
+2. The peer will process the BINHEADERS frames as defined in {{frame}}.
+3. When a downstream consumer does not likewise support that encoding, the peer will transform them into HEADERS frames (if the peer is HTTP/2) or a form it will understand (e.g., the textual representation of Structured Headers data types defined in {{!I-D.ietf-httpbis-header-structure}}).
 4. The peer will likewise transform all fields defined as Aliased Fields ({{aliased}}) into their non-aliased forms as necessary.
 
 The default value of SETTINGS_BINARY_STRUCTURED_HEADERS is 0. Future extensions to Structured Headers might use it to indicate support for new types.
 
-## HEADERS Indicator {#indicator}
+## The BINHEADERS Frame {#frame}
 
-When a peer has indicated that it supports this specification {#setting}, a sender indicates that a given HEADERS frame is serialising all of the fields in a header block fragment ({{!RFC7540}} Section 6.2) as Binary Structured Types by prefixing the header block fragment with the byte 0x80 (i.e., 10000000, which is an illegal indexed header field reference in HPACK {{?RFC7541}}).
+When a peer has indicated that it supports this specification {#setting}, a sender can send Binary Structured Headers in the BINHEADERS Frame Type (0xTODO).
 
-Such header block fragments will serialise all field values as Binary Structured Types (possibly using Textual Field Values ({{TFV}})). These field values can be indexed in the dynamic table just as "normal" field values, although they may have to be converted to textual field values upon reuse, depending upon the capabilities of the peer at that time.
+The BINHEADERS Frame Type behaves and is represented exactly as a HEADERS Frame type ({{!RFC7540}}, Section 6.2), with one exception; the field values encoded in the Header Block Fragment as Literal Header Field representations are Binary Structured Headers.
 
-Binary Structured Types do not have Huffman encoding applied to them (except as specified in their definitions).
+This means that a BINHEADERS frame can be converted to a HEADERS frame by converting the field values to the string representations of the various Structured Headers Types, and Textual Field Values ({{TFV}}) to their string counterparts.
+
+Conversely, a HEADERS frame can be converted to a BINHEADERS frame by encoding all of the Literal field values as Binary Structured Types. In this case, the header types used are informed by the implementations knowledge of the individual header field semantics; see {{backport}}. Those which it cannot (do to either lack of knowledge or an error) or does not wish to convert into Structured Headers are conveyed in BINHEADERS as Textual Field Values ({{TFV}}).
+
+Field values are stored in the HPACK {{!RFC7541}} dynamic table without Huffman encoding, although specific Binary Structured Types might specify the use of such encodings.
+
+Note that BINHEADERS and HEADERS frames MAY be mixed on the same connection, depending on the requirements of the sender. Also, note that only the field values are encoded as Binary Structured Types; field names are encoded as they are in HPACK.
 
 
 # Using Binary Structured Headers with Existing Fields {#backport}
