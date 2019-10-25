@@ -1,0 +1,896 @@
+
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                                    Fastly
+Intended status: Standards Track                        October 25, 2019
+Expires: April 27, 2020
+
+
+                  Binary Encoding of Structured Types
+                        draft-nottingham-best-00
+
+Abstract
+
+   HTTP messages often pass through several systems - clients,
+   intermediaries, servers, and subsystems of each - that parse and
+   process their header and trailer fields.  This repeated parsing (and
+   often re-serialisation) adds latency and consumes CPU, energy, and
+   other resources.
+
+   Structured Headers for HTTP offers a set of data types that new
+   headers can combine to express their semantics.  This specification
+   defines a binary serialisation of these types that is more efficient
+   to process, along with a negotiation mechanism for its use in HTTP/2.
+   It also defines how to use Structured Headers for many existing
+   headers - thereby "backporting" them - when supported by two peers.
+
+Note to Readers
+
+   _RFC EDITOR: please remove this section before publication_
+
+   The issues list for this draft can be found at
+   https://github.com/mnot/I-D/labels/hehe [1].
+
+   The most recent (often, unpublished) draft is at
+   https://mnot.github.io/I-D/hehe/ [2].
+
+   Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
+   pages/hehe [3].
+
+   See also the draft's current status in the IETF datatracker, at
+   https://datatracker.ietf.org/doc/draft-nottingham-hehe/ [4].
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+
+
+
+
+Nottingham               Expires April 27, 2020                 [Page 1]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on April 27, 2020.
+
+Copyright Notice
+
+   Copyright (c) 2019 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+   2.  Binary Structured Types . . . . . . . . . . . . . . . . . . .   4
+     2.1.  Lists . . . . . . . . . . . . . . . . . . . . . . . . . .   4
+       2.1.1.  Inner Lists . . . . . . . . . . . . . . . . . . . . .   4
+       2.1.2.  Parameters  . . . . . . . . . . . . . . . . . . . . .   5
+     2.2.  Dictionaries  . . . . . . . . . . . . . . . . . . . . . .   5
+     2.3.  Items . . . . . . . . . . . . . . . . . . . . . . . . . .   6
+       2.3.1.  Integers  . . . . . . . . . . . . . . . . . . . . . .   6
+       2.3.2.  Floats  . . . . . . . . . . . . . . . . . . . . . . .   6
+       2.3.3.  Strings . . . . . . . . . . . . . . . . . . . . . . .   7
+       2.3.4.  Tokens  . . . . . . . . . . . . . . . . . . . . . . .   7
+       2.3.5.  Byte Sequences  . . . . . . . . . . . . . . . . . . .   8
+       2.3.6.  Booleans  . . . . . . . . . . . . . . . . . . . . . .   8
+     2.4.  Textual Field Values  . . . . . . . . . . . . . . . . . .   8
+   3.  Negotiating and Using Binary Structured Headers in HTTP/2 . .   9
+     3.1.  Binary Structured Headers Setting . . . . . . . . . . . .   9
+     3.2.  HEADERS Indicator . . . . . . . . . . . . . . . . . . . .   9
+   4.  Using Binary Structured Headers with Existing Fields  . . . .  10
+     4.1.  Directly Represented Fields . . . . . . . . . . . . . . .  10
+     4.2.  Aliased Fields  . . . . . . . . . . . . . . . . . . . . .  12
+
+
+
+Nottingham               Expires April 27, 2020                 [Page 2]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+       4.2.1.  URLs  . . . . . . . . . . . . . . . . . . . . . . . .  12
+       4.2.2.  Dates . . . . . . . . . . . . . . . . . . . . . . . .  13
+       4.2.3.  ETags . . . . . . . . . . . . . . . . . . . . . . . .  13
+       4.2.4.  Links . . . . . . . . . . . . . . . . . . . . . . . .  14
+       4.2.5.  Cookies . . . . . . . . . . . . . . . . . . . . . . .  14
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  15
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .  15
+     7.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  16
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  16
+
+1.  Introduction
+
+   HTTP messages often pass through several systems - clients,
+   intermediaries, servers, and subsystems of each - that parse and
+   process their header and trailer fields.  This repeated parsing (and
+   often re-serialisation) adds latency and consumes CPU, energy, and
+   other resources.
+
+   Structured Headers for HTTP [I-D.ietf-httpbis-header-structure]
+   offers a set of data types that new headers can combine to express
+   their semantics.  This specification defines a binary serialisation
+   of these types that is more efficient to process, along with a
+   negotiation mechanism for its use in HTTP/2.  It also defines how to
+   use Structured Headers for many existing headers - thereby
+   "backporting" them - when supported by two peers.
+
+   The goals of this specification are to reduce parsing overhead and
+   associated costs.  It may also result in a more efficient wire format
+   in some cases, but that is not a primary goal.  An additional goal is
+   to enable future work on more efficient header compression
+   mechanisms.
+
+   Section 2 defines binary serialisations of Structured Headers types.
+   Section 3 shows how to negotiate their use in a HTTP/2 connection.
+   Section 4 shows how to use Structured Headers types with already
+   defined header fields.
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+
+
+
+Nottingham               Expires April 27, 2020                 [Page 3]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+2.  Binary Structured Types
+
+   This section defines a binary serialisation for the Structured Header
+   Types defined in [I-D.ietf-httpbis-header-structure].
+
+   Every Binary Structured Type starts with a 6-bit type field that
+   defines the format of its payload:
+
+   +------+--+--------
+   |T (6) | Payload (0...)
+   +------+--+--------
+
+   Some Binary Structured Types have variable lengths; in these cases,
+   the payload MUST have padding appended to align it with the next byte
+   boundary.
+
+2.1.  Lists
+
+   The List data type (type=0x1) has a length field that indicates how
+   many members are in the list, as an unsigned 10-bit integer.
+
+   --+--------+--------+---------
+   Length (10)|  List members...
+   --+--------+--------+---------
+
+   Each member of the list will be represented by one or more Binary
+   Structured Types (depending on their types), unless it cannot be
+   represented; in these cases, the field value will be serialised as a
+   Textual Field Value Section 2.4.
+
+   list-members that are Items are represented as per Section 2.3; list-
+   members that are inner-lists are represented as per Section 2.1.1.
+
+   Binary Structured Headers can represent Lists with up to 1024
+   members; fields containing more members will need to be serialised as
+   Textual Field Values Section 2.4.
+
+2.1.1.  Inner Lists
+
+   The Inner List data type (type=0x2) has a length field that indicates
+   how many members are in the inner-list, as an unsigned 10-bit
+   integer.
+
+   --+--------+--------+---------
+   Length (10)|  List members...
+   --+--------+--------+---------
+
+
+
+
+
+Nottingham               Expires April 27, 2020                 [Page 4]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+   Each member of the list will be represented as an Item Section 2.3,
+   unless it cannot be represented; in these cases, the field value will
+   be serialised as a Textual Field Value Section 2.4.
+
+   Binary Structured Headers can represent inner lists with up to 1024
+   members; fields containing more members will need to be serialised as
+   Textual Field Values Section 2.4.
+
+2.1.2.  Parameters
+
+   The Parameters data type (type=0x3) has a length field that indicates
+   how many (parameter-name, parameter-value) pairs are present, as an
+   unsigned 10-bit integer.
+
+   --+--------+--------+---------
+   Length (10)|  Parameters...
+   --+--------+--------+---------
+
+   Each pair will be represented by at least two Binary Structured
+   Types; the parameter-name, represented as a token Section 2.3.4, and
+   the parameter-value, which is represented as a bare item Section 2.3.
+
+   If the parameters cannot be represented, the field value will be
+   serialised as a Textual Field Value Section 2.4.
+
+   Binary Structured Headers can represent up to 1024 parameters; fields
+   containing more will need to be serialised as Textual Field Values
+   Section 2.4.
+
+2.2.  Dictionaries
+
+   The Dictionary data type (type=0x4) has a length field that indicates
+   how many members are in the dictionary, as an unsigned 10-bit
+   integer.
+
+   --+--------+--------+---------
+   Length (10)|  Dictionary members...
+   --+--------+--------+---------
+
+   Each member of the dictionary will be represented by at least two
+   Binary Structured Types; the member-name, represented as a token
+   Section 2.3.4, and the member-value, which is represented as one or
+   more Binary Structured Types as per their definitions.
+
+   member-values that are Items are represented as per Section 2.3;
+   member-values that are inner-lists are represented as per
+   Section 2.1.1.
+
+
+
+
+Nottingham               Expires April 27, 2020                 [Page 5]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+   If the dictionary cannot be represented, the field value will be
+   serialised as a Textual Field Value Section 2.4.
+
+   Binary Structured Headers can represent Dictionaries with up to 1024
+   members; fields containing more members will need to be serialised as
+   Textual Field Values Section 2.4.
+
+2.3.  Items
+
+   Items are represented using one to many Binary Structured Types.  The
+   bare-item is serialised as the appropriate Binary Structured Type, as
+   per below.
+
+   The item's parameters, if present, are serialised as the Parameter
+   type Section 2.1.2 (which will include zero or more following types).
+
+   Bare items are never serialised with parameters.
+
+2.3.1.  Integers
+
+   The Integer data type (type=0x5) has a payload of 58 bits:
+
+   --+--------+--------+--------+--------+--------+--------+--+------+
+   SX|  Integer                                               |  Pad |
+   --+--------+--------+--------+--------+--------+--------+--+------+
+
+   Its fields are:
+
+   o  S - sign bit; 0 is negative, 1 is positive
+
+   o  X - 1 bit; discard
+
+   o  Integer - 50 bits, unsigned
+
+   o  Pad - 6 bits
+
+   TODO: varint?
+
+2.3.2.  Floats
+
+   The Float data type (type=0x6) have a payload of 74 bits:
+
+
+
+
+
+
+
+
+
+
+Nottingham               Expires April 27, 2020                 [Page 6]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+   -+-+--------+--------+--------+--------+--------+------+
+   S|   Integer                                           |
+   -+-+--------+--------+--------+--------+--------+------+
+
+   +--+--------+--------+--------+
+   |    Fractional               |
+   +--+--------+--------+--------+
+
+   Its fields are:
+
+   o  S - sign bit; 0 is negative, 1 is positive
+
+   o  Integer - 47 bits, unsigned
+
+   o  Fractional - 20 bits, unsigned integer
+
+   TODO: varint?
+
+2.3.3.  Strings
+
+   The String data type (type=0x7) has a payload whose length is
+   indicated by its first ten bits (as an unsigned integer):
+
+   --+--------+--------+---------
+   Length (10)|  String...
+   --+--------+--------+---------
+
+   Binary Structured Headers can represent Strings up to 1024 characters
+   in length; fields containing longer values will need to be serialised
+   as Textual Field Values Section 2.4.
+
+   TODO: Huffman coding?
+
+2.3.4.  Tokens
+
+   The Token data type (type=0x8) has a payload whose length is
+   indicated by its first ten bits (as an unsigned integer):
+
+   --+--------+--------+--------------
+   Length (10)|  Token...
+   --+--------+--------+--------------
+
+   Binary Structured Headers can represent Tokens up to 1024 characters
+   in length; fields containing longer values will need to be serialised
+   as Textual Field Values Section 2.4.
+
+   TODO: Huffman coding?
+
+
+
+
+Nottingham               Expires April 27, 2020                 [Page 7]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+2.3.5.  Byte Sequences
+
+   The Byte Sequence data type (type=0x9) has a payload whose length is
+   indicated by its first 14 bits (as an unsigned integer):
+
+   --+--------+----+----+---------------------
+   Length (14)     |XXXX|  Byte Sequence...
+   --+--------+----+----+---------------------
+
+   Binary Structured Headers can represent Byte Sequences up to 16384
+   characters in length; fields containing longer values will need to be
+   serialised as Textual Field Values Section 2.4.
+
+2.3.6.  Booleans
+
+   The Boolean data type (type=0xa) has a payload of two bits:
+
+   --+
+   BX|
+   --+
+
+   If B is 0, the value is False; if B is 1, the value is True.  The
+   value of X is discarded.
+
+2.4.  Textual Field Values
+
+   The Textual Field Value data type (type=0xb) indicates that the
+   contents are a textual HTTP header value, rather than a Binary
+   Structured Header.  The value may or may not be a Structured Header.
+
+   Its payload is two bytes of padding, followed by the octets of the
+   field value:
+
+   --+--------+----
+   XX| Field Value...
+   --+--------+----
+
+   Note that unlike other binary data types, Textual Field Values rely
+   upon their context to convey their length.  As a result, they cannot
+   be used anywhere but as a top-level field value; their presence
+   elsewhere MUST be considered an error.
+
+   TODO: huffman coding?
+
+
+
+
+
+
+
+
+Nottingham               Expires April 27, 2020                 [Page 8]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+3.  Negotiating and Using Binary Structured Headers in HTTP/2
+
+   When both peers on a connection support this specification, they can
+   advertise this and then take advantage of that knowledge to serialise
+   headers that they know to be compatible with
+
+3.1.  Binary Structured Headers Setting
+
+   Advertising support is accomplished using a HTTP/2 setting,
+   SETTINGS_BINARY_STRUCTURED_HEADERS (0xTODO).
+
+   Receiving SETTINGS_BINARY_STRUCTURED_HEADERS from a peer indicates
+   that:
+
+   1.  The peer supports the encoding of Binary Structured Headers
+       defined in Section 2.
+
+   2.  The peer will process HEADERS frames containing the HEADERS
+       indicator as defined in Section 3.2.
+
+   3.  When a downstream consumer does not likewise support that
+       encoding, the peer will transform them into an encoding it does
+       understand (typically, the textual Structured Headers defined in
+       [I-D.ietf-httpbis-header-structure]) where necessary.
+
+   4.  The peer will likewise transform all fields defined as Aliased
+       Fields Section 4.2 into their non-aliased forms as necessary.
+
+   The default value of SETTINGS_BINARY_STRUCTURED_HEADERS is 0.  Future
+   extensions to Structured Headers might use it to indicate support for
+   new types.
+
+3.2.  HEADERS Indicator
+
+   When a peer has indicated that it supports this specification
+   {#setting}, a sender indicates that a given HEADERS frame is
+   serialising all of the fields in a header block fragment ([RFC7540]
+   Section 6.2) as Binary Structured Types by prefixing the header block
+   fragment with the byte 0x80 (i.e., 10000000, which is an illegal
+   indexed header field reference in HPACK [RFC7541]).
+
+   Such header block fragments will serialise all field values as Binary
+   Structured Types (possibly using Textual Field Values Section 2.4).
+   These field values can be indexed in the dynamic table just as
+   "normal" field values, although they may have to be converted to
+   textual field values upon reuse, depending upon the capabilities of
+   the peer at that time.
+
+
+
+
+Nottingham               Expires April 27, 2020                 [Page 9]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+   Binary Structured Types do not have Huffman encoding applied to them
+   (except as specified in their definitions).
+
+4.  Using Binary Structured Headers with Existing Fields
+
+   Any header field can potentially be parsed as a Structured Header
+   according to the algorithms in [I-D.ietf-httpbis-header-structure]
+   and serialised as a Binary Structured Header.  However, many cannot,
+   so optimistically parsing them can be expensive.
+
+   This section identifies fields that will usually succeed in
+   Section 4.1, and those that can be mapped into Structured Headers by
+   using an alias field name in Section 4.2.
+
+4.1.  Directly Represented Fields
+
+   The following HTTP field names can have their values parsed as
+   Structured Headers according to the algorithms in
+   [I-D.ietf-httpbis-header-structure], and thus can usually be
+   serialised using the corresponding Binary Structured Types.
+
+   When one of these fields' values cannot be represented using
+   Structured Types, its value can instead be represented as a Textual
+   Field Value Section 2.4.
+
+   o  Accept - List
+
+   o  Accept-Encoding - List
+
+   o  Accept-Language - List
+
+   o  Accept-Patch - List
+
+   o  Accept-Ranges - List
+
+   o  Access-Control-Allow-Credentials - Item
+
+   o  Access-Control-Allow-Headers - List
+
+   o  Access-Control-Allow-Methods - List
+
+   o  Access-Control-Allow-Origin - Item
+
+   o  Access-Control-Max-Age - Item
+
+   o  Access-Control-Request-Headers - List
+
+   o  Access-Control-Request-Method - Item
+
+
+
+Nottingham               Expires April 27, 2020                [Page 10]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+   o  Age - Item
+
+   o  Allow - List
+
+   o  ALPN - List
+
+   o  Alt-Svc - List
+
+   o  Alt-Used - Item
+
+   o  Cache-Control - Dictionary
+
+   o  Content-Encoding - Item
+
+   o  Content-Language - List
+
+   o  Content-Length - Item
+
+   o  Content-Type - Item
+
+   o  Expect - Item
+
+   o  Forwarded - List
+
+   o  Host - Item
+
+   o  Origin - Item
+
+   o  Pragma - Dictionary
+
+   o  Prefer - Dictionary
+
+   o  Preference-Applied - Dictionary
+
+   o  Retry-After - Item (see caveat below)
+
+   o  Surrogate-Control - Dictionary
+
+   o  TE - List
+
+   o  Trailer - List
+
+   o  Transfer-Encoding - List
+
+   o  Vary - List
+
+   o  X-Content-Type-Options - Item
+
+
+
+
+Nottingham               Expires April 27, 2020                [Page 11]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+   Note that only the delta-seconds form of Retry-After is supported; a
+   Retry-After value containing a http-date will need to be either
+   converted into delta-seconds or serialised as a Textual Field Value
+   Section 2.4.
+
+   TODO: Accept and Content-Type media types use + in values.
+
+4.2.  Aliased Fields
+
+   The following HTTP field names can have their values represented in
+   Structured headers by mapping them into its data types and then
+   serialising the resulting Structured Header using an alternative
+   field name.
+
+   For example, the Date HTTP header field carries a http-date, which is
+   a string representing a date:
+
+   Date: Sun, 06 Nov 1994 08:49:37 GMT
+
+   Its value is more efficiently represented as an integer number of
+   delta seconds from the Unix epoch (00:00:00 UTC on 1 January 1970,
+   minus leap seconds).  Thus, the example above would be represented in
+   (non-binary) Structured headers as:
+
+   SH-Date: 784072177
+
+   As with directly represented fields, if the intended value of an
+   aliased field cannot be represented using Structured Types
+   successfully, its value can instead be represented as a Textual Field
+   Value Section 2.4.
+
+   Note that senders MUST know that the next-hop recipient understands
+   these fields (typically, using the negotiation mechanism defined in
+   Section 3) before using them.  Likewise, recipients MUST transform
+   them back to their unaliased form before forwarding the message to a
+   peer or other consuming components that do not have this capability.
+
+   Each field name listed below indicates a replacement field name and a
+   way to map its value to Structured Headers.
+
+4.2.1.  URLs
+
+   The following field names (paired with their replacement field names)
+   have values that can be represented in Binary Structured Headers by
+   considering their payload a string.
+
+   o  Content-Location - SH-Content-Location
+
+
+
+
+Nottingham               Expires April 27, 2020                [Page 12]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+   o  Location - SH-Location
+
+   o  Referer - SH-Referer
+
+   For example, a (non-binary) Location:
+
+   SH-Location: "https://example.com/foo"
+
+   TOOD: list of strings, one for each path segment, to allow better
+   compression in the future?
+
+4.2.2.  Dates
+
+   The following field names (paired with their replacement field names)
+   have values that can be represented in Binary Structured Headers by
+   parsing their payload according to [RFC7230], Section 7.1.1.1, and
+   representing the result as an integer number of seconds delta from
+   the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
+
+   o  Date - SH-Date
+
+   o  Expires - SH-Expires
+
+   o  If-Modified-Since - SH-IMS
+
+   o  If-Unmodified-Since - SH-IUS
+
+   o  Last-Modified - SH-LM
+
+   For example, a (non-binary) Expires:
+
+   SH-Expires: 1571965240
+
+4.2.3.  ETags
+
+   The following field names (paired with their replacement field names)
+   have values that can be represented in Binary Structured Headers by
+   representing the entity-tag as a string, and the weakness flag as a
+   boolean "w" parameter on it, where true indicates that the entity-tag
+   is weak; if 0 or unset, the entity-tag is strong.
+
+   o  ETag - SH-ETag
+
+   For example, a (non-Binary) ETag:
+
+   SH-ETag: "abcdef"; w=?1
+
+   If-None-Match is a list of the structure described above.
+
+
+
+Nottingham               Expires April 27, 2020                [Page 13]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+   o  If-None-Match - SH-INM
+
+   For example, a (non-binary) If-None-Match:
+
+   SH-INM: "abcdef"; w=?1, "ghijkl"
+
+4.2.4.  Links
+
+   The field-value of the Link header field [RFC8288] can be represented
+   in Binary Structured Headers by representing the URI-Reference as a
+   string, and link-param as parameters.
+
+   o  Link: SH-Link
+
+   For example, a (non-binary) Link:
+
+   SH-Link: "/terms"; rel="copyright"; anchor="#foo"
+
+4.2.5.  Cookies
+
+   The field-value of the Cookie and Set-Cookie fields [RFC6265] can be
+   represented in Binary Structured Headers as a List with parameters
+   and a Dictionary, respectively.  The serialisation is almost
+   identical, except that the Expires parameter is always a string (as
+   it can contain a comma), multiple cookie-strings can appear in Set-
+   Cookie, and cookie-pairs are delimited in Cookie by a comma, rather
+   than a semicolon.
+
+   Set-Cookie: SH-Set-Cookie Cookie: SH-Cookie
+
+   SH-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
+   SH-Cookie: SID=31d4d96e407aad42, lang=en-US
+
+   TODO: explicitly convert Expires to an integer?
+
+5.  IANA Considerations
+
+   TODO
+
+6.  Security Considerations
+
+   As is so often the case, having alternative representations of data
+   brings the potential for security weaknesses, when attackers exploit
+   the differences between those representations and their handling.
+
+   One mitigation to this risk is the strictness of parsing for both
+   non-binary and binary Structured Headers data types, along with the
+   "escape valve" of Textual Field Values Section 2.4.  Therefore,
+
+
+
+Nottingham               Expires April 27, 2020                [Page 14]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+   implementation divergence from this strictness can have security
+   impact.
+
+7.  References
+
+7.1.  Normative References
+
+   [I-D.ietf-httpbis-header-structure]
+              Nottingham, M. and P. Kamp, "Structured Headers for HTTP",
+              draft-ietf-httpbis-header-structure-13 (work in progress),
+              August 2019.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC6265]  Barth, A., "HTTP State Management Mechanism", RFC 6265,
+              DOI 10.17487/RFC6265, April 2011,
+              <https://www.rfc-editor.org/info/rfc6265>.
+
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing",
+              RFC 7230, DOI 10.17487/RFC7230, June 2014,
+              <https://www.rfc-editor.org/info/rfc7230>.
+
+   [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
+              Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
+              DOI 10.17487/RFC7540, May 2015,
+              <https://www.rfc-editor.org/info/rfc7540>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+   [RFC8288]  Nottingham, M., "Web Linking", RFC 8288,
+              DOI 10.17487/RFC8288, October 2017,
+              <https://www.rfc-editor.org/info/rfc8288>.
+
+7.2.  Informative References
+
+   [RFC7541]  Peon, R. and H. Ruellan, "HPACK: Header Compression for
+              HTTP/2", RFC 7541, DOI 10.17487/RFC7541, May 2015,
+              <https://www.rfc-editor.org/info/rfc7541>.
+
+
+
+
+
+
+
+Nottingham               Expires April 27, 2020                [Page 15]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
+7.3.  URIs
+
+   [1] https://github.com/mnot/I-D/labels/hehe
+
+   [2] https://mnot.github.io/I-D/hehe/
+
+   [3] https://github.com/mnot/I-D/commits/gh-pages/hehe
+
+   [4] https://datatracker.ietf.org/doc/draft-nottingham-hehe/
+
+Author's Address
+
+   Mark Nottingham
+   Fastly
+
+   Email: mnot@mnot.net
+   URI:   https://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham               Expires April 27, 2020                [Page 16]
