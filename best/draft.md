@@ -96,11 +96,11 @@ Length (10)|  List members...
 --+--------+--------+---------
 ~~~
 
-Each member of the list will be represented by one or more Binary Structured Types (depending on their types), unless it cannot be represented; in these cases, the field value will be serialised as a Textual Field Value {{TFV}}.
+Each member of the list will be represented by one or more Binary Structured Types (depending on their types), unless it cannot be represented; in these cases, the field value will be serialised as a Textual Field Value ({{TFV}}).
 
 list-members that are Items are represented as per {{item}}; list-members that are inner-lists are represented as per {{inner-list}}.
 
-Binary Structured Headers can represent Lists with up to 1024 members; fields containing more members will need to be serialised as Textual Field Values {{TFV}}.
+Binary Structured Headers can represent Lists with up to 1024 members; fields containing more members will need to be serialised as Textual Field Values ({{TFV}}).
 
 ### Inner Lists {#inner-list}
 
@@ -112,9 +112,9 @@ Length (10)|  List members...
 --+--------+--------+---------
 ~~~
 
-Each member of the list will be represented as an Item {{item}}, unless it cannot be represented; in these cases, the field value will be serialised as a Textual Field Value {{TFV}}.
+Each member of the list will be represented as an Item {{item}}, unless it cannot be represented; in these cases, the field value will be serialised as a Textual Field Value ({{TFV}}).
 
-Binary Structured Headers can represent inner lists with up to 1024 members; fields containing more members will need to be serialised as Textual Field Values {{TFV}}.
+Binary Structured Headers can represent inner lists with up to 1024 members; fields containing more members will need to be serialised as Textual Field Values ({{TFV}}).
 
 
 ### Parameters {#parameter}
@@ -129,9 +129,9 @@ Length (10)|  Parameters...
 
 Each pair will be represented by at least two Binary Structured Types; the parameter-name, represented as a token {{token}}, and the parameter-value, which is represented as a bare item {{item}}.
 
-If the parameters cannot be represented, the field value will be serialised as a Textual Field Value {{TFV}}.
+If the parameters cannot be represented, the field value will be serialised as a Textual Field Value ({{TFV}}).
 
-Binary Structured Headers can represent up to 1024 parameters; fields containing more will need to be serialised as Textual Field Values {{TFV}}.
+Binary Structured Headers can represent up to 1024 parameters; fields containing more will need to be serialised as Textual Field Values ({{TFV}}).
 
 ## Dictionaries
 
@@ -147,9 +147,9 @@ Each member of the dictionary will be represented by at least two Binary Structu
 
 member-values that are Items are represented as per {{item}}; member-values that are inner-lists are represented as per {{inner-list}}.
 
-If the dictionary cannot be represented, the field value will be serialised as a Textual Field Value {{TFV}}.
+If the dictionary cannot be represented, the field value will be serialised as a Textual Field Value ({{TFV}}).
 
-Binary Structured Headers can represent Dictionaries with up to 1024 members; fields containing more members will need to be serialised as Textual Field Values {{TFV}}.
+Binary Structured Headers can represent Dictionaries with up to 1024 members; fields containing more members will need to be serialised as Textual Field Values ({{TFV}}).
 
 ## Items {#item}
 
@@ -210,7 +210,7 @@ Length (10)|  String...
 --+--------+--------+---------
 ~~~
 
-Binary Structured Headers can represent Strings up to 1024 characters in length; fields containing longer values will need to be serialised as Textual Field Values {{TFV}}.
+Binary Structured Headers can represent Strings up to 1024 characters in length; fields containing longer values will need to be serialised as Textual Field Values ({{TFV}}).
 
 TODO: Huffman coding?
 
@@ -224,7 +224,7 @@ Length (10)|  Token...
 --+--------+--------+--------------
 ~~~
 
-Binary Structured Headers can represent Tokens up to 1024 characters in length; fields containing longer values will need to be serialised as Textual Field Values {{TFV}}.
+Binary Structured Headers can represent Tokens up to 1024 characters in length; fields containing longer values will need to be serialised as Textual Field Values ({{TFV}}).
 
 TODO: Huffman coding?
 
@@ -238,7 +238,7 @@ Length (14)     |XXXX|  Byte Sequence...
 --+--------+----+----+---------------------
 ~~~
 
-Binary Structured Headers can represent Byte Sequences up to 16384 characters in length; fields containing longer values will need to be serialised as Textual Field Values {{TFV}}.
+Binary Structured Headers can represent Byte Sequences up to 16384 characters in length; fields containing longer values will need to be serialised as Textual Field Values ({{TFV}}).
 
 
 ### Booleans
@@ -294,7 +294,7 @@ The default value of SETTINGS_BINARY_STRUCTURED_HEADERS is 0. Future extensions 
 
 When a peer has indicated that it supports this specification {#setting}, a sender indicates that a given HEADERS frame is serialising all of the fields in a header block fragment ({{!RFC7540}} Section 6.2) as Binary Structured Types by prefixing the header block fragment with the byte 0x80 (i.e., 10000000, which is an illegal indexed header field reference in HPACK {{?RFC7541}}).
 
-Such header block fragments will serialise all field values as Binary Structured Types (possibly using Textual Field Values {{TFV}}). These field values can be indexed in the dynamic table just as "normal" field values, although they may have to be converted to textual field values upon reuse, depending upon the capabilities of the peer at that time.
+Such header block fragments will serialise all field values as Binary Structured Types (possibly using Textual Field Values ({{TFV}})). These field values can be indexed in the dynamic table just as "normal" field values, although they may have to be converted to textual field values upon reuse, depending upon the capabilities of the peer at that time.
 
 Binary Structured Types do not have Huffman encoding applied to them (except as specified in their definitions).
 
@@ -310,7 +310,7 @@ This section identifies fields that will usually succeed in {{direct}}, and thos
 
 The following HTTP field names can have their values parsed as Structured Headers according to the algorithms in {{!I-D.ietf-httpbis-header-structure}}, and thus can usually be serialised using the corresponding Binary Structured Types.
 
-When one of these fields' values cannot be represented using Structured Types, its value can instead be represented as a Textual Field Value {{TFV}}.
+When one of these fields' values cannot be represented using Structured Types, its value can instead be represented as a Textual Field Value ({{TFV}}).
 
 * Accept - List
 * Accept-Encoding - List
@@ -349,7 +349,7 @@ When one of these fields' values cannot be represented using Structured Types, i
 * Vary - List
 * X-Content-Type-Options - Item
 
-Note that only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or serialised as a Textual Field Value {{TFV}}.
+Note that only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or serialised as a Textual Field Value ({{TFV}}).
 
 TODO: Accept and Content-Type media types use + in values.
 
@@ -369,7 +369,7 @@ Its value is more efficiently represented as an integer number of delta seconds 
 SH-Date: 784072177
 ~~~
 
-As with directly represented fields, if the intended value of an aliased field cannot be represented using Structured Types successfully, its value can instead be represented as a Textual Field Value {{TFV}}.
+As with directly represented fields, if the intended value of an aliased field cannot be represented using Structured Types successfully, its value can instead be represented as a Textual Field Value ({{TFV}}).
 
 Note that senders MUST know that the next-hop recipient understands these fields (typically, using the negotiation mechanism defined in {{negotiate}}) before using them. Likewise, recipients MUST transform them back to their unaliased form before forwarding the message to a peer or other consuming components that do not have this capability.
 
@@ -464,7 +464,7 @@ TODO
 
 As is so often the case, having alternative representations of data brings the potential for security weaknesses, when attackers exploit the differences between those representations and their handling.
 
-One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Headers data types, along with the "escape valve" of Textual Field Values {{TFV}}. Therefore, implementation divergence from this strictness can have security impact.
+One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Headers data types, along with the "escape valve" of Textual Field Values ({{TFV}}). Therefore, implementation divergence from this strictness can have security impact.
 
 
 --- back
