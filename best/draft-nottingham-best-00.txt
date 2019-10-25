@@ -191,17 +191,17 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
 2.1.  Lists
 
-   The List data type (type=0x1) has a length field that indicates how
-   many members are in the list, as an unsigned 10-bit integer.
+   The List data type (type=0x1) has a payload consisting of one or more
+   members.
 
    --+--------+--------+---------
-   Length (10)|  List members...
+     List members...
    --+--------+--------+---------
 
    Each member of the list will be represented by one or more Binary
    Structured Types (depending on their types), unless it cannot be
-   represented; in these cases, the field value will be serialised as a
-   Textual Field Value (Section 2.4).
+   represented; in these cases, the entire field value will be
+   serialised as a Textual Field Value (Section 2.4).
 
    list-members that are Items are represented as per Section 2.3; list-
    members that are inner-lists are represented as per Section 2.1.1.
@@ -253,8 +253,8 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    and the parameter-value, which is represented as a bare item
    (Section 2.3).
 
-   If the parameters cannot be represented, the field value will be
-   serialised as a Textual Field Value (Section 2.4).
+   If the parameters cannot be represented, the entire field value will
+   be serialised as a Textual Field Value (Section 2.4).
 
    Binary Structured Headers can represent up to 1024 parameters; fields
    containing more will need to be serialised as Textual Field Values
@@ -262,18 +262,18 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
 2.2.  Dictionaries
 
-   The Dictionary data type (type=0x4) has a length field that indicates
-   how many members are in the dictionary, as an unsigned 10-bit
-   integer.
+   The Dictionary data type (type=0x4) has a payload consisting of
+   member-name / member-value pairs.
 
    --+--------+--------+---------
-   Length (10)|  Dictionary members...
+     Dictionary members...
    --+--------+--------+---------
 
-   Each member of the dictionary will be represented by at least two
-   Binary Structured Types; the member-name, represented as a token
-   (Section 2.3.4), and the member-value, which is represented as one or
-   more Binary Structured Types as per their definitions.
+   Each member of the dictionary is represented by an 8-bit key length
+   field KL, followed by that many bytes of the member-name, followed by
+   one or more Binary Structured Types representing the member-value.
+
+
 
 
 
@@ -282,16 +282,16 @@ Nottingham               Expires April 27, 2020                 [Page 5]
 Internet-Draft     Binary Encoding of Structured Types      October 2019
 
 
+   +--------+--------+---------
+   |  KL(8) | member-name(*) member-value...
+   +--------+--------+---------
+
    member-values that are Items are represented as per Section 2.3;
    member-values that are inner-lists are represented as per
    Section 2.1.1.
 
    If the dictionary cannot be represented, the field value will be
    serialised as a Textual Field Value (Section 2.4).
-
-   Binary Structured Headers can represent Dictionaries with up to 1024
-   members; fields containing more members will need to be serialised as
-   Textual Field Values (Section 2.4).
 
 2.3.  Items
 
