@@ -29,9 +29,11 @@ informative:
 
 --- abstract
 
-HTTP messages often pass through several systems -- clients, intermediaries, servers, and subsystems of each -- that parse and process their header and trailer fields. This repeated parsing (and often re-serialisation) adds latency and consumes CPU, energy, and other resources.
+HTTP messages often pass through several systems -- clients, intermediaries, servers, and subsystems of each -- that parse and process their header and trailer fields as ASCII strings. This repeated parsing (and often re-serialisation) adds latency and consumes CPU, energy, and other resources.
 
-Structured Headers for HTTP offers a set of data types that new headers can combine to express their semantics. This specification defines a binary serialisation of these types that is more efficient to process, along with a negotiation mechanism for its use in HTTP/2. It also defines how to use Structured Headers for many existing headers -- thereby "backporting" them -- when supported by two peers.
+Structured Headers for HTTP defines a set of data types that new headers can use to express their semantics. This specification defines a binary serialisation of those types that is more efficient to process, along with a negotiation mechanism for its use in HTTP/2; specifically, in HPACK Literal Header Field Representations.
+
+It also defines how to use Structured Headers for many existing headers -- thereby "backporting" them -- when supported by two peers.
 
 
 --- note_Note_to_Readers
@@ -53,9 +55,11 @@ See also the draft's current status in the IETF datatracker, at
 
 HTTP messages often pass through several systems -- clients, intermediaries, servers, and subsystems of each -- that parse and process their header and trailer fields. This repeated parsing (and often re-serialisation) adds latency and consumes CPU, energy, and other resources.
 
-Structured Headers for HTTP {{!I-D.ietf-httpbis-header-structure}} offers a set of data types that new headers can combine to express their semantics. This specification defines a binary serialisation of these types that is more efficient to process, along with a negotiation mechanism for its use in HTTP/2. It also defines how to use Structured Headers for many existing headers -- thereby "backporting" them -- when supported by two peers.
+Structured Headers for HTTP {{!I-D.ietf-httpbis-header-structure}} offers a set of data types that new headers can combine to express their semantics. This specification defines a binary serialisation of those types that is more efficient to process, along with a negotiation mechanism for its use in HTTP/2; specifically, in HPACK Literal Header Field Representations {{!RFC7541}}.
 
-The goals of this specification are to reduce parsing overhead and associated costs. It may also result in a more efficient wire format in some cases, but that is not a primary goal. An additional goal is to enable future work on more efficient header compression mechanisms.
+It also defines how to use Structured Headers for many existing headers -- thereby "backporting" them -- when supported by two peers.
+
+The primary goal of this specification are to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Headers. A secondary goal is a smaller wire format, but that is not always met. An additional goal is to enable future work on more granular header compression mechanisms.
 
 {{types}} defines binary serialisations of Structured Headers types. {{negotiate}} shows how to negotiate their use in a HTTP/2 connection. {{backport}} shows how to use Structured Headers types with already defined header fields.
 
