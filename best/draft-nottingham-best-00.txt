@@ -102,9 +102,9 @@ Table of Contents
        2.3.5.  Byte Sequences  . . . . . . . . . . . . . . . . . . .   8
        2.3.6.  Booleans  . . . . . . . . . . . . . . . . . . . . . .   8
      2.4.  Textual Field Values  . . . . . . . . . . . . . . . . . .   8
-   3.  Negotiating and Using Binary Structured Headers in HTTP/2 . .   9
+   3.  Using Binary Structured Headers in HTTP/2 . . . . . . . . . .   9
      3.1.  Binary Structured Headers Setting . . . . . . . . . . . .   9
-     3.2.  HEADERS Indicator . . . . . . . . . . . . . . . . . . . .   9
+     3.2.  The BINHEADERS Frame  . . . . . . . . . . . . . . . . . .   9
    4.  Using Binary Structured Headers with Existing Fields  . . . .  10
 
 
@@ -118,10 +118,10 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
      4.2.  Aliased Fields  . . . . . . . . . . . . . . . . . . . . .  12
        4.2.1.  URLs  . . . . . . . . . . . . . . . . . . . . . . . .  13
        4.2.2.  Dates . . . . . . . . . . . . . . . . . . . . . . . .  13
-       4.2.3.  ETags . . . . . . . . . . . . . . . . . . . . . . . .  13
+       4.2.3.  ETags . . . . . . . . . . . . . . . . . . . . . . . .  14
        4.2.4.  Links . . . . . . . . . . . . . . . . . . . . . . . .  14
        4.2.5.  Cookies . . . . . . . . . . . . . . . . . . . . . . .  14
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  15
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
    7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
      7.1.  Normative References  . . . . . . . . . . . . . . . . . .  15
@@ -450,15 +450,15 @@ Nottingham               Expires April 27, 2020                 [Page 8]
 Internet-Draft     Binary Encoding of Structured Types      October 2019
 
 
-3.  Negotiating and Using Binary Structured Headers in HTTP/2
+3.  Using Binary Structured Headers in HTTP/2
 
    When both peers on a connection support this specification, they can
    take advantage of that knowledge to serialise headers that they know
    to be Structured Headers (or compatible with them; see Section 4).
 
    Peers advertise and discover this support using a HTTP/2 setting
-   defined in Section 3.1; individual HEADERS frames opt into this
-   format using a sigil byte defined in Section 3.2.
+   defined in Section 3.1, and convey Binary Structured Headers in a
+   frame type defined in Section 3.2.
 
 3.1.  Binary Structured Headers Setting
 
@@ -471,13 +471,14 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    1.  The peer supports the encoding of Binary Structured Headers
        defined in Section 2.
 
-   2.  The peer will process HEADERS frames containing the HEADERS
-       indicator as defined in Section 3.2.
+   2.  The peer will process the BINHEADERS frames as defined in
+       Section 3.2.
 
    3.  When a downstream consumer does not likewise support that
-       encoding, the peer will transform them into an encoding it does
-       understand (typically, the textual Structured Headers defined in
-       [I-D.ietf-httpbis-header-structure]) where necessary.
+       encoding, the peer will transform them into HEADERS frames (if
+       the peer is HTTP/2) or a form it will understand (e.g., the
+       textual representation of Structured Headers data types defined
+       in [I-D.ietf-httpbis-header-structure]).
 
    4.  The peer will likewise transform all fields defined as Aliased
        Fields (Section 4.2) into their non-aliased forms as necessary.
@@ -486,18 +487,17 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    extensions to Structured Headers might use it to indicate support for
    new types.
 
-3.2.  HEADERS Indicator
+3.2.  The BINHEADERS Frame
 
    When a peer has indicated that it supports this specification
-   {#setting}, a sender indicates that a given HEADERS frame is
-   serialising all of the fields in a header block fragment ([RFC7540]
-   Section 6.2) as Binary Structured Types by prefixing the header block
-   fragment with the byte 0x80 (i.e., 10000000, which is an illegal
-   indexed header field reference in HPACK [RFC7541]).
+   {#setting}, a sender can send Binary Structured Headers in the
+   BINHEADERS Frame Type (0xTODO).
 
-   Such header block fragments will serialise all field values as Binary
-   Structured Types (possibly using Textual Field Values (Section 2.4)).
-   These field values can be indexed in the dynamic table just as
+   The BINHEADERS Frame Type behaves and is represented exactly as a
+   HEADERS Frame type ([RFC7540], Section 6.2), with one exception; the
+   field values encoded in the Header Block Fragment as Literal Header
+   Field representations are Binary Structured Headers.
+
 
 
 
@@ -506,12 +506,27 @@ Nottingham               Expires April 27, 2020                 [Page 9]
 Internet-Draft     Binary Encoding of Structured Types      October 2019
 
 
-   "normal" field values, although they may have to be converted to
-   textual field values upon reuse, depending upon the capabilities of
-   the peer at that time.
+   This means that a BINHEADERS frame can be converted to a HEADERS
+   frame by converting the field values to the string representations of
+   the various Structured Headers Types, and Textual Field Values
+   (Section 2.4) to their string counterparts.
 
-   Binary Structured Types do not have Huffman encoding applied to them
-   (except as specified in their definitions).
+   Conversely, a HEADERS frame can be converted to a BINHEADERS frame by
+   encoding all of the Literal field values as Binary Structured Types.
+   In this case, the header types used are informed by the
+   implementations knowledge of the individual header field semantics;
+   see Section 4.  Those which it cannot (do to either lack of knowledge
+   or an error) or does not wish to convert into Structured Headers are
+   conveyed in BINHEADERS as Textual Field Values (Section 2.4).
+
+   Field values are stored in the HPACK [RFC7541] dynamic table without
+   Huffman encoding, although specific Binary Structured Types might
+   specify the use of such encodings.
+
+   Note that BINHEADERS and HEADERS frames MAY be mixed on the same
+   connection, depending on the requirements of the sender.  Also, note
+   that only the field values are encoded as Binary Structured Types;
+   field names are encoded as they are in HPACK.
 
 4.  Using Binary Structured Headers with Existing Fields
 
@@ -539,6 +554,14 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
    o  Accept-Encoding - List
 
+
+
+
+Nottingham               Expires April 27, 2020                [Page 10]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
    o  Accept-Language - List
 
    o  Accept-Patch - List
@@ -554,13 +577,6 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    o  Access-Control-Allow-Origin - Item
 
    o  Access-Control-Max-Age - Item
-
-
-
-Nottingham               Expires April 27, 2020                [Page 10]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
 
    o  Access-Control-Request-Headers - List
 
@@ -594,6 +610,14 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
    o  Origin - Item
 
+
+
+
+Nottingham               Expires April 27, 2020                [Page 11]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
    o  Pragma - Dictionary
 
    o  Prefer - Dictionary
@@ -609,14 +633,6 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    o  Trailer - List
 
    o  Transfer-Encoding - List
-
-
-
-
-Nottingham               Expires April 27, 2020                [Page 11]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
 
    o  Vary - List
 
@@ -650,6 +666,14 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
    As with directly represented fields, if the intended value of an
    aliased field cannot be represented using Structured Types
+
+
+
+Nottingham               Expires April 27, 2020                [Page 12]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
    successfully, its value can instead be represented as a Textual Field
    Value (Section 2.4).
 
@@ -661,18 +685,6 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
    Each field name listed below indicates a replacement field name and a
    way to map its value to Structured Headers.
-
-
-
-
-
-
-
-
-Nottingham               Expires April 27, 2020                [Page 12]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
 
 4.2.1.  URLs
 
@@ -711,6 +723,13 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
    o  Last-Modified - SH-LM
 
+
+
+Nottingham               Expires April 27, 2020                [Page 13]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
    For example, a (non-binary) Expires:
 
    SH-Expires: 1571965240
@@ -722,13 +741,6 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    representing the entity-tag as a string, and the weakness flag as a
    boolean "w" parameter on it, where true indicates that the entity-tag
    is weak; if 0 or unset, the entity-tag is strong.
-
-
-
-Nottingham               Expires April 27, 2020                [Page 13]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
 
    o  ETag - SH-ETag
 
@@ -766,6 +778,14 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    Cookie, and cookie-pairs are delimited in Cookie by a comma, rather
    than a semicolon.
 
+
+
+
+Nottingham               Expires April 27, 2020                [Page 14]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
    Set-Cookie: SH-Set-Cookie Cookie: SH-Cookie
 
    SH-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
@@ -776,15 +796,6 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 5.  IANA Considerations
 
    TODO
-
-
-
-
-
-Nottingham               Expires April 27, 2020                [Page 14]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
 
 6.  Security Considerations
 
@@ -821,6 +832,16 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <https://www.rfc-editor.org/info/rfc7230>.
 
+
+
+
+
+
+Nottingham               Expires April 27, 2020                [Page 15]
+
+Internet-Draft     Binary Encoding of Structured Types      October 2019
+
+
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
               DOI 10.17487/RFC7540, May 2015,
@@ -833,14 +854,6 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
-
-
-
-
-Nottingham               Expires April 27, 2020                [Page 15]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
 
    [RFC8288]  Nottingham, M., "Web Linking", RFC 8288,
               DOI 10.17487/RFC8288, October 2017,
@@ -863,19 +876,6 @@ Author's Address
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
