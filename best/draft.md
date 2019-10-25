@@ -273,11 +273,13 @@ TODO: huffman coding?
 
 # Negotiating and Using Binary Structured Headers in HTTP/2 {#negotiate}
 
-When both peers on a connection support this specification, they can advertise this and then take advantage of that knowledge to serialise headers that they know to be compatible with
+When both peers on a connection support this specification, they can take advantage of that knowledge to serialise headers that they know to be Structured Headers (or compatible with them; see {{backport}}).
+
+Peers advertise and discover this support using a HTTP/2 setting defined in {{setting}}; individual HEADERS frames opt into this format using a sigil byte defined in {{indicator}}.
 
 ## Binary Structured Headers Setting {#setting}
 
-Advertising support is accomplished using a HTTP/2 setting, SETTINGS_BINARY_STRUCTURED_HEADERS (0xTODO).
+Advertising support for Binary Structured Headers is accomplished using a HTTP/2 setting, SETTINGS_BINARY_STRUCTURED_HEADERS (0xTODO).
 
 Receiving SETTINGS_BINARY_STRUCTURED_HEADERS from a peer indicates that:
 
