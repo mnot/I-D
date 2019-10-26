@@ -1,5 +1,5 @@
 ---
-title: Binary Encoding of Structured Types
+title: Binary Structured HTTP Headers
 abbrev:
 docname: draft-nottingham-best-00
 date: {DATE}
