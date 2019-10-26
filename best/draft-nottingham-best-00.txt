@@ -4,11 +4,11 @@
 
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                    Fastly
-Intended status: Standards Track                        October 25, 2019
-Expires: April 27, 2020
+Intended status: Standards Track                        October 26, 2019
+Expires: April 28, 2020
 
 
-                  Binary Encoding of Structured Types
+                     Binary Structured HTTP Headers
                         draft-nottingham-best-00
 
 Abstract
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Nottingham               Expires April 27, 2020                 [Page 1]
+Nottingham               Expires April 28, 2020                 [Page 1]
 
-Internet-Draft     Binary Encoding of Structured Types      October 2019
+Internet-Draft       Binary Structured HTTP Headers         October 2019
 
 
    Internet-Drafts are working documents of the Internet Engineering
@@ -68,7 +68,7 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on April 27, 2020.
+   This Internet-Draft will expire on April 28, 2020.
 
 Copyright Notice
 
@@ -96,7 +96,7 @@ Table of Contents
      2.2.  Dictionaries  . . . . . . . . . . . . . . . . . . . . . .   5
      2.3.  Items . . . . . . . . . . . . . . . . . . . . . . . . . .   6
        2.3.1.  Integers  . . . . . . . . . . . . . . . . . . . . . .   6
-       2.3.2.  Floats  . . . . . . . . . . . . . . . . . . . . . . .   6
+       2.3.2.  Floats  . . . . . . . . . . . . . . . . . . . . . . .   7
        2.3.3.  Strings . . . . . . . . . . . . . . . . . . . . . . .   7
        2.3.4.  Tokens  . . . . . . . . . . . . . . . . . . . . . . .   7
        2.3.5.  Byte Sequences  . . . . . . . . . . . . . . . . . . .   8
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Nottingham               Expires April 27, 2020                 [Page 2]
+Nottingham               Expires April 28, 2020                 [Page 2]
 
-Internet-Draft     Binary Encoding of Structured Types      October 2019
+Internet-Draft       Binary Structured HTTP Headers         October 2019
 
 
      4.1.  Directly Represented Fields . . . . . . . . . . . . . . .  10
@@ -139,12 +139,12 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    Structured Headers for HTTP [I-D.ietf-httpbis-header-structure]
    offers a set of data types that new headers can combine to express
    their semantics.  This specification defines a binary serialisation
-   of those types that is more efficient to process, along with a
-   negotiation mechanism for its use in HTTP/2; specifically, in HPACK
-   Literal Header Field Representations [RFC7541].
+   of those types in Section 2, and specifies their use in HTTP/2 -
+   specifically, in HPACK Literal Header Field Representations [RFC7541]
+   - in Section 3.
 
-   It also defines how to use Structured Headers for many existing
-   headers - thereby "backporting" them - when supported by two peers.
+   Section 4 defines how to use Structured Headers for many existing
+   headers when supported by two peers.
 
    The primary goal of this specification are to reduce parsing overhead
    and associated costs, as compared to the textual representation of
@@ -152,26 +152,23 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    that is not always met.  An additional goal is to enable future work
    on more granular header compression mechanisms.
 
-   Section 2 defines binary serialisations of Structured Headers types.
-   Section 3 shows how to negotiate their use in a HTTP/2 connection.
-   Section 4 shows how to use Structured Headers types with already
-   defined header fields.
-
 1.1.  Notational Conventions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
    "OPTIONAL" in this document are to be interpreted as described in BCP
-
-
-
-Nottingham               Expires April 27, 2020                 [Page 3]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
-
    14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
+
+
+
+
+
+
+Nottingham               Expires April 28, 2020                 [Page 3]
+
+Internet-Draft       Binary Structured HTTP Headers         October 2019
+
 
 2.  Binary Structured Types
 
@@ -191,24 +188,23 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
 2.1.  Lists
 
-   The List data type (type=0x1) has a payload consisting of one or more
-   members.
+   The List data type (type=0x1) has a payload consisting of a stream of
+   Binary Structured Types representing zero or more members.
 
    --+--------+--------+---------
      List members...
    --+--------+--------+---------
 
    Each member of the list will be represented by one or more Binary
-   Structured Types (depending on their types), unless it cannot be
-   represented; in these cases, the entire field value will be
-   serialised as a Textual Field Value (Section 2.4).
+   Structured Types, unless it cannot be represented; in these cases,
+   the entire field value will be serialised as a Textual Field Value
+   (Section 2.4).
 
    list-members that are Items are represented as per Section 2.3; list-
    members that are inner-lists are represented as per Section 2.1.1.
 
-   Binary Structured Headers can represent Lists with up to 1024
-   members; fields containing more members will need to be serialised as
-   Textual Field Values (Section 2.4).
+   The List data type can only be the first Binary Structured Type in a
+   field-value; if it occurs in any other position, it is an error.
 
 2.1.1.  Inner Lists
 
@@ -216,19 +212,19 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    how many members are in the inner-list, as an unsigned 10-bit
    integer.
 
-
-
-
-
-
-Nottingham               Expires April 27, 2020                 [Page 4]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
-
    --+--------+--------+---------
    Length (10)|  List members...
    --+--------+--------+---------
+
+
+
+
+
+
+Nottingham               Expires April 28, 2020                 [Page 4]
+
+Internet-Draft       Binary Structured HTTP Headers         October 2019
+
 
    Each member of the list will be represented as an Item (Section 2.3),
    unless it cannot be represented; in these cases, the field value will
@@ -262,8 +258,8 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
 2.2.  Dictionaries
 
-   The Dictionary data type (type=0x4) has a payload consisting of
-   member-name / member-value pairs.
+   The Dictionary data type (type=0x4) has a payload consisting of a
+   stream of members.
 
    --+--------+--------+---------
      Dictionary members...
@@ -273,37 +269,42 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    field KL, followed by that many bytes of the member-name, followed by
    one or more Binary Structured Types representing the member-value.
 
-
-
-
-
-Nottingham               Expires April 27, 2020                 [Page 5]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
-
    +--------+--------+---------
    |  KL(8) | member-name(*) member-value...
    +--------+--------+---------
+
+
+
+
+
+Nottingham               Expires April 28, 2020                 [Page 5]
+
+Internet-Draft       Binary Structured HTTP Headers         October 2019
+
 
    member-values that are Items are represented as per Section 2.3;
    member-values that are inner-lists are represented as per
    Section 2.1.1.
 
    If the dictionary cannot be represented, the field value will be
-   serialised as a Textual Field Value (Section 2.4).
+   serialised as a Textual Field Value (Section 2.4).  In particular,
+   dictionaries with member-names longer than 256 characters cannot be
+   represented as Binary Structured Types.
+
+   The Dictionary data type can only be the first Binary Structured Type
+   in a field-value; if it occurs in any other position, it is an error.
 
 2.3.  Items
 
-   Items are represented using one to many Binary Structured Types.  The
+   Items are represented using one or more Binary Structured Types.  The
    bare-item is serialised as the appropriate Binary Structured Type, as
    per below.
 
    The item's parameters, if present, are serialised as the Parameter
-   type (Section 2.1.2), which will include zero or more following
-   types.
+   type (Section 2.1.2), which will be followed by zero or more types
+   representing the parameter payload.
 
-   Bare items are never serialised with parameters.
+   Bare items are never followed by a Parameter type.
 
 2.3.1.  Integers
 
@@ -325,18 +326,21 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
    TODO: varint?
 
+
+
+
+
+
+
+
+Nottingham               Expires April 28, 2020                 [Page 6]
+
+Internet-Draft       Binary Structured HTTP Headers         October 2019
+
+
 2.3.2.  Floats
 
    The Float data type (type=0x6) have a payload of 74 bits:
-
-
-
-
-
-Nottingham               Expires April 27, 2020                 [Page 6]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
 
    -+-+--------+--------+--------+--------+--------+------+
    S|   Integer                                           |
@@ -380,19 +384,21 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    Length (10)|  Token...
    --+--------+--------+--------------
 
+
+
+
+
+
+Nottingham               Expires April 28, 2020                 [Page 7]
+
+Internet-Draft       Binary Structured HTTP Headers         October 2019
+
+
    Binary Structured Headers can represent Tokens up to 1024 characters
    in length; fields containing longer values will need to be serialised
    as Textual Field Values (Section 2.4).
 
    TODO: Huffman coding?
-
-
-
-
-Nottingham               Expires April 27, 2020                 [Page 7]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
 
 2.3.5.  Byte Sequences
 
@@ -436,19 +442,15 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    be used anywhere but as a top-level field value; their presence
    elsewhere MUST be considered an error.
 
-   TODO: huffman coding?
 
 
 
-
-
-
-
-
-Nottingham               Expires April 27, 2020                 [Page 8]
+Nottingham               Expires April 28, 2020                 [Page 8]
 
-Internet-Draft     Binary Encoding of Structured Types      October 2019
+Internet-Draft       Binary Structured HTTP Headers         October 2019
 
+
+   TODO: huffman coding?
 
 3.  Using Binary Structured Headers in HTTP/2
 
@@ -495,16 +497,17 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
    The BINHEADERS Frame Type behaves and is represented exactly as a
    HEADERS Frame type ([RFC7540], Section 6.2), with one exception; the
+
+
+
+
+Nottingham               Expires April 28, 2020                 [Page 9]
+
+Internet-Draft       Binary Structured HTTP Headers         October 2019
+
+
    field values encoded in the Header Block Fragment as Literal Header
    Field representations are Binary Structured Headers.
-
-
-
-
-Nottingham               Expires April 27, 2020                 [Page 9]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
 
    This means that a BINHEADERS frame can be converted to a HEADERS
    frame by converting the field values to the string representations of
@@ -552,15 +555,14 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
    o  Accept - List
 
-   o  Accept-Encoding - List
 
 
-
-
-Nottingham               Expires April 27, 2020                [Page 10]
+Nottingham               Expires April 28, 2020                [Page 10]
 
-Internet-Draft     Binary Encoding of Structured Types      October 2019
+Internet-Draft       Binary Structured HTTP Headers         October 2019
 
+
+   o  Accept-Encoding - List
 
    o  Accept-Language - List
 
@@ -608,15 +610,15 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
    o  Host - Item
 
-   o  Origin - Item
 
 
 
-
-Nottingham               Expires April 27, 2020                [Page 11]
+Nottingham               Expires April 28, 2020                [Page 11]
 
-Internet-Draft     Binary Encoding of Structured Types      October 2019
+Internet-Draft       Binary Structured HTTP Headers         October 2019
 
+
+   o  Origin - Item
 
    o  Pragma - Dictionary
 
@@ -664,16 +666,16 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
    SH-Date: 784072177
 
+
+
+
+Nottingham               Expires April 28, 2020                [Page 12]
+
+Internet-Draft       Binary Structured HTTP Headers         October 2019
+
+
    As with directly represented fields, if the intended value of an
    aliased field cannot be represented using Structured Types
-
-
-
-Nottingham               Expires April 27, 2020                [Page 12]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
-
    successfully, its value can instead be represented as a Textual Field
    Value (Section 2.4).
 
@@ -721,14 +723,14 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
    o  If-Unmodified-Since - SH-IUS
 
-   o  Last-Modified - SH-LM
 
 
-
-Nottingham               Expires April 27, 2020                [Page 13]
+Nottingham               Expires April 28, 2020                [Page 13]
 
-Internet-Draft     Binary Encoding of Structured Types      October 2019
+Internet-Draft       Binary Structured HTTP Headers         October 2019
 
+
+   o  Last-Modified - SH-LM
 
    For example, a (non-binary) Expires:
 
@@ -775,16 +777,17 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
    and a Dictionary, respectively.  The serialisation is almost
    identical, except that the Expires parameter is always a string (as
    it can contain a comma), multiple cookie-strings can appear in Set-
+
+
+
+
+Nottingham               Expires April 28, 2020                [Page 14]
+
+Internet-Draft       Binary Structured HTTP Headers         October 2019
+
+
    Cookie, and cookie-pairs are delimited in Cookie by a comma, rather
    than a semicolon.
-
-
-
-
-Nottingham               Expires April 27, 2020                [Page 14]
-
-Internet-Draft     Binary Encoding of Structured Types      October 2019
-
 
    Set-Cookie: SH-Set-Cookie Cookie: SH-Cookie
 
@@ -834,12 +837,9 @@ Internet-Draft     Binary Encoding of Structured Types      October 2019
 
 
 
-
-
-
-Nottingham               Expires April 27, 2020                [Page 15]
+Nottingham               Expires April 28, 2020                [Page 15]
 
-Internet-Draft     Binary Encoding of Structured Types      October 2019
+Internet-Draft       Binary Structured HTTP Headers         October 2019
 
 
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
@@ -893,4 +893,4 @@ Author's Address
 
 
 
-Nottingham               Expires April 27, 2020                [Page 16]
+Nottingham               Expires April 28, 2020                [Page 16]
