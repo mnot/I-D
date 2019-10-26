@@ -118,15 +118,23 @@ Binary Structured Headers can represent inner lists with up to 1024 members; fie
 
 ### Parameters {#parameter}
 
-The Parameters data type (type=0x3) has a length field that indicates how many (parameter-name, parameter-value) pairs are present, as an unsigned 10-bit integer.
+The Parameters data type (type=0x3) has a Count field that indicates how many parameters are present, as an unsigned 10-bit integer.
 
 ~~~
 --+--------+--------+---------
-Length (10)|  Parameters...
+ Count (10)|  Parameters...
 --+--------+--------+---------
 ~~~
 
-Each pair will be represented by at least two Binary Structured Types; the parameter-name, represented as a token ({{token}}), and the parameter-value, which is represented as a bare item ({{item}}).
+Each parameter is represented by an 8-bit key length field KL, followed by that many bytes of the parameter-name, followed by a Binary Structured Types representing the parameter-value.
+
+~~~
++--------+--------+---------
+|  KL(8) | parameter-name(*) parameter-value...
++--------+--------+---------
+~~~
+
+The parameter-value is represented as a bare item ({{item}}).
 
 If the parameters cannot be represented, the entire field value will be serialised as a Textual Field Value ({{TFV}}).
 
