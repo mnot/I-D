@@ -103,11 +103,11 @@ The List data type can only be the first Binary Structured Type in a field-value
 
 ### Inner Lists {#inner-list}
 
-The Inner List data type (type=0x2) has a length field that indicates how many members are in the inner-list, as an unsigned 10-bit integer.
+The Inner List data type (type=0x2) has a Count field that indicates how many members are in the inner-list, as an unsigned 10-bit integer.
 
 ~~~
 --+--------+--------+---------
-Length (10)|  List members...
+ Count (10)|  List members...
 --+--------+--------+---------
 ~~~
 
