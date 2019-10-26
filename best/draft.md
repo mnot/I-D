@@ -86,7 +86,7 @@ Some Binary Structured Types have variable lengths; in these cases, the payload 
 
 ## Lists {#list}
 
-The List data type (type=0x1) has a payload consisting of one or more members.
+The List data type (type=0x1) has a payload consisting of a stream of Binary Structured Types representing zero or more members.
 
 ~~~
 --+--------+--------+---------
@@ -94,11 +94,12 @@ The List data type (type=0x1) has a payload consisting of one or more members.
 --+--------+--------+---------
 ~~~
 
-Each member of the list will be represented by one or more Binary Structured Types (depending on their types), unless it cannot be represented; in these cases, the entire field value will be serialised as a Textual Field Value ({{TFV}}).
+Each member of the list will be represented by one or more Binary Structured Types, unless it cannot be represented; in these cases, the entire field value will be serialised as a Textual Field Value ({{TFV}}).
 
 list-members that are Items are represented as per {{item}}; list-members that are inner-lists are represented as per {{inner-list}}.
 
-Binary Structured Headers can represent Lists with up to 1024 members; fields containing more members will need to be serialised as Textual Field Values ({{TFV}}).
+The List data type can only be the first Binary Structured Type in a field-value; if it occurs in any other position, it is an error.
+
 
 ### Inner Lists {#inner-list}
 
@@ -133,7 +134,7 @@ Binary Structured Headers can represent up to 1024 parameters; fields containing
 
 ## Dictionaries
 
-The Dictionary data type (type=0x4) has a payload consisting of member-name / member-value pairs.
+The Dictionary data type (type=0x4) has a payload consisting of a stream of members.
 
 ~~~
 --+--------+--------+---------
@@ -151,16 +152,18 @@ Each member of the dictionary is represented by an 8-bit key length field KL, fo
 
 member-values that are Items are represented as per {{item}}; member-values that are inner-lists are represented as per {{inner-list}}.
 
-If the dictionary cannot be represented, the field value will be serialised as a Textual Field Value ({{TFV}}).
+If the dictionary cannot be represented, the field value will be serialised as a Textual Field Value ({{TFV}}). In particular, dictionaries with member-names longer than 256 characters cannot be represented as Binary Structured Types.
+
+The Dictionary data type can only be the first Binary Structured Type in a field-value; if it occurs in any other position, it is an error.
 
 
 ## Items {#item}
 
-Items are represented using one to many Binary Structured Types. The bare-item is serialised as the appropriate Binary Structured Type, as per below.
+Items are represented using one or more Binary Structured Types. The bare-item is serialised as the appropriate Binary Structured Type, as per below.
 
-The item's parameters, if present, are serialised as the Parameter type ({{parameter}}), which will include zero or more following types.
+The item's parameters, if present, are serialised as the Parameter type ({{parameter}}), which will be followed by zero or more types representing the parameter payload.
 
-Bare items are never serialised with parameters.
+Bare items are never followed by a Parameter type.
 
 ### Integers
 
