@@ -208,12 +208,12 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
 2.1.1.  Inner Lists
 
-   The Inner List data type (type=0x2) has a length field that indicates
+   The Inner List data type (type=0x2) has a Count field that indicates
    how many members are in the inner-list, as an unsigned 10-bit
    integer.
 
    --+--------+--------+---------
-   Length (10)|  List members...
+    Count (10)|  List members...
    --+--------+--------+---------
 
 
@@ -236,18 +236,22 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
 2.1.2.  Parameters
 
-   The Parameters data type (type=0x3) has a length field that indicates
-   how many (parameter-name, parameter-value) pairs are present, as an
-   unsigned 10-bit integer.
+   The Parameters data type (type=0x3) has a Count field that indicates
+   how many parameters are present, as an unsigned 10-bit integer.
 
    --+--------+--------+---------
-   Length (10)|  Parameters...
+    Count (10)|  Parameters...
    --+--------+--------+---------
 
-   Each pair will be represented by at least two Binary Structured
-   Types; the parameter-name, represented as a token (Section 2.3.4),
-   and the parameter-value, which is represented as a bare item
-   (Section 2.3).
+   Each parameter is represented by an 8-bit key length field KL,
+   followed by that many bytes of the parameter-name, followed by a
+   Binary Structured Types representing the parameter-value.
+
+   +--------+--------+---------
+   |  KL(8) | parameter-name(*) parameter-value...
+   +--------+--------+---------
+
+   The parameter-value is represented as a bare item (Section 2.3).
 
    If the parameters cannot be represented, the entire field value will
    be serialised as a Textual Field Value (Section 2.4).
@@ -269,10 +273,6 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    field KL, followed by that many bytes of the member-name, followed by
    one or more Binary Structured Types representing the member-value.
 
-   +--------+--------+---------
-   |  KL(8) | member-name(*) member-value...
-   +--------+--------+---------
-
 
 
 
@@ -281,6 +281,10 @@ Nottingham               Expires April 28, 2020                 [Page 5]
 
 Internet-Draft       Binary Structured HTTP Headers         October 2019
 
+
+   +--------+--------+---------
+   |  KL(8) | member-name(*) member-value...
+   +--------+--------+---------
 
    member-values that are Items are represented as per Section 2.3;
    member-values that are inner-lists are represented as per
@@ -325,10 +329,6 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    o  Pad - 6 bits
 
    TODO: varint?
-
-
-
-
 
 
 
