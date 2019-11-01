@@ -110,7 +110,7 @@ The Inner List data type (type=0x2) has a Count field that indicates how many me
 --+--------+--------+---------
 ~~~
 
-Each member of the list will be represented as an Item ({{item}}), unless it cannot be represented; in these cases, the field value will be serialised as a Textual Field Value ({{TFV}}).
+Each member of the list will be represented as an Item ({{item}}), unless it cannot be represented; in these cases, the entire field value will be serialised as a Textual Field Value ({{TFV}}).
 
 The inner list's parameters, if present, are serialised as the Parameter type ({{parameter}}), which will be followed by zero or more types representing the parameters' payload.
 
@@ -161,7 +161,7 @@ Each member of the dictionary is represented by an 8-bit key length field KL, fo
 
 member-values that are Items are represented as per {{item}}; member-values that are inner-lists are represented as per {{inner-list}}.
 
-If the dictionary cannot be represented, the field value will be serialised as a Textual Field Value ({{TFV}}). In particular, dictionaries with member-names longer than 256 characters cannot be represented as Binary Structured Types.
+If the dictionary cannot be represented, the entire field value will be serialised as a Textual Field Value ({{TFV}}). In particular, dictionaries with member-names longer than 256 characters cannot be represented as Binary Structured Types.
 
 The Dictionary data type can only be the first Binary Structured Type in a field-value; if it occurs in any other position, it is an error.
 
