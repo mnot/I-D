@@ -68,7 +68,7 @@ shown here.
 
 # Binary Structured Types {#types}
 
-This section defines a binary serialisation for the Structured Header Types defined in {{!I-D.ietf-httpbis-header-structure}}.
+This section defines a binary serialisation for each of the Structured Header Types defined in {{!I-D.ietf-httpbis-header-structure}}.
 
 Every Binary Structured Type starts with a 6-bit type field that defines the format of its payload:
 
@@ -78,7 +78,10 @@ Every Binary Structured Type starts with a 6-bit type field that defines the for
 +------+--+--------
 ~~~
 
-Some Binary Structured Types have variable lengths; in these cases, the payload MUST have padding appended to align it with the next byte boundary.
+Some Binary Structured Types have variable lengths; in these cases, the payload MUST have padding appended to align it with the next byte boundary. Senders MUST set padding bits to 0; recipients MUST ignore their values.
+
+ISSUE: byte-align all types, or only the terminal one in a header value?
+
 
 ## Lists {#list}
 
@@ -108,6 +111,8 @@ The Inner List data type (type=0x2) has a Count field that indicates how many me
 ~~~
 
 Each member of the list will be represented as an Item ({{item}}), unless it cannot be represented; in these cases, the field value will be serialised as a Textual Field Value ({{TFV}}).
+
+The inner list's parameters, if present, are serialised as the Parameter type ({{parameter}}), which will be followed by zero or more types representing the parameters' payload.
 
 Binary Structured Headers can represent inner lists with up to 1024 members; fields containing more members will need to be serialised as Textual Field Values ({{TFV}}).
 
@@ -165,7 +170,7 @@ The Dictionary data type can only be the first Binary Structured Type in a field
 
 Items are represented using one or more Binary Structured Types. The bare-item is serialised as the appropriate Binary Structured Type, as per below.
 
-The item's parameters, if present, are serialised as the Parameter type ({{parameter}}), which will be followed by zero or more types representing the parameter payload.
+The item's parameters, if present, are serialised as the Parameter type ({{parameter}}), which will be followed by zero or more types representing the parameters' payload.
 
 Bare items are never followed by a Parameter type.
 
@@ -186,7 +191,7 @@ Its fields are:
 * Integer - 50 bits, unsigned
 * Pad - 6 bits
 
-TODO: varint?
+ISSUE: varint?
 
 ### Floats
 
@@ -208,7 +213,7 @@ Its fields are:
 * Integer - 47 bits, unsigned
 * Fractional - 20 bits, unsigned integer
 
-TODO: varint?
+ISSUE: varint?
 
 ### Strings
 
@@ -222,7 +227,7 @@ Length (10)|  String...
 
 Binary Structured Headers can represent Strings up to 1024 characters in length; fields containing longer values will need to be serialised as Textual Field Values ({{TFV}}).
 
-TODO: Huffman coding?
+ISSUE: Huffman coding?
 
 ### Tokens {#token}
 
@@ -236,7 +241,7 @@ Length (10)|  Token...
 
 Binary Structured Headers can represent Tokens up to 1024 characters in length; fields containing longer values will need to be serialised as Textual Field Values ({{TFV}}).
 
-TODO: Huffman coding?
+ISSUE: Huffman coding?
 
 ### Byte Sequences
 
@@ -278,7 +283,7 @@ XX| Field Value...
 
 Note that unlike other binary data types, Textual Field Values rely upon their context to convey their length. As a result, they cannot be used anywhere but as a top-level field value; their presence elsewhere MUST be considered an error.
 
-TODO: huffman coding?
+ISSUE: huffman coding?
 
 
 # Using Binary Structured Headers in HTTP/2 {#negotiate}
@@ -367,7 +372,6 @@ When one of these fields' values cannot be represented using Structured Types, i
 
 Note that only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or serialised as a Textual Field Value ({{TFV}}).
 
-TODO: Accept and Content-Type media types use + in values.
 
 ## Aliased Fields {#aliased}
 
@@ -470,11 +474,11 @@ SH-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
 SH-Cookie: SID=31d4d96e407aad42, lang=en-US
 ~~~
 
-TODO: explicitly convert Expires to an integer?
+ISSUE: explicitly convert Expires to an integer?
 
 # IANA Considerations
 
-TODO
+ISSUE: todo
 
 # Security Considerations
 
