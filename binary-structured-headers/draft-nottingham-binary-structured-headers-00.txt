@@ -88,13 +88,7 @@ Table of Contents
      2.2.  Binary Structured Types . . . . . . . . . . . . . . . . .   5
        2.2.1.  Inner Lists . . . . . . . . . . . . . . . . . . . . .   6
        2.2.2.  Parameters  . . . . . . . . . . . . . . . . . . . . .   6
-     2.3.  Item Payload Types  . . . . . . . . . . . . . . . . . . .   7
-       2.3.1.  Integers  . . . . . . . . . . . . . . . . . . . . . .   8
-       2.3.2.  Floats  . . . . . . . . . . . . . . . . . . . . . . .   8
-       2.3.3.  Strings . . . . . . . . . . . . . . . . . . . . . . .   9
-       2.3.4.  Tokens  . . . . . . . . . . . . . . . . . . . . . . .   9
-       2.3.5.  Byte Sequences  . . . . . . . . . . . . . . . . . . .  10
-       2.3.6.  Booleans  . . . . . . . . . . . . . . . . . . . . . .  10
+       2.2.3.  Item Payload Types  . . . . . . . . . . . . . . . . .   7
    3.  Using Binary Structured Headers in HTTP/2 . . . . . . . . . .  10
      3.1.  Binary Structured Headers Setting . . . . . . . . . . . .  11
      3.2.  The BINHEADERS Frame  . . . . . . . . . . . . . . . . . .  11
@@ -106,6 +100,12 @@ Table of Contents
        4.2.3.  ETags . . . . . . . . . . . . . . . . . . . . . . . .  16
        4.2.4.  Links . . . . . . . . . . . . . . . . . . . . . . . .  16
        4.2.5.  Cookies . . . . . . . . . . . . . . . . . . . . . . .  17
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  17
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  17
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  17
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  17
+     7.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  18
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  19
 
 
 
@@ -113,13 +113,6 @@ Nottingham                 Expires May 4, 2020                  [Page 2]
 
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
-
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  17
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  17
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  17
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  17
-     7.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  18
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  19
 
 1.  Introduction
 
@@ -163,15 +156,19 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    Binary Literal Representation (Section 2.1), which is a replacement
    for the String Literal Representation in [RFC7541].
 
+   Binary representations of the remaining types are defined in
+   Section 2.2.
+
+
+
+
+
 
 
 Nottingham                 Expires May 4, 2020                  [Page 3]
 
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
-
-   Binary representations of the remaining types are defined in
-   Section 2.2.
 
 2.1.  The Binary Literal Representation
 
@@ -203,8 +200,9 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    List values (type=0x1) have a payload consisting of a stream of
    Binary Structured Types representing the members of the list.
 
-   list-members that are Items are represented as per Section 2.3; list-
-   members that are inner-lists are represented as per Section 2.2.1.
+   list-members that are Items are represented as per Section 2.2.3;
+   list-members that are inner-lists are represented as per
+   Section 2.2.1.
 
    If any member cannot be represented, the entire field value MUST be
    serialised as a String Literal (Section 2.1.4).
@@ -217,6 +215,8 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    Each member is represented by a key length, followed by that many
    bytes of the member-name, followed by one or more Binary Structured
    Types representing the member-value.
+
+
 
 
 
@@ -245,7 +245,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    o  member-value: One or more Binary Structure Types
 
-   member-values that are Items are represented as per Section 2.3;
+   member-values that are Items are represented as per Section 2.2.3;
    member-values that are inner-lists are represented as per
    Section 2.2.1.
 
@@ -255,7 +255,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 2.1.3.  Items
 
    Item values (type=0x3) have a payload consisting of one or two Binary
-   Structured Types, as described in Section 2.3.
+   Structured Types, as described in Section 2.2.3.
 
 2.1.4.  String Literals
 
@@ -306,9 +306,9 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    o  Members: L octets
 
-   Each member of the list will be represented as an Item (Section 2.3);
-   if any member cannot, the entire field value will be serialised as a
-   String Literal (Section 2.1.4).
+   Each member of the list will be represented as an Item
+   (Section 2.2.3); if any member cannot, the entire field value will be
+   serialised as a String Literal (Section 2.1.4).
 
    The inner list's parameters, if present, are serialised in a
    following Parameter type (Section 2.2.2); they do not form part of
@@ -360,7 +360,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    o  parameter-name: KL octets of the parameter-name
 
    o  parameter-value: A Binary Structured type representing a bare item
-      (Section 2.3)
+      (Section 2.2.3)
 
    Parameter-values are bare items; that is, they MUST NOT have
    parameters themselves.
@@ -375,7 +375,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    ISSUE: use Huffman coding for parameter-name?
    https://github.com/mnot/I-D/issues/305 [6]
 
-2.3.  Item Payload Types
+2.2.3.  Item Payload Types
 
    Individual Structured Header Items can be represented using the
    Binary Payload Types defined below.
@@ -394,7 +394,7 @@ Nottingham                 Expires May 4, 2020                  [Page 7]
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-2.3.1.  Integers
+2.2.3.1.  Integers
 
    The Integer data type (type=0x3) has a payload in the format:
 
@@ -419,7 +419,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    o  Integer: Length octets
 
-2.3.2.  Floats
+2.2.3.2.  Floats
 
    The Float data type (type=0x4) have a payload in the format:
 
@@ -468,7 +468,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    o  Fractional: FLength octets
 
-2.3.3.  Strings
+2.2.3.3.  Strings
 
    The String data type (type=0x5) has a payload in the format:
 
@@ -486,7 +486,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    ISSUE: use Huffman coding? https://github.com/mnot/I-D/issues/305 [7]
 
-2.3.4.  Tokens
+2.2.3.4.  Tokens
 
    The Token data type (type=0x6) has a payload in the format:
 
@@ -513,7 +513,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    ISSUE: use Huffman coding? https://github.com/mnot/I-D/issues/305 [8]
 
-2.3.5.  Byte Sequences
+2.2.3.5.  Byte Sequences
 
    The Byte Sequence data type (type=0x7) has a payload in the format:
 
@@ -529,7 +529,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    o  Byte Sequence: L octets.
 
-2.3.6.  Booleans
+2.2.3.6.  Booleans
 
    The Boolean data type (type=0x8) has a payload of two bits:
 
