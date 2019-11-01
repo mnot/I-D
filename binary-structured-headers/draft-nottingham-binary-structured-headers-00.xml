@@ -36,7 +36,7 @@
     <abstract>
 
 
-<t>This specification defines a binary serialisation of the types specified by Structured Headers for HTTP, along with a negotiation mechanism for its use in HTTP/2. It also defines how to use Structured Headers for many existing headers – thereby “backporting” them – when supported by two peers.</t>
+<t>This specification defines a binary serialisation of Structured Headers for HTTP, along with a negotiation mechanism for its use in HTTP/2. It also defines how to use Structured Headers for many existing headers – thereby “backporting” them – when supported by two peers.</t>
 
 
 
@@ -70,7 +70,7 @@
 
 <t>HTTP messages often pass through several systems – clients, intermediaries, servers, and subsystems of each – that parse and process their header and trailer fields. This repeated parsing (and often re-serialisation) adds latency and consumes CPU, energy, and other resources.</t>
 
-<t>Structured Headers for HTTP <xref target="I-D.ietf-httpbis-header-structure"/> offers a set of data types that new headers can combine to express their semantics. This specification defines a binary serialisation of those types in <xref target="types"/>, and specifies their use in HTTP/2 – specifically, in HPACK Literal Header Field Representations <xref target="RFC7541"/> – in <xref target="negotiate"/>.</t>
+<t>Structured Headers for HTTP <xref target="I-D.ietf-httpbis-header-structure"/> offers a set of data types that new headers can combine to express their semantics. This specification defines a binary serialisation of those structures in <xref target="headers"/>, and specifies their use in HTTP/2 – specifically, in HPACK Literal Header Field Representations <xref target="RFC7541"/> – in <xref target="negotiate"/>.</t>
 
 <t><xref target="backport"/> defines how to use Structured Headers for many existing headers when supported by two peers.</t>
 
@@ -85,236 +85,323 @@ shown here.</t>
 
 </section>
 </section>
-<section anchor="types" title="Binary Structured Types">
+<section anchor="headers" title="Binary Structured Headers">
 
-<t>This section defines a binary serialisation for each of the Structured Header Types defined in <xref target="I-D.ietf-httpbis-header-structure"/>.</t>
+<t>This section defines a binary serialisation for the Structured Header Types defined in <xref target="I-D.ietf-httpbis-header-structure"/>.</t>
 
-<t>Every Binary Structured Type starts with a 6-bit type field that defines the format of its payload:</t>
+<t>The types permissable as the top-level of Structured Header field values – Dictionary, List, and Item – are defined in terms of a Binary Literal Representation (<xref target="binlit"/>), which is a replacement for the String Literal Representation in <xref target="RFC7541"/>.</t>
 
-<figure><artwork><![CDATA[
-+------+--+--------
-|T (6) | Payload (0...)
-+------+--+--------
-]]></artwork></figure>
+<t>Binary representations of the remaining types are defined in <xref target="leaf"/>.</t>
 
-<t>Some Binary Structured Types have variable lengths; in these cases, the payload MUST have padding appended to align it with the next byte boundary.</t>
+<section anchor="binlit" title="The Binary Literal Representation">
 
-<t>Senders MUST set these padding bits as well as any explicitly identified by a type as padding to 0; recipients MUST ignore their values.</t>
-
-<t>ISSUE: byte-align all types, or only the terminal one in a header value? <eref target="https://github.com/mnot/I-D/issues/306">https://github.com/mnot/I-D/issues/306</eref></t>
-
-<section anchor="list" title="Lists">
-
-<t>The List data type (type=0x1) has a payload consisting of a stream of Binary Structured Types representing zero or more members.</t>
+<t>The Binary Literal Representation is a replacement for the String Literal Representation defined in <xref target="RFC7541"/>, Section 5.2, for use in BINHEADERS frames (<xref target="frame"/>).</t>
 
 <figure><artwork><![CDATA[
---+--------+--------+---------
-  List members...
---+--------+--------+---------
+  0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---+
+|   Type (4)    | PLength (4+)  |
++---+---------------------------+
+| Payload Data (Length octets)  |
++-------------------------------+
 ]]></artwork></figure>
 
-<t>Each member of the list will be represented by one or more Binary Structured Types, unless it cannot be represented; in these cases, the entire field value will be serialised as a Textual Field Value (<xref target="TFV"/>).</t>
+<t>A binary literal representation contains the following fields:</t>
 
-<t>list-members that are Items are represented as per <xref target="item"/>; list-members that are inner-lists are represented as per <xref target="inner-list"/>.</t>
+<t><list style="symbols">
+  <t>Type:** Four bits indicating the type of the payload.</t>
+  <t>PLength: The number of octets used to represent the payload, encoded as per <xref target="RFC7541"/>, Section 5.1, with a 4-bit prefix.</t>
+  <t>Payload Data: The payload, as zero or more Binary Structured Types.</t>
+</list></t>
 
-<t>The List data type can only be the first Binary Structured Type in a field-value; if it occurs in any other position, it is an error.</t>
+<t>The following payload types are defined:</t>
+
+<section anchor="lists" title="Lists">
+
+<t>List values (type=0x1) have a payload consisting of a stream of Binary Structured Types representing the members of the list.</t>
+
+<t>list-members that are Items are represented as per <xref target="inner-item"/>; list-members that are inner-lists are represented as per <xref target="inner-list"/>.</t>
+
+<t>If any member cannot be represented, the entire field value MUST be serialised as a String Literal (<xref target="literal"/>).</t>
+
+</section>
+<section anchor="dictionaries" title="Dictionaries">
+
+<t>Dictionary values (type=0x2) have a payload consisting of a stream of members.</t>
+
+<t>Each member is represented by a key length, followed by that many bytes of the member-name, followed by one or more Binary Structured Types representing the member-value.</t>
+
+<figure><artwork><![CDATA[
+  0   1   2   3   4   5   6   7   0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+| KL (8+)                       |  member-name (KL octets)
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+
+  0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---
+| member-value
++---+---+---+---+---+---+---+---
+]]></artwork></figure>
+
+<t>A parameter’s fields are:</t>
+
+<t><list style="symbols">
+  <t>KL: The number of octets used to represent the member-name, encoded as per <xref target="RFC7541"/>, Section 5.1, with a 8-bit prefix</t>
+  <t>member-name: KL octets of the member-name</t>
+  <t>member-value: One or more Binary Structure Types</t>
+</list></t>
+
+<t>member-values that are Items are represented as per <xref target="inner-item"/>; member-values that are inner-lists are represented as per <xref target="inner-list"/>.</t>
+
+<t>If any member cannot be represented, the entire field value MUST be serialised as a String Literal (<xref target="literal"/>).</t>
+
+</section>
+<section anchor="items" title="Items">
+
+<t>Item values (type=0x3) have a payload consisting of one or two Binary Structured Types, as described in <xref target="inner-item"/>.</t>
+
+</section>
+<section anchor="literal" title="String Literals">
+
+<t>String Literals (type=0x4) are the string value of a header field; they are used to carry header field values that are not Binary Structured Headers, and may not be Structured Headers at all. As such, their semantics are that of String Literal Representations in <xref target="RFC7541"/>, Section 5.2.</t>
+
+<t>Their payload is the octets of the field value.</t>
+
+<t>ISSUE: use Huffman coding? <eref target="https://github.com/mnot/I-D/issues/305">https://github.com/mnot/I-D/issues/305</eref></t>
+
+</section>
+</section>
+<section anchor="leaf" title="Binary Structured Types">
+
+<t>Every Binary Structured Type starts with a 5-bit type field that identifies the format of its payload:</t>
+
+<figure><artwork><![CDATA[
+  0   1   2   3   4   5   6   7   0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+      Type (5)      |  Payload...
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+]]></artwork></figure>
+
+<t>Some Binary Structured Types contain padding bits; senders MUST set padding bits to 0; recipients MUST ignore their values.</t>
 
 <section anchor="inner-list" title="Inner Lists">
 
-<t>The Inner List data type (type=0x2) has a Count field that indicates how many members are in the inner-list, as an unsigned 10-bit integer.</t>
+<t>The Inner List data type (type=0x1) has a payload in the format:</t>
 
 <figure><artwork><![CDATA[
---+--------+--------+---------
- Count (10)|  List members...
---+--------+--------+---------
+  5   6   7   0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---+---+---+---
+     L(3+)  |  Members (L octets)
++---+---+---+---+---+---+---+---+---+---+---
 ]]></artwork></figure>
 
-<t>Each member of the list will be represented as an Item (<xref target="item"/>), unless it cannot be represented; in these cases, the entire field value will be serialised as a Textual Field Value (<xref target="TFV"/>).</t>
+<t>Its fields are:</t>
 
-<t>The inner list’s parameters, if present, are serialised as the Parameter type (<xref target="parameter"/>), which will be followed by zero or more types representing the parameters’ payload.</t>
+<t><list style="symbols">
+  <t>L: The number of octets used to represent the members, encoded as per <xref target="RFC7541"/>, Section 5.1, with a 3-bit prefix</t>
+  <t>Members: L octets</t>
+</list></t>
 
-<t>Binary Structured Headers can represent inner lists with up to 1024 members; fields containing more members will need to be serialised as Textual Field Values (<xref target="TFV"/>).</t>
+<t>Each member of the list will be represented as an Item (<xref target="inner-item"/>); if any member cannot, the entire field value will be serialised as a String Literal (<xref target="literal"/>).</t>
+
+<t>The inner list’s parameters, if present, are serialised in a following Parameter type (<xref target="parameter"/>); they do not form part of the payload of the inner list.</t>
 
 </section>
 <section anchor="parameter" title="Parameters">
 
-<t>The Parameters data type (type=0x3) has a Count field that indicates how many parameters are present, as an unsigned 10-bit integer.</t>
+<t>The Parameters data type (type=0x2) has a payload in the format:</t>
 
 <figure><artwork><![CDATA[
---+--------+--------+---------
- Count (10)|  Parameters...
---+--------+--------+---------
-]]></artwork></figure>
-
-<t>Each parameter is represented by an 8-bit key length field KL, followed by that many bytes of the parameter-name, followed by a Binary Structured Types representing the parameter-value.</t>
-
-<figure><artwork><![CDATA[
-+--------+--------+---------
-|  KL(8) | parameter-name(*) parameter-value...
-+--------+--------+---------
-]]></artwork></figure>
-
-<t>The parameter-value is represented as a bare item (<xref target="item"/>).</t>
-
-<t>If the parameters cannot be represented, the entire field value will be serialised as a Textual Field Value (<xref target="TFV"/>).</t>
-
-<t>Binary Structured Headers can represent up to 1024 parameters; fields containing more will need to be serialised as Textual Field Values (<xref target="TFV"/>).</t>
-
-</section>
-</section>
-<section anchor="dictionaries" title="Dictionaries">
-
-<t>The Dictionary data type (type=0x4) has a payload consisting of a stream of members.</t>
-
-<figure><artwork><![CDATA[
---+--------+--------+---------
-  Dictionary members...
---+--------+--------+---------
-]]></artwork></figure>
-
-<t>Each member of the dictionary is represented by an 8-bit key length field KL, followed by that many bytes of the member-name, followed by one or more Binary Structured Types representing the member-value.</t>
-
-<figure><artwork><![CDATA[
-+--------+--------+---------
-|  KL(8) | member-name(*) member-value...
-+--------+--------+---------
-]]></artwork></figure>
-
-<t>member-values that are Items are represented as per <xref target="item"/>; member-values that are inner-lists are represented as per <xref target="inner-list"/>.</t>
-
-<t>If the dictionary cannot be represented, the entire field value will be serialised as a Textual Field Value (<xref target="TFV"/>). In particular, dictionaries with member-names longer than 256 characters cannot be represented as Binary Structured Types.</t>
-
-<t>The Dictionary data type can only be the first Binary Structured Type in a field-value; if it occurs in any other position, it is an error.</t>
-
-</section>
-<section anchor="item" title="Items">
-
-<t>Items are represented using one or more Binary Structured Types. The bare-item is serialised as the appropriate Binary Structured Type, as per below.</t>
-
-<t>The item’s parameters, if present, are serialised as the Parameter type (<xref target="parameter"/>), which will be followed by zero or more types representing the parameters’ payload.</t>
-
-<t>Bare items are never followed by a Parameter type.</t>
-
-<section anchor="integers" title="Integers">
-
-<t>The Integer data type (type=0x5) has a payload of 58 bits:</t>
-
-<figure><artwork><![CDATA[
---+--------+--------+--------+--------+--------+--------+--+------+
-SX|  Integer                                               |  Pad |
---+--------+--------+--------+--------+--------+--------+--+------+
+  5   6   7   0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---+---+---+---
+     L(3+)  |  Parameters (L octets)
++---+---+---+---+---+---+---+---+---+---+---
 ]]></artwork></figure>
 
 <t>Its fields are:</t>
 
 <t><list style="symbols">
-  <t>S - sign bit; 0 is negative, 1 is positive</t>
-  <t>X - 1 bit of padding</t>
-  <t>Integer - 50 bits, unsigned</t>
-  <t>Pad - 6 bits</t>
+  <t>L: The number of octets used to represent the token, encoded as per <xref target="RFC7541"/>, Section 5.1, with a 3-bit prefix</t>
+  <t>Parameters: L octets</t>
 </list></t>
 
-<t>ISSUE: Should we use a varint? <eref target="https://github.com/mnot/I-D/issues/304">https://github.com/mnot/I-D/issues/304</eref>.</t>
+<t>Each parameter is represented by key length, followed by that many bytes of the parameter-name, followed by a Binary Structured Type representing the parameter-value.</t>
+
+<figure><artwork><![CDATA[
+  0   1   2   3   4   5   6   7   0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+| KL (8+)                       |  parameter-name (KL octets)
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+
+  0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---
+| parameter-value (VL octets)
++---+---+---+---+---+---+---+---
+]]></artwork></figure>
+
+<t>A parameter’s fields are:</t>
+
+<t><list style="symbols">
+  <t>KL: The number of octets used to represent the parameter-name, encoded as per <xref target="RFC7541"/>, Section 5.1, with a 8-bit prefix</t>
+  <t>parameter-name: KL octets of the parameter-name</t>
+  <t>parameter-value: A Binary Structured type representing a bare item (<xref target="inner-item"/>)</t>
+</list></t>
+
+<t>Parameter-values are bare items; that is, they MUST NOT have parameters themselves.</t>
+
+<t>If the parameters cannot be represented, the entire field value will be serialised as a String Literal (<xref target="literal"/>).</t>
+
+<t>Parameters are always associated with the Binary Structured Type that immediately preceded them. If parameters are not explicitly allowed on the preceding type, or there is no preceding type, it is an error.</t>
+
+<t>ISSUE: use Huffman coding for parameter-name? <eref target="https://github.com/mnot/I-D/issues/305">https://github.com/mnot/I-D/issues/305</eref></t>
+
+</section>
+</section>
+<section anchor="inner-item" title="Item Payload Types">
+
+<t>Individual Structured Header Items can be represented using the Binary Payload Types defined below.</t>
+
+<t>The item’s parameters, if present, are serialised in a following Parameter type (<xref target="parameter"/>); they do not form part of the payload of the item.</t>
+
+<section anchor="integers" title="Integers">
+
+<t>The Integer data type (type=0x3) has a payload in the format:</t>
+
+<figure><artwork><![CDATA[
+  5   6   7   0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---+---+---+---
+  S |   X   | Length (8+)
++---+---+---+---+---+---+---+---+---+---+---
+
+  0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---
+|  Integer (Length octets)
++---+---+---+---+---+---+---+---
+]]></artwork></figure>
+
+<t>Its fields are:</t>
+
+<t><list style="symbols">
+  <t>S: sign bit; 0 is negative, 1 is positive</t>
+  <t>X: 2 bits of padding</t>
+  <t>Length: The number of octets used to represent the integer, encoded as per <xref target="RFC7541"/>, Section 5.1, with a 2-bit prefix</t>
+  <t>Integer: Length octets</t>
+</list></t>
 
 </section>
 <section anchor="floats" title="Floats">
 
-<t>The Float data type (type=0x6) have a payload of 74 bits:</t>
+<t>The Float data type (type=0x4) have a payload in the format:</t>
 
 <figure><artwork><![CDATA[
--+-+--------+--------+--------+--------+--------+------+
-S|   Integer                                           |
--+-+--------+--------+--------+--------+--------+------+
+  5   6   7   0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---+---+---+---
+  S |   X   | ILength (8+)
++---+---+---+---+---+---+---+---+---+---+---
 
-+--+--------+--------+--------+
-|    Fractional               |
-+--+--------+--------+--------+
+  0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---
+|  Integer (ILength octets)
++---+---+---+---+---+---+---+---
+
+  0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---
+|  FLength (8+)
++---+---+---+---+---+---+---+---
+
+  0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---
+|  Fractional (FLength octets)
++---+---+---+---+---+---+---+---
 ]]></artwork></figure>
 
 <t>Its fields are:</t>
 
 <t><list style="symbols">
-  <t>S - sign bit; 0 is negative, 1 is positive</t>
-  <t>Integer - 47 bits, unsigned</t>
-  <t>Fractional - 20 bits, unsigned integer</t>
+  <t>S: sign bit; 0 is negative, 1 is positive</t>
+  <t>X: 2 bits of padding</t>
+  <t>ILength: The number of octets used to represent the integer component, encoded as per <xref target="RFC7541"/>, Section 5.1, with a 2-bit prefix.</t>
+  <t>Integer - ILength octets</t>
+  <t>FLength: The number of octets used to represent the fractional component, encoded as per <xref target="RFC7541"/>, Section 5.1, with a 2-bit prefix.</t>
+  <t>Fractional: FLength octets</t>
 </list></t>
-
-<t>ISSUE: Should we use a varint? <eref target="https://github.com/mnot/I-D/issues/304">https://github.com/mnot/I-D/issues/304</eref>.</t>
 
 </section>
 <section anchor="strings" title="Strings">
 
-<t>The String data type (type=0x7) has a payload whose length is indicated by its first ten bits (as an unsigned integer):</t>
+<t>The String data type (type=0x5) has a payload in the format:</t>
 
 <figure><artwork><![CDATA[
---+--------+--------+---------
-Length (10)|  String...
---+--------+--------+---------
+  5   6   7   0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---+---+---+---
+     L(3+)  |  String (L octets)
++---+---+---+---+---+---+---+---+---+---+---
 ]]></artwork></figure>
 
-<t>Binary Structured Headers can represent Strings up to 1024 characters in length; fields containing longer values will need to be serialised as Textual Field Values (<xref target="TFV"/>).</t>
+<t>Its fields are:</t>
+
+<t><list style="symbols">
+  <t>L: The number of octets used to represent the string, encoded as per <xref target="RFC7541"/>, Section 5.1, with a 3-bit prefix.</t>
+  <t>String: L octets.</t>
+</list></t>
 
 <t>ISSUE: use Huffman coding? <eref target="https://github.com/mnot/I-D/issues/305">https://github.com/mnot/I-D/issues/305</eref></t>
 
 </section>
 <section anchor="token" title="Tokens">
 
-<t>The Token data type (type=0x8) has a payload whose length is indicated by its first ten bits (as an unsigned integer):</t>
+<t>The Token data type (type=0x6) has a payload in the format:</t>
 
 <figure><artwork><![CDATA[
---+--------+--------+--------------
-Length (10)|  Token...
---+--------+--------+--------------
+  5   6   7   0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---+---+---+---
+     L(3+)  |  Token (L octets)
++---+---+---+---+---+---+---+---+---+---+---
 ]]></artwork></figure>
 
-<t>Binary Structured Headers can represent Tokens up to 1024 characters in length; fields containing longer values will need to be serialised as Textual Field Values (<xref target="TFV"/>).</t>
+<t>Its fields are:</t>
+
+<t><list style="symbols">
+  <t>L: The number of octets used to represent the token, encoded as per <xref target="RFC7541"/>, Section 5.1, with a 3-bit prefix.</t>
+  <t>Token: L octets.</t>
+</list></t>
 
 <t>ISSUE: use Huffman coding? <eref target="https://github.com/mnot/I-D/issues/305">https://github.com/mnot/I-D/issues/305</eref></t>
 
 </section>
 <section anchor="byte-sequences" title="Byte Sequences">
 
-<t>The Byte Sequence data type (type=0x9) has a payload whose length is indicated by its first 14 bits (as an unsigned integer), followed by four bits of padding:</t>
+<t>The Byte Sequence data type (type=0x7) has a payload in the format:</t>
 
 <figure><artwork><![CDATA[
---+--------+----+----+---------------------
-Length (14)     |XXXX|  Byte Sequence...
---+--------+----+----+---------------------
+  5   6   7   0   1   2   3   4   5   6   7
++---+---+---+---+---+---+---+---+---+---+---
+     L(3+)  |  Byte Sequence (L octets)
++---+---+---+---+---+---+---+---+---+---+---
 ]]></artwork></figure>
 
-<t>Binary Structured Headers can represent Byte Sequences up to 16384 characters in length; fields containing longer values will need to be serialised as Textual Field Values (<xref target="TFV"/>).</t>
+<t>Its fields are:</t>
+
+<t><list style="symbols">
+  <t>L: The number of octets used to represent the byte sequence, encoded as per <xref target="RFC7541"/>, Section 5.1, with a 3-bit prefix.</t>
+  <t>Byte Sequence: L octets.</t>
+</list></t>
 
 </section>
 <section anchor="booleans" title="Booleans">
 
-<t>The Boolean data type (type=0xa) has a payload of two bits:</t>
+<t>The Boolean data type (type=0x8) has a payload of two bits:</t>
 
 <figure><artwork><![CDATA[
---+
-BX|
---+
+  5   6   7
++---+---+---+
+  B |   X   |
++---+---+---+
 ]]></artwork></figure>
 
 <t>If B is 0, the value is False; if B is 1, the value is True. X is padding.</t>
 
 </section>
-</section>
-<section anchor="TFV" title="Textual Field Values">
-
-<t>The Textual Field Value data type (type=0xb) indicates that the contents are a textual HTTP header value, rather than a Binary Structured Header. The value may or may not be a Structured Header.</t>
-
-<t>Its payload is two bytes of padding, followed by the octets of the field value:</t>
-
-<figure><artwork><![CDATA[
---+--------+----
-XX| Field Value...
---+--------+----
-]]></artwork></figure>
-
-<t>Note that unlike other binary data types, Textual Field Values rely upon their context to convey their length. As a result, they cannot be used anywhere but as a top-level field value; their presence elsewhere MUST be considered an error.</t>
-
-<t>ISSUE: use Huffman coding? <eref target="https://github.com/mnot/I-D/issues/305">https://github.com/mnot/I-D/issues/305</eref></t>
-
 </section>
 </section>
 <section anchor="negotiate" title="Using Binary Structured Headers in HTTP/2">
@@ -330,7 +417,7 @@ XX| Field Value...
 <t>Receiving SETTINGS_BINARY_STRUCTURED_HEADERS from a peer indicates that:</t>
 
 <t><list style="numbers">
-  <t>The peer supports the encoding of Binary Structured Headers defined in <xref target="types"/>.</t>
+  <t>The peer supports the Binary Structured Types defined in <xref target="headers"/>.</t>
   <t>The peer will process the BINHEADERS frames as defined in <xref target="frame"/>.</t>
   <t>When a downstream consumer does not likewise support that encoding, the peer will transform them into HEADERS frames (if the peer is HTTP/2) or a form it will understand (e.g., the textual representation of Structured Headers data types defined in <xref target="I-D.ietf-httpbis-header-structure"/>).</t>
   <t>The peer will likewise transform all fields defined as Aliased Fields (<xref target="aliased"/>) into their non-aliased forms as necessary.</t>
@@ -341,13 +428,19 @@ XX| Field Value...
 </section>
 <section anchor="frame" title="The BINHEADERS Frame">
 
-<t>When a peer has indicated that it supports this specification {#setting}, a sender can send Binary Structured Headers in the BINHEADERS Frame Type (0xTODO).</t>
+<t>When a peer has indicated that it supports this specification {#setting}, a sender can send the BINHEADERS Frame Type (0xTODO).</t>
 
-<t>The BINHEADERS Frame Type behaves and is represented exactly as a HEADERS Frame type (<xref target="RFC7540"/>, Section 6.2), with one exception; any String Literal representations (<xref target="RFC7541"/>, Section 5.2) encoded in the Header Block Fragment have String Data that are Binary Structured Headers.</t>
+<t>The BINHEADERS Frame Type behaves and is represented exactly as a HEADERS Frame type (<xref target="RFC7540"/>, Section 6.2), with one exception; instead of using the String Literal Representation defined in <xref target="RFC7541"/>, Section 5.2, it uses the Binary Literal Representation defined in <xref target="binlit"/>.</t>
 
-<t>This means that a BINHEADERS frame can be converted to a HEADERS frame by converting the field values to the string representations of the various Structured Headers Types, and Textual Field Values (<xref target="TFV"/>) to their string counterparts.</t>
+<t>Fields that are Structured Headers can have their values represented using the Binary Literal Representation corresponding to that header’s top-level type – List, Dictionary, or Item; their values will then be serialised as a stream of Binary Structured Types.</t>
 
-<t>Conversely, a HEADERS frame can be converted to a BINHEADERS frame by encoding all of the Literal field values as Binary Structured Types. In this case, the header types used are informed by the implementations knowledge of the individual header field semantics; see <xref target="backport"/>. Those which it cannot (do to either lack of knowledge or an error) or does not wish to convert into Structured Headers are conveyed in BINHEADERS as Textual Field Values (<xref target="TFV"/>).</t>
+<t>Additionally, any field (including those defined as Structured Headers) can be serialised as a String Literal (<xref target="literal"/>), which accommodates headers that are not defined as Structured Headers, not valid Structured Headers, or that the sending implementation does not wish to send as Binary Structured Types for some other reason.</t>
+
+<t>Note that Field Names are always serialised as String Literals (<xref target="literal"/>).</t>
+
+<t>This means that a BINHEADERS frame can be converted to a HEADERS frame by converting the field values to the string representations of the various Structured Headers Types, and String Literals (<xref target="literal"/>) to their string counterparts.</t>
+
+<t>Conversely, a HEADERS frame can be converted to a BINHEADERS frame by encoding all of the Literal field values as Binary Structured Types. In this case, the header types used are informed by the implementations knowledge of the individual header field semantics; see <xref target="backport"/>. Those which it cannot (do to either lack of knowledge or an error) or does not wish to convert into Structured Headers are conveyed in BINHEADERS as String Literals (<xref target="literal"/>).</t>
 
 <t>Field values are stored in the HPACK <xref target="RFC7541"/> dynamic table without Huffman encoding, although specific Binary Structured Types might specify the use of such encodings.</t>
 
@@ -365,7 +458,7 @@ XX| Field Value...
 
 <t>The following HTTP field names can have their values parsed as Structured Headers according to the algorithms in <xref target="I-D.ietf-httpbis-header-structure"/>, and thus can usually be serialised using the corresponding Binary Structured Types.</t>
 
-<t>When one of these fields’ values cannot be represented using Structured Types, its value can instead be represented as a Textual Field Value (<xref target="TFV"/>).</t>
+<t>When one of these fields’ values cannot be represented using Structured Types, its value can instead be represented as a String Literal (<xref target="literal"/>).</t>
 
 <t><list style="symbols">
   <t>Accept - List</t>
@@ -406,7 +499,7 @@ XX| Field Value...
   <t>X-Content-Type-Options - Item</t>
 </list></t>
 
-<t>Note that only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or serialised as a Textual Field Value (<xref target="TFV"/>).</t>
+<t>Note that only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or serialised as a String Literal (<xref target="literal"/>).</t>
 
 </section>
 <section anchor="aliased" title="Aliased Fields">
@@ -425,7 +518,7 @@ Date: Sun, 06 Nov 1994 08:49:37 GMT
 SH-Date: 784072177
 ]]></artwork></figure>
 
-<t>As with directly represented fields, if the intended value of an aliased field cannot be represented using Structured Types successfully, its value can instead be represented as a Textual Field Value (<xref target="TFV"/>).</t>
+<t>As with directly represented fields, if the intended value of an aliased field cannot be represented using Structured Types successfully, its value can instead be represented as a String Literal (<xref target="literal"/>).</t>
 
 <t>Note that senders MUST know that the next-hop recipient understands these fields (typically, using the negotiation mechanism defined in <xref target="negotiate"/>) before using them. Likewise, recipients MUST transform them back to their unaliased form before forwarding the message to a peer or other consuming components that do not have this capability.</t>
 
@@ -539,7 +632,7 @@ SH-Cookie: SID=31d4d96e407aad42, lang=en-US
 
 <t>As is so often the case, having alternative representations of data brings the potential for security weaknesses, when attackers exploit the differences between those representations and their handling.</t>
 
-<t>One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Headers data types, along with the “escape valve” of Textual Field Values (<xref target="TFV"/>). Therefore, implementation divergence from this strictness can have security impact.</t>
+<t>One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Headers data types, along with the “escape valve” of String Literals (<xref target="literal"/>). Therefore, implementation divergence from this strictness can have security impact.</t>
 
 </section>
 
@@ -580,15 +673,15 @@ SH-Cookie: SID=31d4d96e407aad42, lang=en-US
     <organization />
 </author>
 
-<date month='August' day='25' year='2019' />
+<date month='October' day='31' year='2019' />
 
 <abstract><t>This document describes a set of data types and associated algorithms that are intended to make it easier and safer to define and handle HTTP header fields.  It is intended for use by specifications of new HTTP header fields that wish to use a common syntax that is more restrictive than traditional HTTP field values.</t></abstract>
 
 </front>
 
-<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-header-structure-13' />
+<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-header-structure-14' />
 <format type='TXT'
-        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-header-structure-13.txt' />
+        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-header-structure-14.txt' />
 </reference>
 
 
@@ -685,147 +778,151 @@ SH-Cookie: SID=31d4d96e407aad42, lang=en-US
   </back>
 
 <!-- ##markdown-source:
-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
-N/Xcr6rhdsb7H7fLFk5xUAAA
+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
+/h8oP3j2yFoAAA==
 
 -->
 

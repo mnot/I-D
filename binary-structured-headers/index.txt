@@ -13,11 +13,11 @@ Expires: May 4, 2020
 
 Abstract
 
-   This specification defines a binary serialisation of the types
-   specified by Structured Headers for HTTP, along with a negotiation
-   mechanism for its use in HTTP/2.  It also defines how to use
-   Structured Headers for many existing headers - thereby "backporting"
-   them - when supported by two peers.
+   This specification defines a binary serialisation of Structured
+   Headers for HTTP, along with a negotiation mechanism for its use in
+   HTTP/2.  It also defines how to use Structured Headers for many
+   existing headers - thereby "backporting" them - when supported by two
+   peers.
 
 Note to Readers
 
@@ -79,33 +79,33 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
-   2.  Binary Structured Types . . . . . . . . . . . . . . . . . . .   3
-     2.1.  Lists . . . . . . . . . . . . . . . . . . . . . . . . . .   4
-       2.1.1.  Inner Lists . . . . . . . . . . . . . . . . . . . . .   4
-       2.1.2.  Parameters  . . . . . . . . . . . . . . . . . . . . .   5
-     2.2.  Dictionaries  . . . . . . . . . . . . . . . . . . . . . .   5
-     2.3.  Items . . . . . . . . . . . . . . . . . . . . . . . . . .   6
-       2.3.1.  Integers  . . . . . . . . . . . . . . . . . . . . . .   6
-       2.3.2.  Floats  . . . . . . . . . . . . . . . . . . . . . . .   7
-       2.3.3.  Strings . . . . . . . . . . . . . . . . . . . . . . .   7
-       2.3.4.  Tokens  . . . . . . . . . . . . . . . . . . . . . . .   7
-       2.3.5.  Byte Sequences  . . . . . . . . . . . . . . . . . . .   8
-       2.3.6.  Booleans  . . . . . . . . . . . . . . . . . . . . . .   8
-     2.4.  Textual Field Values  . . . . . . . . . . . . . . . . . .   8
-   3.  Using Binary Structured Headers in HTTP/2 . . . . . . . . . .   9
-     3.1.  Binary Structured Headers Setting . . . . . . . . . . . .   9
-     3.2.  The BINHEADERS Frame  . . . . . . . . . . . . . . . . . .   9
-   4.  Using Binary Structured Headers with Existing Fields  . . . .  10
-     4.1.  Directly Represented Fields . . . . . . . . . . . . . . .  10
-     4.2.  Aliased Fields  . . . . . . . . . . . . . . . . . . . . .  12
-       4.2.1.  URLs  . . . . . . . . . . . . . . . . . . . . . . . .  13
-       4.2.2.  Dates . . . . . . . . . . . . . . . . . . . . . . . .  13
-       4.2.3.  ETags . . . . . . . . . . . . . . . . . . . . . . . .  14
-       4.2.4.  Links . . . . . . . . . . . . . . . . . . . . . . . .  14
-       4.2.5.  Cookies . . . . . . . . . . . . . . . . . . . . . . .  15
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  15
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
+   2.  Binary Structured Headers . . . . . . . . . . . . . . . . . .   3
+     2.1.  The Binary Literal Representation . . . . . . . . . . . .   4
+       2.1.1.  Lists . . . . . . . . . . . . . . . . . . . . . . . .   4
+       2.1.2.  Dictionaries  . . . . . . . . . . . . . . . . . . . .   4
+       2.1.3.  Items . . . . . . . . . . . . . . . . . . . . . . . .   5
+       2.1.4.  String Literals . . . . . . . . . . . . . . . . . . .   5
+     2.2.  Binary Structured Types . . . . . . . . . . . . . . . . .   5
+       2.2.1.  Inner Lists . . . . . . . . . . . . . . . . . . . . .   6
+       2.2.2.  Parameters  . . . . . . . . . . . . . . . . . . . . .   6
+     2.3.  Item Payload Types  . . . . . . . . . . . . . . . . . . .   7
+       2.3.1.  Integers  . . . . . . . . . . . . . . . . . . . . . .   8
+       2.3.2.  Floats  . . . . . . . . . . . . . . . . . . . . . . .   8
+       2.3.3.  Strings . . . . . . . . . . . . . . . . . . . . . . .   9
+       2.3.4.  Tokens  . . . . . . . . . . . . . . . . . . . . . . .   9
+       2.3.5.  Byte Sequences  . . . . . . . . . . . . . . . . . . .  10
+       2.3.6.  Booleans  . . . . . . . . . . . . . . . . . . . . . .  10
+   3.  Using Binary Structured Headers in HTTP/2 . . . . . . . . . .  10
+     3.1.  Binary Structured Headers Setting . . . . . . . . . . . .  11
+     3.2.  The BINHEADERS Frame  . . . . . . . . . . . . . . . . . .  11
+   4.  Using Binary Structured Headers with Existing Fields  . . . .  12
+     4.1.  Directly Represented Fields . . . . . . . . . . . . . . .  12
+     4.2.  Aliased Fields  . . . . . . . . . . . . . . . . . . . . .  14
+       4.2.1.  URLs  . . . . . . . . . . . . . . . . . . . . . . . .  15
+       4.2.2.  Dates . . . . . . . . . . . . . . . . . . . . . . . .  15
+       4.2.3.  ETags . . . . . . . . . . . . . . . . . . . . . . . .  16
+       4.2.4.  Links . . . . . . . . . . . . . . . . . . . . . . . .  16
+       4.2.5.  Cookies . . . . . . . . . . . . . . . . . . . . . . .  17
 
 
 
@@ -114,9 +114,12 @@ Nottingham                 Expires May 4, 2020                  [Page 2]
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  15
-     7.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  16
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  17
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  17
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .  17
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  17
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .  17
+     7.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  18
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  19
 
 1.  Introduction
 
@@ -129,7 +132,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    Structured Headers for HTTP [I-D.ietf-httpbis-header-structure]
    offers a set of data types that new headers can combine to express
    their semantics.  This specification defines a binary serialisation
-   of those types in Section 2, and specifies their use in HTTP/2 -
+   of those structures in Section 2, and specifies their use in HTTP/2 -
    specifically, in HPACK Literal Header Field Representations [RFC7541]
    - in Section 3.
 
@@ -150,18 +153,15 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-2.  Binary Structured Types
+2.  Binary Structured Headers
 
-   This section defines a binary serialisation for each of the
-   Structured Header Types defined in
-   [I-D.ietf-httpbis-header-structure].
+   This section defines a binary serialisation for the Structured Header
+   Types defined in [I-D.ietf-httpbis-header-structure].
 
-   Every Binary Structured Type starts with a 6-bit type field that
-   defines the format of its payload:
-
-   +------+--+--------
-   |T (6) | Payload (0...)
-   +------+--+--------
+   The types permissable as the top-level of Structured Header field
+   values - Dictionary, List, and Item - are defined in terms of a
+   Binary Literal Representation (Section 2.1), which is a replacement
+   for the String Literal Representation in [RFC7541].
 
 
 
@@ -170,54 +170,54 @@ Nottingham                 Expires May 4, 2020                  [Page 3]
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-   Some Binary Structured Types have variable lengths; in these cases,
-   the payload MUST have padding appended to align it with the next byte
-   boundary.
+   Binary representations of the remaining types are defined in
+   Section 2.2.
 
-   Senders MUST set these padding bits as well as any explicitly
-   identified by a type as padding to 0; recipients MUST ignore their
-   values.
+2.1.  The Binary Literal Representation
 
-   ISSUE: byte-align all types, or only the terminal one in a header
-   value? https://github.com/mnot/I-D/issues/306 [5]
+   The Binary Literal Representation is a replacement for the String
+   Literal Representation defined in [RFC7541], Section 5.2, for use in
+   BINHEADERS frames (Section 3.2).
 
-2.1.  Lists
+     0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---+
+   |   Type (4)    | PLength (4+)  |
+   +---+---------------------------+
+   | Payload Data (Length octets)  |
+   +-------------------------------+
 
-   The List data type (type=0x1) has a payload consisting of a stream of
-   Binary Structured Types representing zero or more members.
+   A binary literal representation contains the following fields:
 
-   --+--------+--------+---------
-     List members...
-   --+--------+--------+---------
+   o  Type:** Four bits indicating the type of the payload.
 
-   Each member of the list will be represented by one or more Binary
-   Structured Types, unless it cannot be represented; in these cases,
-   the entire field value will be serialised as a Textual Field Value
-   (Section 2.4).
+   o  PLength: The number of octets used to represent the payload,
+      encoded as per [RFC7541], Section 5.1, with a 4-bit prefix.
+
+   o  Payload Data: The payload, as zero or more Binary Structured
+      Types.
+
+   The following payload types are defined:
+
+2.1.1.  Lists
+
+   List values (type=0x1) have a payload consisting of a stream of
+   Binary Structured Types representing the members of the list.
 
    list-members that are Items are represented as per Section 2.3; list-
-   members that are inner-lists are represented as per Section 2.1.1.
+   members that are inner-lists are represented as per Section 2.2.1.
 
-   The List data type can only be the first Binary Structured Type in a
-   field-value; if it occurs in any other position, it is an error.
+   If any member cannot be represented, the entire field value MUST be
+   serialised as a String Literal (Section 2.1.4).
 
-2.1.1.  Inner Lists
+2.1.2.  Dictionaries
 
-   The Inner List data type (type=0x2) has a Count field that indicates
-   how many members are in the inner-list, as an unsigned 10-bit
-   integer.
+   Dictionary values (type=0x2) have a payload consisting of a stream of
+   members.
 
-   --+--------+--------+---------
-    Count (10)|  List members...
-   --+--------+--------+---------
+   Each member is represented by a key length, followed by that many
+   bytes of the member-name, followed by one or more Binary Structured
+   Types representing the member-value.
 
-   Each member of the list will be represented as an Item (Section 2.3),
-   unless it cannot be represented; in these cases, the entire field
-   value will be serialised as a Textual Field Value (Section 2.4).
-
-   The inner list's parameters, if present, are serialised as the
-   Parameter type (Section 2.1.2), which will be followed by zero or
-   more types representing the parameters' payload.
 
 
 
@@ -226,53 +226,53 @@ Nottingham                 Expires May 4, 2020                  [Page 4]
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-   Binary Structured Headers can represent inner lists with up to 1024
-   members; fields containing more members will need to be serialised as
-   Textual Field Values (Section 2.4).
+     0   1   2   3   4   5   6   7   0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+   | KL (8+)                       |  member-name (KL octets)
+   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
 
-2.1.2.  Parameters
+     0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---
+   | member-value
+   +---+---+---+---+---+---+---+---
 
-   The Parameters data type (type=0x3) has a Count field that indicates
-   how many parameters are present, as an unsigned 10-bit integer.
+   A parameter's fields are:
 
-   --+--------+--------+---------
-    Count (10)|  Parameters...
-   --+--------+--------+---------
+   o  KL: The number of octets used to represent the member-name,
+      encoded as per [RFC7541], Section 5.1, with a 8-bit prefix
 
-   Each parameter is represented by an 8-bit key length field KL,
-   followed by that many bytes of the parameter-name, followed by a
-   Binary Structured Types representing the parameter-value.
+   o  member-name: KL octets of the member-name
 
-   +--------+--------+---------
-   |  KL(8) | parameter-name(*) parameter-value...
-   +--------+--------+---------
+   o  member-value: One or more Binary Structure Types
 
-   The parameter-value is represented as a bare item (Section 2.3).
+   member-values that are Items are represented as per Section 2.3;
+   member-values that are inner-lists are represented as per
+   Section 2.2.1.
 
-   If the parameters cannot be represented, the entire field value will
-   be serialised as a Textual Field Value (Section 2.4).
+   If any member cannot be represented, the entire field value MUST be
+   serialised as a String Literal (Section 2.1.4).
 
-   Binary Structured Headers can represent up to 1024 parameters; fields
-   containing more will need to be serialised as Textual Field Values
-   (Section 2.4).
+2.1.3.  Items
 
-2.2.  Dictionaries
+   Item values (type=0x3) have a payload consisting of one or two Binary
+   Structured Types, as described in Section 2.3.
 
-   The Dictionary data type (type=0x4) has a payload consisting of a
-   stream of members.
+2.1.4.  String Literals
 
-   --+--------+--------+---------
-     Dictionary members...
-   --+--------+--------+---------
+   String Literals (type=0x4) are the string value of a header field;
+   they are used to carry header field values that are not Binary
+   Structured Headers, and may not be Structured Headers at all.  As
+   such, their semantics are that of String Literal Representations in
+   [RFC7541], Section 5.2.
 
-   Each member of the dictionary is represented by an 8-bit key length
-   field KL, followed by that many bytes of the member-name, followed by
-   one or more Binary Structured Types representing the member-value.
+   Their payload is the octets of the field value.
 
-   +--------+--------+---------
-   |  KL(8) | member-name(*) member-value...
-   +--------+--------+---------
+   ISSUE: use Huffman coding? https://github.com/mnot/I-D/issues/305 [5]
 
+2.2.  Binary Structured Types
+
+   Every Binary Structured Type starts with a 5-bit type field that
+   identifies the format of its payload:
 
 
 
@@ -282,53 +282,53 @@ Nottingham                 Expires May 4, 2020                  [Page 5]
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-   member-values that are Items are represented as per Section 2.3;
-   member-values that are inner-lists are represented as per
-   Section 2.1.1.
+     0   1   2   3   4   5   6   7   0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+         Type (5)      |  Payload...
+   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
 
-   If the dictionary cannot be represented, the entire field value will
-   be serialised as a Textual Field Value (Section 2.4).  In particular,
-   dictionaries with member-names longer than 256 characters cannot be
-   represented as Binary Structured Types.
+   Some Binary Structured Types contain padding bits; senders MUST set
+   padding bits to 0; recipients MUST ignore their values.
 
-   The Dictionary data type can only be the first Binary Structured Type
-   in a field-value; if it occurs in any other position, it is an error.
+2.2.1.  Inner Lists
 
-2.3.  Items
+   The Inner List data type (type=0x1) has a payload in the format:
 
-   Items are represented using one or more Binary Structured Types.  The
-   bare-item is serialised as the appropriate Binary Structured Type, as
-   per below.
-
-   The item's parameters, if present, are serialised as the Parameter
-   type (Section 2.1.2), which will be followed by zero or more types
-   representing the parameters' payload.
-
-   Bare items are never followed by a Parameter type.
-
-2.3.1.  Integers
-
-   The Integer data type (type=0x5) has a payload of 58 bits:
-
-   --+--------+--------+--------+--------+--------+--------+--+------+
-   SX|  Integer                                               |  Pad |
-   --+--------+--------+--------+--------+--------+--------+--+------+
+     5   6   7   0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---+---+---+---
+        L(3+)  |  Members (L octets)
+   +---+---+---+---+---+---+---+---+---+---+---
 
    Its fields are:
 
-   o  S - sign bit; 0 is negative, 1 is positive
+   o  L: The number of octets used to represent the members, encoded as
+      per [RFC7541], Section 5.1, with a 3-bit prefix
 
-   o  X - 1 bit of padding
+   o  Members: L octets
 
-   o  Integer - 50 bits, unsigned
+   Each member of the list will be represented as an Item (Section 2.3);
+   if any member cannot, the entire field value will be serialised as a
+   String Literal (Section 2.1.4).
 
-   o  Pad - 6 bits
+   The inner list's parameters, if present, are serialised in a
+   following Parameter type (Section 2.2.2); they do not form part of
+   the payload of the inner list.
 
-   ISSUE: Should we use a varint? https://github.com/mnot/I-D/issues/304
-   [6].
+2.2.2.  Parameters
 
+   The Parameters data type (type=0x2) has a payload in the format:
 
+     5   6   7   0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---+---+---+---
+        L(3+)  |  Parameters (L octets)
+   +---+---+---+---+---+---+---+---+---+---+---
 
+   Its fields are:
+
+   o  L: The number of octets used to represent the token, encoded as
+      per [RFC7541], Section 5.1, with a 3-bit prefix
+
+   o  Parameters: L octets
 
 
 
@@ -338,52 +338,52 @@ Nottingham                 Expires May 4, 2020                  [Page 6]
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-2.3.2.  Floats
+   Each parameter is represented by key length, followed by that many
+   bytes of the parameter-name, followed by a Binary Structured Type
+   representing the parameter-value.
 
-   The Float data type (type=0x6) have a payload of 74 bits:
+     0   1   2   3   4   5   6   7   0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+   | KL (8+)                       |  parameter-name (KL octets)
+   +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
 
-   -+-+--------+--------+--------+--------+--------+------+
-   S|   Integer                                           |
-   -+-+--------+--------+--------+--------+--------+------+
+     0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---
+   | parameter-value (VL octets)
+   +---+---+---+---+---+---+---+---
 
-   +--+--------+--------+--------+
-   |    Fractional               |
-   +--+--------+--------+--------+
+   A parameter's fields are:
 
-   Its fields are:
+   o  KL: The number of octets used to represent the parameter-name,
+      encoded as per [RFC7541], Section 5.1, with a 8-bit prefix
 
-   o  S - sign bit; 0 is negative, 1 is positive
+   o  parameter-name: KL octets of the parameter-name
 
-   o  Integer - 47 bits, unsigned
+   o  parameter-value: A Binary Structured type representing a bare item
+      (Section 2.3)
 
-   o  Fractional - 20 bits, unsigned integer
+   Parameter-values are bare items; that is, they MUST NOT have
+   parameters themselves.
 
-   ISSUE: Should we use a varint? https://github.com/mnot/I-D/issues/304
-   [7].
+   If the parameters cannot be represented, the entire field value will
+   be serialised as a String Literal (Section 2.1.4).
 
-2.3.3.  Strings
+   Parameters are always associated with the Binary Structured Type that
+   immediately preceded them.  If parameters are not explicitly allowed
+   on the preceding type, or there is no preceding type, it is an error.
 
-   The String data type (type=0x7) has a payload whose length is
-   indicated by its first ten bits (as an unsigned integer):
+   ISSUE: use Huffman coding for parameter-name?
+   https://github.com/mnot/I-D/issues/305 [6]
 
-   --+--------+--------+---------
-   Length (10)|  String...
-   --+--------+--------+---------
+2.3.  Item Payload Types
 
-   Binary Structured Headers can represent Strings up to 1024 characters
-   in length; fields containing longer values will need to be serialised
-   as Textual Field Values (Section 2.4).
+   Individual Structured Header Items can be represented using the
+   Binary Payload Types defined below.
 
-   ISSUE: use Huffman coding? https://github.com/mnot/I-D/issues/305 [8]
+   The item's parameters, if present, are serialised in a following
+   Parameter type (Section 2.2.2); they do not form part of the payload
+   of the item.
 
-2.3.4.  Tokens
-
-   The Token data type (type=0x8) has a payload whose length is
-   indicated by its first ten bits (as an unsigned integer):
-
-   --+--------+--------+--------------
-   Length (10)|  Token...
-   --+--------+--------+--------------
 
 
 
@@ -394,54 +394,54 @@ Nottingham                 Expires May 4, 2020                  [Page 7]
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-   Binary Structured Headers can represent Tokens up to 1024 characters
-   in length; fields containing longer values will need to be serialised
-   as Textual Field Values (Section 2.4).
+2.3.1.  Integers
 
-   ISSUE: use Huffman coding? https://github.com/mnot/I-D/issues/305 [9]
+   The Integer data type (type=0x3) has a payload in the format:
 
-2.3.5.  Byte Sequences
+     5   6   7   0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---+---+---+---
+     S |   X   | Length (8+)
+   +---+---+---+---+---+---+---+---+---+---+---
 
-   The Byte Sequence data type (type=0x9) has a payload whose length is
-   indicated by its first 14 bits (as an unsigned integer), followed by
-   four bits of padding:
+     0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---
+   |  Integer (Length octets)
+   +---+---+---+---+---+---+---+---
 
-   --+--------+----+----+---------------------
-   Length (14)     |XXXX|  Byte Sequence...
-   --+--------+----+----+---------------------
+   Its fields are:
 
-   Binary Structured Headers can represent Byte Sequences up to 16384
-   characters in length; fields containing longer values will need to be
-   serialised as Textual Field Values (Section 2.4).
+   o  S: sign bit; 0 is negative, 1 is positive
 
-2.3.6.  Booleans
+   o  X: 2 bits of padding
 
-   The Boolean data type (type=0xa) has a payload of two bits:
+   o  Length: The number of octets used to represent the integer,
+      encoded as per [RFC7541], Section 5.1, with a 2-bit prefix
 
-   --+
-   BX|
-   --+
+   o  Integer: Length octets
 
-   If B is 0, the value is False; if B is 1, the value is True.  X is
-   padding.
+2.3.2.  Floats
 
-2.4.  Textual Field Values
+   The Float data type (type=0x4) have a payload in the format:
 
-   The Textual Field Value data type (type=0xb) indicates that the
-   contents are a textual HTTP header value, rather than a Binary
-   Structured Header.  The value may or may not be a Structured Header.
+     5   6   7   0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---+---+---+---
+     S |   X   | ILength (8+)
+   +---+---+---+---+---+---+---+---+---+---+---
 
-   Its payload is two bytes of padding, followed by the octets of the
-   field value:
+     0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---
+   |  Integer (ILength octets)
+   +---+---+---+---+---+---+---+---
 
-   --+--------+----
-   XX| Field Value...
-   --+--------+----
+     0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---
+   |  FLength (8+)
+   +---+---+---+---+---+---+---+---
 
-   Note that unlike other binary data types, Textual Field Values rely
-   upon their context to convey their length.  As a result, they cannot
-   be used anywhere but as a top-level field value; their presence
-   elsewhere MUST be considered an error.
+     0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---
+   |  Fractional (FLength octets)
+   +---+---+---+---+---+---+---+---
 
 
 
@@ -450,8 +450,96 @@ Nottingham                 Expires May 4, 2020                  [Page 8]
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-   ISSUE: use Huffman coding? https://github.com/mnot/I-D/issues/305
-   [10]
+   Its fields are:
+
+   o  S: sign bit; 0 is negative, 1 is positive
+
+   o  X: 2 bits of padding
+
+   o  ILength: The number of octets used to represent the integer
+      component, encoded as per [RFC7541], Section 5.1, with a 2-bit
+      prefix.
+
+   o  Integer - ILength octets
+
+   o  FLength: The number of octets used to represent the fractional
+      component, encoded as per [RFC7541], Section 5.1, with a 2-bit
+      prefix.
+
+   o  Fractional: FLength octets
+
+2.3.3.  Strings
+
+   The String data type (type=0x5) has a payload in the format:
+
+     5   6   7   0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---+---+---+---
+        L(3+)  |  String (L octets)
+   +---+---+---+---+---+---+---+---+---+---+---
+
+   Its fields are:
+
+   o  L: The number of octets used to represent the string, encoded as
+      per [RFC7541], Section 5.1, with a 3-bit prefix.
+
+   o  String: L octets.
+
+   ISSUE: use Huffman coding? https://github.com/mnot/I-D/issues/305 [7]
+
+2.3.4.  Tokens
+
+   The Token data type (type=0x6) has a payload in the format:
+
+     5   6   7   0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---+---+---+---
+        L(3+)  |  Token (L octets)
+   +---+---+---+---+---+---+---+---+---+---+---
+
+   Its fields are:
+
+
+
+
+
+Nottingham                 Expires May 4, 2020                  [Page 9]
+
+Internet-Draft       Binary Structured HTTP Headers        November 2019
+
+
+   o  L: The number of octets used to represent the token, encoded as
+      per [RFC7541], Section 5.1, with a 3-bit prefix.
+
+   o  Token: L octets.
+
+   ISSUE: use Huffman coding? https://github.com/mnot/I-D/issues/305 [8]
+
+2.3.5.  Byte Sequences
+
+   The Byte Sequence data type (type=0x7) has a payload in the format:
+
+     5   6   7   0   1   2   3   4   5   6   7
+   +---+---+---+---+---+---+---+---+---+---+---
+        L(3+)  |  Byte Sequence (L octets)
+   +---+---+---+---+---+---+---+---+---+---+---
+
+   Its fields are:
+
+   o  L: The number of octets used to represent the byte sequence,
+      encoded as per [RFC7541], Section 5.1, with a 3-bit prefix.
+
+   o  Byte Sequence: L octets.
+
+2.3.6.  Booleans
+
+   The Boolean data type (type=0x8) has a payload of two bits:
+
+     5   6   7
+   +---+---+---+
+     B |   X   |
+   +---+---+---+
+
+   If B is 0, the value is False; if B is 1, the value is True.  X is
+   padding.
 
 3.  Using Binary Structured Headers in HTTP/2
 
@@ -463,6 +551,17 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    defined in Section 3.1, and convey Binary Structured Headers in a
    frame type defined in Section 3.2.
 
+
+
+
+
+
+
+Nottingham                 Expires May 4, 2020                 [Page 10]
+
+Internet-Draft       Binary Structured HTTP Headers        November 2019
+
+
 3.1.  Binary Structured Headers Setting
 
    Advertising support for Binary Structured Headers is accomplished
@@ -471,8 +570,8 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    Receiving SETTINGS_BINARY_STRUCTURED_HEADERS from a peer indicates
    that:
 
-   1.  The peer supports the encoding of Binary Structured Headers
-       defined in Section 2.
+   1.  The peer supports the Binary Structured Types defined in
+       Section 2.
 
    2.  The peer will process the BINHEADERS frames as defined in
        Section 3.2.
@@ -493,27 +592,39 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 3.2.  The BINHEADERS Frame
 
    When a peer has indicated that it supports this specification
-   {#setting}, a sender can send Binary Structured Headers in the
-   BINHEADERS Frame Type (0xTODO).
+   {#setting}, a sender can send the BINHEADERS Frame Type (0xTODO).
 
    The BINHEADERS Frame Type behaves and is represented exactly as a
-   HEADERS Frame type ([RFC7540], Section 6.2), with one exception; any
+   HEADERS Frame type ([RFC7540], Section 6.2), with one exception;
+   instead of using the String Literal Representation defined in
+   [RFC7541], Section 5.2, it uses the Binary Literal Representation
+   defined in Section 2.1.
+
+   Fields that are Structured Headers can have their values represented
+   using the Binary Literal Representation corresponding to that
+   header's top-level type - List, Dictionary, or Item; their values
+   will then be serialised as a stream of Binary Structured Types.
+
+   Additionally, any field (including those defined as Structured
+   Headers) can be serialised as a String Literal (Section 2.1.4), which
+   accommodates headers that are not defined as Structured Headers, not
+   valid Structured Headers, or that the sending implementation does not
+   wish to send as Binary Structured Types for some other reason.
 
 
 
-Nottingham                 Expires May 4, 2020                  [Page 9]
+Nottingham                 Expires May 4, 2020                 [Page 11]
 
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-   String Literal representations ([RFC7541], Section 5.2) encoded in
-   the Header Block Fragment have String Data that are Binary Structured
-   Headers.
+   Note that Field Names are always serialised as String Literals
+   (Section 2.1.4).
 
    This means that a BINHEADERS frame can be converted to a HEADERS
    frame by converting the field values to the string representations of
-   the various Structured Headers Types, and Textual Field Values
-   (Section 2.4) to their string counterparts.
+   the various Structured Headers Types, and String Literals
+   (Section 2.1.4) to their string counterparts.
 
    Conversely, a HEADERS frame can be converted to a BINHEADERS frame by
    encoding all of the Literal field values as Binary Structured Types.
@@ -521,7 +632,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    implementations knowledge of the individual header field semantics;
    see Section 4.  Those which it cannot (do to either lack of knowledge
    or an error) or does not wish to convert into Structured Headers are
-   conveyed in BINHEADERS as Textual Field Values (Section 2.4).
+   conveyed in BINHEADERS as String Literals (Section 2.1.4).
 
    Field values are stored in the HPACK [RFC7541] dynamic table without
    Huffman encoding, although specific Binary Structured Types might
@@ -551,18 +662,17 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    serialised using the corresponding Binary Structured Types.
 
    When one of these fields' values cannot be represented using
-   Structured Types, its value can instead be represented as a Textual
-   Field Value (Section 2.4).
+   Structured Types, its value can instead be represented as a String
+   Literal (Section 2.1.4).
+
+   o  Accept - List
 
 
 
-
-Nottingham                 Expires May 4, 2020                 [Page 10]
+Nottingham                 Expires May 4, 2020                 [Page 12]
 
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
-
-   o  Accept - List
 
    o  Accept-Encoding - List
 
@@ -610,15 +720,15 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    o  Forwarded - List
 
+   o  Host - Item
 
 
 
-Nottingham                 Expires May 4, 2020                 [Page 11]
+
+Nottingham                 Expires May 4, 2020                 [Page 13]
 
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
-
-   o  Host - Item
 
    o  Origin - Item
 
@@ -644,8 +754,8 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    Note that only the delta-seconds form of Retry-After is supported; a
    Retry-After value containing a http-date will need to be either
-   converted into delta-seconds or serialised as a Textual Field Value
-   (Section 2.4).
+   converted into delta-seconds or serialised as a String Literal
+   (Section 2.1.4).
 
 4.2.  Aliased Fields
 
@@ -666,18 +776,18 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    SH-Date: 784072177
 
+   As with directly represented fields, if the intended value of an
+   aliased field cannot be represented using Structured Types
 
 
 
-Nottingham                 Expires May 4, 2020                 [Page 12]
+Nottingham                 Expires May 4, 2020                 [Page 14]
 
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-   As with directly represented fields, if the intended value of an
-   aliased field cannot be represented using Structured Types
-   successfully, its value can instead be represented as a Textual Field
-   Value (Section 2.4).
+   successfully, its value can instead be represented as a String
+   Literal (Section 2.1.4).
 
    Note that senders MUST know that the next-hop recipient understands
    these fields (typically, using the negotiation mechanism defined in
@@ -692,7 +802,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    "leak" into normal headers, but it isn't strictly necessary if
    implementations always convert back to the correct form when giving
    it to peers or consuming software that doesn't understand this.
-   https://github.com/mnot/I-D/issues/307 [11]
+   https://github.com/mnot/I-D/issues/307 [9]
 
 4.2.1.  URLs
 
@@ -723,14 +833,14 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    o  Date - SH-Date
 
+   o  Expires - SH-Expires
 
 
-Nottingham                 Expires May 4, 2020                 [Page 13]
+
+Nottingham                 Expires May 4, 2020                 [Page 15]
 
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
-
-   o  Expires - SH-Expires
 
    o  If-Modified-Since - SH-IMS
 
@@ -781,7 +891,9 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
 
-Nottingham                 Expires May 4, 2020                 [Page 14]
+
+
+Nottingham                 Expires May 4, 2020                 [Page 16]
 
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
@@ -802,7 +914,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    SH-Cookie: SID=31d4d96e407aad42, lang=en-US
 
    ISSUE: explicitly convert Expires to an integer?
-   https://github.com/mnot/I-D/issues/308 [12]
+   https://github.com/mnot/I-D/issues/308 [10]
 
 5.  IANA Considerations
 
@@ -816,7 +928,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    One mitigation to this risk is the strictness of parsing for both
    non-binary and binary Structured Headers data types, along with the
-   "escape valve" of Textual Field Values (Section 2.4).  Therefore,
+   "escape valve" of String Literals (Section 2.1.4).  Therefore,
    implementation divergence from this strictness can have security
    impact.
 
@@ -826,8 +938,8 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    [I-D.ietf-httpbis-header-structure]
               Nottingham, M. and P. Kamp, "Structured Headers for HTTP",
-              draft-ietf-httpbis-header-structure-13 (work in progress),
-              August 2019.
+              draft-ietf-httpbis-header-structure-14 (work in progress),
+              October 2019.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -837,7 +949,7 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
 
-Nottingham                 Expires May 4, 2020                 [Page 15]
+Nottingham                 Expires May 4, 2020                 [Page 17]
 
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
@@ -880,29 +992,25 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    [4] https://datatracker.ietf.org/doc/draft-nottingham-binary-
        structured-headers/
 
-   [5] https://github.com/mnot/I-D/issues/306
+   [5] https://github.com/mnot/I-D/issues/305
 
-   [6] https://github.com/mnot/I-D/issues/304
+   [6] https://github.com/mnot/I-D/issues/305
 
-   [7] https://github.com/mnot/I-D/issues/304
+   [7] https://github.com/mnot/I-D/issues/305
 
    [8] https://github.com/mnot/I-D/issues/305
 
-   [9] https://github.com/mnot/I-D/issues/305
+   [9] https://github.com/mnot/I-D/issues/307
 
 
 
 
-Nottingham                 Expires May 4, 2020                 [Page 16]
+Nottingham                 Expires May 4, 2020                 [Page 18]
 
 Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-   [10] https://github.com/mnot/I-D/issues/305
-
-   [11] https://github.com/mnot/I-D/issues/307
-
-   [12] https://github.com/mnot/I-D/issues/308
+   [10] https://github.com/mnot/I-D/issues/308
 
 Author's Address
 
@@ -949,4 +1057,8 @@ Author's Address
 
 
 
-Nottingham                 Expires May 4, 2020                 [Page 17]
+
+
+
+
+Nottingham                 Expires May 4, 2020                 [Page 19]
