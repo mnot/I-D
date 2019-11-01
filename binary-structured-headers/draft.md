@@ -80,7 +80,7 @@ Every Binary Structured Type starts with a 6-bit type field that defines the for
 
 Some Binary Structured Types have variable lengths; in these cases, the payload MUST have padding appended to align it with the next byte boundary. Senders MUST set padding bits to 0; recipients MUST ignore their values.
 
-ISSUE: byte-align all types, or only the terminal one in a header value?
+ISSUE: byte-align all types, or only the terminal one in a header value? <https://github.com/mnot/I-D/issues/306>
 
 
 ## Lists {#list}
@@ -191,7 +191,7 @@ Its fields are:
 * Integer - 50 bits, unsigned
 * Pad - 6 bits
 
-ISSUE: varint?
+ISSUE: Should we use a varint? <https://github.com/mnot/I-D/issues/304>.
 
 ### Floats
 
@@ -213,7 +213,7 @@ Its fields are:
 * Integer - 47 bits, unsigned
 * Fractional - 20 bits, unsigned integer
 
-ISSUE: varint?
+ISSUE: Should we use a varint? <https://github.com/mnot/I-D/issues/304>.
 
 ### Strings
 
@@ -227,7 +227,7 @@ Length (10)|  String...
 
 Binary Structured Headers can represent Strings up to 1024 characters in length; fields containing longer values will need to be serialised as Textual Field Values ({{TFV}}).
 
-ISSUE: Huffman coding?
+ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
 ### Tokens {#token}
 
@@ -241,7 +241,7 @@ Length (10)|  Token...
 
 Binary Structured Headers can represent Tokens up to 1024 characters in length; fields containing longer values will need to be serialised as Textual Field Values ({{TFV}}).
 
-ISSUE: Huffman coding?
+ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
 ### Byte Sequences
 
@@ -283,7 +283,7 @@ XX| Field Value...
 
 Note that unlike other binary data types, Textual Field Values rely upon their context to convey their length. As a result, they cannot be used anywhere but as a top-level field value; their presence elsewhere MUST be considered an error.
 
-ISSUE: huffman coding?
+ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
 
 # Using Binary Structured Headers in HTTP/2 {#negotiate}
@@ -395,6 +395,8 @@ Note that senders MUST know that the next-hop recipient understands these fields
 
 Each field name listed below indicates a replacement field name and a way to map its value to Structured Headers.
 
+ISSUE: using separate names assures that the different syntax doesn't "leak" into normal headers, but it isn't strictly necessary if implementations always convert back to the correct form when giving it to peers or consuming software that doesn't understand this. <https://github.com/mnot/I-D/issues/307>
+
 ### URLs
 
 The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Headers by considering their payload a string.
@@ -474,7 +476,7 @@ SH-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
 SH-Cookie: SID=31d4d96e407aad42, lang=en-US
 ~~~
 
-ISSUE: explicitly convert Expires to an integer?
+ISSUE: explicitly convert Expires to an integer? <https://github.com/mnot/I-D/issues/308>
 
 # IANA Considerations
 
