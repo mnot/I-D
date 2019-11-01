@@ -125,18 +125,18 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    Structured Headers for HTTP [I-D.ietf-httpbis-header-structure]
    offers a set of data types that new headers can combine to express
    their semantics.  This specification defines a binary serialisation
-   of those structures in Section 2, and specifies their use in HTTP/2 -
-   specifically, in HPACK Literal Header Field Representations [RFC7541]
-   - in Section 3.
+   of those structures in Section 2, and specifies its use in HTTP/2 -
+   specifically, as part of HPACK Literal Header Field Representations
+   ([RFC7541]) - in Section 3.
 
    Section 4 defines how to use Structured Headers for many existing
    headers when supported by two peers.
 
    The primary goal of this specification are to reduce parsing overhead
    and associated costs, as compared to the textual representation of
-   Structured Headers.  A secondary goal is a smaller wire format, but
-   that is not always met.  An additional goal is to enable future work
-   on more granular header compression mechanisms.
+   Structured Headers.  A secondary goal is a more compact wire format
+   in common situations.  An additional goal is to enable future work on
+   more granular header compression mechanisms.
 
 1.1.  Notational Conventions
 
@@ -185,13 +185,12 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    A binary literal representation contains the following fields:
 
-   o  Type:** Four bits indicating the type of the payload.
+   o  Type: Four bits indicating the type of the payload.
 
    o  PLength: The number of octets used to represent the payload,
       encoded as per [RFC7541], Section 5.1, with a 4-bit prefix.
 
-   o  Payload Data: The payload, as zero or more Binary Structured
-      Types.
+   o  Payload Data: The payload, as per below.
 
    The following payload types are defined:
 
@@ -199,10 +198,8 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
    List values (type=0x1) have a payload consisting of a stream of
    Binary Structured Types representing the members of the list.
-
-   list-members that are Items are represented as per Section 2.2.3;
-   list-members that are inner-lists are represented as per
-   Section 2.2.1.
+   Members that are Items are represented as per Section 2.2.3; members
+   that are inner-lists are represented as per Section 2.2.1.
 
    If any member cannot be represented, the entire field value MUST be
    serialised as a String Literal (Section 2.1.4).
@@ -213,8 +210,11 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
    members.
 
    Each member is represented by a key length, followed by that many
-   bytes of the member-name, followed by one or more Binary Structured
-   Types representing the member-value.
+   bytes of the member-name, followed by Binary Structured Types
+   representing the member-value.
+
+
+
 
 
 
@@ -254,8 +254,8 @@ Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 2.1.3.  Items
 
-   Item values (type=0x3) have a payload consisting of one or two Binary
-   Structured Types, as described in Section 2.2.3.
+   Item values (type=0x3) have a payload consisting of Binary Structured
+   Types, as described in Section 2.2.3.
 
 2.1.4.  String Literals
 
