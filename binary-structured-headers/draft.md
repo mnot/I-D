@@ -1,7 +1,7 @@
 ---
 title: Binary Structured HTTP Headers
 abbrev:
-docname: draft-nottingham-best-00
+docname: draft-nottingham-binary-structured-headers-00
 date: {DATE}
 category: std
 
@@ -36,14 +36,14 @@ This specification defines a binary serialisation of the types specified by Stru
 
 *RFC EDITOR: please remove this section before publication*
 
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/best>.
+The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/binary-structured-headers>.
 
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/best/>.
+The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/binary-structured-headers/>.
 
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/best>.
+Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/binary-structured-headers>.
 
 See also the draft's current status in the IETF datatracker, at
-<https://datatracker.ietf.org/doc/draft-nottingham-best/>.
+<https://datatracker.ietf.org/doc/draft-nottingham-binary-structured-headers/>.
 
 --- middle
 
