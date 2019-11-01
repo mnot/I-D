@@ -78,7 +78,9 @@ Every Binary Structured Type starts with a 6-bit type field that defines the for
 +------+--+--------
 ~~~
 
-Some Binary Structured Types have variable lengths; in these cases, the payload MUST have padding appended to align it with the next byte boundary. Senders MUST set padding bits to 0; recipients MUST ignore their values.
+Some Binary Structured Types have variable lengths; in these cases, the payload MUST have padding appended to align it with the next byte boundary.
+
+Senders MUST set these padding bits as well as any explicitly identified by a type as padding to 0; recipients MUST ignore their values.
 
 ISSUE: byte-align all types, or only the terminal one in a header value? <https://github.com/mnot/I-D/issues/306>
 
@@ -187,7 +189,7 @@ SX|  Integer                                               |  Pad |
 Its fields are:
 
 * S - sign bit; 0 is negative, 1 is positive
-* X - 1 bit; discard
+* X - 1 bit of padding
 * Integer - 50 bits, unsigned
 * Pad - 6 bits
 
@@ -245,7 +247,7 @@ ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
 ### Byte Sequences
 
-The Byte Sequence data type (type=0x9) has a payload whose length is indicated by its first 14 bits (as an unsigned integer):
+The Byte Sequence data type (type=0x9) has a payload whose length is indicated by its first 14 bits (as an unsigned integer), followed by four bits of padding:
 
 ~~~
 --+--------+----+----+---------------------
@@ -266,7 +268,7 @@ BX|
 --+
 ~~~
 
-If B is 0, the value is False; if B is 1, the value is True. The value of X is discarded.
+If B is 0, the value is False; if B is 1, the value is True. X is padding.
 
 
 ## Textual Field Values {#TFV}
