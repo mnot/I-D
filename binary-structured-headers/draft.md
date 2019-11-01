@@ -309,7 +309,7 @@ The default value of SETTINGS_BINARY_STRUCTURED_HEADERS is 0. Future extensions 
 
 When a peer has indicated that it supports this specification {#setting}, a sender can send Binary Structured Headers in the BINHEADERS Frame Type (0xTODO).
 
-The BINHEADERS Frame Type behaves and is represented exactly as a HEADERS Frame type ({{!RFC7540}}, Section 6.2), with one exception; the field values encoded in the Header Block Fragment as Literal Header Field representations are Binary Structured Headers.
+The BINHEADERS Frame Type behaves and is represented exactly as a HEADERS Frame type ({{!RFC7540}}, Section 6.2), with one exception; any String Literal representations ({{!RFC7541}}, Section 5.2) encoded in the Header Block Fragment have String Data that are Binary Structured Headers.
 
 This means that a BINHEADERS frame can be converted to a HEADERS frame by converting the field values to the string representations of the various Structured Headers Types, and Textual Field Values ({{TFV}}) to their string counterparts.
 
