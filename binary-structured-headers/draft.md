@@ -51,11 +51,11 @@ See also the draft's current status in the IETF datatracker, at
 
 HTTP messages often pass through several systems -- clients, intermediaries, servers, and subsystems of each -- that parse and process their header and trailer fields. This repeated parsing (and often re-serialisation) adds latency and consumes CPU, energy, and other resources.
 
-Structured Headers for HTTP {{!I-D.ietf-httpbis-header-structure}} offers a set of data types that new headers can combine to express their semantics. This specification defines a binary serialisation of those structures in {{headers}}, and specifies their use in HTTP/2 -- specifically, in HPACK Literal Header Field Representations {{!RFC7541}} -- in {{negotiate}}.
+Structured Headers for HTTP {{!I-D.ietf-httpbis-header-structure}} offers a set of data types that new headers can combine to express their semantics. This specification defines a binary serialisation of those structures in {{headers}}, and specifies its use in HTTP/2 -- specifically, as part of HPACK Literal Header Field Representations ({{!RFC7541}}) -- in {{negotiate}}.
 
 {{backport}} defines how to use Structured Headers for many existing headers when supported by two peers.
 
-The primary goal of this specification are to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Headers. A secondary goal is a smaller wire format, but that is not always met. An additional goal is to enable future work on more granular header compression mechanisms.
+The primary goal of this specification are to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Headers. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular header compression mechanisms.
 
 
 ## Notational Conventions
@@ -90,17 +90,15 @@ The Binary Literal Representation is a replacement for the String Literal Repres
 
 A binary literal representation contains the following fields:
 
-* Type:** Four bits indicating the type of the payload.
+* Type: Four bits indicating the type of the payload.
 * PLength: The number of octets used to represent the payload, encoded as per {{!RFC7541}}, Section 5.1, with a 4-bit prefix.
-* Payload Data: The payload, as zero or more Binary Structured Types.
+* Payload Data: The payload, as per below.
 
 The following payload types are defined:
 
 ### Lists
 
-List values (type=0x1) have a payload consisting of a stream of Binary Structured Types representing the members of the list.
-
-list-members that are Items are represented as per {{inner-item}}; list-members that are inner-lists are represented as per {{inner-list}}.
+List values (type=0x1) have a payload consisting of a stream of Binary Structured Types representing the members of the list. Members that are Items are represented as per {{inner-item}}; members that are inner-lists are represented as per {{inner-list}}.
 
 If any member cannot be represented, the entire field value MUST be serialised as a String Literal ({{literal}}).
 
@@ -109,7 +107,7 @@ If any member cannot be represented, the entire field value MUST be serialised a
 
 Dictionary values (type=0x2) have a payload consisting of a stream of members.
 
-Each member is represented by a key length, followed by that many bytes of the member-name, followed by one or more Binary Structured Types representing the member-value.
+Each member is represented by a key length, followed by that many bytes of the member-name, followed by Binary Structured Types representing the member-value.
 
 ~~~
   0   1   2   3   4   5   6   7   0   1   2   3   4   5   6   7
@@ -136,7 +134,7 @@ If any member cannot be represented, the entire field value MUST be serialised a
 
 ### Items
 
-Item values (type=0x3) have a payload consisting of one or two Binary Structured Types, as described in {{inner-item}}.
+Item values (type=0x3) have a payload consisting of Binary Structured Types, as described in {{inner-item}}.
 
 
 ### String Literals {#literal}
