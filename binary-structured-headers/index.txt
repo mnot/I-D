@@ -4,59 +4,42 @@
 
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                    Fastly
-Intended status: Standards Track                        October 26, 2019
-Expires: April 28, 2020
+Intended status: Standards Track                        November 1, 2019
+Expires: May 4, 2020
 
 
                      Binary Structured HTTP Headers
-                        draft-nottingham-best-00
+             draft-nottingham-binary-structured-headers-00
 
 Abstract
 
-   HTTP messages often pass through several systems - clients,
-   intermediaries, servers, and subsystems of each - that parse and
-   process their header and trailer fields as ASCII strings.  This
-   repeated parsing (and often re-serialisation) adds latency and
-   consumes CPU, energy, and other resources.
-
-   Structured Headers for HTTP defines a set of data types that new
-   headers can use to express their semantics.  This specification
-   defines a binary serialisation of those types that is more efficient
-   to process, along with a negotiation mechanism for its use in HTTP/2;
-   specifically, in HPACK Literal Header Field Representations.
-
-   It also defines how to use Structured Headers for many existing
-   headers - thereby "backporting" them - when supported by two peers.
+   This specification defines a binary serialisation of the types
+   specified by Structured Headers for HTTP, along with a negotiation
+   mechanism for its use in HTTP/2.  It also defines how to use
+   Structured Headers for many existing headers - thereby "backporting"
+   them - when supported by two peers.
 
 Note to Readers
 
    _RFC EDITOR: please remove this section before publication_
 
    The issues list for this draft can be found at
-   https://github.com/mnot/I-D/labels/best [1].
+   https://github.com/mnot/I-D/labels/binary-structured-headers [1].
 
    The most recent (often, unpublished) draft is at
-   https://mnot.github.io/I-D/best/ [2].
+   https://mnot.github.io/I-D/binary-structured-headers/ [2].
 
    Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
-   pages/best [3].
+   pages/binary-structured-headers [3].
 
    See also the draft's current status in the IETF datatracker, at
-   https://datatracker.ietf.org/doc/draft-nottingham-best/ [4].
+   https://datatracker.ietf.org/doc/draft-nottingham-binary-structured-
+   headers/ [4].
 
 Status of This Memo
 
    This Internet-Draft is submitted in full conformance with the
    provisions of BCP 78 and BCP 79.
-
-
-
-
-
-Nottingham               Expires April 28, 2020                 [Page 1]
-
-Internet-Draft       Binary Structured HTTP Headers         October 2019
-
 
    Internet-Drafts are working documents of the Internet Engineering
    Task Force (IETF).  Note that other groups may also distribute
@@ -68,7 +51,14 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on April 28, 2020.
+
+
+Nottingham                 Expires May 4, 2020                  [Page 1]
+
+Internet-Draft       Binary Structured HTTP Headers        November 2019
+
+
+   This Internet-Draft will expire on May 4, 2020.
 
 Copyright Notice
 
@@ -89,7 +79,7 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
-   2.  Binary Structured Types . . . . . . . . . . . . . . . . . . .   4
+   2.  Binary Structured Types . . . . . . . . . . . . . . . . . . .   3
      2.1.  Lists . . . . . . . . . . . . . . . . . . . . . . . . . .   4
        2.1.1.  Inner Lists . . . . . . . . . . . . . . . . . . . . .   4
        2.1.2.  Parameters  . . . . . . . . . . . . . . . . . . . . .   5
@@ -106,27 +96,27 @@ Table of Contents
      3.1.  Binary Structured Headers Setting . . . . . . . . . . . .   9
      3.2.  The BINHEADERS Frame  . . . . . . . . . . . . . . . . . .   9
    4.  Using Binary Structured Headers with Existing Fields  . . . .  10
-
-
-
-Nottingham               Expires April 28, 2020                 [Page 2]
-
-Internet-Draft       Binary Structured HTTP Headers         October 2019
-
-
      4.1.  Directly Represented Fields . . . . . . . . . . . . . . .  10
      4.2.  Aliased Fields  . . . . . . . . . . . . . . . . . . . . .  12
        4.2.1.  URLs  . . . . . . . . . . . . . . . . . . . . . . . .  13
        4.2.2.  Dates . . . . . . . . . . . . . . . . . . . . . . . .  13
        4.2.3.  ETags . . . . . . . . . . . . . . . . . . . . . . . .  14
        4.2.4.  Links . . . . . . . . . . . . . . . . . . . . . . . .  14
-       4.2.5.  Cookies . . . . . . . . . . . . . . . . . . . . . . .  14
+       4.2.5.  Cookies . . . . . . . . . . . . . . . . . . . . . . .  15
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  15
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
    7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  15
+
+
+
+Nottingham                 Expires May 4, 2020                  [Page 2]
+
+Internet-Draft       Binary Structured HTTP Headers        November 2019
+
+
      7.1.  Normative References  . . . . . . . . . . . . . . . . . .  15
      7.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .  16
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  16
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  17
 
 1.  Introduction
 
@@ -160,20 +150,11 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-
-
-
-
-
-Nottingham               Expires April 28, 2020                 [Page 3]
-
-Internet-Draft       Binary Structured HTTP Headers         October 2019
-
-
 2.  Binary Structured Types
 
-   This section defines a binary serialisation for the Structured Header
-   Types defined in [I-D.ietf-httpbis-header-structure].
+   This section defines a binary serialisation for each of the
+   Structured Header Types defined in
+   [I-D.ietf-httpbis-header-structure].
 
    Every Binary Structured Type starts with a 6-bit type field that
    defines the format of its payload:
@@ -182,9 +163,23 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    |T (6) | Payload (0...)
    +------+--+--------
 
+
+
+Nottingham                 Expires May 4, 2020                  [Page 3]
+
+Internet-Draft       Binary Structured HTTP Headers        November 2019
+
+
    Some Binary Structured Types have variable lengths; in these cases,
    the payload MUST have padding appended to align it with the next byte
    boundary.
+
+   Senders MUST set these padding bits as well as any explicitly
+   identified by a type as padding to 0; recipients MUST ignore their
+   values.
+
+   ISSUE: byte-align all types, or only the terminal one in a header
+   value? https://github.com/mnot/I-D/issues/306 [5]
 
 2.1.  Lists
 
@@ -216,19 +211,20 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
     Count (10)|  List members...
    --+--------+--------+---------
 
-
-
-
-
-
-Nottingham               Expires April 28, 2020                 [Page 4]
-
-Internet-Draft       Binary Structured HTTP Headers         October 2019
-
-
    Each member of the list will be represented as an Item (Section 2.3),
-   unless it cannot be represented; in these cases, the field value will
-   be serialised as a Textual Field Value (Section 2.4).
+   unless it cannot be represented; in these cases, the entire field
+   value will be serialised as a Textual Field Value (Section 2.4).
+
+   The inner list's parameters, if present, are serialised as the
+   Parameter type (Section 2.1.2), which will be followed by zero or
+   more types representing the parameters' payload.
+
+
+
+Nottingham                 Expires May 4, 2020                  [Page 4]
+
+Internet-Draft       Binary Structured HTTP Headers        November 2019
+
 
    Binary Structured Headers can represent inner lists with up to 1024
    members; fields containing more members will need to be serialised as
@@ -273,25 +269,25 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    field KL, followed by that many bytes of the member-name, followed by
    one or more Binary Structured Types representing the member-value.
 
-
-
-
-
-Nottingham               Expires April 28, 2020                 [Page 5]
-
-Internet-Draft       Binary Structured HTTP Headers         October 2019
-
-
    +--------+--------+---------
    |  KL(8) | member-name(*) member-value...
    +--------+--------+---------
+
+
+
+
+
+Nottingham                 Expires May 4, 2020                  [Page 5]
+
+Internet-Draft       Binary Structured HTTP Headers        November 2019
+
 
    member-values that are Items are represented as per Section 2.3;
    member-values that are inner-lists are represented as per
    Section 2.1.1.
 
-   If the dictionary cannot be represented, the field value will be
-   serialised as a Textual Field Value (Section 2.4).  In particular,
+   If the dictionary cannot be represented, the entire field value will
+   be serialised as a Textual Field Value (Section 2.4).  In particular,
    dictionaries with member-names longer than 256 characters cannot be
    represented as Binary Structured Types.
 
@@ -306,7 +302,7 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
    The item's parameters, if present, are serialised as the Parameter
    type (Section 2.1.2), which will be followed by zero or more types
-   representing the parameter payload.
+   representing the parameters' payload.
 
    Bare items are never followed by a Parameter type.
 
@@ -322,20 +318,24 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
    o  S - sign bit; 0 is negative, 1 is positive
 
-   o  X - 1 bit; discard
+   o  X - 1 bit of padding
 
    o  Integer - 50 bits, unsigned
 
    o  Pad - 6 bits
 
-   TODO: varint?
+   ISSUE: Should we use a varint? https://github.com/mnot/I-D/issues/304
+   [6].
 
 
 
 
-Nottingham               Expires April 28, 2020                 [Page 6]
+
+
+
+Nottingham                 Expires May 4, 2020                  [Page 6]
 
-Internet-Draft       Binary Structured HTTP Headers         October 2019
+Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
 2.3.2.  Floats
@@ -358,7 +358,8 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
    o  Fractional - 20 bits, unsigned integer
 
-   TODO: varint?
+   ISSUE: Should we use a varint? https://github.com/mnot/I-D/issues/304
+   [7].
 
 2.3.3.  Strings
 
@@ -373,7 +374,7 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    in length; fields containing longer values will need to be serialised
    as Textual Field Values (Section 2.4).
 
-   TODO: Huffman coding?
+   ISSUE: use Huffman coding? https://github.com/mnot/I-D/issues/305 [8]
 
 2.3.4.  Tokens
 
@@ -388,22 +389,22 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
 
 
-
-Nottingham               Expires April 28, 2020                 [Page 7]
+Nottingham                 Expires May 4, 2020                  [Page 7]
 
-Internet-Draft       Binary Structured HTTP Headers         October 2019
+Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
    Binary Structured Headers can represent Tokens up to 1024 characters
    in length; fields containing longer values will need to be serialised
    as Textual Field Values (Section 2.4).
 
-   TODO: Huffman coding?
+   ISSUE: use Huffman coding? https://github.com/mnot/I-D/issues/305 [9]
 
 2.3.5.  Byte Sequences
 
    The Byte Sequence data type (type=0x9) has a payload whose length is
-   indicated by its first 14 bits (as an unsigned integer):
+   indicated by its first 14 bits (as an unsigned integer), followed by
+   four bits of padding:
 
    --+--------+----+----+---------------------
    Length (14)     |XXXX|  Byte Sequence...
@@ -421,8 +422,8 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    BX|
    --+
 
-   If B is 0, the value is False; if B is 1, the value is True.  The
-   value of X is discarded.
+   If B is 0, the value is False; if B is 1, the value is True.  X is
+   padding.
 
 2.4.  Textual Field Values
 
@@ -444,13 +445,13 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
 
 
-
-Nottingham               Expires April 28, 2020                 [Page 8]
+Nottingham                 Expires May 4, 2020                  [Page 8]
 
-Internet-Draft       Binary Structured HTTP Headers         October 2019
+Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-   TODO: huffman coding?
+   ISSUE: use Huffman coding? https://github.com/mnot/I-D/issues/305
+   [10]
 
 3.  Using Binary Structured Headers in HTTP/2
 
@@ -496,18 +497,18 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    BINHEADERS Frame Type (0xTODO).
 
    The BINHEADERS Frame Type behaves and is represented exactly as a
-   HEADERS Frame type ([RFC7540], Section 6.2), with one exception; the
+   HEADERS Frame type ([RFC7540], Section 6.2), with one exception; any
 
 
 
-
-Nottingham               Expires April 28, 2020                 [Page 9]
+Nottingham                 Expires May 4, 2020                  [Page 9]
 
-Internet-Draft       Binary Structured HTTP Headers         October 2019
+Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
-   field values encoded in the Header Block Fragment as Literal Header
-   Field representations are Binary Structured Headers.
+   String Literal representations ([RFC7541], Section 5.2) encoded in
+   the Header Block Fragment have String Data that are Binary Structured
+   Headers.
 
    This means that a BINHEADERS frame can be converted to a HEADERS
    frame by converting the field values to the string representations of
@@ -553,14 +554,15 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    Structured Types, its value can instead be represented as a Textual
    Field Value (Section 2.4).
 
-   o  Accept - List
 
 
 
-Nottingham               Expires April 28, 2020                [Page 10]
+Nottingham                 Expires May 4, 2020                 [Page 10]
 
-Internet-Draft       Binary Structured HTTP Headers         October 2019
+Internet-Draft       Binary Structured HTTP Headers        November 2019
 
+
+   o  Accept - List
 
    o  Accept-Encoding - List
 
@@ -608,15 +610,15 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
    o  Forwarded - List
 
-   o  Host - Item
 
 
 
-
-Nottingham               Expires April 28, 2020                [Page 11]
+Nottingham                 Expires May 4, 2020                 [Page 11]
 
-Internet-Draft       Binary Structured HTTP Headers         October 2019
+Internet-Draft       Binary Structured HTTP Headers        November 2019
 
+
+   o  Host - Item
 
    o  Origin - Item
 
@@ -645,8 +647,6 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    converted into delta-seconds or serialised as a Textual Field Value
    (Section 2.4).
 
-   TODO: Accept and Content-Type media types use + in values.
-
 4.2.  Aliased Fields
 
    The following HTTP field names can have their values represented in
@@ -669,9 +669,9 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
 
 
-Nottingham               Expires April 28, 2020                [Page 12]
+Nottingham                 Expires May 4, 2020                 [Page 12]
 
-Internet-Draft       Binary Structured HTTP Headers         October 2019
+Internet-Draft       Binary Structured HTTP Headers        November 2019
 
 
    As with directly represented fields, if the intended value of an
@@ -687,6 +687,12 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
    Each field name listed below indicates a replacement field name and a
    way to map its value to Structured Headers.
+
+   ISSUE: using separate names assures that the different syntax doesn't
+   "leak" into normal headers, but it isn't strictly necessary if
+   implementations always convert back to the correct form when giving
+   it to peers or consuming software that doesn't understand this.
+   https://github.com/mnot/I-D/issues/307 [11]
 
 4.2.1.  URLs
 
@@ -717,18 +723,18 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
    o  Date - SH-Date
 
+
+
+Nottingham                 Expires May 4, 2020                 [Page 13]
+
+Internet-Draft       Binary Structured HTTP Headers        November 2019
+
+
    o  Expires - SH-Expires
 
    o  If-Modified-Since - SH-IMS
 
    o  If-Unmodified-Since - SH-IUS
-
-
-
-Nottingham               Expires April 28, 2020                [Page 13]
-
-Internet-Draft       Binary Structured HTTP Headers         October 2019
-
 
    o  Last-Modified - SH-LM
 
@@ -770,6 +776,16 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
    SH-Link: "/terms"; rel="copyright"; anchor="#foo"
 
+
+
+
+
+
+Nottingham                 Expires May 4, 2020                 [Page 14]
+
+Internet-Draft       Binary Structured HTTP Headers        November 2019
+
+
 4.2.5.  Cookies
 
    The field-value of the Cookie and Set-Cookie fields [RFC6265] can be
@@ -777,15 +793,6 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    and a Dictionary, respectively.  The serialisation is almost
    identical, except that the Expires parameter is always a string (as
    it can contain a comma), multiple cookie-strings can appear in Set-
-
-
-
-
-Nottingham               Expires April 28, 2020                [Page 14]
-
-Internet-Draft       Binary Structured HTTP Headers         October 2019
-
-
    Cookie, and cookie-pairs are delimited in Cookie by a comma, rather
    than a semicolon.
 
@@ -794,11 +801,12 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
    SH-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
    SH-Cookie: SID=31d4d96e407aad42, lang=en-US
 
-   TODO: explicitly convert Expires to an integer?
+   ISSUE: explicitly convert Expires to an integer?
+   https://github.com/mnot/I-D/issues/308 [12]
 
 5.  IANA Considerations
 
-   TODO
+   ISSUE: todo
 
 6.  Security Considerations
 
@@ -826,6 +834,14 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
+
+
+
+Nottingham                 Expires May 4, 2020                 [Page 15]
+
+Internet-Draft       Binary Structured HTTP Headers        November 2019
+
+
    [RFC6265]  Barth, A., "HTTP State Management Mechanism", RFC 6265,
               DOI 10.17487/RFC6265, April 2011,
               <https://www.rfc-editor.org/info/rfc6265>.
@@ -834,13 +850,6 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <https://www.rfc-editor.org/info/rfc7230>.
-
-
-
-Nottingham               Expires April 28, 2020                [Page 15]
-
-Internet-Draft       Binary Structured HTTP Headers         October 2019
-
 
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
@@ -861,13 +870,39 @@ Internet-Draft       Binary Structured HTTP Headers         October 2019
 
 7.2.  URIs
 
-   [1] https://github.com/mnot/I-D/labels/best
+   [1] https://github.com/mnot/I-D/labels/binary-structured-headers
 
-   [2] https://mnot.github.io/I-D/best/
+   [2] https://mnot.github.io/I-D/binary-structured-headers/
 
-   [3] https://github.com/mnot/I-D/commits/gh-pages/best
+   [3] https://github.com/mnot/I-D/commits/gh-pages/binary-structured-
+       headers
 
-   [4] https://datatracker.ietf.org/doc/draft-nottingham-best/
+   [4] https://datatracker.ietf.org/doc/draft-nottingham-binary-
+       structured-headers/
+
+   [5] https://github.com/mnot/I-D/issues/306
+
+   [6] https://github.com/mnot/I-D/issues/304
+
+   [7] https://github.com/mnot/I-D/issues/304
+
+   [8] https://github.com/mnot/I-D/issues/305
+
+   [9] https://github.com/mnot/I-D/issues/305
+
+
+
+
+Nottingham                 Expires May 4, 2020                 [Page 16]
+
+Internet-Draft       Binary Structured HTTP Headers        November 2019
+
+
+   [10] https://github.com/mnot/I-D/issues/305
+
+   [11] https://github.com/mnot/I-D/issues/307
+
+   [12] https://github.com/mnot/I-D/issues/308
 
 Author's Address
 
@@ -893,4 +928,25 @@ Author's Address
 
 
 
-Nottingham               Expires April 28, 2020                [Page 16]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham                 Expires May 4, 2020                 [Page 17]
