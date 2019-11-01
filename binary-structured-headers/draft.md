@@ -231,14 +231,14 @@ Parameters are always associated with the Binary Structured Type that immediatel
 ISSUE: use Huffman coding for parameter-name? <https://github.com/mnot/I-D/issues/305>
 
 
-## Item Payload Types {#inner-item}
+### Item Payload Types {#inner-item}
 
 Individual Structured Header Items can be represented using the Binary Payload Types defined below.
 
 The item's parameters, if present, are serialised in a following Parameter type ({{parameter}}); they do not form part of the payload of the item.
 
 
-### Integers
+#### Integers
 
 The Integer data type (type=0x3) has a payload in the format:
 
@@ -262,7 +262,7 @@ Its fields are:
 * Integer: Length octets
 
 
-### Floats
+#### Floats
 
 The Float data type (type=0x4) have a payload in the format:
 
@@ -298,7 +298,7 @@ Its fields are:
 * Fractional: FLength octets
 
 
-### Strings
+#### Strings
 
 The String data type (type=0x5) has a payload in the format:
 
@@ -317,7 +317,7 @@ Its fields are:
 ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
 
-### Tokens {#token}
+#### Tokens {#token}
 
 The Token data type (type=0x6) has a payload in the format:
 
@@ -336,7 +336,7 @@ Its fields are:
 ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
 
-### Byte Sequences
+#### Byte Sequences
 
 The Byte Sequence data type (type=0x7) has a payload in the format:
 
@@ -353,7 +353,7 @@ Its fields are:
 * Byte Sequence: L octets.
 
 
-### Booleans
+#### Booleans
 
 The Boolean data type (type=0x8) has a payload of two bits:
 
