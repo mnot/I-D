@@ -29,11 +29,7 @@ informative:
 
 --- abstract
 
-HTTP messages often pass through several systems -- clients, intermediaries, servers, and subsystems of each -- that parse and process their header and trailer fields as ASCII strings. This repeated parsing (and often re-serialisation) adds latency and consumes CPU, energy, and other resources.
-
-Structured Headers for HTTP defines a set of data types that new headers can use to express their semantics. This specification defines a binary serialisation of those types that is more efficient to process, along with a negotiation mechanism for its use in HTTP/2; specifically, in HPACK Literal Header Field Representations.
-
-It also defines how to use Structured Headers for many existing headers -- thereby "backporting" them -- when supported by two peers.
+This specification defines a binary serialisation of the types specified by Structured Headers for HTTP, along with a negotiation mechanism for its use in HTTP/2. It also defines how to use Structured Headers for many existing headers -- thereby "backporting" them -- when supported by two peers.
 
 
 --- note_Note_to_Readers
