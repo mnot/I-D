@@ -243,21 +243,14 @@ The Integer data type (type=0x3) has a payload in the format:
 ~~~
   5   6   7   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+---+---+---
-  S |   X   | Length (8+)
+  S |  Integer (2+)
 +---+---+---+---+---+---+---+---+---+---+---
-
-  0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---
-|  Integer (Length octets)
-+---+---+---+---+---+---+---+---
 ~~~
 
 Its fields are:
 
 * S: sign bit; 0 is negative, 1 is positive
-* X: 2 bits of padding
-* Length: The number of octets used to represent the integer, encoded as per {{!RFC7541}}, Section 5.1, with a 2-bit prefix
-* Integer: Length octets
+* Integer: The integer, encoded as per {{!RFC7541}}, Section 5.1, with a 2-bit prefix
 
 
 #### Floats
@@ -267,13 +260,8 @@ The Float data type (type=0x4) have a payload in the format:
 ~~~
   5   6   7   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+---+---+---
-  S |   X   | ILength (8+)
+  S |   Integer (2+)
 +---+---+---+---+---+---+---+---+---+---+---
-
-  0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---
-|  Integer (ILength octets)
-+---+---+---+---+---+---+---+---
 
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---
@@ -282,18 +270,15 @@ The Float data type (type=0x4) have a payload in the format:
 
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---
-|  Fractional (FLength octets)
+|  Fractional (8+)
 +---+---+---+---+---+---+---+---
 ~~~
 
 Its fields are:
 
 * S: sign bit; 0 is negative, 1 is positive
-* X: 2 bits of padding
-* ILength: The number of octets used to represent the integer component, encoded as per {{!RFC7541}}, Section 5.1, with a 2-bit prefix.
-* Integer - ILength octets
-* FLength: The number of octets used to represent the fractional component, encoded as per {{!RFC7541}}, Section 5.1, with a 2-bit prefix.
-* Fractional: FLength octets
+* Integer: The integer component, encoded as per {{!RFC7541}}, Section 5.1, with a 2-bit prefix.
+* Fractional: The fractional component, encoded as per {{!RFC7541}}, Section 5.1, with a 8-bit prefix.
 
 
 #### Strings
