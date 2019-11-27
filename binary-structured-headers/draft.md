@@ -426,24 +426,29 @@ When one of these fields' values cannot be represented using Structured Types, i
 * Alt-Svc - Dictionary
 * Alt-Used - Item
 * Cache-Control - Dictionary
+* Connection - List
 * Content-Encoding - Item
 * Content-Language - List
 * Content-Length - Item
 * Content-Type - Item
 * Expect - Item
+* Expect-CT - Dictionary
 * Forwarded - List
 * Host - Item
+* Keep-Alive - Dictionary
 * Origin - Item
 * Pragma - Dictionary
 * Prefer - Dictionary
 * Preference-Applied - Dictionary
 * Retry-After - Item  (see caveat below)
+* Strict-Transport-Security - Dictionary
 * Surrogate-Control - Dictionary
 * TE - List
 * Trailer - List
 * Transfer-Encoding - List
 * Vary - List
 * X-Content-Type-Options - Item
+* X-XSS-Protection - List
 
 Note that only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or serialised as a String Literal ({{literal}}).
 
