@@ -423,7 +423,7 @@ When one of these fields' values cannot be represented using Structured Types, i
 * Age - Item
 * Allow - List
 * ALPN - List
-* Alt-Svc - List
+* Alt-Svc - Dictionary
 * Alt-Used - Item
 * Cache-Control - Dictionary
 * Content-Encoding - Item
