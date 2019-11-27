@@ -38,10 +38,14 @@ normative:
     date: 2004-12-15
 
 informative:
-  BCP115:
-    target: https://tools.ietf.org/html/bcp115
+  BCP35:
+    target: https://tools.ietf.org/html/bcp35
     title: Guidelines and Registration Procedures for New URI Schemes
     author:
+     -
+        ins: D. Thaler
+        name: Dave Thaler
+        org: Microsoft
      -
         ins: T. Hansen
         name: Tony Hansen
@@ -49,16 +53,11 @@ informative:
      -
         ins: T. Hardie
         name: Ted Hardie
-        org: Qualcomm, Inc.
-     -
-        ins: L. Masinter
-        name: Larry Masinter
-        org: Adobe Systems
-    date: 2006-02
+        org: Google
+    date: 2015-06
     seriesinfo:
-      BCP: 115
-      RFC: 4395
-  W3C.REC-html401-19991224:
+      BCP: 35
+      RFC: 7595
 
 
 --- abstract
@@ -191,7 +190,7 @@ ought not preclude the use of other URI schemes in the future, unless they are c
 with the nominated schemes.
 
 A Specification that defines substructure for URI schemes overall (e.g., a prefix or suffix for URI
-scheme names) MUST do so by modifying {{BCP115}} (an exceptional circumstance).
+scheme names) MUST do so by modifying {{BCP35}} (an exceptional circumstance).
 
 
 ## URI Authorities
