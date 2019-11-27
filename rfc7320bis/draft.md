@@ -255,7 +255,7 @@ New form languages are encouraged to allow creation of a broader variety of URIs
 
 ## URI Fragment Identifiers
 
-Section 3.5 of {{RFC3986}} specifies fragment identiers' syntax and semantics as being dependent
+Section 3.5 of {{RFC3986}} specifies fragment identifiers' syntax and semantics as being dependent
 upon the media type of a potentially retrieved resource. As a result, other Specifications MUST NOT
 define structure within the fragment identifier, unless they are explicitly defining one for reuse
 by media types in their definitions (for example, as JSON Pointer {{?RFC6901}} does).
