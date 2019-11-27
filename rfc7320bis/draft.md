@@ -73,7 +73,7 @@ This document provides guidance on the specification of URI substructure in stan
 
 --- note_Note_to_Readers
 
-*RFC EDITOR: please remove this section before publication*
+*RFC EDITOR: please remove this section and the "URIs" section before the Appendices before publication*
 
 This is a proposed revision of RFC7320, aka BCP190. The -00 draft is a copy of the published RFC;
 subsequent revisions will update it.
