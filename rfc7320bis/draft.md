@@ -306,6 +306,10 @@ There are no direct IANA actions specified in this document.
 
 --- back
 
+# Changes from RFC7320
+
+Many of the requirements of RFC7320 were removed, in the spirit of making this BCP guidance, rather than rules.
+
 # Acknowledgments
 
 Thanks to David Booth, Dave Crocker, Tim Bray, Anne van Kesteren, Martin Thomson, Erik Wilde,
