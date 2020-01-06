@@ -122,7 +122,7 @@ detrimental effects:
 
 * Operational Difficulty - Supporting some URI conventions can be difficult in some
   implementations. For example, specifying that a particular query parameter be used with "HTTP"
-  URIs precludes the use of Web servers that serve the response from a filesystem. Likewise, an
+  URIs can preclude the use of Web servers that serve the response from a filesystem. Likewise, an
   application that fixes a base path for its operation (e.g., "/v1") makes it impossible to deploy
   other applications with the same prefix on the same host.
 
@@ -178,8 +178,8 @@ shown here.
 
 # Best Current Practices for Standardizing Structured URIs
 
-This section updates {{RFC3986}} by advising Specifications how they should define
-structure and semantics within URIs. Best practices differ depending on the URI component, as
+This section updates {{RFC3986}} by advising Specifications how they should define structure and
+semantics within URIs. Best practices differ depending on the URI component in question, as
 described below.
 
 ## URI Schemes
@@ -219,7 +219,7 @@ One such exception to this requirement is registered "well-known" URIs, as speci
 {{?RFC8615}}. See that document for a description of the applicability of that mechanism.
 
 Note that this does not apply to Applications defining a structure of URIs paths "under" a resource
-under control of the server. Because the prefix is under control of the party deploying the
+controlled by the server. Because the prefix is under control of the party deploying the
 application, collisions and rigidity are avoided, and the risk of erroneous client assumptions is
 reduced.
 
