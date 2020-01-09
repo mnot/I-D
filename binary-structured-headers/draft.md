@@ -433,7 +433,7 @@ When one of these fields' values cannot be represented using Structured Types, i
 * Content-Type - Item
 * Expect - Item
 * Expect-CT - Dictionary
-* Forwarded - List
+* Forwarded - Dictionary
 * Host - Item
 * Keep-Alive - Dictionary
 * Origin - Item
@@ -441,7 +441,6 @@ When one of these fields' values cannot be represented using Structured Types, i
 * Prefer - Dictionary
 * Preference-Applied - Dictionary
 * Retry-After - Item  (see caveat below)
-* Strict-Transport-Security - Dictionary
 * Surrogate-Control - Dictionary
 * TE - List
 * Trailer - List
@@ -557,6 +556,8 @@ SH-Cookie: SID=31d4d96e407aad42, lang=en-US
 ~~~
 
 ISSUE: explicitly convert Expires to an integer? <https://github.com/mnot/I-D/issues/308>
+ISSUE: dictionary keys cannot contain UC alpha. <https://github.com/mnot/I-D/issues/312>
+ISSUE: explicitly allow non-string content. <https://github.com/mnot/I-D/issues/313>
 
 # IANA Considerations
 
@@ -570,3 +571,63 @@ One mitigation to this risk is the strictness of parsing for both non-binary and
 
 
 --- back
+
+
+# Data Supporting Directly Represented Field Mappings
+
+*RFC EDITOR: please remove this section before publication*
+
+To help guide decisions about Directly Represented Fields, the HTTP response headers captured by the HTTP Archive <https://httparchive.org>, representing more than 400,000,000 HTTP exchanges, were parsed as Structured Headers using the types listed in {{direct}}, with the indicated number of successful header instances, failures, and the resulting failure rate:
+
+- accept: 10060 / 8 = 0%
+- accept-encoding: 37322 / 4 = 0%
+- accept-language: 216051 / 199 = 0%
+- accept-patch: 3 / 0 = 0%
+- accept-ranges: 277520850 / 240940 = 0%
+- access-control-allow-credentials: 17305094 / 16503 = 0%
+- access-control-allow-headers: 10829889 / 19028 = 0%
+- access-control-allow-methods: 15706123 / 12994 = 0%
+- access-control-allow-origin: 79694513 / 209447 = 0%
+- access-control-max-age: 5166126 / 9236 = 0%
+- access-control-request-headers: 48937 / 532 = 1%
+- access-control-request-method: 151702 / 12859 = 7%
+- age: 222024968 / 417140 = 0%
+- allow: 398227 / 567 = 0%
+- alt-svc: 26793600 / 1779280 = 6%
+- cache-control: 373807306 / 4119381 = 1%
+- connection: 188382722 / 244317 = 0%
+- content-encoding: 301904345 / 23368 = 0%
+- content-language: 152252635 / 81760 = 0%
+- content-length: 367973320 / 209032 = 0%
+- content-type: 398500045 / 432427 = 0%
+- expect: 0 / 1 = 100%
+- expect-ct: 26129601 / 30226 = 0%
+- forwarded: 0 / 82 = 100%
+- host: 23003 / 781 = 3%
+- keep-alive: 2 / 0 = 0%
+- origin: 27921 / 1677 = 5%
+- pragma: 219160866 / 890328 = 0%
+- preference-applied: 2 / 59 = 96%
+- retry-after: 680494 / 2832 = 0%
+- surrogate-control: 156370 / 736 = 0%
+- trailer: 1 / 0 = 0%
+- transfer-encoding: 127553768 / 458 = 0%
+- vary: 310245980 / 866776 = 0%
+- x-content-type-options: 94309348 / 608045 = 0%
+- x-xss-protection: 72910239 / 348566 = 0%
+
+Note that some failure rates are slightly raised because of a bug in the input data (see <https://discuss.httparchive.org/t/working-with-csv-dumps/1835>). This data set focuses on response headers, although some request headers are present (because, the Web).
+
+The top ten header fields in that data set that were not parsed as Directly Represented Fields are:
+
+- date: 515685
+- server: 476602
+- expires: 444122
+- last-modified: 438634
+- etag: 366327
+- location: 275145
+- x-powered-by: 273537
+- via: 246009
+- content-location: 135731
+- status: 118541
+
