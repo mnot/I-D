@@ -616,18 +616,25 @@ To help guide decisions about Directly Represented Fields, the HTTP response hea
 - x-content-type-options: 94309348 / 608045 = 0%
 - x-xss-protection: 72910239 / 348566 = 0%
 
-Note that some failure rates are slightly raised because of a bug in the input data (see <https://discuss.httparchive.org/t/working-with-csv-dumps/1835>). This data set focuses on response headers, although some request headers are present (because, the Web).
+This data set focuses on response headers, although some request headers are present (because, the Web).
+
+Some failure rates are slightly raised because of a bug in the input data (see <https://discuss.httparchive.org/t/working-with-csv-dumps/1835>).
+
+`preference-applied` has a high failure rate because of the occurence of '.' in keys (e.g., `odata.include-annotations`)
+
+`forwarded` has a high failure rate because many senders use the unquoted form for IP addresses, which makes integer parsing fail; e.g., `for=192.168.1.1`
 
 The top ten header fields in that data set that were not parsed as Directly Represented Fields are:
 
-- date: 515685
-- server: 476602
-- expires: 444122
-- last-modified: 438634
-- etag: 366327
-- location: 275145
-- x-powered-by: 273537
-- via: 246009
-- content-location: 135731
-- status: 118541
+- date: 405374834
+- server: 367671207
+- expires: 326515189
+- last-modified: 325777639
+- etag: 271541372
+- location: 180398510
+- via: 179060017
+- x-powered-by: 178075863
+- status: 169014311
+- content-location: 126069665
+
 
