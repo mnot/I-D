@@ -1,7 +1,7 @@
 ---
 title: Binary Structured HTTP Headers
 abbrev:
-docname: draft-nottingham-binary-structured-headers-00
+docname: draft-nottingham-binary-structured-headers-01
 date: {DATE}
 category: std
 
