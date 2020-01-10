@@ -602,7 +602,7 @@ To help guide decisions about Directly Represented Fields, the HTTP response hea
 - content-type: 398500045 / 432427 = 0%
 - expect: 0 / 1 = 100%
 - expect-ct: 26129601 / 30226 = 0%
-- forwarded: 0 / 82 = 100%
+- forwarded: 23 / 59 = 71%
 - host: 23003 / 781 = 3%
 - keep-alive: 2 / 0 = 0%
 - origin: 27921 / 1677 = 5%
