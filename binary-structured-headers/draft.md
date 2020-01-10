@@ -143,7 +143,7 @@ String Literals (type=0x4) are the string value of a header field; they are used
 
 Their payload is the octets of the field value.
 
-ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
+* ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
 
 
@@ -226,7 +226,7 @@ If the parameters cannot be represented, the entire field value will be serialis
 
 Parameters are always associated with the Binary Structured Type that immediately preceded them. If parameters are not explicitly allowed on the preceding type, or there is no preceding type, it is an error.
 
-ISSUE: use Huffman coding for parameter-name? <https://github.com/mnot/I-D/issues/305>
+* ISSUE: use Huffman coding for parameter-name? <https://github.com/mnot/I-D/issues/305>
 
 
 ### Item Payload Types {#inner-item}
@@ -297,7 +297,7 @@ Its fields are:
 * L: The number of octets used to represent the string, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix.
 * String: L octets.
 
-ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
+* ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
 
 #### Tokens {#token}
@@ -316,7 +316,7 @@ Its fields are:
 * L: The number of octets used to represent the token, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix.
 * Token: L octets.
 
-ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
+* ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
 
 #### Byte Sequences
@@ -474,7 +474,7 @@ Note that senders MUST know that the next-hop recipient understands these fields
 
 Each field name listed below indicates a replacement field name and a way to map its value to Structured Headers.
 
-ISSUE: using separate names assures that the different syntax doesn't "leak" into normal headers, but it isn't strictly necessary if implementations always convert back to the correct form when giving it to peers or consuming software that doesn't understand this. <https://github.com/mnot/I-D/issues/307>
+* ISSUE: using separate names assures that the different syntax doesn't "leak" into normal headers, but it isn't strictly necessary if implementations always convert back to the correct form when giving it to peers or consuming software that doesn't understand this. <https://github.com/mnot/I-D/issues/307>
 
 ### URLs
 
@@ -555,13 +555,13 @@ SH-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
 SH-Cookie: SID=31d4d96e407aad42, lang=en-US
 ~~~
 
-ISSUE: explicitly convert Expires to an integer? <https://github.com/mnot/I-D/issues/308>
-ISSUE: dictionary keys cannot contain UC alpha. <https://github.com/mnot/I-D/issues/312>
-ISSUE: explicitly allow non-string content. <https://github.com/mnot/I-D/issues/313>
+* ISSUE: explicitly convert Expires to an integer? <https://github.com/mnot/I-D/issues/308>
+* ISSUE: dictionary keys cannot contain UC alpha. <https://github.com/mnot/I-D/issues/312>
+* ISSUE: explicitly allow non-string content. <https://github.com/mnot/I-D/issues/313>
 
 # IANA Considerations
 
-ISSUE: todo
+* ISSUE: todo
 
 # Security Considerations
 
@@ -622,7 +622,7 @@ Some failure rates are slightly raised because of a bug in the input data (see <
 
 `preference-applied` has a high failure rate because of the occurence of '.' in keys (e.g., `odata.include-annotations`)
 
-`forwarded` has a high failure rate because many senders use the unquoted form for IP addresses, which makes integer parsing fail; e.g., `for=192.168.1.1`
+`forwarded` has a high failure rate because many senders use the unquoted form for IP addresses, which makes integer parsing fail; e.g., `for=192.168.1.1`.
 
 The top ten header fields in that data set that were not parsed as Directly Represented Fields are:
 
