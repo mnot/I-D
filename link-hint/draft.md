@@ -2,7 +2,7 @@
 title: HTTP Link Hints
 abbrev:
 docname: draft-nottingham-link-hint-02
-date: 2018
+date: 2020
 category: info
 
 ipr: trust200902
