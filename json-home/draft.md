@@ -58,11 +58,11 @@ A client can then decide which resources to interact with "on the fly" based upo
 
 Doing so can provide any of a number of benefits, including:
 
-* Extensibility - Because new server capabilities can be expressed as link relations, new features can be layered in without introducing a new API version; clients will discover them in the home document. This promotes loose coupling between clients and servers.
+* Extensibility - Because new server capabilities can be expressed as resources typed by link relations, new features can be layered in without introducing a new API version; clients will discover them in the home document. This promotes loose coupling between clients and servers.
 
 * Evolvability - Likewise, interfaces can change gradually by introducing a new link relation and/or format while still supporting the old ones.
 
-* Customisation - Home documents can be tailored for the client, allowing different classes of service or different client permissions to be exposed naturally.
+* Customisation - Home documents can be tailored for the client, allowing different classes of service or different client roles and permissions to be exposed naturally.
 
 * Flexible deployment - Since URLs aren't baked into documentation, the server can choose what URLs to use for a given service.
 
@@ -70,7 +70,7 @@ Doing so can provide any of a number of benefits, including:
 
 Whether an application ought to use links in this fashion depends on how it is deployed; generally, the most benefit will be received when multiple instances of the service are deployed, possibly with different versions, and they are consumed by clients with different capabilities. In particular, Internet Standards that use HTTP as a substrate are likely to require the attributes described above.
 
-This document defines a "home document" format using the JSON format {{!RFC7159}} for APIs to use as a launching point for the interactions they offer, using links. Having a well-defined format for this purpose promotes good practice and tooling.
+This document defines a "home document" format using the JSON format {{!RFC7159}} for APIs to use as a launching point for the interactions they offer, using links. Having a well-defined format for this purpose promotes good practice and development of tooling.
 
 
 ## Notational Conventions
