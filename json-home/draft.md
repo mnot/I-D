@@ -52,7 +52,7 @@ Often, these applications of HTTP are defined by documenting static URLs that cl
 
 For some applications, this approach brings issues, especially when the interface changes, either due to evolution, extension or drift between implementations. Furthermore, implementing more than one instance of interface can bring further issues, as different environments have different requirements.
 
-The Web itself offers one way to address these issues, using links {{!RFC3986}} to navigate between states. A link-driven application discovers relevant resources at run time, using a shared vocabulary of link relations {{!RFC5988}} and internet media types {{!RFC6838}} to support a "follow your nose" style of interaction -- just as a Web browser does to navigate the Web.
+The Web itself offers one way to address these issues, using links {{!RFC3986}} to navigate between states. A link-driven application discovers relevant resources at run time, using a shared vocabulary of link relations {{!RFC8288}} and internet media types {{!RFC6838}} to support a "follow your nose" style of interaction -- just as a Web browser does to navigate the Web.
 
 A client can then decide which resources to interact with "on the fly" based upon its capabilities (as described by link relations), and the server can safely add new resources and formats without disturbing clients that are not yet aware of them.
 
@@ -86,7 +86,7 @@ An API Home Document (or, interchangeably, "home document") uses the format desc
 
 Its content consists of a root object with:
 
-* A "resources" member, whose value is an object that describes the resources associated with the API. Its member names are link relation types (as defined by {{!RFC5988}}), and their values are Resource Objects ({{resource-object}}).
+* A "resources" member, whose value is an object that describes the resources associated with the API. Its member names are link relation types (as defined by {{!RFC8288}}), and their values are Resource Objects ({{resource-object}}).
 
 * Optionally, a "api" member, whose value is an API Object ({{api-object}}) that contains information about the API as a whole.
 
@@ -172,7 +172,7 @@ Two optional members are defined:
 
 * "title" has a string value indicating the name of the API;
 
-* "links" has an object value, whose member names are link relation types {{!RFC5988}}, and values
+* "links" has an object value, whose member names are link relation types {{!RFC8288}}, and values
   are URLs {{!RFC3986}}. The context of these links is the API home document as a whole.
 
 No links are required to be conveyed, but APIs might benefit from setting the following:
@@ -393,7 +393,7 @@ TBD
 
 ## Link Relation Type Registration
 
-This specification registers the "home" link relation type in the registry of link relation types {{!RFC5988}}.
+This specification registers the "home" link relation type in the registry of link relation types {{!RFC8288}}.
 
 * Relation Name: home
 * Description: Links to a "home document" resource that provides context and/or starting points for the context resource.
