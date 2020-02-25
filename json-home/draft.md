@@ -22,21 +22,9 @@ author:
     uri: https://www.mnot.net/
 
 normative:
-  RFC2119:
-  RFC3986:
-  RFC5226:
-  RFC5988:
-  RFC6570:
-  RFC7159:
-  RFC7234:
 
 informative:
-  RFC5789:
-  RFC6838:
-  RFC7232:
-  RFC7233:
-  RFC7235:
-  RFC7240:
+
 
 --- abstract
 
@@ -56,7 +44,7 @@ For information about implementations, see <https://github.com/mnot/I-D/wiki/jso
 
 # Introduction
 
-It is becoming increasingly common to use HTTP {{RFC7230}} for applications other than traditional Web browsing. Such "HTTP APIs" are used to integrate processes on disparate systems, make information available to machines across the Internet, and as part of the implementation of "microservices."
+It is becoming increasingly common to use HTTP {{!RFC7230}} for applications other than traditional Web browsing. Such "HTTP APIs" are used to integrate processes on disparate systems, make information available to machines across the Internet, and as part of the implementation of "microservices."
 
 By using HTTP, these applications realise a number of benefits, from message framing to caching, and well-defined semantics that are broadly understood and useful.
 
@@ -64,7 +52,7 @@ Often, these applications of HTTP are defined by documenting static URLs that cl
 
 For some applications, this approach brings issues, especially when the interface changes, either due to evolution, extension or drift between implementations. Furthermore, implementing more than one instance of interface can bring further issues, as different environments have different requirements.
 
-The Web itself offers one way to address these issues, using links {{RFC3986}} to navigate between states. A link-driven application discovers relevant resources at run time, using a shared vocabulary of link relations {{RFC5988}} and internet media types {{RFC6838}} to support a "follow your nose" style of interaction -- just as a Web browser does to navigate the Web.
+The Web itself offers one way to address these issues, using links {{!RFC3986}} to navigate between states. A link-driven application discovers relevant resources at run time, using a shared vocabulary of link relations {{!RFC5988}} and internet media types {{!RFC6838}} to support a "follow your nose" style of interaction -- just as a Web browser does to navigate the Web.
 
 A client can then decide which resources to interact with "on the fly" based upon its capabilities (as described by link relations), and the server can safely add new resources and formats without disturbing clients that are not yet aware of them.
 
@@ -82,23 +70,23 @@ Doing so can provide any of a number of benefits, including:
 
 Whether an application ought to use links in this fashion depends on how it is deployed; generally, the most benefit will be received when multiple instances of the service are deployed, possibly with different versions, and they are consumed by clients with different capabilities. In particular, Internet Standards that use HTTP as a substrate are likely to require the attributes described above.
 
-This document defines a "home document" format using the JSON format {{RFC7159}} for APIs to use as a launching point for the interactions they offer, using links. Having a well-defined format for this purpose promotes good practice and tooling.
+This document defines a "home document" format using the JSON format {{!RFC7159}} for APIs to use as a launching point for the interactions they offer, using links. Having a well-defined format for this purpose promotes good practice and tooling.
 
 
 ## Notational Conventions
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in {{RFC2119}}.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in {{!RFC2119}}.
 
 
 # API Home Documents
 
-An API Home Document (or, interchangeably, "home document") uses the format described in {{RFC7159}} and has the media type "application/json-home".
+An API Home Document (or, interchangeably, "home document") uses the format described in {{!RFC7159}} and has the media type "application/json-home".
 
 **Note: this media type is not final, and will change before final publication.**
 
 Its content consists of a root object with:
 
-* A "resources" member, whose value is an object that describes the resources associated with the API. Its member names are link relation types (as defined by {{RFC5988}}), and their values are Resource Objects ({{resource-object}}).
+* A "resources" member, whose value is an object that describes the resources associated with the API. Its member names are link relation types (as defined by {{!RFC5988}}), and their values are Resource Objects ({{resource-object}}).
 
 * Optionally, a "api" member, whose value is an API Object ({{api-object}}) that contains information about the API as a whole.
 
@@ -146,9 +134,9 @@ For example:
 
 Here, we have a home document for the API "Example API", whose author can be contacted at the e-mail address "api-admin@example.com", and whose documentation is at "https://example.com/api-docs/".
 
-It links to a resource "/widgets/" with the relation "tag:me@example.com,2016:widgets". It also links to an unknown number of resources with the relation type "tag:me@example.com,2016:widget" using a URI Template {{RFC6570}}, along with a mapping of identifiers to a variable for use in that template.
+It links to a resource "/widgets/" with the relation "tag:me@example.com,2016:widgets". It also links to an unknown number of resources with the relation type "tag:me@example.com,2016:widget" using a URI Template {{!RFC6570}}, along with a mapping of identifiers to a variable for use in that template.
 
-It also gives several hints about interacting with the latter "widget" resources, including the HTTP methods usable with them, the PATCH and POST formats they accept, and the fact that they support partial requests {{RFC7233}} using the "bytes" range-specifier.
+It also gives several hints about interacting with the latter "widget" resources, including the HTTP methods usable with them, the PATCH and POST formats they accept, and the fact that they support partial requests {{!RFC7233}} using the "bytes" range-specifier.
 
 It gives no such hints about the "widgets" resource. This does not mean that it (for example) doesn't support any HTTP methods; it means that the client will need to discover this by interacting with the resource, and/or examining the documentation for its link relation type.
 
@@ -184,8 +172,8 @@ Two optional members are defined:
 
 * "title" has a string value indicating the name of the API;
 
-* "links" has an object value, whose member names are link relation types {{RFC5988}}, and values
-  are URLs {{RFC3986}}. The context of these links is the API home document as a whole.
+* "links" has an object value, whose member names are link relation types {{!RFC5988}}, and values
+  are URLs {{!RFC3986}}. The context of these links is the API home document as a whole.
 
 No links are required to be conveyed, but APIs might benefit from setting the following:
 
@@ -200,19 +188,19 @@ Future members of the API Object MAY be defined by specifications that update th
 
 A Resource Object links to resources of the type indicated in their name using one of two mechanisms; either a direct link (in which case there is exactly one resource of that relation type associated with the API), or a templated link, in which case there are zero to many such resources.
 
-Direct links are indicated with an "href" property, whose value is a URI {{RFC3986}}.
+Direct links are indicated with an "href" property, whose value is a URI {{!RFC3986}}.
 
-Templated links are indicated with an "hrefTemplate" property, whose value is a URI Template {{RFC6570}}. When "hrefTemplate" is present, the Resource Object MUST have a "hrefVars" property; see "Resolving Templated Links".
+Templated links are indicated with an "hrefTemplate" property, whose value is a URI Template {{!RFC6570}}. When "hrefTemplate" is present, the Resource Object MUST have a "hrefVars" property; see "Resolving Templated Links".
 
 Resource Objects MUST have exactly one of the "href" or "href-vars" properties.
 
-In both forms, the links that "href" and "hrefTemplate" refer to are URI-references {{RFC3986}} whose base URI is that of the API Home Document itself.
+In both forms, the links that "href" and "hrefTemplate" refer to are URI-references {{!RFC3986}} whose base URI is that of the API Home Document itself.
 
 Resource Objects MAY also have a "hints" property, whose value is an object that uses named Resource Hints (see {{resource_hints}}) as its properties.
 
 ## Resolving Templated Links
 
-A URI can be derived from a Templated Link by treating the "hrefTemplate" value as a Level 3 URI Template {{RFC6570}}, using the "hrefVars" property to fill the template.
+A URI can be derived from a Templated Link by treating the "hrefTemplate" value as a Level 3 URI Template {{!RFC6570}}, using the "hrefVars" property to fill the template.
 
 The "hrefVars" property, in turn, is an object that acts as a mapping between variable names available to the template and absolute URIs that are used as global identifiers for the semantics and syntax of those variables.
 
@@ -267,7 +255,7 @@ Content MUST be an object, whose keys are media types, and values are objects, c
 ## acceptPatch
 
 * Resource Hint Name: accept-Patch
-* Description: Hints the PATCH {{RFC5789}} request formats accepted by the resource for this client; equivalent to the Accept-Patch HTTP response header.
+* Description: Hints the PATCH {{!RFC5789}} request formats accepted by the resource for this client; equivalent to the Accept-Patch HTTP response header.
 * Specification: [this document]
 
 Content MUST be an array of strings, containing media types.
@@ -297,7 +285,7 @@ When this hint is present, "PUT" SHOULD be listed in the "allow" hint.
 ## acceptRanges
 
 * Resource Hint Name: acceptRanges
-* Description: Hints the range-specifiers available to the client for this resource; equivalent to the Accept-Ranges HTTP response header {{RFC7233}}.
+* Description: Hints the range-specifiers available to the client for this resource; equivalent to the Accept-Ranges HTTP response header {{!RFC7233}}.
 * Specification: [this document]
 
 Content MUST be an array of strings, containing HTTP range-specifiers (typically, "bytes").
@@ -305,7 +293,7 @@ Content MUST be an array of strings, containing HTTP range-specifiers (typically
 ## acceptPrefer
 
 * Resource Hint Name: acceptPrefer
-* Description: Hints the preferences {{RFC7240}} supported by the resource. Note that, as per that specifications, a preference can be ignored by the server.
+* Description: Hints the preferences {{!RFC7240}} supported by the resource. Note that, as per that specifications, a preference can be ignored by the server.
 * Specification: [this document]
 
 Content MUST be an array of strings, containing preferences.
@@ -316,12 +304,12 @@ Content MUST be an array of strings, containing preferences.
 * Description: Hints the location for human-readable documentation for the relation type of the resource.
 * Specification: [this document]
 
-Content MUST be a string containing an absolute-URI {{RFC3986}} referring to documentation that SHOULD be in HTML format.
+Content MUST be a string containing an absolute-URI {{!RFC3986}} referring to documentation that SHOULD be in HTML format.
 
 ## preconditionRequired
 
 * Resource Hint Name: preconditionRequired
-* Description: Hints that the resource requires state-changing requests (e.g., PUT, PATCH) to include a precondition, as per {{RFC7232}}, to avoid conflicts due to concurrent updates.
+* Description: Hints that the resource requires state-changing requests (e.g., PUT, PATCH) to include a precondition, as per {{!RFC7232}}, to avoid conflicts due to concurrent updates.
 * Specification: [this document]
 
 Content MUST be an array of strings, with possible values "etag" and "last-modified" indicating type of precondition expected.
@@ -329,7 +317,7 @@ Content MUST be an array of strings, with possible values "etag" and "last-modif
 ## authSchemes
 
 * Resource Hint Name: authSchemes
-* Description: Hints that the resource requires authentication using the HTTP Authentication Framework {{RFC7235}}.
+* Description: Hints that the resource requires authentication using the HTTP Authentication Framework {{!RFC7235}}.
 * Specification: [this document]
 
 Content MUST be an array of objects, each with a "scheme" property containing a string that corresponds to a HTTP authentication scheme, and optionally a "realms" property containing an array of zero to many strings that identify protection spaces that the resource is a member of.
@@ -388,9 +376,9 @@ In particular, resource hints are generic; that is, they are potentially applica
 
 Hint names MUST be composed of the lowercase letters (a-z), digits (0-9), underscores ("_") and hyphens ("-"), and MUST begin with a lowercase letter.
 
-Hint content SHOULD be described in terms of JSON {{RFC7159}} constructs.
+Hint content SHOULD be described in terms of JSON {{!RFC7159}} constructs.
 
-New hints are registered using the Expert Review process described in {{RFC5226}} to enforce the criteria above. Requests for registration of new resource hints are to use the following template:
+New hints are registered using the Expert Review process described in {{?RFC5226}} to enforce the criteria above. Requests for registration of new resource hints are to use the following template:
 
 * Resource Hint Name: [hint name]
 * Description: [a short description of the hint's semantics]
@@ -405,7 +393,7 @@ TBD
 
 ## Link Relation Type Registration
 
-This specification registers the "home" link relation type in the registry of link relation types {{RFC5988}}.
+This specification registers the "home" link relation type in the registry of link relation types {{!RFC5988}}.
 
 * Relation Name: home
 * Description: Links to a "home document" resource that provides context and/or starting points for the context resource.
@@ -461,9 +449,9 @@ Clients might use home documents in a variety of ways.
 
 In the most common case -- actually consuming the API -- the client will scan the Resources Object for the link relation(s) that it is interested in, and then to interact with the resource(s) referred to. Resource Hints can be used to optimize communication with the client, as well as to inform as to the permissible actions (e.g., whether PUT is likely to be supported).
 
-Note that the home document is a "living" document; it does not represent a "contract", but rather is expected to be inspected before each interaction. In particular, links from the home document MUST NOT be assumed to be valid beyond the freshness lifetime of the home document, as per HTTP's caching model {{RFC7234}}.
+Note that the home document is a "living" document; it does not represent a "contract", but rather is expected to be inspected before each interaction. In particular, links from the home document MUST NOT be assumed to be valid beyond the freshness lifetime of the home document, as per HTTP's caching model {{!RFC7234}}.
 
-As a result, clients ought to cache the home document (as per {{RFC7234}}), to avoid fetching it before every interaction (which would otherwise be required).
+As a result, clients ought to cache the home document (as per {{!RFC7234}}), to avoid fetching it before every interaction (which would otherwise be required).
 
 Likewise, a client encountering a 404 (Not Found) on a link is encouraged obtain a fresh copy of the home document, to assure that it is up-to-date.
 
