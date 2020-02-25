@@ -82,13 +82,13 @@ shown here.
 
 # API Home Documents
 
-An API Home Document (or, interchangeably, "home document") uses the format described in {{!RFC7159}} and has the media type "application/json-home".
+An API Home Document (or "home document") uses the format described in {{!RFC7159}} and has the media type "application/json-home".
 
 **Note: this media type is not final, and will change before final publication.**
 
 Its content consists of a root object with:
 
-* A "resources" member, whose value is an object that describes the resources associated with the API. Its member names are link relation types (as defined by {{!RFC8288}}), and their values are Resource Objects ({{resource-object}}).
+* A "resources" member, whose value is an object that describes the resources of the API. Its member names are link relation types (as defined by {{!RFC8288}}), and their values are Resource Objects ({{resource-object}}).
 
 * Optionally, a "api" member, whose value is an API Object ({{api-object}}) that contains information about the API as a whole.
 
