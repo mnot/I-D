@@ -628,15 +628,15 @@ Some failure rates are slightly raised because of a bug in the input data (see <
 
 The top ten header fields in that data set that were not parsed as Directly Represented Fields are:
 
-- date: 405374834
-- server: 367671207
-- expires: 326515189
-- last-modified: 325777639
-- etag: 271541372
-- location: 180398510
-- via: 179060017
-- x-powered-by: 178075863
-- status: 169014311
-- content-location: 126069665
+- date: 355875872
+- server: 320813814
+- last-modified: 285968077
+- expires: 280063578
+- etag: 231886257
+- status: 163584320
+- location: 152562226
+- x-powered-by: 151558433
+- via: 147854102
+- content-location: 1013889892
 
 
