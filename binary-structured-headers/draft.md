@@ -579,60 +579,63 @@ One mitigation to this risk is the strictness of parsing for both non-binary and
 
 To help guide decisions about Directly Represented Fields, the HTTP response headers captured by the HTTP Archive <https://httparchive.org> in February 2020, representing more than 400,000,000 HTTP exchanges, were parsed as Structured Headers using the types listed in {{direct}}, with the indicated number of successful header instances, failures, and the resulting failure rate:
 
-- accept: 8462 / 10 = 0.118%
-- accept-encoding: 33511 / 1 = 0.003%
-- accept-language: 147032 / 211 = 0.143%
-- accept-patch: 4 / 0 = 0.000%
-- accept-ranges: 239183008 / 4063 = 0.002%
-- access-control-allow-credentials: 15452549 / 7176 = 0.046%
-- access-control-allow-headers: 10172752 / 12046 = 0.118%
-- access-control-allow-methods: 14596099 / 15082 = 0.103%
-- access-control-allow-origin: 84017233 / 142777 = 0.170%
-- access-control-max-age: 4833121 / 7350 = 0.152%
-- access-control-request-headers: 38377 / 621 = 1.592%
-- access-control-request-method: 135166 / 12655 = 8.561%
-- age: 196336203 / 443626 = 0.225%
-- allow: 326637 / 1680 = 0.512%
-- alt-svc: 30361736 / 934592 = 2.986%
-- cache-control: 330228172 / 1181096 = 0.356%
-- connection: 154566237 / 3197 = 0.002%
-- content-encoding: 261500212 / 25217 = 0.010%
-- content-language: 122255282 / 39366 = 0.032%
-- content-length: 318928017 / 804074 = 0.251%
-- content-type: 348946684 / 828392 = 0.237%
+- accept: 9201 / 10 = 0.109%
+- accept-encoding: 34158 / 74 = 0.216%
+- accept-language: 381037 / 512 = 0.134%
+- accept-patch: 5 / 0 = 0.000%
+- accept-ranges: 197759320 / 3960 = 0.002%
+- access-control-allow-credentials: 16687349 / 7357 = 0.044%
+- access-control-allow-headers: 13008501 / 15317 = 0.118%
+- access-control-allow-methods: 15469948 / 28203 = 0.182%
+- access-control-allow-origin: 105326450 / 268180 = 0.254%
+- access-control-max-age: 5287263 / 7749 = 0.146%
+- access-control-request-headers: 39340 / 624 = 1.561%
+- access-control-request-method: 146566 / 13822 = 8.618%
+- age: 71292543 / 168572 = 0.236%
+- allow: 351707 / 1886 = 0.533%
+- alt-svc: 19777530 / 18743564 = 48.658%
+- cache-control: 264666902 / 946441 = 0.356%
+- connection: 105884722 / 2915 = 0.003%
+- content-encoding: 139812089 / 379 = 0.000%
+- content-language: 2368918 / 728 = 0.031%
+- content-length: 296649810 / 787897 = 0.265%
+- content-type: 341948523 / 794873 = 0.232%
 - expect: 0 / 47 = 100.000%
-- expect-ct: 26580864 / 14596 = 0.055%
-- forwarded: 119 / 34 = 22.222%
-- host: 19105 / 578 = 2.937%
-- keep-alive: 1 / 0 = 0.000%
-- origin: 22367 / 1372 = 5.780%
-- pragma: 185817938 / 539116 = 0.289%
-- preference-applied: 53 / 0 = 0.000%
-- retry-after: 601689 / 1490 = 0.247%
-- strict-transport-security: 20061542 / 27385877 = 57.718%
-- surrogate-control: 115494 / 596 = 0.513%
+- expect-ct: 26573905 / 29117 = 0.109%
+- forwarded: 119 / 35 = 22.727%
+- host: 25335 / 1441 = 5.382%
+- origin: 24336 / 1539 = 5.948%
+- pragma: 46827330 / 81849 = 0.174%
+- preference-applied: 57 / 0 = 0.000%
+- retry-after: 605926 / 6194 = 1.012%
+- strict-transport-security: 26826044 / 35266879 = 56.797%
+- surrogate-control: 121124 / 861 = 0.706%
 - te: 1 / 0 = 0.000%
-- trailer: 46 / 0 = 0.000%
-- transfer-encoding: 118941858 / 10 = 0.000%
-- vary: 268079259 / 62880 = 0.023%
-- x-content-type-options: 88153449 / 194250 = 0.220%
-- x-xss-protection: 65718231 / 341872 = 0.518%
+- trailer: 282 / 0 = 0.000%
+- transfer-encoding: 13953547 / 0 = 0.000%
+- vary: 150804591 / 42628 = 0.028%
+- x-content-type-options: 99982040 / 204085 = 0.204%
+- x-xss-protection: 79878788 / 362990 = 0.452%
 
 This data set focuses on response headers, although some request headers are present (because, the Web).
 
+`alt-svc` has a high failure rate because some currently-used ALPN tokens (e.g., `h3-Q43`) do not conform to key's syntax. Since the final version of HTTP/3 will use the `h3` token, this shouldn't be a long-term issue, although future tokens may again violate this assumption.
+
 `forwarded` has a high failure rate because many senders use the unquoted form for IP addresses, which makes integer parsing fail; e.g., `for=192.168.1.1`.
+
+`strict-transport-security` has a high failure rate because the `includeSubDomains` flag does not conform to the key syntax.
 
 The top ten header fields in that data set that were not parsed as Directly Represented Fields are:
 
-- date: 355875872
-- server: 320813814
-- last-modified: 285968077
-- expires: 280063578
-- etag: 231886257
-- status: 163584320
-- location: 152562226
-- x-powered-by: 151558433
-- via: 147854102
-- content-location: 1013889892
+- date: 354682928
+- server: 311299353
+- last-modified: 263851525
+- expires: 199990486
+- status: 192439616
+- etag: 172075240
+- timing-allow-origin: 64413795
+- x-cache: 41743980
+- p3p: 39518705
+- x-frame-options: 34045384
 
 
