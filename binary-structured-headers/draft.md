@@ -577,7 +577,7 @@ One mitigation to this risk is the strictness of parsing for both non-binary and
 
 *RFC EDITOR: please remove this section before publication*
 
-To help guide decisions about Directly Represented Fields, the HTTP response headers captured by the HTTP Archive <https://httparchive.org>, representing more than 400,000,000 HTTP exchanges, were parsed as Structured Headers using the types listed in {{direct}}, with the indicated number of successful header instances, failures, and the resulting failure rate:
+To help guide decisions about Directly Represented Fields, the HTTP response headers captured by the HTTP Archive <https://httparchive.org> in February 2020, representing more than 400,000,000 HTTP exchanges, were parsed as Structured Headers using the types listed in {{direct}}, with the indicated number of successful header instances, failures, and the resulting failure rate:
 
 - accept: 8462 / 10 = 0.118%
 - accept-encoding: 33511 / 1 = 0.003%
@@ -619,10 +619,6 @@ To help guide decisions about Directly Represented Fields, the HTTP response hea
 - x-xss-protection: 65718231 / 341872 = 0.518%
 
 This data set focuses on response headers, although some request headers are present (because, the Web).
-
-Some failure rates are slightly raised because of a bug in the input data (see <https://discuss.httparchive.org/t/working-with-csv-dumps/1835>).
-
-`preference-applied` has a high failure rate because of the occurence of '.' in keys (e.g., `odata.include-annotations`)
 
 `forwarded` has a high failure rate because many senders use the unquoted form for IP addresses, which makes integer parsing fail; e.g., `for=192.168.1.1`.
 
