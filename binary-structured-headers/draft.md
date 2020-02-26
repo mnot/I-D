@@ -427,7 +427,7 @@ When one of these fields' values cannot be represented using Structured Types, i
 * Alt-Used - Item
 * Cache-Control - Dictionary
 * Connection - List
-* Content-Encoding - Item
+* Content-Encoding - List
 * Content-Language - List
 * Content-Length - Item
 * Content-Type - Item
