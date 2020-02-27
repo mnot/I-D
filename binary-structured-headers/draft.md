@@ -577,44 +577,44 @@ One mitigation to this risk is the strictness of parsing for both non-binary and
 
 *RFC EDITOR: please remove this section before publication*
 
-To help guide decisions about Directly Represented Fields, the HTTP response headers captured by the HTTP Archive <https://httparchive.org> in February 2020, representing more than 400,000,000 HTTP exchanges, were parsed as Structured Headers using the types listed in {{direct}}, with the indicated number of successful header instances, failures, and the resulting failure rate:
+To help guide decisions about Directly Represented Fields, the HTTP response headers captured by the HTTP Archive <https://httparchive.org> in February 2020, representing more than 350,000,000 HTTP exchanges, were parsed as Structured Headers using the types listed in {{direct}}, with the indicated number of successful header instances, failures, and the resulting failure rate:
 
 - accept: 9201 / 10 = 0.109%
 - accept-encoding: 34158 / 74 = 0.216%
 - accept-language: 381037 / 512 = 0.134%
 - accept-patch: 5 / 0 = 0.000%
 - accept-ranges: 197759320 / 3960 = 0.002%
-- access-control-allow-credentials: 16687349 / 7357 = 0.044%
+- access-control-allow-credentials: 16692270 / 2436 = 0.015%
 - access-control-allow-headers: 13008501 / 15317 = 0.118%
 - access-control-allow-methods: 15469948 / 28203 = 0.182%
-- access-control-allow-origin: 105326450 / 268180 = 0.254%
-- access-control-max-age: 5287263 / 7749 = 0.146%
+- access-control-allow-origin: 105462779 / 131851 = 0.125%
+- access-control-max-age: 5287424 / 7588 = 0.143%
 - access-control-request-headers: 39340 / 624 = 1.561%
 - access-control-request-method: 146566 / 13822 = 8.618%
-- age: 71292543 / 168572 = 0.236%
+- age: 71292663 / 168452 = 0.236%
 - allow: 351707 / 1886 = 0.533%
 - alt-svc: 19777530 / 18743564 = 48.658%
-- cache-control: 264666902 / 946441 = 0.356%
+- cache-control: 264666876 / 946434 = 0.356%
 - connection: 105884722 / 2915 = 0.003%
 - content-encoding: 139812089 / 379 = 0.000%
-- content-language: 2368918 / 728 = 0.031%
+- content-language: 2368912 / 728 = 0.031%
 - content-length: 296649810 / 787897 = 0.265%
-- content-type: 341948523 / 794873 = 0.232%
+- content-type: 341978677 / 764712 = 0.223%
 - expect: 0 / 47 = 100.000%
 - expect-ct: 26573905 / 29117 = 0.109%
 - forwarded: 119 / 35 = 22.727%
-- host: 25335 / 1441 = 5.382%
-- origin: 24336 / 1539 = 5.948%
-- pragma: 46827330 / 81849 = 0.174%
+- host: 25433 / 1343 = 5.016%
+- origin: 24339 / 1536 = 5.936%
+- pragma: 46826446 / 81707 = 0.174%
 - preference-applied: 57 / 0 = 0.000%
-- retry-after: 605926 / 6194 = 1.012%
+- retry-after: 605928 / 6192 = 1.012%
 - strict-transport-security: 26826044 / 35266879 = 56.797%
 - surrogate-control: 121124 / 861 = 0.706%
 - te: 1 / 0 = 0.000%
 - trailer: 282 / 0 = 0.000%
 - transfer-encoding: 13953547 / 0 = 0.000%
-- vary: 150804591 / 42628 = 0.028%
-- x-content-type-options: 99982040 / 204085 = 0.204%
+- vary: 150802211 / 41317 = 0.027%
+- x-content-type-options: 99997237 / 188888 = 0.189%
 - x-xss-protection: 79878788 / 362990 = 0.452%
 
 This data set focuses on response headers, although some request headers are present (because, the Web).
@@ -627,15 +627,16 @@ This data set focuses on response headers, although some request headers are pre
 
 The top ten header fields in that data set that were not parsed as Directly Represented Fields are:
 
-- date: 354682928
-- server: 311299353
-- last-modified: 263851525
-- expires: 199990486
+- date: 354682923
+- server: 311299092
+- last-modified: 263851521
+- expires: 199985746
 - status: 192439616
-- etag: 172075240
+- etag: 172071631
 - timing-allow-origin: 64413795
 - x-cache: 41743980
 - p3p: 39518705
 - x-frame-options: 34045384
+
 
 
