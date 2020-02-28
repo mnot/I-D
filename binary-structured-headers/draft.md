@@ -625,6 +625,8 @@ This data set focuses on response headers, although some request headers are pre
 
 `strict-transport-security` has a high failure rate because the `includeSubDomains` flag does not conform to the key syntax.
 
+The most common problem causing failure for many other headers is duplicated values; e.g., a Content-Length with `2, 2`.
+
 The top ten header fields in that data set that were not parsed as Directly Represented Fields are:
 
 - date: 354682923
