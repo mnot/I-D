@@ -66,7 +66,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
 shown here.
 
-This document uses ABNF {{!RFC5234}}, including by reference the following rules: ALPHA, DIGIT. It also uses the pchar rule from {{!RFC3986}}.
+This document uses ABNF {{!RFC5234}}. It also uses the pchar rule from {{!RFC3986}}.
 
 
 # The secret-token URI scheme
