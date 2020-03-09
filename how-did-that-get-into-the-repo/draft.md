@@ -1,7 +1,7 @@
 ---
 title: The secret-token URI Scheme
 abbrev:
-docname: draft-nottingham-how-did-that-get-into-the-repo-01
+docname: draft-nottingham-how-did-that-get-into-the-repo-02
 date: 2019
 category: info
 
