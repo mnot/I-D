@@ -579,44 +579,44 @@ One mitigation to this risk is the strictness of parsing for both non-binary and
 
 To help guide decisions about Directly Represented Fields, the HTTP response headers captured by the HTTP Archive <https://httparchive.org> in February 2020, representing more than 350,000,000 HTTP exchanges, were parsed as Structured Headers using the types listed in {{direct}}, with the indicated number of successful header instances, failures, and the resulting failure rate:
 
-- accept: 9,201 / 10 = 0.109%
-- accept-encoding: 34,158 / 74 = 0.216%
-- accept-language: 381,037 / 512 = 0.134%
+- accept: 9,198 / 10 = 0.109%
+- accept-encoding: 34,157 / 74 = 0.216%
+- accept-language: 381,034 / 512 = 0.134%
 - accept-patch: 5 / 0 = 0.000%
-- accept-ranges: 197,759,320 / 3,960 = 0.002%
-- access-control-allow-credentials: 16,687,349 / 7,357 = 0.044%
-- access-control-allow-headers: 12,979,869 / 14,960 = 0.115%
-- access-control-allow-methods: 15,469,948 / 28,203 = 0.182%
-- access-control-allow-origin: 105,326,437 / 264,278 = 0.250%
-- access-control-max-age: 5,287,263 / 7,749 = 0.146%
-- access-control-request-headers: 39,340 / 624 = 1.561%
-- access-control-request-method: 146,566 / 13,822 = 8.618%
-- age: 71,292,543 / 168,572 = 0.236%
-- allow: 351,707 / 1,886 = 0.533%
-- alt-svc: 19,777,530 / 15,682,026 = 44.225%
-- cache-control: 264,666,876 / 946,434 = 0.356%
-- connection: 105,884,722 / 2,915 = 0.003%
-- content-encoding: 139,812,089 / 379 = 0.000%
-- content-language: 2,368,912 / 728 = 0.031%
-- content-length: 296,649,810 / 787,897 = 0.265%
-- content-type: 341,948,525 / 794,864 = 0.232%
+- accept-ranges: 197,746,643 / 3,960 = 0.002%
+- access-control-allow-credentials: 16,684,916 / 7,438 = 0.045%
+- access-control-allow-headers: 12,976,838 / 15,074 = 0.116%
+- access-control-allow-methods: 15,466,748 / 28,203 = 0.182%
+- access-control-allow-origin: 105,307,402 / 271,359 = 0.257%
+- access-control-max-age: 5,284,663 / 7,754 = 0.147%
+- access-control-request-headers: 39,328 / 624 = 1.562%
+- access-control-request-method: 146,259 / 13,821 = 8.634%
+- age: 71,281,684 / 172,398 = 0.241%
+- allow: 351,704 / 1,886 = 0.533%
+- alt-svc: 19,775,126 / 15,680,528 = 44.226%
+- cache-control: 264,805,256 / 782,896 = 0.295%
+- connection: 105,876,072 / 2,915 = 0.003%
+- content-encoding: 139,799,523 / 379 = 0.000%
+- content-language: 2,367,162 / 728 = 0.031%
+- content-length: 296,624,718 / 787,843 = 0.265%
+- content-type: 341,918,716 / 795,676 = 0.232%
 - expect: 0 / 47 = 100.000%
-- expect-ct: 26,573,905 / 29,117 = 0.109%
+- expect-ct: 26,569,605 / 29,114 = 0.109%
 - forwarded: 119 / 35 = 22.727%
-- host: 25,335 / 1,441 = 5.382%
-- keep-alive: 43,063,257 / 796 = 0.002%
-- origin: 24,336 / 1,539 = 5.948%
-- pragma: 46,826,446 / 81,707 = 0.174%
+- host: 25,333 / 1,441 = 5.382%
+- keep-alive: 43,061,546 / 796 = 0.002%
+- origin: 24,335 / 1,539 = 5.948%
+- pragma: 46,820,588 / 81,700 = 0.174%
 - preference-applied: 57 / 0 = 0.000%
-- retry-after: 605,926 / 6,194 = 1.012%
-- strict-transport-security: 26,826,043 / 35,266,676 = 56.797%
-- surrogate-control: 121,124 / 861 = 0.706%
+- retry-after: 605,844 / 6,195 = 1.012%
+- strict-transport-security: 26,825,957 / 35,258,808 = 56.791%
+- surrogate-control: 121,118 / 861 = 0.706%
 - te: 1 / 0 = 0.000%
 - trailer: 282 / 0 = 0.000%
-- transfer-encoding: 13,953,547 / 0 = 0.000%
-- vary: 150,802,211 / 41,317 = 0.027%
-- x-content-type-options: 99,982,040 / 203,824 = 0.203%
-- x-xss-protection: 79,878,780 / 362,984 = 0.452%
+- transfer-encoding: 13,952,661 / 0 = 0.000%
+- vary: 150,787,199 / 41,313 = 0.027%
+- x-content-type-options: 99,968,016 / 208,885 = 0.209%
+- x-xss-protection: 79,871,948 / 362,979 = 0.452%
 
 This data set focuses on response headers, although some request headers are present (because, the Web).
 
@@ -630,16 +630,17 @@ The most common problem causing failure for many other headers is duplicated val
 
 The top ten header fields in that data set that were not parsed as Directly Represented Fields are:
 
-- date: 354,682,923
-- server: 311,299,092
-- last-modified: 263,851,521
-- expires: 199,985,746
-- status: 192,439,616
-- etag: 172,071,630
-- timing-allow-origin: 64,413,748
-- x-cache: 41,743,978
-- p3p: 39,495,307
-- x-frame-options: 34,041,316
+- date: 354,652,447
+- server: 311,275,961
+- last-modified: 263,832,615
+- expires: 199,967,042
+- status: 192,423,509
+- etag: 172,058,269
+- timing-allow-origin: 64,407,586
+- x-cache: 41,740,804
+- p3p: 39,490,058
+- x-frame-options: 34,037,985
+
 
 
 
