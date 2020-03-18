@@ -83,11 +83,13 @@ It further requires such malformed responses to generate a "hard" error, so that
 
 The currently proposed HTTP/3 specification {{?I-D.ietf-quic-http}} has language similar to that in HTTP/2.
 
-Unfortunately, this makes _other_ uses of Content-Length more difficult to implement. In particular, many servers will reject a request without an explicit Content-Length using 411 (Length Required), but depending on the protocol version(s) between the user agent and the origin server, a Content-Length header might not make it all the way, or the request might be rejected.
+Unfortunately, this makes _other_ uses of Content-Length more difficult to implement.
+
+In particular, many servers will reject a request without an explicit Content-Length using 411 (Length Required), because they want to know how many bytes are being sent before deciding to devote resources to serving the request. However, depending on the protocol version(s) between the user agent and the origin server, a Content-Length header might not make it all the way, or the request might be rejected.
 
 Likewise, some applications would like to use Content-Length to indicate progress of a large download, but its successful traversal cannot be relied upon.
 
-While it's questionable whether all of the requirements above regarding Content-Length are honoured by implementations uniformly, there is enough diversity in implementation (particularly on the server side and in intermediaries) to make deployment of them daunting.
+While it's questionable whether all of the requirements above regarding Content-Length are honoured by implementations uniformly, there is enough diversity in implementation (particularly on the server side and in intermediaries) to make deployment of these uses daunting.
 
 Therefore, this specification proposes a new HTTP header field to carry _advisory_ content length information. It is intended only for these uses, and _not_ message delimitation.
 
