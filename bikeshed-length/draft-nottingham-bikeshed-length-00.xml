@@ -72,7 +72,7 @@
 
 <t>The HTTP Content-Length header field (<xref target="RFC7230"/>) is overloaded with (at least) two duties: message delimitation in HTTP/1, and metadata about the length of an incoming request body to the software handling it.</t>
 
-<t>Message delimitation is a critical feature of the protocol; it allows more than one message to be sent in a given direction on a connection. It is also security-critical; if it is under attacker control, it’s possible to confuse a recipient about how requests and responses are associated in HTTP/1.1 (as “smuggling” attacks).</t>
+<t>Message delimitation is a core feature of the protocol; it allows more than one message to be sent in a given direction on a connection. It is also security-critical; if it is under attacker control, it’s possible to confuse a recipient about how requests and responses are associated in HTTP/1.1 (as “smuggling” attacks).</t>
 
 <t>As such, it has been treated progressively more strictly in HTTP specifications. HTTP/1.1 introduced chunked transfer encoding, and forbade sending Content-Length when it is in use. From <xref target="RFC2616"/>:</t>
 
@@ -110,11 +110,13 @@
 
 <t>The currently proposed HTTP/3 specification <xref target="I-D.ietf-quic-http"/> has language similar to that in HTTP/2.</t>
 
-<t>Unfortunately, this makes <spanx style="emph">other</spanx> uses of Content-Length more difficult to implement. In particular, many servers will reject a request without an explicit Content-Length using 411 (Length Required), but depending on the protocol version(s) between the user agent and the origin server, a Content-Length header might not make it all the way, or the request might be rejected.</t>
+<t>Unfortunately, this makes <spanx style="emph">other</spanx> uses of Content-Length more difficult to implement.</t>
+
+<t>In particular, many servers will reject a request without an explicit Content-Length using 411 (Length Required), because they want to know how many bytes are being sent before deciding to devote resources to serving the request. However, depending on the protocol version(s) between the user agent and the origin server, a Content-Length header might not make it all the way, or the request might be rejected.</t>
 
 <t>Likewise, some applications would like to use Content-Length to indicate progress of a large download, but its successful traversal cannot be relied upon.</t>
 
-<t>While it’s questionable whether all of the requirements above regarding Content-Length are honoured by implementations uniformly, there is enough diversity in implementation (particularly on the server side and in intermediaries) to make deployment of them daunting.</t>
+<t>While it’s questionable whether all of the requirements above regarding Content-Length are honoured by implementations uniformly, there is enough diversity in implementation (particularly on the server side and in intermediaries) to make deployment of these uses daunting.</t>
 
 <t>Therefore, this specification proposes a new HTTP header field to carry <spanx style="emph">advisory</spanx> content length information. It is intended only for these uses, and <spanx style="emph">not</spanx> message delimitation.</t>
 
@@ -308,73 +310,74 @@ Bikeshed-Length = sh-item
   </back>
 
 <!-- ##markdown-source:
-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
-hcqWGwAA
+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
+yP4HkeYRdRIcAAA=
 
 -->
 

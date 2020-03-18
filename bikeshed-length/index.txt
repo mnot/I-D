@@ -99,7 +99,7 @@ Table of Contents
    about the length of an incoming request body to the software handling
    it.
 
-   Message delimitation is a critical feature of the protocol; it allows
+   Message delimitation is a core feature of the protocol; it allows
    more than one message to be sent in a given direction on a
    connection.  It is also security-critical; if it is under attacker
    control, it's possible to confuse a recipient about how requests and
@@ -178,11 +178,14 @@ Internet-Draft      Advisory Content-Length for HTTP          March 2020
    language similar to that in HTTP/2.
 
    Unfortunately, this makes _other_ uses of Content-Length more
-   difficult to implement.  In particular, many servers will reject a
-   request without an explicit Content-Length using 411 (Length
-   Required), but depending on the protocol version(s) between the user
-   agent and the origin server, a Content-Length header might not make
-   it all the way, or the request might be rejected.
+   difficult to implement.
+
+   In particular, many servers will reject a request without an explicit
+   Content-Length using 411 (Length Required), because they want to know
+   how many bytes are being sent before deciding to devote resources to
+   serving the request.  However, depending on the protocol version(s)
+   between the user agent and the origin server, a Content-Length header
+   might not make it all the way, or the request might be rejected.
 
    Likewise, some applications would like to use Content-Length to
    indicate progress of a large download, but its successful traversal
@@ -191,7 +194,7 @@ Internet-Draft      Advisory Content-Length for HTTP          March 2020
    While it's questionable whether all of the requirements above
    regarding Content-Length are honoured by implementations uniformly,
    there is enough diversity in implementation (particularly on the
-   server side and in intermediaries) to make deployment of them
+   server side and in intermediaries) to make deployment of these uses
    daunting.
 
    Therefore, this specification proposes a new HTTP header field to
@@ -215,9 +218,6 @@ Internet-Draft      Advisory Content-Length for HTTP          March 2020
    [I-D.ietf-httpbis-header-structure] that conveys an advisory content
    length for the message body:
 
-   Bikeshed-Length = sh-item
-
-
 
 
 
@@ -225,6 +225,8 @@ Nottingham             Expires September 19, 2020               [Page 4]
 
 Internet-Draft      Advisory Content-Length for HTTP          March 2020
 
+
+   Bikeshed-Length = sh-item
 
    Its value MUST be an Integer (Section x.x of
    [I-D.ietf-httpbis-header-structure]), indicating a decimal number of
@@ -269,10 +271,8 @@ Internet-Draft      Advisory Content-Length for HTTP          March 2020
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
-   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <https://www.rfc-editor.org/info/rfc7230>.
+
+
 
 
 
@@ -281,6 +281,11 @@ Nottingham             Expires September 19, 2020               [Page 5]
 
 Internet-Draft      Advisory Content-Length for HTTP          March 2020
 
+
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing",
+              RFC 7230, DOI 10.17487/RFC7230, June 2014,
+              <https://www.rfc-editor.org/info/rfc7230>.
 
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
@@ -321,11 +326,6 @@ Author's Address
 
    Email: mnot@mnot.net
    URI:   https://www.mnot.net/
-
-
-
-
-
 
 
 
