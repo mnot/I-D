@@ -53,7 +53,7 @@ See also the draft's current status in the IETF datatracker, at
 
 The HTTP Content-Length header field ({{!RFC7230}}) is overloaded with (at least) two duties: message delimitation in HTTP/1, and metadata about the length of an incoming request body to the software handling it.
 
-Message delimitation is a critical feature of the protocol; it allows more than one message to be sent in a given direction on a connection. It is also security-critical; if it is under attacker control, it's possible to confuse a recipient about how requests and responses are associated in HTTP/1.1 (as "smuggling" attacks).
+Message delimitation is a core feature of the protocol; it allows more than one message to be sent in a given direction on a connection. It is also security-critical; if it is under attacker control, it's possible to confuse a recipient about how requests and responses are associated in HTTP/1.1 (as "smuggling" attacks).
 
 As such, it has been treated progressively more strictly in HTTP specifications. HTTP/1.1 introduced chunked transfer encoding, and forbade sending Content-Length when it is in use. From {{?RFC2616}}:
 
