@@ -1,0 +1,224 @@
+
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                            March 27, 2020
+Intended status: Informational
+Expires: September 28, 2020
+
+
+                        Unreliable HTTP Payloads
+                  draft-nottingham-unreliable-http-00
+
+Abstract
+
+   This document might eventually specify a way to mark messages (or
+   parts of them) for unreliable delivery in HTTP.  For now, it just
+   enumerates some design assumptions in Section 1.1 to seed discussion.
+
+Note to Readers
+
+   _RFC EDITOR: please remove this section before publication_
+
+   The issues list for this draft can be found at
+   https://github.com/mnot/I-D/labels/unreliable-http [1].
+
+   The most recent (often, unpublished) draft is at
+   https://mnot.github.io/I-D/unreliable-http/ [2].
+
+   Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
+   pages/unreliable-http [3].
+
+   See also the draft's current status in the IETF datatracker, at
+   https://datatracker.ietf.org/doc/draft-nottingham-unreliable-http/
+   [4].
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on September 28, 2020.
+
+
+
+Nottingham             Expires September 28, 2020               [Page 1]
+
+Internet-Draft          Unreliable HTTP Payloads              March 2020
+
+
+Copyright Notice
+
+   Copyright (c) 2020 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Design Assumptions  . . . . . . . . . . . . . . . . . . .   3
+     1.2.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+     1.3.  Some Protocol Mechanism . . . . . . . . . . . . . . . . .   3
+   2.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
+   3.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     3.1.  Normative References  . . . . . . . . . . . . . . . . . .   4
+     3.2.  Informative References  . . . . . . . . . . . . . . . . .   4
+     3.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   4
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   4
+
+1.  Introduction
+
+   Some HTTP applications might benefit from being able to tell the
+   protocol that delivery of data need not be reliable; that is, rather
+   than offering guaranteed end-to-end transmission of the entire
+   message payload, it is preferable to forgo this, because the
+   retransmission of lost data is harmful (or just not useful).
+
+   For example, in some cases retransmission of audio or video data
+   might be counterproductive, because use of the data is time-
+   sensitive, and retransmission of loss only competes with more current
+   data "on the wire."
+
+   This document might eventually specify a way to do this in HTTP.  For
+   now, it just enumerates some design assumptions in Section 1.1 to
+   seed discussion.
+
+
+
+
+
+
+
+Nottingham             Expires September 28, 2020               [Page 2]
+
+Internet-Draft          Unreliable HTTP Payloads              March 2020
+
+
+1.1.  Design Assumptions
+
+   This document asserts that the following assumptions are necessary
+   for a successful unreliable HTTP mechanism.  If you disagree, please
+   discuss on the HTTP WG mailing list, or the issues list above.
+
+   An unreliable HTTP delivery mechanism should:
+
+   1.  Allow unreliable delivery both on requests and responses.  While
+       the response side is the most obvious target, requests such as
+       POST can support interesting use cases too.
+
+   2.  Focus on unreliable delivery of the message body.  Header and
+       trailers need to be reliable.
+
+   3.  Be triggered by an in-protocol mechanism, like a header field or
+       request method.  Requiring implementations to have out-of-band
+       knowledge hurts deployment.
+
+   4.  Be able to fall back to "normal" reliable HTTP on hops that don't
+       support unreliable delivery.  This implies that unreliable
+       delivery is an optimisation, not an application semantic.
+
+   5.  Give _some_ level of feedback to both ends about whether
+       unreliable delivery is in use, end-to-end.  Probably also
+       optional loss stats, hop-by-hop.  This might be through a header
+       like [I-D.ietf-httpbis-proxy-status].
+
+   6.  Provide some way to guarantee that application data is delimited
+       at certain boundaries, to add application loss handling.  This
+       might be just a convention that DATAGRAM frames are never
+       combined or split, or it might be something in-protocol.
+
+   7.  Still provide in-order delivery.
+
+1.2.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+1.3.  Some Protocol Mechanism
+
+   TBD.
+
+
+
+
+
+Nottingham             Expires September 28, 2020               [Page 3]
+
+Internet-Draft          Unreliable HTTP Payloads              March 2020
+
+
+2.  Security Considerations
+
+   Eventually.
+
+3.  References
+
+3.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+3.2.  Informative References
+
+   [I-D.ietf-httpbis-proxy-status]
+              Nottingham, M. and P. Sikora, "The Proxy-Status HTTP
+              Response Header Field", draft-ietf-httpbis-proxy-status-01
+              (work in progress), March 2020.
+
+3.3.  URIs
+
+   [1] https://github.com/mnot/I-D/labels/unreliable-http
+
+   [2] https://mnot.github.io/I-D/unreliable-http/
+
+   [3] https://github.com/mnot/I-D/commits/gh-pages/unreliable-http
+
+   [4] https://datatracker.ietf.org/doc/draft-nottingham-unreliable-
+       http/
+
+Author's Address
+
+   Mark Nottingham
+
+   Email: mnot@mnot.net
+   URI:   https://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+Nottingham             Expires September 28, 2020               [Page 4]
