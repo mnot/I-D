@@ -74,7 +74,7 @@ An unreliable HTTP delivery mechanism should:
 1. Provide some way to guarantee that application data is delimited at certain boundaries, to add application loss handling. This might be just a convention that DATAGRAM frames are never combined or split, or it might be something in-protocol.
 
 1. Provide out-of-order delivery by default. If an application wants in-order delivery, it will need
-to define sequence numbers in payloads and then buffer when receiving.
+to define sequence numbers in payloads and then buffer when receiving. TODO: discuss whether optional in-order is useful.
 
 
 
