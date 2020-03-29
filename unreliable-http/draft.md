@@ -63,18 +63,21 @@ An unreliable HTTP delivery mechanism should:
 
 1. Allow unreliable delivery both on requests and responses. While the response side is the most obvious target, requests such as POST can support interesting use cases too.
 
+1. Additionally, provide a way to establish a channel within the connection for routing unreliable data within.
+
 1. Focus on unreliable delivery of the message body. Header and trailers need to be reliable.
 
 1. Be triggered by an in-protocol mechanism, like a header field or request method. Requiring implementations to have out-of-band knowledge hurts deployment.
 
 1. Be able to fall back to "normal" reliable HTTP on hops that don't support unreliable delivery. This implies that unreliable delivery is an optimisation, not an application semantic.
 
+1. Provide a way for endpoints to advise their peer whether they will be sending unreliable data on this connection; likewise, whether they are capable of receiving it.
+
 1. Give _some_ level of feedback to both ends about whether unreliable delivery is in use, end-to-end. Probably also optional loss stats, hop-by-hop. This might be through a header like {{?I-D.ietf-httpbis-proxy-status}}.
 
 1. Provide some way to guarantee that application data is delimited at certain boundaries, to add application loss handling. This might be just a convention that DATAGRAM frames are never combined or split, or it might be something in-protocol.
 
-1. Provide out-of-order delivery by default. If an application wants in-order delivery, it will need
-to define sequence numbers in payloads and then buffer when receiving. TODO: discuss whether optional in-order is useful.
+1. Provide out-of-order delivery by default. Possibly, provide a mechanism (e.g., sequence numbers) for applications that desire in-order delivery.
 
 
 
