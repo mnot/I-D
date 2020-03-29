@@ -82,13 +82,14 @@
 
 <t><list style="numbers">
   <t>Allow unreliable delivery both on requests and responses. While the response side is the most obvious target, requests such as POST can support interesting use cases too.</t>
+  <t>Additionally, provide a way to establish a channel within the connection for routing unreliable data within.</t>
   <t>Focus on unreliable delivery of the message body. Header and trailers need to be reliable.</t>
   <t>Be triggered by an in-protocol mechanism, like a header field or request method. Requiring implementations to have out-of-band knowledge hurts deployment.</t>
   <t>Be able to fall back to “normal” reliable HTTP on hops that don’t support unreliable delivery. This implies that unreliable delivery is an optimisation, not an application semantic.</t>
+  <t>Provide a way for endpoints to advise their peer whether they will be sending unreliable data on this connection; likewise, whether they are capable of receiving it.</t>
   <t>Give <spanx style="emph">some</spanx> level of feedback to both ends about whether unreliable delivery is in use, end-to-end. Probably also optional loss stats, hop-by-hop. This might be through a header like <xref target="I-D.ietf-httpbis-proxy-status"/>.</t>
   <t>Provide some way to guarantee that application data is delimited at certain boundaries, to add application loss handling. This might be just a convention that DATAGRAM frames are never combined or split, or it might be something in-protocol.</t>
-  <t>Provide out-of-order delivery by default. If an application wants in-order delivery, it will need
-to define sequence numbers in payloads and then buffer when receiving. TODO: discuss whether optional in-order is useful.</t>
+  <t>Provide out-of-order delivery by default. Possibly, provide a mechanism (e.g., sequence numbers) for applications that desire in-order delivery.</t>
 </list></t>
 
 </section>
@@ -193,48 +194,49 @@ shown here.</t>
   </back>
 
 <!-- ##markdown-source:
-H4sIABN4fV4AA71X72/juBH9rr9imv1wtwfLToIDeucWbbPr7G6AzY9LvDgU
-RRFQ0thiI5EqScXnBvu/9w0pK46bw+G+NEBsiiI5M2/evKHzPM+CDg3P6Ytx
-3GhVNEyflssbulHbxqrKZ6ooHD/Os8qWRrVYWTm1CrmxIWizrlWb9+PWvA6h
-y4+Ps0oFrDw9Pj3OSgzX1m3npM3KZpnu3JyC6304PT7+8fg0U47VnD6yYaea
-bGPdw9rZvptnD7zFUzWnCxPYGQ75QkxnmQ/KVPeqsQZGtuyzTs/pH8GWE8KH
-NhWbMCFvXXC88hht22EQnC7xqrRtp4ZBi8V4pU2jDf8zy1QfauvmGeUZ4U8b
-P6fLKV2N8cbpBMWlcg+Hb6xbK6P/o4K2Zh5nuFW6mVMLyP4mH1OEEl/0Dn4L
-ZH4+m202m+nu7SzLjHUtznhkOeP2w/vTk5Mf50APGI4vsizPc1IFwkI0Wbas
-tSfkqZeYqNXrOhA/YtyrptmS77jUqy0p2qgtkKJW3G/Ze7VmT99aR51ywZNd
-Uai5fUuwRc/ZpQqDR3ZbgBJJMqUPWGDsBvAF+hdSSmxg3CHlHvi3ssXrtSHl
-fd92AomXzU9PexNfv4ovnrmiSvuy9x6z0yE4AML3V/IR7P0tq4qdz7LvAAid
-Ly6W17dz6hpWnslxax8ZjgMDz6UcTQUjAqauLxpdxox8JygxaZiHi42GyxJk
-3BWJTaWSfZjtTUUq0J93CVrrUPfFFJSZSZ5mF/li1qiCGz87qIC/TJOV1uJ4
-x6Vk41u7CmwmgDN642uu3g4WYXrfTiTBYEzbaObg/JkYuE3nlrUykj1UUQyH
-f9tpIb0Ofrau804y/5r7d8ykGm+FCMnNbzyVvXNiE/UX+phIeXtxvvxAKHgl
-LHxgN4ED2ejA3oup5rCaoj5m4Ojst2QkBikUaHVVNZxlb0QHnK36mFu4KPyK
-WqW6bpdfP9C+gJysQMqVsy0eYIIihcG0wE0THe+chVxYeQBkI7nBfnGajDAS
-/gkbdp79Ka3VEAyQvGZhDvhiVyt2YmPdK6egVtjJpsqDzfEFtVPGtzoSeygu
-vA4aKRuqD4UX5TYWEvjQQa9QRoPHYOjaRo5O4Eypes/xDMeHJzfCuOg9DqmV
-a1d9Ews7FqcEg72YewtspXb5F9WifkT+Ur2WKCX/ysGqr7SFttGjrtgmEzuk
-oaK9KHQ3JOeRn92U/yHinVtBt5x7Nl6npdDy1yOBEBnIlog1i6BswGXUFFDb
-ETEeeWQTDzfAc3r0+1WwStD+f0TtzRtapN1ne7uf3uxvPQwB71hkOVJPIl3Z
-prGbyOm9Q0QBDEQBhAKLRdUU+b6UCWFBf9DgWxbp0L6d0sWKtrYXR9XaMVIy
-SOrgOQ0Ax20/fyRpZ2Jc5GZCUT1fKqoqoMQI9sz8j9Wxykbz5GvbNxW62cmU
-ziSwV1tOYZF8OOL437ADNBJtfIfQ2U/p51o3u6pIk+RB1Ui4nRTb4lFbCFdQ
-bs1wfTwLMNXAkm6u75axAfi+63B9QFrBayyRcIXKqTyCtdPo7gekKMLzmscD
-7XcVXthqO6VPsYVF58F4uOx8EhqwZU9n0vHvEJDT6zVcqKgAZQ0cykfZGiGc
-APYH6DXV6fSV5qaSxAwBYiXuNNWUbvGso1BpKXth16CaMF8rtE/bh9yu8kIc
-fEARNFzB97oX/lXcNXYrm0b3RoVCaVEBlZeHo3h3aY7oZeoBU227gcaVNd+E
-EeZX4JtSLALxU/Ow6dWriDCBLGoA4hGDmUSdw+ReW0AlttBlXSbPP2Iv3Ust
-31MDbWgkWSukYRdCZBuk2wuX+0CbmqPa/4oHqH6wY7Kn+VO6cbbAwm1qozYW
-qWqSrkkDhZYDjrzY5vgaoh0VNdS4Aq/r55TGBD89/RX9O7bR2CIL7YUNv2zz
-1JG/fk3hwbTIdBKrQeXGzpSg3MdmJ8wSES4G6QZRQnIU4irkHqQcciCXa1JV
-9WJvDAcsrEQRDqOI4qkg4EbkV0cZwdGLs+XZx9uzSzRn3KJ3wgUsReoL3MIj
-dz2MJHnR4flICQlqLQx+roSXUQ8Uxi8HnPisH1uMV6pvQtS7A3psAI2k8WBX
-bAEbDW5LjWbSLHCrMHBDCsuU8LtvC6lhIDW08KRMYAuw6+VeIOQx8RqoHxNI
-14vr+SiuO2qNDBm9AJSpW8tlWDoH7sFqWPR+xNSnuyZ+LJH8WvJ0dPnlbnk0
-Sd90dR3Ht+c/fbm4PV/I+O7T2efP42C34u7T9ZfPi+dRms+w8/315eX51SJt
-xiwdTF2e/f0otfGj65vlxfXV2eejdDl80cUcDyKn02WBI9N8hm5aOl3gAXve
-vb+hk+/B9D8Mv3nQSNPDDyd//B4PAmYyFi8H6REAbiWfrJwcImJUqk4HlN5E
-TKDFbKA+0NHUguPV8Wano5c7HQWS7xYCNlYw7hg6bAVo6SNODVifjzeJ3U8U
-0Yzsv5wWNwVKDwAA
+H4sIAI01gV4AA71X72/byBH9zr9iqny45CBStnFAe7qirRM7iYH4R20Fh6Io
+jCU5ErcmubzdpXSqkf+9b3YpSnJdHPqlAWKRS+7OzJs3b4ZpmiZe+5rn9LW1
+XGuV10yfF4s7ulPb2qjSJSrPLa/nSWmKVjV4s7Rq6dPWeK/bVaWatB+3ppX3
+XXpykpTK482zk7OTpMDlytjtnHS7NEmiOzsnb3vnz05Ofjw5S5RlNadP3LJV
+dbIx9mllTd/Nkyfe4q6c01Xr2bbs0wsxnSTOq7Z8VLVpYWTLLun0nP7uTTEl
+/NFtya2fkjPWW146XG2b4cJbXeBRYZpODRcNXsYj3da65X8kiep9Zew8oTQh
+/NOtm9N1RjdjvGE5QnGt7NPLJ8auVKv/pbw27TyscKN0PacGkP1F/mQIJTzo
+LfwWyNx8NttsNtnu6SxJWmMbnLFmOeP+44ez09Mf50APGI4PkiRNU1I5wkI0
+SbKotCPkqZeYqNGryhOvcd2rut6S67jQyy0p2qgtkKJG3G/YObViR2+NpU5Z
+78gsyVfcvCPYon12qcTFmu0WoASSZPQRL7RmA/g8/RMpJW5h3CLlDvg3ssXp
+VUvKub7pBBInm5+fDxa+fRNfHHNJpXZF7xxWsyE4AMKPN/LHm8d7ViVblyTf
+AxC6vLha3N7PqatZOSbLjVkzHAcGjgs5mnJGBExdn9e6CBn5XlBi0jAPF2sN
+lyXIsCsQmwol+7DatyUpT3/cJWilfdXnGSgzkzzNrtKLWa1yrt3sRQX8KYtW
+GoPjLReSjbdm6bmdAs7gjau4fDdYhOlDO4EEgzFtgpkX58/EwH08t6hUK9lD
+FYVw+LedFtJr72arKu0k86+5/8BMqnZGiBDd/M5R0VsrNlF/vg+JlKdXl4uP
+hIJXwsIntlM4kIwOHDzINPtlhvqYgaOz35KREKRQoNFlWXOSvBEdsKbsQ27h
+ovAraJXqul1+3UD7HHKyBCmX1jS4gQkKFAbTPNd1cLyzBnJh5AaQjeQG+8Vp
+aoWR8E/YsPPsp/iuhmCA5BULc8AXs1yyFRurXlkFtcJObsvUmxQ/UDvVukYH
+Yg/FhcdeI2VD9aHwgtyGQgIfOugVymjwGAxdmcDRKZwpVO84nGH55cm1MC54
+j0MqZZtlX4fCDsUpwWAv1t4BW6ld/lU1qB+Rv1ivBUrJvXKw6kttoG201iWb
+aGKHNFS0F4XuhuSsee+m/B8i3rnldcOp49bp+Cq0/PVIIEQtZEvEmkVQNuAy
+agqo7YgYjpyYyMMN8Mwm/7sKlhHa/4+ovXlDF3H3+cHu5zeHW1+GgGcsshyo
+J5EuTV2bTeD0wSGiAC1EAYQCi0XVFLm+kAVhQf+iwTcs0qFdk9HVkramF0fV
+yjJSMkjq4DkNAIdtP38iaWdiXORmSkE9jxVV5VBiBHve/ofVscpG8+Qq09cl
+utlpRucS2KstJzdIPhyx/AvsAI1IG9chdHYZ/VzpelcVcZEcqBoIt5Nik6+1
+gXB5ZVcM18ezAFMFLOnu9mERGoDruw7jA9IKXuMVCVeoHMvDG5NFd8tSC/hC
+rKnoiVTHnlnYqILWY0mibbkOJB6EszBYiY1KsoWhJ9o5iF74HXdEgx/BiZCP
+1yAa6mwnKbkptxl9Dj0zoIUSA0bWRWWDfwfCFo9/DwStXq0Qc0k5aqQFAumo
+k2POpsjzkwRaxdOXmutSmDAgijcxRJUZ3eNeB2XUojNC50GmYb5S6NcIOjXL
+NBcHn1B1NZfwveqF8CV3tdnKptG9URIBOeVoK3IzCcNSPaFjrgGmynRD3ZSm
+/c6PeX0FvoxC1YmfmodNr84+Qj0yKDqoVQhmGoQViwd9CKXfoBHoInp+d0QN
+yTb6QmdAr4CEKtc6arrGDMZAdFPx0F54CwZIsCA0Nr3GkFCf8GtPqJ9CgjY4
+dHp8lIhEobqwF3yR4USvQ34GjD8hSnoUmXukGrJZy2tLEGYHdihEOOKkzHs/
+Hv9fsALXe/Fi3w4DGjle3MYJw3SxhKLky2yBNofEpfk2xc+Ql7HZ+AqFsqr2
+5AtUfH7+M0abMGGE6SHXTnj76zaNw8q3b8eJCDo+lOnYtGPSD7O461kSEWam
+OFwVUGOFuHIZEZUFW6YxieXR3hAO6qUUsXwZRegrSjImnUmHDOLoi/PF+af7
+82vMLfjA2Gk6sJQumOMDJVSZg5GovNrvj5SQRClWhzV7HPVQbPiowol7ad3i
+eqn62uNNOK3zYzXbS/VbzlYZPqOkytsCrvVNDkGJHwpHU9gwUjmZceDOsUUZ
+7qUTYq5XQ+4/jEC4ODs/Ce+xzdHk+uvDYjKNv3RzG67vL//69er+8kKuHz6f
+f/kyXuzeePh8+/XLxf4qrifY+eH2+vry5iJuxiq9WLo+/9skjiWT27vF1e3N
++ZdJHHaPurLlQUN1HH440MMliLqwOscN9rz/cEenP4Cevxu+4TAYxJs/nP7+
+B9ygfNpoLAw78TaWatexsnKIaB2KVnvUy1RMoGVuIG6Q6ThShFH4bifT17t8
+Acn3FwI23mDMTNpvBWjpi1YNWF+Ok9Huk0sKPfk3rGi0OxoQAAA=
 
 -->
 

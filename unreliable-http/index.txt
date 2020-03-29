@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                            March 27, 2020
+Internet-Draft                                            March 30, 2020
 Intended status: Informational
-Expires: September 28, 2020
+Expires: October 1, 2020
 
 
                         Unreliable HTTP Payloads
@@ -49,11 +49,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on September 28, 2020.
+   This Internet-Draft will expire on October 1, 2020.
 
 
 
-Nottingham             Expires September 28, 2020               [Page 1]
+Nottingham               Expires October 1, 2020                [Page 1]
 
 Internet-Draft          Unreliable HTTP Payloads              March 2020
 
@@ -77,14 +77,14 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Design Assumptions  . . . . . . . . . . . . . . . . . . .   3
-     1.2.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+     1.2.  Notational Conventions  . . . . . . . . . . . . . . . . .   4
      1.3.  Some Protocol Mechanism . . . . . . . . . . . . . . . . .   4
    2.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
    3.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   4
      3.1.  Normative References  . . . . . . . . . . . . . . . . . .   4
      3.2.  Informative References  . . . . . . . . . . . . . . . . .   4
      3.3.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   4
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   4
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   5
 
 1.  Introduction
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Nottingham             Expires September 28, 2020               [Page 2]
+Nottingham               Expires October 1, 2020                [Page 2]
 
 Internet-Draft          Unreliable HTTP Payloads              March 2020
 
@@ -126,31 +126,49 @@ Internet-Draft          Unreliable HTTP Payloads              March 2020
        the response side is the most obvious target, requests such as
        POST can support interesting use cases too.
 
-   2.  Focus on unreliable delivery of the message body.  Header and
+   2.  Additionally, provide a way to establish a channel within the
+       connection for routing unreliable data within.
+
+   3.  Focus on unreliable delivery of the message body.  Header and
        trailers need to be reliable.
 
-   3.  Be triggered by an in-protocol mechanism, like a header field or
+   4.  Be triggered by an in-protocol mechanism, like a header field or
        request method.  Requiring implementations to have out-of-band
        knowledge hurts deployment.
 
-   4.  Be able to fall back to "normal" reliable HTTP on hops that don't
+   5.  Be able to fall back to "normal" reliable HTTP on hops that don't
        support unreliable delivery.  This implies that unreliable
        delivery is an optimisation, not an application semantic.
 
-   5.  Give _some_ level of feedback to both ends about whether
+   6.  Provide a way for endpoints to advise their peer whether they
+       will be sending unreliable data on this connection; likewise,
+       whether they are capable of receiving it.
+
+   7.  Give _some_ level of feedback to both ends about whether
        unreliable delivery is in use, end-to-end.  Probably also
        optional loss stats, hop-by-hop.  This might be through a header
        like [I-D.ietf-httpbis-proxy-status].
 
-   6.  Provide some way to guarantee that application data is delimited
+   8.  Provide some way to guarantee that application data is delimited
        at certain boundaries, to add application loss handling.  This
        might be just a convention that DATAGRAM frames are never
        combined or split, or it might be something in-protocol.
 
-   7.  Provide out-of-order delivery by default.  If an application
-       wants in-order delivery, it will need to define sequence numbers
-       in payloads and then buffer when receiving.  TODO: discuss
-       whether optional in-order is useful.
+   9.  Provide out-of-order delivery by default.  Possibly, provide a
+       mechanism (e.g., sequence numbers) for applications that desire
+       in-order delivery.
+
+
+
+
+
+
+
+
+Nottingham               Expires October 1, 2020                [Page 3]
+
+Internet-Draft          Unreliable HTTP Payloads              March 2020
+
 
 1.2.  Notational Conventions
 
@@ -159,16 +177,6 @@ Internet-Draft          Unreliable HTTP Payloads              March 2020
    "OPTIONAL" in this document are to be interpreted as described in BCP
    14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
-
-
-
-
-
-
-Nottingham             Expires September 28, 2020               [Page 3]
-
-Internet-Draft          Unreliable HTTP Payloads              March 2020
-
 
 1.3.  Some Protocol Mechanism
 
@@ -209,6 +217,15 @@ Internet-Draft          Unreliable HTTP Payloads              March 2020
    [4] https://datatracker.ietf.org/doc/draft-nottingham-unreliable-
        http/
 
+
+
+
+
+Nottingham               Expires October 1, 2020                [Page 4]
+
+Internet-Draft          Unreliable HTTP Payloads              March 2020
+
+
 Author's Address
 
    Mark Nottingham
@@ -221,4 +238,43 @@ Author's Address
 
 
 
-Nottingham             Expires September 28, 2020               [Page 4]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham               Expires October 1, 2020                [Page 5]
