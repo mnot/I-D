@@ -120,6 +120,7 @@ This document registers the following value in the URI Scheme registry:
 # Security Considerations
 
 The token ABNF rule allows tokens as small as one character. This is not recommended practice; applications should evaluate their requirements for entropy and issue tokens correspondingly.
+See {{?RFC4086}} for more information.
 
 This URI scheme is intended to reduce the incidence of accidental disclosure; it cannot prevent intentional disclosure.
 
