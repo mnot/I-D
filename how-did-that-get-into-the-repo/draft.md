@@ -2,7 +2,7 @@
 title: The secret-token URI Scheme
 abbrev:
 docname: draft-nottingham-how-did-that-get-into-the-repo-02
-date: 2019
+date: 2020
 category: info
 
 ipr: trust200902
@@ -129,4 +129,4 @@ If it is difficult to correctly handle secret material, or unclear as to what th
 
 # Acknowledgements
 
-The definition of bearer tokens is from {{?RC6750}}.
+The definition of bearer tokens is from {{?RFC6750}}.
