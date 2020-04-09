@@ -109,7 +109,7 @@ This document registers the following value in the URI Scheme registry:
 
 The token ABNF rule allows tokens as small as one character. This is not recommended practice; applications should evaluate their requirements for entropy and issue tokens correspondingly.
 
-This URI scheme is intended to prevent accidental disclosure; it cannot prevent intentional disclosure.
+This URI scheme is intended to reduce the incidence of accidental disclosure; it cannot prevent intentional disclosure.
 
 If it is difficult to correctly handle secret material, or unclear as to what the appropriate handling is, users might choose to obfuscate their secret tokens in order to evade detection (for example, removing the URI scheme for storage). Clear guidelines and helpful tools are good mitigations here.
 
