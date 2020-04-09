@@ -124,7 +124,9 @@ See {{?RFC4086}} for more information.
 
 This URI scheme is intended to reduce the incidence of accidental disclosure; it cannot prevent intentional disclosure.
 
-If it is difficult to correctly handle secret material, or unclear as to what the appropriate handling is, users might choose to obfuscate their secret tokens in order to evade detection (for example, removing the URI scheme for storage). Clear guidelines and helpful tools are good mitigations here.
+If it is difficult to correctly handle secret material, or unclear as to what the appropriate handling is, users might choose to obfuscate their secret tokens in order to evade detection (for example, removing the URI scheme for storage). Mitigating this risk is often beyond the reach of
+the system using the secret-token URI, but they can caution users against such practices, and
+provide tools to help.
 
 --- back
 
