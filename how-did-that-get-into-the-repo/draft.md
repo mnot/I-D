@@ -49,7 +49,13 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-It has become increasingly common to use bearer tokens (as defined in Section 1.2 of {{?RFC6750}}) as an authentication mechanism.
+It has become increasingly common to use bearer tokens as an authentication mechanism in various
+protocols.
+
+A bearer token is a security token with the property that any party in possession of the token (a
+"bearer") can use the token in any way that any other party in possession of it can. Using a bearer
+token does not require a bearer to prove possession of cryptographic key material
+(proof-of-possession).
 
 Unfortunately, the number of security incidents involving accidental disclosure of these tokens has also increased. For example, we now regularly hear about a developer committing an access token to a public source code repository, either because they didn't realise it was included in the committed code, or because they didn't realise the implications of its disclosure.
 
@@ -90,7 +96,13 @@ For example, given the URI:
 secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
 ~~~
 
-This string (character-for-character, case-sensitive) will both be issued by the token authority, and required for later access.
+This string (character-for-character, case-sensitive) will both be issued by the token authority, and required for later access. Therefore, if the example above were used as a bearer token in {{?RFC6750}}, a client might send:
+
+~~~ example
+GET /authenticated/stuff HTTP/1.1
+Host: www.example.com
+Authorization: Bearer secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
+~~~
 
 
 # IANA Considerations
@@ -114,3 +126,7 @@ This URI scheme is intended to reduce the incidence of accidental disclosure; it
 If it is difficult to correctly handle secret material, or unclear as to what the appropriate handling is, users might choose to obfuscate their secret tokens in order to evade detection (for example, removing the URI scheme for storage). Clear guidelines and helpful tools are good mitigations here.
 
 --- back
+
+# Acknowledgements
+
+The definition of bearer tokens is from {{?RC6750}}.
