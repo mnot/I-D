@@ -49,7 +49,7 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-It has become increasingly common to use bearer tokens as an authentication mechanism.
+It has become increasingly common to use bearer tokens (as defined in Section 1.2 of {{?RFC6750}}) as an authentication mechanism.
 
 Unfortunately, the number of security incidents involving accidental disclosure of these tokens has also increased. For example, we now regularly hear about a developer committing an access token to a public source code repository, either because they didn't realise it was included in the committed code, or because they didn't realise the implications of its disclosure.
 
