@@ -116,7 +116,7 @@ Once a new grease value has been deployed, old grease values SHOULD be withdrawn
 
 Grease values for HTTP request header fields consist of a field name and a field value.
 
-Grease field names SHOULD be hard to predict; e.g., they SHOULD NOT have any identifying prefix, suffix, or pattern. However, they MUST NOT be likely to conflict with unregistered or future field names, and the grease coordinator MUST avoid potentially offensive or confusing terms. They also MUST conform to the syntactic requirements for field names in HTTP ({!I-D.ietf-httpbis-semantics}, Section 4.3).
+Grease field names SHOULD be hard to predict; e.g., they SHOULD NOT have any identifying prefix, suffix, or pattern. However, they MUST NOT be likely to conflict with unregistered or future field names, and the grease coordinator MUST avoid potentially offensive or confusing terms. They also MUST conform to the syntactic requirements for field names in HTTP ({{!I-D.ietf-httpbis-semantics}}, Section 4.3).
 
 This can be achieved in different ways (which SHOULD vary from time to time), for example:
 
@@ -124,14 +124,14 @@ This can be achieved in different ways (which SHOULD vary from time to time), fo
 * Append digits to a dictionary word (e.g., 'Turnstile23')
 * Generate a string using a hash or similar function (e.g., 'dd722785c01b')
 
-Grease field values can be statically specified in the grease announcement, specified to be of a certain type (e.g., using {?I-D.ietf-httpbis-header-structure} types), or left to the discretion of the grease sender.
+Grease field values can be statically specified in the grease announcement, specified to be of a certain type (e.g., using {{?I-D.ietf-httpbis-header-structure}} types), or left to the discretion of the grease sender.
 
 
 ## Greasing HTTP Request Cache Directives
 
 Grease values for HTTP request cache directives consist of a directive name and an optional directive value.
 
-Grease directive names SHOULD be hard to predict; e.g., they SHOULD NOT have any identifying prefix, suffix, or pattern. However, they MUST NOT be likely to conflict with unregistered or future directive names, and the grease coordinator MUST avoid potentially offensive or confusing terms. They also MUST conform to the syntactic requirements for cache directive names in HTTP ({!I-D.ietf-httpbis-cache}, Section 5.2).
+Grease directive names SHOULD be hard to predict; e.g., they SHOULD NOT have any identifying prefix, suffix, or pattern. However, they MUST NOT be likely to conflict with unregistered or future directive names, and the grease coordinator MUST avoid potentially offensive or confusing terms. They also MUST conform to the syntactic requirements for cache directive names in HTTP ({{!I-D.ietf-httpbis-cache}}, Section 5.2).
 
 This can be achieved in different ways (which SHOULD vary from time to time), for example:
 
