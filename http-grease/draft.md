@@ -163,3 +163,9 @@ Clients are likely to be risk-averse; if their implementation alone breaks some 
 WAF vendors and deployers often do not coordinate behaviour, and may not have prompt update mechanisms. Therefore, a successful greasing strategy needs to attract them to into community engagement (e.g., using the mailing list above) and needs to accommodate their needs; it is likely they will not be able to deploy updates quickly at first, for example.
 
 As a result, when greasing begins, it will be necessary to have long lead times between announcement and sending. Likewise, initial grease values are more likely to succeed (building confidence and engagement) if they are static and simple.
+
+For example, the first grease value might be completely static, very simple (e.g., "Grease: 1"), and announced several months ahead of time. Subsequent values can grow in complexity, become more dynamic, and arrive with progressively shorter notice, after discussion within the community.
+
+Some clients may not be able to deploy new grease values on a regular basis, and so they will need some sort of update or scheduling mechanism to participate.
+
+In cases where greasing breaks deployed sites too widely, clients may wish to temporarily stop greasing while the issue is mitigated. This should be coordinated among all clients, rather than done unilaterally. Mitigations like retrying requests without grease can be performed at any time; the point is to gently increase pressure on servers to accept new values, not to break sites unnecessarily.
