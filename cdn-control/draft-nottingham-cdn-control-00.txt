@@ -1,0 +1,392 @@
+
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                                    Fastly
+Intended status: Informational                            August 6, 2020
+Expires: February 7, 2021
+
+
+               The CDN-Control HTTP Response Header Field
+                    draft-nottingham-cdn-control-00
+
+Abstract
+
+   this specification defines a HTTP header field that conveys HTTP
+   cache directives to gateway caches.
+
+Note to Readers
+
+   _RFC EDITOR: please remove this section before publication_
+
+   The issues list for this draft can be found at
+   https://github.com/mnot/I-D/labels/cdn-control [1].
+
+   The most recent (often, unpublished) draft is at
+   https://mnot.github.io/I-D/cdn-control/ [2].
+
+   Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
+   pages/cdn-control [3].
+
+   See also the draft's current status in the IETF datatracker, at
+   https://datatracker.ietf.org/doc/draft-nottingham-cdn-control/ [4].
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on February 7, 2021.
+
+
+
+
+
+Nottingham              Expires February 7, 2021                [Page 1]
+
+Internet-Draft                 CDN-Control                   August 2020
+
+
+Copyright Notice
+
+   Copyright (c) 2020 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+   2.  The CDN-Control Response Header Field . . . . . . . . . . . .   3
+     2.1.  Examples  . . . . . . . . . . . . . . . . . . . . . . . .   4
+     2.2.  Parsing . . . . . . . . . . . . . . . . . . . . . . . . .   4
+   3.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   4.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     4.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
+     4.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
+   Appendix A.  Frequently Asked Questions . . . . . . . . . . . . .   6
+     A.1.  Why not Surrogate-Control?  . . . . . . . . . . . . . . .   6
+     A.2.  Why not mix with Cache-Control? . . . . . . . . . . . . .   6
+     A.3.  Is this just for CDNs?  . . . . . . . . . . . . . . . . .   6
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
+
+1.  Introduction
+
+   Many HTTP origins servers use gateway caches to distribute their
+   content, either locally (sometimes called a "reverse proxy cache") or
+   in a distributed fashion ("Content Delivery Networks").
+
+   While HTTP defines Cache-Control as a means of controlling cache
+   behaviour, it is often desirable to give gateway caches different
+   instructions.  To meet this need, this specification defines a
+   separate header field that conveys HTTP cache directives to gateway
+   caches.
+
+
+
+
+
+
+
+
+Nottingham              Expires February 7, 2021                [Page 2]
+
+Internet-Draft                 CDN-Control                   August 2020
+
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+2.  The CDN-Control Response Header Field
+
+   The CDN-Control Response Header Field allows origin servers to
+   control the behaviour of gateway caches interposed between them and
+   clients, separately from other caches that might handle the response.
+
+   It is a Dictionary Structured Header
+   [I-D.ietf-httpbis-header-structure], whose members can be any
+   directive registered in the HTTP Cache Directive Registry
+   https://www.iana.org/assignments/http-cache-directives/http-cache-
+   directives.xhtml [5].
+
+   When CDN-Control is present in a response, caches that use it MUST
+   behave as if the Cache-Control and Expires header fields were not
+   present in the response.  In other words, CDN-Control "turns off"
+   other cache directives, and is a wholly separate way to control the
+   cache.  Note that this is on a response-by-response basis; if CDN-
+   Control is not present, caches fall back to other control mechanisms
+   as required by HTTP [I-D.ietf-httpbis-cache].
+
+   Caches that use CDN-Control MUST implement the semantics of the
+   following directives:
+
+   o  max-age
+
+   o  must-revalidate
+
+   o  no-store
+
+   o  no-cache
+
+   o  private
+
+   Precedence of directies in CDN-Control is the same as in Cache-
+   Control; in particular, no-store and no-cache make max-age
+   inoperative.
+
+   Typically, caches that use CDN-CONTROL will remove the header field
+   from a response before forwarding it, but MAY leave it intact (e.g.,
+   if the downstream client is known to be using its value).
+
+
+
+Nottingham              Expires February 7, 2021                [Page 3]
+
+Internet-Draft                 CDN-Control                   August 2020
+
+
+2.1.  Examples
+
+   For example, the following header fields would instruct a gateway
+   cache to consider the response fresh for 600 seconds, other shared
+   caches for 120 seconds and any remaining caches for 60 seconds:
+
+   Cache-Control: max-age=60, smax-age=120
+   CDN-Control: 600
+
+   These header fields would instruct a gateway cache to consider the
+   response fresh for 600 seconds, while all other caches would be
+   prevented from storing it:
+
+   Cache-Control: no-store
+   CDN-Control: max-age=600
+
+   Because CDN-Control is not present, this header field would prevent
+   all caches from storing the response:
+
+   Cache-Control: no-store
+
+   Whereas these would prevent all caches except for gateway caches from
+   storing the response:
+
+   Cache-Control: no-store
+   CDN-Control: none
+
+   (note that 'none' is not a registered cache directive; it is here to
+   avoid sending a header field with an empty value, because such a
+   header might not be preserved in all cases)
+
+2.2.  Parsing
+
+   CDN-Control is specified a a Structured Field
+   [I-D.ietf-httpbis-header-structure], and implementations are
+   encouraged to use a parser for that format in the interests of
+   robustness, interoperability and security.
+
+   However, some implementers might initially reuse a Cache-Control
+   parser for simplicity.  If they do so, they SHOULD observe the
+   following points, to aid in a smooth transition to a full Structured
+   Field parser and prevent interoperability issues:
+
+   o  If a directive is repeated in the field value (e.g., "max-age=30,
+      max-age=60"), the last value 'wins' (60, in this case)
+
+   o  Members of the list can have parameters (e.g., "max-
+      age=30;a=b;c=d"), which should be ignored by default
+
+
+
+Nottingham              Expires February 7, 2021                [Page 4]
+
+Internet-Draft                 CDN-Control                   August 2020
+
+
+   When an implementation does parse CDN-Control as a Structured Field,
+   each directive will be assigned value; for example, max-age has an
+   Integer value, no-store's value is Boolean true, and no-cache's value
+   can either be Boolean true or contain a list of field names.
+   Implementations SHOULD NOT accept other values (e.g. coerce a max-age
+   with a Decimal value into an Integer).  Likewise, implementations
+   SHOULD ignore parameters on directives, unless otherwise specified.
+
+3.  Security Considerations
+
+   The security considerations of HTTP caching [I-D.ietf-httpbis-cache]
+   apply.
+
+4.  References
+
+4.1.  Normative References
+
+   [I-D.ietf-httpbis-cache]
+              Fielding, R., Nottingham, M., and J. Reschke, "HTTP
+              Caching", draft-ietf-httpbis-cache-10 (work in progress),
+              July 2020.
+
+   [I-D.ietf-httpbis-header-structure]
+              Nottingham, M. and P. Kamp, "Structured Field Values for
+              HTTP", draft-ietf-httpbis-header-structure-19 (work in
+              progress), June 2020.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+4.2.  URIs
+
+   [1] https://github.com/mnot/I-D/labels/cdn-control
+
+   [2] https://mnot.github.io/I-D/cdn-control/
+
+   [3] https://github.com/mnot/I-D/commits/gh-pages/cdn-control
+
+   [4] https://datatracker.ietf.org/doc/draft-nottingham-cdn-control/
+
+   [5] https://www.iana.org/assignments/http-cache-directives/http-
+       cache-directives.xhtml
+
+
+
+Nottingham              Expires February 7, 2021                [Page 5]
+
+Internet-Draft                 CDN-Control                   August 2020
+
+
+Appendix A.  Frequently Asked Questions
+
+A.1.  Why not Surrogate-Control?
+
+   The Surrogate-Control header field is used by a variety of cache
+   implementations, but their interpretation of it is not consistent;
+   some only support 'no-store', others support a few directives, and
+   still more support a larger variety of implementation-specific
+   directives.  These implementations also differ in how they relate
+   Surrogate-Control to Cache-Control and other mechanisms.
+
+   Rather than attempt to align all of these different behaviours (which
+   would likely fail, because may existing deployments depend upon them)
+   or define a very small subset, a new header field seems more likely
+   to provide good functionality and interoperability.
+
+A.2.  Why not mix with Cache-Control?
+
+   An alternative design would be to have gateway caches combine the
+   directives found in Cache-Control and CDN-Control, considering their
+   union as the directives that must be followed.
+
+   While this would be slightly less verbose in some cases, it would
+   make interoperability considerable more complex to achieve.  Consider
+   the case when there are syntax errors in the argument of a directive;
+   e.g., 'max-age=n60'.  Should that directive be ignored, or does it
+   invalidate the entire header field value?  If the directive is
+   ignored in CDN-Control, should the cache fall back to a value in
+   Cache-Control?  And so on.
+
+   Also, this approach would make it difficult to direct the gateway
+   cache to store something while directing other caches to avoid
+   storing it (because no-store overrides max-age).
+
+A.3.  Is this just for CDNs?
+
+   No; any gateway cache can use it.  The name is chosen for convenience
+   and brevity.
+
+Author's Address
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 7, 2021                [Page 6]
+
+Internet-Draft                 CDN-Control                   August 2020
+
+
+   Mark Nottingham
+   Fastly
+   made in
+   Prahran, VIC
+   Australia
+
+   Email: mnot@mnot.net
+   URI:   https://www.mnot.net/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires February 7, 2021                [Page 7]
