@@ -33,7 +33,7 @@ informative:
 
 --- abstract
 
-this specification defines a HTTP header field that conveys HTTP cache directives to gateway caches.
+This specification defines a HTTP header field that conveys HTTP cache directives to gateway caches.
 
 --- note_Note_to_Readers
 
