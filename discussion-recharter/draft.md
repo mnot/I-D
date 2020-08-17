@@ -26,11 +26,6 @@ author:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
-normative:
-  RFC2119:
-
-informative:
-
 
 --- abstract
 
@@ -54,11 +49,11 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-The IETF discussion list was chartered to '[further] the development and specification of Internet technology through discussion of technical issues, and [host] discussions of IETF direction, policy, meetings and procedures.'{{!RFC3005}} It is thus considered the primary venue where the operation of the IETF is discussed, as well as the default home for technical discussions that don't have a more focused venue.
+The IETF discussion list was chartered to '\[further] the development and specification of Internet technology through discussion of technical issues, and \[host] discussions of IETF direction, policy, meetings and procedures.'{{!RFC3005}} It is thus considered the primary venue where the operation of the IETF is discussed, as well as the default home for technical discussions that don't have a more focused venue.
 
 Over time, it has become the favoured venue for the IESG to 'take the temperature' of the IETF as a whole, especially for proposals that affect many either administratively or technically. Support on the list is taken as a sign that there is support within the IETF overall; objections on the list can stop a proposal from being enacted.
 
-This draft contends that the IETF discussion list is not an appropriate venue for that, because it is not representative of the IETF community {{representative}}, and because it is not productive {{unproductive}}. {{recommendations}} recommends re-scoping the charter of the IETF discussion list to reflect this.
+This draft contends that the IETF discussion list is not an appropriate venue for that, because it is not representative of the IETF community ({{representative}}), and because it is not productive ({{unproductive}}). {{recommendations}} recommends re-scoping the charter of the IETF discussion list to reflect this.
 
 
 ## The IETF discussion list is not representative {#representative}
