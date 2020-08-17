@@ -26,11 +26,6 @@ author:
     email: mnot@mnot.net
     uri: https://www.mnot.net/
 
-normative:
-  RFC2119:
-
-informative:
-
 
 --- abstract
 
