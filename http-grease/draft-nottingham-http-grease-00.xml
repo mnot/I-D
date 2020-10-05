@@ -14,7 +14,7 @@
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
 
-<rfc ipr="trust200902" docName="draft-nottingham-http-grease-00" category="info">
+<rfc ipr="trust200902" docName="draft-nottingham-http-grease-00" category="bcp">
 
   <front>
     <title>Greasing HTTP</title>
@@ -22,6 +22,12 @@
     <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
       <organization></organization>
       <address>
+        <postal>
+          <street>made in</street>
+          <city>Prahran</city>
+          <region>VIC</region>
+          <country>Australia</country>
+        </postal>
         <email>mnot@mnot.net</email>
         <uri>https://www.mnot.net/</uri>
       </address>
@@ -36,7 +42,7 @@
     <abstract>
 
 
-<t>Like many network protocols, HTTP is vulnerable to ossification of its extensibility points. This draft specifies how they should be exercised (‘greased’) to assure their continued usability.</t>
+<t>Like many network protocols, HTTP is vulnerable to ossification of its extensibility points. This draft explains why HTTP ossification is a problem and establishes guidelines for exercising those extensions by ‘greasing’ the protocol to combat it.</t>
 
 
 
@@ -68,74 +74,48 @@
 
 <section anchor="introduction" title="Introduction">
 
-<t>Like many network protocols, HTTP is vulnerable to ossification of its extensibility points. Those that are rarely exercised risk ‘rusting shut’ because recipients assume that they will not be used. This happens in practice for several reasons, including implementer convenience, performance optimisation, or traffic characterisation.</t>
+<t>Like many network protocols, HTTP is vulnerable to ossification of its extensibility points. Ossification happens when a significant number of the systems that generate, transmit, handle, or consume the protocol don’t accept a new extension, thereby making it more difficult to deploy extensions.</t>
 
-<t>Because extensibility is a primary mechanism for protocol evolution, it is important to keep these extension points flexible. For points that are rarely used, one proven way (pioneered by <xref target="RFC8701"/>) to assure this is through sending ‘grease’ values – i.e., extension values that are hard to predict and have no effect on correct protocol operation.</t>
+<t>For example, TCP has effectively been ossified by middleboxes that assume that new TCP options will not be deployed; likewise, the Protocol field in IP has been effectively ossified as well, since so many networks will only accept TCP or UDP traffic.</t>
 
-<t>This document specifies how HTTP’s extension points should be greased, to assure their continued usability. It focuses on generic HTTP features; other documents cover versioned extensibility points (e.g., see <xref target="I-D.bishop-httpbis-grease"/>).</t>
+<t>Addressing this issue is important; protocol extensibility allows adaptation to new circumstances as well as application to new use cases. Inability to deploy new extensions creates pressure to misuse the protocol – often leading to undesirable side effects – or to use other protocols, reducing the value that the community gets from a shared, standard protocol.</t>
 
-<section anchor="what-to-grease" title="What to Grease?">
+<t>While there are a few ways that protocol designers can mitigate ossification, this document focuses on a technique that’s well suited to many of the ossification risks in HTTP: ‘greasing’ extensibility points by exercising them, so that they don’t become ‘rusted shut.’</t>
 
-<t>HTTP has several extension mechanisms. While keeping all of them available for use is desirable, this document currently targets two specific extensibility points - HTTP request header fields and request cache directives - for a few reasons.</t>
+<t><xref target="RFC8701"/>) pioneered greasing techniques in IETF protocols; this document explains how they apply to HTTP. It focuses on generic HTTP features; other documents cover versioned extensibility points (e.g., see <xref target="I-D.bishop-httpbis-grease"/>).</t>
 
-<t>Some extension points are not practical to grease. For example, introducing new HTTP methods is important, but greasing them would require sending requests beyond those intended by the user. Beyond the overhead of doing so, failure of those requests is not likely to create an incentive to allow those requests, because that failure is not user visible.</t>
-
-<t>Other extension points are already effectively ossified: for example, range units. While it might be possible to introduce a new range unit in the future (with enough effort), there is not much desire to do so in the community at this point, and the risk of greasing it causing too many failures is high.</t>
-
-<t>Greasing aspects of HTTP responses (such as header fields or cache control directives) is not addressed in this document because current Web traffic already effectively greases them. For example, the breadth of unrecognised headers sent from HTTP servers effectively keeps response header fields greased; likewise with response cache-control directives.</t>
-
-<t>Future revisions might address other extensibility points (including those listed above), based upon discussion and feedback.</t>
-
-</section>
-<section anchor="how-to-grease" title="How to Grease?">
-
-<t>Greasing has the goal of keeping protocol extension points flexible – that is, it should remain possible to introduce new values with negligible risk of interoperability problems. By necessity, this is not absolute; an implementation determined to control input values can anticipate grease values and allow them, while denying other extensions.</t>
-
-<t>As a result, one of the tradeoffs in a greasing mechanism is between making the values difficult to anticipate and the complexity of the mechanism. One that is hard to anticipate typically requires hard-to-predict values generated by an algorithm, with a corresponding prohibition on registration of those values. Even then, a determined implementation could use heuristics to identify and allow grease values, while blocking others. On the other hand, an easily predictable value can be added to an allow list in implementations, while they still block unknown values.</t>
-
-<t>This document’s initial goal is to make it possible to deploy new standards-defined values with a suitable notice period, rather than to allow any implementation to introduce new values at any time. To meet that goal, a ‘HTTP grease process’ is defined, whereby grease values are periodically announced and later sent by implementations, so that receiving implementations have enough time to assure interoperability.</t>
-
-</section>
 <section anchor="notational-conventions" title="Notational Conventions">
 
-<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”,
-“RECOMMENDED”, “NOT RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as
-described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all capitals, as
-shown here.</t>
+<t>The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “NOT RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all capitals, as shown here.</t>
 
 </section>
 </section>
-<section anchor="process" title="The HTTP Grease Process">
+<section anchor="ossification-and-http" title="Ossification and HTTP">
 
-<t>There are a few parties involved in the greasing of an HTTP extensibility point. They are:</t>
+<t>As an application protocol, HTTP has several extensibility points. For example, methods, status codes, header and trailer fields, cache directives, range units and content codings are all HTTP extension points.</t>
 
-<t><list style="symbols">
-  <t>Grease senders - implementers and operators of HTTP deployments that send grease extensions</t>
-  <t>Grease recipients - implementers and operators of HTTP deployments that receive grease extensions</t>
-  <t>The grease coordinator - a person appointed to oversee the HTTP grease process</t>
+<t>Each extension point defines how unrecognised values should be handled; in most cases, they should be ignored (e.g. header fields, cache directives and range units), while in a few cases they have other handling (e.g., unrecognised methods result in a 405 status code; unrecognised status codes devolve to a more generic x00 status code).</t>
+
+<t>Implementations and other components that diverge from these defined behaviours risk ossifying that extensibility point.</t>
+
+<t>For example, it is increasingly common for Web Application Firewalls (WAFs), bot detection services and similar components to reject HTTP requests that contain an unrecognised HTTP header field; in some cases any unrecognised field name will cause an error, while in others, the field value needs to contain certain characters or strings.</t>
+
+<t>This behaviour has become prevalent enough to make it difficult for Web browsers and other clients to introduce new request header fields. That difficulty is aggravated by two factors:</t>
+
+<t><list style="numbers">
+  <t>A relatively large number of vendors create these components, but have little coordination between them, leading to wide variances in behaviour, and</t>
+  <t>Many of these components’ deployments are not updated regularly and reliably, leading to difficulty in addressing ossification issues even when they are identified.</t>
 </list></t>
 
-<t>To aid communication between these parties, a mailing list (TBD) has been created for announcements and discussion.</t>
-
-<t>The grease coordinator is appointed by the ART Area Director(s), in consultation with the HTTP Working Group chair(s).</t>
-
-<t>On a periodic basis (to be determined by the grease coordinator in consultation with grease senders and grease recipients), the grease coordinator will announce a new grease value for the extension points covered by this process. Where possible, these values will be provisionally registered with IANA, with the note ‘grease value’ and a reference to this specification.</t>
-
-<t>Such announcements MUST contain the details of the grease value (see individual requirements below), and a date on which grease senders SHOULD start sending that value.</t>
-
-<t>Grease senders SHOULD send the grease value on a sizeable fraction of traffic (e.g., 1/8th); too small a proportion might be ignored.</t>
-
-<t>Grease senders MAY selectively send grease values. For example, a Web browser might only send grease on navigation requests, to assure that any interoperability problems are clearly visible.</t>
-
-<t>Grease senders SHOULD NOT send grease values when the request method is non-idempotent or unsafe.</t>
-
-<t>If grease senders or recipients experience widespread interoperability problems as the result of deployment of a grease value, they SHOULD report this to the grease coordinator, who MAY declare that the grease value can be withdrawn by grease senders. Grease senders SHOULD NOT act unilaterally in such cases.</t>
-
-<t>Once a new grease value has been deployed, old grease values SHOULD be withdrawn by grease senders.</t>
+<t>To avoid ossification of request header fields, it is Best Current Practice to grease them, as explained below. Other HTTP extensibility points might be added in the future, and it is not to be inferred that greasing other HTTP extensibility points is not good practice.</t>
 
 <section anchor="greasing-http-request-header-fields" title="Greasing HTTP Request Header Fields">
 
-<t>Grease values for HTTP request header fields consist of a field name and a field value.</t>
+<t>HTTP clients SHOULD grease request header fields.</t>
+
+<t>This means that they should add grease fields to requests at their discretion. For example, a client implementation might add one or more grease request header fields to every request it makes, or it might add one to every third or tenth request.</t>
+
+<t>Depending on the deployment model of the client, it might do this in production releases automatically (especially if there are ways that it can modify how grease values are sent with a high degree of control, in case too many errors are encountered), or it might do so only in pre-releases.</t>
 
 <t>Grease field names SHOULD be hard to predict; e.g., they SHOULD NOT have any identifying prefix, suffix, or pattern. However, they MUST NOT be likely to conflict with unregistered or future field names, and the grease coordinator MUST avoid potentially offensive or confusing terms. They also MUST conform to the syntactic requirements for field names in HTTP (<xref target="I-D.ietf-httpbis-semantics"/>, Section 4.3).</t>
 
@@ -147,33 +127,23 @@ shown here.</t>
   <t>Generate a string using a hash or similar function (e.g., ‘dd722785c01b’)</t>
 </list></t>
 
-<t>Grease field values can be statically specified in the grease announcement, specified to be of a certain type (e.g., using <xref target="I-D.ietf-httpbis-header-structure"/> types), or left to the discretion of the grease sender.</t>
+<t>Grease field names are not required to be registered in the IANA HTTP Field Name Registry, unless they are intended to be used over an extended period of time (e.g., more than one year). However, they MAY be registered as Provisional with a reference to this RFC or another explanatory resource, to help interested parties to find out what they are used for. Such registered values SHOULD be removed after the client stops using that field.</t>
 
-</section>
-<section anchor="greasing-http-request-cache-directives" title="Greasing HTTP Request Cache Directives">
+<t>Greasing clients SHOULD not reuse other clients’ grease fields names, unless they coordinate.</t>
 
-<t>Grease values for HTTP request cache directives consist of a directive name and an optional directive value.</t>
+<t>Grease field values can be fixed strings, or dynamically generated at runtime. It is RECOMMENDED that greasing clients exercise the various types in <xref target="I-D.ietf-httpbis-header-structure"/>.</t>
 
-<t>Grease directive names SHOULD be hard to predict; e.g., they SHOULD NOT have any identifying prefix, suffix, or pattern. However, they MUST NOT be likely to conflict with unregistered or future directive names, and the grease coordinator MUST avoid potentially offensive or confusing terms. They also MUST conform to the syntactic requirements for cache directive names in HTTP (<xref target="I-D.ietf-httpbis-cache"/>, Section 5.2).</t>
+<t>If an error is encountered by a greasing client, it SHOULD NOT re-issue the request without the grease value, since hiding the consequences of the failure doesn’t serve the purpose of greasing.</t>
 
-<t>This can be achieved in different ways (which SHOULD vary from time to time), for example:</t>
-
-<t><list style="symbols">
-  <t>Select a single dictionary word or proper noun (e.g., ‘fanciful’, ‘imagine’)</t>
-  <t>Combine two dictionary words or proper nouns with a hyphen (e.g., ‘skateboard-clancy’)</t>
-  <t>Append digits to a dictionary word (e.g., ‘turnstile23’)</t>
-  <t>Generate a string using a hash or similar function (e.g., ‘dd722785c01b’)</t>
-</list></t>
-
-<t>Grease field values can be omitted (so there is no ‘=value’), statically specified in the grease announcement, specified to be of a certain type (e.g., an integer, a quoted string), or left to the discretion of the grease sender.</t>
+<t>Greasing clients SHOULD announce new field names they intend to grease on the http-grease@ietf.org mailing list.</t>
 
 </section>
 </section>
 <section anchor="security-considerations" title="Security Considerations">
 
-<t>Some HTTP extensibility points are becoming (or have become) ossified because of security considerations; receiving implementations believe that it is more secure to reject unknown values, or they are able to identify undesirable peers through their use of extensions.</t>
+<t>Some HTTP extensibility points are becoming (or have become) ossified because of security considerations; receiving implementations believe that it is more secure to reject unknown values, or that they can identify undesirable peers through their use of extensions.</t>
 
-<t>This document does not directly address these concerns, nor does it directly disallow such behaviour. Instead, it aims to encourage the ability to accommodate new extensions more quickly than is now currently possible.</t>
+<t>This document does not directly address these concerns, nor does it directly disallow such behaviour. Instead, it aims to encourage the ability to accommodate new extensions more quickly than is now possible.</t>
 
 </section>
 
@@ -232,44 +202,15 @@ shown here.</t>
     <organization />
 </author>
 
-<date month='May' day='26' year='2020' />
+<date month='October' day='2' year='2020' />
 
 <abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP: its architecture, terminology, the "http" and "https" Uniform Resource Identifier (URI) schemes, core request methods, request header fields, response status codes, response header fields, and content negotiation.  This document obsoletes RFC 2818, RFC 7231, RFC 7232, RFC 7233, RFC 7235, RFC 7538, RFC 7615, RFC 7694, and portions of RFC 7230.</t></abstract>
 
 </front>
 
-<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-semantics-08' />
+<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-semantics-12' />
 <format type='TXT'
-        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-semantics-08.txt' />
-</reference>
-
-
-
-<reference anchor="I-D.ietf-httpbis-cache">
-<front>
-<title>HTTP Caching</title>
-
-<author initials='R' surname='Fielding' fullname='Roy Fielding'>
-    <organization />
-</author>
-
-<author initials='M' surname='Nottingham' fullname='Mark Nottingham'>
-    <organization />
-</author>
-
-<author initials='J' surname='Reschke' fullname='Julian Reschke'>
-    <organization />
-</author>
-
-<date month='May' day='26' year='2020' />
-
-<abstract><t>The Hypertext Transfer Protocol (HTTP) is a stateless application- level protocol for distributed, collaborative, hypertext information systems.  This document defines HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages.  This document obsoletes RFC 7234.</t></abstract>
-
-</front>
-
-<seriesInfo name='Internet-Draft' value='draft-ietf-httpbis-cache-08' />
-<format type='TXT'
-        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-cache-08.txt' />
+        target='http://www.ietf.org/internet-drafts/draft-ietf-httpbis-semantics-12.txt' />
 </reference>
 
 
@@ -346,136 +287,88 @@ shown here.</t>
     </references>
 
 
-<section anchor="bootstrapping-the-http-grease-process" title="Bootstrapping the HTTP Grease Process">
-
-<t>Because the initial focus of this document is on two request extension points, the relevant grease senders will be HTTP clients – a combination of Web browsers, HTTP client libraries and intermediaries (such as CDNs). The relevant grease recipients will be HTTP servers (both on the origin and in intermediaries).</t>
-
-<t>Broadly speaking, HTTP servers accept these extensions, unless they have a Web Application Firewall (WAF) installed. As such, greasing HTTP successfully will require client implementers, WAF vendors, and in some cases WAF deployers to work together.</t>
-
-<t>Clients are likely to be risk-averse; if their implementation alone breaks some Web sites, they can face negative consequences (because their users can easily flee to other implementations). Therefore, a successful greasing strategy needs to include most or all major clients, and their actions need to be coordinated.</t>
-
-<t>WAF vendors and deployers often do not coordinate behaviour, and may not have prompt update mechanisms. Therefore, a successful greasing strategy needs to attract them to into community engagement (e.g., using the mailing list above) and needs to accommodate their needs; it is likely they will not be able to deploy updates quickly at first, for example.</t>
-
-<t>As a result, when greasing begins, it will be necessary to have long lead times between announcement and sending. Likewise, initial grease values are more likely to succeed (building confidence and engagement) if they are static and simple.</t>
-
-<t>For example, the first grease value might be completely static, very simple (e.g., “Grease: 1”), and announced several months ahead of time. Subsequent values can grow in complexity, become more dynamic, and arrive with progressively shorter notice, after discussion within the community.</t>
-
-<t>Some clients may not be able to deploy new grease values on a regular basis, and so they will need some sort of update or scheduling mechanism to participate.</t>
-
-<t>In cases where greasing breaks deployed sites too widely, clients may wish to temporarily stop greasing while the issue is mitigated. This should be coordinated among all clients, rather than done unilaterally. Mitigations like retrying requests without grease can be performed at any time; the point is to gently increase pressure on servers to accept new values, not to break sites unnecessarily.</t>
-
-</section>
 
 
   </back>
 
 <!-- ##markdown-source:
-H4sIANjMA18AA9Vaa48bR3b9zl9RkT/MjEFyJK0X9o6SbPS0BejhSGMYQRAs
-mt1Fsna6u7hV3UNzDf33nHNvVXeTM7I3BowkC6zMIburbt177rmvWiwWs851
-tb0y3wZbRNduzHfX19/PitUq2NurWeXLtmjwcxWKdbdofdfhmW3RLLZdt1ts
-+JJdPHw4q4oOTz1++PjhrMTHjQ+HK+PatZ/N3C5cmS70sXv88OGfHj6eFXgL
-G9rWhqKe7X242QTf765mN/aAv6or87rtbGhtt3jBbWez2BVt9Zei9i02Odg4
-27kr85+dL+cG/7i2sm03N9GHLth1xKdDkz50wZX4qfTNrkgfGjyMn1xbu9b+
-12xW9N3Wh6uZWcwM/ufaeGXeLs274azytarhbRFuTn/xYVO07u9F53x7Jd/Y
-pnD1lWmgrn/jP0scRX7oA+Sm5uLV5eV+v1/mXy9ns9aHBmvcWq7x4dXzx48e
-/ekK2oMOhx9ms8ViYYoVjoXTzGZv3I01TdEeDNagIs0ueGjE1zggDWlcNLd9
-TU2vagtlGR+jW7tSpDV+bVwXjf2ps210K1e77mB23kFBS3O9xctidxN3tsRb
-Npqt35tuaw8mbn1fV2Zl8bYNpYu2MudnCojq7IJbFTH2wfJxF6D4Fkrr8VQf
-C91pmc4DHdi/vOM/nf/LB1tUNsTZ7EvowLx88fr6/Ycrs6u5rgm28bdcEZJF
-W8oZVhYKsmbXr+p0rC9ns+utxdFjD4lrFzuDR/QtPU9Z8D1827eVKTrzz9km
-G9dt+9USKLmkaS5fL15c1sXK1vFyAvh/XeoOjcfSwZYAlDn3ayhxbvpWJIlb
-W12k3bDtdA+xedrIedlisvYlF/+ga5bbot3gCHAYOYb9dWGJb5j0crNd7Aq8
-eyr2R2tNUUdPq6h4Z9GUfQjcD27W9REeIL++fnn9ysCvC4LtxoY5Np8Nm09+
-WDrbrZdwg0vQxeUvMYUcjiZvXFXVdjb7gq4efNWLLX93QPtI8ECH1GjAP/Vh
-At/g4o05I1GRB+O2786AkrLoBXml2zkyh8C6SeuIK+xdXRPEhBSerZLrbIvd
-DlJQnTu6qyut4DDaWxKfoUZ8K0xU1n3FPV0DoJOfrDjMrW2xZWnnZmeD0AD+
-MH7XucZFOfDcENjQODRAuHAfG9KP0PWzJP6xQghIyOSaIhxMYwkzFxsRLqvb
-2Ftf97qFEwhDNvBrAZhA6TfW7nj4cWkoX/Vs1rX9ycE4S/OKC+qXp1qnniB8
-a7kjzmn2xcGc77CMtQG2WB3Mzz//GRTwzdcPH336dMwnlIZLImpsttBnK8pL
-5HNmbouajg+YuaVdzicSpl8GYaCwiivvsCXihEGUwXdgmNYbu16DYSAiLAH3
-wMdBNx7myBpWlvRl34gHHRElAXsW72po5M7El/N/iC7NaxJZCdVFirVhAIXZ
-xS3WFq4bbHxiPBYIg0Rwbqg3GPyfEmC9+3zDnNvlBpqKYAeoHUSyXIHC/E6c
-Fx+T/8IQOPIXX5gfBfxeswb759lMhNgWcUD3eOgBYHDBH7cOXkv00GIF/AYe
-C4EbU9wiZopPE4bELPVqoxNHnyf2znpOjAUgdUXYWAJs77P2y/vPuFBNBfs3
-YKAzWwk0BsaqqyiWz7+URUlydDQ6wi7fpEwFlLzPXksq9c096CesyAXJ5aEJ
-qEm1pw5hfyro5XR7ZT5qorWKFigLyUgVjxxublZ9p2vwWVHXXhBEiSHm4ALp
-BBHQOnicqBPGw0b4XZ2KxA7lhqV5lh8Bo8BkVAeNUXkhPz83axiEgBQLeeHA
-tDqE4xFrkDUt4E0J2ToElpZcBru4W6Fm2FfShenL84FSxQvzJmlJimZuXRT+
-mM3eC5bv1XFRY8/qkNwUG0ISDQUWCeR6qujAKIrA7LoBgaC0xm22Qtk7vpaC
-SbYJ1hebjK/mqLju6WfmfI/ga2wrDAQZYKkLgtSOZ2n6cqsIlqUr4NPnVRim
-uerBSBDBG3K0ueCQD0gsguYHqzvislcAeK8xMilPDLLFcaCxIY0v6AzQFdZI
-sI874BYPn0cKBlc99gBoTIFP6glgudEBLvKRiqrCOoyVco6pR2ar5lziR7sa
-AtN9tlKXiILmE8fg+Vd8AxqG+H0LOfymlRitMpNmsMc6+EZPB9iQ4Y52IMvE
-4dwnp03E+0RAvMfSRgw6PC2qWNxVBVT8ShGA+sgRlDEhKekm8e/9LDtGenWK
-nNSt4IGAz4oimR4SYMcIohfQExJra6sVki1l3+/oVRPyHYxOAqb2Nr4QZs1E
-O0b1zwVrRktxSBcl4KcQFVjKtJ9xETpIiqiivNZuareR5zJ8ST1BwmXWRPD4
-naHgGXO8EhrD1/MhqAvKVpG5h30ihJJTIk3wKosFG8dARt5J9nFIurssC5N7
-sKZDwkZSUkvnH6nMTEu2mZu90AHqxwP15I/5htZ+ylwJhu3rTvMVDVjEdmX9
-ei35XTH66ZhOOdJwt7dIbpriJjF3lqNy9AwsKjw5Spv9nwUrTQOVpQ2HhZfm
-fWuzsYYUZrJGd9gx8MAFUnzQpxadX+REJ0khKUTRaWig2moU7jAlFUOLFpr7
-0CeqhKMtMK2pdovlN46laE69FdS69tK8ZFoHyZFBFlO7nVi0FKD14qGoj5F8
-l1FwxqLerQ8Tkx2ZMttuVfvyZjBepHY0qIktobKKrGponvqQMz1JNGSdXAvC
-fW1SZNpNCkd3isBhX62CO+b+IgJ46qb1+5xknqaGZwQKNAfHFO90ckgAQ4LR
-1MEqu6v9QbxL+h4wXVxUdi3Km/pbYWLv9ChwG5YXcDTnK0Y8OTww0o5xmBHj
-RPefc2emx3gadQaSlmuIaW2niKPstOeZ0G4yCGBBRz7TlE0EpZYQC1eHU/8L
-WcoE0aJFDEXSUImd64Klj5D76lRatnO8SsGa290eVUz6iGbvKSxT/ElifcpF
-bD+ATN95fRc2eS4llyykBf4NqzsP/ZsHb3/4eP1grv81797L5w8v//2H1x9e
-vuDnj989ffNm+JCf+Pjd+x/evBg/6fczvPn8/du3L9+90JfxrTn56u3T/3ig
-6cCD999fv37/7umbB3ejbqG5xSqdDuiWeBJnyDvK4FYaqZ89/948+gqZ/T+l
-vtKnT+mPbx59/RX+2KuXYjPfwib6pwCcNWwRhOMA9LLYAXCsxbEFQgTQTitT
-kyjlqTGBhQYm873Cwvz8RQLIJ9Eqkzf+X9LpXRE6lkuuRb15mxMLO/IpaAUg
-lmXviakstSllYHPsy7wx02FmA4tpQa3cr6WbD2NipO6mtZKAi29n1I6hYFx9
-0gr4bRsoeu29e1xvh+9LD+S5lotho4JuE5kO7OTkSlbM3Fm0dVn1xx4JfQP+
-rsr5ZuqS5LCkBXwyAb2afUsqXajv/PrZiwtJKVZ8WHP8Skuh5LR6KB57zFdS
-b+yeQ7DtMAifapGnH67NUzxqXkiK5cN5vGBpxNDOmKsCC90NZ/zRByH8b9k1
-ZtfD8S2WC62qSdiF2RR2PFf3mMSftPN9At637eYYU8UIjhEImvrft6T0hrK6
-UlExZcTUmbynkJS6PYvLAkFNygqGLpQjxjxZcQgMjEfaVZH0NOUBDNSynJzp
-9dN3T+ejVtmAze0TXehMoy5eXOMtit751HZNNXbuf3yUYuIID0KRTM2K5MxQ
-PoAVcyZzdP5zwtchvbh1VS9dMUlZdKWVReC6mCdhOGNg2oH4W96xS+JXRMzQ
-DfWwuJvsk0ujuy/YlHEdSUU/M9H93WpHQmr5lOOkmiZ1TB5dftNtL55ITRYb
-ciQ7a56Vu/Q+cpHpNq2H+u+KAZ7H53qoWqbskzOpo+qokNJqFfyetbJuIKw9
-fRNbt8Wt2yiOx9p72mZKQf6zKbqwdFmD/rH4WJPfr0ZGsLuiSyTRejb1VrS/
-oZl+u0CO1+wAPkQyNn3aWKy5xev1qXXx64R27U90coHlHkvEHYvFXzpITDLQ
-taXJMVCyxJcjoVPgS+cKlqZU6Hf+M17OZMeLJStb1kUYm8PHqEqpJv2uCgWC
-55gepYMuT0PYRL3AIDsRkiKJV8O7pJQvWUgL/d1PMQOF67Gl8VqfWipt9Cvi
-acp0NCs0H5Jpv9MC+5UU2ANO0vKkuV9ov5F2GXPEGvKdDNyS4+sXJ348PjUV
-/qSj+8Som05NSl1KmijoT1WGVjfIXX9Cltmv5b/sXhcdJ5FLltxsbKaVchLI
-HSddMN+ua1ZXQqxsWwysi6VS42gi9tjtuSdwyBbFrUfwVg9xYnNUnAwTkN5L
-k3idWkIIbjEnQxzvZA7m1CADNx5AyWxKHpMsTTNVpkvp1jlSRHaCOd0Z+sDR
-NlJpxk+f5uZjGsF9tfzDRa53cjlVbp1N+RxrXStNoX1xQERW/k7WuOUMQho5
-OV3nf8H5kxae5HbPfbNyLHz3XoYe22DZpBUJuIbm6TrCAAkYRqShUNoedmSi
-RNpnH2/gRCvPovh5XbTl4Qxfvu1DKA4LkG3XklUXH1GadmcX2PspJzlMcjac
-LpFET3celr7uQ8uq0D7+g7z6bSqxGU+6QFupxQq65ZbyRtfAqQmQVtWZl6qq
-rx8//vqbP5YPH62w1jHwJ80OqJuTu1RQ5RHEcSptj2L0fPKU5kfieKUNGrMP
-O5ulUGnTUOAICurBC5yqLwlt1BF8kckQTlXbdZeBx+QQlcnQJbDHtPKLrPJc
-epIvhgbcrxLLne79EbcM30/4pZWRmlSA488nbHP83v8rxjkR/f8Q65yY6h/h
-H3llyj1/XD7+/bnnoyRokhK2m/oO7ZywzuDAa1CLW/c12cU1xQb0JZwwpbLf
-yGBxZLBSGex/yFPd/wpP+cZ1rP7O9QZCHpaYs3/RsuNi/jtSmYynOruRqwzm
-b72nJHrY38ZZBGEfmGo+J8dUaSoc02zwc00LzaxXFkU5NXzug7KDfGMvhjHW
-MFOBADHvVB7t9OQXWmEonugGqVMszeLGy7Cw7LVtFOxfrSSV08alXilIXRWT
-b1kM3di+HYayKLWZouY5vA6uk7xHPfTjGXnlrfb51fHZA0yjE61kcUJYj+0+
-lEz6tJs8DMNoP1Ny35WF6pzvw9K8Bp4RkmR8UbhG8I8aAb8VG+2Q5MKAjlGy
-JeKlpGTCPMqrSgJTlTckWbZQBaP7ydA5F9/pNgsnM4KHZ953bIjvdrndf08/
-bLyVwQdyU1gG+wq1qbKcjPpJFDm+nTYK5qm2qe0tL2ecFE65HyBylHVqWy2k
-s08SGnr3k6IyX7XRxxFuVqEILg1PpMpqEOr0q2GY+PzFu3ghseCOLJPK7Uic
-PLQ7X3lO+lLbPoC82rTVyW4k+mfBF5VygwxV5sdrwa52151eTYm8l1UniB1S
-LJYjgzHztTFULsHuWcKf//j01QUvAnb4i/d5nkZB23xsS+qmfUmDguHrdAso
-D+ST6qbdwbnBquYWdvEhBWEWcCQKKeDk51ShBQGv3H/q/MaSKXH058l8eh0s
-5wArnbYtCmkFPjFunTzxpNcvtydlrnoTdVueP7rOxpRjkKPXhUwCNnLhUMiG
-sIND0kwjbNXRg/J6Gq2sa6sXsmT2cMJGCo0gd/XmMrnIqht1KqMku+How1Y6
-A5J5abpox74jVNwUf2XqoLoYkhkIpD2aKG8nxQypjXReJvrXnuWgbLm7xwk9
-aWl8aWQX3acpDvKE4AdBugHS+p1wyPSSy284KJI+9pj0bodOZfzkkoBtN+Aw
-IYSjtFzmgtOerU6SRdhx7QnVqabkpycpJmQknd5kK47HUXrOOBAj7264ELuj
-ZOl0Xirtn+HYK2SnrY6XMw/oBJjJCXYStQKlOAv7OczFxhHqNObL+VKPb2ne
-pAn+fByw3Rk5CaePPiNGYRqy6l0tnUImrYxxpdYEo8IvkkNpONTkRPd36cR3
-7i6IXo5bMEMfUOe6nXT6ZK05r2Yd0mrZug80YlyZRw9y93MYk+ULVo1vuy1O
-ly/u6LDuY79Sjz0ah29A7NrdzlPleco2VDPVAak3ZZGtQqDvS94JkG8YmlNv
-covaWBJTThvx9Jp/Ta4q8J3TGy75plQOPtmJ7kLstHEVtQ2LoqZn3in9fBVR
-s8eMV1pSCI0XwOXGiPokc1ZUC1VfHw/mWaxx5qHjcvYb20TBMrOcAFbJMrfN
-lCyl1cu2Yw0lTg8FDG4le2RPkxFTbOx343rD4FjvJktGBsRuhJ/00uh4NXDC
-XaZofLouN/DedMRbkdmnrcGleavrCiES99BiFw5Hd8RoLN8PQE0ZerppqleN
-8xD4iQgt+UYaXG80EQJB54GT1b4yTJZjsXIPw/E4Wp6L7cnO1G3SaN9mHoDO
-lrP/BuMHRnKWMAAA
+H4sIAIGyel8AA7VZXW/bRhZ956+YTR8cF5bsuCnSKovdunbSGIiTrO1sUSwW
+xYgcSbMmOewMKUVb+L/vOXeGEqmm7dMWaCyLw7nf5557PZlMsta2pZmpH7zR
+wdZL9eb+/kOm53Nv1rOscHmtKzwuvF60k9q1Lc6sdDVZtW0zWfIlMzk7ywrd
+4tT52flZluPj0vntTM3zJsts42eq9V1oz8/Ovj07zzRegjxTG6/LbOP8w9K7
+rpllD2aL34qZuq5b42vTTq4oNctCq+viZ126GjK2JmSNnal/tS4/UfjH1oWp
+2xMVnG+9WQR82lbpQ+ttjke5qxqdPlQ4jEe2Lm1t/p1lumtXzs8yNckU/rN1
+mKmbqXq3M1W+jl640f7h8InzS13b/+rWunom30CqMe1MVbowuE++y20Lh3zw
+euV1/MabJd9Q/7y+jCdcV7f02gVcBc9YLV+bStsSd8H13/GfKfwiDzoPJzAK
+YXZ6utlspv3T0yyrna+g0NpQodvXl+fPnn07Qyjqxf5Blk0mE6XnFJbDyW/t
+g4HK9VbhDkZFNd7Bva6Et5gUyga17kqGbV4aeF65EOzC5mK6cgtl26DMp9bU
+wc5tCYtV4yy8PVX3K7wsOYQDTanhZbVZbeO9o2twTlMyRFQKYVcG0Z+XNqxM
+UMvOFoZxCwqW4CrjcytZixgG0wt3uH2+VUfLlNNHeGx25lBz5MFct1B4mvwA
+35mf3/Gf1v18axA5H7LsS/hOvbq6vn9/O1NNyWRH3Cq3hvm0KJhclJ4bqAMJ
+HRSNdnyZZfeQaUPooCzUb0Xjdu+HXPM9fNvBSOjy1z6WS9uuuvkUKp4ypKfX
+k6vTUs9NGU4HRfe3aZRQOVztTY6sVk/dAvafqK4WTeCy4jhJo1sHMiRXkiDr
+RMTg7lNefhvvzFe6XsIEVK2YYf5cWRYZUuF0uZo0Gu8eqn1njNJlcBIVUe8o
+qLzznvIQ7bYLKBt5ev3q/rUCtmgm6YPxJxCe7YQPHkytaRdT1OIpIOv0j9BK
+jGPIK1sUpcmyL4g33hWdxPL/XAjvhydXummMVIKpkfXBLmt5CDfUXTU3nnfR
+DWELx1cBn+H7pSBnawB+wJIAV5/gphq2nACMkNp16CozTvnC1Uet0nluGvyA
+YZt9rZzwqDcomEo/sJZsi6xCuAu7gDZd2dLEwjSl2w4qDF58LTWoq4ai7y8/
+QA3YvViwKtam3CK/YVh0DvKGEsTnc/fJJGN0SMriM7XiLa5ppYQ3tixZmCyT
+KN4UL5GED2ZjgxG1gajJQkgoC6bNdVRDRA912amBhxtTlugOts7hWzcKdhLr
+aryS/CU6efXx6gM9Tp/A9oui8CYk7EFCSKUzM2zVoBEhhi/37h/ngi5Lt0FF
+FbppYyLAvzQ+tz7vKna7nBUX9eRP5EkPLP3ZDlCUI52RU9e1Tjfv4zSKMKoL
+qd/izoY6d16StrKBl4zyBGUhGKKAdYXY5oAmhQk25noA/iavBjns5QSucUyi
+YaV4g4qK7jFqrcsuRZm/EiG6mhovDS5aeFcx/1cAmYJdG9msfbG7De7+cWVL
+ExNVoEirBSzc6G3Ko32mG5YR0FsAFsVhl7B8VKEnCYYdnE3IWeADHImY49rW
+5Kva/pK0PUoxCJ0l8rUpV1JZjsre2/AguEWImA2bz+eQgMUwal+mIoPZuWib
+SnZu4CujjsifoEBYde30KMt+/fXvaE3fvDh79vh4rBrIN/BMoXqhezNEJYHR
+XWxeHti/68grt4mymW+STbQFCTbykeCPzSMULpBXyCfcGROgvxTuR5f0Cv8z
+A6HaZ73w1EyXUxiOjgCT0Dymc7Qt1whg42PCbBiJHPjiC3Iv8bYu1aWr1xDE
+9I6dEPRRkT8G9eTm4939k5P4U717L59vX/3j4/Xtqyt+vntz8fbt7kN/4u7N
++49vr/af9m9evr+5efXuKr6Mb9XBVzcXP+EH2cqT9x/ur9+/u3j7JLawoZ91
+rLs5SSEILmqxjXCEnM29nRvBr++BNs+ewx1/ScTt8TH98s2zF8/xC7tFFCYg
+FX/tw2a05yWAGOR/Y1vNUoQIOHWDhoMkoSPHbYhXCevPLgA19Qht+qRJnY/I
+GsyazP13GtyoJ1QGvKwQIi5dPXcwFd1K+JXIBaCisH2EbzzKdU5SYH3EbeII
++YciWgR5A/2tFWLiCFCRmNBc0W8Heb0+WfYKNx5+D48vhEUy47sawhxab0AA
+BKjEXR3aCUIVOyv6DrwqXEtANzl8fwyY41iAktC9gb9nlNgxsOv4BFEkvjFy
+AmwiJMpY6XWPrqILqzuVzUjz5GvgbmDLlquen309dP3L8RvDoMAja1euJUF1
+bP99nX86OxseZSVeM7zMaR07tSSjqMhJC+XO2hYoK2Cvh50C8TgRTPI9vQbT
+rOsA1cTOiKbbiIa6/Vx6HVIOK7wWXTyhHqqBnQVRJtf+0czVxSCVX8P/G2QK
+UOfHi9d0+twxE9pE4oPxa5un6ARb2VKP7XHw7X9wOKaaN0TX3k5mpabP67GP
+Y9UM0kESKRDTY4zZTkZvRCLDeTMykVyzveJe473zg0wRh8dMTC/FLotWUIQ4
+5ESdcuPjT/RXjHrsjXAPZ2PUj4wRNuyjkdiTtB1AFO6UHlG7brmKDRD02LYD
+dtg7e+5Ba3j7IB1K2/vOJpJthJsk740rhXOiHty8lbFlufR6rdtIIMHR1AJG
+OB8wwj6bqgtcVerE8RAx5NqeO6NBFM739Cfl3z6kyICujQWGJGtLPkMDsbVO
+U127IYuMzXnAiDZkQWvtbSRqtt57T4A5y86n6mZPFEZCjxJFi12S6EWK2zWF
+mOjNsoMVJJ/ECAy74F3bkfShe5Bwex56MEfL5AmsruN8ETsExFmuS4QKM/Yo
+97WzxW9GmM8GqC+57/nkMk1sH5hUKBzqFtt18hiHgUgtpNpBejH/SFoMsXpM
+CCq7XAnhh12xH0p6dyQZselFDeizvpcuUBkkZzIc9QTI/YmgdMfSOfLMaAGX
+ASAZo1WYuk2OeBMd8VockWXyrE/vxBeS9Z/P7VRnlcHMNqB5qYXA3P71eD7C
+TYKYeNiCXlkwBcMYHXRanXTh+DGA5uRP3o7sY9lHaP8DRSmYHX67e8x5EEUf
+ZLzkL6M7d8dBdsDZORFA+qp/G3ZfGUy5kr0uhnNfAFCnMGXPp6MJJ3sZhUvD
+lRCRNKGzKkzEzq51XGflQPUtmmJoTG7ls10MZoX9lGDj2gVC0Wmk+SdPpLbP
+04FqbSws0GoFLaAtDhnqSED15EIEU8lzlwYCweb4vqllk0c6fjz2GKwBwxfS
+JgaZSW8JnPTDIPiC/rusEhLiZfjAO4XNMVnG/i8JtOeqEcmoTipxaaZ4Z2E/
+gYJ1C/kJjRrdcsE6VW/chrFLN/VsmRI5ZccRAEYv0EOTT9iqllwDseJwVazM
+odqxShnO5NsdpuK4iIiA0zjmSQyXw0SJCl2btMBYdGmI8ZU0BSIXF0byOp87
+X1G3uBtBrrN8JePQ4yOwsikNnZkGM/UUXJpzBvdFuykjGEQRV4THxxN1l/jA
+8+lXx33VpmUdeJyFwwSXCMNGAFDy6yn6MohmigaawzZxHltJjfAn8mGxL1r0
+ry8xxVRzyypCX5P9IFONMeaQ4/uBxslk3aBG0YZlMxLTc9sQ2RMbPLp7QAuZ
+O+TK5LJEa9oe4csboLTeTgAWbc0snNwhPdujY8i+4PapgLSljS1aH0reXX3f
++Tq0IB7nX8mrP6QdFKd24REqRkyTPayEXiQCtejq6M7+qqJ4cX7+4puv87Nn
+c9z1ucTvm2IKaJGQfpB5/Xrw4t1FDKvAsnpH1nQrx/yW/LhEaxx0Pk4Oxe6+
+jnRLplSyq0/pGbxs0RMISQxdUltgExhSC+ZtMWYd/6Z8Ln460BIN8IN3axvi
+xJqihnpk3sSGKfDGLbOjFrFpSdOUeiEGB7CKnNsuB5wumzg7GtkGNNq31kjo
+QKmhM9jMZtdZaLGYiJybqrsuXw11S4i3x5i414bSCxwYwDEC7JqQ4isoKqHq
+IYvfHrTBGLr9Uig9PjpocAkthkHaQYU5RMSkbr80t59kfhEGK5BWbHFdagT9
+glQ21R5YjDjKEoOu3g/uB4ShNyJtZUzaWyEZMPi02yZiSNpSjNAjts8J1EGD
+Aho+PnJEWuw4O+UOugJprD6UK01vAOVoDnGjSC36RswEYowH4Cp+6VeZK1v0
+CzdugfmWENTUXhcYtQnWhTOBuyUOPGn/1/mGfz/BwV6vP4ivrolCicgP61Zi
+GItsQAZT0x+s4L/rl/WKf9yiBP5lQdgX0bfz5GmXsAB9zOu04rnjQPL7fI7Z
+LlOLzMfOx2YY55jjwQ7axHkKloZeUj6S9FL+mmLXsgk/mHNBYon/OzJBPueE
+M+RpqZomxK5+qLlwiWl7EqG9L0wmcd+hR9vVxnB6Qg+Is5YwvqTsaO9+P1or
+MZxSc3HBwNEhzgS70QOxAnyf4JCPp+3gMCilLKRBEIAQu0GGa2VAhS4kM7Wt
+IjFkGnu9jGkzWDvrXCZvDjGHu2fxEIA8fyChIIQK994gcogK7E5/j5nr/AEp
+kP0Pe6VBDJUeAAA=
 
 -->
 
