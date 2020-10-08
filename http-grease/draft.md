@@ -1,7 +1,7 @@
 ---
 title: Greasing HTTP
 abbrev:
-docname: draft-nottingham-http-grease-00
+docname: draft-nottingham-http-grease-01
 date: 2020
 category: bcp
 
