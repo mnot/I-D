@@ -75,7 +75,7 @@ Each extension point defines how unrecognised values should be handled; in most 
 
 Implementations and other components that diverge from these defined behaviours risk ossifying that extensibility point.
 
-For example, it is increasingly common for Web Application Firewalls (WAFs), bot detection services and similar components to reject HTTP requests that contain an unrecognised HTTP header field; in some cases any unrecognised field name will cause an error, while in others, the field value needs to contain certain characters or strings.
+For example, it is increasingly common for Web Application Firewalls (WAFs), bot detection services and similar components to reject HTTP requests that contain header fields with certain characters or strings, even though syntactically valid, and even though the header fields are not necessarily recognised by the recipient.
 
 This behaviour has become prevalent enough to make it difficult for Web browsers and other clients to introduce new request header fields. That difficulty is aggravated by two factors:
 
@@ -88,9 +88,12 @@ To avoid ossification of request header fields, it is Best Current Practice to g
 
 ## Greasing HTTP Request Header Fields
 
-HTTP clients SHOULD grease request header fields.
+HTTP clients SHOULD grease request header fields. There are two aims in doing so:
 
-This means that they should add grease fields to requests at their discretion. For example, a client implementation might add one or more grease request header fields to every request it makes, or it might add one to every third or tenth request.
+1. Preserving the ability to add new request header fields over time
+2. Preserving the ability to add new request header fields with values containing common syntax
+
+Clients can grease a given request at their discretion. For example, a client implementation might add one or more grease request header fields to every request it makes, or it might add one to every third or tenth request.
 
 Depending on the deployment model of the client, it might do this in production releases automatically (especially if there are ways that it can modify how grease values are sent with a high degree of control, in case too many errors are encountered), or it might do so only in pre-releases.
 
