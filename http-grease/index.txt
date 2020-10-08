@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                           October 5, 2020
+Internet-Draft                                           October 8, 2020
 Intended status: Best Current Practice
-Expires: April 8, 2021
+Expires: April 11, 2021
 
 
                              Greasing HTTP
@@ -49,11 +49,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on April 8, 2021.
+   This Internet-Draft will expire on April 11, 2021.
 
 
 
-Nottingham                Expires April 8, 2021                 [Page 1]
+Nottingham               Expires April 11, 2021                 [Page 1]
 
 Internet-Draft                Greasing HTTP                 October 2020
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Nottingham                Expires April 8, 2021                 [Page 2]
+Nottingham               Expires April 11, 2021                 [Page 2]
 
 Internet-Draft                Greasing HTTP                 October 2020
 
@@ -151,28 +151,24 @@ Internet-Draft                Greasing HTTP                 October 2020
 
    For example, it is increasingly common for Web Application Firewalls
    (WAFs), bot detection services and similar components to reject HTTP
-   requests that contain an unrecognised HTTP header field; in some
-   cases any unrecognised field name will cause an error, while in
-   others, the field value needs to contain certain characters or
-   strings.
+   requests that contain header fields with certain characters or
+   strings, even though syntactically valid, and even though the header
+   fields are not necessarily recognised by the recipient.
 
    This behaviour has become prevalent enough to make it difficult for
    Web browsers and other clients to introduce new request header
    fields.  That difficulty is aggravated by two factors:
 
-
-
-
-
-
-Nottingham                Expires April 8, 2021                 [Page 3]
-
-Internet-Draft                Greasing HTTP                 October 2020
-
-
    1.  A relatively large number of vendors create these components, but
        have little coordination between them, leading to wide variances
        in behaviour, and
+
+
+
+Nottingham               Expires April 11, 2021                 [Page 3]
+
+Internet-Draft                Greasing HTTP                 October 2020
+
 
    2.  Many of these components' deployments are not updated regularly
        and reliably, leading to difficulty in addressing ossification
@@ -186,12 +182,18 @@ Internet-Draft                Greasing HTTP                 October 2020
 
 2.1.  Greasing HTTP Request Header Fields
 
-   HTTP clients SHOULD grease request header fields.
+   HTTP clients SHOULD grease request header fields.  There are two aims
+   in doing so:
 
-   This means that they should add grease fields to requests at their
-   discretion.  For example, a client implementation might add one or
-   more grease request header fields to every request it makes, or it
-   might add one to every third or tenth request.
+   1.  Preserving the ability to add new request header fields over time
+
+   2.  Preserving the ability to add new request header fields with
+       values containing common syntax
+
+   Clients can grease a given request at their discretion.  For example,
+   a client implementation might add one or more grease request header
+   fields to every request it makes, or it might add one to every third
+   or tenth request.
 
    Depending on the deployment model of the client, it might do this in
    production releases automatically (especially if there are ways that
@@ -215,16 +217,17 @@ Internet-Draft                Greasing HTTP                 October 2020
 
    o  Append digits to a dictionary word (e.g., 'Turnstile23')
 
-   o  Generate a string using a hash or similar function (e.g.,
-      'dd722785c01b')
 
 
 
 
-Nottingham                Expires April 8, 2021                 [Page 4]
+Nottingham               Expires April 11, 2021                 [Page 4]
 
 Internet-Draft                Greasing HTTP                 October 2020
 
+
+   o  Generate a string using a hash or similar function (e.g.,
+      'dd722785c01b')
 
    Grease field names are not required to be registered in the IANA HTTP
    Field Name Registry, unless they are intended to be used over an
@@ -269,18 +272,20 @@ Internet-Draft                Greasing HTTP                 October 2020
               Semantics", draft-ietf-httpbis-semantics-12 (work in
               progress), October 2020.
 
+
+
+
+
+
+Nottingham               Expires April 11, 2021                 [Page 5]
+
+Internet-Draft                Greasing HTTP                 October 2020
+
+
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
-
-
-
-
-Nottingham                Expires April 8, 2021                 [Page 5]
-
-Internet-Draft                Greasing HTTP                 October 2020
-
 
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
@@ -328,9 +333,4 @@ Author's Address
 
 
 
-
-
-
-
-
-Nottingham                Expires April 8, 2021                 [Page 6]
+Nottingham               Expires April 11, 2021                 [Page 6]
