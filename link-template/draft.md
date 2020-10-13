@@ -14,6 +14,7 @@ keyword: Web Linking
 keyword: link relation
 
 stand_alone: yes
+smart_quotes: no
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline, rfcedstyle]
 
 author:

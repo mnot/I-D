@@ -12,6 +12,7 @@ workgroup: GENDISPATCH
 keyword: Internet-Draft
 
 stand_alone: yes
+smart_quotes: no
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
 author:
