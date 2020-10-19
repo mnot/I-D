@@ -118,7 +118,7 @@ This document registers the following value in the URI Scheme registry:
 * Applications / protocols that use this scheme: none yet
 * Contact: iesg@iesg.org
 * Change Controller: IESG
-* References: [this document]
+* References: (this document)
 
 
 # Security Considerations
