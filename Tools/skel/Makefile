@@ -61,3 +61,12 @@ index.txt: $(target).txt
 
 update:
 	cp $(id_base)/Tools/skel/Makefile .
+
+rfc-http-validate ?= rfc-http-validate.py
+.PHONY: http-lint
+http-lint: $(drafts_xml) http-lint-install
+	$(rfc-http-validate) -m sf.json $(filter-out http-lint-install,$^)
+
+.PHONY: http-lint-install
+http-lint-install:
+	@hash rfc-http-validate 2>/dev/null || pip3 install rfc-http-validate
