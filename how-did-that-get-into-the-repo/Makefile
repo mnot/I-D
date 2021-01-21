@@ -2,7 +2,7 @@
 id_base = ..
 xml2rfc ?= xml2rfc --v3
 saxpath ?= /usr/local/share/saxon-b/saxon9.jar
-kramdown-rfc2629 ?= kramdown-rfc2629
+kramdown-rfc2629 ?= kramdown-rfc2629 -3
 bootstrap ?= ../Tools/rfcbootstrap/rfcbootstrap.xslt
 extra_css ?= ../Tools/style.css
 idnits ?= idnits

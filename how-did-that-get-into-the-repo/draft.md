@@ -2,7 +2,7 @@
 title: The secret-token URI Scheme
 abbrev:
 docname: draft-nottingham-how-did-that-get-into-the-repo-02
-date: 2020
+date: {DATE}
 category: info
 
 ipr: trust200902
@@ -61,13 +61,13 @@ A bearer token is a security token with the property that any party in possessio
 token does not require a bearer to prove possession of cryptographic key material
 (proof-of-possession).
 
-Unfortunately, the number of security incidents involving accidental disclosure of these tokens has also increased. For example, we now regularly hear about a developer committing an access token to a public source code repository, either because they didn't realise it was included in the committed code, or because they didn't realise the implications of its disclosure.
+Unfortunately, the number of security incidents involving accidental disclosure of these tokens has also increased. For example, we now regularly hear about a developer committing an access token to a public source code repository, either because they didn't realize it was included in the committed code or because they didn't realize the implications of its disclosure.
 
 This specification registers the "secret-token" URI scheme to aid prevention of such accidental disclosures. When tokens are easier to unambiguously identify, they can trigger warnings in Continuous Integration systems, or be used in source code repositories themselves. They can also be scanned for separately.
 
 For example, if cloud.example.net issues access tokens to its clients for later use, and it does so by formatting them as secret-token URIs, tokens that "leak" into places that they don't belong are easier to identify. This could be through a variety of mechanisms; for example, if repo.example.com can be configured to refuse commits containing secret-token URIs, it helps its customers avoid accidental disclosures.
 
-secret-token URIs are intended to aid in identification of generated secrets like API keys and similar tokens. They are not intended for use in controlled situations where ephemeral tokens are used, such as things like Cross-Site Request Forgery (CSRF) tokens.
+secret-token URIs are intended to aid in identification of generated secrets, like API keys and similar tokens. They are not intended for use in controlled situations where ephemeral tokens are used, such as things like Cross-Site Request Forgery (CSRF) tokens.
 
 ## Notational Conventions
 
@@ -79,7 +79,7 @@ shown here.
 This document uses ABNF {{!RFC5234}}. It also uses the pchar rule from {{!RFC3986}}.
 
 
-# The secret-token URI scheme
+# The secret-token URI Scheme
 
 The secret-token URI scheme identifies a token that is intended to be a secret.
 
@@ -89,7 +89,7 @@ secret-token-scheme = "secret-token"
 token               = 1*pchar
 ~~~
 
-See {{!RFC3986}}, Section 3.3 for a definition of pchar. Disallowed characters -- including non-ASCII characters -- MUST be encoded into UTF-8 {{!RFC3629}} and then percent-encoded ({{!RFC3986}}, Section 2.1).
+See {{RFC3986, Section 3.3}} for a definition of pchar. Disallowed characters -- including non-ASCII characters -- MUST be encoded into UTF-8 {{!RFC3629}} and then percent-encoded ({{RFC3986, Section 2.1}}).
 
 When a token is both generated and presented for authentication, the entire URI MUST be used,
 without changes.
@@ -100,25 +100,37 @@ For example, given the URI:
 secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
 ~~~
 
-This string (character-for-character, case-sensitive) will both be issued by the token authority, and required for later access. Therefore, if the example above were used as a bearer token in {{?RFC6750}}, a client might send:
+This (character-for-character, case-sensitive) string will both be issued by the token authority, and required for later access. Therefore, if the example above were used as a bearer token in {{?RFC6750}}, a client might send:
 
-~~~ example
+~~~ http-message
 GET /authenticated/stuff HTTP/1.1
 Host: www.example.com
-Authorization: Bearer secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
+Authorization: Bearer
+  secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
 ~~~
 
 
 # IANA Considerations
 
-This document registers the following value in the URI Scheme registry:
+This document registers the following value in the "Uniform Resource Identifier (URI) Schemes" registry:
 
-* Scheme name: secret-token
-* Status: provisional
-* Applications / protocols that use this scheme: none yet
-* Contact: iesg@iesg.org
-* Change Controller: IESG
-* References: (this document)
+Scheme name:
+: secret-token
+
+Status:
+: provisional
+
+Applications/protocols that use this scheme:
+: none yet
+
+Contact:
+: iesg@iesg.org
+
+Change Controller:
+: IESG
+
+References:
+: (this document)
 
 
 # Security Considerations
@@ -129,11 +141,11 @@ See {{?RFC4086}} for more information.
 This URI scheme is intended to reduce the incidence of accidental disclosure; it cannot prevent intentional disclosure.
 
 If it is difficult to correctly handle secret material, or unclear as to what the appropriate handling is, users might choose to obfuscate their secret tokens in order to evade detection (for example, removing the URI scheme for storage). Mitigating this risk is often beyond the reach of
-the system using the secret-token URI, but they can caution users against such practices, and
-provide tools to help.
+the system using the secret-token URI; users can be cautioned against such practices and be provided tools to help.
 
 --- back
 
 # Acknowledgements
+{:numbered="false"}
 
 The definition of bearer tokens is from {{?RFC6750}}.
