@@ -8,7 +8,9 @@ category: info
 ipr: trust200902
 area: General
 workgroup:
-keyword: Internet-Draft
+keyword:
+ - bearer token
+ - token scanning
 
 stand_alone: yes
 smart_quotes: no
