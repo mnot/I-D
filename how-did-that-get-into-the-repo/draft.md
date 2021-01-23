@@ -1,5 +1,5 @@
 ---
-title: The secret-token URI Scheme
+title: The "secret-token" URI Scheme
 abbrev:
 docname: draft-nottingham-how-did-that-get-into-the-repo-02
 date: {DATE}
@@ -55,21 +55,17 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-It has become increasingly common to use bearer tokens as an authentication mechanism in various
-protocols.
+It has become increasingly common to use bearer tokens as an authentication mechanism in various protocols.
 
-A bearer token is a security token with the property that any party in possession of the token (a
-"bearer") can use the token in any way that any other party in possession of it can. Using a bearer
-token does not require a bearer to prove possession of cryptographic key material
-(proof-of-possession).
+A bearer token is a security token with the property that any party in possession of the token (a "bearer") can use the token in any way that any other party in possession of it can. Using a bearer token does not require a bearer to prove possession of cryptographic key material (proof-of-possession).
 
 Unfortunately, the number of security incidents involving accidental disclosure of these tokens has also increased. For example, we now regularly hear about a developer committing an access token to a public source code repository, either because they didn't realize it was included in the committed code or because they didn't realize the implications of its disclosure.
 
-This specification registers the "secret-token" URI scheme to aid prevention of such accidental disclosures. When tokens are easier to unambiguously identify, they can trigger warnings in Continuous Integration systems, or be used in source code repositories themselves. They can also be scanned for separately.
+This specification registers the "secret-token" URI scheme to aid prevention of such accidental disclosures. When tokens are easier to unambiguously identify, they can trigger warnings in continuous integration systems or be used in source code repositories themselves. They can also be scanned for separately.
 
-For example, if cloud.example.net issues access tokens to its clients for later use, and it does so by formatting them as secret-token URIs, tokens that "leak" into places that they don't belong are easier to identify. This could be through a variety of mechanisms; for example, if repo.example.com can be configured to refuse commits containing secret-token URIs, it helps its customers avoid accidental disclosures.
+For example, if cloud.example.net issues access tokens to its clients for later use, and it does so by formatting them as "secret-token" URIs, tokens that "leak" into places that they don't belong are easier to identify. This could be through a variety of mechanisms; for example, if repo.example.com can be configured to refuse commits containing "secret-token" URIs, it helps its customers avoid accidental disclosures.
 
-secret-token URIs are intended to aid in identification of generated secrets, like API keys and similar tokens. They are not intended for use in controlled situations where ephemeral tokens are used, such as things like Cross-Site Request Forgery (CSRF) tokens.
+"secret-token" URIs are intended to aid in identification of generated secrets, like API keys and similar tokens. They are not intended for use in controlled situations where ephemeral tokens are used, such as things like Cross-Site Request Forgery (CSRF) tokens.
 
 ## Notational Conventions
 
@@ -81,9 +77,9 @@ shown here.
 This document uses ABNF {{!RFC5234}}. It also uses the pchar rule from {{!RFC3986}}.
 
 
-# The secret-token URI Scheme
+# The "secret-token" URI Scheme
 
-The secret-token URI scheme identifies a token that is intended to be a secret.
+The "secret-token" URI scheme identifies a token that is intended to be a secret.
 
 ~~~ abnf
 secret-token-URI    = secret-token-scheme ":" token
@@ -116,6 +112,7 @@ Authorization: Bearer
 
 This document registers the following value in the "Uniform Resource Identifier (URI) Schemes" registry:
 
+{: vspace="0"}
 Scheme name:
 : secret-token
 
