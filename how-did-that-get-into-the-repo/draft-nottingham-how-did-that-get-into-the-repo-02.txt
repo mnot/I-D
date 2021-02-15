@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                           19 October 2020
+Internet-Draft                                           23 January 2021
 Intended status: Informational                                          
-Expires: 22 April 2021
+Expires: 27 July 2021
 
 
                       The secret-token URI Scheme
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Nottingham                Expires 22 April 2021                 [Page 1]
+Nottingham                Expires 27 July 2021                  [Page 1]
 
-Internet-Draft         The secret-token URI Scheme          October 2020
+Internet-Draft         The secret-token URI Scheme          January 2021
 
 
    Internet-Drafts are draft documents valid for a maximum of six months
@@ -63,11 +63,11 @@ Internet-Draft         The secret-token URI Scheme          October 2020
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 April 2021.
+   This Internet-Draft will expire on 27 July 2021.
 
 Copyright Notice
 
-   Copyright (c) 2020 IETF Trust and the persons identified as the
+   Copyright (c) 2021 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -83,13 +83,13 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
-   2.  The secret-token URI scheme . . . . . . . . . . . . . . . . .   3
+   2.  The "secret-token" URI Scheme . . . . . . . . . . . . . . . .   3
    3.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
    5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
      5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
      5.2.  Informative References  . . . . . . . . . . . . . . . . .   5
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   6
+   Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . .   6
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
 
 1.  Introduction
@@ -109,19 +109,19 @@ Table of Contents
 
 
 
-Nottingham                Expires 22 April 2021                 [Page 2]
+Nottingham                Expires 27 July 2021                  [Page 2]
 
-Internet-Draft         The secret-token URI Scheme          October 2020
+Internet-Draft         The secret-token URI Scheme          January 2021
 
 
-   public source code repository, either because they didn't realise it
-   was included in the committed code, or because they didn't realise
-   the implications of its disclosure.
+   public source code repository, either because they didn't realize it
+   was included in the committed code or because they didn't realize the
+   implications of its disclosure.
 
    This specification registers the "secret-token" URI scheme to aid
    prevention of such accidental disclosures.  When tokens are easier to
-   unambiguously identify, they can trigger warnings in Continuous
-   Integration systems, or be used in source code repositories
+   unambiguously identify, they can trigger warnings in continuous
+   integration systems or be used in source code repositories
    themselves.  They can also be scanned for separately.
 
    For example, if cloud.example.net issues access tokens to its clients
@@ -133,7 +133,7 @@ Internet-Draft         The secret-token URI Scheme          October 2020
    disclosures.
 
    secret-token URIs are intended to aid in identification of generated
-   secrets like API keys and similar tokens.  They are not intended for
+   secrets, like API keys and similar tokens.  They are not intended for
    use in controlled situations where ephemeral tokens are used, such as
    things like Cross-Site Request Forgery (CSRF) tokens.
 
@@ -148,26 +148,26 @@ Internet-Draft         The secret-token URI Scheme          October 2020
    This document uses ABNF [RFC5234].  It also uses the pchar rule from
    [RFC3986].
 
-2.  The secret-token URI scheme
+2.  The "secret-token" URI Scheme
 
-   The secret-token URI scheme identifies a token that is intended to be
-   a secret.
+   The "secret-token" URI scheme identifies a token that is intended to
+   be a secret.
 
    secret-token-URI    = secret-token-scheme ":" token
    secret-token-scheme = "secret-token"
    token               = 1*pchar
 
    See [RFC3986], Section 3.3 for a definition of pchar.  Disallowed
-   characters - including non-ASCII characters - MUST be encoded into
+   characters -- including non-ASCII characters -- MUST be encoded into
    UTF-8 [RFC3629] and then percent-encoded ([RFC3986], Section 2.1).
 
 
 
 
 
-Nottingham                Expires 22 April 2021                 [Page 3]
+Nottingham                Expires 27 July 2021                  [Page 3]
 
-Internet-Draft         The secret-token URI Scheme          October 2020
+Internet-Draft         The secret-token URI Scheme          January 2021
 
 
    When a token is both generated and presented for authentication, the
@@ -177,31 +177,32 @@ Internet-Draft         The secret-token URI Scheme          October 2020
 
    secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
 
-   This string (character-for-character, case-sensitive) will both be
+   This (character-for-character, case-sensitive) string will both be
    issued by the token authority, and required for later access.
    Therefore, if the example above were used as a bearer token in
    [RFC6750], a client might send:
 
-GET /authenticated/stuff HTTP/1.1
-Host: www.example.com
-Authorization: Bearer secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
+   GET /authenticated/stuff HTTP/1.1
+   Host: www.example.com
+   Authorization: Bearer
+     secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
 
 3.  IANA Considerations
 
-   This document registers the following value in the URI Scheme
-   registry:
+   This document registers the following value in the "Uniform Resource
+   Identifier (URI) Schemes" registry:
 
-   *  Scheme name: secret-token
+   Scheme name:  secret-token
 
-   *  Status: provisional
+   Status:  provisional
 
-   *  Applications / protocols that use this scheme: none yet
+   Applications/protocols that use this scheme:  none yet
 
-   *  Contact: iesg@iesg.org
+   Contact:  iesg@iesg.org
 
-   *  Change Controller: IESG
+   Change Controller:  IESG
 
-   *  References: (this document)
+   References:  (this document)
 
 4.  Security Considerations
 
@@ -220,18 +221,17 @@ Authorization: Bearer secret-token:E92FB7EB-D882-47A4-A265-A0B6135DC842%20foo
 
 
 
-
-Nottingham                Expires 22 April 2021                 [Page 4]
+Nottingham                Expires 27 July 2021                  [Page 4]
 
-Internet-Draft         The secret-token URI Scheme          October 2020
+Internet-Draft         The secret-token URI Scheme          January 2021
 
 
    If it is difficult to correctly handle secret material, or unclear as
    to what the appropriate handling is, users might choose to obfuscate
    their secret tokens in order to evade detection (for example,
    removing the URI scheme for storage).  Mitigating this risk is often
-   beyond the reach of the system using the secret-token URI, but they
-   can caution users against such practices, and provide tools to help.
+   beyond the reach of the system using the secret-token URI; users can
+   be cautioned against such practices and be provided tools to help.
 
 5.  References
 
@@ -277,12 +277,12 @@ Internet-Draft         The secret-token URI Scheme          October 2020
 
 
 
-Nottingham                Expires 22 April 2021                 [Page 5]
+Nottingham                Expires 27 July 2021                  [Page 5]
 
-Internet-Draft         The secret-token URI Scheme          October 2020
+Internet-Draft         The secret-token URI Scheme          January 2021
 
 
-Appendix A.  Acknowledgements
+Acknowledgements
 
    The definition of bearer tokens is from [RFC6750].
 
@@ -333,4 +333,4 @@ Author's Address
 
 
 
-Nottingham                Expires 22 April 2021                 [Page 6]
+Nottingham                Expires 27 July 2021                  [Page 6]
