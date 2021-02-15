@@ -1,7 +1,7 @@
 /**
  * --------------------------------------------------------------------------
- * Bootstrap (v4.3.1): popover.js
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * Bootstrap (v4.6.0): popover.js
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  * --------------------------------------------------------------------------
  */
 
@@ -14,20 +14,20 @@ import Tooltip from './tooltip'
  * ------------------------------------------------------------------------
  */
 
-const NAME                = 'popover'
-const VERSION             = '4.3.1'
-const DATA_KEY            = 'bs.popover'
-const EVENT_KEY           = `.${DATA_KEY}`
-const JQUERY_NO_CONFLICT  = $.fn[NAME]
-const CLASS_PREFIX        = 'bs-popover'
-const BSCLS_PREFIX_REGEX  = new RegExp(`(^|\\s)${CLASS_PREFIX}\\S+`, 'g')
+const NAME = 'popover'
+const VERSION = '4.6.0'
+const DATA_KEY = 'bs.popover'
+const EVENT_KEY = `.${DATA_KEY}`
+const JQUERY_NO_CONFLICT = $.fn[NAME]
+const CLASS_PREFIX = 'bs-popover'
+const BSCLS_PREFIX_REGEX = new RegExp(`(^|\\s)${CLASS_PREFIX}\\S+`, 'g')
 
 const Default = {
   ...Tooltip.Default,
-  placement : 'right',
-  trigger   : 'click',
-  content   : '',
-  template  : '<div class="popover" role="tooltip">' +
+  placement: 'right',
+  trigger: 'click',
+  content: '',
+  template: '<div class="popover" role="tooltip">' +
               '<div class="arrow"></div>' +
               '<h3 class="popover-header"></h3>' +
               '<div class="popover-body"></div></div>'
@@ -35,30 +35,26 @@ const Default = {
 
 const DefaultType = {
   ...Tooltip.DefaultType,
-  content : '(string|element|function)'
+  content: '(string|element|function)'
 }
 
-const ClassName = {
-  FADE : 'fade',
-  SHOW : 'show'
-}
+const CLASS_NAME_FADE = 'fade'
+const CLASS_NAME_SHOW = 'show'
 
-const Selector = {
-  TITLE   : '.popover-header',
-  CONTENT : '.popover-body'
-}
+const SELECTOR_TITLE = '.popover-header'
+const SELECTOR_CONTENT = '.popover-body'
 
 const Event = {
-  HIDE       : `hide${EVENT_KEY}`,
-  HIDDEN     : `hidden${EVENT_KEY}`,
-  SHOW       : `show${EVENT_KEY}`,
-  SHOWN      : `shown${EVENT_KEY}`,
-  INSERTED   : `inserted${EVENT_KEY}`,
-  CLICK      : `click${EVENT_KEY}`,
-  FOCUSIN    : `focusin${EVENT_KEY}`,
-  FOCUSOUT   : `focusout${EVENT_KEY}`,
-  MOUSEENTER : `mouseenter${EVENT_KEY}`,
-  MOUSELEAVE : `mouseleave${EVENT_KEY}`
+  HIDE: `hide${EVENT_KEY}`,
+  HIDDEN: `hidden${EVENT_KEY}`,
+  SHOW: `show${EVENT_KEY}`,
+  SHOWN: `shown${EVENT_KEY}`,
+  INSERTED: `inserted${EVENT_KEY}`,
+  CLICK: `click${EVENT_KEY}`,
+  FOCUSIN: `focusin${EVENT_KEY}`,
+  FOCUSOUT: `focusout${EVENT_KEY}`,
+  MOUSEENTER: `mouseenter${EVENT_KEY}`,
+  MOUSELEAVE: `mouseleave${EVENT_KEY}`
 }
 
 /**
@@ -117,14 +113,15 @@ class Popover extends Tooltip {
     const $tip = $(this.getTipElement())
 
     // We use append for html objects to maintain js events
-    this.setElementContent($tip.find(Selector.TITLE), this.getTitle())
+    this.setElementContent($tip.find(SELECTOR_TITLE), this.getTitle())
     let content = this._getContent()
     if (typeof content === 'function') {
       content = content.call(this.element)
     }
-    this.setElementContent($tip.find(Selector.CONTENT), content)
 
-    $tip.removeClass(`${ClassName.FADE} ${ClassName.SHOW}`)
+    this.setElementContent($tip.find(SELECTOR_CONTENT), content)
+
+    $tip.removeClass(`${CLASS_NAME_FADE} ${CLASS_NAME_SHOW}`)
   }
 
   // Private
@@ -162,6 +159,7 @@ class Popover extends Tooltip {
         if (typeof data[config] === 'undefined') {
           throw new TypeError(`No method named "${config}"`)
         }
+
         data[config]()
       }
     })
