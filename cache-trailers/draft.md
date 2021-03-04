@@ -32,6 +32,7 @@ author:
 
 normative:
   RFC2119:
+  I-D.ietf-httpbis-cache:
 
 informative:
 
@@ -88,7 +89,7 @@ In responses where the trailer field value has replaced the header field value, 
 
 Caches MAY temporarily store a response that has a caching policy with both the "no-store" and "trailer-update" directives, but MUST NOT reuse that response until the caching policy is updated in a manner that allows it. If the caching policy is not updated or the "no-store" directive is still present in the updated response, the cache MUST immediately and permanently discard the temporarily stored response.
 
-For purposes of calculating a stored response's age ({{!I-D.ietf-httpbis-cache, Section 4.2.3}}), caches receiving such a trailer SHOULD consider the response_time to be when the trailer is received, but only when calculating resident_time (not response_delay, as that would be counterproductive for the purpose of estimating network delay).
+For purposes of calculating a stored response's age ({{I-D.ietf-httpbis-cache, Section 4.2.3}}), caches receiving such a trailer SHOULD consider the response_time to be when the trailer is received, but only when calculating resident_time (not response_delay, as that would be counterproductive for the purpose of estimating network delay).
 
 ## Examples
 
