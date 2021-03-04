@@ -53,9 +53,9 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-Web content that is "dynamically" generated -- i.e., with the response body streamed by the server to the client as it is created -- is often assumed to be uncacheable. In practice, though, there are some scenarios where caching is highly beneficial; for example, when a private cache might be able to reuse a personalised, dynamic response for a period, or when such a response can be shared by a number of clients for a period.
+Web content that is "dynamically" generated -- i.e., with the response body streamed by the server to the client as it is created -- is often assumed to be uncacheable. In practice, though, there are some scenarios where caching is beneficial; for example, when a private cache might be able to reuse a personalised, dynamic response for a period, or when such a response can be shared by a number of clients.
 
-However, a server choosing a caching policy for such a response faces a conundrum: if an error or other unforeseen condition happens during the generation of the response, that caching policy might be too liberal. Currently, the only available solutions are to:
+A server choosing a caching policy for such a response faces a conundrum: if an error or other unforeseen condition happens during the generation of the response, that caching policy might be too liberal. Currently, the only available solutions are to:
 
 1. prevent or severely curtail downstream caching, or
 2. buffer the response until a caching policy can be confidently assigned.
@@ -79,7 +79,7 @@ An HTTP response containing the "trailer-update" cache response directive in its
 
 Upon receiving a Cache-Control field in the trailer section of an eligible response, caches that implement this specification MUST completely replace the stored Cache-Control header field value for that response with the trailer field's value, MUST update its handling of that response to account for the new field value (after any outstanding requests are satisfied), and MUST use that value for the Cache-Control header field in responses to future requests satisfied from that cache entry (i.e., the trailer field is "promoted" to a header field).
 
-In responses where the trailer field value has replaced the heder field value, the "trailer-update" directive will have been removed as part of that process.
+In responses where the trailer field value has replaced the header field value, the "trailer-update" directive will have been removed as part of that process.
 
 Caches MAY temporarily store a response that has a Cache-Control header field with both the "no-store" and "trailer-update" directives, but MUST NOT reuse that response until the caching policy is updated in a manner that allows it. If the caching policy is not updated or the "no-store" directive is still present in the updated response, the cache MUST immediately and permanently discard the temporarily stored response.
 
