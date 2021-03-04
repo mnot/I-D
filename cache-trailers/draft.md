@@ -79,7 +79,7 @@ The "trailer-update" cache response directive indicates that the caching policy 
 
 When it is present as a cache directive in a header field and a trailer field with the same field name is received, a cache that implements this specification MUST completely replace the stored header field value for that response with the trailer field's value, MUST update its handling of that response to account for the new field value (after any outstanding requests are satisfied), and MUST use that value for the header field in responses to future requests satisfied from that cache entry (i.e., the trailer field is "promoted" to a header field).
 
-In responses where the trailer field value has replaced the header field value, the "trailer-update" directive will have been removed as part of that process.
+In responses where the trailer field value has replaced the header field value, the "trailer-update" directive will have been removed as part of that process. Note that the presence of "trailer-update" does not guarantee that a trailer field will follow.
 
 Caches MAY temporarily store a response that has a caching policy with both the "no-store" and "trailer-update" directives, but MUST NOT reuse that response until the caching policy is updated in a manner that allows it. If the caching policy is not updated or the "no-store" directive is still present in the updated response, the cache MUST immediately and permanently discard the temporarily stored response.
 
