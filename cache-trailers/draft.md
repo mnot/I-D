@@ -24,6 +24,11 @@ author:
     country: Australia
     email: mnot@mnot.net
     uri: https://www.mnot.net/
+ -
+    ins: J. Snell
+    name: James Snell
+    organization:
+    email: jasnell@gmail.com
 
 normative:
   RFC2119:
