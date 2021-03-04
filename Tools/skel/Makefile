@@ -34,7 +34,7 @@ idnits: $(target).txt
 	$(idnits) $<
 
 %.xml: draft.md
-	$(kramdown-rfc2629) $< > draft.tmp.xml
+	$(kramdown-rfc2629) -3 $< > draft.tmp.xml
 	xml2rfc --v2v3 draft.tmp.xml -o $@
 	rm draft.tmp.xml
 	sed -i '' -e"s/\"rfc2629-xhtml.ent/\"$(id_base)\/Tools\/rfcbootstrap\/rfc2629-xhtml.ent/" $@
@@ -46,7 +46,7 @@ idnits: $(target).txt
 	jqueryJsUrl='../Tools/node_modules/jquery/dist/jquery.min.js' \
 	pageUrl='https://mnot.github.io/I-D/${shortname}/' \
 	siteName="mnot's Internet Drafts" \
-	navbar='../Tools/navbar.html' \
+	navbar='../navbar.html' \
 	> $@
 #	$(xml2rfc) --html $< $@
 
