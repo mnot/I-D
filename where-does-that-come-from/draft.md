@@ -91,6 +91,8 @@ The tools team is directed to honour these requests in any renderings of these R
 
 ### Proposal 2: visual distinction
 
+The purpose of this proposal is to create a strong, clear link between document status and document presentation.
+
 The RFC Editor is directed to propose stream-specific presentation of RFCs that vary in visually significant ways; e.g., use of typeface, decoration, formatting such as alignment and spacing, and other typographic controls.
 
 
@@ -121,7 +123,9 @@ The tools team is directed to display the logos of the IETF, IRTF and IAB promin
 
 ### Proposal 5: visual distinction
 
-The tools team is directed to propose stream-specific presentation of RFCs that vary in visually significant ways; e.g., use of typeface, decoration, formatting such as alignment and spacing, and other typographic controls.
+The purpose of this proposal is to create a strong, clear link between document status and document presentation.
+
+The tools team is directed to propose stream-specific presentation of Internet-Drafts that vary in visually significant ways; e.g., use of typeface, decoration, formatting such as alignment and spacing, and other typographic controls.
 
 
 ### Proposal 6: domain usage
