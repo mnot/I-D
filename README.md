@@ -1,7 +1,6 @@
-Internet-Drafts
-===============
+# Internet-Drafts
 
-These are some of the Internet-Drafts I've authored or contributed to. 
+These are some of the Internet-Drafts I've authored or contributed to.
 
 The top-level directory contains works in progress; "Abandoned" contains
 drafts I'm no longer pursuing. "Published" contains those that made it into an
@@ -11,18 +10,16 @@ For status, see:
   https://datatracker.ietf.org/doc/{draft_name}/
 
 
-Giving Feedback
----------------
+## Giving Feedback
 
 If the draft you want to make a comment upon specifies an e-mail list for
 feedback, please use that. Usually, it's in the abstract.
 
-Otherwise, feel free to either contact me via e-mail, or to open an issue 
+Otherwise, feel free to either contact me via e-mail, or to open an issue
 on github.
 
 
-Making Contributions
---------------------
+## Making Contributions
 
 If you want to submit a pull request against a draft, be aware that I use
 two different toolchains (depending on how old the draft is);
