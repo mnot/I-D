@@ -161,7 +161,7 @@ to, in the case of IETF stream documents:
 
 ~~~
 This Internet-Draft is a working document of the Internet Engineering
-Task Force (IETF). Note that other groups may also distribute
+Task Force (IETF). Note that other parties are able to distribute
 working documents as Internet-Drafts.  The list of current Internet-
 Drafts is at https://internet-drafts.org/drafts/current/.
 ~~~
@@ -170,7 +170,7 @@ in the case of IRTF stream documents:
 
 ~~~
 This Internet-Draft is a working document of the Internet Research
-Task Force (IRTF). Note that other groups may also distribute
+Task Force (IRTF). Note that other parties are able to distribute
 working documents as Internet-Drafts.  The list of current Internet-
 Drafts is at https://internet-drafts.org/drafts/current/.
 ~~~
@@ -179,7 +179,7 @@ in the case of IAB stream documents:
 
 ~~~
 This Internet-Draft is a working document of the Internet Architecture
-Board (IAB). Note that other groups may also distribute
+Board (IAB). Note that other parties are able to distribute
 working documents as Internet-Drafts.  The list of current Internet-
 Drafts is at https://internet-drafts.org/drafts/current/.
 ~~~
@@ -188,7 +188,7 @@ in the case of Independent stream documents:
 
 ~~~
 This Internet-Draft is an Independent Submission for publication in the
-RFC Series. Note that other groups may also distribute
+RFC Series. Note that other parties are able to distribute
 working documents as Internet-Drafts.  The list of current Internet-
 Drafts is at https://internet-drafts.org/drafts/current/.
 ~~~
@@ -198,7 +198,7 @@ in the case of documents not associated with a stream:
 ~~~
 This Internet-Draft is a working document that has not been adopted
 by any stream that would lead to RFC publication. Note that other
-groups may also distribute working documents as Internet-Drafts.
+parties are able to distribute working documents as Internet-Drafts.
 The list of current Internet- Drafts is at
 https://internet-drafts.org/drafts/current/.
 ~~~
