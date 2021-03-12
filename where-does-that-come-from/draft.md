@@ -197,10 +197,8 @@ in the case of documents not associated with a stream:
 
 ~~~
 This Internet-Draft is a working document that has not been adopted
-by any stream that would lead to RFC publication. Note that other
-parties are able to distribute working documents as Internet-Drafts.
-The list of current Internet- Drafts is at
-https://internet-drafts.org/drafts/current/.
+by any stream that would lead to RFC publication. The list of current
+Internet-Drafts is at https://internet-drafts.org/drafts/current/.
 ~~~
 
 
