@@ -125,7 +125,7 @@ The tools team is directed to display the logos of the IETF, IRTF and IAB promin
 
 The purpose of this proposal is to create a strong, clear link between document status and document presentation.
 
-The tools team is directed to propose stream-specific presentation of Internet-Drafts that vary in visually significant ways; e.g., use of typeface, decoration, formatting such as alignment and spacing, and other typographic controls.
+The tools team is directed to propose stream-specific presentation of Internet-Drafts that vary in visually significant ways; e.g., use of typeface, decoration (e.g., 'DRAFT' background images), formatting such as alignment and spacing, and other typographic controls.
 
 
 ### Proposal 6: domain usage
