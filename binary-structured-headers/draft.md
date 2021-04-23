@@ -1,5 +1,5 @@
 ---
-title: Binary Structured HTTP Headers
+title: Binary Structured HTTP Field Values
 abbrev:
 docname: draft-nottingham-binary-structured-headers-03
 date: {DATE}
@@ -33,7 +33,7 @@ informative:
 
 --- abstract
 
-This specification defines a binary serialisation of Structured Headers for HTTP, along with a negotiation mechanism for its use in HTTP/2. It also defines how to use Structured Headers for many existing headers -- thereby "backporting" them -- when supported by two peers.
+This specification defines a binary serialisation of Structured Field Values for HTTP, along with a negotiation mechanism for its use in HTTP/2. It also defines how to use Structured Fields for many existing fields -- thereby "backporting" them -- when supported by two peers.
 
 
 --- note_Note_to_Readers
@@ -55,11 +55,11 @@ See also the draft's current status in the IETF datatracker, at
 
 HTTP messages often pass through several systems -- clients, intermediaries, servers, and subsystems of each -- that parse and process their header and trailer fields. This repeated parsing (and often re-serialisation) adds latency and consumes CPU, energy, and other resources.
 
-Structured Headers for HTTP {{!I-D.ietf-httpbis-header-structure}} offers a set of data types that new headers can combine to express their semantics. This specification defines a binary serialisation of those structures in {{headers}}, and specifies its use in HTTP/2 -- specifically, as part of HPACK Literal Header Field Representations ({{!RFC7541}}) -- in {{negotiate}}.
+Structured Field Values for HTTP {{!RFC8941}} offers a set of data types that new fields can combine to express their semantics. This specification defines a binary serialisation of those structures in {{fields}}, and specifies its use in HTTP/2 -- specifically, as part of HPACK Literal Header Field Representations ({{!RFC7541}}) -- in {{negotiate}}.
 
-{{backport}} defines how to use Structured Headers for many existing headers when supported by two peers.
+{{backport}} defines how to convey existing fields as Structured Fields, when supported by two peers.
 
-The primary goal of this specification are to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Headers. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular header compression mechanisms.
+The primary goal of this specification are to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.
 
 
 ## Notational Conventions
@@ -70,11 +70,11 @@ described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear i
 shown here.
 
 
-# Binary Structured Headers {#headers}
+# Binary Structured Fields {#fields}
 
-This section defines a binary serialisation for the Structured Header Types defined in {{!I-D.ietf-httpbis-header-structure}}.
+This section defines a binary serialisation for the Structured Field Types defined in {{!RFC8941}}.
 
-The types permissable as the top-level of Structured Header field values -- Dictionary, List, and Item -- are defined in terms of a Binary Literal Representation ({{binlit}}), which is a replacement for the String Literal Representation in {{RFC7541}}.
+The types permissable as the top-level of Structured Field values -- Dictionary, List, and Item -- are defined in terms of a Binary Literal Representation ({{binlit}}), which is a replacement for the String Literal Representation in {{RFC7541}}.
 
 Binary representations of the remaining types are defined in {{leaf}}.
 
@@ -143,7 +143,7 @@ Item values (type=0x3) have a payload consisting of Binary Structured Types, as 
 
 ### String Literals {#literal}
 
-String Literals (type=0x4) are the string value of a header field; they are used to carry header field values that are not Binary Structured Headers, and may not be Structured Headers at all. As such, their semantics are that of String Literal Representations in {{!RFC7541}}, Section 5.2.
+String Literals (type=0x4) are the string value of a field; they are used to carry field values that are not Binary Structured Fields, and may not be Structured Fields at all. As such, their semantics are that of String Literal Representations in {{!RFC7541}}, Section 5.2.
 
 Their payload is the octets of the field value.
 
@@ -235,7 +235,7 @@ Parameters are always associated with the Binary Structured Type that immediatel
 
 ### Item Payload Types {#inner-item}
 
-Individual Structured Header Items can be represented using the Binary Payload Types defined below.
+Individual Structured Field Items can be represented using the Binary Payload Types defined below.
 
 The item's parameters, if present, are serialised in a following Parameter type ({{parameter}}); they do not form part of the payload of the item.
 
@@ -356,24 +356,24 @@ If B is 0, the value is False; if B is 1, the value is True. X is padding.
 
 
 
-# Using Binary Structured Headers in HTTP/2 {#negotiate}
+# Using Binary Structured Fields in HTTP/2 {#negotiate}
 
-When both peers on a connection support this specification, they can take advantage of that knowledge to serialise headers that they know to be Structured Headers (or compatible with them; see {{backport}}).
+When both peers on a connection support this specification, they can take advantage of that knowledge to serialise fields that they know to be Structured Fields (or compatible with them; see {{backport}}).
 
-Peers advertise and discover this support using a HTTP/2 setting defined in {{setting}}, and convey Binary Structured Headers in a frame type defined in {{frame}}.
+Peers advertise and discover this support using a HTTP/2 setting defined in {{setting}}, and convey Binary Structured Fields in a frame type defined in {{frame}}.
 
-## Binary Structured Headers Setting {#setting}
+## Binary Structured Fields Setting {#setting}
 
-Advertising support for Binary Structured Headers is accomplished using a HTTP/2 setting, SETTINGS_BINARY_STRUCTURED_HEADERS (0xTODO).
+Advertising support for Binary Structured Fields is accomplished using a HTTP/2 setting, SETTINGS_BINARY_STRUCTURED_FIELDS (0xTODO).
 
-Receiving SETTINGS_BINARY_STRUCTURED_HEADERS from a peer indicates that:
+Receiving SETTINGS_BINARY_STRUCTURED_FIELDS from a peer indicates that:
 
-1. The peer supports the Binary Structured Types defined in {{headers}}.
+1. The peer supports the Binary Structured Types defined in {{fields}}.
 2. The peer will process the BINHEADERS frames as defined in {{frame}}.
-3. When a downstream consumer does not likewise support that encoding, the peer will transform them into HEADERS frames (if the peer is HTTP/2) or a form it will understand (e.g., the textual representation of Structured Headers data types defined in {{!I-D.ietf-httpbis-header-structure}}).
+3. When a downstream consumer does not likewise support that encoding, the peer will transform them into HEADERS frames (if the peer is HTTP/2) or a form it will understand (e.g., the textual representation of Structured Fields data types defined in {{!RFC8941}}).
 4. The peer will likewise transform all fields defined as Aliased Fields ({{aliased}}) into their non-aliased forms as necessary.
 
-The default value of SETTINGS_BINARY_STRUCTURED_HEADERS is 0. Future extensions to Structured Headers might use it to indicate support for new types.
+The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0. Future extensions to Structured Fields might use it to indicate support for new types.
 
 
 ## The BINHEADERS Frame {#frame}
@@ -382,15 +382,15 @@ When a peer has indicated that it supports this specification {#setting}, a send
 
 The BINHEADERS Frame Type behaves and is represented exactly as a HEADERS Frame type ({{!RFC7540}}, Section 6.2), with one exception; instead of using the String Literal Representation defined in {{!RFC7541}}, Section 5.2, it uses the Binary Literal Representation defined in {{binlit}}.
 
-Fields that are Structured Headers can have their values represented using the Binary Literal Representation corresponding to that header's top-level type -- List, Dictionary, or Item; their values will then be serialised as a stream of Binary Structured Types.
+Fields that are Structured Fields can have their values represented using the Binary Literal Representation corresponding to that field's top-level type -- List, Dictionary, or Item; their values will then be serialised as a stream of Binary Structured Types.
 
-Additionally, any field (including those defined as Structured Headers) can be serialised as a String Literal ({{literal}}), which accommodates headers that are not defined as Structured Headers, not valid Structured Headers, or that the sending implementation does not wish to send as Binary Structured Types for some other reason.
+Additionally, any field (including those defined as Structured Fields) can be serialised as a String Literal ({{literal}}), which accommodates fields that are not defined as Structured Fields, not valid Structured Fields, or that the sending implementation does not wish to send as Binary Structured Types for some other reason.
 
 Note that Field Names are always serialised as String Literals ({{literal}}).
 
-This means that a BINHEADERS frame can be converted to a HEADERS frame by converting the field values to the string representations of the various Structured Headers Types, and String Literals ({{literal}}) to their string counterparts.
+This means that a BINHEADERS frame can be converted to a HEADERS frame by converting the field values to the string representations of the various Structured Fields Types, and String Literals ({{literal}}) to their string counterparts.
 
-Conversely, a HEADERS frame can be converted to a BINHEADERS frame by encoding all of the Literal field values as Binary Structured Types. In this case, the header types used are informed by the implementations knowledge of the individual header field semantics; see {{backport}}. Those which it cannot (do to either lack of knowledge or an error) or does not wish to convert into Structured Headers are conveyed in BINHEADERS as String Literals ({{literal}}).
+Conversely, a HEADERS frame can be converted to a BINHEADERS frame by encoding all of the Literal field values as Binary Structured Types. In this case, the field types used are informed by the implementations knowledge of the individual field semantics; see {{backport}}. Those which it cannot (do to either lack of knowledge or an error) or does not wish to convert into Structured Fields are conveyed in BINHEADERS as String Literals ({{literal}}).
 
 Field values are stored in the HPACK {{!RFC7541}} dynamic table without Huffman encoding, although specific Binary Structured Types might specify the use of such encodings.
 
@@ -399,16 +399,16 @@ Note that BINHEADERS and HEADERS frames MAY be mixed on the same connection, dep
 
 
 
-# Using Binary Structured Headers with Existing Fields {#backport}
+# Using Binary Structured Fields with Existing Fields {#backport}
 
-Any header field can potentially be parsed as a Structured Header according to the algorithms in {{!I-D.ietf-httpbis-header-structure}} and serialised as a Binary Structured Header. However, many cannot, so optimistically parsing them can be expensive.
+Any field can potentially be parsed as a Structured Field according to the algorithms in {{!I-D.ietf-httpbis-header-structure}} and serialised as a Binary Structured Field. However, many cannot, so optimistically parsing them can be expensive.
 
-This section identifies fields that will usually succeed in {{direct}}, and those that can be mapped into Structured Headers by using an alias field name in {{aliased}}.
+This section identifies fields that will usually succeed in {{direct}}, and those that can be mapped into Structured Fields by using an alias field name in {{aliased}}.
 
 
 ## Directly Represented Fields {#direct}
 
-The following HTTP field names can have their values parsed as Structured Headers according to the algorithms in {{!I-D.ietf-httpbis-header-structure}}, and thus can usually be serialised using the corresponding Binary Structured Types.
+The following HTTP field names can have their values parsed as Structured Fields according to the algorithms in {{!I-D.ietf-httpbis-header-structure}}, and thus can usually be serialised using the corresponding Binary Structured Types.
 
 When one of these fields' values cannot be represented using Structured Types, its value can instead be represented as a String Literal ({{literal}}).
 
@@ -458,7 +458,7 @@ Note that only the delta-seconds form of Retry-After is supported; a Retry-After
 
 ## Aliased Fields {#aliased}
 
-The following HTTP field names can have their values represented in Structured headers by mapping them into its data types and then serialising the resulting Structured Header using an alternative field name.
+The following HTTP field names can have their values represented in Structured Fields by mapping them into its data types and then serialising the resulting Structured Field using an alternative field name.
 
 For example, the Date HTTP header field carries a http-date, which is a string representing a date:
 
@@ -466,7 +466,7 @@ For example, the Date HTTP header field carries a http-date, which is a string r
 Date: Sun, 06 Nov 1994 08:49:37 GMT
 ~~~
 
-Its value is more efficiently represented as an integer number of delta seconds from the Unix epoch (00:00:00 UTC on 1 January 1970, minus leap seconds). Thus, the example above would be represented in (non-binary) Structured headers as:
+Its value is more efficiently represented as an integer number of delta seconds from the Unix epoch (00:00:00 UTC on 1 January 1970, minus leap seconds). Thus, the example above would be represented in (non-binary) Structured Fields as:
 
 ~~~
 SH-Date: 784072177
@@ -476,13 +476,13 @@ As with directly represented fields, if the intended value of an aliased field c
 
 Note that senders MUST know that the next-hop recipient understands these fields (typically, using the negotiation mechanism defined in {{negotiate}}) before using them. Likewise, recipients MUST transform them back to their unaliased form before forwarding the message to a peer or other consuming components that do not have this capability.
 
-Each field name listed below indicates a replacement field name and a way to map its value to Structured Headers.
+Each field name listed below indicates a replacement field name and a way to map its value to Structured Fields.
 
-* ISSUE: using separate names assures that the different syntax doesn't "leak" into normal headers, but it isn't strictly necessary if implementations always convert back to the correct form when giving it to peers or consuming software that doesn't understand this. <https://github.com/mnot/I-D/issues/307>
+* ISSUE: using separate names assures that the different syntax doesn't "leak" into normal fields, but it isn't strictly necessary if implementations always convert back to the correct form when giving it to peers or consuming software that doesn't understand this. <https://github.com/mnot/I-D/issues/307>
 
 ### URLs
 
-The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Headers by considering their payload a string.
+The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by considering their payload a string.
 
 * Content-Location - SH-Content-Location
 * Location - SH-Location
@@ -498,7 +498,7 @@ TOOD: list of strings, one for each path segment, to allow better compression in
 
 ### Dates
 
-The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Headers by parsing their payload according to {{!RFC7230}}, Section 7.1.1.1, and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
+The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by parsing their payload according to {{!RFC7230}}, Section 7.1.1.1, and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
 
 * Date - SH-Date
 * Expires - SH-Expires
@@ -514,7 +514,7 @@ SH-Expires: 1571965240
 
 ### ETags
 
-The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Headers by representing the entity-tag as a string, and the weakness flag as a boolean "w" parameter on it, where true indicates that the entity-tag is weak; if 0 or unset, the entity-tag is strong.
+The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by representing the entity-tag as a string, and the weakness flag as a boolean "w" parameter on it, where true indicates that the entity-tag is weak; if 0 or unset, the entity-tag is strong.
 
 * ETag - SH-ETag
 
@@ -537,7 +537,7 @@ SH-INM: "abcdef"; w=?1, "ghijkl"
 
 ### Links
 
-The field-value of the Link header field {{!RFC8288}} can be represented in Binary Structured Headers by representing the URI-Reference as a string, and link-param as parameters.
+The field-value of the Link header field {{!RFC8288}} can be represented in Binary Structured Fields by representing the URI-Reference as a string, and link-param as parameters.
 
 * Link: SH-Link
 
@@ -549,7 +549,7 @@ SH-Link: "/terms"; rel="copyright"; anchor="#foo"
 
 ### Cookies
 
-The field-value of the Cookie and Set-Cookie fields {{!RFC6265}} can be represented in Binary Structured Headers as a List with parameters and a Dictionary, respectively. The serialisation is almost identical, except that the Expires parameter is always a string (as it can contain a comma), multiple cookie-strings can appear in Set-Cookie, and cookie-pairs are delimited in Cookie by a comma, rather than a semicolon.
+The field-value of the Cookie and Set-Cookie fields {{!RFC6265}} can be represented in Binary Structured Fields as a List with parameters and a Dictionary, respectively. The serialisation is almost identical, except that the Expires parameter is always a string (as it can contain a comma), multiple cookie-strings can appear in Set-Cookie, and cookie-pairs are delimited in Cookie by a comma, rather than a semicolon.
 
 Set-Cookie: SH-Set-Cookie
 Cookie: SH-Cookie
@@ -571,7 +571,7 @@ SH-Cookie: SID=31d4d96e407aad42, lang=en-US
 
 As is so often the case, having alternative representations of data brings the potential for security weaknesses, when attackers exploit the differences between those representations and their handling.
 
-One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Headers data types, along with the "escape valve" of String Literals ({{literal}}). Therefore, implementation divergence from this strictness can have security impact.
+One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Fields data types, along with the "escape valve" of String Literals ({{literal}}). Therefore, implementation divergence from this strictness can have security impact.
 
 
 --- back
@@ -581,7 +581,7 @@ One mitigation to this risk is the strictness of parsing for both non-binary and
 
 *RFC EDITOR: please remove this section before publication*
 
-To help guide decisions about Directly Represented Fields, the HTTP response headers captured by the HTTP Archive <https://httparchive.org> in February 2020, representing more than 350,000,000 HTTP exchanges, were parsed as Structured Headers using the types listed in {{direct}}, with the indicated number of successful header instances, failures, and the resulting failure rate:
+To help guide decisions about Directly Represented Fields, the HTTP response headers captured by the HTTP Archive <https://httparchive.org> in February 2020, representing more than 350,000,000 HTTP exchanges, were parsed as Structured Fields using the types listed in {{direct}}, with the indicated number of successful header instances, failures, and the resulting failure rate:
 
 - accept: 9,198 / 10 = 0.109%
 - accept-encoding: 34,157 / 74 = 0.216%
