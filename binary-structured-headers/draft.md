@@ -69,6 +69,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
 shown here.
 
+This specification describes payloads using the format described in {{Section 1.3 of I-D.ietf-quic-transport}}.
+
 
 # Binary Structured Fields {#fields}
 
@@ -83,26 +85,34 @@ Binary representations of the remaining types are defined in {{leaf}}.
 
 The Binary Literal Representation is a replacement for the String Literal Representation defined in {{!RFC7541}}, Section 5.2, for use in BINHEADERS frames ({{frame}}).
 
+All Binary Literal Representations of Field Values share the following header:
+
 ~~~
-  0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---+
-|   Type (4)    | PLength (4+)  |
-+---+---------------------------+
-| Payload Data (Length octets)  |
-+-------------------------------+
+Binary Literal Representation {
+  Top Level Type (3),
+  Length (5..),
+}
 ~~~
 
-A binary literal representation contains the following fields:
+Its fields are:
 
-* Type: Four bits indicating the type of the payload.
-* PLength: The number of octets used to represent the payload, encoded as per {{!RFC7541}}, Section 5.1, with a 4-bit prefix.
-* Payload Data: The payload, as per below.
+* Top Level Type: Three bits indicating the top-level type of the field value.
+* Length: The number of octets used to represent the payload, encoded as per {{!RFC7541}}, Section 5.1, with a 4-bit prefix.
 
-The following payload types are defined:
+The following top-level types are defined:
+
 
 ### Lists
 
 List values (type=0x1) have a payload consisting of a stream of Binary Structured Types representing the members of the list. Members that are Items are represented as per {{inner-item}}; members that are inner-lists are represented as per {{inner-list}}.
+
+~~~
+List Field Value {
+  Top Level Type (3) = 1,
+  Length (5..),
+  Item or Inner List (..) ...
+}
+~~~
 
 If any member cannot be represented, the entire field value MUST be serialised as a String Literal ({{literal}}).
 
@@ -114,24 +124,25 @@ Dictionary values (type=0x2) have a payload consisting of a stream of members.
 Each member is represented by a key length, followed by that many bytes of the member-name, followed by Binary Structured Types representing the member-value.
 
 ~~~
-  0   1   2   3   4   5   6   7   0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
-| KL (8+)                       |  member-name (KL octets)
-+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
+Dictionary Field Value {
+  Top Level Type (3) = 2,
+  Length (5..),
+  Dictionary Member (..) ...
+}
 
-  0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---
-| member-value
-+---+---+---+---+---+---+---+---
+Dictionary Member {
+  Name Length (8..),
+  Member Name (..),
+  Item or Inner List (..)
+}
 ~~~
 
 A parameter's fields are:
 
-* KL: The number of octets used to represent the member-name, encoded as per {{!RFC7541}}, Section 5.1, with a 8-bit prefix
-* member-name: KL octets of the member-name
-* member-value: One or more Binary Structure Types
+* Name Length: The number of octets used to represent the Member Name, encoded as per {{!RFC7541}}, Section 5.1, with a 8-bit prefix
+* Member Name: Name Length octets of the member-name, ASCII-encoded
 
-member-values that are Items are represented as per {{inner-item}}; member-values that are inner-lists are represented as per {{inner-list}}.
+Member Values that are Items are represented as per {{inner-item}}; those that are inner-lists are represented as per {{inner-list}}.
 
 If any member cannot be represented, the entire field value MUST be serialised as a String Literal ({{literal}}).
 
@@ -140,12 +151,29 @@ If any member cannot be represented, the entire field value MUST be serialised a
 
 Item values (type=0x3) have a payload consisting of Binary Structured Types, as described in {{inner-item}}.
 
+~~~
+Item Field Value {
+  Top Level Type (3) = 3,
+  Length (5..),
+  Item (..)
+}
+~~~
+
 
 ### String Literals {#literal}
 
 String Literals (type=0x4) are the string value of a field; they are used to carry field values that are not Binary Structured Fields, and may not be Structured Fields at all. As such, their semantics are that of String Literal Representations in {{!RFC7541}}, Section 5.2.
 
+~~~
+String Literal Field Value {
+  Top Level Type (3) = 4,
+  Length (5..),
+  Payload (..)
+}
+~~~
+
 Their payload is the octets of the field value.
+
 
 * ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
@@ -153,16 +181,7 @@ Their payload is the octets of the field value.
 
 ## Binary Structured Types {#leaf}
 
-
-Every Binary Structured Type starts with a 5-bit type field that identifies the format of its payload:
-
-~~~
-  0   1   2   3   4   5   6   7   0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
-      Type (5)      |  Payload...
-+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
-~~~
-
+Every Binary Structured Type starts with a 5-bit type field that identifies the format of its payload.
 
 Some Binary Structured Types contain padding bits; senders MUST set padding bits to 0; recipients MUST ignore their values.
 
@@ -172,16 +191,17 @@ Some Binary Structured Types contain padding bits; senders MUST set padding bits
 The Inner List data type (type=0x1) has a payload in the format:
 
 ~~~
-  5   6   7   0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---+---+---+---
-     L(3+)  |  Members (L octets)
-+---+---+---+---+---+---+---+---+---+---+---
+Inner List {
+  Type (5) = 1,
+  Length (3..),
+  Members (..)
+}
 ~~~
 
 Its fields are:
 
-* L: The number of octets used to represent the members, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix
-* Members: L octets
+* Length: The number of octets used to represent the members, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix
+* Members: Length octets
 
 Each member of the list will be represented as an Item ({{inner-item}}); if any member cannot, the entire field value will be serialised as a String Literal ({{literal}}).
 
@@ -193,29 +213,27 @@ The inner list's parameters, if present, are serialised in a following Parameter
 The Parameters data type (type=0x2) has a payload in the format:
 
 ~~~
-  5   6   7   0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---+---+---+---
-     L(3+)  |  Parameters (L octets)
-+---+---+---+---+---+---+---+---+---+---+---
+Parameters {
+  Type (5) = 2,
+  Length (3..),
+  Payload (..)
+}
 ~~~
 
 Its fields are:
 
-* L: The number of octets used to represent the token, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix
-* Parameters: L octets
+* Length: The number of octets used to represent the token, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix
+* Payload: Length octets
 
 Each parameter is represented by key length, followed by that many bytes of the parameter-name, followed by a Binary Structured Type representing the parameter-value.
 
 ~~~
-  0   1   2   3   4   5   6   7   0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
-| KL (8+)                       |  parameter-name (KL octets)
-+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
-
-  0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---
-| parameter-value (VL octets)
-+---+---+---+---+---+---+---+---
+Parameter {
+  Parameter Name Length (8..),
+  Parameter Name (..),
+  Parmeter Value Length (8..),
+  Paramter Value (..)
+}
 ~~~
 
 A parameter's fields are:
@@ -239,22 +257,28 @@ Individual Structured Field Items can be represented using the Binary Payload Ty
 
 The item's parameters, if present, are serialised in a following Parameter type ({{parameter}}); they do not form part of the payload of the item.
 
+~~~
+Item {
+  Item Type (5)
+}
+~~~
 
 #### Integers
 
 The Integer data type (type=0x3) has a payload in the format:
 
 ~~~
-  5   6   7   0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---+---+---+---
-  S |  Integer (2+)
-+---+---+---+---+---+---+---+---+---+---+---
+Integer {
+  Item Type (5) = 3,
+  Sign (1),
+  Payload (2..)
+}
 ~~~
 
 Its fields are:
 
-* S: sign bit; 0 is negative, 1 is positive
-* Integer: The integer, encoded as per {{!RFC7541}}, Section 5.1, with a 2-bit prefix
+* Sign: sign bit; 0 is negative, 1 is positive
+* Payload: The integer, encoded as per {{!RFC7541}}, Section 5.1, with a 2-bit prefix
 
 
 #### Floats
@@ -262,25 +286,17 @@ Its fields are:
 The Float data type (type=0x4) have a payload in the format:
 
 ~~~
-  5   6   7   0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---+---+---+---
-  S |   Integer (2+)
-+---+---+---+---+---+---+---+---+---+---+---
-
-  0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---
-|  FLength (8+)
-+---+---+---+---+---+---+---+---
-
-  0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---
-|  Fractional (8+)
-+---+---+---+---+---+---+---+---
+Float {
+  Item Type (5) = 4,
+  Sign (1),
+  Integer (2..),
+  Fractional (8..)
+}
 ~~~
 
 Its fields are:
 
-* S: sign bit; 0 is negative, 1 is positive
+* Sign: sign bit; 0 is negative, 1 is positive
 * Integer: The integer component, encoded as per {{!RFC7541}}, Section 5.1, with a 2-bit prefix.
 * Fractional: The fractional component, encoded as per {{!RFC7541}}, Section 5.1, with a 8-bit prefix.
 
@@ -290,16 +306,17 @@ Its fields are:
 The String data type (type=0x5) has a payload in the format:
 
 ~~~
-  5   6   7   0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---+---+---+---
-     L(3+)  |  String (L octets)
-+---+---+---+---+---+---+---+---+---+---+---
+String {
+  Item Type (5) = 5,
+  Length (3..),
+  Payload (..)
+}
 ~~~
 
 Its fields are:
 
-* L: The number of octets used to represent the string, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix.
-* String: L octets.
+* Length: The number of octets used to represent the string, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix.
+* Payload: Length octets, ASCII-encoded.
 
 * ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
@@ -309,16 +326,17 @@ Its fields are:
 The Token data type (type=0x6) has a payload in the format:
 
 ~~~
-  5   6   7   0   1   2   3   4   5   6   7
-+---+---+---+---+---+---+---+---+---+---+---
-     L(3+)  |  Token (L octets)
-+---+---+---+---+---+---+---+---+---+---+---
+Token {
+  Item Type (5) = 6,
+  Length (3..),
+  Payload (..)
+}
 ~~~
 
 Its fields are:
 
-* L: The number of octets used to represent the token, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix.
-* Token: L octets.
+* Length: The number of octets used to represent the token, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix.
+* Payload: Length octets, ASCII-encoded.
 
 * ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
 
@@ -328,6 +346,12 @@ Its fields are:
 The Byte Sequence data type (type=0x7) has a payload in the format:
 
 ~~~
+Byte Sequence {
+  Item Type (5) = 7,
+  Length (3..),
+  Payload (..)
+}
+
   5   6   7   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+---+---+---
      L(3+)  |  Byte Sequence (L octets)
@@ -336,8 +360,8 @@ The Byte Sequence data type (type=0x7) has a payload in the format:
 
 Its fields are:
 
-* L: The number of octets used to represent the byte sequence, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix.
-* Byte Sequence: L octets.
+* Length: The number of octets used to represent the byte sequence, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix.
+* Byte Sequence: Length octets.
 
 
 #### Booleans
@@ -345,13 +369,14 @@ Its fields are:
 The Boolean data type (type=0x8) has a payload of two bits:
 
 ~~~
-  5   6   7
-+---+---+---+
-  B |   X   |
-+---+---+---+
+Boolean {
+  Item Type (5) = 8,
+  Payload (1),
+  Padding (2) = 0
+}
 ~~~
 
-If B is 0, the value is False; if B is 1, the value is True. X is padding.
+If Payload is 0, the value is False; if Payload is 1, the value is True.
 
 
 
