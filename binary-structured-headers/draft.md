@@ -157,6 +157,8 @@ A Dictionary Member's fields are:
 * Item: An Item ({{types}})
 * Parameters: Optional Parameters ({{parameter}})
 
+The Item in a Dictionary Member MUST NOT be a Parameters (0x2).
+
 
 ### Item Field Values
 
@@ -176,6 +178,8 @@ An Item Field Value's fields are:
 * Length: The number of octets used to represent the Item, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
 * Item: An Item ({{types}})
 * Parameters: Optional Parameters ({{parameter}})
+
+The Item in an Item Field Value MUST NOT be an Inner List (0x1) or Parameters (0x2).
 
 
 ### String Literal Field Values {#literal}
@@ -266,11 +270,9 @@ A parameter's fields are:
 * Parameter Name: Parameter Name Length octets of the parameter-name
 * Parameter Value: A Binary Item Type representing a bare item ({{types}})
 
-The Item in a Parameter MUST NOT be an Inner List (0x1) or Parameter (0x2).
+The Item in a Parameter MUST NOT be an Inner List (0x1) or Parameters (0x2).
 
-Parameters are always associated with the Binary Item Type that immediately preceded them.
-
-If parameters are not explicitly allowed on the preceding type, or there is no preceding type, it is an error.
+Parameters are always associated with the Binary Item Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Item in a container, and MUST NOT follow another Parameters.
 
 
 ### Integers
