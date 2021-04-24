@@ -429,14 +429,14 @@ Note that BINHEADERS and HEADERS frames MAY be mixed on the same connection, dep
 
 # Using Binary Structured Fields with Existing Fields {#backport}
 
-Any field can potentially be parsed as a Structured Field according to the algorithms in {{!I-D.ietf-httpbis-header-structure}} and serialised as a Binary Structured Field. However, many cannot, so optimistically parsing them can be expensive.
+Any field can potentially be parsed as a Structured Field according to the algorithms in {{!RFC8941}} and serialised as a Binary Structured Field. However, many cannot, so optimistically parsing them can be expensive.
 
 This section identifies fields that will usually succeed in {{direct}}, and those that can be mapped into Structured Fields by using an alias field name in {{aliased}}.
 
 
 ## Directly Represented Fields {#direct}
 
-The following HTTP field names can have their values parsed as Structured Fields according to the algorithms in {{!I-D.ietf-httpbis-header-structure}}, and thus can usually be serialised using the corresponding Binary Item Types.
+The following HTTP field names can have their values parsed as Structured Fields according to the algorithms in {{!RFC8941}}, and thus can usually be serialised using the corresponding Binary Item Types.
 
 When one of these fields' values cannot be represented using Structured Types, its value can instead be represented as a String Literal ({{literal}}).
 
