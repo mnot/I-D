@@ -410,7 +410,7 @@ Date: Sun, 06 Nov 1994 08:49:37 GMT
 ]]></artwork>
         <t>Its value is more efficiently represented as an integer number of delta seconds from the Unix epoch (00:00:00 UTC on 1 January 1970, minus leap seconds). Thus, the example above would be represented in (non-binary) Structured Fields as:</t>
         <artwork name="" type="" align="left" alt=""><![CDATA[
-SH-Date: 784072177
+SF-Date: 784072177
 ]]></artwork>
         <t>As with directly represented fields, if the intended value of an aliased field cannot be represented using Structured Types successfully, its value can instead be represented as a String Literal (<xref target="literal" format="default"/>).</t>
         <t>Note that senders MUST know that the next-hop recipient understands these fields (typically, using the negotiation mechanism defined in <xref target="negotiate" format="default"/>) before using them. Likewise, recipients MUST transform them back to their unaliased form before forwarding the message to a peer or other consuming components that do not have this capability.</t>
@@ -422,13 +422,13 @@ SH-Date: 784072177
           <name>URLs</name>
           <t>The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by considering their payload a string.</t>
           <ul spacing="normal">
-            <li>Content-Location - SH-Content-Location</li>
-            <li>Location - SH-Location</li>
-            <li>Referer - SH-Referer</li>
+            <li>Content-Location - SF-Content-Location</li>
+            <li>Location - SF-Location</li>
+            <li>Referer - SF-Referer</li>
           </ul>
           <t>For example, a (non-binary) Location:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
-SH-Location: "https://example.com/foo"
+SF-Location: "https://example.com/foo"
 ]]></artwork>
           <t>TOOD: list of strings, one for each path segment, to allow better compression in the future?</t>
         </section>
@@ -436,55 +436,55 @@ SH-Location: "https://example.com/foo"
           <name>Dates</name>
           <t>The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by parsing their payload according to <xref target="RFC7230" format="default"/>, Section 7.1.1.1, and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).</t>
           <ul spacing="normal">
-            <li>Date - SH-Date</li>
-            <li>Expires - SH-Expires</li>
-            <li>If-Modified-Since - SH-IMS</li>
-            <li>If-Unmodified-Since - SH-IUS</li>
-            <li>Last-Modified - SH-LM</li>
+            <li>Date - SF-Date</li>
+            <li>Expires - SF-Expires</li>
+            <li>If-Modified-Since - SF-IMS</li>
+            <li>If-Unmodified-Since - SF-IUS</li>
+            <li>Last-Modified - SF-LM</li>
           </ul>
           <t>For example, a (non-binary) Expires:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
-SH-Expires: 1571965240
+SF-Expires: 1571965240
 ]]></artwork>
         </section>
         <section anchor="etags" numbered="true" toc="default">
           <name>ETags</name>
           <t>The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by representing the entity-tag as a string, and the weakness flag as a boolean "w" parameter on it, where true indicates that the entity-tag is weak; if 0 or unset, the entity-tag is strong.</t>
           <ul spacing="normal">
-            <li>ETag - SH-ETag</li>
+            <li>ETag - SF-ETag</li>
           </ul>
           <t>For example, a (non-Binary) ETag:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
-SH-ETag: "abcdef"; w=?1
+SF-ETag: "abcdef"; w=?1
 ]]></artwork>
           <t>If-None-Match is a list of the structure described above.</t>
           <ul spacing="normal">
-            <li>If-None-Match - SH-INM</li>
+            <li>If-None-Match - SF-INM</li>
           </ul>
           <t>For example, a (non-binary) If-None-Match:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
-SH-INM: "abcdef"; w=?1, "ghijkl"
+SF-INM: "abcdef"; w=?1, "ghijkl"
 ]]></artwork>
         </section>
         <section anchor="links" numbered="true" toc="default">
           <name>Links</name>
           <t>The field-value of the Link header field <xref target="RFC8288" format="default"/> can be represented in Binary Structured Fields by representing the URI-Reference as a string, and link-param as parameters.</t>
           <ul spacing="normal">
-            <li>Link: SH-Link</li>
+            <li>Link: SF-Link</li>
           </ul>
           <t>For example, a (non-binary) Link:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
-SH-Link: "/terms"; rel="copyright"; anchor="#foo"
+SF-Link: "/terms"; rel="copyright"; anchor="#foo"
 ]]></artwork>
         </section>
         <section anchor="cookies" numbered="true" toc="default">
           <name>Cookies</name>
           <t>The field-value of the Cookie and Set-Cookie fields <xref target="RFC6265" format="default"/> can be represented in Binary Structured Fields as a List with parameters and a Dictionary, respectively. The serialisation is almost identical, except that the Expires parameter is always a string (as it can contain a comma), multiple cookie-strings can appear in Set-Cookie, and cookie-pairs are delimited in Cookie by a comma, rather than a semicolon.</t>
-          <t>Set-Cookie: SH-Set-Cookie
-Cookie: SH-Cookie</t>
+          <t>Set-Cookie: SF-Set-Cookie
+Cookie: SF-Cookie</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
-SH-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
-SH-Cookie: SID=31d4d96e407aad42, lang=en-US
+SF-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
+SF-Cookie: SID=31d4d96e407aad42, lang=en-US
 ]]></artwork>
           <ul spacing="normal">
             <li>ISSUE: explicitly convert Expires to an integer? <eref target="https://github.com/mnot/I-D/issues/308">https://github.com/mnot/I-D/issues/308</eref></li>
@@ -763,7 +763,7 @@ Note to Readers
     </section>
   </back>
   <!-- ##markdown-source:
-H4sIAHPWg2AAA808Z3PjyJXf+Sv6pLpaaQugCDBzbtanlTQe2SPNWMGhXK7d
+H4sIAPbWg2AAA808Z3PjyJXf+Sv6pLpaaQugCDBzbtanlTQe2SPNWMGhXK7d
 JtgkYYEADYAKpxr/9nuhG2iAoCbaZYddEejw+uXUcF23lYd5pCbi5zCW6ZO4
 ztNNkG9SNRNvb24+iDehimbijzLaqKwlp9NU3U9asySI5QomzVI5z904yfMw
 Xizlyp3SKm5WrOIulZypNHM73dZM5jDn+fT45uxjK4AfiyR9mogsn7Va4Tqd
@@ -876,7 +876,7 @@ iwFLb6K8ptzZQ7HsLF6+p7qmBS86t4Ah9SjRy+eo4BRRTediU1b4Rmka0o2u
 giCVW071GIuJR58Q0K3V9DWB6w34lp2BuEzuhTce90RnNOmNJ92h+O3FTVla
 KdL71K+t5uAaY8NY9LRllOKiEFvWXIgFRMGDmInFk93G4aNQ6wRAPuh0JvQ/
 cXtzgh6uJ34n4w1KhTcedsC9CmOw15GSa7POIQYvm4yRpDEm5BTvfT8km2jL
-YgKdDzDlxxfgDpu8C1NNuX7rMnaGo15n6HvDoe5l0e7rzLg/9vpzHf6HJgzL
+YgKdDzDlxxfgDpu8C1NNuX7jMnaGo15n6HvDoe5l0e7rzLg/9vpzHf6HJgzL
 0RmfWV2m2rsyY7/ILWB/L8vmG8qZfDcfodQYlU5BLn+YLEasHnN3mazLTkEr
 C5xVfB4qWplrxqUT1fzNgUp6zLpGfGgu6xcLrNpwAs7/Olv9irX0NoYSZQZg
 E9s5XrPwnA1SeZMjyyTXhHTeFKQwMdos26w4iaAr/tod1w1xWrtQJL+W0xDQ
@@ -936,7 +936,7 @@ vyJwO6Xu08ASIrl5WF1vpqcJfoAx+5VzZEVzokUynICX4DXR9Icsk7XAkMfO
 1uhvF5urs8i33IuldKNw6QG+1BTFd9Jcrr+C3gDrDRLb6w1RXaj0HoW964EF
 BbM3HnjwNMJMqEmUot4Bq9sFIff6rMl1ipNkdOh0ej7pLfzaMj6Ftf2u0++M
 cXCOmTa0yB1QVv4An2FvGvBV1R8BEwphNujYASsFtLAT1BfDXgeUXA/1bHdN
-HkRv3MHVaBx1MZZaA1zHTnfojEd9aghs/T+CKT++JF8AAA==
+HkRv3MHVaBx1MZZaA1zHTnfojEd9aghs/T/AcQ/dJF8AAA==
 
 -->
 
