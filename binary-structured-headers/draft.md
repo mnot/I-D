@@ -175,7 +175,7 @@ Item Field Value {
 
 An Item Field Value's fields are:
 
-* Length: The number of octets used to represent the Item, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
+* Length: The number of octets used to represent the Item (including Parameters, if present), encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
 * Item: An Item ({{types}})
 * Parameters: Optional Parameters ({{parameter}})
 
@@ -197,7 +197,7 @@ String Literal Field Value {
 A String Literal Field Value's fields are:
 
 * Length: The number of octets used to represent the string literal, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
-* Payload: The octets of the field value
+* Payload: The raw octets of the field value
 
 
 
@@ -229,7 +229,7 @@ Inner List {
 Its fields are:
 
 * Length: The number of octets used to represent the members, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix
-* Members: Length octets
+* Item(s): Length octets containing the Item(s) in the List
 
 An Item in an Inner List MUST NOT be an Inner List (0x1).
 
@@ -251,10 +251,9 @@ Parameters {
 Its fields are:
 
 * Length: The number of octets used to represent the payload, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix
-* Payload: Length octets
+* Parameter(s): Length octets
 
-
-Each parameter conveys a key and a value:
+Each Parameter conveys a key and a value:
 
 ~~~
 Parameter {
@@ -268,7 +267,7 @@ A parameter's fields are:
 
 * Parameter Name Length: The number of octets used to represent the parameter-name, encoded as per {{!RFC7541}}, Section 5.1, with a 8-bit prefix
 * Parameter Name: Parameter Name Length octets of the parameter-name
-* Parameter Value: A Binary Item Type representing a bare item ({{types}})
+* Item: The parameter value, a Binary Item Type
 
 The Item in a Parameter MUST NOT be an Inner List (0x1) or Parameters (0x2).
 
