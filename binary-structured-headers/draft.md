@@ -497,7 +497,7 @@ Date: Sun, 06 Nov 1994 08:49:37 GMT
 Its value is more efficiently represented as an integer number of delta seconds from the Unix epoch (00:00:00 UTC on 1 January 1970, minus leap seconds). Thus, the example above would be represented in (non-binary) Structured Fields as:
 
 ~~~
-SH-Date: 784072177
+SF-Date: 784072177
 ~~~
 
 As with directly represented fields, if the intended value of an aliased field cannot be represented using Structured Types successfully, its value can instead be represented as a String Literal ({{literal}}).
@@ -512,14 +512,14 @@ Each field name listed below indicates a replacement field name and a way to map
 
 The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by considering their payload a string.
 
-* Content-Location - SH-Content-Location
-* Location - SH-Location
-* Referer - SH-Referer
+* Content-Location - SF-Content-Location
+* Location - SF-Location
+* Referer - SF-Referer
 
 For example, a (non-binary) Location:
 
 ~~~
-SH-Location: "https://example.com/foo"
+SF-Location: "https://example.com/foo"
 ~~~
 
 TOOD: list of strings, one for each path segment, to allow better compression in the future?
@@ -528,38 +528,38 @@ TOOD: list of strings, one for each path segment, to allow better compression in
 
 The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by parsing their payload according to {{!RFC7230}}, Section 7.1.1.1, and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
 
-* Date - SH-Date
-* Expires - SH-Expires
-* If-Modified-Since - SH-IMS
-* If-Unmodified-Since - SH-IUS
-* Last-Modified - SH-LM
+* Date - SF-Date
+* Expires - SF-Expires
+* If-Modified-Since - SF-IMS
+* If-Unmodified-Since - SF-IUS
+* Last-Modified - SF-LM
 
 For example, a (non-binary) Expires:
 
 ~~~
-SH-Expires: 1571965240
+SF-Expires: 1571965240
 ~~~
 
 ### ETags
 
 The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by representing the entity-tag as a string, and the weakness flag as a boolean "w" parameter on it, where true indicates that the entity-tag is weak; if 0 or unset, the entity-tag is strong.
 
-* ETag - SH-ETag
+* ETag - SF-ETag
 
 For example, a (non-Binary) ETag:
 
 ~~~
-SH-ETag: "abcdef"; w=?1
+SF-ETag: "abcdef"; w=?1
 ~~~
 
 If-None-Match is a list of the structure described above.
 
-* If-None-Match - SH-INM
+* If-None-Match - SF-INM
 
 For example, a (non-binary) If-None-Match:
 
 ~~~
-SH-INM: "abcdef"; w=?1, "ghijkl"
+SF-INM: "abcdef"; w=?1, "ghijkl"
 ~~~
 
 
@@ -567,24 +567,24 @@ SH-INM: "abcdef"; w=?1, "ghijkl"
 
 The field-value of the Link header field {{!RFC8288}} can be represented in Binary Structured Fields by representing the URI-Reference as a string, and link-param as parameters.
 
-* Link: SH-Link
+* Link: SF-Link
 
 For example, a (non-binary) Link:
 
 ~~~
-SH-Link: "/terms"; rel="copyright"; anchor="#foo"
+SF-Link: "/terms"; rel="copyright"; anchor="#foo"
 ~~~
 
 ### Cookies
 
 The field-value of the Cookie and Set-Cookie fields {{!RFC6265}} can be represented in Binary Structured Fields as a List with parameters and a Dictionary, respectively. The serialisation is almost identical, except that the Expires parameter is always a string (as it can contain a comma), multiple cookie-strings can appear in Set-Cookie, and cookie-pairs are delimited in Cookie by a comma, rather than a semicolon.
 
-Set-Cookie: SH-Set-Cookie
-Cookie: SH-Cookie
+Set-Cookie: SF-Set-Cookie
+Cookie: SF-Cookie
 
 ~~~
-SH-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
-SH-Cookie: SID=31d4d96e407aad42, lang=en-US
+SF-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
+SF-Cookie: SID=31d4d96e407aad42, lang=en-US
 ~~~
 
 * ISSUE: explicitly convert Expires to an integer? <https://github.com/mnot/I-D/issues/308>
