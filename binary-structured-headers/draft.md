@@ -34,7 +34,9 @@ informative:
 
 --- abstract
 
-This specification defines a binary serialisation of Structured Field Values for HTTP, along with a negotiation mechanism for its use in HTTP/2. It also defines how to use Structured Fields for many existing fields -- thereby "backporting" them -- when supported by two peers.
+This specification defines a binary serialisation of Structured Field Values for HTTP, along with a negotiation mechanism for its use in HTTP/2.
+
+It also defines how to use Structured Fields for many existing fields -- thereby "backporting" them -- when supported by both peers.
 
 
 --- note_Note_to_Readers
@@ -54,8 +56,6 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-HTTP messages often pass through several systems -- clients, intermediaries, servers, and subsystems of each -- that parse and process their header and trailer fields. This repeated parsing (and often re-serialisation) adds latency and consumes CPU, energy, and other resources.
-
 Structured Field Values for HTTP {{!RFC8941}} offers a set of data types that new fields can combine to express their semantics. This specification defines a binary serialisation of those structures in {{fields}}, and specifies its use in HTTP/2 -- specifically, as part of HPACK Literal Header Field Representations ({{!RFC7541}}) -- in {{negotiate}}.
 
 {{backport}} defines how to convey existing fields as Structured Fields, when supported by two peers.
@@ -70,7 +70,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
 shown here.
 
-This specification describes payloads using the format described in {{Section 1.3 of I-D.ietf-quic-transport}}.
+This specification describes formats using the convention described in {{Section 1.3 of I-D.ietf-quic-transport}}.
 
 
 # Binary Structured Fields {#fields}
@@ -98,7 +98,7 @@ Binary Structured Field Value {
 Its fields are:
 
 * Top Level Type: Three bits indicating the top-level type of the field value.
-* Length: The number of octets used to represent the payload, encoded as per {{!RFC7541}}, Section 5.1, with a 4-bit prefix.
+* Length: The number of octets used to represent the payload, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix.
 
 The following top-level types are defined:
 
@@ -115,14 +115,17 @@ List Field Value {
 }
 ~~~
 
-If any member cannot be represented, the entire field value MUST be serialised as a String Literal ({{literal}}).
+A List Field Value's fields are:
+
+* Length: The number of octets used to represent the entire List, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
+* Item: One or more Item(s) ({{types}})
 
 
 ### Dictionary Field Values
 
-Dictionary values (type=0x2) have a payload consisting of a stream of members.
+Dictionary values (type=0x2) have a payload consisting of a stream of Dictionary Members.
 
-Each member is represented by a key length, followed by that many bytes of the member-name, followed by Binary Item Types representing the member-value.
+Each member is represented by a length, followed by that many bytes of the member-name, followed by the Binary Item Type(s) representing the member-value.
 
 ~~~
 Dictionary Field Value {
@@ -130,7 +133,14 @@ Dictionary Field Value {
   Length (5..),
   Dictionary Member (..) ...
 }
+~~~
 
+A Dictionary Field Value's fields are:
+
+* Length: The number of octets used to represent the entire Dictionary, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
+* Dictionary Member: one or more Dictionary Member(s)
+
+~~~
 Dictionary Member {
   Name Length (8..),
   Member Name (..),
@@ -140,14 +150,12 @@ Dictionary Member {
 
 ~~~
 
-A parameter's fields are:
+A Dictionary Member's fields are:
 
 * Name Length: The number of octets used to represent the Member Name, encoded as per {{!RFC7541}}, Section 5.1, with a 8-bit prefix
 * Member Name: Name Length octets of the member-name, ASCII-encoded
-
-Member Values that are Items are represented as per {{types}}; those that are inner-lists are represented as per {{inner-list}}.
-
-If any member cannot be represented, the entire field value MUST be serialised as a String Literal ({{literal}}).
+* Item: An Item ({{types}})
+* Parameters: Optional Parameters ({{parameter}})
 
 
 ### Item Field Values
@@ -163,6 +171,12 @@ Item Field Value {
 }
 ~~~
 
+An Item Field Value's fields are:
+
+* Length: The number of octets used to represent the Item, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
+* Item: An Item ({{types}})
+* Parameters: Optional Parameters ({{parameter}})
+
 
 ### String Literal Field Values {#literal}
 
@@ -176,10 +190,10 @@ String Literal Field Value {
 }
 ~~~
 
-Their payload is the octets of the field value.
+A String Literal Field Value's fields are:
 
-
-* ISSUE: use Huffman coding? <https://github.com/mnot/I-D/issues/305>
+* Length: The number of octets used to represent the string literal, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
+* Payload: The octets of the field value
 
 
 
@@ -213,7 +227,7 @@ Its fields are:
 * Length: The number of octets used to represent the members, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix
 * Members: Length octets
 
-Each member of the list will be represented as an Item ({{types}}); if any member cannot, the entire field value will be serialised as a String Literal ({{literal}}).
+An Item in an Inner List MUST NOT be an Inner List (0x1).
 
 The inner list's parameters, if present, are serialised in a following Parameter type ({{parameter}}); they do not form part of the payload of the inner list.
 
@@ -252,9 +266,11 @@ A parameter's fields are:
 * Parameter Name: Parameter Name Length octets of the parameter-name
 * Parameter Value: A Binary Item Type representing a bare item ({{types}})
 
-Parameter-values are bare items; that is, they MUST NOT have parameters themselves.
+The Item in a Parameter MUST NOT be an Inner List (0x1) or Parameter (0x2).
 
-Parameters are always associated with the Binary Item Type that immediately preceded them. If parameters are not explicitly allowed on the preceding type, or there is no preceding type, it is an error.
+Parameters are always associated with the Binary Item Type that immediately preceded them.
+
+If parameters are not explicitly allowed on the preceding type, or there is no preceding type, it is an error.
 
 
 ### Integers
