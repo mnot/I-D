@@ -233,7 +233,7 @@ Its fields are:
 
 An Item in an Inner List MUST NOT be an Inner List (0x1).
 
-The inner list's parameters, if present, are serialised in a following Parameter type ({{parameter}}); they do not form part of the payload of the inner list.
+Parameters on the Inner List itself, if present, are serialised in a following Parameter type ({{parameter}}); they do not form part of the payload of the Inner List (and therefore are not counted in Length).
 
 
 ### Parameters {#parameter}
