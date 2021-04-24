@@ -291,8 +291,9 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    An Item Field Value's fields are:
 
-   *  Length: The number of octets used to represent the Item, encoded
-      as per [RFC7541], Section 5.1, with a 5-bit prefix
+   *  Length: The number of octets used to represent the Item (including
+      Parameters, if present), encoded as per [RFC7541], Section 5.1,
+      with a 5-bit prefix
 
    *  Item: An Item (Section 2.2)
 
@@ -319,7 +320,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    *  Length: The number of octets used to represent the string literal,
       encoded as per [RFC7541], Section 5.1, with a 5-bit prefix
 
-   *  Payload: The octets of the field value
+   *  Payload: The raw octets of the field value
 
 2.2.  Binary Item Types
 
@@ -329,7 +330,6 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    Item {
      Type (5)
    }
-
 
 
 
@@ -356,7 +356,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    *  Length: The number of octets used to represent the members,
       encoded as per [RFC7541], Section 5.1, with a 3-bit prefix
 
-   *  Members: Length octets
+   *  Item(s): Length octets containing the Item(s) in the List
 
    An Item in an Inner List MUST NOT be an Inner List (0x1).
 
@@ -380,9 +380,9 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    *  Length: The number of octets used to represent the payload,
       encoded as per [RFC7541], Section 5.1, with a 3-bit prefix
 
-   *  Payload: Length octets
+   *  Parameter(s): Length octets
 
-   Each parameter conveys a key and a value:
+   Each Parameter conveys a key and a value:
 
 
 
@@ -408,8 +408,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    *  Parameter Name: Parameter Name Length octets of the parameter-name
 
-   *  Parameter Value: A Binary Item Type representing a bare item
-      (Section 2.2)
+   *  Item: The parameter value, a Binary Item Type
 
    The Item in a Parameter MUST NOT be an Inner List (0x1) or Parameters
    (0x2).
@@ -438,6 +437,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 2.2.4.  Floats
 
    The Float data type (type=0x4) have a payload in the format:
+
 
 
 
