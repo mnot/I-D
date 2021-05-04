@@ -201,17 +201,17 @@ A Binary Literal Field Value's fields are:
 
 
 
-## Binary Item Types {#types}
+## Binary Data Types {#types}
 
-Every Item starts with a 5-bit type field that identifies the format of its payload.
+Every data type starts with a 5-bit type field that identifies the format of its payload.
 
 ~~~
-Item {
+Binary Data Type {
   Type (5)
 }
 ~~~
 
-Some Binary Item Types contain padding bits; senders MUST set padding bits to 0; recipients MUST ignore their values.
+Some data types contain padding bits; senders MUST set padding bits to 0; recipients MUST ignore their values.
 
 
 ### Inner Lists {#inner-list}
@@ -259,7 +259,7 @@ Each Parameter conveys a key and a value:
 Parameter {
   Parameter Name Length (8..),
   Parameter Name (..),
-  Item (..)
+  Binary Data Type (..)
 }
 ~~~
 
@@ -267,11 +267,11 @@ A parameter's fields are:
 
 * Parameter Name Length: The number of octets used to represent the parameter-name, encoded as per {{!RFC7541}}, Section 5.1, with a 8-bit prefix
 * Parameter Name: Parameter Name Length octets of the parameter-name
-* Item: The parameter value, a Binary Item Type
+* Binary Data Type: The parameter value, a Binary Data Type
 
-The Item in a Parameter MUST NOT be an Inner List (0x1) or Parameters (0x2).
+The Binary Data Type in a Parameter MUST NOT be an Inner List (0x1) or Parameters (0x2).
 
-Parameters are always associated with the Binary Item Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Item in a container, and MUST NOT follow another Parameters.
+Parameters are always associated with the Binary Data Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Binary Data Type in a container, and MUST NOT follow another Parameters.
 
 
 ### Integers
@@ -298,7 +298,7 @@ The Float data type (type=0x4) have a payload in the format:
 
 ~~~
 Float {
-  Item Type (5) = 4,
+  Type (5) = 4,
   Sign (1),
   Integer (2..),
   Fractional (8..)
@@ -318,7 +318,7 @@ The String data type (type=0x5) has a payload in the format:
 
 ~~~
 String {
-  Item Type (5) = 5,
+  Type (5) = 5,
   Length (3..),
   Payload (..)
 }
@@ -336,7 +336,7 @@ The Token data type (type=0x6) has a payload in the format:
 
 ~~~
 Token {
-  Item Type (5) = 6,
+  Type (5) = 6,
   Length (3..),
   Payload (..)
 }
@@ -354,7 +354,7 @@ The Byte Sequence data type (type=0x7) has a payload in the format:
 
 ~~~
 Byte Sequence {
-  Item Type (5) = 7,
+  Type (5) = 7,
   Length (3..),
   Payload (..)
 }
@@ -372,7 +372,7 @@ The Boolean data type (type=0x8) has a payload of two bits:
 
 ~~~
 Boolean {
-  Item Type (5) = 8,
+  Type (5) = 8,
   Payload (1),
   Padding (2) = 0
 }
