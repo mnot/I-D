@@ -56,9 +56,9 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-Structured Field Values for HTTP {{!RFC8941}} offers a set of data types that new fields can combine to express their semantics. This specification defines a binary serialisation of those structures in {{fields}}, and specifies its use in HTTP/2 -- specifically, as part of HPACK Literal Header Field Representations ({{!RFC7541}}) -- in {{negotiate}}.
+Structured Field Values for HTTP {{!RFC8941}} offers a set of data types that new fields can combine to express their semantics. This specification defines a binary serialisation of those structures in {{fields}}, and specifies its use in HTTP/2 in {{negotiate}}.
 
-{{backport}} defines how to convey existing fields as Structured Fields, when supported by two peers.
+Additionally, {{backport}} defines how to convey existing fields as Structured Fields, when supported by two peers.
 
 The primary goal of this specification are to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.
 
@@ -77,19 +77,19 @@ This specification describes formats using the convention described in {{Section
 
 This section defines a binary serialisation for the Structured Field Types defined in {{!RFC8941}}.
 
-The types permissable as the top-level of Structured Field values -- Dictionary, List, and Item -- are defined in terms of a Binary Literal Representation ({{binlit}}), which is a replacement for the String Literal Representation in {{RFC7541}}.
+The types permissable as the top-level of Structured Field values -- Dictionary, List, and Item -- are defined in terms of a Binary Representation ({{binlit}}), which is a replacement for the String Literal Representation in {{RFC7541}}.
 
-Binary representations of the remaining types are defined in {{types}}.
+Binary representations of the remaining structured field types are defined in {{types}}.
 
 
-## The Binary Literal Representation {#binlit}
+## Binary Representations {#binlit}
 
-The Binary Literal Representation is a replacement for the String Literal Representation defined in {{!RFC7541}}, Section 5.2, for use in BINHEADERS frames ({{frame}}).
+Binary Representations are a replacement for the String Literal Representation defined in {{!RFC7541}}, Section 5.2, and can be used to serialise a Structured Field Type.
 
-All Binary Literal Representations of Field Values share the following header:
+All Binary Representations share the following header:
 
 ~~~
-Binary Structured Field Value {
+Binary Representation {
   Top Level Type (3),
   Length (5..),
 }
@@ -182,19 +182,19 @@ An Item Field Value's fields are:
 The Item in an Item Field Value MUST NOT be an Inner List (0x1) or Parameters (0x2).
 
 
-### String Literal Field Values {#literal}
+### Binary Literal Field Values {#literal}
 
-String Literals (type=0x4) are the string value of a field; they are used to carry field values that are not Binary Structured Fields, and may not be Structured Fields at all. As such, their semantics are that of String Literal Representations in {{!RFC7541}}, Section 5.2.
+Binary Literal values (type=0x4) are the string value of a field; they are used to carry field values that are not Binary Structured Fields, and may not be Structured Fields at all. As such, their semantics are that of String Literal Representations in {{!RFC7541}}, Section 5.2.
 
 ~~~
-String Literal Field Value {
+Binary Literal Field Value {
   Top Level Type (3) = 4,
   Length (5..),
   Payload (..)
 }
 ~~~
 
-A String Literal Field Value's fields are:
+A Binary Literal Field Value's fields are:
 
 * Length: The number of octets used to represent the string literal, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
 * Payload: The raw octets of the field value
@@ -385,45 +385,36 @@ If Payload is 0, the value is False; if Payload is 1, the value is True.
 
 # Using Binary Structured Fields in HTTP/2 {#negotiate}
 
-When both peers on a connection support this specification, they can take advantage of that knowledge to serialise fields that they know to be Structured Fields (or compatible with them; see {{backport}}).
+When both peers on a connection support this specification, they can take advantage of that knowledge to serialise fields that they know to be Structured Fields (or compatible with them; see {{backport}}) as binary data, rather than strings.
 
-Peers advertise and discover this support using a HTTP/2 setting defined in {{setting}}, and convey Binary Structured Fields in a frame type defined in {{frame}}.
+Peers advertise and discover this support using a HTTP/2 setting defined in {{setting}}, and convey Binary Structured Fields in streams whose HEADERS frame uses the flag defined in {{flag}}.
 
-## Binary Structured Fields Setting {#setting}
+
+## The SETTINGS_BINARY_STRUCTURED_FIELDS Setting {#setting}
 
 Advertising support for Binary Structured Fields is accomplished using a HTTP/2 setting, SETTINGS_BINARY_STRUCTURED_FIELDS (0xTODO).
 
-Receiving SETTINGS_BINARY_STRUCTURED_FIELDS from a peer indicates that:
+Receiving SETTINGS_BINARY_STRUCTURED_FIELDS with a non-zero value from a peer indicates that:
 
 1. The peer supports the Binary Item Types defined in {{fields}}.
 2. The peer will process the BINHEADERS frames as defined in {{frame}}.
 3. When a downstream consumer does not likewise support that encoding, the peer will transform them into HEADERS frames (if the peer is HTTP/2) or a form it will understand (e.g., the textual representation of Structured Fields data types defined in {{!RFC8941}}).
 4. The peer will likewise transform all fields defined as Aliased Fields ({{aliased}}) into their non-aliased forms as necessary.
 
-The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0. Future extensions to Structured Fields might use it to indicate support for new types.
+The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0, whereas a value of 1 indicates that this specification is supported with no further extensions. Future specifications might use values greater than one to indicate support for extensions.
 
 
-## The BINHEADERS Frame {#frame}
+## The BINARY_STRUCTRED HEADERS Flag {#flag}
 
-When a peer has indicated that it supports this specification {#setting}, a sender can send the BINHEADERS Frame Type (0xTODO).
+When a peer has indicated that it supports this specification as per {{setting}}, a sender can send the BINARY_STRUCTURED flag (0xTODO) on the HEADERS frame.
 
-The BINHEADERS Frame Type behaves and is represented exactly as a HEADERS Frame type ({{!RFC7540}}, Section 6.2), with one exception; instead of using the String Literal Representation defined in {{!RFC7541}}, Section 5.2, it uses the Binary Literal Representation defined in {{binlit}}.
+This flag indicates that the HEADERS frame containing it and subsequent CONTINUATION frames on the same stream use the Binary Representation defined in {{binlit}} instead of the String Literal Representation defined in {{!RFC7541, Section 5.2}} for all field values. Field names are still serialised as String Literal Representations.
 
-Fields that are Structured Fields can have their values represented using the Binary Literal Representation corresponding to that field's top-level type -- List, Dictionary, or Item; their values will then be serialised as a stream of Binary Item Types.
+In such frames, field values that are known to be Structured Fields and those that can be converted to Structured Fields (as per {{backport}}) MAY be sent using the applicable Binary Representation. However, any field value (including those defined as Structured Fields) can also be serialised as a Binary Literal ({{literal}}) to accommodate fields that are not defined as Structured Fields, not valid Structured Fields, or that the sending implementation does not wish to send as a Structured Field for some other reason.
 
-Additionally, any field (including those defined as Structured Fields) can be serialised as a String Literal ({{literal}}), which accommodates fields that are not defined as Structured Fields, not valid Structured Fields, or that the sending implementation does not wish to send as Binary Item Types for some other reason.
+Binary Representations are stored in the HPACK {{!RFC7541}} dynamic table, and their lengths are used for the purposes of maintaining dynamic table size ({{RFC7541, Section 4}}).
 
-Note that Field Names are always serialised as String Literals ({{literal}}).
-
-This means that a BINHEADERS frame can be converted to a HEADERS frame by converting the field values to the string representations of the various Structured Fields Types, and String Literals ({{literal}}) to their string counterparts.
-
-Conversely, a HEADERS frame can be converted to a BINHEADERS frame by encoding all of the Literal field values as Binary Item Types. In this case, the field types used are informed by the implementations knowledge of the individual field semantics; see {{backport}}. Those which it cannot (do to either lack of knowledge or an error) or does not wish to convert into Structured Fields are conveyed in BINHEADERS as String Literals ({{literal}}).
-
-Field values are stored in the HPACK {{!RFC7541}} dynamic table without Huffman encoding, although specific Binary Item Types might specify the use of such encodings.
-
-Note that BINHEADERS and HEADERS frames MAY be mixed on the same connection, depending on the requirements of the sender. Also, note that only the field values are encoded as Binary Item Types; field names are encoded as they are in HPACK.
-
-
+Note that HEADERS frames with and without the BINARY_STRUCTURED flag MAY be mixed on the same connection, depending on the requirements of the sender.
 
 
 # Using Binary Structured Fields with Existing Fields {#backport}
@@ -437,7 +428,7 @@ This section identifies fields that will usually succeed in {{direct}}, and thos
 
 The following HTTP field names can have their values parsed as Structured Fields according to the algorithms in {{!RFC8941}}, and thus can usually be serialised using the corresponding Binary Item Types.
 
-When one of these fields' values cannot be represented using Structured Types, its value can instead be represented as a String Literal ({{literal}}).
+When one of these fields' values cannot be represented using Structured Types in a Binary Representation, its value can instead be represented as a Binary Literal ({{literal}}).
 
 * Accept - List
 * Accept-Encoding - List
@@ -480,7 +471,7 @@ When one of these fields' values cannot be represented using Structured Types, i
 * X-Content-Type-Options - Item
 * X-XSS-Protection - List
 
-Note that only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or serialised as a String Literal ({{literal}}).
+Note that only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or serialised as a Binary Literal ({{literal}}).
 
 
 ## Aliased Fields {#aliased}
@@ -499,7 +490,7 @@ Its value is more efficiently represented as an integer number of delta seconds 
 SF-Date: 784072177
 ~~~
 
-As with directly represented fields, if the intended value of an aliased field cannot be represented using Structured Types successfully, its value can instead be represented as a String Literal ({{literal}}).
+As with directly represented fields, if the intended value of an aliased field cannot be represented using Structured Types successfully, its value can instead be represented as a Binary Literal ({{literal}}).
 
 Note that senders MUST know that the next-hop recipient understands these fields (typically, using the negotiation mechanism defined in {{negotiate}}) before using them. Likewise, recipients MUST transform them back to their unaliased form before forwarding the message to a peer or other consuming components that do not have this capability.
 
@@ -590,6 +581,7 @@ SF-Cookie: SID=31d4d96e407aad42, lang=en-US
 * ISSUE: dictionary keys cannot contain UC alpha. <https://github.com/mnot/I-D/issues/312>
 * ISSUE: explicitly allow non-string content. <https://github.com/mnot/I-D/issues/313>
 
+
 # IANA Considerations
 
 * ISSUE: todo
@@ -598,7 +590,7 @@ SF-Cookie: SID=31d4d96e407aad42, lang=en-US
 
 As is so often the case, having alternative representations of data brings the potential for security weaknesses, when attackers exploit the differences between those representations and their handling.
 
-One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Fields data types, along with the "escape valve" of String Literals ({{literal}}). Therefore, implementation divergence from this strictness can have security impact.
+One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Fields data types, along with the "escape valve" of Binary Literals ({{literal}}). Therefore, implementation divergence from this strictness can have security impact.
 
 
 --- back
