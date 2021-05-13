@@ -27,6 +27,7 @@ author:
 
 normative:
   RFC2119:
+  RFC7541:
   I-D.ietf-quic-transport:
 
 informative:
@@ -84,7 +85,7 @@ Binary representations of the remaining structured field types are defined in {{
 
 ## Binary Representations {#binlit}
 
-Binary Representations are a replacement for the String Literal Representation defined in {{!RFC7541}}, Section 5.2, and can be used to serialise a Structured Field Type.
+Binary Representations are a replacement for the String Literal Representation defined in {{Section 5.2. of RFC7541}}, and can be used to serialise a Structured Field Type.
 
 All Binary Representations share the following header:
 
@@ -98,7 +99,7 @@ Binary Representation {
 Its fields are:
 
 * Top Level Type: Three bits indicating the top-level type of the field value.
-* Length: The number of octets used to represent the payload, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix.
+* Length: The number of octets used to represent the payload, encoded as per {{Section 5.1 of RFC7541}}, with a 5-bit prefix.
 
 The following top-level types are defined:
 
@@ -117,7 +118,7 @@ List Field Value {
 
 A List Field Value's fields are:
 
-* Length: The number of octets used to represent the entire List, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
+* Length: The number of octets used to represent the entire List, encoded as per {{Section 5.1 of RFC7541}}, with a 5-bit prefix
 * Item: One or more Item(s) ({{types}})
 
 
@@ -137,7 +138,7 @@ Dictionary Field Value {
 
 A Dictionary Field Value's fields are:
 
-* Length: The number of octets used to represent the entire Dictionary, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
+* Length: The number of octets used to represent the entire Dictionary, encoded as per {{Section 5.1 of RFC7541}}, with a 5-bit prefix
 * Dictionary Member: one or more Dictionary Member(s)
 
 ~~~
@@ -152,7 +153,7 @@ Dictionary Member {
 
 A Dictionary Member's fields are:
 
-* Name Length: The number of octets used to represent the Member Name, encoded as per {{!RFC7541}}, Section 5.1, with a 8-bit prefix
+* Name Length: The number of octets used to represent the Member Name, encoded as per {{Section 5.1 of RFC7541}}, with a 8-bit prefix
 * Member Name: Name Length octets of the member-name, ASCII-encoded
 * Item: An Item ({{types}})
 * Parameters: Optional Parameters ({{parameter}})
@@ -175,7 +176,7 @@ Item Field Value {
 
 An Item Field Value's fields are:
 
-* Length: The number of octets used to represent the Item (including Parameters, if present), encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
+* Length: The number of octets used to represent the Item (including Parameters, if present), encoded as per {{Section 5.1 of RFC7541}}, with a 5-bit prefix
 * Item: An Item ({{types}})
 * Parameters: Optional Parameters ({{parameter}})
 
@@ -184,7 +185,7 @@ The Item in an Item Field Value MUST NOT be an Inner List (0x1) or Parameters (0
 
 ### Binary Literal Field Values {#literal}
 
-Binary Literal values (type=0x4) are the string value of a field; they are used to carry field values that are not Binary Structured Fields, and may not be Structured Fields at all. As such, their semantics are that of String Literal Representations in {{!RFC7541}}, Section 5.2.
+Binary Literal values (type=0x4) are the string value of a field; they are used to carry field values that are not Binary Structured Fields, and may not be Structured Fields at all. As such, their semantics are that of String Literal Representations in {{Section 5.2 of RFC7541}}.
 
 ~~~
 Binary Literal Field Value {
@@ -196,7 +197,7 @@ Binary Literal Field Value {
 
 A Binary Literal Field Value's fields are:
 
-* Length: The number of octets used to represent the string literal, encoded as per {{!RFC7541}}, Section 5.1, with a 5-bit prefix
+* Length: The number of octets used to represent the string literal, encoded as per {{Section 5.1 of RFC7541}}, with a 5-bit prefix
 * Payload: The raw octets of the field value
 
 
@@ -228,7 +229,7 @@ Inner List {
 
 Its fields are:
 
-* Length: The number of octets used to represent the members, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix
+* Length: The number of octets used to represent the members, encoded as per {{Section 5.1 of RFC7541}}, with a 3-bit prefix
 * Item(s): Length octets containing the Item(s) in the List
 
 An Item in an Inner List MUST NOT be an Inner List (0x1).
@@ -250,7 +251,7 @@ Parameters {
 
 Its fields are:
 
-* Length: The number of octets used to represent the payload, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix
+* Length: The number of octets used to represent the payload, encoded as per {{Section 5.1 of RFC7541}}, with a 3-bit prefix
 * Parameter(s): Length octets
 
 Each Parameter conveys a key and a value:
@@ -265,7 +266,7 @@ Parameter {
 
 A parameter's fields are:
 
-* Parameter Name Length: The number of octets used to represent the parameter-name, encoded as per {{!RFC7541}}, Section 5.1, with a 8-bit prefix
+* Parameter Name Length: The number of octets used to represent the parameter-name, encoded as per {{Section 5.1 of RFC7541}}, with a 8-bit prefix
 * Parameter Name: Parameter Name Length octets of the parameter-name
 * Binary Data Type: The parameter value, a Binary Data Type
 
@@ -289,7 +290,7 @@ Integer {
 Its fields are:
 
 * Sign: sign bit; 0 is negative, 1 is positive
-* Payload: The integer, encoded as per {{!RFC7541}}, Section 5.1, with a 2-bit prefix
+* Payload: The integer, encoded as per {{Section 5.1 of RFC7541}}, with a 2-bit prefix
 
 
 ### Floats
@@ -308,8 +309,8 @@ Float {
 Its fields are:
 
 * Sign: sign bit; 0 is negative, 1 is positive
-* Integer: The integer component, encoded as per {{!RFC7541}}, Section 5.1, with a 2-bit prefix.
-* Fractional: The fractional component, encoded as per {{!RFC7541}}, Section 5.1, with a 8-bit prefix.
+* Integer: The integer component, encoded as per {{Section 5.1 of RFC7541}}, with a 2-bit prefix.
+* Fractional: The fractional component, encoded as per {{Section 5.1 of RFC7541}}, with a 8-bit prefix.
 
 
 ### Strings
@@ -326,7 +327,7 @@ String {
 
 Its fields are:
 
-* Length: The number of octets used to represent the string, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix.
+* Length: The number of octets used to represent the string, encoded as per {{Section 5.1 of RFC7541}}, with a 3-bit prefix.
 * Payload: Length octets, ASCII-encoded.
 
 
@@ -344,7 +345,7 @@ Token {
 
 Its fields are:
 
-* Length: The number of octets used to represent the token, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix.
+* Length: The number of octets used to represent the token, encoded as per {{Section 5.1 of RFC7541}}, with a 3-bit prefix.
 * Payload: Length octets, ASCII-encoded.
 
 
@@ -362,7 +363,7 @@ Byte Sequence {
 
 Its fields are:
 
-* Length: The number of octets used to represent the byte sequence, encoded as per {{!RFC7541}}, Section 5.1, with a 3-bit prefix.
+* Length: The number of octets used to represent the byte sequence, encoded as per {{Section 5.1 of RFC7541}}, with a 3-bit prefix.
 * Payload: Length octets.
 
 
@@ -397,7 +398,7 @@ Advertising support for Binary Structured Fields is accomplished using a HTTP/2 
 Receiving SETTINGS_BINARY_STRUCTURED_FIELDS with a non-zero value from a peer indicates that:
 
 1. The peer supports the Binary Item Types defined in {{fields}}.
-2. The peer will process the BINHEADERS frames as defined in {{frame}}.
+2. The peer will process the BINARY_STRUCTRED HEADERS flag as defined in {{flag}}.
 3. When a downstream consumer does not likewise support that encoding, the peer will transform them into HEADERS frames (if the peer is HTTP/2) or a form it will understand (e.g., the textual representation of Structured Fields data types defined in {{!RFC8941}}).
 4. The peer will likewise transform all fields defined as Aliased Fields ({{aliased}}) into their non-aliased forms as necessary.
 
@@ -408,11 +409,11 @@ The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0, whereas a value of 
 
 When a peer has indicated that it supports this specification as per {{setting}}, a sender can send the BINARY_STRUCTURED flag (0xTODO) on the HEADERS frame.
 
-This flag indicates that the HEADERS frame containing it and subsequent CONTINUATION frames on the same stream use the Binary Representation defined in {{binlit}} instead of the String Literal Representation defined in {{!RFC7541, Section 5.2}} for all field values. Field names are still serialised as String Literal Representations.
+This flag indicates that the HEADERS frame containing it and subsequent CONTINUATION frames on the same stream use the Binary Representation defined in {{binlit}} instead of the String Literal Representation defined in {{Section 5.2 of RFC7541}} for all field values. Field names are still serialised as String Literal Representations.
 
 In such frames, field values that are known to be Structured Fields and those that can be converted to Structured Fields (as per {{backport}}) MAY be sent using the applicable Binary Representation. However, any field value (including those defined as Structured Fields) can also be serialised as a Binary Literal ({{literal}}) to accommodate fields that are not defined as Structured Fields, not valid Structured Fields, or that the sending implementation does not wish to send as a Structured Field for some other reason.
 
-Binary Representations are stored in the HPACK {{!RFC7541}} dynamic table, and their lengths are used for the purposes of maintaining dynamic table size ({{RFC7541, Section 4}}).
+Binary Representations are stored in the HPACK {{RFC7541}} dynamic table, and their lengths are used for the purposes of maintaining dynamic table size ({{RFC7541, Section 4}}).
 
 Note that HEADERS frames with and without the BINARY_STRUCTURED flag MAY be mixed on the same connection, depending on the requirements of the sender.
 
