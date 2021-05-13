@@ -516,7 +516,7 @@ TOOD: list of strings, one for each path segment, to allow better compression in
 
 ### Dates
 
-The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by parsing their payload according to {{!RFC7230}}, Section 7.1.1.1, and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
+The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by parsing their payload according to {{!RFC7231}}, Section 7.1.1.1, and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
 
 * Date - SF-Date
 * Expires - SF-Expires
