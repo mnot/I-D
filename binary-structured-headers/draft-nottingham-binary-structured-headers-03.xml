@@ -47,8 +47,8 @@
   <middle>
     <section anchor="introduction" numbered="true" toc="default">
       <name>Introduction</name>
-      <t>Structured Field Values for HTTP <xref target="RFC8941" format="default"/> offers a set of data types that new fields can combine to express their semantics. This specification defines a binary serialisation of those structures in <xref target="fields" format="default"/>, and specifies its use in HTTP/2 -- specifically, as part of HPACK Literal Header Field Representations (<xref target="RFC7541" format="default"/>) -- in <xref target="negotiate" format="default"/>.</t>
-      <t><xref target="backport" format="default"/> defines how to convey existing fields as Structured Fields, when supported by two peers.</t>
+      <t>Structured Field Values for HTTP <xref target="RFC8941" format="default"/> offers a set of data types that new fields can combine to express their semantics. This specification defines a binary serialisation of those structures in <xref target="fields" format="default"/>, and specifies its use in HTTP/2 in <xref target="negotiate" format="default"/>.</t>
+      <t>Additionally, <xref target="backport" format="default"/> defines how to convey existing fields as Structured Fields, when supported by two peers.</t>
       <t>The primary goal of this specification are to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.</t>
       <section anchor="notational-conventions" numbered="true" toc="default">
         <name>Notational Conventions</name>
@@ -62,14 +62,14 @@ shown here.</t>
     <section anchor="fields" numbered="true" toc="default">
       <name>Binary Structured Fields</name>
       <t>This section defines a binary serialisation for the Structured Field Types defined in <xref target="RFC8941" format="default"/>.</t>
-      <t>The types permissable as the top-level of Structured Field values -- Dictionary, List, and Item -- are defined in terms of a Binary Literal Representation (<xref target="binlit" format="default"/>), which is a replacement for the String Literal Representation in <xref target="RFC7541" format="default"/>.</t>
-      <t>Binary representations of the remaining types are defined in <xref target="types" format="default"/>.</t>
+      <t>The types permissable as the top-level of Structured Field values -- Dictionary, List, and Item -- are defined in terms of a Binary Representation (<xref target="binlit" format="default"/>), which is a replacement for the String Literal Representation in <xref target="RFC7541" format="default"/>.</t>
+      <t>Binary representations of the remaining structured field types are defined in <xref target="types" format="default"/>.</t>
       <section anchor="binlit" numbered="true" toc="default">
-        <name>The Binary Literal Representation</name>
-        <t>The Binary Literal Representation is a replacement for the String Literal Representation defined in <xref target="RFC7541" format="default"/>, Section 5.2, for use in BINHEADERS frames (<xref target="frame" format="default"/>).</t>
-        <t>All Binary Literal Representations of Field Values share the following header:</t>
+        <name>Binary Representations</name>
+        <t>Binary Representations are a replacement for the String Literal Representation defined in <xref section="5.2." sectionFormat="of" target="RFC7541" format="default"/>, and can be used to serialise a Structured Field Type.</t>
+        <t>All Binary Representations share the following header:</t>
         <artwork name="" type="" align="left" alt=""><![CDATA[
-Binary Structured Field Value {
+Binary Representation {
   Top Level Type (3),
   Length (5..),
 }
@@ -77,7 +77,7 @@ Binary Structured Field Value {
         <t>Its fields are:</t>
         <ul spacing="normal">
           <li>Top Level Type: Three bits indicating the top-level type of the field value.</li>
-          <li>Length: The number of octets used to represent the payload, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 5-bit prefix.</li>
+          <li>Length: The number of octets used to represent the payload, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 5-bit prefix.</li>
         </ul>
         <t>The following top-level types are defined:</t>
         <section anchor="list-field-values" numbered="true" toc="default">
@@ -92,7 +92,7 @@ List Field Value {
 ]]></artwork>
           <t>A List Field Value's fields are:</t>
           <ul spacing="normal">
-            <li>Length: The number of octets used to represent the entire List, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 5-bit prefix</li>
+            <li>Length: The number of octets used to represent the entire List, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 5-bit prefix</li>
             <li>Item: One or more Item(s) (<xref target="types" format="default"/>)</li>
           </ul>
         </section>
@@ -109,7 +109,7 @@ Dictionary Field Value {
 ]]></artwork>
           <t>A Dictionary Field Value's fields are:</t>
           <ul spacing="normal">
-            <li>Length: The number of octets used to represent the entire Dictionary, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 5-bit prefix</li>
+            <li>Length: The number of octets used to represent the entire Dictionary, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 5-bit prefix</li>
             <li>Dictionary Member: one or more Dictionary Member(s)</li>
           </ul>
           <artwork name="" type="" align="left" alt=""><![CDATA[
@@ -123,7 +123,7 @@ Dictionary Member {
 ]]></artwork>
           <t>A Dictionary Member's fields are:</t>
           <ul spacing="normal">
-            <li>Name Length: The number of octets used to represent the Member Name, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 8-bit prefix</li>
+            <li>Name Length: The number of octets used to represent the Member Name, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 8-bit prefix</li>
             <li>Member Name: Name Length octets of the member-name, ASCII-encoded</li>
             <li>Item: An Item (<xref target="types" format="default"/>)</li>
             <li>Parameters: Optional Parameters (<xref target="parameter" format="default"/>)</li>
@@ -143,38 +143,38 @@ Item Field Value {
 ]]></artwork>
           <t>An Item Field Value's fields are:</t>
           <ul spacing="normal">
-            <li>Length: The number of octets used to represent the Item (including Parameters, if present), encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 5-bit prefix</li>
+            <li>Length: The number of octets used to represent the Item (including Parameters, if present), encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 5-bit prefix</li>
             <li>Item: An Item (<xref target="types" format="default"/>)</li>
             <li>Parameters: Optional Parameters (<xref target="parameter" format="default"/>)</li>
           </ul>
           <t>The Item in an Item Field Value MUST NOT be an Inner List (0x1) or Parameters (0x2).</t>
         </section>
         <section anchor="literal" numbered="true" toc="default">
-          <name>String Literal Field Values</name>
-          <t>String Literals (type=0x4) are the string value of a field; they are used to carry field values that are not Binary Structured Fields, and may not be Structured Fields at all. As such, their semantics are that of String Literal Representations in <xref target="RFC7541" format="default"/>, Section 5.2.</t>
+          <name>Binary Literal Field Values</name>
+          <t>Binary Literal values (type=0x4) are the string value of a field; they are used to carry field values that are not Binary Structured Fields, and may not be Structured Fields at all. As such, their semantics are that of String Literal Representations in <xref section="5.2" sectionFormat="of" target="RFC7541" format="default"/>.</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
-String Literal Field Value {
+Binary Literal Field Value {
   Top Level Type (3) = 4,
   Length (5..),
   Payload (..)
 }
 ]]></artwork>
-          <t>A String Literal Field Value's fields are:</t>
+          <t>A Binary Literal Field Value's fields are:</t>
           <ul spacing="normal">
-            <li>Length: The number of octets used to represent the string literal, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 5-bit prefix</li>
+            <li>Length: The number of octets used to represent the string literal, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 5-bit prefix</li>
             <li>Payload: The raw octets of the field value</li>
           </ul>
         </section>
       </section>
       <section anchor="types" numbered="true" toc="default">
-        <name>Binary Item Types</name>
-        <t>Every Item starts with a 5-bit type field that identifies the format of its payload.</t>
+        <name>Binary Data Types</name>
+        <t>Every data type starts with a 5-bit type field that identifies the format of its payload.</t>
         <artwork name="" type="" align="left" alt=""><![CDATA[
-Item {
+Binary Data Type {
   Type (5)
 }
 ]]></artwork>
-        <t>Some Binary Item Types contain padding bits; senders MUST set padding bits to 0; recipients MUST ignore their values.</t>
+        <t>Some data types contain padding bits; senders MUST set padding bits to 0; recipients MUST ignore their values.</t>
         <section anchor="inner-list" numbered="true" toc="default">
           <name>Inner Lists</name>
           <t>The Inner List data type (type=0x1) has a payload in the format:</t>
@@ -187,7 +187,7 @@ Inner List {
 ]]></artwork>
           <t>Its fields are:</t>
           <ul spacing="normal">
-            <li>Length: The number of octets used to represent the members, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 3-bit prefix</li>
+            <li>Length: The number of octets used to represent the members, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 3-bit prefix</li>
             <li>Item(s): Length octets containing the Item(s) in the List</li>
           </ul>
           <t>An Item in an Inner List MUST NOT be an Inner List (0x1).</t>
@@ -205,7 +205,7 @@ Parameters {
 ]]></artwork>
           <t>Its fields are:</t>
           <ul spacing="normal">
-            <li>Length: The number of octets used to represent the payload, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 3-bit prefix</li>
+            <li>Length: The number of octets used to represent the payload, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 3-bit prefix</li>
             <li>Parameter(s): Length octets</li>
           </ul>
           <t>Each Parameter conveys a key and a value:</t>
@@ -213,17 +213,17 @@ Parameters {
 Parameter {
   Parameter Name Length (8..),
   Parameter Name (..),
-  Item (..)
+  Binary Data Type (..)
 }
 ]]></artwork>
           <t>A parameter's fields are:</t>
           <ul spacing="normal">
-            <li>Parameter Name Length: The number of octets used to represent the parameter-name, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 8-bit prefix</li>
+            <li>Parameter Name Length: The number of octets used to represent the parameter-name, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 8-bit prefix</li>
             <li>Parameter Name: Parameter Name Length octets of the parameter-name</li>
-            <li>Item: The parameter value, a Binary Item Type</li>
+            <li>Binary Data Type: The parameter value, a Binary Data Type</li>
           </ul>
-          <t>The Item in a Parameter MUST NOT be an Inner List (0x1) or Parameters (0x2).</t>
-          <t>Parameters are always associated with the Binary Item Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Item in a container, and MUST NOT follow another Parameters.</t>
+          <t>The Binary Data Type in a Parameter MUST NOT be an Inner List (0x1) or Parameters (0x2).</t>
+          <t>Parameters are always associated with the Binary Data Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Binary Data Type in a container, and MUST NOT follow another Parameters.</t>
         </section>
         <section anchor="integers" numbered="true" toc="default">
           <name>Integers</name>
@@ -238,7 +238,7 @@ Integer {
           <t>Its fields are:</t>
           <ul spacing="normal">
             <li>Sign: sign bit; 0 is negative, 1 is positive</li>
-            <li>Payload: The integer, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 2-bit prefix</li>
+            <li>Payload: The integer, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 2-bit prefix</li>
           </ul>
         </section>
         <section anchor="floats" numbered="true" toc="default">
@@ -246,7 +246,7 @@ Integer {
           <t>The Float data type (type=0x4) have a payload in the format:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Float {
-  Item Type (5) = 4,
+  Type (5) = 4,
   Sign (1),
   Integer (2..),
   Fractional (8..)
@@ -255,8 +255,8 @@ Float {
           <t>Its fields are:</t>
           <ul spacing="normal">
             <li>Sign: sign bit; 0 is negative, 1 is positive</li>
-            <li>Integer: The integer component, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 2-bit prefix.</li>
-            <li>Fractional: The fractional component, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 8-bit prefix.</li>
+            <li>Integer: The integer component, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 2-bit prefix.</li>
+            <li>Fractional: The fractional component, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 8-bit prefix.</li>
           </ul>
         </section>
         <section anchor="strings" numbered="true" toc="default">
@@ -264,14 +264,14 @@ Float {
           <t>The String data type (type=0x5) has a payload in the format:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 String {
-  Item Type (5) = 5,
+  Type (5) = 5,
   Length (3..),
   Payload (..)
 }
 ]]></artwork>
           <t>Its fields are:</t>
           <ul spacing="normal">
-            <li>Length: The number of octets used to represent the string, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 3-bit prefix.</li>
+            <li>Length: The number of octets used to represent the string, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 3-bit prefix.</li>
             <li>Payload: Length octets, ASCII-encoded.</li>
           </ul>
         </section>
@@ -280,14 +280,14 @@ String {
           <t>The Token data type (type=0x6) has a payload in the format:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Token {
-  Item Type (5) = 6,
+  Type (5) = 6,
   Length (3..),
   Payload (..)
 }
 ]]></artwork>
           <t>Its fields are:</t>
           <ul spacing="normal">
-            <li>Length: The number of octets used to represent the token, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 3-bit prefix.</li>
+            <li>Length: The number of octets used to represent the token, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 3-bit prefix.</li>
             <li>Payload: Length octets, ASCII-encoded.</li>
           </ul>
         </section>
@@ -296,14 +296,14 @@ Token {
           <t>The Byte Sequence data type (type=0x7) has a payload in the format:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Byte Sequence {
-  Item Type (5) = 7,
+  Type (5) = 7,
   Length (3..),
   Payload (..)
 }
 ]]></artwork>
           <t>Its fields are:</t>
           <ul spacing="normal">
-            <li>Length: The number of octets used to represent the byte sequence, encoded as per <xref target="RFC7541" format="default"/>, Section 5.1, with a 3-bit prefix.</li>
+            <li>Length: The number of octets used to represent the byte sequence, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 3-bit prefix.</li>
             <li>Payload: Length octets.</li>
           </ul>
         </section>
@@ -312,7 +312,7 @@ Byte Sequence {
           <t>The Boolean data type (type=0x8) has a payload of two bits:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Boolean {
-  Item Type (5) = 8,
+  Type (5) = 8,
   Payload (1),
   Padding (2) = 0
 }
@@ -323,30 +323,26 @@ Boolean {
     </section>
     <section anchor="negotiate" numbered="true" toc="default">
       <name>Using Binary Structured Fields in HTTP/2</name>
-      <t>When both peers on a connection support this specification, they can take advantage of that knowledge to serialise fields that they know to be Structured Fields (or compatible with them; see <xref target="backport" format="default"/>).</t>
-      <t>Peers advertise and discover this support using a HTTP/2 setting defined in <xref target="setting" format="default"/>, and convey Binary Structured Fields in a frame type defined in <xref target="frame" format="default"/>.</t>
+      <t>When both peers on a connection support this specification, they can take advantage of that knowledge to serialise fields that they know to be Structured Fields (or compatible with them; see <xref target="backport" format="default"/>) as binary data, rather than strings.</t>
+      <t>Peers advertise and discover this support using a HTTP/2 setting defined in <xref target="setting" format="default"/>, and convey Binary Structured Fields in streams whose HEADERS frame uses the flag defined in <xref target="flag" format="default"/>.</t>
       <section anchor="setting" numbered="true" toc="default">
-        <name>Binary Structured Fields Setting</name>
+        <name>The SETTINGS_BINARY_STRUCTURED_FIELDS Setting</name>
         <t>Advertising support for Binary Structured Fields is accomplished using a HTTP/2 setting, SETTINGS_BINARY_STRUCTURED_FIELDS (0xTODO).</t>
-        <t>Receiving SETTINGS_BINARY_STRUCTURED_FIELDS from a peer indicates that:</t>
+        <t>Receiving SETTINGS_BINARY_STRUCTURED_FIELDS with a non-zero value from a peer indicates that:</t>
         <ol spacing="normal" type="1"><li>The peer supports the Binary Item Types defined in <xref target="fields" format="default"/>.</li>
-          <li>The peer will process the BINHEADERS frames as defined in <xref target="frame" format="default"/>.</li>
+          <li>The peer will process the BINARY_STRUCTRED HEADERS flag as defined in <xref target="flag" format="default"/>.</li>
           <li>When a downstream consumer does not likewise support that encoding, the peer will transform them into HEADERS frames (if the peer is HTTP/2) or a form it will understand (e.g., the textual representation of Structured Fields data types defined in <xref target="RFC8941" format="default"/>).</li>
           <li>The peer will likewise transform all fields defined as Aliased Fields (<xref target="aliased" format="default"/>) into their non-aliased forms as necessary.</li>
         </ol>
-        <t>The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0. Future extensions to Structured Fields might use it to indicate support for new types.</t>
+        <t>The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0, whereas a value of 1 indicates that this specification is supported with no further extensions. Future specifications might use values greater than one to indicate support for extensions.</t>
       </section>
-      <section anchor="frame" numbered="true" toc="default">
-        <name>The BINHEADERS Frame</name>
-        <t>When a peer has indicated that it supports this specification {#setting}, a sender can send the BINHEADERS Frame Type (0xTODO).</t>
-        <t>The BINHEADERS Frame Type behaves and is represented exactly as a HEADERS Frame type (<xref target="RFC7540" format="default"/>, Section 6.2), with one exception; instead of using the String Literal Representation defined in <xref target="RFC7541" format="default"/>, Section 5.2, it uses the Binary Literal Representation defined in <xref target="binlit" format="default"/>.</t>
-        <t>Fields that are Structured Fields can have their values represented using the Binary Literal Representation corresponding to that field's top-level type -- List, Dictionary, or Item; their values will then be serialised as a stream of Binary Item Types.</t>
-        <t>Additionally, any field (including those defined as Structured Fields) can be serialised as a String Literal (<xref target="literal" format="default"/>), which accommodates fields that are not defined as Structured Fields, not valid Structured Fields, or that the sending implementation does not wish to send as Binary Item Types for some other reason.</t>
-        <t>Note that Field Names are always serialised as String Literals (<xref target="literal" format="default"/>).</t>
-        <t>This means that a BINHEADERS frame can be converted to a HEADERS frame by converting the field values to the string representations of the various Structured Fields Types, and String Literals (<xref target="literal" format="default"/>) to their string counterparts.</t>
-        <t>Conversely, a HEADERS frame can be converted to a BINHEADERS frame by encoding all of the Literal field values as Binary Item Types. In this case, the field types used are informed by the implementations knowledge of the individual field semantics; see <xref target="backport" format="default"/>. Those which it cannot (do to either lack of knowledge or an error) or does not wish to convert into Structured Fields are conveyed in BINHEADERS as String Literals (<xref target="literal" format="default"/>).</t>
-        <t>Field values are stored in the HPACK <xref target="RFC7541" format="default"/> dynamic table without Huffman encoding, although specific Binary Item Types might specify the use of such encodings.</t>
-        <t>Note that BINHEADERS and HEADERS frames MAY be mixed on the same connection, depending on the requirements of the sender. Also, note that only the field values are encoded as Binary Item Types; field names are encoded as they are in HPACK.</t>
+      <section anchor="flag" numbered="true" toc="default">
+        <name>The BINARY_STRUCTRED HEADERS Flag</name>
+        <t>When a peer has indicated that it supports this specification as per <xref target="setting" format="default"/>, a sender can send the BINARY_STRUCTURED flag (0xTODO) on the HEADERS frame.</t>
+        <t>This flag indicates that the HEADERS frame containing it and subsequent CONTINUATION frames on the same stream use the Binary Representation defined in <xref target="binlit" format="default"/> instead of the String Literal Representation defined in <xref section="5.2" sectionFormat="of" target="RFC7541" format="default"/> for all field values. Field names are still serialised as String Literal Representations.</t>
+        <t>In such frames, field values that are known to be Structured Fields and those that can be converted to Structured Fields (as per <xref target="backport" format="default"/>) MAY be sent using the applicable Binary Representation. However, any field value (including those defined as Structured Fields) can also be serialised as a Binary Literal (<xref target="literal" format="default"/>) to accommodate fields that are not defined as Structured Fields, not valid Structured Fields, or that the sending implementation does not wish to send as a Structured Field for some other reason.</t>
+        <t>Binary Representations are stored in the HPACK <xref target="RFC7541" format="default"/> dynamic table, and their lengths are used for the purposes of maintaining dynamic table size (<xref section="4" sectionFormat="comma" target="RFC7541" format="default"/>).</t>
+        <t>Note that HEADERS frames with and without the BINARY_STRUCTURED flag MAY be mixed on the same connection, depending on the requirements of the sender.</t>
       </section>
     </section>
     <section anchor="backport" numbered="true" toc="default">
@@ -356,7 +352,7 @@ Boolean {
       <section anchor="direct" numbered="true" toc="default">
         <name>Directly Represented Fields</name>
         <t>The following HTTP field names can have their values parsed as Structured Fields according to the algorithms in <xref target="RFC8941" format="default"/>, and thus can usually be serialised using the corresponding Binary Item Types.</t>
-        <t>When one of these fields' values cannot be represented using Structured Types, its value can instead be represented as a String Literal (<xref target="literal" format="default"/>).</t>
+        <t>When one of these fields' values cannot be represented using Structured Types in a Binary Representation, its value can instead be represented as a Binary Literal (<xref target="literal" format="default"/>).</t>
         <ul spacing="normal">
           <li>Accept - List</li>
           <li>Accept-Encoding - List</li>
@@ -399,7 +395,7 @@ Boolean {
           <li>X-Content-Type-Options - Item</li>
           <li>X-XSS-Protection - List</li>
         </ul>
-        <t>Note that only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or serialised as a String Literal (<xref target="literal" format="default"/>).</t>
+        <t>Note that only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or serialised as a Binary Literal (<xref target="literal" format="default"/>).</t>
       </section>
       <section anchor="aliased" numbered="true" toc="default">
         <name>Aliased Fields</name>
@@ -412,7 +408,7 @@ Date: Sun, 06 Nov 1994 08:49:37 GMT
         <artwork name="" type="" align="left" alt=""><![CDATA[
 SF-Date: 784072177
 ]]></artwork>
-        <t>As with directly represented fields, if the intended value of an aliased field cannot be represented using Structured Types successfully, its value can instead be represented as a String Literal (<xref target="literal" format="default"/>).</t>
+        <t>As with directly represented fields, if the intended value of an aliased field cannot be represented using Structured Types successfully, its value can instead be represented as a Binary Literal (<xref target="literal" format="default"/>).</t>
         <t>Note that senders MUST know that the next-hop recipient understands these fields (typically, using the negotiation mechanism defined in <xref target="negotiate" format="default"/>) before using them. Likewise, recipients MUST transform them back to their unaliased form before forwarding the message to a peer or other consuming components that do not have this capability.</t>
         <t>Each field name listed below indicates a replacement field name and a way to map its value to Structured Fields.</t>
         <ul spacing="normal">
@@ -434,7 +430,7 @@ SF-Location: "https://example.com/foo"
         </section>
         <section anchor="dates" numbered="true" toc="default">
           <name>Dates</name>
-          <t>The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by parsing their payload according to <xref target="RFC7230" format="default"/>, Section 7.1.1.1, and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).</t>
+          <t>The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by parsing their payload according to <xref target="RFC7231" format="default"/>, Section 7.1.1.1, and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).</t>
           <ul spacing="normal">
             <li>Date - SF-Date</li>
             <li>Expires - SF-Expires</li>
@@ -503,7 +499,7 @@ SF-Cookie: SID=31d4d96e407aad42, lang=en-US
     <section anchor="security-considerations" numbered="true" toc="default">
       <name>Security Considerations</name>
       <t>As is so often the case, having alternative representations of data brings the potential for security weaknesses, when attackers exploit the differences between those representations and their handling.</t>
-      <t>One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Fields data types, along with the "escape valve" of String Literals (<xref target="literal" format="default"/>). Therefore, implementation divergence from this strictness can have security impact.</t>
+      <t>One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Fields data types, along with the "escape valve" of Binary Literals (<xref target="literal" format="default"/>). Therefore, implementation divergence from this strictness can have security impact.</t>
     </section>
   </middle>
   <back>
@@ -523,6 +519,23 @@ SF-Cookie: SID=31d4d96e407aad42, lang=en-US
         <seriesInfo name="BCP" value="14"/>
         <seriesInfo name="RFC" value="2119"/>
         <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+      </reference>
+      <reference anchor="RFC7541" target="https://www.rfc-editor.org/info/rfc7541">
+        <front>
+          <title>HPACK: Header Compression for HTTP/2</title>
+          <author fullname="R. Peon" initials="R." surname="Peon">
+            <organization/>
+          </author>
+          <author fullname="H. Ruellan" initials="H." surname="Ruellan">
+            <organization/>
+          </author>
+          <date month="May" year="2015"/>
+          <abstract>
+            <t>This specification defines HPACK, a compression format for efficiently representing HTTP header fields, to be used in HTTP/2.</t>
+          </abstract>
+        </front>
+        <seriesInfo name="RFC" value="7541"/>
+        <seriesInfo name="DOI" value="10.17487/RFC7541"/>
       </reference>
       <reference anchor="I-D.ietf-quic-transport" target="https://www.ietf.org/archive/id/draft-ietf-quic-transport-34.txt">
         <front>
@@ -582,23 +595,6 @@ Note to Readers
         <seriesInfo name="RFC" value="8941"/>
         <seriesInfo name="DOI" value="10.17487/RFC8941"/>
       </reference>
-      <reference anchor="RFC7541" target="https://www.rfc-editor.org/info/rfc7541">
-        <front>
-          <title>HPACK: Header Compression for HTTP/2</title>
-          <author fullname="R. Peon" initials="R." surname="Peon">
-            <organization/>
-          </author>
-          <author fullname="H. Ruellan" initials="H." surname="Ruellan">
-            <organization/>
-          </author>
-          <date month="May" year="2015"/>
-          <abstract>
-            <t>This specification defines HPACK, a compression format for efficiently representing HTTP header fields, to be used in HTTP/2.</t>
-          </abstract>
-        </front>
-        <seriesInfo name="RFC" value="7541"/>
-        <seriesInfo name="DOI" value="10.17487/RFC7541"/>
-      </reference>
       <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174">
         <front>
           <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
@@ -614,30 +610,9 @@ Note to Readers
         <seriesInfo name="RFC" value="8174"/>
         <seriesInfo name="DOI" value="10.17487/RFC8174"/>
       </reference>
-      <reference anchor="RFC7540" target="https://www.rfc-editor.org/info/rfc7540">
+      <reference anchor="RFC7231" target="https://www.rfc-editor.org/info/rfc7231">
         <front>
-          <title>Hypertext Transfer Protocol Version 2 (HTTP/2)</title>
-          <author fullname="M. Belshe" initials="M." surname="Belshe">
-            <organization/>
-          </author>
-          <author fullname="R. Peon" initials="R." surname="Peon">
-            <organization/>
-          </author>
-          <author fullname="M. Thomson" initials="M." role="editor" surname="Thomson">
-            <organization/>
-          </author>
-          <date month="May" year="2015"/>
-          <abstract>
-            <t>This specification describes an optimized expression of the semantics of the Hypertext Transfer Protocol (HTTP), referred to as HTTP version 2 (HTTP/2).  HTTP/2 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent exchanges on the same connection.  It also introduces unsolicited push of representations from servers to clients.</t>
-            <t>This specification is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.</t>
-          </abstract>
-        </front>
-        <seriesInfo name="RFC" value="7540"/>
-        <seriesInfo name="DOI" value="10.17487/RFC7540"/>
-      </reference>
-      <reference anchor="RFC7230" target="https://www.rfc-editor.org/info/rfc7230">
-        <front>
-          <title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+          <title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
           <author fullname="R. Fielding" initials="R." role="editor" surname="Fielding">
             <organization/>
           </author>
@@ -646,11 +621,11 @@ Note to Readers
           </author>
           <date month="June" year="2014"/>
           <abstract>
-            <t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t>
+            <t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t>
           </abstract>
         </front>
-        <seriesInfo name="RFC" value="7230"/>
-        <seriesInfo name="DOI" value="10.17487/RFC7230"/>
+        <seriesInfo name="RFC" value="7231"/>
+        <seriesInfo name="DOI" value="10.17487/RFC7231"/>
       </reference>
       <reference anchor="RFC8288" target="https://www.rfc-editor.org/info/rfc8288">
         <front>
@@ -746,180 +721,177 @@ Note to Readers
     </section>
   </back>
   <!-- ##markdown-source:
-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
+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
 
 -->
 

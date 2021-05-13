@@ -4,8 +4,8 @@
 
 Network Working Group                                      M. Nottingham
 Internet-Draft                                                    Fastly
-Intended status: Standards Track                           24 April 2021
-Expires: 26 October 2021
+Intended status: Standards Track                             13 May 2021
+Expires: 14 November 2021
 
 
                   Binary Structured HTTP Field Values
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Nottingham               Expires 26 October 2021                [Page 1]
+Nottingham              Expires 14 November 2021                [Page 1]
 
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
 
 
    Internet-Drafts are draft documents valid for a maximum of six months
@@ -63,7 +63,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 October 2021.
+   This Internet-Draft will expire on 14 November 2021.
 
 Copyright Notice
 
@@ -84,12 +84,12 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  Binary Structured Fields  . . . . . . . . . . . . . . . . . .   3
-     2.1.  The Binary Literal Representation . . . . . . . . . . . .   4
+     2.1.  Binary Representations  . . . . . . . . . . . . . . . . .   4
        2.1.1.  List Field Values . . . . . . . . . . . . . . . . . .   4
        2.1.2.  Dictionary Field Values . . . . . . . . . . . . . . .   5
        2.1.3.  Item Field Values . . . . . . . . . . . . . . . . . .   5
-       2.1.4.  String Literal Field Values . . . . . . . . . . . . .   6
-     2.2.  Binary Item Types . . . . . . . . . . . . . . . . . . . .   6
+       2.1.4.  Binary Literal Field Values . . . . . . . . . . . . .   6
+     2.2.  Binary Data Types . . . . . . . . . . . . . . . . . . . .   6
        2.2.1.  Inner Lists . . . . . . . . . . . . . . . . . . . . .   7
        2.2.2.  Parameters  . . . . . . . . . . . . . . . . . . . . .   7
        2.2.3.  Integers  . . . . . . . . . . . . . . . . . . . . . .   8
@@ -99,29 +99,29 @@ Table of Contents
        2.2.7.  Byte Sequences  . . . . . . . . . . . . . . . . . . .  10
        2.2.8.  Booleans  . . . . . . . . . . . . . . . . . . . . . .  10
    3.  Using Binary Structured Fields in HTTP/2  . . . . . . . . . .  10
-     3.1.  Binary Structured Fields Setting  . . . . . . . . . . . .  10
-     3.2.  The BINHEADERS Frame  . . . . . . . . . . . . . . . . . .  11
+     3.1.  The SETTINGS_BINARY_STRUCTURED_FIELDS Setting . . . . . .  10
+     3.2.  The BINARY_STRUCTRED HEADERS Flag . . . . . . . . . . . .  11
    4.  Using Binary Structured Fields with Existing Fields . . . . .  12
      4.1.  Directly Represented Fields . . . . . . . . . . . . . . .  12
      4.2.  Aliased Fields  . . . . . . . . . . . . . . . . . . . . .  14
        4.2.1.  URLs  . . . . . . . . . . . . . . . . . . . . . . . .  15
-       4.2.2.  Dates . . . . . . . . . . . . . . . . . . . . . . . .  16
+       4.2.2.  Dates . . . . . . . . . . . . . . . . . . . . . . . .  15
 
 
 
-Nottingham               Expires 26 October 2021                [Page 2]
+Nottingham              Expires 14 November 2021                [Page 2]
 
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
 
 
        4.2.3.  ETags . . . . . . . . . . . . . . . . . . . . . . . .  16
-       4.2.4.  Links . . . . . . . . . . . . . . . . . . . . . . . .  17
-       4.2.5.  Cookies . . . . . . . . . . . . . . . . . . . . . . .  17
+       4.2.4.  Links . . . . . . . . . . . . . . . . . . . . . . . .  16
+       4.2.5.  Cookies . . . . . . . . . . . . . . . . . . . . . . .  16
    5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  17
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .  17
-   7.  Normative References  . . . . . . . . . . . . . . . . . . . .  18
+   7.  Normative References  . . . . . . . . . . . . . . . . . . . .  17
    Appendix A.  Data Supporting Directly Represented Field
-           Mappings  . . . . . . . . . . . . . . . . . . . . . . . .  19
+           Mappings  . . . . . . . . . . . . . . . . . . . . . . . .  18
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  21
 
 1.  Introduction
@@ -129,12 +129,10 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    Structured Field Values for HTTP [RFC8941] offers a set of data types
    that new fields can combine to express their semantics.  This
    specification defines a binary serialisation of those structures in
-   Section 2, and specifies its use in HTTP/2 -- specifically, as part
-   of HPACK Literal Header Field Representations ([RFC7541]) -- in
-   Section 3.
+   Section 2, and specifies its use in HTTP/2 in Section 3.
 
-   Section 4 defines how to convey existing fields as Structured Fields,
-   when supported by two peers.
+   Additionally, Section 4 defines how to convey existing fields as
+   Structured Fields, when supported by two peers.
 
    The primary goal of this specification are to reduce parsing overhead
    and associated costs, as compared to the textual representation of
@@ -160,29 +158,30 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    The types permissable as the top-level of Structured Field values --
    Dictionary, List, and Item -- are defined in terms of a Binary
-   Literal Representation (Section 2.1), which is a replacement for the
-   String Literal Representation in [RFC7541].
+   Representation (Section 2.1), which is a replacement for the String
+   Literal Representation in [RFC7541].
 
 
 
-Nottingham               Expires 26 October 2021                [Page 3]
+
+
+Nottingham              Expires 14 November 2021                [Page 3]
 
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
 
 
-   Binary representations of the remaining types are defined in
-   Section 2.2.
+   Binary representations of the remaining structured field types are
+   defined in Section 2.2.
 
-2.1.  The Binary Literal Representation
+2.1.  Binary Representations
 
-   The Binary Literal Representation is a replacement for the String
-   Literal Representation defined in [RFC7541], Section 5.2, for use in
-   BINHEADERS frames (Section 3.2).
+   Binary Representations are a replacement for the String Literal
+   Representation defined in Section 5.2. of [RFC7541], and can be used
+   to serialise a Structured Field Type.
 
-   All Binary Literal Representations of Field Values share the
-   following header:
+   All Binary Representations share the following header:
 
-   Binary Structured Field Value {
+   Binary Representation {
      Top Level Type (3),
      Length (5..),
    }
@@ -193,7 +192,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
       field value.
 
    *  Length: The number of octets used to represent the payload,
-      encoded as per [RFC7541], Section 5.1, with a 5-bit prefix.
+      encoded as per Section 5.1 of [RFC7541], with a 5-bit prefix.
 
    The following top-level types are defined:
 
@@ -213,7 +212,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    A List Field Value's fields are:
 
    *  Length: The number of octets used to represent the entire List,
-      encoded as per [RFC7541], Section 5.1, with a 5-bit prefix
+      encoded as per Section 5.1 of [RFC7541], with a 5-bit prefix
 
    *  Item: One or more Item(s) (Section 2.2)
 
@@ -221,9 +220,10 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
 
 
-Nottingham               Expires 26 October 2021                [Page 4]
+
+Nottingham              Expires 14 November 2021                [Page 4]
 
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
 
 
 2.1.2.  Dictionary Field Values
@@ -244,7 +244,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    A Dictionary Field Value's fields are:
 
    *  Length: The number of octets used to represent the entire
-      Dictionary, encoded as per [RFC7541], Section 5.1, with a 5-bit
+      Dictionary, encoded as per Section 5.1 of [RFC7541], with a 5-bit
       prefix
 
    *  Dictionary Member: one or more Dictionary Member(s)
@@ -259,7 +259,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    A Dictionary Member's fields are:
 
    *  Name Length: The number of octets used to represent the Member
-      Name, encoded as per [RFC7541], Section 5.1, with a 8-bit prefix
+      Name, encoded as per Section 5.1 of [RFC7541], with a 8-bit prefix
 
    *  Member Name: Name Length octets of the member-name, ASCII-encoded
 
@@ -277,9 +277,9 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
 
 
-Nottingham               Expires 26 October 2021                [Page 5]
+Nottingham              Expires 14 November 2021                [Page 5]
 
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
 
 
    Item Field Value {
@@ -292,7 +292,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    An Item Field Value's fields are:
 
    *  Length: The number of octets used to represent the Item (including
-      Parameters, if present), encoded as per [RFC7541], Section 5.1,
+      Parameters, if present), encoded as per Section 5.1 of [RFC7541],
       with a 5-bit prefix
 
    *  Item: An Item (Section 2.2)
@@ -302,44 +302,48 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    The Item in an Item Field Value MUST NOT be an Inner List (0x1) or
    Parameters (0x2).
 
-2.1.4.  String Literal Field Values
+2.1.4.  Binary Literal Field Values
 
-   String Literals (type=0x4) are the string value of a field; they are
-   used to carry field values that are not Binary Structured Fields, and
-   may not be Structured Fields at all.  As such, their semantics are
-   that of String Literal Representations in [RFC7541], Section 5.2.
+   Binary Literal values (type=0x4) are the string value of a field;
+   they are used to carry field values that are not Binary Structured
+   Fields, and may not be Structured Fields at all.  As such, their
+   semantics are that of String Literal Representations in Section 5.2
+   of [RFC7541].
 
-   String Literal Field Value {
+   Binary Literal Field Value {
      Top Level Type (3) = 4,
      Length (5..),
      Payload (..)
    }
 
-   A String Literal Field Value's fields are:
+   A Binary Literal Field Value's fields are:
 
    *  Length: The number of octets used to represent the string literal,
-      encoded as per [RFC7541], Section 5.1, with a 5-bit prefix
+      encoded as per Section 5.1 of [RFC7541], with a 5-bit prefix
 
    *  Payload: The raw octets of the field value
 
-2.2.  Binary Item Types
+2.2.  Binary Data Types
 
-   Every Item starts with a 5-bit type field that identifies the format
-   of its payload.
+   Every data type starts with a 5-bit type field that identifies the
+   format of its payload.
 
-   Item {
+
+
+
+
+
+Nottingham              Expires 14 November 2021                [Page 6]
+
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
+
+
+   Binary Data Type {
      Type (5)
    }
 
-
-
-Nottingham               Expires 26 October 2021                [Page 6]
-
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
-
-
-   Some Binary Item Types contain padding bits; senders MUST set padding
-   bits to 0; recipients MUST ignore their values.
+   Some data types contain padding bits; senders MUST set padding bits
+   to 0; recipients MUST ignore their values.
 
 2.2.1.  Inner Lists
 
@@ -354,7 +358,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    Its fields are:
 
    *  Length: The number of octets used to represent the members,
-      encoded as per [RFC7541], Section 5.1, with a 3-bit prefix
+      encoded as per Section 5.1 of [RFC7541], with a 3-bit prefix
 
    *  Item(s): Length octets containing the Item(s) in the List
 
@@ -378,44 +382,43 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    Its fields are:
 
    *  Length: The number of octets used to represent the payload,
-      encoded as per [RFC7541], Section 5.1, with a 3-bit prefix
+      encoded as per Section 5.1 of [RFC7541], with a 3-bit prefix
 
    *  Parameter(s): Length octets
 
-   Each Parameter conveys a key and a value:
 
 
 
-
-
-
-Nottingham               Expires 26 October 2021                [Page 7]
+Nottingham              Expires 14 November 2021                [Page 7]
 
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
 
+
+   Each Parameter conveys a key and a value:
 
    Parameter {
      Parameter Name Length (8..),
      Parameter Name (..),
-     Item (..)
+     Binary Data Type (..)
    }
 
    A parameter's fields are:
 
    *  Parameter Name Length: The number of octets used to represent the
-      parameter-name, encoded as per [RFC7541], Section 5.1, with a
+      parameter-name, encoded as per Section 5.1 of [RFC7541], with a
       8-bit prefix
 
    *  Parameter Name: Parameter Name Length octets of the parameter-name
 
-   *  Item: The parameter value, a Binary Item Type
+   *  Binary Data Type: The parameter value, a Binary Data Type
 
-   The Item in a Parameter MUST NOT be an Inner List (0x1) or Parameters
-   (0x2).
+   The Binary Data Type in a Parameter MUST NOT be an Inner List (0x1)
+   or Parameters (0x2).
 
-   Parameters are always associated with the Binary Item Type that
+   Parameters are always associated with the Binary Data Type that
    immediately preceded them.  Therefore, Parameters MUST NOT be the
-   first Item in a container, and MUST NOT follow another Parameters.
+   first Binary Data Type in a container, and MUST NOT follow another
+   Parameters.
 
 2.2.3.  Integers
 
@@ -431,8 +434,8 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    *  Sign: sign bit; 0 is negative, 1 is positive
 
-   *  Payload: The integer, encoded as per [RFC7541], Section 5.1, with
-      a 2-bit prefix
+   *  Payload: The integer, encoded as per Section 5.1 of [RFC7541],
+      with a 2-bit prefix
 
 2.2.4.  Floats
 
@@ -442,16 +445,13 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
 
 
-
-
-
-Nottingham               Expires 26 October 2021                [Page 8]
+Nottingham              Expires 14 November 2021                [Page 8]
 
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
 
 
    Float {
-     Item Type (5) = 4,
+     Type (5) = 4,
      Sign (1),
      Integer (2..),
      Fractional (8..)
@@ -461,18 +461,18 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    *  Sign: sign bit; 0 is negative, 1 is positive
 
-   *  Integer: The integer component, encoded as per [RFC7541],
-      Section 5.1, with a 2-bit prefix.
+   *  Integer: The integer component, encoded as per Section 5.1 of
+      [RFC7541], with a 2-bit prefix.
 
-   *  Fractional: The fractional component, encoded as per [RFC7541],
-      Section 5.1, with a 8-bit prefix.
+   *  Fractional: The fractional component, encoded as per Section 5.1
+      of [RFC7541], with a 8-bit prefix.
 
 2.2.5.  Strings
 
    The String data type (type=0x5) has a payload in the format:
 
    String {
-     Item Type (5) = 5,
+     Type (5) = 5,
      Length (3..),
      Payload (..)
    }
@@ -480,7 +480,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    Its fields are:
 
    *  Length: The number of octets used to represent the string, encoded
-      as per [RFC7541], Section 5.1, with a 3-bit prefix.
+      as per Section 5.1 of [RFC7541], with a 3-bit prefix.
 
    *  Payload: Length octets, ASCII-encoded.
 
@@ -489,7 +489,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    The Token data type (type=0x6) has a payload in the format:
 
    Token {
-     Item Type (5) = 6,
+     Type (5) = 6,
      Length (3..),
      Payload (..)
    }
@@ -497,13 +497,13 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    Its fields are:
 
    *  Length: The number of octets used to represent the token, encoded
-      as per [RFC7541], Section 5.1, with a 3-bit prefix.
+      as per Section 5.1 of [RFC7541], with a 3-bit prefix.
 
 
 
-Nottingham               Expires 26 October 2021                [Page 9]
+Nottingham              Expires 14 November 2021                [Page 9]
 
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
 
 
    *  Payload: Length octets, ASCII-encoded.
@@ -513,7 +513,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    The Byte Sequence data type (type=0x7) has a payload in the format:
 
    Byte Sequence {
-     Item Type (5) = 7,
+     Type (5) = 7,
      Length (3..),
      Payload (..)
    }
@@ -521,7 +521,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    Its fields are:
 
    *  Length: The number of octets used to represent the byte sequence,
-      encoded as per [RFC7541], Section 5.1, with a 3-bit prefix.
+      encoded as per Section 5.1 of [RFC7541], with a 3-bit prefix.
 
    *  Payload: Length octets.
 
@@ -530,7 +530,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    The Boolean data type (type=0x8) has a payload of two bits:
 
    Boolean {
-     Item Type (5) = 8,
+     Type (5) = 8,
      Payload (1),
      Padding (2) = 0
    }
@@ -542,13 +542,14 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    When both peers on a connection support this specification, they can
    take advantage of that knowledge to serialise fields that they know
-   to be Structured Fields (or compatible with them; see Section 4).
+   to be Structured Fields (or compatible with them; see Section 4) as
+   binary data, rather than strings.
 
    Peers advertise and discover this support using a HTTP/2 setting
-   defined in Section 3.1, and convey Binary Structured Fields in a
-   frame type defined in Section 3.2.
+   defined in Section 3.1, and convey Binary Structured Fields in
+   streams whose HEADERS frame uses the flag defined in Section 3.2.
 
-3.1.  Binary Structured Fields Setting
+3.1.  The SETTINGS_BINARY_STRUCTURED_FIELDS Setting
 
    Advertising support for Binary Structured Fields is accomplished
    using a HTTP/2 setting, SETTINGS_BINARY_STRUCTURED_FIELDS (0xTODO).
@@ -556,19 +557,18 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
 
 
-
-Nottingham               Expires 26 October 2021               [Page 10]
+Nottingham              Expires 14 November 2021               [Page 10]
 
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
 
 
-   Receiving SETTINGS_BINARY_STRUCTURED_FIELDS from a peer indicates
-   that:
+   Receiving SETTINGS_BINARY_STRUCTURED_FIELDS with a non-zero value
+   from a peer indicates that:
 
    1.  The peer supports the Binary Item Types defined in Section 2.
 
-   2.  The peer will process the BINHEADERS frames as defined in
-       Section 3.2.
+   2.  The peer will process the BINARY_STRUCTRED HEADERS flag as
+       defined in Section 3.2.
 
    3.  When a downstream consumer does not likewise support that
        encoding, the peer will transform them into HEADERS frames (if
@@ -579,66 +579,48 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    4.  The peer will likewise transform all fields defined as Aliased
        Fields (Section 4.2) into their non-aliased forms as necessary.
 
-   The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0.  Future
-   extensions to Structured Fields might use it to indicate support for
-   new types.
+   The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0, whereas
+   a value of 1 indicates that this specification is supported with no
+   further extensions.  Future specifications might use values greater
+   than one to indicate support for extensions.
 
-3.2.  The BINHEADERS Frame
+3.2.  The BINARY_STRUCTRED HEADERS Flag
 
-   When a peer has indicated that it supports this specification
-   {#setting}, a sender can send the BINHEADERS Frame Type (0xTODO).
+   When a peer has indicated that it supports this specification as per
+   Section 3.1, a sender can send the BINARY_STRUCTURED flag (0xTODO) on
+   the HEADERS frame.
 
-   The BINHEADERS Frame Type behaves and is represented exactly as a
-   HEADERS Frame type ([RFC7540], Section 6.2), with one exception;
-   instead of using the String Literal Representation defined in
-   [RFC7541], Section 5.2, it uses the Binary Literal Representation
-   defined in Section 2.1.
+   This flag indicates that the HEADERS frame containing it and
+   subsequent CONTINUATION frames on the same stream use the Binary
+   Representation defined in Section 2.1 instead of the String Literal
+   Representation defined in Section 5.2 of [RFC7541] for all field
+   values.  Field names are still serialised as String Literal
+   Representations.
 
-   Fields that are Structured Fields can have their values represented
-   using the Binary Literal Representation corresponding to that field's
-   top-level type -- List, Dictionary, or Item; their values will then
-   be serialised as a stream of Binary Item Types.
-
-   Additionally, any field (including those defined as Structured
-   Fields) can be serialised as a String Literal (Section 2.1.4), which
-   accommodates fields that are not defined as Structured Fields, not
+   In such frames, field values that are known to be Structured Fields
+   and those that can be converted to Structured Fields (as per
+   Section 4) MAY be sent using the applicable Binary Representation.
+   However, any field value (including those defined as Structured
+   Fields) can also be serialised as a Binary Literal (Section 2.1.4) to
+   accommodate fields that are not defined as Structured Fields, not
    valid Structured Fields, or that the sending implementation does not
-   wish to send as Binary Item Types for some other reason.
+   wish to send as a Structured Field for some other reason.
 
-   Note that Field Names are always serialised as String Literals
-   (Section 2.1.4).
-
-
-
+   Binary Representations are stored in the HPACK [RFC7541] dynamic
+   table, and their lengths are used for the purposes of maintaining
+   dynamic table size ([RFC7541], Section 4).
 
 
 
-Nottingham               Expires 26 October 2021               [Page 11]
+
+Nottingham              Expires 14 November 2021               [Page 11]
 
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
 
 
-   This means that a BINHEADERS frame can be converted to a HEADERS
-   frame by converting the field values to the string representations of
-   the various Structured Fields Types, and String Literals
-   (Section 2.1.4) to their string counterparts.
-
-   Conversely, a HEADERS frame can be converted to a BINHEADERS frame by
-   encoding all of the Literal field values as Binary Item Types.  In
-   this case, the field types used are informed by the implementations
-   knowledge of the individual field semantics; see Section 4.  Those
-   which it cannot (do to either lack of knowledge or an error) or does
-   not wish to convert into Structured Fields are conveyed in BINHEADERS
-   as String Literals (Section 2.1.4).
-
-   Field values are stored in the HPACK [RFC7541] dynamic table without
-   Huffman encoding, although specific Binary Item Types might specify
-   the use of such encodings.
-
-   Note that BINHEADERS and HEADERS frames MAY be mixed on the same
-   connection, depending on the requirements of the sender.  Also, note
-   that only the field values are encoded as Binary Item Types; field
-   names are encoded as they are in HPACK.
+   Note that HEADERS frames with and without the BINARY_STRUCTURED flag
+   MAY be mixed on the same connection, depending on the requirements of
+   the sender.
 
 4.  Using Binary Structured Fields with Existing Fields
 
@@ -658,21 +640,14 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    can usually be serialised using the corresponding Binary Item Types.
 
    When one of these fields' values cannot be represented using
-   Structured Types, its value can instead be represented as a String
-   Literal (Section 2.1.4).
+   Structured Types in a Binary Representation, its value can instead be
+   represented as a Binary Literal (Section 2.1.4).
 
    *  Accept - List
 
    *  Accept-Encoding - List
 
    *  Accept-Language - List
-
-
-
-Nottingham               Expires 26 October 2021               [Page 12]
-
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
-
 
    *  Accept-Patch - List
 
@@ -691,6 +666,13 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    *  Access-Control-Request-Headers - List
 
    *  Access-Control-Request-Method - Item
+
+
+
+Nottingham              Expires 14 November 2021               [Page 12]
+
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
+
 
    *  Age - Item
 
@@ -722,14 +704,6 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    *  Host - Item
 
-
-
-
-Nottingham               Expires 26 October 2021               [Page 13]
-
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
-
-
    *  Keep-Alive - Dictionary
 
    *  Origin - Item
@@ -748,6 +722,14 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    *  Trailer - List
 
+
+
+
+Nottingham              Expires 14 November 2021               [Page 13]
+
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
+
+
    *  Transfer-Encoding - List
 
    *  Vary - List
@@ -758,7 +740,7 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    Note that only the delta-seconds form of Retry-After is supported; a
    Retry-After value containing a http-date will need to be either
-   converted into delta-seconds or serialised as a String Literal
+   converted into delta-seconds or serialised as a Binary Literal
    (Section 2.1.4).
 
 4.2.  Aliased Fields
@@ -778,19 +760,11 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    minus leap seconds).  Thus, the example above would be represented in
    (non-binary) Structured Fields as:
 
-
-
-
-Nottingham               Expires 26 October 2021               [Page 14]
-
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
-
-
    SF-Date: 784072177
 
    As with directly represented fields, if the intended value of an
    aliased field cannot be represented using Structured Types
-   successfully, its value can instead be represented as a String
+   successfully, its value can instead be represented as a Binary
    Literal (Section 2.1.4).
 
    Note that senders MUST know that the next-hop recipient understands
@@ -801,6 +775,16 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    Each field name listed below indicates a replacement field name and a
    way to map its value to Structured Fields.
+
+
+
+
+
+
+Nottingham              Expires 14 November 2021               [Page 14]
+
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
+
 
    *  ISSUE: using separate names assures that the different syntax
       doesn't "leak" into normal fields, but it isn't strictly necessary
@@ -828,25 +812,11 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    TOOD: list of strings, one for each path segment, to allow better
    compression in the future?
 
-
-
-
-
-
-
-
-
-
-Nottingham               Expires 26 October 2021               [Page 15]
-
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
-
-
 4.2.2.  Dates
 
    The following field names (paired with their replacement field names)
    have values that can be represented in Binary Structured Fields by
-   parsing their payload according to [RFC7230], Section 7.1.1.1, and
+   parsing their payload according to [RFC7231], Section 7.1.1.1, and
    representing the result as an integer number of seconds delta from
    the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
 
@@ -863,6 +833,14 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    For example, a (non-binary) Expires:
 
    SF-Expires: 1571965240
+
+
+
+
+Nottingham              Expires 14 November 2021               [Page 15]
+
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
+
 
 4.2.3.  ETags
 
@@ -885,18 +863,6 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    For example, a (non-binary) If-None-Match:
 
    SF-INM: "abcdef"; w=?1, "ghijkl"
-
-
-
-
-
-
-
-
-Nottingham               Expires 26 October 2021               [Page 16]
-
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
-
 
 4.2.4.  Links
 
@@ -925,6 +891,13 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    SF-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
    SF-Cookie: SID=31d4d96e407aad42, lang=en-US
 
+
+
+Nottingham              Expires 14 November 2021               [Page 16]
+
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
+
+
    *  ISSUE: explicitly convert Expires to an integer?
       https://github.com/mnot/I-D/issues/308 (https://github.com/mnot/I-
       D/issues/308)
@@ -947,16 +920,9 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    brings the potential for security weaknesses, when attackers exploit
    the differences between those representations and their handling.
 
-
-
-Nottingham               Expires 26 October 2021               [Page 17]
-
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
-
-
    One mitigation to this risk is the strictness of parsing for both
    non-binary and binary Structured Fields data types, along with the
-   "escape valve" of String Literals (Section 2.1.4).  Therefore,
+   "escape valve" of Binary Literals (Section 2.1.4).  Therefore,
    implementation divergence from this strictness can have security
    impact.
 
@@ -978,15 +944,20 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
               DOI 10.17487/RFC6265, April 2011,
               <https://www.rfc-editor.org/info/rfc6265>.
 
-   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <https://www.rfc-editor.org/info/rfc7230>.
 
-   [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
-              Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
-              DOI 10.17487/RFC7540, May 2015,
-              <https://www.rfc-editor.org/info/rfc7540>.
+
+
+
+
+Nottingham              Expires 14 November 2021               [Page 17]
+
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
+
+
+   [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
+              DOI 10.17487/RFC7231, June 2014,
+              <https://www.rfc-editor.org/info/rfc7231>.
 
    [RFC7541]  Peon, R. and H. Ruellan, "HPACK: Header Compression for
               HTTP/2", RFC 7541, DOI 10.17487/RFC7541, May 2015,
@@ -999,16 +970,6 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
    [RFC8288]  Nottingham, M., "Web Linking", RFC 8288,
               DOI 10.17487/RFC8288, October 2017,
               <https://www.rfc-editor.org/info/rfc8288>.
-
-
-
-
-
-
-Nottingham               Expires 26 October 2021               [Page 18]
-
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
-
 
    [RFC8941]  Nottingham, M. and P-H. Kamp, "Structured Field Values for
               HTTP", RFC 8941, DOI 10.17487/RFC8941, February 2021,
@@ -1042,6 +1003,13 @@ Appendix A.  Data Supporting Directly Represented Field Mappings
 
    *  access-control-allow-methods: 15,466,748 / 28,203 = 0.182%
 
+
+
+Nottingham              Expires 14 November 2021               [Page 18]
+
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
+
+
    *  access-control-allow-origin: 105,307,402 / 271,359 = 0.257%
 
    *  access-control-max-age: 5,284,663 / 7,754 = 0.147%
@@ -1057,14 +1025,6 @@ Appendix A.  Data Supporting Directly Represented Field Mappings
    *  alt-svc: 19,775,126 / 15,680,528 = 44.226%
 
    *  cache-control: 264,805,256 / 782,896 = 0.295%
-
-
-
-
-Nottingham               Expires 26 October 2021               [Page 19]
-
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
-
 
    *  connection: 105,876,072 / 2,915 = 0.003%
 
@@ -1098,6 +1058,14 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    *  surrogate-control: 121,118 / 861 = 0.706%
 
+
+
+
+Nottingham              Expires 14 November 2021               [Page 19]
+
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
+
+
    *  te: 1 / 0 = 0.000%
 
    *  trailer: 282 / 0 = 0.000%
@@ -1112,15 +1080,6 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    This data set focuses on response headers, although some request
    headers are present (because, the Web).
-
-
-
-
-
-Nottingham               Expires 26 October 2021               [Page 20]
-
-Internet-Draft     Binary Structured HTTP Field Values        April 2021
-
 
    "alt-svc" has a high failure rate because some currently-used ALPN
    tokens (e.g., "h3-Q43") do not conform to key's syntax.  Since the
@@ -1156,6 +1115,13 @@ Internet-Draft     Binary Structured HTTP Field Values        April 2021
 
    *  p3p: 39,490,058
 
+
+
+Nottingham              Expires 14 November 2021               [Page 20]
+
+Internet-Draft     Binary Structured HTTP Field Values          May 2021
+
+
    *  x-frame-options: 34,037,985
 
 Author's Address
@@ -1173,4 +1139,38 @@ Author's Address
 
 
 
-Nottingham               Expires 26 October 2021               [Page 21]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nottingham              Expires 14 November 2021               [Page 21]
