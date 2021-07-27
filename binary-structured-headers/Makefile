@@ -34,9 +34,10 @@ idnits: $(target).txt
 	$(idnits) $<
 
 %.xml: draft.md
-	$(kramdown-rfc2629) -3 $< > $@
+	$(kramdown-rfc2629) -3 $< > draft.tmp.xml
+	xml2rfc --v2v3 draft.tmp.xml -o $@
+	rm draft.tmp.xml
 	sed -i '' -e"s/\"rfc2629-xhtml.ent/\"$(id_base)\/Tools\/rfcbootstrap\/rfc2629-xhtml.ent/" $@
-	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfcbootstrap\/rfc2629.dtd/" $@
 	
 %.html: %.xml $(bootstrap) $(extra_css)
 	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) \
