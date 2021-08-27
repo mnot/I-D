@@ -1,6 +1,6 @@
 
 id_base = ..
-xml2rfc ?= xml2rfc
+xml2rfc ?= xml2rfc --v3
 saxpath ?= /usr/local/share/saxon-b/saxon9.jar
 kramdown-rfc2629 ?= kramdown-rfc2629
 bootstrap ?= ../Tools/rfcbootstrap/rfcbootstrap.xslt
@@ -34,22 +34,23 @@ idnits: $(target).txt
 	$(idnits) $<
 
 %.xml: draft.md
-	$(kramdown-rfc2629) $< > $@
+	$(kramdown-rfc2629) -3 $< > draft.tmp.xml
+	xml2rfc --v2v3 draft.tmp.xml -o $@
+	rm draft.tmp.xml
+	sed -i '' -e"s/\"rfc2629-xhtml.ent/\"$(id_base)\/Tools\/rfcbootstrap\/rfc2629-xhtml.ent/" $@
 	
 %.html: %.xml $(bootstrap) $(extra_css)
-	sed -i '' -e"s/\"rfc2629.dtd/\"$(id_base)\/Tools\/rfcbootstrap\/rfc2629.dtd/" $<
 	java -classpath $(saxpath) net.sf.saxon.Transform -l $< $(bootstrap) \
 	bootstrapJsUrl='../Tools/node_modules/bootstrap/dist/js/bootstrap.min.js' \
 	bootstrapCssUrl=$(extra_css) \
 	jqueryJsUrl='../Tools/node_modules/jquery/dist/jquery.min.js' \
 	pageUrl='https://mnot.github.io/I-D/${shortname}/' \
 	siteName="mnot's Internet Drafts" \
-	navbar='../Tools/navbar.html' \
+	navbar='../navbar.html' \
 	> $@
-#	$(xml2rfc) --html $< $@
 
 %.txt: %.xml
-	$(xml2rfc) $< $@
+	$(xml2rfc) $< -o $@
 
 index.html: $(target).html
 	cp $< $@
@@ -59,3 +60,12 @@ index.txt: $(target).txt
 
 update:
 	cp $(id_base)/Tools/skel/Makefile .
+
+rfc-http-validate ?= rfc-http-validate.py
+.PHONY: http-lint
+http-lint: $(drafts_xml) http-lint-install
+	$(rfc-http-validate) -m sf.json $(filter-out http-lint-install,$^)
+
+.PHONY: http-lint-install
+http-lint-install:
+	@hash rfc-http-validate 2>/dev/null || pip3 install rfc-http-validate
