@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                             July 22, 2017
-Intended status: Standards Track
-Expires: January 23, 2020
+Internet-Draft                                            27 August 2021
+Intended status: Standards Track                                        
+Expires: 28 February 2022
 
 
                   The Link-Template HTTP Header Field
@@ -20,13 +20,15 @@ Abstract
 Note to Readers
 
    The issues list can be found at https://github.com/mnot/I-D/labels/
-   link-template [1].
+   link-template (https://github.com/mnot/I-D/labels/link-template).
 
    The most recent (often, unpublished) draft is at
-   https://mnot.github.io/I-D/link-template/ [2].
+   https://mnot.github.io/I-D/link-template/ (https://mnot.github.io/I-
+   D/link-template/).
 
    Recent changes are listed at https://github.com/mnot/I-D/commits/gh-
-   pages/link-template [3].
+   pages/link-template (https://github.com/mnot/I-D/commits/gh-pages/
+   link-template).
 
 Status of This Memo
 
@@ -43,30 +45,32 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 23, 2020.
+   This Internet-Draft will expire on 28 February 2022.
+
+
+
+
+
+
+
+Nottingham              Expires 28 February 2022                [Page 1]
+
+Internet-Draft                Link-Template                  August 2021
+
 
 Copyright Notice
 
-   Copyright (c) 2017 IETF Trust and the persons identified as the
+   Copyright (c) 2021 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
-
-
-
-Nottingham              Expires January 23, 2020                [Page 1]
-
-Internet-Draft                Link-Template                    July 2017
-
-
    This document is subject to BCP 78 and the IETF Trust's Legal
-   Provisions Relating to IETF Documents
-   (https://trustee.ietf.org/license-info) in effect on the date of
-   publication of this document.  Please review these documents
-   carefully, as they describe your rights and restrictions with respect
-   to this document.  Code Components extracted from this document must
-   include Simplified BSD License text as described in Section 4.e of
-   the Trust Legal Provisions and are provided without warranty as
-   described in the Simplified BSD License.
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Simplified BSD License text
+   as described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Simplified BSD License.
 
 Table of Contents
 
@@ -76,205 +80,201 @@ Table of Contents
      2.1.  The 'var-base' parameter  . . . . . . . . . . . . . . . .   3
    3.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
    4.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
-     5.2.  URIs  . . . . . . . . . . . . . . . . . . . . . . . . . .   5
+   5.  Normative References  . . . . . . . . . . . . . . . . . . . .   4
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   5
 
 1.  Introduction
 
-   [RFC6570] defines a syntax for templates that, when expanded using a
-   set of variables, results in a URI [RFC3986].
+   [URI-TEMPLATE] defines a syntax for templates that, when expanded
+   using a set of variables, results in a URI [URI].
 
-   This specification defines a HTTP header field for conveying
+   This specification defines a HTTP header field [HTTP] for conveying
    templates for links in the headers of a HTTP message.  It is
-   complimentary to the Link header field [I-D.nottingham-rfc5988bis],
-   which carries links directly.
+   complimentary to the Link header field defined in Section 3 of
+   [WEB-LINKING], which carries links directly.
 
 1.1.  Notational Conventions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-   document are to be interpreted as described in [RFC2119].
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
 
-   This document uses the Augmented BNF defined in [RFC7230] to specify
+   This document uses the Augmented BNF defined in [HTTP] to specify
    valid protocol elements.  Additionally, it uses the modified
-   "parameter" rule from [RFC5987], and the "URI-Template" rule from
-   [RFC6570].
+   "parameter" rule from [RFC5987] and the "URI-Template" rule from
+   [URI-TEMPLATE].
 
 
 
 
-
-
-
-
-Nottingham              Expires January 23, 2020                [Page 2]
+Nottingham              Expires 28 February 2022                [Page 2]
 
-Internet-Draft                Link-Template                    July 2017
+Internet-Draft                Link-Template                  August 2021
 
 
 2.  The Link-Template Header Field
 
-   The Link-Template entity-header field provides a means for
-   serialising one or more links into HTTP headers.  It is semantically
-   equivalent to the Link header field [I-D.nottingham-rfc5988bis],
-   except that it uses URI Templates [RFC6570] to convey the structure
-   of links.
+   The Link-Template header field provides a means for serialising one
+   or more links into HTTP message metadata.  It is semantically
+   equivalent to the Link header field defined in Section 3 of
+   [WEB-LINKING], except that it uses URI Templates [URI-TEMPLATE] to
+   convey the structure of links.
 
-     Link-Template  = "Link-Template" ":" #linkt-value
-     linkt-value    = "<" URI-Template ">" *( ";" parameter )
+   Link-Template  = "Link-Template" ":" #templated-link
+   templated-link = "<" URI-Template ">" *( ";" parameter )
 
    For example:
 
-   Link-Template: </{username}>; rel="http://example.org/rel/user"
+   Link-Template: </{username}>; rel="https://example.org/rel/user"
 
    indicates that a resource with the relation type
-   "http://example.org/rel/user" can be found by interpolating the
+   "https://example.org/rel/user" can be found by interpolating the
    "username" variable into the template given.
 
-   The target for the link (as defined by [I-D.nottingham-rfc5988bis])
-   is the result of expanding the URI Template [RFC6570] (being
+   The target for the link (as defined in Section 2 of [WEB-LINKING]) is
+   the result of expanding the URI Template [URI-TEMPLATE] (being
    converted to an absolute URI after expansion, if necessary).
 
    The context, relation type and target attributes for the link are
-   determined as defined for the Link header field in
-   [I-D.nottingham-rfc5988bis].
+   determined as defined for the Link header field in Section 3 of
+   [WEB-LINKING].
 
-   The parameters on a linkt-value have identical semantics to those of
-   a Link header field [I-D.nottingham-rfc5988bis].  This includes (but
-   is not limited to) the use of the "rel" parameter to convey the
-   relation type, the "anchor" parameter to modify the context IRI, and
-   so on.
+   Parameters on a templated-link have identical semantics to those of a
+   Link header field.  This includes (but is not limited to) the use of
+   the "rel" parameter to convey the relation type, the "anchor"
+   parameter to modify the context IRI, and so on.
 
-   Likewise, the requirements for parameters on linkt-values are the
+   Likewise, the requirements for parameters on templated-links are the
    same as those for a Link header field; in particular, the "rel"
-   parameter MUST NOT appear more than once, and if it does, the linkt-
-   value MUST be ignored by parsers.
+   parameter MUST NOT appear more than once, and if it does, the
+   templated-link MUST be ignored by parsers.
 
    This specification defines additional semantics for the "var-base"
-   parameter on linkt-values; see below.
+   parameter on templated-links; see below.
 
 2.1.  The 'var-base' parameter
 
-   When a linkt-value has a 'var-base' parameter, its value conveys a
+   When a templated-link has a 'var-base' parameter, its value conveys a
    URI-reference that is used as a base URI for the variable names in
-   the URI template.
+   the URI template.  This allows template variables to be globally
+   identified, rather than specific to the context of use.
 
 
 
 
 
-Nottingham              Expires January 23, 2020                [Page 3]
+Nottingham              Expires 28 February 2022                [Page 3]
 
-Internet-Draft                Link-Template                    July 2017
+Internet-Draft                Link-Template                  August 2021
 
 
-   This mechanism allows template variables to be globally identified,
-   rather than specific to the context of use.  Dereferencing the URI
-   for a particular variable might lead to more information about the
-   syntax or semantics of that variable; specification of particular
-   formats for this information is out of scope for this document.
+   Dereferencing the URI for a particular variable might lead to more
+   information about the syntax or semantics of that variable;
+   specification of particular formats for this information is out of
+   scope for this document.
 
    To determine the URI for a given variable, the value given is used as
-   a base URI in reference resolution (as specified in [RFC3986]).  If
-   the resulting URI is still relative, the context of the link is used
-   as the base URI in a further resolution; see
-   [I-D.nottingham-rfc5988bis].
+   a base URI in reference resolution (as specified in [URI]).  If the
+   resulting URI is still relative, the context of the link is used as
+   the base URI in a further resolution; see [WEB-LINKING].
 
    For example:
 
    Link-Template: </widgets/{widget_id}>;
-                  rel="http://example.org/rel/widget";
-                  var-base="http://example.org/vars/"
+                  rel="https://example.org/rel/widget";
+                  var-base="https://example.org/vars/"
 
    indicates that a resource with the relation type
-   "http://example.org/rel/widget" can be found by interpolating the
-   "http://example.org/vars/widget_id" variable into the template given.
+   "https://example.org/rel/widget" can be found by interpolating the
+   "https://example.org/vars/widget_id" variable into the template
+   given.
 
    If the current context of the message that the header appears within
-   is "http://example.org/", the same information could be conveyed by
+   is "https://example.org/", the same information could be conveyed by
    this header field:
 
    Link-Template: </widgets/{widget_id}>;
-                  rel="http://example.org/rel/widget";
+                  rel="https://example.org/rel/widget";
                   var-base="/vars/"
 
 3.  Security Considerations
 
-   The security consideration for the Link header field in
-   [I-D.nottingham-rfc5988bis] and those for URI Templates [RFC6570]
-   both apply.
+   The security consideration for the Link header field in [WEB-LINKING]
+   and those for URI Templates [URI-TEMPLATE] both apply.
 
 4.  IANA Considerations
 
-   This specification enters the "Link-Template" into the registry of
-   Permanent Message Header Field Names.
+   This specification enters the "Link-Template" into the Hypertext
+   Transfer Protocol (HTTP) Field Name Registry.
 
-   Header Field Name: Link-Template
-   Protocol: http
-   Status:
-   Reference: [this document]
+   Field Name: Link-Template
+   Status: permanent
+   Specification document: [this document]
 
-
-
+5.  Normative References
 
 
 
-Nottingham              Expires January 23, 2020                [Page 4]
+
+
+
+
+Nottingham              Expires 28 February 2022                [Page 4]
 
-Internet-Draft                Link-Template                    July 2017
+Internet-Draft                Link-Template                  August 2021
 
 
-5.  References
-
-5.1.  Normative References
-
-   [I-D.nottingham-rfc5988bis]
-              Nottingham, M., "Web Linking", draft-nottingham-
-              rfc5988bis-08 (work in progress), August 2017.
+   [HTTP]     Fielding, R. T., Nottingham, M., and J. Reschke, "HTTP
+              Semantics", Work in Progress, Internet-Draft, draft-ietf-
+              httpbis-semantics-18, 18 August 2021,
+              <https://www.ietf.org/archive/id/draft-ietf-httpbis-
+              semantics-18.txt>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
-   [RFC3986]  Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
-              Resource Identifier (URI): Generic Syntax", STD 66,
-              RFC 3986, DOI 10.17487/RFC3986, January 2005,
-              <https://www.rfc-editor.org/info/rfc3986>.
-
    [RFC5987]  Reschke, J., "Character Set and Language Encoding for
               Hypertext Transfer Protocol (HTTP) Header Field
               Parameters", RFC 5987, DOI 10.17487/RFC5987, August 2010,
               <https://www.rfc-editor.org/info/rfc5987>.
 
-   [RFC6570]  Gregorio, J., Fielding, R., Hadley, M., Nottingham, M.,
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+   [URI]      Berners-Lee, T., Fielding, R., and L. Masinter, "Uniform
+              Resource Identifier (URI): Generic Syntax", STD 66,
+              RFC 3986, DOI 10.17487/RFC3986, January 2005,
+              <https://www.rfc-editor.org/info/rfc3986>.
+
+   [URI-TEMPLATE]
+              Gregorio, J., Fielding, R., Hadley, M., Nottingham, M.,
               and D. Orchard, "URI Template", RFC 6570,
               DOI 10.17487/RFC6570, March 2012,
               <https://www.rfc-editor.org/info/rfc6570>.
 
-   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <https://www.rfc-editor.org/info/rfc7230>.
-
-5.2.  URIs
-
-   [1] https://github.com/mnot/I-D/labels/link-template
-
-   [2] https://mnot.github.io/I-D/link-template/
-
-   [3] https://github.com/mnot/I-D/commits/gh-pages/link-template
+   [WEB-LINKING]
+              Nottingham, M., "Web Linking", RFC 8288,
+              DOI 10.17487/RFC8288, October 2017,
+              <https://www.rfc-editor.org/info/rfc8288>.
 
 Author's Address
 
    Mark Nottingham
+   Prahran
+   VIC
+   Australia
 
-   EMail: mnot@mnot.net
+   Email: mnot@mnot.net
    URI:   https://www.mnot.net/
 
 
 
 
-Nottingham              Expires January 23, 2020                [Page 5]
+
+
+Nottingham              Expires 28 February 2022                [Page 5]
