@@ -56,7 +56,7 @@ Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/link-
 
 {{URI-TEMPLATE}} defines a syntax for templates that, when expanded using a set of variables, results in a URI {{URI}}.
 
-This specification defines a HTTP {{HTTP}} header field for conveying templates for links in the headers of a HTTP message. It is complimentary to the Link header field {{WEB-LINKING}}, which carries links directly.
+This specification defines a HTTP header field {{HTTP}} for conveying templates for links in the headers of a HTTP message. It is complimentary to the Link header field defined in {{Section 3 of WEB-LINKING}}, which carries links directly.
 
 ## Notational Conventions
 
@@ -68,7 +68,7 @@ This document uses the Augmented BNF defined in {{HTTP}} to specify valid protoc
 
 # The Link-Template Header Field
 
-The Link-Template header field provides a means for serialising one or more links into HTTP message metadata. It is semantically equivalent to the Link header field {{WEB-LINKING}}, except that it uses URI Templates {{URI-TEMPLATE}} to convey the structure of links.
+The Link-Template header field provides a means for serialising one or more links into HTTP message metadata. It is semantically equivalent to the Link header field defined in {{Section 3 of WEB-LINKING}}, except that it uses URI Templates {{URI-TEMPLATE}} to convey the structure of links.
 
 ~~~ abnf
 Link-Template  = "Link-Template" ":" #templated-link
@@ -83,11 +83,11 @@ Link-Template: </{username}>; rel="https://example.org/rel/user"
 
 indicates that a resource with the relation type "https://example.org/rel/user" can be found by interpolating the "username" variable into the template given.
 
-The target for the link (as defined by {{WEB-LINKING}}) is the result of expanding the URI Template {{URI-TEMPLATE}} (being converted to an absolute URI after expansion, if necessary).
+The target for the link (as defined in {{Section 2 of WEB-LINKING}}) is the result of expanding the URI Template {{URI-TEMPLATE}} (being converted to an absolute URI after expansion, if necessary).
 
-The context, relation type and target attributes for the link are determined as defined for the Link header field in {{WEB-LINKING}}.
+The context, relation type and target attributes for the link are determined as defined for the Link header field in {{Section 3 of WEB-LINKING}}.
 
-Parameters on a templated-link have identical semantics to those of a Link header field {{WEB-LINKING}}. This includes (but is not limited to) the use of the "rel" parameter to convey the relation type, the "anchor" parameter to modify the context IRI, and so on.
+Parameters on a templated-link have identical semantics to those of a Link header field. This includes (but is not limited to) the use of the "rel" parameter to convey the relation type, the "anchor" parameter to modify the context IRI, and so on.
 
 Likewise, the requirements for parameters on templated-links are the same as those for a Link header field; in particular, the "rel" parameter MUST NOT appear more than once, and if it does, the templated-link MUST be ignored by parsers.
 
