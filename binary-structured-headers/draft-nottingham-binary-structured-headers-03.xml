@@ -52,9 +52,9 @@
   <middle>
     <section anchor="introduction" numbered="true" toc="default">
       <name>Introduction</name>
-      <t>Structured Field Values for HTTP <xref target="RFC8941" format="default"/> offers a set of data types that new fields can combine to express their semantics. This specification defines a binary serialisation of those structures in <xref target="fields" format="default"/>, and specifies its use in HTTP/2 in <xref target="negotiate" format="default"/>.</t>
+      <t>Structured Field Values for HTTP <xref target="RFC8941" format="default"/> offers a set of data types that new fields can use to express their semantics in a familiar textual syntax. This specification defines an alternative, binary serialisation of those structures in <xref target="fields" format="default"/>, and specifies its use in HTTP/2 in <xref target="negotiate" format="default"/>.</t>
       <t>Additionally, <xref target="backport" format="default"/> defines how to convey existing fields as Structured Fields, when supported by two peers.</t>
-      <t>The primary goal of this specification are to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.</t>
+      <t>The primary goal is to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.</t>
       <section anchor="notational-conventions" numbered="true" toc="default">
         <name>Notational Conventions</name>
         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
@@ -71,7 +71,7 @@ shown here.</t>
       <t>Binary representations of the remaining structured field types are defined in <xref target="types" format="default"/>.</t>
       <section anchor="binlit" numbered="true" toc="default">
         <name>Binary Representations</name>
-        <t>Binary Representations are a replacement for the String Literal Representation defined in <xref section="5.2." sectionFormat="of" target="RFC7541" format="default"/>, and can be used to serialise a Structured Field Type.</t>
+        <t>Binary Representations are a replacement for the String Literal Representation defined in <xref section="5.2" sectionFormat="of" target="RFC7541" format="default"/>, and can be used to serialise any field, including but not limited to those defined as Structured Fields.</t>
         <t>All Binary Representations share the following header:</t>
         <artwork name="" type="" align="left" alt=""><![CDATA[
 Binary Representation {
@@ -85,26 +85,32 @@ Binary Representation {
           <li>Length: The number of octets used to represent the payload, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 5-bit prefix.</li>
         </ul>
         <t>The following top-level types are defined:</t>
+        <section anchor="literal" numbered="true" toc="default">
+          <name>Binary Literal Field Values</name>
+          <t>Binary Literal field values (type=0x0) carry the string value of a field; they are used to carry field values that are not structured using the data types defined in <xref section="3" sectionFormat="of" target="RFC8941" format="default"/>. This might be because the field is not recognised as a Structured Field, or it might be because a field that is understood to be a Structured Field cannot be parsed successfully as one.</t>
+          <t>A binary literal field value's payload is the raw octets of the field value. As such, they are functionally equivalent to String Literal Representations in <xref section="5.2" sectionFormat="of" target="RFC7541" format="default"/>.</t>
+          <artwork name="" type="" align="left" alt=""><![CDATA[
+Binary Literal Field Value {
+  Top Level Type (3) = 0,
+  Length (5..),
+  Payload (..)
+}
+]]></artwork>
+        </section>
         <section anchor="list-field-values" numbered="true" toc="default">
           <name>List Field Values</name>
-          <t>List values (type=0x1) have a payload consisting of a stream of Binary Item Types representing the members of the list. Members that are Items are represented as per <xref target="types" format="default"/>; members that are inner-lists are represented as per <xref target="inner-list" format="default"/>.</t>
+          <t>Structured fields whose values are known to be a List as per <xref section="3.1" sectionFormat="of" target="RFC8941" format="default"/> can be conveyed as a binary representation with a top level type of 0x1. They have a payload consisting of one or more Binary Data Types (<xref target="types" format="default"/>) representing the members of the list.</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 List Field Value {
   Top Level Type (3) = 1,
   Length (5..),
-  Item (..) ...
+  Binary Data Type (..) ...
 }
 ]]></artwork>
-          <t>A List Field Value's fields are:</t>
-          <ul spacing="normal">
-            <li>Length: The number of octets used to represent the entire List, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 5-bit prefix</li>
-            <li>Item: One or more Item(s) (<xref target="types" format="default"/>)</li>
-          </ul>
         </section>
         <section anchor="dictionary-field-values" numbered="true" toc="default">
           <name>Dictionary Field Values</name>
-          <t>Dictionary values (type=0x2) have a payload consisting of a stream of Dictionary Members.</t>
-          <t>Each member is represented by a length, followed by that many bytes of the member-name, followed by the Binary Item Type(s) representing the member-value.</t>
+          <t>Structured fields whose values are known to be a Dictionary as per <xref section="3.2" sectionFormat="of" target="RFC8941" format="default"/> can be conveyed in a binary representation with a top level type of 0x2. They have a payload consisting of one or more Dictionary Members.</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Dictionary Field Value {
   Top Level Type (3) = 2,
@@ -112,71 +118,42 @@ Dictionary Field Value {
   Dictionary Member (..) ...
 }
 ]]></artwork>
-          <t>A Dictionary Field Value's fields are:</t>
-          <ul spacing="normal">
-            <li>Length: The number of octets used to represent the entire Dictionary, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 5-bit prefix</li>
-            <li>Dictionary Member: one or more Dictionary Member(s)</li>
-          </ul>
+          <t>Each Dictionary member is represented by a length, followed by that many bytes of the member-name, followed by the Binary Data Type(s) representing the member-value.</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Dictionary Member {
   Name Length (8..),
   Member Name (..),
-  Item (..),
+  Binary Data Type (..),
   [Parameters (..)]
 }
 
 ]]></artwork>
-          <t>A Dictionary Member's fields are:</t>
-          <ul spacing="normal">
-            <li>Name Length: The number of octets used to represent the Member Name, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 8-bit prefix</li>
-            <li>Member Name: Name Length octets of the member-name, ASCII-encoded</li>
-            <li>Item: An Item (<xref target="types" format="default"/>)</li>
-            <li>Parameters: Optional Parameters (<xref target="parameter" format="default"/>)</li>
-          </ul>
-          <t>The Item in a Dictionary Member MUST NOT be a Parameters (0x2).</t>
+          <t>The Binary Data Type in a Dictionary Member MUST NOT be a Parameters (0x2).</t>
         </section>
         <section anchor="item-field-values" numbered="true" toc="default">
           <name>Item Field Values</name>
-          <t>Item values (type=0x3) have a payload consisting of Binary Item Types, as described in <xref target="types" format="default"/>.</t>
+          <t>Structured field values that are known to be an Item as per <xref section="3.3" sectionFormat="of" target="RFC8941" format="default"/> can be conveyed in a binary representation with a top level type of 0x3. They have a payload consisting of a single Binary Data Type (<xref target="types" format="default"/>), with optional parameters (<xref target="parameters" format="default"/>).</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Item Field Value {
   Top Level Type (3) = 3,
   Length (5..),
-  Item (..)
+  Binary Data Type (..),
   [Parameters (..)]
 }
 ]]></artwork>
-          <t>An Item Field Value's fields are:</t>
-          <ul spacing="normal">
-            <li>Length: The number of octets used to represent the Item (including Parameters, if present), encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 5-bit prefix</li>
-            <li>Item: An Item (<xref target="types" format="default"/>)</li>
-            <li>Parameters: Optional Parameters (<xref target="parameter" format="default"/>)</li>
-          </ul>
-          <t>The Item in an Item Field Value MUST NOT be an Inner List (0x1) or Parameters (0x2).</t>
+          <t>The Binary Data Type in an Item Field Value MUST NOT be an Inner List (0x1) or Parameters (0x2).</t>
         </section>
-        <section anchor="literal" numbered="true" toc="default">
-          <name>Binary Literal Field Values</name>
-          <t>Binary Literal values (type=0x4) are the string value of a field; they are used to carry field values that are not Binary Structured Fields, and may not be Structured Fields at all. As such, their semantics are that of String Literal Representations in <xref section="5.2" sectionFormat="of" target="RFC7541" format="default"/>.</t>
-          <artwork name="" type="" align="left" alt=""><![CDATA[
-Binary Literal Field Value {
-  Top Level Type (3) = 4,
-  Length (5..),
-  Payload (..)
-}
-]]></artwork>
-          <t>A Binary Literal Field Value's fields are:</t>
-          <ul spacing="normal">
-            <li>Length: The number of octets used to represent the string literal, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 5-bit prefix</li>
-            <li>Payload: The raw octets of the field value</li>
-          </ul>
-        </section>
+      </section>
+      <section anchor="parameters" numbered="true" toc="default">
+        <name>Parameters</name>
       </section>
       <section anchor="types" numbered="true" toc="default">
         <name>Binary Data Types</name>
-        <t>Every data type starts with a 5-bit type field that identifies the format of its payload.</t>
+        <t>Binary data types are discrete values that are composed into binary representations (<xref target="binlit" format="default"/>) to represent the structured field values.</t>
+        <t>Every binary data type starts with a 4-bit type field that identifies the format of its payload.</t>
         <artwork name="" type="" align="left" alt=""><![CDATA[
 Binary Data Type {
-  Type (5)
+  Type (4)
 }
 ]]></artwork>
         <t>Some data types contain padding bits; senders MUST set padding bits to 0; recipients MUST ignore their values.</t>
@@ -185,17 +162,12 @@ Binary Data Type {
           <t>The Inner List data type (type=0x1) has a payload in the format:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Inner List {
-  Type (5) = 1,
-  Length (3..),
-  Item (..) ...
+  Type (4) = 1,
+  Length (4..),
+  Binary Data Type (..) ...
 }
 ]]></artwork>
-          <t>Its fields are:</t>
-          <ul spacing="normal">
-            <li>Length: The number of octets used to represent the members, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 3-bit prefix</li>
-            <li>Item(s): Length octets containing the Item(s) in the List</li>
-          </ul>
-          <t>An Item in an Inner List MUST NOT be an Inner List (0x1).</t>
+          <t>A Binary Data Type in an Inner List MUST NOT be an Inner List (0x1).</t>
           <t>Parameters on the Inner List itself, if present, are serialised in a following Parameter type (<xref target="parameter" format="default"/>); they do not form part of the payload of the Inner List (and therefore are not counted in Length).</t>
         </section>
         <section anchor="parameter" numbered="true" toc="default">
@@ -203,16 +175,11 @@ Inner List {
           <t>The Parameters data type (type=0x2) has a payload in the format:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Parameters {
-  Type (5) = 2,
-  Length (3..),
+  Type (4) = 2,
+  Length (4..),
   Parameter (..) ...
 }
 ]]></artwork>
-          <t>Its fields are:</t>
-          <ul spacing="normal">
-            <li>Length: The number of octets used to represent the payload, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 3-bit prefix</li>
-            <li>Parameter(s): Length octets</li>
-          </ul>
           <t>Each Parameter conveys a key and a value:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Parameter {
@@ -228,16 +195,16 @@ Parameter {
             <li>Binary Data Type: The parameter value, a Binary Data Type</li>
           </ul>
           <t>The Binary Data Type in a Parameter MUST NOT be an Inner List (0x1) or Parameters (0x2).</t>
-          <t>Parameters are always associated with the Binary Data Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Binary Data Type in a container, and MUST NOT follow another Parameters.</t>
+          <t>Parameters are always associated with the Binary Data Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Binary Data Type in a Binary Representation, and MUST NOT follow another Parameters.</t>
         </section>
         <section anchor="integers" numbered="true" toc="default">
           <name>Integers</name>
           <t>The Integer data type (type=0x3) has a payload in the format:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Integer {
-  Type (5) = 3,
+  Type (4) = 3,
   Sign (1),
-  Payload (2..)
+  Payload (3..)
 }
 ]]></artwork>
           <t>Its fields are:</t>
@@ -251,9 +218,9 @@ Integer {
           <t>The Float data type (type=0x4) have a payload in the format:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Float {
-  Type (5) = 4,
+  Type (4) = 4,
   Sign (1),
-  Integer (2..),
+  Integer (3..),
   Fractional (8..)
 }
 ]]></artwork>
@@ -269,57 +236,45 @@ Float {
           <t>The String data type (type=0x5) has a payload in the format:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 String {
-  Type (5) = 5,
-  Length (3..),
+  Type (4) = 5,
+  Length (4..),
   Payload (..)
 }
 ]]></artwork>
-          <t>Its fields are:</t>
-          <ul spacing="normal">
-            <li>Length: The number of octets used to represent the string, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 3-bit prefix.</li>
-            <li>Payload: Length octets, ASCII-encoded.</li>
-          </ul>
+          <t>Its payload is Length octets long and ASCII-encoded.</t>
         </section>
         <section anchor="token" numbered="true" toc="default">
           <name>Tokens</name>
           <t>The Token data type (type=0x6) has a payload in the format:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Token {
-  Type (5) = 6,
-  Length (3..),
+  Type (4) = 6,
+  Length (4..),
   Payload (..)
 }
 ]]></artwork>
-          <t>Its fields are:</t>
-          <ul spacing="normal">
-            <li>Length: The number of octets used to represent the token, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 3-bit prefix.</li>
-            <li>Payload: Length octets, ASCII-encoded.</li>
-          </ul>
+          <t>Its payload is Length octets long and ASCII-encoded.</t>
         </section>
         <section anchor="byte-sequences" numbered="true" toc="default">
           <name>Byte Sequences</name>
           <t>The Byte Sequence data type (type=0x7) has a payload in the format:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Byte Sequence {
-  Type (5) = 7,
-  Length (3..),
+  Type (4) = 7,
+  Length (4..),
   Payload (..)
 }
 ]]></artwork>
-          <t>Its fields are:</t>
-          <ul spacing="normal">
-            <li>Length: The number of octets used to represent the byte sequence, encoded as per <xref section="5.1" sectionFormat="of" target="RFC7541" format="default"/>, with a 3-bit prefix.</li>
-            <li>Payload: Length octets.</li>
-          </ul>
+          <t>The payload is the raw octets of the byte sequence.</t>
         </section>
         <section anchor="booleans" numbered="true" toc="default">
           <name>Booleans</name>
           <t>The Boolean data type (type=0x8) has a payload of two bits:</t>
           <artwork name="" type="" align="left" alt=""><![CDATA[
 Boolean {
-  Type (5) = 8,
+  Type (4) = 8,
   Payload (1),
-  Padding (2) = 0
+  Padding (3) = 0
 }
 ]]></artwork>
           <t>If Payload is 0, the value is False; if Payload is 1, the value is True.</t>
@@ -334,7 +289,7 @@ Boolean {
         <name>The SETTINGS_BINARY_STRUCTURED_FIELDS Setting</name>
         <t>Advertising support for Binary Structured Fields is accomplished using a HTTP/2 setting, SETTINGS_BINARY_STRUCTURED_FIELDS (0xTODO).</t>
         <t>Receiving SETTINGS_BINARY_STRUCTURED_FIELDS with a non-zero value from a peer indicates that:</t>
-        <ol spacing="normal" type="1"><li>The peer supports the Binary Item Types defined in <xref target="fields" format="default"/>.</li>
+        <ol spacing="normal" type="1"><li>The peer supports the Binary Data Types defined in <xref target="fields" format="default"/>.</li>
           <li>The peer will process the BINARY_STRUCTRED HEADERS flag as defined in <xref target="flag" format="default"/>.</li>
           <li>When a downstream consumer does not likewise support that encoding, the peer will transform them into HEADERS frames (if the peer is HTTP/2) or a form it will understand (e.g., the textual representation of Structured Fields data types defined in <xref target="RFC8941" format="default"/>).</li>
           <li>The peer will likewise transform all fields defined as Aliased Fields (<xref target="aliased" format="default"/>) into their non-aliased forms as necessary.</li>
@@ -356,7 +311,7 @@ Boolean {
       <t>This section identifies fields that will usually succeed in <xref target="direct" format="default"/>, and those that can be mapped into Structured Fields by using an alias field name in <xref target="aliased" format="default"/>.</t>
       <section anchor="direct" numbered="true" toc="default">
         <name>Directly Represented Fields</name>
-        <t>The following HTTP field names can have their values parsed as Structured Fields according to the algorithms in <xref target="RFC8941" format="default"/>, and thus can usually be serialised using the corresponding Binary Item Types.</t>
+        <t>The following HTTP field names can have their values parsed as Structured Fields according to the algorithms in <xref target="RFC8941" format="default"/>, and thus can usually be serialised using the corresponding Binary Data Types.</t>
         <t>When one of these fields' values cannot be represented using Structured Types in a Binary Representation, its value can instead be represented as a Binary Literal (<xref target="literal" format="default"/>).</t>
         <ul spacing="normal">
           <li>Accept - List</li>
@@ -702,177 +657,176 @@ SF-Cookie: SID=31d4d96e407aad42, lang=en-US
     </section>
   </back>
   <!-- ##markdown-source:
-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
+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
+GkcdhqXWANexEwyc0bBHV3Na/wtCkenpwlgAAA==
 
 -->
 
