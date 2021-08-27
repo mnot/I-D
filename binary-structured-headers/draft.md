@@ -162,7 +162,7 @@ The Binary Data Type in a Dictionary Member MUST NOT be a Parameters (0x2).
 
 ### Item Field Values
 
-Structured field values that are known to be an Item as per {{Section 3.3 of RFC8941}} can be conveyed in a binary representation with a top level type of 0x3. They have a payload consisting of a single Binary Data Type ({{types}}), with optional parameters ({{parameters}}).
+Structured field values that are known to be an Item as per {{Section 3.3 of RFC8941}} can be conveyed in a binary representation with a top level type of 0x3. They have a payload consisting of a single Binary Data Type ({{types}}), with optional parameters ({{parameter}}).
 
 ~~~
 Item Field Value {
@@ -174,9 +174,6 @@ Item Field Value {
 ~~~
 
 The Binary Data Type in an Item Field Value MUST NOT be an Inner List (0x1) or Parameters (0x2).
-
-
-## Parameters
 
 
 ## Binary Data Types {#types}
