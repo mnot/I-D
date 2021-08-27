@@ -100,7 +100,7 @@ Binary Representation {
 Its fields are:
 
 * Top Level Type: Three bits indicating the top-level type of the field value.
-* Length: The number of octets used to represent the payload, encoded as per {{Section 5.1 of RFC7541}}, with a 5-bit prefix.
+* Length: The number of octets used to represent the entire field value (including the header), encoded as per {{Section 5.1 of RFC7541}}, with a 5-bit prefix.
 
 The following top-level types are defined:
 
@@ -203,6 +203,8 @@ Inner List {
 }
 ~~~
 
+Length conveys the number of octets used to represent the inner list, encoded as per {{Section 5.1 of RFC7541}}, with a 4-bit prefix.
+
 A Binary Data Type in an Inner List MUST NOT be an Inner List (0x1).
 
 Parameters on the Inner List itself, if present, are serialised in a following Parameter type ({{parameter}}); they do not form part of the payload of the Inner List (and therefore are not counted in Length).
@@ -219,6 +221,8 @@ Parameters {
   Parameter (..) ...
 }
 ~~~
+
+Length conveys the number of octets used to represent the parameters, encoded as per {{Section 5.1 of RFC7541}}, with a 4-bit prefix.
 
 Each Parameter conveys a key and a value:
 
@@ -321,7 +325,7 @@ Byte Sequence {
 }
 ~~~
 
-The payload is the raw octets of the byte sequence.
+The payload is is Length octets long, containing the raw octets of the byte sequence.
 
 
 ### Booleans
