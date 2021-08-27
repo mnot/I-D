@@ -2,7 +2,7 @@
 title:
 abbrev:
 docname: draft-nottingham-SHORTNAME-00
-date: 2017
+date: {DATE}
 category: info
 
 ipr: trust200902
