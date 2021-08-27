@@ -58,11 +58,11 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-Structured Field Values for HTTP {{!RFC8941}} offers a set of data types that new fields can combine to express their semantics. This specification defines a binary serialisation of those structures in {{fields}}, and specifies its use in HTTP/2 in {{negotiate}}.
+Structured Field Values for HTTP {{!RFC8941}} offers a set of data types that new fields can use to express their semantics in a familiar textual syntax. This specification defines an alternative, binary serialisation of those structures in {{fields}}, and specifies its use in HTTP/2 in {{negotiate}}.
 
 Additionally, {{backport}} defines how to convey existing fields as Structured Fields, when supported by two peers.
 
-The primary goal of this specification are to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.
+The primary goal is to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.
 
 
 ## Notational Conventions
@@ -86,7 +86,7 @@ Binary representations of the remaining structured field types are defined in {{
 
 ## Binary Representations {#binlit}
 
-Binary Representations are a replacement for the String Literal Representation defined in {{Section 5.2. of RFC7541}}, and can be used to serialise a Structured Field Type.
+Binary Representations are a replacement for the String Literal Representation defined in {{Section 5.2 of RFC7541}}, and can be used to serialise any field, including but not limited to those defined as Structured Fields.
 
 All Binary Representations share the following header:
 
@@ -105,29 +105,37 @@ Its fields are:
 The following top-level types are defined:
 
 
+### Binary Literal Field Values {#literal}
+
+Binary Literal field values (type=0x0) carry the string value of a field; they are used to carry field values that are not structured using the data types defined in {{Section 3 of RFC8941}}. This might be because the field is not recognised as a Structured Field, or it might be because a field that is understood to be a Structured Field cannot be parsed successfully as one.
+
+A binary literal field value's payload is the raw octets of the field value. As such, they are functionally equivalent to String Literal Representations in {{Section 5.2 of RFC7541}}.
+
+~~~
+Binary Literal Field Value {
+  Top Level Type (3) = 0,
+  Length (5..),
+  Payload (..)
+}
+~~~
+
+
 ### List Field Values
 
-List values (type=0x1) have a payload consisting of a stream of Binary Item Types representing the members of the list. Members that are Items are represented as per {{types}}; members that are inner-lists are represented as per {{inner-list}}.
+Structured fields whose values are known to be a List as per {{Section 3.1 of RFC8941}} can be conveyed as a binary representation with a top level type of 0x1. They have a payload consisting of one or more Binary Data Types ({{types}}) representing the members of the list.
 
 ~~~
 List Field Value {
   Top Level Type (3) = 1,
   Length (5..),
-  Item (..) ...
+  Binary Data Type (..) ...
 }
 ~~~
-
-A List Field Value's fields are:
-
-* Length: The number of octets used to represent the entire List, encoded as per {{Section 5.1 of RFC7541}}, with a 5-bit prefix
-* Item: One or more Item(s) ({{types}})
 
 
 ### Dictionary Field Values
 
-Dictionary values (type=0x2) have a payload consisting of a stream of Dictionary Members.
-
-Each member is represented by a length, followed by that many bytes of the member-name, followed by the Binary Item Type(s) representing the member-value.
+Structured fields whose values are known to be a Dictionary as per {{Section 3.2 of RFC8941}} can be conveyed in a binary representation with a top level type of 0x2. They have a payload consisting of one or more Dictionary Members.
 
 ~~~
 Dictionary Field Value {
@@ -137,79 +145,49 @@ Dictionary Field Value {
 }
 ~~~
 
-A Dictionary Field Value's fields are:
-
-* Length: The number of octets used to represent the entire Dictionary, encoded as per {{Section 5.1 of RFC7541}}, with a 5-bit prefix
-* Dictionary Member: one or more Dictionary Member(s)
+Each Dictionary member is represented by a length, followed by that many bytes of the member-name, followed by the Binary Data Type(s) representing the member-value.
 
 ~~~
 Dictionary Member {
   Name Length (8..),
   Member Name (..),
-  Item (..),
+  Binary Data Type (..),
   [Parameters (..)]
 }
 
 ~~~
 
-A Dictionary Member's fields are:
-
-* Name Length: The number of octets used to represent the Member Name, encoded as per {{Section 5.1 of RFC7541}}, with a 8-bit prefix
-* Member Name: Name Length octets of the member-name, ASCII-encoded
-* Item: An Item ({{types}})
-* Parameters: Optional Parameters ({{parameter}})
-
-The Item in a Dictionary Member MUST NOT be a Parameters (0x2).
+The Binary Data Type in a Dictionary Member MUST NOT be a Parameters (0x2).
 
 
 ### Item Field Values
 
-Item values (type=0x3) have a payload consisting of Binary Item Types, as described in {{types}}.
+Structured field values that are known to be an Item as per {{Section 3.3 of RFC8941}} can be conveyed in a binary representation with a top level type of 0x3. They have a payload consisting of a single Binary Data Type ({{types}}), with optional parameters ({{parameters}}).
 
 ~~~
 Item Field Value {
   Top Level Type (3) = 3,
   Length (5..),
-  Item (..)
+  Binary Data Type (..),
   [Parameters (..)]
 }
 ~~~
 
-An Item Field Value's fields are:
-
-* Length: The number of octets used to represent the Item (including Parameters, if present), encoded as per {{Section 5.1 of RFC7541}}, with a 5-bit prefix
-* Item: An Item ({{types}})
-* Parameters: Optional Parameters ({{parameter}})
-
-The Item in an Item Field Value MUST NOT be an Inner List (0x1) or Parameters (0x2).
+The Binary Data Type in an Item Field Value MUST NOT be an Inner List (0x1) or Parameters (0x2).
 
 
-### Binary Literal Field Values {#literal}
-
-Binary Literal values (type=0x4) are the string value of a field; they are used to carry field values that are not Binary Structured Fields, and may not be Structured Fields at all. As such, their semantics are that of String Literal Representations in {{Section 5.2 of RFC7541}}.
-
-~~~
-Binary Literal Field Value {
-  Top Level Type (3) = 4,
-  Length (5..),
-  Payload (..)
-}
-~~~
-
-A Binary Literal Field Value's fields are:
-
-* Length: The number of octets used to represent the string literal, encoded as per {{Section 5.1 of RFC7541}}, with a 5-bit prefix
-* Payload: The raw octets of the field value
-
+## Parameters
 
 
 ## Binary Data Types {#types}
 
-Every data type starts with a 5-bit type field that identifies the format of its payload.
+Binary data types are discrete values that are composed into binary representations ({{binlit}}) to represent the structured field values.
+
+Every binary data type starts with a 4-bit type field that identifies the format of its payload.
 
 ~~~
 Binary Data Type {
-  Type (5)
+  Type (4)
 }
 ~~~
 
@@ -222,18 +200,13 @@ The Inner List data type (type=0x1) has a payload in the format:
 
 ~~~
 Inner List {
-  Type (5) = 1,
-  Length (3..),
-  Item (..) ...
+  Type (4) = 1,
+  Length (4..),
+  Binary Data Type (..) ...
 }
 ~~~
 
-Its fields are:
-
-* Length: The number of octets used to represent the members, encoded as per {{Section 5.1 of RFC7541}}, with a 3-bit prefix
-* Item(s): Length octets containing the Item(s) in the List
-
-An Item in an Inner List MUST NOT be an Inner List (0x1).
+A Binary Data Type in an Inner List MUST NOT be an Inner List (0x1).
 
 Parameters on the Inner List itself, if present, are serialised in a following Parameter type ({{parameter}}); they do not form part of the payload of the Inner List (and therefore are not counted in Length).
 
@@ -244,16 +217,11 @@ The Parameters data type (type=0x2) has a payload in the format:
 
 ~~~
 Parameters {
-  Type (5) = 2,
-  Length (3..),
+  Type (4) = 2,
+  Length (4..),
   Parameter (..) ...
 }
 ~~~
-
-Its fields are:
-
-* Length: The number of octets used to represent the payload, encoded as per {{Section 5.1 of RFC7541}}, with a 3-bit prefix
-* Parameter(s): Length octets
 
 Each Parameter conveys a key and a value:
 
@@ -273,7 +241,7 @@ A parameter's fields are:
 
 The Binary Data Type in a Parameter MUST NOT be an Inner List (0x1) or Parameters (0x2).
 
-Parameters are always associated with the Binary Data Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Binary Data Type in a container, and MUST NOT follow another Parameters.
+Parameters are always associated with the Binary Data Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Binary Data Type in a Binary Representation, and MUST NOT follow another Parameters.
 
 
 ### Integers
@@ -282,9 +250,9 @@ The Integer data type (type=0x3) has a payload in the format:
 
 ~~~
 Integer {
-  Type (5) = 3,
+  Type (4) = 3,
   Sign (1),
-  Payload (2..)
+  Payload (3..)
 }
 ~~~
 
@@ -300,9 +268,9 @@ The Float data type (type=0x4) have a payload in the format:
 
 ~~~
 Float {
-  Type (5) = 4,
+  Type (4) = 4,
   Sign (1),
-  Integer (2..),
+  Integer (3..),
   Fractional (8..)
 }
 ~~~
@@ -320,16 +288,13 @@ The String data type (type=0x5) has a payload in the format:
 
 ~~~
 String {
-  Type (5) = 5,
-  Length (3..),
+  Type (4) = 5,
+  Length (4..),
   Payload (..)
 }
 ~~~
 
-Its fields are:
-
-* Length: The number of octets used to represent the string, encoded as per {{Section 5.1 of RFC7541}}, with a 3-bit prefix.
-* Payload: Length octets, ASCII-encoded.
+Its payload is Length octets long and ASCII-encoded.
 
 
 ### Tokens {#token}
@@ -338,16 +303,13 @@ The Token data type (type=0x6) has a payload in the format:
 
 ~~~
 Token {
-  Type (5) = 6,
-  Length (3..),
+  Type (4) = 6,
+  Length (4..),
   Payload (..)
 }
 ~~~
 
-Its fields are:
-
-* Length: The number of octets used to represent the token, encoded as per {{Section 5.1 of RFC7541}}, with a 3-bit prefix.
-* Payload: Length octets, ASCII-encoded.
+Its payload is Length octets long and ASCII-encoded.
 
 
 ### Byte Sequences
@@ -356,16 +318,13 @@ The Byte Sequence data type (type=0x7) has a payload in the format:
 
 ~~~
 Byte Sequence {
-  Type (5) = 7,
-  Length (3..),
+  Type (4) = 7,
+  Length (4..),
   Payload (..)
 }
 ~~~
 
-Its fields are:
-
-* Length: The number of octets used to represent the byte sequence, encoded as per {{Section 5.1 of RFC7541}}, with a 3-bit prefix.
-* Payload: Length octets.
+The payload is the raw octets of the byte sequence.
 
 
 ### Booleans
@@ -374,9 +333,9 @@ The Boolean data type (type=0x8) has a payload of two bits:
 
 ~~~
 Boolean {
-  Type (5) = 8,
+  Type (4) = 8,
   Payload (1),
-  Padding (2) = 0
+  Padding (3) = 0
 }
 ~~~
 
@@ -398,7 +357,7 @@ Advertising support for Binary Structured Fields is accomplished using a HTTP/2 
 
 Receiving SETTINGS_BINARY_STRUCTURED_FIELDS with a non-zero value from a peer indicates that:
 
-1. The peer supports the Binary Item Types defined in {{fields}}.
+1. The peer supports the Binary Data Types defined in {{fields}}.
 2. The peer will process the BINARY_STRUCTRED HEADERS flag as defined in {{flag}}.
 3. When a downstream consumer does not likewise support that encoding, the peer will transform them into HEADERS frames (if the peer is HTTP/2) or a form it will understand (e.g., the textual representation of Structured Fields data types defined in {{!RFC8941}}).
 4. The peer will likewise transform all fields defined as Aliased Fields ({{aliased}}) into their non-aliased forms as necessary.
@@ -428,7 +387,7 @@ This section identifies fields that will usually succeed in {{direct}}, and thos
 
 ## Directly Represented Fields {#direct}
 
-The following HTTP field names can have their values parsed as Structured Fields according to the algorithms in {{!RFC8941}}, and thus can usually be serialised using the corresponding Binary Item Types.
+The following HTTP field names can have their values parsed as Structured Fields according to the algorithms in {{!RFC8941}}, and thus can usually be serialised using the corresponding Binary Data Types.
 
 When one of these fields' values cannot be represented using Structured Types in a Binary Representation, its value can instead be represented as a Binary Literal ({{literal}}).
 
