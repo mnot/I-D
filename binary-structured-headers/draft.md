@@ -18,7 +18,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization: Fastly
+    organization:
     postal:
       - Prahran
       - VIC
@@ -37,8 +37,6 @@ informative:
 --- abstract
 
 This specification defines a binary serialisation of Structured Field Values for HTTP, along with a negotiation mechanism for its use in HTTP/2.
-
-It also defines how to use Structured Fields for many existing fields -- thereby "backporting" them -- when supported by both peers.
 
 
 --- note_Note_to_Readers
@@ -59,8 +57,6 @@ See also the draft's current status in the IETF datatracker, at
 # Introduction
 
 Structured Field Values for HTTP {{!RFC8941}} offers a set of data types that new fields can use to express their semantics in a familiar textual syntax. This specification defines an alternative, binary serialisation of those structures in {{fields}}, and specifies its use in HTTP/2 in {{negotiate}}.
-
-Additionally, {{backport}} defines how to convey existing fields as Structured Fields, when supported by two peers.
 
 The primary goal is to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.
 
@@ -347,7 +343,7 @@ If Payload is 0, the value is False; if Payload is 1, the value is True.
 
 # Using Binary Structured Fields in HTTP/2 {#negotiate}
 
-When both peers on a connection support this specification, they can take advantage of that knowledge to serialise fields that they know to be Structured Fields (or compatible with them; see {{backport}}) as binary data, rather than strings.
+When both peers on a connection support this specification, they can take advantage of that knowledge to serialise fields that they know to be Structured Fields as binary data, rather than strings.
 
 Peers advertise and discover this support using a HTTP/2 setting defined in {{setting}}, and convey Binary Structured Fields in streams whose HEADERS frame uses the flag defined in {{flag}}.
 
@@ -379,171 +375,6 @@ Binary Representations are stored in the HPACK {{RFC7541}} dynamic table, and th
 Note that HEADERS frames with and without the BINARY_STRUCTURED flag MAY be mixed on the same connection, depending on the requirements of the sender.
 
 
-# Using Binary Structured Fields with Existing Fields {#backport}
-
-Any field can potentially be parsed as a Structured Field according to the algorithms in {{!RFC8941}} and serialised as a Binary Structured Field. However, many cannot, so optimistically parsing them can be expensive.
-
-This section identifies fields that will usually succeed in {{direct}}, and those that can be mapped into Structured Fields by using an alias field name in {{aliased}}.
-
-
-## Directly Represented Fields {#direct}
-
-The following HTTP field names can have their values parsed as Structured Fields according to the algorithms in {{!RFC8941}}, and thus can usually be serialised using the corresponding Binary Data Types.
-
-When one of these fields' values cannot be represented using Structured Types in a Binary Representation, its value can instead be represented as a Binary Literal ({{literal}}).
-
-* Accept - List
-* Accept-Encoding - List
-* Accept-Language - List
-* Accept-Patch - List
-* Accept-Ranges - List
-* Access-Control-Allow-Credentials - Item
-* Access-Control-Allow-Headers - List
-* Access-Control-Allow-Methods - List
-* Access-Control-Allow-Origin - Item
-* Access-Control-Max-Age - Item
-* Access-Control-Request-Headers - List
-* Access-Control-Request-Method - Item
-* Age - Item
-* Allow - List
-* ALPN - List
-* Alt-Svc - Dictionary
-* Alt-Used - Item
-* Cache-Control - Dictionary
-* Connection - List
-* Content-Encoding - List
-* Content-Language - List
-* Content-Length - Item
-* Content-Type - Item
-* Expect - Item
-* Expect-CT - Dictionary
-* Forwarded - Dictionary
-* Host - Item
-* Keep-Alive - Dictionary
-* Origin - Item
-* Pragma - Dictionary
-* Prefer - Dictionary
-* Preference-Applied - Dictionary
-* Retry-After - Item  (see caveat below)
-* Surrogate-Control - Dictionary
-* TE - List
-* Trailer - List
-* Transfer-Encoding - List
-* Vary - List
-* X-Content-Type-Options - Item
-* X-XSS-Protection - List
-
-Note that only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or serialised as a Binary Literal ({{literal}}).
-
-
-## Aliased Fields {#aliased}
-
-The following HTTP field names can have their values represented in Structured Fields by mapping them into its data types and then serialising the resulting Structured Field using an alternative field name.
-
-For example, the Date HTTP header field carries a http-date, which is a string representing a date:
-
-~~~
-Date: Sun, 06 Nov 1994 08:49:37 GMT
-~~~
-
-Its value is more efficiently represented as an integer number of delta seconds from the Unix epoch (00:00:00 UTC on 1 January 1970, minus leap seconds). Thus, the example above would be represented in (non-binary) Structured Fields as:
-
-~~~
-SF-Date: 784072177
-~~~
-
-As with directly represented fields, if the intended value of an aliased field cannot be represented using Structured Types successfully, its value can instead be represented as a Binary Literal ({{literal}}).
-
-Note that senders MUST know that the next-hop recipient understands these fields (typically, using the negotiation mechanism defined in {{negotiate}}) before using them. Likewise, recipients MUST transform them back to their unaliased form before forwarding the message to a peer or other consuming components that do not have this capability.
-
-Each field name listed below indicates a replacement field name and a way to map its value to Structured Fields.
-
-* ISSUE: using separate names assures that the different syntax doesn't "leak" into normal fields, but it isn't strictly necessary if implementations always convert back to the correct form when giving it to peers or consuming software that doesn't understand this. <https://github.com/mnot/I-D/issues/307>
-
-### URLs
-
-The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by considering their payload a string.
-
-* Content-Location - SF-Content-Location
-* Location - SF-Location
-* Referer - SF-Referer
-
-For example, a (non-binary) Location:
-
-~~~
-SF-Location: "https://example.com/foo"
-~~~
-
-TOOD: list of strings, one for each path segment, to allow better compression in the future?
-
-### Dates
-
-The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by parsing their payload according to {{!RFC7231}}, Section 7.1.1.1, and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
-
-* Date - SF-Date
-* Expires - SF-Expires
-* If-Modified-Since - SF-IMS
-* If-Unmodified-Since - SF-IUS
-* Last-Modified - SF-LM
-
-For example, a (non-binary) Expires:
-
-~~~
-SF-Expires: 1571965240
-~~~
-
-### ETags
-
-The following field names (paired with their replacement field names) have values that can be represented in Binary Structured Fields by representing the entity-tag as a string, and the weakness flag as a boolean "w" parameter on it, where true indicates that the entity-tag is weak; if 0 or unset, the entity-tag is strong.
-
-* ETag - SF-ETag
-
-For example, a (non-Binary) ETag:
-
-~~~
-SF-ETag: "abcdef"; w=?1
-~~~
-
-If-None-Match is a list of the structure described above.
-
-* If-None-Match - SF-INM
-
-For example, a (non-binary) If-None-Match:
-
-~~~
-SF-INM: "abcdef"; w=?1, "ghijkl"
-~~~
-
-
-### Links
-
-The field-value of the Link header field {{!RFC8288}} can be represented in Binary Structured Fields by representing the URI-Reference as a string, and link-param as parameters.
-
-* Link: SF-Link
-
-For example, a (non-binary) Link:
-
-~~~
-SF-Link: "/terms"; rel="copyright"; anchor="#foo"
-~~~
-
-### Cookies
-
-The field-value of the Cookie and Set-Cookie fields {{!RFC6265}} can be represented in Binary Structured Fields as a List with parameters and a Dictionary, respectively. The serialisation is almost identical, except that the Expires parameter is always a string (as it can contain a comma), multiple cookie-strings can appear in Set-Cookie, and cookie-pairs are delimited in Cookie by a comma, rather than a semicolon.
-
-Set-Cookie: SF-Set-Cookie
-Cookie: SF-Cookie
-
-~~~
-SF-Set-Cookie: lang=en-US, Expires="Wed, 09 Jun 2021 10:18:14 GMT"
-SF-Cookie: SID=31d4d96e407aad42, lang=en-US
-~~~
-
-* ISSUE: explicitly convert Expires to an integer? <https://github.com/mnot/I-D/issues/308>
-* ISSUE: dictionary keys cannot contain UC alpha. <https://github.com/mnot/I-D/issues/312>
-* ISSUE: explicitly allow non-string content. <https://github.com/mnot/I-D/issues/313>
-
-
 # IANA Considerations
 
 * ISSUE: todo
@@ -556,75 +387,4 @@ One mitigation to this risk is the strictness of parsing for both non-binary and
 
 
 --- back
-
-
-# Data Supporting Directly Represented Field Mappings
-
-*RFC EDITOR: please remove this section before publication*
-
-To help guide decisions about Directly Represented Fields, the HTTP response headers captured by the HTTP Archive <https://httparchive.org> in February 2020, representing more than 350,000,000 HTTP exchanges, were parsed as Structured Fields using the types listed in {{direct}}, with the indicated number of successful header instances, failures, and the resulting failure rate:
-
-- accept: 9,198 / 10 = 0.109%
-- accept-encoding: 34,157 / 74 = 0.216%
-- accept-language: 381,034 / 512 = 0.134%
-- accept-patch: 5 / 0 = 0.000%
-- accept-ranges: 197,746,643 / 3,960 = 0.002%
-- access-control-allow-credentials: 16,684,916 / 7,438 = 0.045%
-- access-control-allow-headers: 12,976,838 / 15,074 = 0.116%
-- access-control-allow-methods: 15,466,748 / 28,203 = 0.182%
-- access-control-allow-origin: 105,307,402 / 271,359 = 0.257%
-- access-control-max-age: 5,284,663 / 7,754 = 0.147%
-- access-control-request-headers: 39,328 / 624 = 1.562%
-- access-control-request-method: 146,259 / 13,821 = 8.634%
-- age: 71,281,684 / 172,398 = 0.241%
-- allow: 351,704 / 1,886 = 0.533%
-- alt-svc: 19,775,126 / 15,680,528 = 44.226%
-- cache-control: 264,805,256 / 782,896 = 0.295%
-- connection: 105,876,072 / 2,915 = 0.003%
-- content-encoding: 139,799,523 / 379 = 0.000%
-- content-language: 2,367,162 / 728 = 0.031%
-- content-length: 296,624,718 / 787,843 = 0.265%
-- content-type: 341,918,716 / 795,676 = 0.232%
-- expect: 0 / 47 = 100.000%
-- expect-ct: 26,569,605 / 29,114 = 0.109%
-- forwarded: 119 / 35 = 22.727%
-- host: 25,333 / 1,441 = 5.382%
-- keep-alive: 43,061,546 / 796 = 0.002%
-- origin: 24,335 / 1,539 = 5.948%
-- pragma: 46,820,588 / 81,700 = 0.174%
-- preference-applied: 57 / 0 = 0.000%
-- retry-after: 605,844 / 6,195 = 1.012%
-- strict-transport-security: 26,825,957 / 35,258,808 = 56.791%
-- surrogate-control: 121,118 / 861 = 0.706%
-- te: 1 / 0 = 0.000%
-- trailer: 282 / 0 = 0.000%
-- transfer-encoding: 13,952,661 / 0 = 0.000%
-- vary: 150,787,199 / 41,313 = 0.027%
-- x-content-type-options: 99,968,016 / 208,885 = 0.209%
-- x-xss-protection: 79,871,948 / 362,979 = 0.452%
-
-This data set focuses on response headers, although some request headers are present (because, the Web).
-
-`alt-svc` has a high failure rate because some currently-used ALPN tokens (e.g., `h3-Q43`) do not conform to key's syntax. Since the final version of HTTP/3 will use the `h3` token, this shouldn't be a long-term issue, although future tokens may again violate this assumption.
-
-`forwarded` has a high failure rate because many senders use the unquoted form for IP addresses, which makes integer parsing fail; e.g., `for=192.168.1.1`.
-
-`strict-transport-security` has a high failure rate because the `includeSubDomains` flag does not conform to the key syntax.
-
-The top ten header fields in that data set that were not parsed as Directly Represented Fields are:
-
-- date: 354,652,447
-- server: 311,275,961
-- last-modified: 263,832,615
-- expires: 199,967,042
-- status: 192,423,509
-- etag: 172,058,269
-- timing-allow-origin: 64,407,586
-- x-cache: 41,740,804
-- p3p: 39,490,058
-- x-frame-options: 34,037,985
-
-
-
-
 
