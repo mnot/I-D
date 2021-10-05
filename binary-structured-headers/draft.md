@@ -29,7 +29,14 @@ author:
 normative:
   RFC2119:
   RFC7541:
-  I-D.ietf-quic-transport:
+  STRUCTURED-FIELDS: RFC8941
+  QUIC: RFC9001
+  RETROFIT:
+    target: "https://mnot.github.io/I-D/http-structure-retrofit/"
+    title: "Retrofit Structured Fields for HTTP"
+    date: 2021-10
+    author:
+     - name: Mark Nottingham
 
 informative:
 
@@ -56,7 +63,7 @@ See also the draft's current status in the IETF datatracker, at
 
 # Introduction
 
-Structured Field Values for HTTP {{!RFC8941}} offers a set of data types that new fields can use to express their semantics in a familiar textual syntax. This specification defines an alternative, binary serialisation of those structures in {{fields}}, and specifies its use in HTTP/2 in {{negotiate}}.
+Structured Field Values for HTTP {{!STRUCTURED-FIELDS}} offers a set of data types that new fields can use to express their semantics in a familiar textual syntax. This specification defines an alternative, binary serialisation of those structures in {{fields}}, and specifies its use in HTTP/2 in {{negotiate}}.
 
 The primary goal is to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.
 
@@ -68,12 +75,12 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
 shown here.
 
-This specification describes formats using the convention described in {{Section 1.3 of I-D.ietf-quic-transport}}.
+This specification describes formats using the convention described in {{Section 1.3 of QUIC}}.
 
 
 # Binary Structured Fields {#fields}
 
-This section defines a binary serialisation for the Structured Field Types defined in {{!RFC8941}}.
+This section defines a binary serialisation for the Structured Field Types defined in {{!STRUCTURED-FIELDS}}.
 
 The types permissable as the top-level of Structured Field values -- Dictionary, List, and Item -- are defined in terms of a Binary Representation ({{binlit}}), which is a replacement for the String Literal Representation in {{RFC7541}}.
 
@@ -103,7 +110,7 @@ The following top-level types are defined:
 
 ### Binary Literal Field Values {#literal}
 
-Binary Literal field values (type=0x0) carry the string value of a field; they are used to carry field values that are not structured using the data types defined in {{Section 3 of RFC8941}}. This might be because the field is not recognised as a Structured Field, or it might be because a field that is understood to be a Structured Field cannot be parsed successfully as one.
+Binary Literal field values (type=0x0) carry the string value of a field; they are used to carry field values that are not structured using the data types defined in {{Section 3 of STRUCTURED-FIELDS}}. This might be because the field is not recognised as a Structured Field, or it might be because a field that is understood to be a Structured Field cannot be parsed successfully as one.
 
 A binary literal field value's payload is the raw octets of the field value. As such, they are functionally equivalent to String Literal Representations in {{Section 5.2 of RFC7541}}.
 
@@ -118,7 +125,7 @@ Binary Literal Field Value {
 
 ### List Field Values
 
-Structured fields whose values are known to be a List as per {{Section 3.1 of RFC8941}} can be conveyed as a binary representation with a top level type of 0x1. They have a payload consisting of one or more Binary Data Types ({{types}}) representing the members of the list.
+Structured fields whose values are known to be a List as per {{Section 3.1 of STRUCTURED-FIELDS}} can be conveyed as a binary representation with a top level type of 0x1. They have a payload consisting of one or more Binary Data Types ({{types}}) representing the members of the list.
 
 ~~~
 List Field Value {
@@ -131,7 +138,7 @@ List Field Value {
 
 ### Dictionary Field Values
 
-Structured fields whose values are known to be a Dictionary as per {{Section 3.2 of RFC8941}} can be conveyed in a binary representation with a top level type of 0x2. They have a payload consisting of one or more Dictionary Members.
+Structured fields whose values are known to be a Dictionary as per {{Section 3.2 of STRUCTURED-FIELDS}} can be conveyed in a binary representation with a top level type of 0x2. They have a payload consisting of one or more Dictionary Members.
 
 ~~~
 Dictionary Field Value {
@@ -158,7 +165,7 @@ The Binary Data Type in a Dictionary Member MUST NOT be a Parameters (0x2).
 
 ### Item Field Values
 
-Structured field values that are known to be an Item as per {{Section 3.3 of RFC8941}} can be conveyed in a binary representation with a top level type of 0x3. They have a payload consisting of a single Binary Data Type ({{types}}), with optional parameters ({{parameter}}).
+Structured field values that are known to be an Item as per {{Section 3.3 of STRUCTURED-FIELDS}} can be conveyed in a binary representation with a top level type of 0x3. They have a payload consisting of a single Binary Data Type ({{types}}), with optional parameters ({{parameter}}).
 
 ~~~
 Item Field Value {
@@ -354,10 +361,11 @@ Advertising support for Binary Structured Fields is accomplished using a HTTP/2 
 
 Receiving SETTINGS_BINARY_STRUCTURED_FIELDS with a non-zero value from a peer indicates that:
 
-1. The peer supports the Binary Data Types defined in {{fields}}.
+1. The peer supports all of the Binary Data Types defined in {{fields}}.
 2. The peer will process the BINARY_STRUCTRED HEADERS flag as defined in {{flag}}.
-3. When a downstream consumer does not likewise support that encoding, the peer will transform them into HEADERS frames (if the peer is HTTP/2) or a form it will understand (e.g., the textual representation of Structured Fields data types defined in {{!RFC8941}}).
-4. The peer will likewise transform all fields defined as Aliased Fields ({{aliased}}) into their non-aliased forms as necessary.
+3. When passing the message to a downstream consumer (whether on the network or not), the peer will:
+   1. Transform all fields defined as Mapped Fields in Section 1.3 of {{RETROFIT}} into their unmapped forms, removing the mapped fields.
+   2. Transform the message fields into the appropriate form for that peer (e.g., the textual representation of Structured Fields data types defined in {{!STRUCTURED-FIELDS}}).
 
 The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0, whereas a value of 1 indicates that this specification is supported with no further extensions. Future specifications might use values greater than one to indicate support for extensions.
 
@@ -368,9 +376,9 @@ When a peer has indicated that it supports this specification as per {{setting}}
 
 This flag indicates that the HEADERS frame containing it and subsequent CONTINUATION frames on the same stream use the Binary Representation defined in {{binlit}} instead of the String Literal Representation defined in {{Section 5.2 of RFC7541}} for all field values. Field names are still serialised as String Literal Representations.
 
-In such frames, field values that are known to be Structured Fields and those that can be converted to Structured Fields (as per {{backport}}) MAY be sent using the applicable Binary Representation. However, any field value (including those defined as Structured Fields) can also be serialised as a Binary Literal ({{literal}}) to accommodate fields that are not defined as Structured Fields, not valid Structured Fields, or that the sending implementation does not wish to send as a Structured Field for some other reason.
+In such frames, field values that are known to be Structured Fields and those that can be converted to Structured Fields (as per {{RETROFIT}}) MAY be sent using the applicable Binary Representation. However, any field value (including those defined as Structured Fields) can also be serialised as a Binary Literal ({{literal}}) to accommodate fields that are not defined as Structured Fields, not valid Structured Fields, or that the sending implementation does not wish to send as a Structured Field for some other reason.
 
-Binary Representations are stored in the HPACK {{RFC7541}} dynamic table, and their lengths are used for the purposes of maintaining dynamic table size ({{RFC7541, Section 4}}).
+Binary Representations are stored in the HPACK {{RFC7541}} dynamic table, and their lengths are used for the purposes of maintaining dynamic table size (see {{RFC7541, Section 4}}).
 
 Note that HEADERS frames with and without the BINARY_STRUCTURED flag MAY be mixed on the same connection, depending on the requirements of the sender.
 
