@@ -81,7 +81,7 @@ described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear i
 shown here.
 
 
-## Compatible Fields {#compatible}
+# Compatible Fields {#compatible}
 
 HTTP fields with the following names can usually have their values handled as Structured Fields according to the listed parsing and serialisation algorithms in {{STRUCTURED-FIELDS}}, subject to the listed caveats.
 
@@ -154,7 +154,7 @@ Retry-After:
 : Only the delta-seconds form of Retry-After is supported; a Retry-After value containing a http-date will need to be either converted into delta-seconds or represented as a raw value.
 
 
-## Mapped Fields {#mapped}
+# Mapped Fields {#mapped}
 
 HTTP fields with the following names can have their values represented in Structured Fields by mapping them into its data types and then serialising the result using an alternative field name.
 
@@ -175,7 +175,7 @@ As in {{compatible}}, these fields are unable to represent values that are not S
 Each field name listed below indicates a replacement field name and a means of mapping its original value into a Structured Field.
 
 
-### URLs
+## URLs
 
 The following field names (paired with their replacement field names) have values that can be represented as Structured Fields by considering the original field's value as a string.
 
@@ -190,7 +190,7 @@ SF-Location: "https://example.com/foo"
 ~~~
 
 
-### Dates
+## Dates
 
 The following field names (paired with their replacement field names) have values that can be represented as Structured Fields by parsing their payload according to {{!RFC7231}}, Section 7.1.1.1, and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
 
@@ -206,7 +206,7 @@ For example, an Expires field could be represented as:
 SF-Expires: 1571965240
 ~~~
 
-### ETags
+## ETags
 
 The following field names (paired with their replacement field names) have values that can be represented as Structured Fields by representing the entity-tag as a string, and the weakness flag as a boolean "w" parameter on it, where true indicates that the entity-tag is weak; if 0 or unset, the entity-tag is strong.
 
@@ -229,7 +229,7 @@ SF-INM: "abcdef"; w=?1, "ghijkl"
 ~~~
 
 
-### Links
+## Links
 
 The field-value of the Link header field {{!RFC8288}} can be represented as a Structured Field by representing the URI-Reference as a string, and link-param as parameters.
 
@@ -242,7 +242,7 @@ SF-Link: "/terms"; rel="copyright"; anchor="#foo"
 ~~~
 
 
-### Cookies
+## Cookies
 
 The field-values of the Cookie and Set-Cookie fields {{!RFC6265}} can be represented in Structured Fields as a List with parameters and a Dictionary, respectively.
 
@@ -263,7 +263,7 @@ SF-Cookie: SID=31d4d96e407aad42, lang=en-US
 
 
 
-## IANA Considerations
+# IANA Considerations
 
 IANA is asked to register the following entries in the HTTP Field Name Registry with a status of "permanent" and referring to this document:
 
