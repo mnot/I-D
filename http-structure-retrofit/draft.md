@@ -83,7 +83,7 @@ shown here.
 
 ## Compatible Fields {#compatible}
 
-HTTP fields with the following names can usually have their values handled as Structured Fields according to the listed parsing and serialisation algorithms in {{!RFC8941}}, subject to the listed caveats.
+HTTP fields with the following names can usually have their values handled as Structured Fields according to the listed parsing and serialisation algorithms in {{STRUCTURED-FIELDS}}, subject to the listed caveats.
 
 The listed types are chosen for compatibility with the defined syntax of the field as well as with actual Internet traffic (see {{numbers}}). However, not all instances of these fields will successfully parse. This might be because the field value is clearly invalid, or it might be because it is valid but not parseable as a Structured Field.
 
