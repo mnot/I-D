@@ -31,12 +31,7 @@ normative:
   RFC7541:
   STRUCTURED-FIELDS: RFC8941
   QUIC: RFC9001
-  RETROFIT:
-    target: "https://mnot.github.io/I-D/http-structure-retrofit/"
-    title: "Retrofit Structured Fields for HTTP"
-    date: 2021-10
-    author:
-     - name: Mark Nottingham
+  RETROFIT: I-D.nottingham-http-structure-retrofit
 
 informative:
 
