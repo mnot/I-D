@@ -53,7 +53,7 @@ Often, these applications of HTTP are defined by documenting static URLs that cl
 
 For some applications, this approach brings issues, especially when the interface changes, either due to evolution, extension or drift between implementations. Furthermore, implementing more than one instance of interface can bring further issues, as different environments have different requirements.
 
-The Web itself offers one way to address these issues, using links {{!RFC3986}} to navigate between states. A link-driven application discovers relevant resources at run time, using a shared vocabulary of link relations {{!RFC8288}} and internet media types {{!RFC6838}} to support a "follow your nose" style of interaction -- just as a Web browser does to navigate the Web.
+The Web itself offers one way to address these issues, using links {{!RFC3986}} to navigate between resources. A link-driven application discovers relevant resources at run time, using a shared vocabulary of link relations {{!RFC8288}} and internet media types {{!RFC6838}} to support a "follow your nose" style of interaction -- just as a Web browser does to navigate the Web.
 
 A client can then decide which resources to interact with "on the fly" based upon its capabilities (as described by link relations), and the server can safely add new resources and formats without disturbing clients that are not yet aware of them.
 
