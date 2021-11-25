@@ -16,6 +16,8 @@ venue:
   home: "https://mnot.github.io/I-D/"
   repo: "https://github.com/mnot/I-D/labels/where-does-that-come-from"
 
+github-issue-label: where-does-that-come-from
+
 author:
  -
     ins: M. Nottingham

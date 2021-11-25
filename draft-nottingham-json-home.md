@@ -16,6 +16,8 @@ venue:
   home: "https://mnot.github.io/I-D/"
   repo: "https://github.com/mnot/I-D/labels/json-home"
 
+github-issue-label: json-home
+
 author:
  -
     ins: M. Nottingham

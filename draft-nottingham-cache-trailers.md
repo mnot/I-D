@@ -16,6 +16,8 @@ venue:
   home: "https://mnot.github.io/I-D/"
   repo: "https://github.com/mnot/I-D/labels/cache-trailers"
 
+github-issue-label: cache-trailers
+
 author:
  -
     ins: M. Nottingham

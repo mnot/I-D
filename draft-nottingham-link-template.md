@@ -19,6 +19,8 @@ venue:
   home: "https://mnot.github.io/I-D/"
   repo: "https://github.com/mnot/I-D/labels/link-template"
 
+github-issue-label: link-template
+
 author:
  -
     ins: M. Nottingham

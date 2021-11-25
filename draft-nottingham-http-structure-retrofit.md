@@ -16,6 +16,8 @@ venue:
   home: "https://mnot.github.io/I-D/"
   repo: "https://github.com/mnot/I-D/labels/http-structure-retrofit"
 
+github-issue-label: http-structure-retrofit
+
 author:
  -
     ins: M. Nottingham

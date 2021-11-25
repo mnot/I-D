@@ -16,6 +16,8 @@ venue:
   home: "https://mnot.github.io/I-D/"
   repo: "https://github.com/mnot/I-D/labels/binary-structured-headers"
 
+github-issue-label: binary-structured-headers
+
 author:
  -
     ins: M. Nottingham
