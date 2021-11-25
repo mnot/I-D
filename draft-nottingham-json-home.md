@@ -2,7 +2,7 @@
 title: Home Documents for HTTP APIs
 abbrev:
 docname: draft-nottingham-json-home-latest
-date: 2020
+date: {DATE}
 category: info
 
 ipr: trust200902

@@ -2,7 +2,7 @@
 title: Clarifying IETF Document Status
 abbrev:
 docname: draft-nottingham-where-does-that-come-from-latest
-date: 2021
+date: {DATE}
 category: info
 
 ipr: trust200902
