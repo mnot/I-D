@@ -194,7 +194,7 @@ Resource Objects MUST have exactly one of the "href" or "href-vars" properties.
 
 In both forms, the links that "href" and "hrefTemplate" refer to are URI-references {{!RFC3986}} whose base URI is that of the API Home Document itself.
 
-Resource Objects MAY also have a "hints" property, whose value is an object that uses named Resource Hints (see {{resource_hints}}) as its properties.
+Resource Objects MAY also have a "hints" property, whose value is an object that uses HTTP Link Hints (see {{!I-D.nottingham-link-hint}}) as its properties.
 
 ## Resolving Templated Links
 
@@ -224,128 +224,6 @@ For example, given the following Resource Object:
 If you understand that "https://example.org/param/widget" is an numeric identifier for a widget, you can then find the resource corresponding to widget number 12345 at "https://example.org/widgets/12345" (assuming that the Home Document is located at "https://example.org/").
 
 
-# Resource Hints {#resource_hints}
-
-Resource hints allow clients to find relevant information about interacting with a resource beforehand, as a means of optimizing communications, as well as advertising available behaviors (e.g., to aid in laying out a user interface for consuming the API).
-
-Hints are just that -- they are not a "contract", and are to only be taken as advisory. The runtime behavior of the resource always overrides hinted information.
-
-For example, a resource might hint that the PUT method is allowed on all "widget" resources. This means that generally, the user has the ability to PUT to a particular resource, but a specific resource might reject a PUT based upon access control or other considerations. More fine-grained information might be gathered by interacting with the resource (e.g., via a GET), or by another resource "containing" it (such as a "widgets" collection) or describing it (e.g., one linked to it with a "describedBy" link relation).
-
-This specification defines a set of common hints, based upon information that's discoverable by directly interacting with resources. See {{resource_hint_registry}} for information on defining new hints.
-
-## allow
-
-* Resource Hint Name: allow
-* Description: Hints the HTTP methods that the current client will be able to use to interact with the resource; equivalent to the Allow HTTP response header.
-* Specification: \[this document]
-
-Content MUST be an array of strings, containing HTTP methods. As per HTTP, when GET is supported, a client MAY assume that HEAD is supported.
-
-## formats
-
-* Resource Hint Name: formats
-* Description: Hints the representation types that the resource makes available, using the GET method.
-* Specification: \[this document]
-
-Content MUST be an object, whose keys are media types, and values are objects, currently empty.
-
-## acceptPatch
-
-* Resource Hint Name: accept-Patch
-* Description: Hints the PATCH {{!RFC5789}} request formats accepted by the resource for this client; equivalent to the Accept-Patch HTTP response header.
-* Specification: \[this document]
-
-Content MUST be an array of strings, containing media types.
-
-When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
-
-## acceptPost
-
-* Resource Hint Name: acceptPost
-* Description: Hints the POST request formats accepted by the resource for this client; equivalent to the Accept-Post HTTP response header.
-* Specification: \[this document]
-
-Content MUST be an array of strings, containing media types.
-
-When this hint is present, "POST" SHOULD be listed in the "allow" hint.
-
-## acceptPut
-
-* Resource Hint Name: acceptPut
-* Description: Hints the PUT request formats accepted by the resource for this client.
-* Specification: \[this document]
-
-Content MUST be an array of strings, containing media types.
-
-When this hint is present, "PUT" SHOULD be listed in the "allow" hint.
-
-## acceptRanges
-
-* Resource Hint Name: acceptRanges
-* Description: Hints the range-specifiers available to the client for this resource; equivalent to the Accept-Ranges HTTP response header {{!RFC7233}}.
-* Specification: \[this document]
-
-Content MUST be an array of strings, containing HTTP range-specifiers (typically, "bytes").
-
-## acceptPrefer
-
-* Resource Hint Name: acceptPrefer
-* Description: Hints the preferences {{!RFC7240}} supported by the resource. Note that, as per that specifications, a preference can be ignored by the server.
-* Specification: \[this document]
-
-Content MUST be an array of strings, containing preferences.
-
-## docs
-
-* Resource Hint Name: docs
-* Description: Hints the location for human-readable documentation for the relation type of the resource.
-* Specification: \[this document]
-
-Content MUST be a string containing an absolute-URI {{!RFC3986}} referring to documentation that SHOULD be in HTML format.
-
-## preconditionRequired
-
-* Resource Hint Name: preconditionRequired
-* Description: Hints that the resource requires state-changing requests (e.g., PUT, PATCH) to include a precondition, as per {{!RFC7232}}, to avoid conflicts due to concurrent updates.
-* Specification: \[this document]
-
-Content MUST be an array of strings, with possible values "etag" and "last-modified" indicating type of precondition expected.
-
-## authSchemes
-
-* Resource Hint Name: authSchemes
-* Description: Hints that the resource requires authentication using the HTTP Authentication Framework {{!RFC7235}}.
-* Specification: \[this document]
-
-Content MUST be an array of objects, each with a "scheme" property containing a string that corresponds to a HTTP authentication scheme, and optionally a "realms" property containing an array of zero to many strings that identify protection spaces that the resource is a member of.
-
-For example, a Resource Object might contain the following hint:
-
-~~~ json
-  {
-    "authSchemes": [
-      {
-        "scheme": "Basic",
-        "realms": ["private"]
-      }
-    ]
-  }
-~~~
-
-## status
-
-* Resource Hint Name: status
-* Description: Hints the status of the resource.
-* Specification: \[this document]
-
-Content MUST be a string; possible values are:
-
-* "deprecated" - indicates that use of the resource is not recommended, but it is still available.
-
-* "gone" - indicates that the resource is no longer available; i.e., it will return a 404 (Not Found) or 410 (Gone) HTTP status code if accessed.
-
-
 # Discovering Home Documents {#discovery}
 
 Home documents are useful starting points for interacting with APIs, both for using the API itself and for discovering additional information about the API. Home documents are distinct resources with their own URIs, and it is possible that home document resources are linked to from other resources, such as from (possibly select) resources of the API itself, or from resources that provide API directory or discovery services.
@@ -365,24 +243,6 @@ The format of the linked home document is not constrained by the "home" link rel
 Clients need to exercise care when using hints. For example, a naive client might send credentials to a server that uses the auth-req hint, without checking to see if those credentials are appropriate for that server.
 
 # IANA Considerations
-
-## HTTP Resource Hint Registry {#resource_hint_registry}
-
-This specification defines the HTTP Resource Hint Registry. See {{resource_hints}} for a general description of the function of resource hints.
-
-In particular, resource hints are generic; that is, they are potentially applicable to any resource, not specific to one application of HTTP, nor to one particular format. Generally, they ought to be information that would otherwise be discoverable by interacting with the resource.
-
-Hint names MUST be composed of the lowercase letters (a-z), digits (0-9), underscores ("_") and hyphens ("-"), and MUST begin with a lowercase letter.
-
-Hint content SHOULD be described in terms of JSON {{!RFC7159}} constructs.
-
-New hints are registered using the Expert Review process described in {{?RFC5226}} to enforce the criteria above. Requests for registration of new resource hints are to use the following template:
-
-* Resource Hint Name: \[hint name]
-* Description: \[a short description of the hint's semantics]
-* Specification: \[reference to specification document]
-
-Initial registrations are enumerated in {{resource_hints}}.
 
 
 ## Media Type Registration
