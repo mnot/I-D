@@ -90,44 +90,44 @@ Its content consists of a root object with:
 
 For example:
 
-~~~
-  GET / HTTP/1.1
-  Host: example.org
-  Accept: application/json-home
+~~~ http-message
+GET / HTTP/1.1
+Host: example.org
+Accept: application/json-home
 
-  HTTP/1.1 200 OK
-  Content-Type: application/json-home
-  Cache-Control: max-age=3600
-  Connection: close
+HTTP/1.1 200 OK
+Content-Type: application/json-home
+Cache-Control: max-age=3600
+Connection: close
 
-  {
-    "api": {
-      "title": "Example API",
-      "links": {
-        "author": "mailto:api-admin@example.com",
-        "describedBy": "https://example.com/api-docs/"
-      }
+{
+  "api": {
+    "title": "Example API",
+    "links": {
+      "author": "mailto:api-admin@example.com",
+      "describedBy": "https://example.com/api-docs/"
+    }
+  },
+  "resources": {
+    "tag:me@example.com,2016:widgets": {
+      "href": "/widgets/"
     },
-    "resources": {
-      "tag:me@example.com,2016:widgets": {
-        "href": "/widgets/"
+    "tag:me@example.com,2016:widget": {
+      "hrefTemplate": "/widgets/{widget_id}",
+      "hrefVars": {
+        "widget_id": "https://example.org/param/widget"
       },
-      "tag:me@example.com,2016:widget": {
-        "hrefTemplate": "/widgets/{widget_id}",
-        "hrefVars": {
-          "widget_id": "https://example.org/param/widget"
+      "hints": {
+        "allow": ["GET", "PUT", "DELETE", "PATCH"],
+        "formats": {
+          "application/json": {}
         },
-        "hints": {
-          "allow": ["GET", "PUT", "DELETE", "PATCH"],
-          "formats": {
-            "application/json": {}
-          },
-          "acceptPatch": ["application/json-patch+json"],
-          "acceptRanges": ["bytes"]
-        }
+        "acceptPatch": ["application/json-patch+json"],
+        "acceptRanges": ["bytes"]
       }
     }
   }
+}
 ~~~
 
 Here, we have a home document for the API "Example API", whose author can be contacted at the e-mail address "api-admin@example.com", and whose documentation is at "https://example.com/api-docs/".
@@ -140,7 +140,7 @@ It gives no such hints about the "widgets" resource. This does not mean that it 
 
 Effectively, this names a set of behaviors, as described by a resource object, with a link relation type. This means that several link relations might apply to a common base URL; e.g.:
 
-~~~
+~~~ json
 {
   "resources": {
     "tag:me@example.com,2016:search-by-id": {
@@ -204,7 +204,7 @@ The "hrefVars" property, in turn, is an object that acts as a mapping between va
 
 For example, given the following Resource Object:
 
-~~~
+~~~ json
   "https://example.org/rel/widget": {
     "hrefTemplate": "/widgets/{widget_id}",
     "hrefVars": {
@@ -322,7 +322,7 @@ Content MUST be an array of objects, each with a "scheme" property containing a 
 
 For example, a Resource Object might contain the following hint:
 
-~~~
+~~~ json
   {
     "authSchemes": [
       {
