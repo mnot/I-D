@@ -16,6 +16,8 @@ venue:
   home: "https://mnot.github.io/I-D/"
   repo: "https://github.com/mnot/I-D/labels/link-hint"
 
+github-issue-label: link-hint
+
 author:
  -
     ins: M. Nottingham
