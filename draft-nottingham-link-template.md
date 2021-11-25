@@ -6,8 +6,6 @@ date: {DATE}
 category: std
 
 ipr: trust200902
-area: General
-workgroup:
 keyword: Link
 keyword: Linking
 keyword: Web Linking

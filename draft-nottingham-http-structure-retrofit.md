@@ -6,8 +6,6 @@ date: {DATE}
 category: info
 
 ipr: trust200902
-area: General
-workgroup:
 keyword: Internet-Draft
 
 stand_alone: yes
