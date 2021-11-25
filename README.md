@@ -1,6 +1,6 @@
-# BINARY Drafts
+# Mark Nottingham's Internet Drafts
 
-This is the working area for individual Internet-Drafts.
+This is the working area for my individual Internet-Drafts.
 
 ## Binary Structured HTTP Field Values
 
