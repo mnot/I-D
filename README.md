@@ -1,33 +1,74 @@
-# Internet-Drafts
+# BINARY Drafts
 
-These are some of the Internet-Drafts I've authored or contributed to.
+This is the working area for individual Internet-Drafts.
 
-The top-level directory contains works in progress; "Abandoned" contains
-drafts I'm no longer pursuing. "Published" contains those that made it into an
-RFC, in one manner or another.
+## Binary Structured HTTP Field Values
 
-For status, see:
-  https://datatracker.ietf.org/doc/{draft_name}/
+* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-binary-structured-headers.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-binary-structured-headers)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-binary-structured-headers)
+* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-binary-structured-headers.diff)
+
+## Updating HTTP Caching Policy in Trailers
+
+* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-cache-trailers.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-cache-trailers)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-cache-trailers)
+* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-cache-trailers.diff)
+
+## Retrofit Structured Fields for HTTP
+
+* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-http-structure-retrofit.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-http-structure-retrofit)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-http-structure-retrofit)
+* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-http-structure-retrofit.diff)
+
+## Home Documents for HTTP APIs
+
+* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-json-home.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-json-home)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-json-home)
+* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-json-home.diff)
+
+## HTTP Link Hints
+
+* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-link-hint.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-link-hint)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-link-hint)
+* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-link-hint.diff)
+
+## The Link-Template HTTP Header Field
+
+* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-link-template.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-link-template)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-link-template)
+* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-link-template.diff)
+
+## Clarifying IETF Document Status
+
+* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-where-does-that-come-from.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-where-does-that-come-from)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-where-does-that-come-from)
+* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-where-does-that-come-from.diff)
 
 
-## Giving Feedback
+## Contributing
 
-If the draft you want to make a comment upon specifies an e-mail list for
-feedback, please use that. Usually, it's in the abstract.
+See the
+[guidelines for contributions](https://github.com/mnot/I-D/blob/main/CONTRIBUTING.md).
 
-Otherwise, feel free to either contact me via e-mail, or to open an issue
-on github.
+Contributions can be made by creating pull requests.
+The GitHub interface supports creating pull requests using the Edit (✏) button.
 
 
-## Making Contributions
+## Command Line Usage
 
-If you want to submit a pull request against a draft, be aware that I use
-two different toolchains (depending on how old the draft is);
+Formatted text and HTML versions of the draft can be built using `make`.
 
-For older drafts, it's straight [xml2rfc](http://xml.resource.org/), and you
-can just use 'make' to generate the draft.
+```sh
+$ make
+```
 
-Newer drafts use [kramdown-rfc2629](https://github.com/cabo/kramdown-rfc2629),
-and you'll need to do a 'make kramdown; make'.
+Command line usage requires that you have the necessary software installed.  See
+[the instructions](https://github.com/martinthomson/i-d-template/blob/main/doc/SETUP.md).
 
-You can tell the difference by looking for 'draft.md'.
