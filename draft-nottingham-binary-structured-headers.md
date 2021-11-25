@@ -13,8 +13,8 @@ smart_quotes: no
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
 venue:
-  home: https://mnot.github.io/I-D/
-  repo: https://github.com/mnot/I-D/labels/binary-structured-headers
+  home: "https://mnot.github.io/I-D/"
+  repo: "https://github.com/mnot/I-D/labels/binary-structured-headers"
 
 author:
  -
