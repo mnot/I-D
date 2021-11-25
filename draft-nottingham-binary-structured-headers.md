@@ -12,6 +12,10 @@ stand_alone: yes
 smart_quotes: no
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
+venue:
+  home: https://mnot.github.io/I-D/
+  repo: https://github.com/mnot/I-D/labels/binary-structured-headers
+
 author:
  -
     ins: M. Nottingham
@@ -38,19 +42,6 @@ informative:
 
 This specification defines a binary serialisation of Structured Field Values for HTTP, along with a negotiation mechanism for its use in HTTP/2.
 
-
---- note_Note_to_Readers
-
-*RFC EDITOR: please remove this section before publication*
-
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/binary-structured-headers>.
-
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/binary-structured-headers/>.
-
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/binary-structured-headers>.
-
-See also the draft's current status in the IETF datatracker, at
-<https://datatracker.ietf.org/doc/draft-nottingham-binary-structured-headers/>.
 
 --- middle
 

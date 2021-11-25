@@ -12,6 +12,10 @@ stand_alone: yes
 smart_quotes: no
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
+venue:
+  home: https://mnot.github.io/I-D/
+  repo: https://github.com/mnot/I-D/labels/cache-trailers
+
 author:
  -
     ins: M. Nottingham
@@ -39,19 +43,6 @@ informative:
 
 This specification defines how to update caching policy for a response in HTTP trailer fields, after the content has been sent.
 
-
---- note_Note_to_Readers
-
-*RFC EDITOR: please remove this section before publication*
-
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/cache-trailers>.
-
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/cache-trailers/>.
-
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/cache-trailers>.
-
-See also the draft's current status in the IETF datatracker, at
-<https://datatracker.ietf.org/doc/draft-nottingham-cache-trailers/>.
 
 --- middle
 

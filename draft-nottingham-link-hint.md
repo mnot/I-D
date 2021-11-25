@@ -12,6 +12,10 @@ stand_alone: yes
 smart_quotes: no
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
+venue:
+  home: https://mnot.github.io/I-D/
+  repo: https://github.com/mnot/I-D/labels/link-hint
+
 author:
  -
     ins: M. Nottingham
@@ -26,17 +30,6 @@ normative:
 
 This memo specifies "HTTP Link Hints", a mechanism for annotating Web links to HTTP(S) resources with information that otherwise might be discovered by interacting with them.
 
---- note_Note_to_Readers
-
-*RFC EDITOR: please remove this section before publication*
-
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/link-hint>.
-
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/link-hint/>.
-
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/link-hint>.
-
-See also the draft's current status in the IETF datatracker, at <https://datatracker.ietf.org/doc/draft-nottingham-link-hint/>.
 
 --- middle
 

@@ -12,6 +12,10 @@ stand_alone: yes
 smart_quotes: no
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
+venue:
+  home: https://mnot.github.io/I-D/
+  repo: https://github.com/mnot/I-D/labels/http-structure-retrofit
+
 author:
  -
     ins: M. Nottingham
@@ -36,19 +40,6 @@ informative:
 
 This specification defines how a selection of existing HTTP fields can be handled as Structured Fields.
 
-
---- note_Note_to_Readers
-
-*RFC EDITOR: please remove this section before publication*
-
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/http-structure-retrofit>.
-
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/http-structure-retrofit/>.
-
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/http-structure-retrofit>.
-
-See also the draft's current status in the IETF datatracker, at
-<https://datatracker.ietf.org/doc/draft-nottingham-http-structure-retrofit/>.
 
 --- middle
 

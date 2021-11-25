@@ -12,6 +12,10 @@ stand_alone: yes
 smart_quotes: no
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
+venue:
+  home: https://mnot.github.io/I-D/
+  repo: https://github.com/mnot/I-D/labels/json-home
+
 author:
  -
     ins: M. Nottingham
@@ -29,15 +33,6 @@ informative:
 
 This document proposes a "home document" format for non-browser HTTP clients.
 
---- note_Note_to_Readers
-
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/json-home>.
-
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/json-home/>.
-
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/json-home>.
-
-For information about implementations, see <https://github.com/mnot/I-D/wiki/json-home>.
 
 --- middle
 

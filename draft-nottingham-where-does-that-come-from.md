@@ -12,6 +12,10 @@ stand_alone: yes
 smart_quotes: no
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
+venue:
+  home: https://mnot.github.io/I-D/
+  repo: https://github.com/mnot/I-D/labels/where-does-that-come-from
+
 author:
  -
     ins: M. Nottingham
@@ -33,18 +37,6 @@ informative:
 
 There is widespread confusion about the status of Internet-Drafts and RFCs, especially regarding their association with the IETF and other streams. This document recommends several interventions to more closely align reader perceptions with actual document status.
 
---- note_Note_to_Readers
-
-*RFC EDITOR: please remove this section before publication*
-
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/where-does-that-come-from>.
-
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/where-does-that-come-from/>.
-
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/where-does-that-come-from>.
-
-See also the draft's current status in the IETF datatracker, at
-<https://datatracker.ietf.org/doc/draft-nottingham-where-does-that-come-from/>.
 
 --- middle
 

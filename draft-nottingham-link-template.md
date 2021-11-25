@@ -15,6 +15,10 @@ stand_alone: yes
 smart_quotes: no
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline, rfcedstyle]
 
+venue:
+  home: https://mnot.github.io/I-D/
+  repo: https://github.com/mnot/I-D/labels/link-template
+
 author:
  -
     ins: M. Nottingham
@@ -36,15 +40,6 @@ normative:
 --- abstract
 
 This specification defines the Link-Template HTTP header field, providing a means for describing the structure of a link between two resources, so that new links can be generated.
-
-
---- note_Note_to_Readers
-
-The issues list can be found at <https://github.com/mnot/I-D/labels/link-template>.
-
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/link-template/>.
-
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/link-template>.
 
 
 --- middle
