@@ -236,7 +236,7 @@ This specification defines a set of common hints, based upon information that's 
 
 * Resource Hint Name: allow
 * Description: Hints the HTTP methods that the current client will be able to use to interact with the resource; equivalent to the Allow HTTP response header.
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, containing HTTP methods. As per HTTP, when GET is supported, a client MAY assume that HEAD is supported.
 
@@ -244,7 +244,7 @@ Content MUST be an array of strings, containing HTTP methods. As per HTTP, when 
 
 * Resource Hint Name: formats
 * Description: Hints the representation types that the resource makes available, using the GET method.
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an object, whose keys are media types, and values are objects, currently empty.
 
@@ -252,7 +252,7 @@ Content MUST be an object, whose keys are media types, and values are objects, c
 
 * Resource Hint Name: accept-Patch
 * Description: Hints the PATCH {{!RFC5789}} request formats accepted by the resource for this client; equivalent to the Accept-Patch HTTP response header.
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, containing media types.
 
@@ -262,7 +262,7 @@ When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
 
 * Resource Hint Name: acceptPost
 * Description: Hints the POST request formats accepted by the resource for this client; equivalent to the Accept-Post HTTP response header.
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, containing media types.
 
@@ -272,7 +272,7 @@ When this hint is present, "POST" SHOULD be listed in the "allow" hint.
 
 * Resource Hint Name: acceptPut
 * Description: Hints the PUT request formats accepted by the resource for this client.
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, containing media types.
 
@@ -282,7 +282,7 @@ When this hint is present, "PUT" SHOULD be listed in the "allow" hint.
 
 * Resource Hint Name: acceptRanges
 * Description: Hints the range-specifiers available to the client for this resource; equivalent to the Accept-Ranges HTTP response header {{!RFC7233}}.
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, containing HTTP range-specifiers (typically, "bytes").
 
@@ -290,7 +290,7 @@ Content MUST be an array of strings, containing HTTP range-specifiers (typically
 
 * Resource Hint Name: acceptPrefer
 * Description: Hints the preferences {{!RFC7240}} supported by the resource. Note that, as per that specifications, a preference can be ignored by the server.
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, containing preferences.
 
@@ -298,7 +298,7 @@ Content MUST be an array of strings, containing preferences.
 
 * Resource Hint Name: docs
 * Description: Hints the location for human-readable documentation for the relation type of the resource.
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be a string containing an absolute-URI {{!RFC3986}} referring to documentation that SHOULD be in HTML format.
 
@@ -306,7 +306,7 @@ Content MUST be a string containing an absolute-URI {{!RFC3986}} referring to do
 
 * Resource Hint Name: preconditionRequired
 * Description: Hints that the resource requires state-changing requests (e.g., PUT, PATCH) to include a precondition, as per {{!RFC7232}}, to avoid conflicts due to concurrent updates.
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, with possible values "etag" and "last-modified" indicating type of precondition expected.
 
@@ -314,7 +314,7 @@ Content MUST be an array of strings, with possible values "etag" and "last-modif
 
 * Resource Hint Name: authSchemes
 * Description: Hints that the resource requires authentication using the HTTP Authentication Framework {{!RFC7235}}.
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of objects, each with a "scheme" property containing a string that corresponds to a HTTP authentication scheme, and optionally a "realms" property containing an array of zero to many strings that identify protection spaces that the resource is a member of.
 
@@ -335,7 +335,7 @@ For example, a Resource Object might contain the following hint:
 
 * Resource Hint Name: status
 * Description: Hints the status of the resource.
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be a string; possible values are:
 
@@ -376,9 +376,9 @@ Hint content SHOULD be described in terms of JSON {{!RFC7159}} constructs.
 
 New hints are registered using the Expert Review process described in {{?RFC5226}} to enforce the criteria above. Requests for registration of new resource hints are to use the following template:
 
-* Resource Hint Name: [hint name]
-* Description: [a short description of the hint's semantics]
-* Specification: [reference to specification document]
+* Resource Hint Name: \[hint name]
+* Description: \[a short description of the hint's semantics]
+* Specification: \[reference to specification document]
 
 Initial registrations are enumerated in {{resource_hints}}.
 

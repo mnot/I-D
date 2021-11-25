@@ -98,7 +98,7 @@ Likewise, the information in a link hint is specific to the link it is attached 
 * Hint Name: allow
 * Description: Hints the HTTP methods that can be used to interact with the target resource; equivalent to the Allow HTTP response header.
 * Content Model: array (of strings)
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, containing HTTP methods ({{!RFC7231}}, Section 4).
 
@@ -107,7 +107,7 @@ Content MUST be an array of strings, containing HTTP methods ({{!RFC7231}}, Sect
 * Hint Name: formats
 * Description: Hints the representation type(s) that the target resource can produce and consume, using the GET and PUT (if allowed) methods respectively.
 * Content Model: object
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an object, whose keys are media types ({{!RFC7231}}, Section 3.1.1.1), and values are objects.
 
@@ -123,7 +123,7 @@ All other members of the object are under control of the corresponding media typ
 * Hint Name: links
 * Description: Hints at links whose context is the target resource.
 * Content Model: object
-* Specification: [this document]
+* Specification: \[this document]
 
 The "links" hint contains links (in the sense of {{!RFC8288}}) whose context is the hinted target resource, which are stable for the lifetime of the hint.
 
@@ -149,7 +149,7 @@ For example:
 * Hint Name: accept-post
 * Description: Hints the POST request format(s) that the target resource can consume.
 * Content Model: object
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an object, with the same constraints as for "formats".
 
@@ -160,7 +160,7 @@ When this hint is present, "POST" SHOULD be listed in the "allow" hint.
 * Hint Name: accept-patch
 * Description: Hints the PATCH {{!RFC5789}} request format(s) that the target resource can consume; equivalent to the Accept-Patch HTTP response header.
 * Content Model: array (of strings)
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, containing media types ({{!RFC7231}}, Section 3.1.1.1).
 
@@ -171,7 +171,7 @@ When this hint is present, "PATCH" SHOULD be listed in the "allow" hint.
 * Hint Name: accept-ranges
 * Description: Hints the range-specifier(s) available for the target resource; equivalent to the Accept-Ranges HTTP response header {{!RFC7233}}.
 * Content Model: array (of strings)
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, containing HTTP range-specifiers ({{!RFC7233}}, Section 3.1).
 
@@ -180,7 +180,7 @@ Content MUST be an array of strings, containing HTTP range-specifiers ({{!RFC723
 * Hint Name: accept-prefer
 * Description: Hints the preference(s) {{!RFC7240}} that the target resource understands (and might act upon) in requests.
 * Content Model: array (of strings)
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, contain preferences ({{!RFC7240}}, Section 2). Note that, by its nature, a preference can be ignored by the server.
 
@@ -189,7 +189,7 @@ Content MUST be an array of strings, contain preferences ({{!RFC7240}}, Section 
 * Hint Name: precondition-req
 * Description: Hints that the target resource requires state-changing requests (e.g., PUT, PATCH) to include a precondition, as per {{!RFC7232}}, to avoid conflicts due to concurrent updates.
 * Content Model: array (of strings)
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of strings, with possible values "etag" and "last-modified" indicating type of precondition expected.
 
@@ -200,7 +200,7 @@ See also the 428 Precondition Required status code ({{!RFC6585}}).
 * Hint Name: auth-schemes
 * Description: Hints that the target resource requires authentication using the HTTP Authentication Framework {{!RFC7235}}.
 * Content Model: array (of objects)
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be an array of objects, each with a "scheme" member containing a string that corresponds to a HTTP authentication scheme ({{!RFC7235}}), and optionally a "realms" member containing an array of zero to many strings that identify protection spaces that the resource is a member of.
 
@@ -222,7 +222,7 @@ For example:
 * Hint Name: status
 * Description: Hints the status of the target resource.
 * Content Model: string
-* Specification: [this document]
+* Specification: \[this document]
 
 Content MUST be a string; possible values are:
 
@@ -252,10 +252,10 @@ Hint semantics SHOULD be described in terms of the framework defined in {{!RFC82
 
 New hints are registered using the Expert Review process described in {{?RFC8126}} to enforce the criteria above. Requests for registration of new resource hints are to use the following template:
 
-* Hint Name: [hint name]
-* Description: [a short description of the hint's semantics]
-* Content Model: [valid JSON value types; see RFC627 Section 2.1]
-* Specification: [reference to specification document]
+* Hint Name: \[hint name]
+* Description: \[a short description of the hint's semantics]
+* Content Model: \[valid JSON value types; see RFC627 Section 2.1]
+* Specification: \[reference to specification document]
 
 Initial registrations are enumerated in {{hints}}. The "rel", "rev", "hreflang", "media", "title", and "type" hint names are reserved, so as to avoid potential clashes with link serialisations.
 
