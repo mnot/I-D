@@ -1,7 +1,7 @@
 ---
 title: Binary Structured HTTP Field Values
 abbrev:
-docname: draft-nottingham-binary-structured-headers-03
+docname: draft-nottingham-binary-structured-headers-latest
 date: {DATE}
 category: std
 

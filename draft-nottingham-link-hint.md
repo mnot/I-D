@@ -1,7 +1,7 @@
 ---
 title: HTTP Link Hints
 abbrev:
-docname: draft-nottingham-link-hint-03
+docname: draft-nottingham-link-hint-latest
 date: 2020
 category: info
 

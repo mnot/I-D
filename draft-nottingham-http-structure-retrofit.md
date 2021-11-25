@@ -1,7 +1,7 @@
 ---
 title: Retrofit Structured Fields for HTTP
 abbrev:
-docname: draft-nottingham-http-structure-retrofit-01
+docname: draft-nottingham-http-structure-retrofit-latest
 date: {DATE}
 category: info
 

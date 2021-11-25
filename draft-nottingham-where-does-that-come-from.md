@@ -1,7 +1,7 @@
 ---
 title: Clarifying IETF Document Status
 abbrev:
-docname: draft-nottingham-where-does-that-come-from-01
+docname: draft-nottingham-where-does-that-come-from-latest
 date: 2021
 category: info
 

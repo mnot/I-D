@@ -1,7 +1,7 @@
 ---
 title: Updating HTTP Caching Policy in Trailers
 abbrev:
-docname: draft-nottingham-cache-trailers-01
+docname: draft-nottingham-cache-trailers-latest
 date: 2021
 category: std
 

@@ -1,7 +1,7 @@
 ---
 title: Home Documents for HTTP APIs
 abbrev:
-docname: draft-nottingham-json-home-06
+docname: draft-nottingham-json-home-latest
 date: 2020
 category: info
 
