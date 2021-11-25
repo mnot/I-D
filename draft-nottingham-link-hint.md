@@ -66,7 +66,7 @@ Typically, link hints are serialised in links as target attributes ({{!RFC8288}}
 In JSON-based formats, this can be achieved by simply serialising link hints as an object; for example:
 
 
-~~~
+~~~ json
 {
   "_links": {
     "self": {
@@ -131,12 +131,12 @@ Content MUST be an object, whose member names are link relations ({{!RFC8288}}) 
 
 For example:
 
-~~~
+~~~ json
 "links": {
   "edit-form": {
     "href": "./edit",
     "hints": {
-      formats: {
+      "formats": {
         "application/json": {}
       }
     }
@@ -206,7 +206,7 @@ Content MUST be an array of objects, each with a "scheme" member containing a st
 
 For example:
 
-~~~
+~~~ json
   {
     "auth-req": [
       {
@@ -279,14 +279,14 @@ For example, the two JSON values below are those of the fictitious "example" and
 
 In a Link header, they would be serialised as:
 
-~~~
+~~~ http-message
 Link: </>; rel="sample"; example="The Example Value";
       example1=1.2
 ~~~
 
 A more complex, single value for "example":
 
-~~~
+~~~ json
 [
   "foo",
   -1.23,
@@ -299,7 +299,7 @@ A more complex, single value for "example":
 
 would be serialised as:
 
-~~~
+~~~ http-message
 Link: </>; rel="sample"; example="\"foo\", -1.23, true,
       [\"charlie\", \"bennet\"], {"cat": \"thor\"}, false"
 ~~~
