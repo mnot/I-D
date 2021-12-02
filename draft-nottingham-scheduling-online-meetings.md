@@ -133,7 +133,7 @@ This option works best when participants are in somewhat compatible timezones; i
 
 Alternatively, the information gathered can be used to calculate the 'least painful' time to hold the meeting, by assigning a 'pain value' to each hour of the day. For example, a meeting during local business hours has 0 pain, whereas a meeting at 3am has a very high value (e.g., 5000). By calculating the cumulative pain for attendees in each possible time slot, the time with the least collective pain can be found.
 
-See https://bit.ly/meeting-pain-calculator for an online tool that facilitates this. Note that it counts each timezone only once, no matter how many participants are in that timezone, to counteract the unfair weight that a large number of participants in one area can have.
+See [the online tool](https://bit.ly/meeting-pain-calculator) that facilitates this. Note that it counts each timezone only once, no matter how many participants are in that timezone, to counteract the unfair weight that a large number of participants in one area can have.
 
 This option works best for meetings that are one-off, or in a short series, and at least one participant will be truly inconvenienced by an unreasonable time. If it is an ongoing series of meetings, it might be combined with the next option.
 
