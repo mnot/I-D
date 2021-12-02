@@ -93,7 +93,7 @@ In general, a one-time conflict is not a reason to change the time of a regular 
 
 Most online meetings have the potential for scheduling conflicts. The steps below help implement the guidelines above, and are intended to help schedule both single and recurring meetings.
 
-## 1. Gather Information
+## Step 1: Gather Information
 
 Ask group participants for:
 
@@ -106,7 +106,7 @@ Ask group participants for:
 Conflicts and preferences should be gathered privately; e.g., in an e-mail to the convener.
 
 
-## 2. Find an Equitable Solution (if possible)
+## Step 2: Find an Equitable Solution (if possible)
 
 Based upon the information gathered, identify one or more candidate times for the meeting that conform to these rules:
 
@@ -118,7 +118,7 @@ If no candidate times are available, proceed to one of the next steps below.
 Otherwise, choose a candidate while conforming as much as possible to any participants' stated preferences, announcing it to the list for confirmation.
 
 
-## 3a. Poll from the Least Privileged Perspective
+## Step 3a: Poll from the Least Privileged Perspective
 
 If the previous step fails to find a candidate time, a poll can be used to select a time for the meeting. In doing so, it is important to consider the dynamics of group behaviour, because a large number of people who have similar needs are likely to overwhelm the needs of a minority in a disproportionate fashion.
 
@@ -129,7 +129,7 @@ To counteract this tendency, such polls should only include options that accommo
 This option works best when participants are in somewhat compatible timezones; if it is not possible to prevent a participant from being inconvenienced by a truly unreasonable meeting time, the following options may be more appropriate.
 
 
-## 3b. Equalize the Pain
+## Step 3b: Equalize the Pain
 
 Alternatively, the information gathered can be used to calculate the 'least painful' time to hold the meeting, by assigning a 'pain value' to each hour of the day. For example, a meeting during local business hours has 0 pain, whereas a meeting at 3am has a very high value (e.g., 5000). By calculating the cumulative pain for attendees in each possible time slot, the time with the least collective pain can be found.
 
@@ -138,7 +138,7 @@ See [the online tool](https://bit.ly/meeting-pain-calculator) that facilitates t
 This option works best for meetings that are one-off, or in a short series, and at least one participant will be truly inconvenienced by an unreasonable time. If it is an ongoing series of meetings, it might be combined with the next option.
 
 
-## 3c. Rotate the Pain
+## Step 3c: Rotate the Pain
 
 When avoiding conflicts is impossible -- for example, because a truly global pool of participants is needed -- it is more appropriate to rotate through different meeting times that distribute the pain, so that at least some meetings will be convenient for all participants, and any inconvenience is shared.
 
@@ -148,7 +148,7 @@ Note that the relative number of participants from each region does not affect t
 
 
 
-## 4. Regularly Confirm
+## Step 4: Regularly Confirm
 
 If a meeting is regularly scheduled or part of an ongoing series, it is important to regularly confirm the information of participants and the selected time, because new participants may join (or wish to), their information might change, and daylight savings time might change the best choice (especially when participants come from the Southern hemisphere).
 
