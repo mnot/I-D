@@ -150,6 +150,7 @@ For example, if a series of three successive meetings needed to include particip
 
 Note that the relative number of participants from each region does not affect the distribution of meetings. This is because the resulting pain is not a shared experience -- it is an individual one, and should not be proportional to participant distribution. Furthermore, if a meeting needs to be perceived as globally representative, it is important that the opportunity to participate is equal.
 
+The downside of this approach is that the meeting time changes, potentially causing confusion and more disruption. As a result, it should only be used for meetings that have significant amounts of time between them (such as a month or more).
 
 
 ## Step 4: Regularly Confirm
