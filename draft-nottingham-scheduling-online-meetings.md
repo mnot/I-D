@@ -153,7 +153,7 @@ Note that the relative number of participants from each region does not affect t
 The downside of this approach is that the meeting time changes, potentially causing confusion and more disruption. As a result, it should only be used for meetings that have significant amounts of time between them (such as a month or more).
 
 
-## Step 4: Regularly Confirm
+## Regularly Confirm
 
 If a meeting is regularly scheduled or part of an ongoing series, it is important to regularly confirm the information of participants and the selected time, because new participants may join (or wish to), their information might change, and daylight savings time might change the best choice (especially when participants come from the Southern hemisphere).
 
