@@ -183,7 +183,7 @@ SF-Location: "https://example.com/foo"
 
 ## Dates
 
-The following field names (paired with their replacement field names) have values that can be represented as Structured Fields by parsing their payload according to {{Section 7.1.1.1 of !RFC7231}} and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
+The following field names (paired with their replacement field names) have values that can be represented as Structured Fields by parsing their payload according to {{Section 5.6.7 of HTTP}} and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
 
 * Date - SF-Date
 * Expires - SF-Expires
