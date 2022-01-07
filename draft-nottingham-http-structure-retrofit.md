@@ -237,7 +237,16 @@ SF-Link: "/terms"; rel="copyright"; anchor="#foo"
 
 The field-values of the Cookie and Set-Cookie fields {{!RFC6265}} can be represented in Structured Fields as a List with parameters and a Dictionary, respectively.
 
-The serialisation is almost identical, except that the Expires parameter is always a string (as it can contain a comma), multiple cookie-strings can appear in Set-Cookie, and cookie-pairs are delimited in Cookie by a comma, rather than a semicolon.
+In each case, cookie names are serialized as tokens, whereas their values are serialised as Strings, unless they can be represented accurately and unambiguously using the textual representation of another structured types (e.g., an Integer or Decimal).
+
+Set-Cookie parameters map to parameters on the appropriate SF-Set-Cookie member, with the parameter name being forced to lowercase. Set-Cookie parameter values are Strings unless a specific type is defined. This specification defines the following parameter types:
+
+* Max-Age: Integer
+* Secure: Boolean
+* HttpOnly: Boolean
+* SameSite: Token
+
+Note that cookies in both fields are separated by commas, not semicolons, and multiple cookies can appear in each field.
 
 * Set-Cookie: SF-Set-Cookie
 * Cookie: SF-Cookie
@@ -247,11 +256,6 @@ SF-Set-Cookie: lang=en-US; expires="Wed, 09 Jun 2021 10:18:14 GMT";
                samesite=Strict
 SF-Cookie: SID=31d4d96e407aad42, lang=en-US
 ~~~
-
-* ISSUE: explicitly convert Expires to an integer? <https://github.com/mnot/I-D/issues/308>
-* ISSUE: dictionary keys cannot contain UC alpha. <https://github.com/mnot/I-D/issues/312>
-* ISSUE: explicitly allow non-string content. <https://github.com/mnot/I-D/issues/313>
-
 
 
 # IANA Considerations
