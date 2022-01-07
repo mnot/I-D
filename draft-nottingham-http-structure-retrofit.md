@@ -199,9 +199,7 @@ SF-Expires: 1571965240
 
 ## ETags
 
-The following field names (paired with their replacement field names) have values that can be represented as Structured Fields by representing the entity-tag as a string, and the weakness flag as a boolean "w" parameter on it, where true indicates that the entity-tag is weak; if 0 or unset, the entity-tag is strong.
-
-* ETag - SF-ETag
+The field value of the ETag header field can be represented as a String Structured Field by representing the entity-tag as a string, and the weakness flag as a boolean "w" parameter on it, where true indicates that the entity-tag is weak; if 0 or unset, the entity-tag is strong.
 
 For example:
 
@@ -209,9 +207,7 @@ For example:
 SF-ETag: "abcdef"; w=?1
 ~~~
 
-If-None-Match is a list of the structure described above.
-
-* If-None-Match - SF-INM
+If-None-Match's field value can be represented as SF-INM, which is a List of the structure described above.
 
 For example:
 
@@ -222,9 +218,7 @@ SF-INM: "abcdef"; w=?1, "ghijkl"
 
 ## Links
 
-The field-value of the Link header field {{!RFC8288}} can be represented as a Structured Field by representing the URI-Reference as a string, and link-param as parameters.
-
-* Link: SF-Link
+The field value of the Link header field {{!RFC8288}} can be represented in the SF-Link List Structured Field by representing the URI-Reference as a string, and link-param as parameters.
 
 For example:
 
@@ -235,7 +229,7 @@ SF-Link: "/terms"; rel="copyright"; anchor="#foo"
 
 ## Cookies
 
-The field-values of the Cookie and Set-Cookie fields {{!RFC6265}} can be represented in Structured Fields as a List with parameters and a Dictionary, respectively.
+The field values of the Cookie and Set-Cookie fields {{!RFC6265}} can be represented in the SF-Cookie Structured Field (a List) and SF-Set-Cookie Structured Field (a Dictionary), respectively.
 
 In each case, cookie names are serialized as tokens, whereas their values are serialised as Strings, unless they can be represented accurately and unambiguously using the textual representation of another structured types (e.g., an Integer or Decimal).
 
@@ -248,8 +242,7 @@ Set-Cookie parameters map to parameters on the appropriate SF-Set-Cookie member,
 
 Note that cookies in both fields are separated by commas, not semicolons, and multiple cookies can appear in each field.
 
-* Set-Cookie: SF-Set-Cookie
-* Cookie: SF-Cookie
+For example:
 
 ~~~ http-message
 SF-Set-Cookie: lang=en-US; expires="Wed, 09 Jun 2021 10:18:14 GMT";
@@ -260,21 +253,27 @@ SF-Cookie: SID=31d4d96e407aad42, lang=en-US
 
 # IANA Considerations
 
-IANA is asked to register the following entries in the HTTP Field Name Registry with a status of "permanent" and referring to this document:
+Please add the following note to the HTTP Field Name Registry:
 
-* SF-Content-Location
-* SF-Location
-* SF-Referer
-* SF-Date
-* SF-Expires
-* SF-IMS
-* SF-IUS
-* SF-LM
-* SF-ETag
-* SF-INM
-* SF-Link
-* SF-Set-Cookie
-* SF-Cookie
+> The "Structured Type" column indicates the type of the field as per RFC8941, if any, and may be "Dictionary", "List" or "Item". A prefix of "*" indicates that it is a retrofit type (i.e., not natively Structured); see \[this specification].
+
+Then, add a new column, "Structured Type", with the values from {{compatible}} assigned to the nominated registrations, prefixing each with "*" to indicate that it is a retrofit type.
+
+Then, add the following field names into the HTTP Field Name Registry, with the corresponding Structured Type as indicated, a status of "permanent" and referring to this document:
+
+* SF-Content-Location - String
+* SF-Location - String
+* SF-Referer - String
+* SF-Date - Integer
+* SF-Expires - Integer
+* SF-IMS - Integer
+* SF-IUS - Integer
+* SF-LM - Integer
+* SF-ETag - Item
+* SF-INM - List
+* SF-Link - List
+* SF-Set-Cookie - Dictionary
+* SF-Cookie - List
 
 
 # Security Considerations
