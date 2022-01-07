@@ -47,7 +47,7 @@ This specification defines how a selection of existing HTTP fields can be handle
 
 # Introduction
 
-Structured Field Values for HTTP {{STRUCTURED-FIELDS}} introduced a data model with associated parsing and serialisation algorithms for HTTP field values. Header fields that are defined as Structured Fields can realise a number of benefits, including:
+Structured Field Values for HTTP {{STRUCTURED-FIELDS}} introduced a data model with associated parsing and serialisation algorithms for use by new HTTP field values. Header fields that are defined as Structured Fields can realise a number of benefits, including:
 
 * Improved interoperability and security: precisely defined parsing and serialisation algorithms are typically not available for fields defined with just ABNF and/or prose.
 * Reuse of common implementations: many parsers for other fields are specific to a single field or a small family of fields
@@ -78,7 +78,7 @@ HTTP fields with the following names can usually have their values handled as St
 
 The listed types are chosen for compatibility with the defined syntax of the field as well as with actual Internet traffic (see {{numbers}}). However, not all instances of these fields will successfully parse. This might be because the field value is clearly invalid, or it might be because it is valid but not parseable as a Structured Field.
 
-As such, an application using this specification will need to consider how to handle these field values. Depending on its requirements, it might be advisable to reject such values, treat them as opaque strings, or attempt to recover a structured value from them in an ad hoc fashion.
+An application using this specification will need to consider how to handle such field values. Depending on its requirements, it might be advisable to reject such values, treat them as opaque strings, or attempt to recover a structured value from them in an ad hoc fashion.
 
 * Accept - List
 * Accept-Encoding - List
@@ -126,7 +126,7 @@ As such, an application using this specification will need to consider how to ha
 
 Note the following caveats:
 
-Parameters:
+Parameter names:
 : HTTP parameter names are case-insensitive (as per {{Section 5.6.6 of HTTP}}), but Structured Fields require them to be all-lowercase. Although the vast majority of parameters seen in typical traffic are all-lowercase, compatibility can be improved by force-lowercasing parameters when encountered.
 
 Empty Field Values:
@@ -147,7 +147,7 @@ Retry-After:
 
 # Mapped Fields {#mapped}
 
-HTTP fields with the following names can have their values represented in Structured Fields by mapping them into its data types and then serialising the result using an alternative field name.
+Some HTTP fields can have their values represented in Structured Fields by mapping them into its data types and then serialising the result using an alternative field name.
 
 For example, the Date HTTP header field carries a string representing a date:
 
@@ -161,7 +161,7 @@ Its value is more efficiently represented as an integer number of delta seconds 
 SF-Date: 784072177
 ~~~
 
-As in {{compatible}}, these fields are unable to represent values that are not Structured Fields, and so an application using this specification will need to how to support such values. Typically, serialising them using the original field name is sufficient.
+As in {{compatible}}, these fields are unable to represent values that are not parseable, and so an application using this specification will need to how to support such values. Typically, handling them using the original field name is sufficient.
 
 Each field name listed below indicates a replacement field name and a means of mapping its original value into a Structured Field.
 
@@ -183,7 +183,7 @@ SF-Location: "https://example.com/foo"
 
 ## Dates
 
-The following field names (paired with their replacement field names) have values that can be represented as Structured Fields by parsing their payload according to {{!RFC7231}}, Section 7.1.1.1, and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
+The following field names (paired with their replacement field names) have values that can be represented as Structured Fields by parsing their payload according to {{Section 7.1.1.1 of !RFC7231}} and representing the result as an integer number of seconds delta from the Unix Epoch (00:00:00 UTC on 1 January 1970, minus leap seconds).
 
 * Date - SF-Date
 * Expires - SF-Expires
