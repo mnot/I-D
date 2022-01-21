@@ -36,12 +36,13 @@ informative:
 
 --- abstract
 
-
+_TBD_
 
 --- middle
 
 # Introduction
 
+_TBD_
 
 
 ## Notational Conventions
@@ -53,34 +54,21 @@ shown here.
 
 
 
+* Feed URL
+ * Encryption
 
-# Feed URL
+* Request Headers
+ * Cookies
+ * ETags
+ * Content Negotiation
+ * User-Agent
 
+* Authentication
 
-## Encryption
-
-
-# Request Headers
-
-## Cookies
-
-## ETags
-
-## Content Negotiation
-
-## User-Agent
-
-## Authentication
-
-
-# Content
-
-## Scripts
-
-## Remote Resources
-
-
-## Reporting
+* Content
+ * Scripts
+ * Remote Resources
+ * Reporting
 
 
 
