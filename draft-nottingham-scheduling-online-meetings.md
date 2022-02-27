@@ -85,7 +85,7 @@ Finally, there are different kinds of scheduling conflicts. One person might con
 
 Likewise, there is a significant difference between the mild annoyance of joining a meeting outside of business hours (for example, at 6pm local time) and disrupting someone's circadian rhythm -- potentially affecting more than one day of their life as they readjust -- to join one at 3am.
 
-Successful meeting scheduling will take the nature of conflicts into account, heavily discounting participants' mere inconvenience and prioritising those whose commitments or location make their need to avoid conflicts greater and more legitimate.
+Successful meeting scheduling will take the nature of conflicts into account, heavily discounting participants' mere inconvenience and prioritising those whose commitments or location make their need to avoid conflicts greater and more legitimate, i.e. a serious conflict.
 
 In general, a one-time conflict is not a reason to change the time of a regular meeting or a series of meetings.
 
@@ -99,7 +99,7 @@ Most online meetings have the potential for scheduling conflicts. The steps belo
 Ask group participants for:
 
 1. The timezone that they are usually participating from.
-2. If they have any genuine conflicts. For example, "I need to collect my children from school at 4pm and no one else can do it".
+2. If they have any serious conflicts. For example, "I need to collect my children from school at 4pm and no one else can do it".
 3. If they have preferences. For example, getting up early, staying up late, avoiding family mealtimes.
 
 "I have another meeting at 4pm on Tuesdays" is not a conflict, it is a preference. This explicitly assumes that those who participate in the meeting for work purposes should prioritise it; otherwise, successfully scheduling the meeting is much less likely.
@@ -112,7 +112,7 @@ Conflicts and preferences should be gathered privately; e.g., in an e-mail to th
 Based upon the information gathered, identify one or more candidate times for the meeting that conform to these rules:
 
 1. No participant is expected to attend any part of the meeting between 11pm and 8am in their stated timezone, unless they explicitly state a preference for doing so, and
-2. No participant has a genuine conflict in any part of the candidate time.
+2. No participant has a serious conflict in any part of the candidate time.
 
 If no candidate times are available, proceed to one of the options in the next step.
 
