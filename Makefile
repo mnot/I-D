@@ -17,11 +17,11 @@ endif
 
 lint:: http-lint
 
-rfc-http-validate ?= rfc-http-validate.py
+rfc-http-validate ?= rfc-http-validate
 .PHONY: http-lint
-http-lint: $(drafts_xml) http-lint-install
+http-lint: $(drafts_source) http-lint-install
 	$(rfc-http-validate) -q -m sf.json $(filter-out http-lint-install,$^)
 
 .PHONY: http-lint-install
 http-lint-install:
-	@hash rfc-http-validate.py 2>/dev/null || pip3 install rfc-http-validate
+	@hash rfc-http-validate 2>/dev/null || pip3 install rfc-http-validate
