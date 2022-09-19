@@ -49,17 +49,14 @@ This specification defines a binary serialisation of Structured Field Values for
 
 # Introduction
 
-Structured Field Values for HTTP {{!STRUCTURED-FIELDS}} offers a set of data types that new fields can use to express their semantics in a familiar textual syntax. This specification defines an alternative, binary serialisation of those structures in {{fields}}, and specifies its use in HTTP/2 in {{negotiate}}.
+Structured Field Values for HTTP {{!STRUCTURED-FIELDS}} offers a set of data types that new fields can use to express their semantics in a familiar textual syntax. {{fields}} defines an alternative, binary serialisation of those structures, and {{negotiate}} defines a mechanism for using that serialisation in HTTP/2.
 
 The primary goal is to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.
 
 
 ## Notational Conventions
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
-"RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
-described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
-shown here.
+{::boilerplate bcp14-tagged}
 
 This specification describes formats using the convention described in {{Section 1.3 of QUIC}}.
 
