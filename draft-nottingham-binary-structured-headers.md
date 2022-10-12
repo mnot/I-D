@@ -196,7 +196,7 @@ A parameter's fields are:
 
 The Binary Structured Type in a Parameter MUST NOT be an Inner List (0x1) or Parameters (0x2).
 
-Parameters are always associated with the Binary Structured Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Binary Structured Type in a Binary Representation, and MUST NOT follow another Parameters.
+Parameters are always associated with the Binary Structured Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Binary Structured Type in a Binary Structured Field Value, and MUST NOT follow another Parameters.
 
 
 ### Integers
@@ -311,7 +311,7 @@ The Parameters Flag indicates whether the value is followed by Parameters (see {
 
 # Using Binary Structured Fields in HTTP/2 {#negotiate}
 
-When both peers on a connection support this specification, they can take advantage of that knowledge to serialise fields that they know to be Structured Fields as binary data, rather than strings.
+When both peers on a connection support this specification, they can negotiate to serialise fields that they know to be Structured Fields as binary data, rather than strings.
 
 Peers advertise and discover this support using a HTTP/2 setting defined in {{setting}}, and convey Binary Structured Fields in streams whose HEADERS frame uses the flag defined in {{flag}}.
 
@@ -324,9 +324,9 @@ Receiving SETTINGS_BINARY_STRUCTURED_FIELDS with a non-zero value from a peer in
 
 1. The peer supports all of the Binary Structured Types defined in {{fields}}.
 2. The peer will process the BINARY_STRUCTRED HEADERS flag as defined in {{flag}}.
-3. When passing the message to a downstream consumer (whether on the network or not), the peer will:
+3. When passing the message to a downstream consumer (whether on the network or not) who does not support this extension or otherwise explicitly negotiate an equivalent mechanism, the peer will:
    1. Transform all fields defined as Mapped Fields in Section 1.3 of {{RETROFIT}} into their unmapped forms, removing the mapped fields.
-   2. Transform the message fields into the appropriate form for that peer (e.g., the textual representation of Structured Fields data types defined in {{!STRUCTURED-FIELDS}}).
+   2. Serialize all fields into the appropriate form for that peer (e.g., the textual representation of Structured Fields data types defined in {{!STRUCTURED-FIELDS}}).
 
 The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0, whereas a value of 1 indicates that this specification is supported with no further extensions. Future specifications might use values greater than one to indicate support for extensions.
 
@@ -337,9 +337,9 @@ When a peer has indicated that it supports this specification as per {{setting}}
 
 This flag indicates that the HEADERS frame containing it and subsequent CONTINUATION frames on the same stream use the Binary Structured Types defined in {{fields}} instead of the String Literal Representation defined in {{Section 5.2 of RFC7541}} to represent all field values. Field names are still serialised as String Literal Representations.
 
-In such frames, field values that are known to be Structured Fields and those that can be converted to Structured Fields (per {{RETROFIT}}) MAY be sent using the applicable Binary Representation. However, any field value (including those defined as Structured Fields) can also be serialised as a Binary Literal ({{literal}}) to accommodate fields that are not defined as Structured Fields, not valid Structured Fields, or that the sending implementation does not wish to send as a Structured Field for some other reason.
+In such frames, all field values MUST be sent as Binary Structured Field Values. Note that this includes Binary Literals ({{literal}}) for those field values that are not recognised as Structured Fields, as well as textual values that cannot be successfully parsed as Structured Fields. Implementations MAY also send a field value as a Binary Literal even when it is possible to represent it as a Structured Field (e.g., for efficiency purposes).
 
-Binary Representations are stored in the HPACK {{RFC7541}} dynamic table, and their lengths are used for the purposes of maintaining dynamic table size (see {{RFC7541, Section 4}}).
+Binary Structured Field Values are stored in the HPACK {{RFC7541}} dynamic table, and their lengths are used for the purposes of maintaining dynamic table size (see {{RFC7541, Section 4}}).
 
 Note that HEADERS frames with and without the BINARY_STRUCTURED flag MAY be mixed on the same connection, depending on the requirements of the sender.
 
