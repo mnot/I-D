@@ -1,7 +1,7 @@
 ---
 title: Best Practices for Blocking Clients by IP Address
 abbrev: Blocking by IP Address
-docname: draft-nottingham-blocking-best-practices
+docname: draft-nottingham-blocking-best-practices-latest
 date: {DATE}
 category: bcp
 
