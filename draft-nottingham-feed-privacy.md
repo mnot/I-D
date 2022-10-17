@@ -68,7 +68,7 @@ Many web sites offer a feed of updates to their content, using {{ATOM}} or {{RSS
 
 Feed readers use HTML and HTTP, and can be considered as part of the web, but one that is distinct from web browsers. Unlike browsers, feed readers do not easily facilitiate cross-site tracking or behavioural advertising, because their capabilities are more limited, thereby establishing an alternative, more privacy-respecting web platform.
 
-At the same time, browsers are protecting privacy in increasingly sophisticated ways; for example, by taking steps to prevent active fingerprinting {{FINGERPRINTING}}.
+At the same time, browsers are protecting privacy in increasingly sophisticated ways; for example, by taking steps to prevent  active fingerprinting {{FINGERPRINTING}}.
 
 This specification seeks to codify these privacy-enhancing distinctions while incorporating browser's privacy advances by offering a definition for "feed reader" in {{reader}}, providing guidelines for how they make requests in {{requests}}, and providing guidelines for their handling of content in {{content}}.
 
