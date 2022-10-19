@@ -77,7 +77,7 @@ IP addresses MUST NOT be blocked indefinitely. As discussed above, permanent or 
 
 Instead, when blocking is believed to be necessary, its duration SHOULD be proportional to the certainty that the client is still abusive. For example, a service might initially ban a problematic client for a few minutes. If there is still significant abusive traffic from the address after that period, the block period might be lengthened to an hour or two.
 
-Depending on the nature of the service offered, IP-based blocking SHOULD NOT exceed a period of more than one week, and typically SHOULD be for much shorter periods. This approach allows the service to discard enough abusive traffic to operate with reasonable efficiency while lowering (but not eliminating) the impact of blocking any legitimate clients.
+Depending on the nature of the service offered, IP-based blocking SHOULD NOT exceed a period of more than one month, and typically SHOULD be for much shorter periods. This approach allows the service to discard enough abusive traffic to operate with reasonable efficiency while lowering (but not eliminating) the impact of blocking any legitimate clients.
 
 Tools that enable blocking by IP address through operator intervention -- for example, firewall rule engines, web portals for controlling traffic, and server configuration formats -- SHOULD promote this practice. For example, allowing a block to removed after a period of time has passed and promoting that with the period recommended above as a default is good practice.
 
