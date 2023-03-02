@@ -47,7 +47,10 @@ The HTTP Vary header field ({{Section 12.5.5 of HTTP}}) allows an origin server 
 
 However, the information conveyed by Vary is limited. If the request headers enumerated in it are considered as a n-dimensional space with each field representing an axis, this response header:
 
-> Vary: Accept-Encoding, Accept-Language, ECT
+
+~~~ http-headers
+Vary: Accept-Encoding, Accept-Language, ECT
+~~~
 
 indicates that there is a three-dimensional space of potential responses that could be sent. However, nothing more is conveyed; the number and nature of the entries on each axis are not available, leaving caches and other downstream consumers none the wiser as to how broad this space is, or how to navigate it.
 
@@ -57,10 +60,12 @@ For example, if a request indicates that the client prefers responses in the Fre
 
 This specification defines a new type of HTTP header field -- an _availability hint_ -- that augments the information on a single axis of content negotiation, by describing the selection of responses that a server has available along that axis. So, our example above have three availabilty hints added to it:
 
-> Vary: Accept-Encoding, Accept-Language, ECT
-> Avail-Encoding: gzip, br
-> Avail-Language: fr, en;d
-> Avail-ECT: (slow-2g 2g 3g), (4g);d
+~~~ http-headers-new
+Vary: Accept-Encoding, Accept-Language, ECT
+Avail-Encoding: gzip, br
+Avail-Language: fr, en;d
+Avail-ECT: (slow-2g 2g 3g), (4g);d
+~~~
 
 This says that there are two encodings available -- gzip and brotli -- beyond the mandatory "identity" encoding; that both French and English are available, but English is the default; and that there are two different representations available depending on the Effective Connection Type that the client advertises, with "4g" being the default.
 
@@ -69,6 +74,8 @@ Caches and other clients can use this information to determine when a request ca
 Availability hints have some limitations. While a server's preferences along a single axis of negotiation can be conveyed by the corresponding availability hint, its relative preferences between multiple axes are not. In the example above, it isn't possible to know whether the server prefers that downstream caches and clients use the brotli-encoded French version over the gzip-encoded English version.
 
 Likewise, it is't possible to convey "holes" in the dimensional space described by Vary. For example, a gzip-encoded French response may not be available from the server. This specification does not attempt to address this shortcoming.
+
+Finally, availability hints need to be defined for each axis of content negotiation in use, and the recipient (such as a cache) needs to understand that availability hint. If either condition is not true, that axis of negotiation will fall back to the behaviour specified by Vary.
 
 {{define}} describes how availability hints are defined. {{process}} specifies how availability hints are processed, with respect to the Vary header field. {{definitions}} defines a number of availability hints for existing HTTP content negotiation mechanisms.
 
@@ -80,8 +87,6 @@ Likewise, it is't possible to convey "holes" in the dimensional space described 
 
 # Defining Availability Hints {#define}
 
-Availability hints need to be specified for each individual content negotiation axis that they might apply to. An availability hint specification needs to:
-* Define how to convey the
 
 
 # Processing Availability Hints {#process}
@@ -90,60 +95,83 @@ Availability hints need to be specified for each individual content negotiation 
 
 # Availability Hint Definitions {#definitions}
 
+The following subsections define availability hints for a selection of existing content negotiation mechanisms.
+
 ## Content Encoding
 
-Avail-Encoding: gzip, br
-Content-Encoding: gzip
+> Avail-Encoding: gzip, br
 
 ## Content Format
 
-Avail-Format: image/png, image/gif;d
-Content-Type: image/png
+> Avail-Format: image/png, image/gif;d
 
 ## Content Language
 
-Avail-Language: en-uk, en-us;d, fr, de
-Content-Language: en-us
+> Avail-Language: en-uk, en-us;d, fr, de
 
 ## Cookie
 
-Cookie-Indices: id, sid
+> Cookie-Indices: id, sid
 
 
 ## Device Pixel Ratio
 
-Avail-DPR:
-DPR:
+TBD
+
+
+> Avail-DPR:
 
 ## Downlink
 
-Avail-Downlink: (0 1), (1 50);d, (50 max)
+TBD
 
+> Avail-Downlink: (0 1), (1 50);d, (50 max)
 
 ## Width
 
-Avail-Width: (0 640), (641 1024);d, (1025 max)
-Width:
+TBD
+
+> Avail-Width: (0 640), (641 1024);d, (1025 max)
 
 ## Sec-CH-UA
 
+TBD
+
 ## Sec-CH-UA-Platform
+
+TBD
 
 
 ## Device-Memory
 
+TBD
+
+
+
 ## RTT
+
+TBD
+
 
 ## ECT
 
 > Avail-ECT: (slow-2g 2g 3g), (4g);d
 
+TBD
+
+
 ## Save-Data
+
+TBD
 
 
 # IANA Considerations
 
+TBD
+
 # Security Considerations
+
+TBD
 
 
 --- back
