@@ -32,6 +32,7 @@ author:
 normative:
   HTTP: RFC9110
   HTTP-CACHING: RFC9111
+  STRUCTURED-FIELDS: RFC8941
 
 
 --- abstract
@@ -48,7 +49,7 @@ The HTTP Vary header field ({{Section 12.5.5 of HTTP}}) allows an origin server 
 However, the information conveyed by Vary is limited. If the request headers enumerated in it are considered as a n-dimensional space with each field representing an axis, this response header:
 
 
-~~~ http-headers
+~~~ http-message
 Vary: Accept-Encoding, Accept-Language, ECT
 ~~~
 
@@ -60,7 +61,7 @@ For example, if a request indicates that the client prefers responses in the Fre
 
 This specification defines a new type of HTTP header field -- an _availability hint_ -- that augments the information on a single axis of content negotiation, by describing the selection of responses that a server has available along that axis. So, our example above have three availabilty hints added to it:
 
-~~~ http-headers-new
+~~~ http-message-new
 Vary: Accept-Encoding, Accept-Language, ECT
 Avail-Encoding: gzip, br
 Avail-Language: fr, en;d
@@ -75,6 +76,8 @@ Availability hints have some limitations. While a server's preferences along a s
 
 Likewise, it is't possible to convey "holes" in the dimensional space described by Vary. For example, a gzip-encoded French response may not be available from the server. This specification does not attempt to address this shortcoming.
 
+Availability hints do not specify exactly how caches should behave in all circumstances. Because they operate as an optimisation, they often have different behaviours based upon the specific requirements of their deployment. Availability hints are designed to better inform their operation, not constrain it.
+
 Finally, availability hints need to be defined for each axis of content negotiation in use, and the recipient (such as a cache) needs to understand that availability hint. If either condition is not true, that axis of negotiation will fall back to the behaviour specified by Vary.
 
 {{define}} describes how availability hints are defined. {{process}} specifies how availability hints are processed, with respect to the Vary header field. {{definitions}} defines a number of availability hints for existing HTTP content negotiation mechanisms.
@@ -87,10 +90,38 @@ Finally, availability hints need to be defined for each axis of content negotiat
 
 # Defining Availability Hints {#define}
 
+The specification for an availability hint applies to a single axis of HTTP proactive content negotiation; for example, that enabled by the `Accept-Encoding` request header field.
+
+An availability hint specification needs to convey the following information:
+
+1. The definition of a response header field that describes the available responses along that axis of content negotiation.
+
+2. An algorithm or guidelines for using that information to determine whether a stored response can be selected for a presented request (per {{Section 4.1 of HTTP-CACHING}}).
+
+The response header field should be defined as a Structured Field {{STRUCTURED-FIELDS}}.
+
+It is recommended that the selection algorithm operate solely using information in the stored responses and presented request, if possible. If the selection algorithm can return multiple available responses, they should indicate an order of preference.
+
+Either the response header field or the algorithm should indicate which of the available responses is the default -- i.e., which is used if none match.
 
 
-# Processing Availability Hints {#process}
+# Publishing Availability Hints {#publish}
 
+TBD
+
+
+# Calculating Cache Keys with Availability Hints {#process}
+
+When presented with a response that has both a Vary header field and one or more availability hints, this specification augments the process defined in {{Section 4.1 of HTTP-CACHING}}.
+
+While the model there is defined in terms of whether the header fields from two requests match, availability hints invoke a different processing model; the set of stored responses that can be used to satisfy a presented request is found by:
+
+1. Determine the Vary header field and availability hints present for the presented URL. They SHOULD be obtained from the most recently obtained response for that URL, although they MAY be obtained from any fresh response for that URL (per {{Section 4.2 of HTTP-CACHING}}).
+2. For each content negotiation axis in the Vary header field, determine which stored responses can be selected by running the corresponding selection algorithm, as defined by the availability hint.
+   1. If an axis of content negotiation is not recognised or implemented by the cache, fall back to selecting available responses for that axis using the rules described in {{Section 4.1 of HTTP-CACHING}}.
+3. Return the intersection of the results of (2).
+
+This specification does not define how to select the most appropriate response when more than one is returned, but it is RECOMMENDED that client preferences be observed when expressed.
 
 
 # Availability Hint Definitions {#definitions}
@@ -99,19 +130,73 @@ The following subsections define availability hints for a selection of existing 
 
 ## Content Encoding
 
-> Avail-Encoding: gzip, br
+The Avail-Encoding response header field is the availability hint for content negotiation using the Accept-Encoding request header field defined in {{Section 12.5.3 of HTTP}}. For example:
+
+~~~ http-message-new
+Vary: Accept-Encoding
+Avail-Encoding: gzip, br
+~~~
+
+Avail-Encoding is a Structured Field, whose value is a List ({{Section 3.1 of STRUCTURED-FIELDS}}) of Tokens ({{Section 3.3.4 of STRUCTURED-FIELDS}}). Each list item indicates a content-coding that is available for the resource. Additionally, the "identity" encoding is always considered to be available, and is the default encoding.
+
+The selection algorithm for this axis of content negotiation is described in {{Section 12.5.3 of HTTP}}.
+
 
 ## Content Format
 
-> Avail-Format: image/png, image/gif;d
+The Avail-Format response header field is the availability hint for content negotiation using the Accept request header field defined in {{Section 12.5.1 of HTTP}}. For example:
+
+~~~ http-message-new
+Vary: Accept
+Avail-Format: image/png, image/gif;d
+~~~
+
+Avail-Format is a Structured Field, whose value is a List ({{Section 3.1 of STRUCTURED-FIELDS}}) of Tokens ({{Section 3.3.4 of STRUCTURED-FIELDS}}). Each list item indicates a media type ("type/subtype") that is available for the resource.
+
+A single member of the List MAY have the "d" parameter, which indicates that member is the default format.
+
+The selection algorithm for this axis of content negotiation is described in {{Section 12.5.1 of HTTP}}.
+
 
 ## Content Language
 
-> Avail-Language: en-uk, en-us;d, fr, de
+The Avail-Language response header field is the availability hint for content negotiation using the Accept-Language request header field defined in {{Section 12.5.4 of HTTP}}. For example:
+
+~~~ http-message-new
+Vary: Accept-Language
+Avail-Language: en-uk, en-us;d, fr, de
+~~~
+
+Avail-Format is a Structured Field, whose value is a List ({{Section 3.1 of STRUCTURED-FIELDS}}) of Tokens ({{Section 3.3.4 of STRUCTURED-FIELDS}}). Each list item indicates a language tag that is available for the resource.
+
+A single member of the List MAY have the "d" parameter, which indicates that member is the default language.
+
+The selection algorithm for this axis of content negotiation is described in {{Section 12.5.4 of HTTP}}.
+
 
 ## Cookie
 
-> Cookie-Indices: id, sid
+The Cookie-Indices response header field is the availability hint for content negotiation using the Cookie request header field defined in {{?RFC6265}}. For example:
+
+~~~ http-message-new
+Vary: Cookie
+Cookie-Indices: id, sid
+~~~
+
+Cookie-Indicies is a Structured Field, whose value is a List ({{Section 3.1 of STRUCTURED-FIELDS}}) of Tokens ({{Section 3.3.4 of STRUCTURED-FIELDS}}). Each list item indicates a cookie name whose value is to be considered when selecting responses.
+
+The selection algorithm for Cookie-Indices, given a set of stored_responses a presented_request, and the value of Cookie-Indices:
+
+0. Let available_responses be an empty set.
+1. For each stored_response in stored_responses:
+  1. For each cookie_index in Cookie-Indicies:
+     1. Let presented_value be the value of the cookie with the name cookie_index in presented_request. If a cookie with the name cookie_index is not present in presented_request, let presented_value be a null value.
+     2. Let stored_value be the value of the cookie with the name cookie_index in stored_response. If a cookie with the name cookie_index is not present in stored_response, let stored_value be a null value.
+     3. If presented_value does not equal stored_value, continue to the next stored_response.
+  2. Add stored_response to available_responses.
+2. Return available_responses.
+
+Note that this algorithm requires storing the cookies from the associated requestm with each response.
 
 
 ## Device Pixel Ratio
@@ -121,31 +206,19 @@ TBD
 
 > Avail-DPR:
 
+
 ## Downlink
 
 TBD
 
 > Avail-Downlink: (0 1), (1 50);d, (50 max)
 
+
 ## Width
 
 TBD
 
 > Avail-Width: (0 640), (641 1024);d, (1025 max)
-
-## Sec-CH-UA
-
-TBD
-
-## Sec-CH-UA-Platform
-
-TBD
-
-
-## Device-Memory
-
-TBD
-
 
 
 ## RTT
