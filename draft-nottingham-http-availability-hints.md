@@ -196,7 +196,7 @@ The selection algorithm for Cookie-Indices, given a set of stored_responses a pr
   2. Add stored_response to available_responses.
 2. Return available_responses.
 
-Note that this algorithm requires storing the cookies from the associated requestm with each response.
+Note that this algorithm requires storing the cookies from the associated request with each response.
 
 
 ## Device Pixel Ratio
