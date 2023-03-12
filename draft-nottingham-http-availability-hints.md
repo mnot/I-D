@@ -107,7 +107,7 @@ Either the response header field or the algorithm should indicate which of the a
 
 # Publishing Availability Hints {#publish}
 
-TBD
+TBD - advice to sites about how to publish / use availability hints
 
 
 # Calculating Cache Keys with Availability Hints {#process}
