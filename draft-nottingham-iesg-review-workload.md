@@ -14,9 +14,9 @@ pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
 venue:
   home: "https://mnot.github.io/I-D/"
-  repo: "https://github.com/mnot/I-D/labels/SHORT"
+  repo: "https://github.com/mnot/I-D/labels/ad-workload"
 
-github-issue-label: ad-considerations
+github-issue-label: ad-workload
 
 author:
  -
