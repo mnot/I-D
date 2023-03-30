@@ -142,7 +142,7 @@ This policy is not a very large change from current practice of at least some AD
 
 Practically, this allows an AD to delegate their review (or partially do so) to someone that they judge as appropriate, based upon their expertise. However, they cannot avoid responsibility -- which means that delegating to a review directorate of volunteers may be unwise.
 
-Overall, the expectation is that ADs should rely on other experts in their area more than they do the reviewing themselves. They are responsible to understand and manage any objections that come from experts they rely on, and are expected to decide the relative importance of actually requiring that any issue raised by such an expert be addressed, but they are expected to farm out their reviews more than they do it themselves.
+Overall, the expectation is that ADs can (and perhaps should) rely on other experts in their area more than they do the reviewing themselves. They are responsible for understanding and managing any objections that come from the experts they rely on, and are expected to decide the relative importance of actually requiring that any issue raised by such an expert be addressed.
 
 
 # IANA Considerations
