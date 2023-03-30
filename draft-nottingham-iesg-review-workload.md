@@ -135,6 +135,11 @@ When reviewing a document, Area Directors may rely on expertise of others to jud
 
 This policy does not prevent an Area Director from exceeding these expectations. However, Area Director reviews should be based in the requirements of {{RFC2026}}, as elaborated upon by the [DISCUSS Criteria](https://www.ietf.org/about/groups/iesg/statements/iesg-discuss-criteria/).
 
+## Policy Discussion
+
+This policy is not a very large change from current practice of at least some ADs, based upon discussions I've had. As such, its most important function is to level-set expectations between the community and the IESG.
+
+Practically, this allows an AD to delegate their review (or partially do so) to someone that they judge as appropriate, based upon their expertise. However, they cannot avoid responsibility -- which means that delegating to a review directorate of volunteers may be unwise.
 
 
 # IANA Considerations
