@@ -91,7 +91,7 @@ However, it later sets a more onerous expectation:
 
 IESG document review undeniably serves an important function: maintaining the output quality of IETF specifications, by making Area Directors both responsible for document review and accountable to the community (through transparency mechanisms like the Open Mic session at plenaries, and ultimately through the risk of appeal and recall). This accountability and quality enhances the legitimacy of the IETF's work, and ultimately, its success.
 
-However, the expectations for review are not clearly stated: while there are clear affordances in the IESG-internal policies and in the NOMCOM job description for an AD to skip a detailed review of the document, many IETF participants and Area Directors alike seem to believe that ADs have a fundamental responsibility to review every document published for any concerns they may have -- to "read on the order of 500 pages \[...] eery two weeks."
+However, the expectations for review are not clearly stated: while there are clear affordances in the IESG-internal policies and in the NOMCOM job description for an AD to skip a detailed review of the document, many IETF participants and Area Directors alike seem to believe that ADs have a fundamental responsibility to review every document published for any concerns they may have -- to "read on the order of 500 pages \[...] every two weeks."
 
 These conflicting and ill-stated expectations arguably have the effect of discouraging many qualified candidates from applying for Area Director positions.
 
