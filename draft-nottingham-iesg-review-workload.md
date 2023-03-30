@@ -133,7 +133,7 @@ This policy sets the expectation that Area Directors are responsible for assurin
 
 When reviewing a document, Area Directors may rely on expertise of others to judge the desired properties; they need not be expert in every technology in their Area. However, in doing so, they do not avoid responsibility for meeting the requirements stated in {{RFC2026}}, and they may be held accountable if those requirements are not met, from the perspective of their Area.
 
-This policy does not prevent an Area Director from exceeding these expectations. However, Area Director reviews should be based in the requirements of {{RFC2026}}, as elaborated upon by the [DISCUSS Criteria]](https://www.ietf.org/about/groups/iesg/statements/iesg-discuss-criteria/).
+This policy does not prevent an Area Director from exceeding these expectations. However, Area Director reviews should be based in the requirements of {{RFC2026}}, as elaborated upon by the [DISCUSS Criteria](https://www.ietf.org/about/groups/iesg/statements/iesg-discuss-criteria/).
 
 
 
