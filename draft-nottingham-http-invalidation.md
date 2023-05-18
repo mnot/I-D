@@ -42,7 +42,7 @@ normative:
 
 --- abstract
 
-This document specifies an HTTP-based API for origin servers to invalidate its responses stored in gateways, such as reverse proxies and content delivery networks.
+This document specifies an HTTP-based API that gateway caches (such as those in reverse proxies and content delivery networks) can expose to allow origin servers to their invalidate stored responses.
 
 --- middle
 
