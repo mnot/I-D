@@ -51,9 +51,9 @@ This document specifies an HTTP-based API that gateway caches (such as those in 
 
 {{Section 4.4 of HTTP-CACHING}} defines invalidation as the side effect of a state-changing request on one or more stored responses in a HTTP cache.
 
-In practice, it has become common for caches to allow invalidation to be triggered through other mechanisms -- often, using a dedicated HTTP API. This is especially useful for caches that have a relationship with the origin server, as is the case for reverse proxies and content delivery networks. Invalidation APIs allow for more fine-grained control over caches in these situations.
+In practice, it has become common for caches to allow invalidation to be triggered through other mechanisms -- often, using a dedicated HTTP API. This is especially useful for caches that have a relationship with the origin server and wish to offer them finer-grained control, as is the case for reverse proxies and content delivery networks.
 
-While many such APIs already exist, they are proprietary. That makes it difficult for third-party implementations (for example, content management systems) to take advantage of those facilities, because each integration needs to created and maintained, hindering interoperability.
+While many such APIs already exist, they are proprietary. That makes it difficult for the origin server or its delegates (for example, content management systems) to take advantage of those facilities, because each integration needs to created and maintained, hindering interoperability.
 
 This document standardises a HTTP-based API for HTTP cache invalidation. {{resource}} describes a HTTP resource that accepts requests to invalidate stored responses, using a format described in {{event-format}}. {{desc-format}} specifies a format that describes the capabilities and configuration of a cache's invalidation API, so that tools used by the origin server can easily consume it.
 
