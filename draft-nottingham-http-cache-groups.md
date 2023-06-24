@@ -53,7 +53,7 @@ However, there are also cases where the relationship between stored responses co
 
 For example, it's common for a set of closely-related resources to be deployed on a site, such as is the case for many JavaScript libraries and frameworks. These resources are typically deployed with long freshness lifetimes for caching. When that period passes, the cache will need to revalidate each stored response in a short period of time. Grouping these resources can be used to allow a cache to consider them all as being revalidated when any single response in the group is revalidated, removing the need to revalidate all of them individually and avoiding the associated overhead.
 
-Likewise, when some resources change, it implies that other resources have also changed. This might be because state-changing request has side effects on other resources, or it might be purely for administrative convenience (e.g., "invalidate this part of the site"). Grouping responses together provides a dedicated way to express these relationships, instead of relying on things like URL structure.
+Likewise, when some resources change, it implies that other resources may have also changed. This might be because a state-changing request has side effects on other resources, or it might be purely for administrative convenience (e.g., "invalidate this part of the site"). Grouping responses together provides a dedicated way to express these relationships, instead of relying on things like URL structure.
 
 In addition to sharing revalidation and invalidation events, the relationships indicated by grouping can also be used by caches to optimise their operation; for example, it could be used to inform the operation of cache eviction algorithms.
 
