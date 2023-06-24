@@ -146,7 +146,9 @@ For example, "https://www.example.com/foo/bar" selects stored responses with the
 
 ... but does not select stored responses with the following URIs:
 
+* "https://www.example.com/FOO/bar" (different path)
 * "https://www.example.com/foo/bar/baz" (different path)
+* "https://www.example.com/foo/barbaz" (different path)
 * "https://www.example.com/foo/bar/" (different path)
 * "http://www.example.com/foo/bar" (different scheme)
 * "https://example.com/foo/bar" (different authority)
@@ -158,7 +160,7 @@ For example, "https://www.example.com/foo/bar" selects stored responses with the
 
 The "uri-prefix" selector type selects one or more stored responses by their URI prefix. When the invalidation event type is "uri-prefix", the content each selector string MUST be either a URI {{URI}} or an IRI {{IRI}}.
 
-When a selector value is compared to a stored response URI to determine whether it selects that response, the same normalization process described in {{uri-selector}} is used. However, the selector value is considered to be a prefix to match.
+When a selector value is compared to a stored response URI to determine whether it selects that response, the same normalization process described in {{uri-selector}} is used. However, the selector value is considered to be a prefix to match. Additionally, each segment of the selector value's path must have a matching segment in the stored response URI.
 
 For example, "https://www.example.com/foo/bar" would select all of the following URIs:
 
@@ -169,7 +171,10 @@ For example, "https://www.example.com/foo/bar" would select all of the following
 * "https://www.example.com/foo/bar?"
 * "https://www.example.com/foo/bar?baz"
 
-TODO: what about /foo/barbara?
+... but does not match stored responses with the following URIs:
+
+* "https://www.example.com/foo/barbaz" (last segment does not match)
+ww.example.com/foo/BAR/baz" (second segment does not match)
 
 ### Origin Selectors {#origin-selector}
 
