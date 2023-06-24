@@ -173,12 +173,12 @@ TODO: what about /foo/barbara?
 
 ### Origin Selectors {#origin-selector}
 
-The "origin" selector type selects all stored responses associated with a URI origin ({{Section 4.3.1 of HTTP}}). When the invalidation event type is "origin", the content of each selector string MUST be a normalized (using the process defined in {{uri-selector}}) URI prefix with port always present, and without a trailing "/".
+The "origin" selector type selects all stored responses associated with a URI origin ({{Section 4.3.1 of HTTP}}). When the invalidation event type is "origin", the content of each selector string MUST be a normalized (using the process defined in {{uri-selector}}) URI prefix, without a trailing "/". If the port is not present, it is assumed to be the default port for the scheme.
 
 For example, all of these are origin selectors:
 
 * "https://www.example.com:443"
-* "http://example.com:80"
+* "http://example.com"
 * "https://example.net:8080"
 
 
