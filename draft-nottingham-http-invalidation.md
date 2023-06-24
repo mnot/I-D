@@ -116,6 +116,8 @@ Additionally, this document defines one optional member of the top-level object:
 
 * "purge": a boolean that when true indicates that the selected stored responses should be removed from cache, rather than just marked as invalid.
 
+When a cache indicates support for purge (see {{desc-format}}) and purge is true, the cache MUST remove the relevant response(s) from volatile and non-volatile storage as promptly as possible, and if the cache indicates success with a 200 (OK) status code, MUST do so before returning the response.
+
 Unrecognised members of the top-level object MUST be ignored, to allow future updates of this specification to add new features.
 
 
@@ -219,7 +221,7 @@ Invalidation description objects can contain the following members and values:
 
 * "uri": a string conveying the URI of the Invalidation Resource ({{resource}})
 * "selectors": an array of strings indicating the selectors ({{selector-types}}) that the Invalidation Resource supports
-* "purge": a boolean indicating whether the Invalidation Resource supports the "purge" member in requests
+* "purge": a boolean indicating whether the Invalidation Resource supports the "purge" member in requests (see {{event-format}})
 * "p95-latency": an integer indicating the number of milliseconds that 95% of invalidation requests should be fully applied to the scope indicated by the description.
 
 API authentication objects can contain the following members and values:
