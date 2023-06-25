@@ -118,12 +118,12 @@ Cache extensions can explicitly strengthen the requirement above. For example, a
 
 The Cache-Group-Invalidation response header field is a List of Strings {{STRUCTURED-FIELDS}}. Each member of the list is an opaque value that identifies a group that the response invalidates, per {{invalidation}}.
 
-For example, a POST request that has side effects on a cache group "eurovision-results" could indicate that stored responses associated with that group should be invalidated with:
+For example, a POST request that has side effects on two cache groups could indicate that stored responses associated with either or both of those groups should be invalidated with:
 
 ~~~ http-message
 HTTP/1.1 200 OK
 Content-Type: text/html
-Cache-Group-Invalidation: "eurovision-results"
+Cache-Group-Invalidation: "eurovision-results", "kylie-minogue"
 ~~~
 
 The Cache-Group-Invalidation header field MUST be ignored on responses to requests that have a safe method (e.g., GET; see {{Section 9.2.1 of HTTP}}.
