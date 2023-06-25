@@ -61,7 +61,7 @@ For example, if a request indicates that the client prefers responses in the Fre
 
 This specification defines a new type of HTTP header field -- an _availability hint_ -- that augments the information on a single axis of content negotiation, by describing the selection of responses that a server has available along that axis. So, our example above have three availabilty hints added to it:
 
-~~~ http-message-new
+~~~ http-message
 Vary: Accept-Encoding, Accept-Language, ECT
 Avail-Encoding: gzip, br
 Avail-Language: fr, en;d
@@ -132,7 +132,7 @@ The following subsections define availability hints for a selection of existing 
 
 The Avail-Encoding response header field is the availability hint for content negotiation using the Accept-Encoding request header field defined in {{Section 12.5.3 of HTTP}}. For example:
 
-~~~ http-message-new
+~~~ http-message
 Vary: Accept-Encoding
 Avail-Encoding: gzip, br
 ~~~
@@ -146,7 +146,7 @@ The selection algorithm for this axis of content negotiation is described in {{S
 
 The Avail-Format response header field is the availability hint for content negotiation using the Accept request header field defined in {{Section 12.5.1 of HTTP}}. For example:
 
-~~~ http-message-new
+~~~ http-message
 Vary: Accept
 Avail-Format: image/png, image/gif;d
 ~~~
@@ -162,7 +162,7 @@ The selection algorithm for this axis of content negotiation is described in {{S
 
 The Avail-Language response header field is the availability hint for content negotiation using the Accept-Language request header field defined in {{Section 12.5.4 of HTTP}}. For example:
 
-~~~ http-message-new
+~~~ http-message
 Vary: Accept-Language
 Avail-Language: en-uk, en-us;d, fr, de
 ~~~
@@ -178,7 +178,7 @@ The selection algorithm for this axis of content negotiation is described in {{S
 
 The Cookie-Indices response header field is the availability hint for content negotiation using the Cookie request header field defined in {{?RFC6265}}. For example:
 
-~~~ http-message-new
+~~~ http-message
 Vary: Cookie
 Cookie-Indices: id, sid
 ~~~
