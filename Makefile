@@ -18,10 +18,9 @@ endif
 lint:: http-lint
 
 rfc-http-validate ?= rfc-http-validate
+.SECONDARY: $(drafts_xml)
 .PHONY: http-lint
-http-lint: $(drafts_source) http-lint-install
-	$(rfc-http-validate) -q -m sf.json $(filter-out http-lint-install,$^)
-
-.PHONY: http-lint-install
-http-lint-install:
-	@hash rfc-http-validate 2>/dev/null || pip3 install rfc-http-validate
+http-lint: $(add-suffix .http-lint.txt,$(add-prefix .,$(drafts)))
+.%.http-lint.txt: %.xml $(DEPS_FILES)
+	$(trace) $< -s http-lint $(rfc-http-validate) -q -m sf.json $<
+	@touch $@
