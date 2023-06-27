@@ -81,7 +81,7 @@ For example, an origin server might group all of the assets in a fictional Examp
 HTTP/1.1 200 OK
 Content-Type: application/javascript
 Cache-Control: max-age=3600
-Cache-Groups: "ExampleJS";revalidate, "scripts"
+Cache-Groups: "ExampleJS";revalidate, "scripts", 123abc
 ~~~
 
 This specification defines one Parameter for Cache-Groups, "revalidate", that indicates that the resources associated with that group share revalidation; see {{revalidation}}.
