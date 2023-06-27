@@ -20,7 +20,7 @@ lint:: http-lint
 rfc-http-validate ?= rfc-http-validate
 .SECONDARY: $(drafts_xml)
 .PHONY: http-lint
-http-lint: $(add-suffix .http-lint.txt,$(add-prefix .,$(drafts)))
+http-lint: $(addsuffix .http-lint.txt,$(addprefix .,$(drafts)))
 .%.http-lint.txt: %.xml $(DEPS_FILES)
 	$(trace) $< -s http-lint $(rfc-http-validate) -q -m sf.json $<
 	@touch $@
