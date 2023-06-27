@@ -65,7 +65,7 @@ This specification defines a new type of HTTP header field -- an _availability h
 Vary: Accept-Encoding, Accept-Language, ECT
 Avail-Encoding: gzip, br
 Avail-Language: fr, en;d
-Avail-ECT: (slow-2g 2g 3g), (4g);d
+Avail-ECT: ("slow-2g" "2g" "3g"), ("4g");d
 ~~~
 
 This says that there are two encodings available -- gzip and brotli -- beyond the mandatory "identity" encoding; that both French and English are available, but English is the default; and that there are two different representations available depending on the Effective Connection Type that the client advertises, with "4g" being the default.
@@ -228,7 +228,7 @@ TBD
 
 ## ECT
 
-> Avail-ECT: (slow-2g 2g 3g), (4g);d
+> Avail-ECT: ("slow-2g" "2g" "3g"), ("4g");d
 
 TBD
 
