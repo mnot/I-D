@@ -14,6 +14,8 @@ else
 	    -b main https://github.com/martinthomson/i-d-template $(LIBDIR)
 endif
 
+clean::
+	-rm -f .*.http-lint.txt
 
 lint:: http-lint
 
@@ -21,6 +23,7 @@ rfc-http-validate ?= rfc-http-validate
 .SECONDARY: $(drafts_xml)
 .PHONY: http-lint
 http-lint: $(addsuffix .http-lint.txt,$(addprefix .,$(drafts)))
+.PHONY: .%.http-lint.txt
 .%.http-lint.txt: %.xml $(DEPS_FILES)
 	$(trace) $< -s http-lint $(rfc-http-validate) -q -m sf.json $<
 	@touch $@
