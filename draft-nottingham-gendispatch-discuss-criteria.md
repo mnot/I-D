@@ -121,6 +121,20 @@ It is possible in such a situation that the WG will understand the AD's objectio
 
 Another possibility is that the WG will disagree with the AD, and will continue to request publication of the document. In those cases the responsible AD should work with both the WG and the AD holding the DISCUSS to see of a mutually agreeable path can be found.
 
+# DISCUSS Resolution
+
+The traditional method of DISCUSS resolution is the initiation of a discussion about the issues in question. This discussion may include only the IESG, particularly if the DISCUSS is resolved quickly during or following the IESG agenda when the document is presented. Usually the discussion extends to document editors and working group chairs, and entire working groups, as necessary. Increasingly, one of the working group chairs may coordinate the resolution of the DISCUSS (see {{?RFC4858}}).
+
+As the conclusion of this discussion, revisions to the document may or may not be required. If revisions are required, it is customary for the Area Director to clear their DISCUSS only when the revision containing the necessary emendations has been published in the Internet-Drafts repository.
+
+While in many cases, DISCUSSes are resolved expeditiously, there are common cases where a DISCUSS can take weeks or months to resolve, given that revisions are frequently required, and such revisions need to be checked by the AD that issued the DISCUSS. Accordingly, DISCUSSes should be used sparingly.
+
+If a DISCUSS cannot be resolved by the working group, and the AD continues to hold his or her DISCUSS, the IESG has an alternative balloting procedure that can be used to override a single discuss position. In the alternative procedure, all ADs are required to enter a "yes" or "no" position on the document. A document will be published if two-thirds of the IESG state a position of "yes", and no more than two ADs state a "no" position. Two-thirds of the IESG is formally defined as two-thirds of the sitting ADs (current 9), except for those who are recused from voting on the document in question, rounded up to the next whole number. If three or more ADs hold a "no" position on a document using the alternative balloting procedure, or if a document fails to gather the required number of "yes" positions, the document will be returned to the WG with a "no" answer, which is one of the options described in RFC 2026.
+
+When an AD is replaced for any reason, the successor should promptly evaluate DISCUSS ballots left by his or her predecessor, and either re-assert them, if they still meet the criteria of Section 3.1, or register "No Objection" if they do not. The successor AD is responsible for handling such DISCUSS ballots just as if they were his or her own.
+
+The criteria provided in this document are intended to help the IESG to restrict the usage of a DISCUSS to cases where it is necessary.
+
 # IANA Considerations
 
 This document contains no considerations for the IANA.
