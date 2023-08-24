@@ -244,7 +244,7 @@ For example:
 {
   "description": "The Example CDN configuration for example.com",
   "generated": "2023-08-21T23:20:50.52Z",
-  "bearer": "mF_9.B5f-4.1JqM"
+  "api-auth": "mF_9.B5f-4.1JqM"
 }
 ~~~
 
