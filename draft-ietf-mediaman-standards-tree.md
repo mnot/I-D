@@ -1,7 +1,7 @@
 ---
 title: Allowing Community Registrations in the Standards Tree
 abbrev: Community Registrations
-docname: draft-nottingham-mediaman-standards-tree-latest
+docname: draft-ietf-mediaman-standards-tree-latest
 date: {DATE}
 category: std
 
@@ -12,11 +12,6 @@ stand_alone: yes
 smart_quotes: no
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
-venue:
-  home: "https://mnot.github.io/I-D/"
-  repo: "https://github.com/mnot/I-D/labels/standards-tree"
-
-github-issue-label: standards-tree
 
 author:
  -
