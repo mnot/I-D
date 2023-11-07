@@ -78,7 +78,7 @@ Some formats are interoperable (i.e., they are supported by more than one implem
 - There is no conflict with IETF work or work at other recognised SDOs (present or future)
 - There is evidence of broad adoption
 
-The Designated Expert(s) have discretion in applying these criteria; in rare cases, they might judge it best to register an entry that fails one or more.
+The intent is to assure that successfully deployed community formats have registered media types. As such, the criteria are designed to preclude anticipatory registrations. The Designated Expert(s) have discretion in applying these criteria; in rare cases, they might judge it best to register an entry that fails one or more. 
 
 Note that such registrations still go through preliminary community review (Section 5.1), and decisions can be appealed (Section 5.3).
 
