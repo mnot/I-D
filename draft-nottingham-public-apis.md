@@ -35,7 +35,7 @@ author:
 This document introduces the concept of a "public API" -- one that is imposed upon the market by regulators -- and documents principles to help guide their development in order to assure that they genuinely serve the public.
 
 
----note_Note_to_Readers
+--- note_Note_to_Readers
 
 This is a very preliminary document; it needs a considerable amount of additional content, examples, discussion, and refinement. At this point, feedback would be greatly appreciated on:
 * The general approach and suitability for purpose (as described in the introduction)
