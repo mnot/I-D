@@ -189,11 +189,11 @@ The selection algorithm for Cookie-Indices, given a set of stored_responses a pr
 
 0. Let available_responses be an empty set.
 1. For each stored_response in stored_responses:
-  1. For each cookie_index in Cookie-Indicies:
-     1. Let presented_value be the value of the cookie with the name cookie_index in presented_request. If a cookie with the name cookie_index is not present in presented_request, let presented_value be a null value.
-     2. Let stored_value be the value of the cookie with the name cookie_index in stored_response. If a cookie with the name cookie_index is not present in stored_response, let stored_value be a null value.
-     3. If presented_value does not equal stored_value, continue to the next stored_response.
-  2. Add stored_response to available_responses.
+    1. For each cookie_index in Cookie-Indicies:
+        1. Let presented_value be the value of the cookie with the name cookie_index in presented_request. If a cookie with the name cookie_index is not present in presented_request, let presented_value be a null value.
+        2. Let stored_value be the value of the cookie with the name cookie_index in stored_response. If a cookie with the name cookie_index is not present in stored_response, let stored_value be a null value.
+        3. If presented_value does not equal stored_value, continue to the next stored_response.
+    2. Add stored_response to available_responses.
 2. Return available_responses.
 
 Note that this algorithm requires storing the cookies from the associated request with each response.
@@ -248,4 +248,3 @@ TBD
 
 
 --- back
-
