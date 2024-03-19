@@ -183,13 +183,13 @@ Vary: Cookie
 Cookie-Indices: "id", "sid"
 ~~~
 
-Cookie-Indicies is a Structured Field, whose value is a List ({{Section 3.1 of STRUCTURED-FIELDS}}) of Strings ({{Section 3.3.3 of STRUCTURED-FIELDS}}). Each list item indicates a cookie name whose value is to be considered when selecting responses.
+Cookie-Indices is a Structured Field, whose value is a List ({{Section 3.1 of STRUCTURED-FIELDS}}) of Strings ({{Section 3.3.3 of STRUCTURED-FIELDS}}). Each list item indicates a cookie name whose value is to be considered when selecting responses.
 
 The selection algorithm for Cookie-Indices, given a set of stored_responses a presented_request, and the value of Cookie-Indices:
 
 0. Let available_responses be an empty set.
 1. For each stored_response in stored_responses:
-    1. For each cookie_index in Cookie-Indicies:
+    1. For each cookie_index in Cookie-Indices:
         1. Let presented_value be the value of the cookie with the name cookie_index in presented_request. If a cookie with the name cookie_index is not present in presented_request, let presented_value be a null value.
         2. Let stored_value be the value of the cookie with the name cookie_index in stored_response. If a cookie with the name cookie_index is not present in stored_response, let stored_value be a null value.
         3. If presented_value does not equal stored_value, continue to the next stored_response.
