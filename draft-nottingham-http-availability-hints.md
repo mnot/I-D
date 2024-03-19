@@ -180,10 +180,10 @@ The Cookie-Indices response header field is the availability hint for content ne
 
 ~~~ http-message
 Vary: Cookie
-Cookie-Indices: id, sid
+Cookie-Indices: "id", "sid"
 ~~~
 
-Cookie-Indices is a Structured Field, whose value is a List ({{Section 3.1 of STRUCTURED-FIELDS}}) of Tokens ({{Section 3.3.4 of STRUCTURED-FIELDS}}). Each list item indicates a cookie name whose value is to be considered when selecting responses.
+Cookie-Indices is a Structured Field, whose value is a List ({{Section 3.1 of STRUCTURED-FIELDS}}) of Strings ({{Section 3.3.3 of STRUCTURED-FIELDS}}). Each list item indicates a cookie name whose value is to be considered when selecting responses.
 
 The selection algorithm for Cookie-Indices, given a set of stored_responses a presented_request, and the value of Cookie-Indices:
 
