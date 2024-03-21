@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-19T00:18:16.343092+00:00",
+  "timestamp": "2024-03-21T00:18:54.220081+00:00",
   "repo": "mnot/I-D",
   "labels": [
     {
@@ -9460,9 +9460,17 @@
       "labels": [],
       "body": "(re. draft-nottingham-http-availability-hints)\r\n\r\n@mnot's suggestion via email was:\r\n* ignore unrecognized parameters\r\n* treat other unexpected data structures like a syntax error and ignore the field (i.e., falling back to vary)\r\n\r\nI think this makes sense; it fails safe for most cases and if we ever added a parameter where it would be incorrect for existing implementations to ignore it, we could add a `must-support-whizbang` or similar token which older implementations would reject.\r\n\r\nFiled this as an issue both because it's slightly less trivial to actually make this change as I sit here, and because it's nuanced enough that someone might have second thoughts before someone sits down to address this.",
       "createdAt": "2024-03-19T00:13:40Z",
-      "updatedAt": "2024-03-19T00:13:40Z",
+      "updatedAt": "2024-03-19T14:26:52Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "jeremyroman",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "One remaining case -- strings which are not valid cookie names in RFC 6265, such as strings containing one of the `separators` characters. Some of these are also accepted as cookies by browsers (well, at least Chromium browsers -- I haven't dug into Mozilla and WebKit), and some are not.\r\n\r\nOne possibility is to say that strings that don't match the `cookie-name` production are ignored (or stricter, constitute a syntax error in the entire header). Alternatively, we could accept all strings (that consist of printable ASCII characters) and simply rely on the fact that they will never compare equal to a cookie that the HTTP implementation never stored (whatever limitations it applies to cookie names).",
+          "createdAt": "2024-03-19T14:26:50Z",
+          "updatedAt": "2024-03-19T14:26:50Z"
+        }
+      ]
     }
   ],
   "pulls": [
