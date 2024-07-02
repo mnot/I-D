@@ -44,7 +44,7 @@ This specification defines availability hints, a new class of HTTP responses hea
 
 # Introduction
 
-The HTTP Vary header field ({{Section 12.5.5 of HTTP}}) allows an origin server to describe what aspects of requests affect the content of its responses. This information is useful in many ways; most prominently, downstream caches can use it to select the correct stored response for a given request ({{Section 4.1 of HTTP-CACHING}}).
+The HTTP Vary header field ({{Section 12.5.5 of HTTP}}) allows an origin server to describe what aspects of requests affect the content of its responses. This information is useful in many ways: most prominently, downstream caches can use it to select the correct stored response for a given request ({{Section 4.1 of HTTP-CACHING}}).
 
 However, the information conveyed by Vary is limited. If the request headers enumerated in it are considered as a n-dimensional space with each field representing an axis, this response header:
 
@@ -59,7 +59,7 @@ This design makes using Vary difficult. A cache doesn't have enough information 
 
 For example, if a request indicates that the client prefers responses in the French language, but will also accept English, and the cache has a stored English response, what is the appropriate action? Should it serve the English response, or should it make a request to the server for a French response and hope that one might be available -- adding significant latency if it is not?
 
-This specification defines a new type of HTTP header field -- an _availability hint_ -- that augments the information on a single axis of content negotiation, by describing the selection of responses that a server has available along that axis. So, our example above have three availabilty hints added to it:
+This specification defines a new type of HTTP header field -- an _availability hint_ -- that augments the information on a single axis of content negotiation, by describing the selection of responses that a server has available along that axis. So, our example above could have three availability hints added to it:
 
 ~~~ http-message
 Vary: Accept-Encoding, Accept-Language, ECT
@@ -78,7 +78,7 @@ Likewise, it is't possible to convey "holes" in the dimensional space described 
 
 Availability hints do not specify exactly how caches should behave in all circumstances. Because they operate as an optimisation, they often have different behaviours based upon the specific requirements of their deployment. Availability hints are designed to better inform their operation, not constrain it.
 
-Finally, availability hints need to be defined for each axis of content negotiation in use, and the recipient (such as a cache) needs to understand that availability hint. If either condition is not true, that axis of negotiation will fall back to the behaviour specified by Vary.
+Finally, availability hints need to be defined for each axis of content negotiation in use, and the recipient (such as a cache) needs to understand that type of availability hint. If either condition is not true, that axis of negotiation will fall back to the behaviour specified by Vary.
 
 {{define}} describes how availability hints are defined. {{process}} specifies how availability hints are processed, with respect to the Vary header field. {{definitions}} defines a number of availability hints for existing HTTP content negotiation mechanisms.
 
