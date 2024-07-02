@@ -123,7 +123,7 @@ This specification does not define how to select the most appropriate response w
 
 The following subsections define availability hints for a selection of existing content negotiation mechanisms.
 
-## Content Encoding
+## Content Encoding {#avail-encoding}
 
 The Avail-Encoding response header field is the availability hint for content negotiation using the Accept-Encoding request header field defined in {{Section 12.5.3 of HTTP}}. For example:
 
@@ -137,7 +137,7 @@ Avail-Encoding is a Structured Field, whose value is a List ({{Section 3.1 of ST
 The selection algorithm for this axis of content negotiation is described in {{Section 12.5.3 of HTTP}}.
 
 
-## Content Format
+## Content Format {#avail-format}
 
 The Avail-Format response header field is the availability hint for content negotiation using the Accept request header field defined in {{Section 12.5.1 of HTTP}}. For example:
 
@@ -153,7 +153,7 @@ A single member of the List MAY have the "d" parameter, which indicates that mem
 The selection algorithm for this axis of content negotiation is described in {{Section 12.5.1 of HTTP}}.
 
 
-## Content Language
+## Content Language {#avail-language}
 
 The Avail-Language response header field is the availability hint for content negotiation using the Accept-Language request header field defined in {{Section 12.5.4 of HTTP}}. For example:
 
@@ -169,7 +169,7 @@ A single member of the List MAY have the "d" parameter, which indicates that mem
 The selection algorithm for this axis of content negotiation is described in {{Section 12.5.4 of HTTP}}.
 
 
-## Cookie
+## Cookie {#cookie-indices}
 
 The Cookie-Indices response header field is the availability hint for content negotiation using the Cookie request header field defined in {{?RFC6265}}. For example:
 
@@ -178,7 +178,7 @@ Vary: Cookie
 Cookie-Indices: "id", "sid"
 ~~~
 
-Cookie-Indices is a Structured Field, whose value is a List ({{Section 3.1 of STRUCTURED-FIELDS}}) of Strings ({{Section 3.3.3 of STRUCTURED-FIELDS}}). Each list item indicates a cookie name whose value is to be considered when selecting responses.
+Cookie-Indices is a Structured Field, whose value is a List ({{Section 3.1 of STRUCTURED-FIELDS}}) of Strings ({{Section 3.3.3 of STRUCTURED-FIELDS}}). Each list item indicates a cookie name whose value is to be considered when selecting responses. Unlisted cookies are, by implication, ignored for that purpose.
 
 The selection algorithm for Cookie-Indices, given a set of stored_responses a presented_request, and the value of Cookie-Indices:
 
@@ -196,11 +196,23 @@ Note that this algorithm requires storing the cookies from the associated reques
 
 # IANA Considerations
 
-TBD
+IANA is asked to update the "Hypertext Transfer Protocol (HTTP) Field Name Registry" registry
+according as follows:
+
+|----------------------|-----------|-------------------------------------------|
+| Field Name           | Status    |                 Reference                 |
+|----------------------|-----------|-------------------------------------------|
+| Avail-Encoding       | permanent | {{avail-encoding}}                        |
+| Avail-Format         | permanent | {{avail-format}}                          |
+| Avail-Language       | permanent | {{avail-language}}                        |
+| Cookie-Indices       | permanent | {{cookie-indices}}                        |
+|----------------------|-----------|-------------------------------------------|
 
 # Security Considerations
 
-TBD
+Availability hints reveal information about the state of the server, and therefore could help an attacker understand better how to bypass defenses. For example, Cookie-Indices reveals information about what cookies might affect the content of responses.
+
+Recipients of availability hints should not assume that the information within them are complete or correct.
 
 
 --- back
