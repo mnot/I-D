@@ -68,7 +68,7 @@ Avail-Language: fr, en;d
 Avail-ECT: ("slow-2g" "2g" "3g"), ("4g");d
 ~~~
 
-This says that there are two encodings available -- gzip and brotli -- beyond the mandatory "identity" encoding; that both French and English are available, but English is the default; and that there are two different representations available depending on the Effective Connection Type that the client advertises, with "4g" being the default.
+This says that there are two encodings available -- gzip and brotli -- beyond the mandatory "identity" encoding; that both French and English are available, but English is the default; and that there are two different representations available depending on the Effective Connection Type that the client advertises, with "4g" being the default. (note that because it it not yet standardised, this specification does not define the Avail-ECT header field; it is only used as an example above).
 
 Caches and other clients can use this information to determine when a request can be satisfied by a stored response, and what other options might be available. Using the example above, we can know that the response to a request an ECT of "2g" can also be used for a request with "3g".
 
@@ -192,45 +192,6 @@ The selection algorithm for Cookie-Indices, given a set of stored_responses a pr
 2. Return available_responses.
 
 Note that this algorithm requires storing the cookies from the associated request with each response.
-
-
-## Device Pixel Ratio
-
-TBD
-
-
-> Avail-DPR:
-
-
-## Downlink
-
-TBD
-
-> Avail-Downlink: (0 1), (1 50);d, (50 max)
-
-
-## Width
-
-TBD
-
-> Avail-Width: (0 640), (641 1024);d, (1025 max)
-
-
-## RTT
-
-TBD
-
-
-## ECT
-
-> Avail-ECT: ("slow-2g" "2g" "3g"), ("4g");d
-
-TBD
-
-
-## Save-Data
-
-TBD
 
 
 # IANA Considerations
