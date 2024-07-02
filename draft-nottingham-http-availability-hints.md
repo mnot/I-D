@@ -90,11 +90,11 @@ Finally, availability hints need to be defined for each axis of content negotiat
 
 # Defining Availability Hints {#define}
 
-The specification for an availability hint applies to a single axis of HTTP proactive content negotiation; for example, that enabled by the `Accept-Encoding` request header field.
+An availability hint applies to a single axis of HTTP proactive content negotiation; for example, that enabled by the `Accept-Encoding` request header field.
 
-An availability hint specification needs to convey the following information:
+A specification for an availability hint needs to convey the following information:
 
-1. The definition of a response header field that describes the available responses along that axis of content negotiation.
+1. The definition of a response header field that describes the available responses along that axis of content negotiation. By convention, these header fields typically begin with "Avail-".
 
 2. An algorithm or guidelines for using that information to determine whether a stored response can be selected for a presented request (per {{Section 4.1 of HTTP-CACHING}}).
 
@@ -105,19 +105,14 @@ It is recommended that the selection algorithm operate solely using information 
 Either the response header field or the algorithm should indicate which of the available responses is the default -- i.e., which is used if none match.
 
 
-# Publishing Availability Hints {#publish}
-
-TBD - advice to sites about how to publish / use availability hints
-
-
 # Calculating Cache Keys with Availability Hints {#process}
 
-When presented with a response that has both a Vary header field and one or more availability hints, this specification augments the process defined in {{Section 4.1 of HTTP-CACHING}}.
+When a cache is presented with a response that has both a Vary header field and one or more availability hints, this specification augments the process defined in {{Section 4.1 of HTTP-CACHING}}.
 
-While the model there is defined in terms of whether the header fields from two requests match, availability hints invoke a different processing model; the set of stored responses that can be used to satisfy a presented request is found by:
+While Vary processing is defined in terms of whether the header fields from two requests match, availability hints invoke a different processing model. When they are present, the set of stored responses that can be used to satisfy a presented request is found by following these steps:
 
-1. Determine the Vary header field and availability hints present for the presented URL. They SHOULD be obtained from the most recently obtained response for that URL, although they MAY be obtained from any fresh response for that URL (per {{Section 4.2 of HTTP-CACHING}}).
-2. For each content negotiation axis in the Vary header field, determine which stored responses can be selected by running the corresponding selection algorithm, as defined by the availability hint.
+1. Determine the Vary header field and availability hints present for the requested URL. They SHOULD be obtained from the most recently obtained response for that URL (per {{Section 4 of HTTP-CACHING}}, but without applying the Vary header field per {{Section 4.1 of HTTP-CACHING}}), although they MAY be obtained from any response allowed to be used for that URL.
+2. For each content negotiation axis in the Vary header field, determine which stored responses can be selected by running the corresponding selection algorithm, as defined by the associated availability hint.
    1. If an axis of content negotiation is not recognised or implemented by the cache, fall back to selecting available responses for that axis using the rules described in {{Section 4.1 of HTTP-CACHING}}.
 3. Return the intersection of the results of (2).
 
