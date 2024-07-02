@@ -118,6 +118,8 @@ While Vary processing is defined in terms of whether the header fields from two 
 
 This specification does not define how to select the most appropriate response when more than one is returned, but it is RECOMMENDED that client preferences be observed when expressed.
 
+If a received availability hint does not conform to the data structure defined in its specification (for example, a Structured Fields List of Strings is anticipated, but one item in the List is an Integer), that field SHOULD be ignored (with the implication that processing for that axis of content negotiation will fall back to Vary behavior). Note that unrecognised Parameters on Structured Fields are ignored and therefore do not trigger this fallback, unless explicitly specified otherwise.
+
 
 # Availability Hint Definitions {#definitions}
 
