@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                              12 June 2024
+Internet-Draft                                               2 July 2024
 Intended status: Standards Track                                        
-Expires: 14 December 2024
+Expires: 3 January 2025
 
 
                         HTTP Availability Hints
@@ -45,7 +45,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 December 2024.
+   This Internet-Draft will expire on 3 January 2025.
 
 Copyright Notice
 
@@ -66,31 +66,24 @@ Table of Contents
    1.  Introduction
      1.1.  Notational Conventions
    2.  Defining Availability Hints
-   3.  Publishing Availability Hints
-   4.  Calculating Cache Keys with Availability Hints
-   5.  Availability Hint Definitions
-     5.1.  Content Encoding
-     5.2.  Content Format
-     5.3.  Content Language
-     5.4.  Cookie
-     5.5.  Device Pixel Ratio
-     5.6.  Downlink
-     5.7.  Width
-     5.8.  RTT
-     5.9.  ECT
-     5.10. Save-Data
-   6.  IANA Considerations
-   7.  Security Considerations
-   8.  References
-     8.1.  Normative References
-     8.2.  Informative References
+   3.  Calculating Cache Keys with Availability Hints
+   4.  Availability Hint Definitions
+     4.1.  Content Encoding
+     4.2.  Content Format
+     4.3.  Content Language
+     4.4.  Cookie
+   5.  IANA Considerations
+   6.  Security Considerations
+   7.  References
+     7.1.  Normative References
+     7.2.  Informative References
    Author's Address
 
 1.  Introduction
 
    The HTTP Vary header field (Section 12.5.5 of [HTTP]) allows an
    origin server to describe what aspects of requests affect the content
-   of its responses.  This information is useful in many ways; most
+   of its responses.  This information is useful in many ways: most
    prominently, downstream caches can use it to select the correct
    stored response for a given request (Section 4.1 of [HTTP-CACHING]).
 
@@ -121,8 +114,8 @@ Table of Contents
    This specification defines a new type of HTTP header field -- an
    _availability hint_ -- that augments the information on a single axis
    of content negotiation, by describing the selection of responses that
-   a server has available along that axis.  So, our example above have
-   three availabilty hints added to it:
+   a server has available along that axis.  So, our example above could
+   have three availability hints added to it:
 
    Vary: Accept-Encoding, Accept-Language, ECT
    Avail-Encoding: gzip, br
@@ -134,7 +127,9 @@ Table of Contents
    English are available, but English is the default; and that there are
    two different representations available depending on the Effective
    Connection Type that the client advertises, with "4g" being the
-   default.
+   default. (note that because it it not yet standardised, this
+   specification does not define the Avail-ECT header field; it is only
+   used as an example above).
 
    Caches and other clients can use this information to determine when a
    request can be satisfied by a stored response, and what other options
@@ -163,13 +158,13 @@ Table of Contents
 
    Finally, availability hints need to be defined for each axis of
    content negotiation in use, and the recipient (such as a cache) needs
-   to understand that availability hint.  If either condition is not
-   true, that axis of negotiation will fall back to the behaviour
+   to understand that type of availability hint.  If either condition is
+   not true, that axis of negotiation will fall back to the behaviour
    specified by Vary.
 
-   Section 2 describes how availability hints are defined.  Section 4
+   Section 2 describes how availability hints are defined.  Section 3
    specifies how availability hints are processed, with respect to the
-   Vary header field.  Section 5 defines a number of availability hints
+   Vary header field.  Section 4 defines a number of availability hints
    for existing HTTP content negotiation mechanisms.
 
 1.1.  Notational Conventions
@@ -182,15 +177,16 @@ Table of Contents
 
 2.  Defining Availability Hints
 
-   The specification for an availability hint applies to a single axis
-   of HTTP proactive content negotiation; for example, that enabled by
-   the Accept-Encoding request header field.
+   An availability hint applies to a single axis of HTTP proactive
+   content negotiation; for example, that enabled by the Accept-Encoding
+   request header field.
 
-   An availability hint specification needs to convey the following
-   information:
+   A specification for an availability hint needs to convey the
+   following information:
 
    1.  The definition of a response header field that describes the
-       available responses along that axis of content negotiation.
+       available responses along that axis of content negotiation.  By
+       convention, these header fields typically begin with "Avail-".
 
    2.  An algorithm or guidelines for using that information to
        determine whether a stored response can be selected for a
@@ -208,31 +204,29 @@ Table of Contents
    which of the available responses is the default -- i.e., which is
    used if none match.
 
-3.  Publishing Availability Hints
+3.  Calculating Cache Keys with Availability Hints
 
-   TBD - advice to sites about how to publish / use availability hints
+   When a cache is presented with a response that has both a Vary header
+   field and one or more availability hints, this specification augments
+   the process defined in Section 4.1 of [HTTP-CACHING].
 
-4.  Calculating Cache Keys with Availability Hints
-
-   When presented with a response that has both a Vary header field and
-   one or more availability hints, this specification augments the
-   process defined in Section 4.1 of [HTTP-CACHING].
-
-   While the model there is defined in terms of whether the header
+   While Vary processing is defined in terms of whether the header
    fields from two requests match, availability hints invoke a different
-   processing model; the set of stored responses that can be used to
-   satisfy a presented request is found by:
+   processing model.  When they are present, the set of stored responses
+   that can be used to satisfy a presented request is found by following
+   these steps:
 
    1.  Determine the Vary header field and availability hints present
-       for the presented URL.  They SHOULD be obtained from the most
-       recently obtained response for that URL, although they MAY be
-       obtained from any fresh response for that URL (per Section 4.2 of
-       [HTTP-CACHING]).
+       for the requested URL.  They SHOULD be obtained from the most
+       recently obtained response for that URL (per Section 4 of
+       [HTTP-CACHING], but without applying the Vary header field per
+       Section 4.1 of [HTTP-CACHING]), although they MAY be obtained
+       from any response allowed to be used for that URL.
 
    2.  For each content negotiation axis in the Vary header field,
        determine which stored responses can be selected by running the
-       corresponding selection algorithm, as defined by the availability
-       hint.
+       corresponding selection algorithm, as defined by the associated
+       availability hint.
 
        1.  If an axis of content negotiation is not recognised or
            implemented by the cache, fall back to selecting available
@@ -245,12 +239,21 @@ Table of Contents
    response when more than one is returned, but it is RECOMMENDED that
    client preferences be observed when expressed.
 
-5.  Availability Hint Definitions
+   If a received availability hint does not conform to the data
+   structure defined in its specification (for example, a Structured
+   Fields List of Strings is anticipated, but one item in the List is an
+   Integer), that field SHOULD be ignored (with the implication that
+   processing for that axis of content negotiation will fall back to
+   Vary behavior).  Note that unrecognised Parameters on Structured
+   Fields are ignored and therefore do not trigger this fallback, unless
+   explicitly specified otherwise.
+
+4.  Availability Hint Definitions
 
    The following subsections define availability hints for a selection
    of existing content negotiation mechanisms.
 
-5.1.  Content Encoding
+4.1.  Content Encoding
 
    The Avail-Encoding response header field is the availability hint for
    content negotiation using the Accept-Encoding request header field
@@ -268,7 +271,7 @@ Table of Contents
    The selection algorithm for this axis of content negotiation is
    described in Section 12.5.3 of [HTTP].
 
-5.2.  Content Format
+4.2.  Content Format
 
    The Avail-Format response header field is the availability hint for
    content negotiation using the Accept request header field defined in
@@ -288,7 +291,7 @@ Table of Contents
    The selection algorithm for this axis of content negotiation is
    described in Section 12.5.1 of [HTTP].
 
-5.3.  Content Language
+4.3.  Content Language
 
    The Avail-Language response header field is the availability hint for
    content negotiation using the Accept-Language request header field
@@ -308,7 +311,7 @@ Table of Contents
    The selection algorithm for this axis of content negotiation is
    described in Section 12.5.4 of [HTTP].
 
-5.4.  Cookie
+4.4.  Cookie
 
    The Cookie-Indices response header field is the availability hint for
    content negotiation using the Cookie request header field defined in
@@ -320,7 +323,8 @@ Table of Contents
    Cookie-Indices is a Structured Field, whose value is a List
    (Section 3.1 of [STRUCTURED-FIELDS]) of Strings (Section 3.3.3 of
    [STRUCTURED-FIELDS]).  Each list item indicates a cookie name whose
-   value is to be considered when selecting responses.
+   value is to be considered when selecting responses.  Unlisted cookies
+   are, by implication, ignored for that purpose.
 
    The selection algorithm for Cookie-Indices, given a set of
    stored_responses a presented_request, and the value of Cookie-
@@ -354,49 +358,38 @@ Table of Contents
    Note that this algorithm requires storing the cookies from the
    associated request with each response.
 
-5.5.  Device Pixel Ratio
+5.  IANA Considerations
 
-   TBD
+   IANA is asked to update the "Hypertext Transfer Protocol (HTTP) Field
+   Name Registry" registry according as follows:
 
-      Avail-DPR:
+               +================+===========+=============+
+               | Field Name     | Status    | Reference   |
+               +================+===========+=============+
+               | Avail-Encoding | permanent | Section 4.1 |
+               +----------------+-----------+-------------+
+               | Avail-Format   | permanent | Section 4.2 |
+               +----------------+-----------+-------------+
+               | Avail-Language | permanent | Section 4.3 |
+               +----------------+-----------+-------------+
+               | Cookie-Indices | permanent | Section 4.4 |
+               +----------------+-----------+-------------+
 
-5.6.  Downlink
+                                 Table 1
 
-   TBD
+6.  Security Considerations
 
-      Avail-Downlink: (0 1), (1 50);d, (50 max)
+   Availability hints reveal information about the state of the server,
+   and therefore could help an attacker understand better how to bypass
+   defenses.  For example, Cookie-Indices reveals information about what
+   cookies might affect the content of responses.
 
-5.7.  Width
+   Recipients of availability hints should not assume that the
+   information within them are complete or correct.
 
-   TBD
+7.  References
 
-      Avail-Width: (0 640), (641 1024);d, (1025 max)
-
-5.8.  RTT
-
-   TBD
-
-5.9.  ECT
-
-      Avail-ECT: ("slow-2g" "2g" "3g"), ("4g");d
-
-   TBD
-
-5.10.  Save-Data
-
-   TBD
-
-6.  IANA Considerations
-
-   TBD
-
-7.  Security Considerations
-
-   TBD
-
-8.  References
-
-8.1.  Normative References
+7.1.  Normative References
 
    [HTTP]     Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
               Ed., "HTTP Semantics", STD 97, RFC 9110,
@@ -423,7 +416,7 @@ Table of Contents
               HTTP", RFC 8941, DOI 10.17487/RFC8941, February 2021,
               <https://www.rfc-editor.org/rfc/rfc8941>.
 
-8.2.  Informative References
+7.2.  Informative References
 
    [RFC6265]  Barth, A., "HTTP State Management Mechanism", RFC 6265,
               DOI 10.17487/RFC6265, April 2011,
