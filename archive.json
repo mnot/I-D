@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-08-08T00:20:48.474040+00:00",
+  "timestamp": "2024-08-11T00:23:15.306726+00:00",
   "repo": "mnot/I-D",
   "labels": [
     {
@@ -9514,9 +9514,24 @@
       "labels": [],
       "body": "For the available hints like AvailLanguage, I have a couple of questions to confirm: \r\n\r\n1. when the specs says \"unrecognised Parameters on Structured Fields are ignored and therefore do not trigger this fallback\", does it mean that e.g. `en, zh;ddd, ja;dd` should result in `en, zh, ja`, also `en, zh;d;c` and  `en, zh;d=?0` and `en;d=1.0, zh` should be treated the same as `en, zh`? \r\n\r\n3.  whether multiple default setting allows or be ignored? it's not clear whether `en, zh;d, ja;d ` should actually be rejected or be treated the same was as `en, zh;d, ja` or as `en, zh;d`. ",
       "createdAt": "2024-07-15T20:04:20Z",
-      "updatedAt": "2024-07-15T20:04:20Z",
+      "updatedAt": "2024-08-10T02:12:50Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "recvfrom",
+          "authorAssociation": "NONE",
+          "body": "Any thoughts on this? This came up in a Chromium code review and it'd be helpful to have a clarification to ensure that we've implemented parsing of the AvailLanguage header correctly. Thanks!\r\n\r\nFor reference: https://chromium-review.googlesource.com/c/chromium/src/+/5703436/comment/eac735bf_760f79bd/",
+          "createdAt": "2024-08-09T14:16:16Z",
+          "updatedAt": "2024-08-09T14:18:10Z"
+        },
+        {
+          "author": "mnot",
+          "authorAssociation": "OWNER",
+          "body": "The text in the spec needs some more nuance, but unrecognised Parameters on `Avail-Language` should indeed be ignored. If `d` has a non-Boolean value, we'll need to define (probably most sensible to ignore those too).\r\n\r\nFor multiple `d`, I'm inclined to say either first one wins, or it means the entire field should be ignored - thoughts?\r\n\r\n",
+          "createdAt": "2024-08-10T02:12:49Z",
+          "updatedAt": "2024-08-10T02:12:49Z"
+        }
+      ]
     }
   ],
   "pulls": [
