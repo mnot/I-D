@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-10T00:22:15.556904+00:00",
+  "timestamp": "2025-01-09T00:30:38.194750+00:00",
   "repo": "mnot/I-D",
   "labels": [
     {
@@ -6228,7 +6228,7 @@
       "title": "Questions regarding h2_cache_digests",
       "url": "https://github.com/mnot/I-D/issues/196",
       "state": "CLOSED",
-      "author": "nvwebd",
+      "author": "nate-vukovich",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [
@@ -6240,7 +6240,7 @@
       "closedAt": "2016-11-13T12:57:40Z",
       "comments": [
         {
-          "author": "nvwebd",
+          "author": "nate-vukovich",
           "authorAssociation": "NONE",
           "body": "It seems a bit hard to implement the hash-value 1/1 in JavaScript.\n\nSHA256 is represented with 256bits -> JavaScript can't handle more than 64bit floating point with 2^56 - 1 precision.\n\nI would like to know what do you think about this solution:\n- Representing the SHA as an ArrayBuffer and then add the buffer values to a variable to be represented as a Number -> converting the Number to binary and then doing the truncate.\n\nI don't see any other solutions to this. \n\nAny info would help me a lot...\n",
           "createdAt": "2016-07-13T23:19:20Z",
@@ -6254,7 +6254,7 @@
           "updatedAt": "2016-07-14T00:16:12Z"
         },
         {
-          "author": "nvwebd",
+          "author": "nate-vukovich",
           "authorAssociation": "NONE",
           "body": "I worked it out. \n\n@kazuho your solution was wrong I used : `let trunc = (f32bits & (Math.pow(2, thisBits)-1));`. But thanks for showing me the direction to go into.\n",
           "createdAt": "2016-07-14T23:24:35Z",
@@ -6268,14 +6268,14 @@
           "updatedAt": "2016-07-15T00:57:31Z"
         },
         {
-          "author": "nvwebd",
+          "author": "nate-vukovich",
           "authorAssociation": "NONE",
           "body": "Next questions: \n1. Let N be the count of URLs' members, rounded to the nearest power of 2 smaller than 2**32:\n   -> I have 4 members and the nearest is 2 - or should the rounding go up to 8? \n2. Let digest-value be an empty array of bits -> UInt32 ?\n3. Write log base2 of N to digest-value using 5bits -> I push this into the array as a byte with 5bits?\n",
           "createdAt": "2016-07-15T07:53:53Z",
           "updatedAt": "2016-07-15T07:53:53Z"
         },
         {
-          "author": "nvwebd",
+          "author": "nate-vukovich",
           "authorAssociation": "NONE",
           "body": "I figured out the way to implement the above questions but the last one remains:\n- Write R to digest-value as binary, using log2(P5) bits -> I get a float number 7.124124 -> do I round this number and then use the rounded value as bits?\n",
           "createdAt": "2016-07-19T13:10:57Z",
@@ -9289,7 +9289,7 @@
       "title": "Representations of time based fields",
       "url": "https://github.com/mnot/I-D/issues/330",
       "state": "CLOSED",
-      "author": "fiestajetsam",
+      "author": null,
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
@@ -9306,7 +9306,7 @@
           "updatedAt": "2022-02-08T00:03:07Z"
         },
         {
-          "author": "fiestajetsam",
+          "author": null,
           "authorAssociation": "NONE",
           "body": "If the priority is to focus on having both cross-version representation that is significantly more optimised than the incumbent (which I still disagree with), those two options do remain on the cards. \r\n\r\nGoing with the first option of encoding as an integer using UNIX epoch, then all the quirks* of leap seconds and the decrease in accuracy during positive leap seconds have to also be accepted - to be specific it means you cannot represent a value that occurs on a positive leap second and it's unclear what implementations may do differently serving a request in during one. Alternately not using this timescale and instead using UTC seconds tied to a known epoch may negate this, at the complexity of having to do some integer maths.\r\n\r\nI would like to give some more thought to your second option , but are you referring to defining a type based on an existing primitive in RFC 8941 (e.g. using a `sf-list` or something), or defining a new type as extension? \r\nIf it's the former, this may be optimal for binary encoding in HTTP/2, but significantly more bytes on wire and complex to generate/parse for HTTP/1.\r\nIf it's the latter, what's to stop using RFC 3339 with markers to indicate a date format to parse it accordingly instead of first treating it like `sf-string`, or did you have another idea?\r\n\r\n<sub>\\* if the differences are a bit unclear, the table in [RFC 7164 \u00a73.4](https://datatracker.ietf.org/doc/html/rfc7164#section-3.4) does a good job describing what happens during one</sub>",
           "createdAt": "2022-02-08T15:10:51Z",
@@ -9320,7 +9320,7 @@
           "updatedAt": "2022-02-09T04:50:45Z"
         },
         {
-          "author": "fiestajetsam",
+          "author": null,
           "authorAssociation": "NONE",
           "body": "Well in that case, that works for me and I'd be happy to work on a PR for it - would it make sense to wait until after adoption call is closed and the Github and -00 formalities are done or do you have another idea?",
           "createdAt": "2022-02-09T22:46:09Z",
