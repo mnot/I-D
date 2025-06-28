@@ -202,12 +202,12 @@ IANA is asked to update the "Hypertext Transfer Protocol (HTTP) Field Name Regis
 according as follows:
 
 |----------------------|-----------|-------------------------------------------|
-| Field Name           | Status    |                 Reference                 |
+| Field Name           | Status    | Structured Type |  Reference              |
 |----------------------|-----------|-------------------------------------------|
-| Avail-Encoding       | permanent | {{avail-encoding}}                        |
-| Avail-Format         | permanent | {{avail-format}}                          |
-| Avail-Language       | permanent | {{avail-language}}                        |
-| Cookie-Indices       | permanent | {{cookie-indices}}                        |
+| Avail-Encoding       | permanent | List            | {{avail-encoding}}      |
+| Avail-Format         | permanent | List            | {{avail-format}}        |
+| Avail-Language       | permanent | List            | {{avail-language}}      |
+| Cookie-Indices       | permanent | List            | {{cookie-indices}}      |
 |----------------------|-----------|-------------------------------------------|
 
 # Security Considerations
