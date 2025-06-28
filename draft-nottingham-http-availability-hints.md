@@ -53,7 +53,7 @@ However, the information conveyed by Vary is limited. If the request headers enu
 Vary: Accept-Encoding, Accept-Language, ECT
 ~~~
 
-indicates that there is a three-dimensional space of potential responses that could be sent. However, nothing more is conveyed; the number and nature of the entries on each axis are not available, leaving caches and other downstream consumers none the wiser as to how broad this space is, or how to navigate it.
+indicates that there is a three-dimensional space of potential responses that could be sent, but nothing more is conveyed. The number and nature of the entries on each axis are not available, leaving caches and other downstream consumers none the wiser as to how broad this space is, or how to navigate it.
 
 This design makes using Vary difficult. A cache doesn't have enough information available to decide whether one of its stored responses is the best to satisfy a given request in all but the most simple circumstances.
 
