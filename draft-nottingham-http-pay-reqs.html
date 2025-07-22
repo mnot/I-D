@@ -4,14 +4,15 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Age Restrictions as Internet Architecture</title>
+<title>Requirements for Paid Web Crawling</title>
 <meta content="Mark Nottingham" name="author">
+<meta content="Simon Newton" name="author">
 <meta content="
-       Jurisdictions around the world are considering (or already implementing) age restriction systems for Internet content. This document explores the architectural considerations that such systems are likely to encounter, and makes recommendations about the properties they should have, if they are to be a successful part of the Internet infrastructure. 
+       This document suggests requirements (and non-requirements) for paid Web crawling protocols. 
     " name="description">
 <meta content="xml2rfc 3.30.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
-<meta content="draft-nottingham-iab-age-restrictions-latest" name="ietf.draft">
+<meta content="draft-nottingham-http-pay-reqs-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.30.0
     Python 3.12.11
@@ -27,7 +28,7 @@
     setuptools 80.9.0
     wcwidth 0.2.13
 -->
-<link href="draft-nottingham-iab-age-restrictions.xml" rel="alternate" type="application/rfc+xml">
+<link href="draft-nottingham-http-pay-reqs.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">@font-face {
   font-family: 'Lora';
@@ -1043,11 +1044,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
-<td class="center">Age Restrictions as Internet Architectur</td>
+<td class="center">Requirements for Paid Web Crawling</td>
 <td class="right">July 2025</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Nottingham</td>
+<td class="left">Nottingham &amp; Newton</td>
 <td class="center">Expires 23 January 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
@@ -1058,39 +1059,32 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">Network Working Group</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-nottingham-iab-age-restrictions-latest</dd>
+<dd class="internet-draft">draft-nottingham-http-pay-reqs-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
 <time datetime="2025-07-22" class="published">22 July 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
-<dd class="intended-status">Informational</dd>
+<dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
 <dd class="expires"><time datetime="2026-01-23">23 January 2026</time></dd>
-<dt class="label-authors">Author:</dt>
+<dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
       <div class="author-name">M. Nottingham</div>
+<div class="org">Cloudflare</div>
+</div>
+<div class="author">
+      <div class="author-name">S. Newton</div>
+<div class="org">Cloudflare</div>
 </div>
 </dd>
 </dl>
 </div>
-<h1 id="title">Age Restrictions as Internet Architecture</h1>
+<h1 id="title">Requirements for Paid Web Crawling</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">Jurisdictions around the world are considering (or already implementing) age restriction systems for Internet content. This document explores the architectural considerations that such systems are likely to encounter, and makes recommendations about the properties they should have, if they are to be a successful part of the Internet infrastructure.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
-</section>
-<section class="note rfcEditorRemove" id="section-note.1">
-      <h2 id="name-about-this-document">
-<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
-      </h2>
-<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
-<p id="section-note.1-2">
-        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nottingham-iab-age-restrictions/">https://datatracker.ietf.org/doc/draft-nottingham-iab-age-restrictions/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
-<p id="section-note.1-3">
-         information can be found at <span><a href="https://mnot.github.io/I-D/">https://mnot.github.io/I-D/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
-<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
-        <span><a href="https://github.com/mnot/I-D/labels/age">https://github.com/mnot/I-D/labels/age</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This document suggests requirements (and non-requirements) for paid Web crawling protocols.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1142,35 +1136,55 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-the-paid-web-crawling-use-c" class="internal xref">The Paid Web Crawling Use Case</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-notational-conventions" class="internal xref">Notational Conventions</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-architectural-consideration" class="internal xref">Architectural Considerations of Age Restriction Systems</a></p>
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-requirements" class="internal xref">Requirements</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
-                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-centralization" class="internal xref">Centralization</a></p>
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-avoid-centralization" class="internal xref">Avoid Centralization</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
-                <p id="section-toc.1-1.2.2.2.1" class="keepWithNext"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-privacy-and-security" class="internal xref">Privacy and Security</a></p>
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-lower-deployment-costs" class="internal xref">Lower Deployment Costs</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
-                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-barriers-to-access" class="internal xref">Barriers to Access</a></p>
+                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-be-extensible" class="internal xref">Be Extensible</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4">
-                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="auto internal xref">2.4</a>.  <a href="#name-fragmentation" class="internal xref">Fragmentation</a></p>
+                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="auto internal xref">2.4</a>.  <a href="#name-minimise-information-disclo" class="internal xref">Minimise Information Disclosure</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.5">
-                <p id="section-toc.1-1.2.2.5.1"><a href="#section-2.5" class="auto internal xref">2.5</a>.  <a href="#name-an-age-gated-internet" class="internal xref">An Age-Gated Internet</a></p>
+                <p id="section-toc.1-1.2.2.5.1"><a href="#section-2.5" class="auto internal xref">2.5</a>.  <a href="#name-allow-granularity" class="internal xref">Allow Granularity</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.6">
+                <p id="section-toc.1-1.2.2.6.1"><a href="#section-2.6" class="auto internal xref">2.6</a>.  <a href="#name-facilitate-negotiation" class="internal xref">Facilitate Negotiation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.7">
+                <p id="section-toc.1-1.2.2.7.1"><a href="#section-2.7" class="auto internal xref">2.7</a>.  <a href="#name-allow-enforcement" class="internal xref">Allow Enforcement</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-recommendations-for-age-res" class="internal xref">Recommendations for Age Restriction Systems</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-non-requirements" class="internal xref">Non-Requirements</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
-                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-content-marking" class="internal xref">Content Marking</a></p>
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-standalone-deployment" class="internal xref">Standalone Deployment</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
-                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-distributed-implementation" class="internal xref">Distributed Implementation</a></p>
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-real-time-operation" class="internal xref">Real-Time Operation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-controlling-content" class="internal xref">Controlling Content</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-preventing-bad-faith" class="internal xref">Preventing Bad Faith</a></p>
 </li>
             </ul>
 </li>
@@ -1181,10 +1195,18 @@ svg :is([fill="white"], [fill^="#fff"]) {
             <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.7.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1195,94 +1217,159 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">The young are often unprepared for the sorts of things they might find online.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">Maturity, education, and the guidance of responsible adults can help children navigate online interactions, but age is often regarded as the best indicator of how able a person is to cope with exposure to content.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">Increasingly, policymakers are proposing regulation that restricts what content young people can access online. A recurring theme in these efforts is that it is no longer considered sufficient to rely on self-assertions of age. A number of jurisdictions have enacted - or are in the process of enacting – laws that take steps to provide stronger guarantees that children are not exposed to certain content.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">Age restrictions are already deployed on the Internet; for example, some Web sites already require some proof of age to create an account. However, when deployments become more widespread, they tend to have greater impact upon the Internet architecture. Systems that are designed for deployment in a single, homogenous domain rarely are suitable for the diversity of requirements and considerations that apply to Internet-scale systems.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5"><a href="#risks" class="auto internal xref">Section 2</a> catalogues the aspects of Internet architecture that such systems should consider. <a href="#recommendations" class="auto internal xref">Section 3</a> suggests the properties that an age restriction system should have to be a healthy part of the Internet infrastructure.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-1">Automated web clients, or "crawlers," have increasingly dominated website traffic, leading to increased operational costs and new technical and economic risks.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">Historically, websites have borne these costs and risks because they believed they received value in return. For instance, crawling to build web search indices exposed sites to increased "referral" traffic when search engine users clicked links to those sites.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">However, this balance has been disrupted by an increase in web traffic without any corresponding benefit to websites. Crawling to train Large Language Models ("AI") not only burdens site infrastructure but also creates value for the LLM vendor without compensation to the content owner.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">An Internet protocol to facilitate payments from crawlers to websites could help address this imbalance. This document outlines the use case in <a href="#usecase" class="auto internal xref">Section 1.1</a>, specifies requirements in <a href="#reqs" class="auto internal xref">Section 2</a>, and identifies non-requirements in <a href="#nonreqs" class="auto internal xref">Section 3</a>.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<div id="usecase">
+<section id="section-1.1">
+        <h3 id="name-the-paid-web-crawling-use-c">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-the-paid-web-crawling-use-c" class="section-name selfRef">The Paid Web Crawling Use Case</a>
+        </h3>
+<p id="section-1.1-1">A Web site "S" wants to be financially compensated for a Web client "C"'s access to its resources. This might be facilitated by a payment processor, "P".<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">For purposes of this use case, we assume:<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-3.1">
+            <p id="section-1.1-3.1.1">C is <em>not</em> a Web browser with a human behind it; it is a machine-driven process that is collecting Web content for some other purpose (colloquially, "crawling" the Web). Note that that process might (or might not) use a "headless" browser as part of its operation.<a href="#section-1.1-3.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.1-3.2">
+            <p id="section-1.1-3.2.1">There are a diverse set of C in the world, but the total set of C that a site will interact with is reasonably bounded (i.e., there will not be thousands of C accessing a given site with this protocol, but there may be twenty or more).<a href="#section-1.1-3.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.1-3.3">
+            <p id="section-1.1-3.3.1">S has some means of cryptographically identifying C. See <a href="https://datatracker.ietf.org/wg/webbotauth/about/">https://datatracker.ietf.org/wg/webbotauth/about/</a>.<a href="#section-1.1-3.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-1.1-4">Note that this use case is not uniformly applied to all Web crawlers; the intent is not to preclude or require payment for all crawlers, but instead to address situations where there is an economic imbalance.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="risks">
+<div id="notational-conventions">
+<section id="section-1.2">
+        <h3 id="name-notational-conventions">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-notational-conventions" class="section-name selfRef">Notational Conventions</a>
+        </h3>
+<p id="section-1.2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="reqs">
 <section id="section-2">
-      <h2 id="name-architectural-consideration">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-architectural-consideration" class="section-name selfRef">Architectural Considerations of Age Restriction Systems</a>
+      <h2 id="name-requirements">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-requirements" class="section-name selfRef">Requirements</a>
       </h2>
-<p id="section-2-1">This section catalogues some aspects of the Internet architecture that age restriction systems should consider.<a href="#section-2-1" class="pilcrow">¶</a></p>
-<div id="centralization">
+<p id="section-2-1">The following sections propose requirements for a protocol that facilitates payment by crawlers to Web sites.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<div id="central">
 <section id="section-2.1">
-        <h3 id="name-centralization">
-<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-centralization" class="section-name selfRef">Centralization</a>
+        <h3 id="name-avoid-centralization">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-avoid-centralization" class="section-name selfRef">Avoid Centralization</a>
         </h3>
-<p id="section-2.1-1">Inherently, any age restriction system involves controlling access to content and services on the Internet. That control -- along with the potential for access to information about people's activities online that comes with it -- is immensely valuable to various parties, often for purposes other than those that policymakers have in mind.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
-<p id="section-2.1-2">How and where that control is exercised thus becomes an important consideration.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
-<p id="section-2.1-3">For example, if an age restriction system requires verification by a single party, that party will have access to a significant amount of sensitive information about people's activities on the Internet. Such systems can be leveraged for a variety of purposes beyond those intended by policymakers -- both by that party itself, and by individuals, organized criminals, and nation-state actors who are able to perform successful cyber attacks against it.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
-<p id="section-2.1-4">It also means that any party operating the system has extraordinary access, and thus risk of abuse, especially if their incentives are not aligned with other participants in the system.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
-<p id="section-2.1-5">In both cases, having only one entity operating the system increases the associated risks dramatically, as this effectively centralizes control in their hands while simultaneously presenting a single target to attackers.<a href="#section-2.1-5" class="pilcrow">¶</a></p>
-<p id="section-2.1-6">Thus, centralisation is a primary consideration for age restriction systems. Internet infrastructure is designed in a way to avoid centralization where it is technically possible, or to mitigate centralization risks where it is not. <span>[<a href="#CENTRALIZATION" class="cite xref">CENTRALIZATION</a>]</span> explores these issues greater detail.<a href="#section-2.1-6" class="pilcrow">¶</a></p>
+<p id="section-2.1-1">A crawl payment protocol <span class="bcp14">MUST NOT</span> have a single or constrained number of "choke point" or "gatekeeper" roles. It <span class="bcp14">MUST</span> be possible for new payment processors to be introduced into the ecosystem with reasonable effort. In particular, attention needs to be paid to mitigating factors such as network effects.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.1-2">Furthermore, a crawl payment protocol <span class="bcp14">SHOULD NOT</span> have secondary effects that encourage centralization in either clients (e.g., allowing advantages to accrue to a small number of well-known crawlers) or servers (e.g., creating significant barriers to deploying new Web sites that compete with well-known ones). Where they are unavoidable, these effects <span class="bcp14">SHOULD</span> be mitigated if at all possible.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
+<p id="section-2.1-3">Similarly, a crawl payment protocol <span class="bcp14">MUST NOT</span> "bundle" other capabilities unless absolutely necessary to achieve its goals. For example, it <span class="bcp14">SHOULD NOT</span> require the payment processor to be co-located with the server, or with the party providing access control to the server.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
+<p id="section-2.1-4">See <span>[<a href="#CENTRALIZATION" class="cite xref">CENTRALIZATION</a>]</span> for further discussion.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="privacy-and-security">
+<div id="lower-deployment-costs">
 <section id="section-2.2">
-        <h3 id="name-privacy-and-security">
-<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-privacy-and-security" class="section-name selfRef">Privacy and Security</a>
+        <h3 id="name-lower-deployment-costs">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-lower-deployment-costs" class="section-name selfRef">Lower Deployment Costs</a>
         </h3>
-<p id="section-2.2-1">It is technically challenging to design an age restriction system that would be considered to meet the security and privacy requirements for Internet standards.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
-<p id="section-2.2-2">A system that exposes the list of services that a person uses to the entity that verifies their age puts that person at risk, because it allows the verifying entity to develop a profile of their Internet activity and track them. The risks here are similar to those seen on the Web, which the Internet standards community has spent considerable efforts in mitigating (see e.g., <span>[<a href="#RFC7258" class="cite xref">RFC7258</a>]</span>).<a href="#section-2.2-2" class="pilcrow">¶</a></p>
-<p id="section-2.2-3">A system that exposes attributes of the person whose age is being verified to the service they are accessing also creates privacy and security risks for them, because many services do not need access to those attributes, and are likely to abuse them. For example, an age verification system that also exposes the country a person is a citizen of allows sites to discriminate against that attribute, which is beyond the purpose of age restriction.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
-<p id="section-2.2-4">Exposing information about Internet users to third parties creates powerful incentives. In particular, commercial interests desire access to it to be able to track activity across the Internet so that this can be sold (to advertisers, insurers and others), and so they will use (and abuse) any facility that offers such information to learn about what people are doing.<a href="#section-2.2-4" class="pilcrow">¶</a></p>
-<p id="section-2.2-5">Critically, even small amounts of information can aid these purposes, because they can be aggregated with other information (like IP addresses, browser characteristics, and so on) to create a unique identifier for each Internet user.<a href="#section-2.2-5" class="pilcrow">¶</a></p>
+<p id="section-2.2-1">A crawl payment protocol <span class="bcp14">MUST</span> be reasonable to deploy in a variety of systems. In particular, it <span class="bcp14">SHOULD NOT</span> incur significant processing, network, or storage overheads on the servers that wish to require payment. It <span class="bcp14">SHOULD</span> be compatible with common techniques for efficient Web sites, such as caching, serving from a filesystem, and in particular <span class="bcp14">SHOULD NOT</span> incur significant per-request overhead, unless absolutely necessary to meet the goals of the protocol.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.2-2">It is acknowledged that "significant" is in the eye of the beholder, and can vary based upon the resources available to a system. Here, the intent is to allow deployment on a diversity of systems, thereby helping to avoid the centralization risks described in <a href="#central" class="auto internal xref">Section 2.1</a>. Thus, a successful crawl payment protocol <span class="bcp14">SHOULD</span> be deployable on a reasonable variety of systems that include at least one maintained by a single person on commodity hardware, but might not reach to some more specialised systems, such as a low-power embedded server.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="barriers-to-access">
+<div id="be-extensible">
 <section id="section-2.3">
-        <h3 id="name-barriers-to-access">
-<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-barriers-to-access" class="section-name selfRef">Barriers to Access</a>
+        <h3 id="name-be-extensible">
+<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-be-extensible" class="section-name selfRef">Be Extensible</a>
         </h3>
-<p id="section-2.3-1">Many existant proposals for age restriction systems require its users to have certain capabilities -- for example, a personal smartphone, a government credential, or a camera with certain resolution.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
-<p id="section-2.3-2">When such requirements are imposed, some number of people will be disenfranchised from full use of the Internet – especially if age restriction becomes pervasive across many services.<a href="#section-2.3-2" class="pilcrow">¶</a></p>
-<p id="section-2.3-3">For example, many people only have Internet access from public computers (such as those in libraries), and do not have exclusive or reliable access to a “smart” phone. Others lack government-issued identity documents that some schemes rely upon.<a href="#section-2.3-3" class="pilcrow">¶</a></p>
-<p id="section-2.3-4">While such restrictions may be palatable in a closed system (such as on a single platform or in a single jurisdiction), they are not suitable for Internet-wide deployment.<a href="#section-2.3-4" class="pilcrow">¶</a></p>
+<p id="section-2.3-1">One of the core requirements for Internet protocols is the ability to evolve -- to incorporate new use cases as well as changes in their context and use. Because the Internet is a distributed system, we cannot call a "flag day" where everyone changes at once; instead, changes are accommodated through explicit extensibility mechanisms. See <span>[<a href="#EXTENSIBILITY" class="cite xref">EXTENSIBILITY</a>]</span> for more discussion.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
+<p id="section-2.3-2">Therefore, a crawl payment protocol <span class="bcp14">MUST</span> allow a variety of payment schemes to be used with it, and <span class="bcp14">MUST</span> allow introduction of new capabilities.<a href="#section-2.3-2" class="pilcrow">¶</a></p>
+<p id="section-2.3-3">Particular attention will need to be paid to the deployability of such extensions. If a small set of payment schemes is deployed, it may be difficult for sites to introduce a new one without protocol support (e.g., fallback mechanisms).<a href="#section-2.3-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="fragmentation">
+<div id="private">
 <section id="section-2.4">
-        <h3 id="name-fragmentation">
-<a href="#section-2.4" class="section-number selfRef">2.4. </a><a href="#name-fragmentation" class="section-name selfRef">Fragmentation</a>
+        <h3 id="name-minimise-information-disclo">
+<a href="#section-2.4" class="section-number selfRef">2.4. </a><a href="#name-minimise-information-disclo" class="section-name selfRef">Minimise Information Disclosure</a>
         </h3>
-<p id="section-2.4-1">If an age restriction system relies too much on legal controls rather than technical capabilities, those controls are likely to be inconsistently applied in different jurisdictions, leading to different experiences for Internet users around the globe.<a href="#section-2.4-1" class="pilcrow">¶</a></p>
-<p id="section-2.4-2">Likewise, a solution that requires special access to computers (such as in “trusted platform modules” or otherwise mandates conformance on people’s computers introduces a risk of limiting the kinds of computers that can be used on the Internet – for example, Open Source Operating Systems and Web browsers are generally unable to provide such assurances.<a href="#section-2.4-2" class="pilcrow">¶</a></p>
-<p id="section-2.4-3">While these tradeoffs may be reasonable in a single jurisdiction, too many differences between jurisdictions will create barriers to Internet-wide deployment of services, creating not only centralization risks, but also fragmentation risks -- that the Internet will work in different ways depending on where you are.<a href="#section-2.4-3" class="pilcrow">¶</a></p>
+<p id="section-2.4-1">A crawl payment protocol <span class="bcp14">SHOULD NOT</span> expose more information about either party than is necessary to complete the payment. Note that legal requirements in some jurisdictions and payment regimes may require exposure of such information, but it <span class="bcp14">SHOULD</span> be limited to that which is required.<a href="#section-2.4-1" class="pilcrow">¶</a></p>
+<p id="section-2.4-2">Furthermore, a crawl payment protocol <span class="bcp14">MUST NOT</span> expose additional information about the parties publicly.<a href="#section-2.4-2" class="pilcrow">¶</a></p>
+<p id="section-2.4-3">This requirement extends to the terms of the payment itself: some parties may not wish to make the amount they are paying or being paid for crawling public information.<a href="#section-2.4-3" class="pilcrow">¶</a></p>
+<p id="section-2.4-4">See <span>[<a href="#PRIVACY" class="cite xref">PRIVACY</a>]</span> for more considerations regarding privacy in protocol design.<a href="#section-2.4-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="an-age-gated-internet">
+<div id="allow-granularity">
 <section id="section-2.5">
-        <h3 id="name-an-age-gated-internet">
-<a href="#section-2.5" class="section-number selfRef">2.5. </a><a href="#name-an-age-gated-internet" class="section-name selfRef">An Age-Gated Internet</a>
+        <h3 id="name-allow-granularity">
+<a href="#section-2.5" class="section-number selfRef">2.5. </a><a href="#name-allow-granularity" class="section-name selfRef">Allow Granularity</a>
         </h3>
-<p id="section-2.5-1">The Internet is designed to be used without permission, both be servers and clients. Easy-to-use age verification mechanisms risk creating a ‘papers please’ Internet, where a credential is required to access large portions of the Internet. Such an outcome would amplify the other harms listed.<a href="#section-2.5-1" class="pilcrow">¶</a></p>
-<p id="section-2.5-2">This risk is heightened if there are incentives for sites to deploy it, such as access to non-age data.<a href="#section-2.5-2" class="pilcrow">¶</a></p>
-<p id="section-2.5-3">Access to more granular age information also heightens many risks, because it makes a verification system simultaneously useful in a broader variety of cases, and more attractive for misuse, because it offers more information about users.<a href="#section-2.5-3" class="pilcrow">¶</a></p>
+<p id="section-2.5-1">A crawl payment protocol <span class="bcp14">SHOULD</span> allow sites to have separate payment agreements for different sets of content on them. This reflects the nature of content: some of it is more valuable or more expensive to produce.<a href="#section-2.5-1" class="pilcrow">¶</a></p>
+<p id="section-2.5-2">Note that this is not an absolute requirement: granularity often comes at a cost of complexity and protocol "chattiness," which are in tension with other requirements.<a href="#section-2.5-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="facilitate-negotiation">
+<section id="section-2.6">
+        <h3 id="name-facilitate-negotiation">
+<a href="#section-2.6" class="section-number selfRef">2.6. </a><a href="#name-facilitate-negotiation" class="section-name selfRef">Facilitate Negotiation</a>
+        </h3>
+<p id="section-2.6-1">A crawl payment protocol <span class="bcp14">SHOULD</span> allow the parties to negotiate over time, so that they can converge on a payment that is agreeable to both of them. However, because negotiation adds complexity to the protocol (and therefore implementation and deployment burden), it <span class="bcp14">SHOULD</span> be optional to use for both parties; i.e. either party could make a "take it or leave it" offer.<a href="#section-2.6-1" class="pilcrow">¶</a></p>
+<p id="section-2.6-2">Likewise, a crawl payment protocol <span class="bcp14">MAY</span> consider providing some level of price transparency either directly or indirectly (e.g., through intermediarie), provided that the privacy requirements in <a href="#private" class="auto internal xref">Section 2.4</a> are met.<a href="#section-2.6-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="allow-enforcement">
+<section id="section-2.7">
+        <h3 id="name-allow-enforcement">
+<a href="#section-2.7" class="section-number selfRef">2.7. </a><a href="#name-allow-enforcement" class="section-name selfRef">Allow Enforcement</a>
+        </h3>
+<p id="section-2.7-1">A crawl payment protocol <span class="bcp14">SHOULD</span> allow intermediaries acting on behalf of the origin server to verify payment status, so that they can impose policy.<a href="#section-2.7-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
-<div id="recommendations">
+<div id="nonreqs">
 <section id="section-3">
-      <h2 id="name-recommendations-for-age-res">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-recommendations-for-age-res" class="section-name selfRef">Recommendations for Age Restriction Systems</a>
+      <h2 id="name-non-requirements">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-non-requirements" class="section-name selfRef">Non-Requirements</a>
       </h2>
-<div id="content-marking">
+<p id="section-3-1">To clarify the scope of work, the following items are considered as NOT being requirements for a successful crawl payment protocol.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">Note that in each case, this does not preclude a successful protocol from accommodating the non-requirement, or require the protocol to preclude that end: it only implies that the non-requirement is not a design goal that the effort will actively seek.<a href="#section-3-2" class="pilcrow">¶</a></p>
+<div id="standalone-deployment">
 <section id="section-3.1">
-        <h3 id="name-content-marking">
-<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-content-marking" class="section-name selfRef">Content Marking</a>
-      </h3>
+        <h3 id="name-standalone-deployment">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-standalone-deployment" class="section-name selfRef">Standalone Deployment</a>
+        </h3>
+<p id="section-3.1-1">While we wish to avoid centralization (see <a href="#central" class="auto internal xref">Section 2.1</a>), it is not a requirement to facilitate full deployment of the protocol exclusively on a single Web server, without external dependencies.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">This non-requirement reflects the nature of payment systems, which typically use intermediaries to provide useful services such as chargebacks, reputation management, and compliance with legal requirements.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">The implication is that where payment intermediaries are used in the protocol, they should be as interchangeable as possible, to promote an ecosystem whereby both servers and crawlers have choices regarding which intermediaries they support.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="distributed-implementation">
+<div id="real-time-operation">
 <section id="section-3.2">
-        <h3 id="name-distributed-implementation">
-<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-distributed-implementation" class="section-name selfRef">Distributed Implementation</a>
-      </h3>
+        <h3 id="name-real-time-operation">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-real-time-operation" class="section-name selfRef">Real-Time Operation</a>
+        </h3>
+<p id="section-3.2-1">It is not a requirement for the protocol to facilitate immediate payment at request time, though the protocol may allow for this. Crawlers are not like Web browsers: they are long-running processes that aren't constrained by the responsiveness requirements of human users, and can reconcile asynchronous operations.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="controlling-content">
+<section id="section-3.3">
+        <h3 id="name-controlling-content">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-controlling-content" class="section-name selfRef">Controlling Content</a>
+        </h3>
+<p id="section-3.3-1">It is not a requirement to provide a technical means of controlling the use of content once it has been crawled; this is not a Digital Rights Management scheme.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="preventing-bad-faith">
+<section id="section-3.4">
+        <h3 id="name-preventing-bad-faith">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-preventing-bad-faith" class="section-name selfRef">Preventing Bad Faith</a>
+        </h3>
+<p id="section-3.4-1">Some crawlers will attempt to crawl without using a payment protocol (e.g., by masquerading as browsers). It is not a requirement of a crawl payment protocol to prevent such misuse. Instead, we expect other interventions -- including blocking of misbehaving crawlers -- to disincent such behaviour.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<p id="section-3.4-2">Some crawlers might even use contents for purposes other than what they negotiate. Likewise, some sites might renege on their agreements and refuse access to content that a crawler has paid for. It is not a requirement to technically prevent these situations. We expect such cases to be addressed by other mechanisms, such as legal intervention.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1292,40 +1379,70 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-iana-considerations">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-4-1">This document has no instructions for IANA.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-1">This document has no tasks for IANA.<a href="#section-4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-considerations">
 <section id="section-5">
       <h2 id="name-security-considerations">
 <a href="#section-5" class="section-number selfRef">5. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
-    </h2>
+      </h2>
+<p id="section-5-1">Payment mechanisms for Web crawling undoubtedly have security implications and considerations, but beyond the aspects captured above, it is premature to characterise their nature.<a href="#section-5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="sec-informative-references">
+<div id="sec-combined-references">
 <section id="section-6">
-      <h2 id="name-informative-references">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+      <h2 id="name-references">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
+<div id="sec-normative-references">
+<section id="section-6.1">
+        <h3 id="name-normative-references">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
 <dl class="references">
-<dt id="CENTRALIZATION">[CENTRALIZATION]</dt>
-      <dd>
-<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Centralization, Decentralization, and Internet Standards"</span>, <span class="seriesInfo">RFC 9518</span>, <span class="seriesInfo">DOI 10.17487/RFC9518</span>, <time datetime="2023-12" class="refDate">December 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9518">https://www.rfc-editor.org/rfc/rfc9518</a>&gt;</span>. </dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC7258">[RFC7258]</dt>
-    <dd>
-<span class="refAuthor">Farrell, S.</span> and <span class="refAuthor">H. Tschofenig</span>, <span class="refTitle">"Pervasive Monitoring Is an Attack"</span>, <span class="seriesInfo">BCP 188</span>, <span class="seriesInfo">RFC 7258</span>, <span class="seriesInfo">DOI 10.17487/RFC7258</span>, <time datetime="2014-05" class="refDate">May 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7258">https://www.rfc-editor.org/rfc/rfc7258</a>&gt;</span>. </dd>
+<dt id="RFC8174">[RFC8174]</dt>
+      <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
 </div>
+<div id="sec-informative-references">
+<section id="section-6.2">
+        <h3 id="name-informative-references">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="CENTRALIZATION">[CENTRALIZATION]</dt>
+        <dd>
+<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Centralization, Decentralization, and Internet Standards"</span>, <span class="seriesInfo">RFC 9518</span>, <span class="seriesInfo">DOI 10.17487/RFC9518</span>, <time datetime="2023-12" class="refDate">December 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9518">https://www.rfc-editor.org/rfc/rfc9518</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="EXTENSIBILITY">[EXTENSIBILITY]</dt>
+        <dd>
+<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">T. Pauly</span>, <span class="refTitle">"Long-Term Viability of Protocol Extension Mechanisms"</span>, <span class="seriesInfo">RFC 9170</span>, <span class="seriesInfo">DOI 10.17487/RFC9170</span>, <time datetime="2021-12" class="refDate">December 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9170">https://www.rfc-editor.org/rfc/rfc9170</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="PRIVACY">[PRIVACY]</dt>
+      <dd>
+<span class="refAuthor">Cooper, A.</span>, <span class="refAuthor">Tschofenig, H.</span>, <span class="refAuthor">Aboba, B.</span>, <span class="refAuthor">Peterson, J.</span>, <span class="refAuthor">Morris, J.</span>, <span class="refAuthor">Hansen, M.</span>, and <span class="refAuthor">R. Smith</span>, <span class="refTitle">"Privacy Considerations for Internet Protocols"</span>, <span class="seriesInfo">RFC 6973</span>, <span class="seriesInfo">DOI 10.17487/RFC6973</span>, <time datetime="2013-07" class="refDate">July 2013</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6973">https://www.rfc-editor.org/rfc/rfc6973</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
 <div id="authors-addresses">
 <section id="appendix-A">
-      <h2 id="name-authors-address">
-<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Mark Nottingham</span></div>
+<div dir="auto" class="left"><span class="org">Cloudflare</span></div>
 <div dir="auto" class="left"><span class="street-address">Melbourne</span></div>
 <div dir="auto" class="left"><span class="country-name">Australia</span></div>
 <div class="email">
@@ -1335,6 +1452,16 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <div class="url">
 <span>URI:</span>
 <a href="https://www.mnot.net/" class="url">https://www.mnot.net/</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Simon Newton</span></div>
+<div dir="auto" class="left"><span class="org">Cloudflare</span></div>
+<div dir="auto" class="left"><span class="street-address">Cambridge</span></div>
+<div dir="auto" class="left"><span class="country-name">United Kingdom</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:rfc@simonnewton.com" class="email">rfc@simonnewton.com</a>
 </div>
 </address>
 </section>
