@@ -1,5 +1,5 @@
 ---
-title: Age Restrictions as Internet Architecture
+title: Architectural Considerations of Age Restriction
 abbrev:
 docname: draft-nottingham-iab-age-restrictions-latest
 date: {DATE}
@@ -34,27 +34,28 @@ informative:
 
 --- abstract
 
-Jurisdictions around the world are considering (or already implementing) age restriction systems for Internet content. This document explores the architectural considerations that such systems are likely to encounter, and makes recommendations about the properties they should have, if they are to be a successful part of the Internet infrastructure.
+Around the world, authorities are considering (and in some cases implementing) age restriction
+systems for Internet content. This document explores the potential for unwanted impacts upon the
+Internet by these systems and makes recommendations about the properties they should have, if they
+are to be a successful part of the Internet infrastructure.
 
 --- middle
 
 
 # Introduction
 
-The young are often unprepared for the sorts of things they might find online.
-
-Maturity, education, and the guidance of responsible adults can help children navigate online interactions, but age is often regarded as the best indicator of how able a person is to cope with exposure to content.
-
 Increasingly, policymakers are proposing regulation that restricts what content young people can access online. A recurring theme in these efforts is that it is no longer considered sufficient to rely on self-assertions of age. A number of jurisdictions have enacted - or are in the process of enacting – laws that take steps to provide stronger guarantees that children are not exposed to certain content.
 
 Age restrictions are already deployed on the Internet; for example, some Web sites already require some proof of age to create an account. However, when deployments become more widespread, they tend to have greater impact upon the Internet architecture. Systems that are designed for deployment in a single, homogenous domain rarely are suitable for the diversity of requirements and considerations that apply to Internet-scale systems.
 
-{{risks}} catalogues the aspects of Internet architecture that such systems should consider. {{recommendations}} suggests the properties that an age restriction system should have to be a healthy part of the Internet infrastructure.
+{{risks}} catalogues the risks that such systems might incur, expressed in terms of the Internet's
+architectural principles. {{recommendations}} suggests the properties that an age restriction
+system should have to be a healthy part of the Internet infrastructure.
 
 
-# Architectural Considerations of Age Restriction Systems {#risks}
+# Architectural Considerations of Age Restriction {#risks}
 
-This section catalogues some aspects of the Internet architecture that age restriction systems should consider.
+This section catalogues risks that age restriction systems might encounter, expressed in terms of the Internet's architectural principles.
 
 ## Centralization
 
