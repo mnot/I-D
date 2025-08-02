@@ -53,7 +53,7 @@ architectural principles. {{recommendations}} suggests the properties that an ag
 system should have to be a healthy part of the Internet infrastructure.
 
 
-# Architectural Considerations of Age Restriction {#risks}
+# Risks of Age Restriction {#risks}
 
 This section catalogues risks that age restriction systems might encounter, expressed in terms of the Internet's architectural principles.
 
@@ -74,13 +74,13 @@ Thus, centralisation is a primary consideration for age restriction systems. Int
 
 ## Privacy and Security
 
-It is technically challenging to design an age restriction system that would be considered to meet the security and privacy requirements for Internet standards.
+It is technically challenging to design an age restriction system that exhibits the security and privacy properties expected of Internet standards.
 
-A system that exposes the list of services that a person uses to the entity that verifies their age puts that person at risk, because it allows the verifying entity to develop a profile of their Internet activity and track them. The risks here are similar to those seen on the Web, which the Internet standards community has spent considerable efforts in mitigating (see e.g., {{?RFC7258}}).
+A system that exposes the Internet services that a person uses to the a verifying entity puts that person at risk, because it allows the verifying entity to develop a profile of their Internet activity and track them. The risks here are similar to those seen on the Web, which the Internet standards community has expended considerable effort to mitigate (see e.g., {{?RFC7258}}).
 
 A system that exposes attributes of the person whose age is being verified to the service they are accessing also creates privacy and security risks for them, because many services do not need access to those attributes, and are likely to abuse them. For example, an age verification system that also exposes the country a person is a citizen of allows sites to discriminate against that attribute, which is beyond the purpose of age restriction.
 
-Exposing information about Internet users to third parties creates powerful incentives. In particular, commercial interests desire access to it to be able to track activity across the Internet so that this can be sold (to advertisers, insurers and others), and so they will use (and abuse) any facility that offers such information to learn about what people are doing.
+Exposing information about Internet users to third parties -- whether verifiers, services, or others -- creates powerful incentives. In particular, commercial interests desire access to it to be able to track activity across the Internet so that this can be sold (to advertisers, insurers and others), and so they will use (and abuse) any facility that offers such information to learn about what people are doing.
 
 Critically, even small amounts of information can aid these purposes, because they can be aggregated with other information (like IP addresses, browser characteristics, and so on) to create a unique identifier for each Internet user.
 
@@ -89,9 +89,9 @@ Critically, even small amounts of information can aid these purposes, because th
 
 Many existant proposals for age restriction systems require its users to have certain capabilities -- for example, a personal smartphone, a government credential, or a camera with certain resolution.
 
-When such requirements are imposed, some number of people will be disenfranchised from full use of the Internet – especially if age restriction becomes pervasive across many services.
+Imposing these requirements means that some number of people will be disenfranchised from full use of the Internet – especially if age restriction becomes pervasive across many services. At the scale of the entire Internet (or even in a single country), this can be a large number of disenfranchised people.
 
-For example, many people only have Internet access from public computers (such as those in libraries), and do not have exclusive or reliable access to a “smart” phone. Others lack government-issued identity documents that some schemes rely upon.
+For example, many people only have Internet access from public computers (such as those in libraries), and do not have exclusive or reliable access to a smartphone. Others lack government-issued identity documents that some schemes rely upon.
 
 While such restrictions may be palatable in a closed system (such as on a single platform or in a single jurisdiction), they are not suitable for Internet-wide deployment.
 
@@ -102,7 +102,7 @@ If an age restriction system relies too much on legal controls rather than techn
 
 Likewise, a solution that requires special access to computers (such as in “trusted platform modules” or otherwise mandates conformance on people’s computers introduces a risk of limiting the kinds of computers that can be used on the Internet – for example, Open Source Operating Systems and Web browsers are generally unable to provide such assurances.
 
-While these tradeoffs may be reasonable in a single jurisdiction, too many differences between jurisdictions will create barriers to Internet-wide deployment of services, creating not only centralization risks, but also fragmentation risks -- that the Internet will work in different ways depending on where you are.
+While these tradeoffs may be reasonable in a single jurisdiction, too many differences will create barriers to Internet-wide deployment of services, creating not only centralization risks, but also fragmentation risks -- that the Internet will work in different ways depending on where you are.
 
 
 ## An Age-Gated Internet
