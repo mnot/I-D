@@ -107,11 +107,11 @@ While these tradeoffs may be reasonable in a single jurisdiction, too many diffe
 
 ## An Age-Gated Internet
 
-The Internet is designed to be used without permission, both be servers and clients. Easy-to-use age verification mechanisms risk creating a ‘papers please’ Internet, where a credential is required to access large portions of the Internet. Such an outcome would amplify the other harms listed.
+The Internet is designed to be used without permission, both be servers and clients. Easy-to-use age restriction mechanisms risk creating a ‘papers please’ Internet, where a credential is required to access large portions of the Internet. Such an outcome would amplify the other harms listed.
 
 This risk is heightened if there are incentives for sites to deploy it, such as access to non-age data.
 
-Access to more granular age information also heightens many risks, because it makes a verification system simultaneously useful in a broader variety of cases, and more attractive for misuse, because it offers more information about users.
+Access to more granular age information also heightens many risks, because it makes a restriction system simultaneously useful in a broader variety of cases, and more attractive for misuse, because it offers more information about users.
 
 
 # Recommendations for Age Restriction Systems {#recommendations}
@@ -132,6 +132,7 @@ This document has no instructions for IANA.
 
 # Security Considerations
 
+Age restriction systems undoubtedly have numerous security considerations, should they be deployed.
 
 --- back
 
