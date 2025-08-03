@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                             2 August 2025
+Internet-Draft                                             3 August 2025
 Intended status: Informational                                          
-Expires: 3 February 2026
+Expires: 4 February 2026
 
 
             Architectural Considerations of Age Restriction
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 3 February 2026.
+   This Internet-Draft will expire on 4 February 2026.
 
 Copyright Notice
 
@@ -137,45 +137,93 @@ Table of Contents
    control in their hands while simultaneously presenting a single
    target to attackers.
 
+   Even when multiple parties provide verification services,
+   centralization can emerge if there is too much friction against user
+   switching between them.  For example, if Web sites rather than end
+   users select the verification service used, this does not create a
+   market that respects end user preferences; it only respects the self-
+   interest of sites.
+
+   Age restriction systems can also have secondary effects that lead to
+   centralization.  For example, if an age restriction system requires
+   use of a particular Web browser (or a small number of them), that
+   effectively distorts the market for Web browsers.
+
    Thus, centralisation is a primary consideration for age restriction
    systems.  Internet infrastructure is designed in a way to avoid
    centralization where it is technically possible, or to mitigate
-   centralization risks where it is not.  [CENTRALIZATION] explores
-   these issues greater detail.
+   centralization risks where it is not.  Since there is nothing
+   inherently centralized about determining a person's age -- i.e.,
+   there are many ways to come to that conclusion -- centralization
+   should be avoided, not merely mitigated, in these systems.
+
+   Therefore, age restriction systems that are intended to become part
+   of Internet infrastructure MUST: * Avoid reliance on a single party
+   to provide age verification services * Provide some mechanism for
+   easy switching between verification services by end users * Avoid
+   requiring use of an arbitrarily limited set of operating systems, Web
+   browsers, client programs, or other software or hardware
+
+   [CENTRALIZATION] explores these issues greater detail.
 
 2.2.  Privacy and Security
 
    It is technically challenging to design an age restriction system
    that exhibits the security and privacy properties expected of
-   Internet standards.
-
-   A system that exposes the Internet services that a person uses to the
-   a verifying entity puts that person at risk, because it allows the
-   verifying entity to develop a profile of their Internet activity and
-   track them.  The risks here are similar to those seen on the Web,
-   which the Internet standards community has expended considerable
-   effort to mitigate (see e.g., [RFC7258]).
-
-   A system that exposes attributes of the person whose age is being
-   verified to the service they are accessing also creates privacy and
-   security risks for them, because many services do not need access to
-   those attributes, and are likely to abuse them.  For example, an age
-   verification system that also exposes the country a person is a
-   citizen of allows sites to discriminate against that attribute, which
-   is beyond the purpose of age restriction.
-
-   Exposing information about Internet users to third parties -- whether
-   verifiers, services, or others -- creates powerful incentives.  In
-   particular, commercial interests desire access to it to be able to
-   track activity across the Internet so that this can be sold (to
-   advertisers, insurers and others), and so they will use (and abuse)
-   any facility that offers such information to learn about what people
-   are doing.
+   Internet standards.  Exposing information about Internet users to
+   third parties -- whether verifiers, services, or others -- creates
+   powerful incentives.  In particular, commercial interests desire
+   access to it to be able to track activity across the Internet so that
+   this can be sold (to advertisers, insurers and others), and so they
+   will use (and abuse) any facility that offers such information to
+   learn about what people are doing.
 
    Critically, even small amounts of information can aid these purposes,
    because they can be aggregated with other information (like IP
    addresses, browser characteristics, and so on) to create a unique
    identifier for each Internet user.
+
+   In this context, age restriction systems can introduce several new
+   risks to the Internet.
+
+   Most immediately, a system that reveals the age (or birthdate) of
+   Internet users to services on it is a privacy risk.  A person's age
+   is an attribute that can be used to discriminate against them without
+   justification, and is legally protected by privacy law in many
+   jurisdictions.
+
+   Beyond that immediate risk, verifying services' potential access to
+   personal information creates a powerful incentive for misuse --
+   whether as part of the business model of the verifying service, or by
+   third parties (such as nation-state attackers).
+
+   This is the case when verifying services over-collect such
+   information (for example, age estimation services that use photos and
+   biometrics), and it is also the case when users' activity is exposed
+   to the verifying service when age restriction takes place.  The
+   latter risk is similar to the risk of tracking and profiling seen on
+   the Web, which the Internet standards community has expended
+   considerable effort to mitigate (see e.g., [RFC7258]).
+
+   Furthermore, exposing information beyond age to services creates
+   additional privacy and security risks.  For example, an age
+   verification system that also exposes the country a person is a
+   citizen of allows sites to discriminate against that attribute, which
+   is beyond the purpose of age restriction.
+
+   Finally, even on its own a simple attribute like 'age in years' or
+   'birthdate' can be used to add entropy to an identifier for the end
+   user, creating a new tracking vector when exposed to services that
+   collect such information.  See [TRACKING].
+
+   Therefore, age restriction systems that are intended to become part
+   of Internet infrastructure MUST: * Avoid over-collection of
+   information by age verifiers * Avoid sharing information about
+   service usage with age verifiers * Avoid sharing information other
+   than age information with services * Minimise the amount of age
+   information shared with services (e.g., using age brackets)
+
+   See also [PRIVACY].
 
 2.3.  Barriers to Access
 
@@ -197,6 +245,12 @@ Table of Contents
    While such restrictions may be palatable in a closed system (such as
    on a single platform or in a single jurisdiction), they are not
    suitable for Internet-wide deployment.
+
+   Therefore, age restriction systems that are intended to become part
+   of Internet infrastructure MUST: * Avoid requiring hardware
+   capabilities not widely available in desktop and mobile computers
+   globally, both in terms of performance and specific features * Avoid
+   relying on a single mechanism for proving age
 
 2.4.  Fragmentation
 
@@ -256,9 +310,18 @@ Table of Contents
               Internet Standards", RFC 9518, DOI 10.17487/RFC9518,
               December 2023, <https://www.rfc-editor.org/rfc/rfc9518>.
 
+   [PRIVACY]  Cooper, A., Tschofenig, H., Aboba, B., Peterson, J.,
+              Morris, J., Hansen, M., and R. Smith, "Privacy
+              Considerations for Internet Protocols", RFC 6973,
+              DOI 10.17487/RFC6973, July 2013,
+              <https://www.rfc-editor.org/rfc/rfc6973>.
+
    [RFC7258]  Farrell, S. and H. Tschofenig, "Pervasive Monitoring Is an
               Attack", BCP 188, RFC 7258, DOI 10.17487/RFC7258, May
               2014, <https://www.rfc-editor.org/rfc/rfc7258>.
+
+   [TRACKING] W3C TAG, "Unsanctioned Web Tracking", July 2015,
+              <https://www.w3.org/2001/tag/doc/unsanctioned-tracking/>.
 
 Author's Address
 
