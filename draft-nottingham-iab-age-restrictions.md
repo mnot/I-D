@@ -124,6 +124,10 @@ For example, many people only have Internet access from public computers (such a
 
 While such restrictions may be palatable in a closed system (such as on a single platform or in a single jurisdiction), they are not suitable for Internet-wide deployment.
 
+Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
+* Avoid requiring hardware capabilities not widely available in desktop and mobile computers globally, both in terms of performance and specific features
+* Avoid relying on a single mechanism for proving age
+
 
 ## Fragmentation
 
