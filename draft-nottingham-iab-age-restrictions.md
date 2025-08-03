@@ -100,14 +100,17 @@ In this context, age restriction systems can introduce several new risks to the 
 
 Most immediately, a system that reveals the age (or birthdate) of Internet users to services on it is a privacy risk. A person's age is an attribute that can be used to discriminate against them without justification, and is legally protected by privacy law in many jurisdictions.
 
-Beyond that immediate risk, a system that exposes the Internet services that a person uses to a verifying entity introduces a new way to track and profile Internet users. The risks here are similar to those seen on the Web, which the Internet standards community has expended considerable effort to mitigate (see e.g., {{?RFC7258}}).
+Beyond that immediate risk, verifying services' potential access to personal information creates a powerful incentive for misuse -- whether as part of the business model of the verifying service, or by third parties (such as nation-state attackers).
 
-Exposing information regarding attributes other than age to services creates additional privacy and security risks. For example, an age verification system that also exposes the country a person is a citizen of allows sites to discriminate against that attribute, which is beyond the purpose of age restriction.
+This is the case when verifying services over-collect such information (for example, age estimation services that use photos and biometrics), and it is also the case when users' activity is exposed to the verifying service when age restriction takes place. The latter risk is similar to the risk of tracking and profiling seen on the Web, which the Internet standards community has expended considerable effort to mitigate (see e.g., {{?RFC7258}}).
 
-Finally, even on its own a simple attribute like 'age in years' or 'birthdate' can be used to add entropy to an identifier for the end user, creating a new tracking vector. See {{TRACKING}}.
+Furthermore, exposing information beyond age to services creates additional privacy and security risks. For example, an age verification system that also exposes the country a person is a citizen of allows sites to discriminate against that attribute, which is beyond the purpose of age restriction.
+
+Finally, even on its own a simple attribute like 'age in years' or 'birthdate' can be used to add entropy to an identifier for the end user, creating a new tracking vector when exposed to services that collect such information. See {{TRACKING}}.
 
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
-* Avoid sharing information about usage with age verifiers
+* Avoid over-collection of information by age verifiers
+* Avoid sharing information about service usage with age verifiers
 * Avoid sharing information other than age information with services
 * Minimise the amount of age information shared with services (e.g., using age brackets)
 
