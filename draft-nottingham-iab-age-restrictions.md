@@ -76,7 +76,16 @@ It also means that any party operating the system has extraordinary access, and 
 
 In both cases, having only one entity operating the system increases the associated risks dramatically, as this effectively centralizes control in their hands while simultaneously presenting a single target to attackers.
 
-Thus, centralisation is a primary consideration for age restriction systems. Internet infrastructure is designed in a way to avoid centralization where it is technically possible, or to mitigate centralization risks where it is not. Since there is nothing inherently centralized about determining a person's age -- i.e., there are many ways to come to that conclusion -- centralization should be avoided, not accommodated, in these systems.
+Even when multiple parties provide verification services, centralization can emerge if there is too much friction against user switching between them. For example, if Web sites rather than end users select the verification service used, this does not create a market that respects end user preferences; it only respects the self-interest of sites.
+
+Age restriction systems can also have secondary effects that lead to centralization. For example, if an age restriction system requires use of a particular Web browser (or a small number of them), that effectively distorts the market for Web browsers.
+
+Thus, centralisation is a primary consideration for age restriction systems. Internet infrastructure is designed in a way to avoid centralization where it is technically possible, or to mitigate centralization risks where it is not. Since there is nothing inherently centralized about determining a person's age -- i.e., there are many ways to come to that conclusion -- centralization should be avoided, not merely mitigated, in these systems.
+
+Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
+* Avoid reliance on a single party to provide age verification services
+* Provide some mechanism for easy switching between verification services by end users
+* Avoid requiring use of an arbitrarily limited set of operating systems, Web browsers, client programs, or other software or hardware
 
 {{CENTRALIZATION}} explores these issues greater detail.
 
