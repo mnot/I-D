@@ -41,10 +41,7 @@ informative:
 
 --- abstract
 
-Around the world, authorities are considering (and in some cases implementing) age restriction
-systems for Internet content. This document explores the potential for unwanted impacts upon the
-Internet by these systems and makes recommendations about the properties they should have, if they
-are to be a successful part of the Internet infrastructure.
+Around the world, policymakers are considering (and in some cases implementing) age restriction systems for Internet content. This document explores the unwanted impacts on the Internet that these systems are likely to have and makes recommendations about the properties they should have, if they are to be a successful part of the Internet infrastructure.
 
 --- middle
 
