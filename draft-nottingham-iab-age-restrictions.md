@@ -76,6 +76,7 @@ Age restriction systems can also have secondary effects that lead to centralizat
 Thus, centralisation is a primary consideration for age restriction systems. Internet infrastructure is designed in a way to avoid centralization where it is technically possible, or to mitigate centralization risks where it is not. Since there is nothing inherently centralized about determining a person's age -- i.e., there are many ways to come to that conclusion -- centralization should be avoided, not merely mitigated, in these systems.
 
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
+
 * Avoid reliance on a single party to provide age verification services
 * Provide some mechanism for easy switching between verification services by end users
 * Avoid requiring use of an arbitrarily limited set of operating systems, Web browsers, client programs, or other software or hardware
@@ -104,6 +105,7 @@ Finally, even on its own a simple attribute like 'age in years' or 'birthdate' c
 In all cases, the privacy and security of an age restriction system needs to be proven: considerable experience has shown that merely trusting assertions of these properties is ill-founded.
 
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
+
 * Avoid over-collection of information by age verifiers
 * Avoid sharing information about service usage with age verifiers
 * Avoid sharing information other than age information with services
@@ -124,6 +126,7 @@ For example, many people only have Internet access from public computers (such a
 While such restrictions may be palatable in a closed system (such as on a single platform or in a single jurisdiction), they are not suitable for Internet-wide deployment.
 
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
+
 * Avoid requiring hardware capabilities not widely available in desktop and mobile computers globally, both in terms of overall performance and specific features
 * Avoid relying on a single mechanism for proving age
 
@@ -139,6 +142,7 @@ In the context of age restriction, fragmentation is most concerning if someone w
 Fragmentation is best addressed by adoption of common technical standards across jurisdictions. However, it is important to recognise that the mere existence of an international standard does not imply that it is suitable for deployment: experience has shown that voluntary adoption by implementers is important to prove their viability.
 
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
+
 * Be based upon internationally recognised, open technical standards
 * Be based upon technical standards that are voluntarily adopted by implementers
 * Be coordinated across jurisdictions wherever feasible
@@ -153,6 +157,7 @@ This risk is heightened if there are incentives for sites to deploy it, such as 
 Access to more granular age information also heightens many risks, because it makes a restriction system simultaneously useful in a broader variety of cases, and more attractive for misuse, because it offers more information about users.
 
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
+
 * Make the use of age restrictions visible to end users
 * Have a structural disincentive for deployment of age-gated services online
 
