@@ -48,13 +48,11 @@ Around the world, policymakers are considering (and in some cases implementing) 
 
 # Introduction
 
-Increasingly, policymakers are proposing regulation that restricts what content young people can access online. A recurring theme in these efforts is that it is no longer considered sufficient to rely on self-assertions of age. A number of jurisdictions have enacted - or are in the process of enacting – laws that take steps to provide stronger guarantees that children are not exposed to certain content.
+Increasingly, policymakers are proposing and implementing regulation that restricts what content young people can access online. A recurring theme in these efforts is that it is no longer considered sufficient to rely on self-assertions of age, and so stronger guarantees are deemed necessary.
 
-Age restrictions are already deployed on the Internet; for example, some Web sites already require some proof of age to create an account. However, when deployments become more widespread, they tend to have greater impact upon the Internet architecture. Systems that are designed for deployment in a single, homogenous domain rarely are suitable for the diversity of requirements and considerations that apply to Internet-scale systems.
+Age restrictions are already deployed on the Internet: for example, some Web sites already require proof of age to create an account. However, when such deployments become more prevalent, they tend to have greater impact upon the Internet architecture, thereby endangering other properties that we depend upon for a healthy online ecosystem. Systems that are designed for deployment in a single, homogenous domain rarely are suitable for the diversity of requirements and considerations that apply to Internet-scale systems.
 
-{{risks}} catalogues the risks that such systems might incur, expressed in terms of the Internet's
-architectural principles. {{recommendations}} suggests the properties that an age restriction
-system should have to be a healthy part of the Internet infrastructure.
+{{risks}} catalogues the risks that such systems might incur, expressed in terms of the Internet's architectural principles. {{recommendations}} suggests the properties that an age restriction system should have to be a healthy part of the Internet infrastructure.
 
 
 # Risks of Age Restriction {#risks}
