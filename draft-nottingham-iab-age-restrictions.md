@@ -139,12 +139,17 @@ Fragmentation is a growing concern for the Internet: various local requirements 
 
 In the context of age restriction, fragmentation is most concerning if someone were to need to understand and interact with (possibly after some onboarding procedure) a new system for each jurisdiction they visit. This would represent a significant barrier for users who travel, and would also present increased complexity and regulatory burden for businesses, potentially leading to further lack of competitiveness in some industries by increasing costs.
 
-Fragmentation is best addressed by adoption of common technical standards across jurisdictions. However, it is important to recognise that the mere existence of an international standard does not imply that it is suitable for deployment: experience has shown that voluntary adoption by implementers is important to prove their viability.
+Fragmentation is best addressed by adoption of common technical standards across jurisdictions.
+
+However, it is important to recognise that the mere existence of an international standard does not imply that it is suitable for deployment: experience has shown that voluntary adoption by implementers is important to prove their viability.
+
+Furthermore, standards do not necessarily enforce interoperability and the architectural goals that they espouse: if they allow too much interpretation of their application (for example, through optional-to-implement features, or too-generous extensibility mechanisms), they can fall short of these goals and only provide "air cover" for those who wish to claim standards compliance, without actually serving public interest goals -- thereby leading to fragmentation.
 
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
 
 * Be based upon internationally recognised, open technical standards
 * Be based upon technical standards that are voluntarily adopted by implementers
+* Be specified in a manner that provides interoperability and ensures architectural alignment
 * Be coordinated across jurisdictions wherever feasible
 
 
