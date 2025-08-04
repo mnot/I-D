@@ -103,11 +103,14 @@ Furthermore, exposing information beyond age to services creates additional priv
 
 Finally, even on its own a simple attribute like 'age in years' or 'birthdate' can be used to add entropy to an identifier for the end user, creating a new tracking vector when exposed to services that collect such information. See {{TRACKING}}.
 
+In all cases, the privacy and security of an age restriction system needs to be proven: considerable experience has shown that merely trusting assertions of these properties is ill-founded.
+
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
 * Avoid over-collection of information by age verifiers
 * Avoid sharing information about service usage with age verifiers
 * Avoid sharing information other than age information with services
 * Minimise the amount of age information shared with services (e.g., using age brackets)
+* Be based upon publicly available specifications that have had adequate security and privacy review to the level that Internet standards are held to
 
 See also {{PRIVACY}}.
 
