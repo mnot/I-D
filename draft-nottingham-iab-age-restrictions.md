@@ -52,8 +52,6 @@ Increasingly, policymakers are proposing and implementing regulation that restri
 
 Age restrictions are already deployed on the Internet: for example, some Web sites already require proof of age to create an account. However, when such deployments become more prevalent, they tend to have greater impact upon the Internet architecture, thereby endangering other properties that we depend upon for a healthy online ecosystem. Systems that are designed for deployment in a single, homogenous domain rarely are suitable for the diversity of requirements and considerations that apply to Internet-scale systems.
 
-{{risks}} catalogues the risks that such systems might incur, expressed in terms of the Internet's architectural principles. {{recommendations}} suggests the properties that an age restriction system should have to be a healthy part of the Internet infrastructure.
-
 
 # Risks of Age Restriction {#risks}
 
@@ -153,16 +151,6 @@ The Internet is designed to be used without permission, both be servers and clie
 This risk is heightened if there are incentives for sites to deploy it, such as access to non-age data.
 
 Access to more granular age information also heightens many risks, because it makes a restriction system simultaneously useful in a broader variety of cases, and more attractive for misuse, because it offers more information about users.
-
-
-# Recommendations for Age Restriction Systems {#recommendations}
-
-
-
-## Content Marking
-
-
-## Distributed Implementation
 
 
 
