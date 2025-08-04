@@ -146,13 +146,15 @@ Therefore, age restriction systems that are intended to become part of Internet 
 
 ## An Age-Gated Internet
 
-The Internet is designed to be used without permission, both be servers and clients. Easy-to-use age restriction mechanisms risk creating a ‘papers please’ Internet, where a credential is required to access large portions of the Internet. Such an outcome would amplify the other harms listed.
+The Internet is designed to be used without permission, both be servers and clients. Easy-to-use age restriction mechanisms risk creating a ‘papers please’ Internet, where a credential is required to access large portions of the Internet's services. Such an outcome would amplify the other harms listed.
 
-This risk is heightened if there are incentives for sites to deploy it, such as access to non-age data.
+This risk is heightened if there are incentives for sites to deploy it, such as increased access to non-age data.
 
 Access to more granular age information also heightens many risks, because it makes a restriction system simultaneously useful in a broader variety of cases, and more attractive for misuse, because it offers more information about users.
 
-
+Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
+* Make the use of age restrictions visible to end users
+* Have a structural disincentive for deployment of age-gated services online
 
 
 # IANA Considerations
