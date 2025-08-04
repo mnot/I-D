@@ -123,17 +123,21 @@ For example, many people only have Internet access from public computers (such a
 While such restrictions may be palatable in a closed system (such as on a single platform or in a single jurisdiction), they are not suitable for Internet-wide deployment.
 
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
-* Avoid requiring hardware capabilities not widely available in desktop and mobile computers globally, both in terms of performance and specific features
+* Avoid requiring hardware capabilities not widely available in desktop and mobile computers globally, both in terms of overall performance and specific features
 * Avoid relying on a single mechanism for proving age
 
 
 ## Fragmentation
 
-If an age restriction system relies too much on legal controls rather than technical capabilities, those controls are likely to be inconsistently applied in different jurisdictions, leading to different experiences for Internet users around the globe.
+The likelihood of incompatible age restriction systems being deployed in different jurisdictions around the world introduces a risk of fragmentation -- i.e., that the Internet will not work the same way in different places.
 
-Likewise, a solution that requires special access to computers (such as in “trusted platform modules” or otherwise mandates conformance on people’s computers introduces a risk of limiting the kinds of computers that can be used on the Internet – for example, Open Source Operating Systems and Web browsers are generally unable to provide such assurances.
+Fragmentation is a growing concern for the Internet: various local requirements are creating friction against global deployment of new applications, protocols, and capabilities. As the Internet fragments, the benefits of having a single, globe-spanning networking technology are correspondingly lessened. Although a single factor (such as diverging approaches to age restriction) is unlikely to fragment the Internet on its own, the sum of such divergences increases the risk of fragmentation greatly, risking the viability of the Internet itself.
 
-While these tradeoffs may be reasonable in a single jurisdiction, too many differences will create barriers to Internet-wide deployment of services, creating not only centralization risks, but also fragmentation risks -- that the Internet will work in different ways depending on where you are.
+In the context of age restriction, fragmentation is most concerning if someone were to need to understand and interact with (possibly after some onboarding procedure) a new system for each jurisdiction they visit. This would represent a significant barrier for users who travel, and would also present increased complexity and regulatory burden for businesses, potentially leading to further lack of competitiveness in some industries by increasing costs.
+
+Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
+* Be based upon internationally recognised, open technical standards
+* Be coordinated across jurisdictions wherever feasible
 
 
 ## An Age-Gated Internet
