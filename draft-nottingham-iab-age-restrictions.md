@@ -92,8 +92,6 @@ Therefore, age restriction systems that are intended to become part of Internet 
 
 It is technically challenging to design an age restriction system that exhibits the security and privacy properties expected of Internet standards. Exposing information about Internet users to third parties -- whether verifiers, services, or others -- creates powerful incentives. In particular, commercial interests desire access to it to be able to track activity across the Internet so that this can be sold (to advertisers, insurers and others), and so they will use (and abuse) any facility that offers such information to learn about what people are doing.
 
-Critically, even small amounts of information can aid these purposes, because they can be aggregated with other information (like IP addresses, browser characteristics, and so on) to create a unique identifier for each Internet user.
-
 In this context, age restriction systems can introduce several new risks to the Internet.
 
 Most immediately, a system that reveals the age (or birthdate) of Internet users to services on it is a privacy risk. A person's age is an attribute that can be used to discriminate against them without justification, and is legally protected by privacy law in many jurisdictions.
@@ -104,9 +102,9 @@ This is the case when verifying services over-collect such information (for exam
 
 Furthermore, exposing information beyond age to services creates additional privacy and security risks. For example, an age verification system that also exposes the country a person is a citizen of allows sites to discriminate against that attribute, which is beyond the purpose of age restriction.
 
-Finally, even on its own a simple attribute like 'age in years' or 'birthdate' can be used to add entropy to an identifier for the end user, creating a new tracking vector when exposed to services that collect such information. See {{TRACKING}}.
+Finally, even on its own a simple attribute like 'age in years' or 'birthdate' can be used to add entropy to an identifier for the end user (in combination with other information, such as IP addresses, browser characteristics, and so on), creating a new tracking vector when exposed to services that collect such information. See {{TRACKING}}.
 
-In all cases, the privacy and security of an age restriction system needs to be proven: considerable experience has shown that merely trusting assertions of these properties is ill-founded.
+In all cases, the privacy and security of an age restriction system needs to be proven: considerable experience has shown that merely trusting assertions of these properties is ill-founded. Likewise, because data that is not collected cannot be shared or stolen, a system that uses technical means to limit data collection and usage is preferable over one that uses legal means (such as contractual terms).
 
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
 
@@ -114,6 +112,7 @@ Therefore, age restriction systems that are intended to become part of Internet 
 * Avoid sharing information about service usage with age verifiers
 * Avoid sharing information other than age information with services
 * Minimise the amount of age information shared with services (e.g., using age brackets)
+* Provide technical limitations to the collection and use of data
 * Be based upon publicly available specifications that have had adequate security and privacy review to the level that Internet standards are held to
 
 See also {{PRIVACY}}.
