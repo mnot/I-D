@@ -59,11 +59,11 @@ This section catalogues risks that age restriction systems might encounter, expr
 
 ## Centralization
 
-One of the defining characteristics of the Internet is its avoidance of creating "gatekeeper" roles where a single entity (or small number of them) has unavoidable access to or control over communications. This architecture makes the Internet more resilient and avoids problematic concentrations of power.
+One of the defining characteristics of the Internet's architecture is its avoidance of "gatekeeper" roles where a single entity (or small number of them) has unavoidable access to or control over communications. This architecture makes the Internet more resilient and avoids problematic concentrations of power.
 
-Inherently, any age restriction system involves controlling access to content and services on the Internet. When that system's use is legally required, its operation can be characterized as centralized. However, that centralization is mitigated (to some degree) by the governance mechanisms that legitimize the legal basis of the system.
+Inherently, any age restriction system involves controlling access to content and services on the Internet. When that system's use is legally required, it can be characterized as being centralized. However, that centralization is mitigated (to some degree) by the governance mechanisms that legitimize the legal basis of the system.
 
-However, other forms of centralization can occur in age verification systems that are more avoidable. For example, many proposed age restriction systems require verification by a single party. This is not how Internet-scale services are provided, because of the many risks that such designs incur:
+However, other forms of centralization can occur in age verification systems that are more avoidable. For example, many proposed age restriction systems require verification by a single party. This is not how Internet-scale services are designed, because of the many risks incurred:
 
 First, that single operator will have access to a significant amount of sensitive information about people's activities on the Internet. Such a system is vulnerable to cyberattacks by organized criminals and nation-state actors. Centralizing so much sensitive data in one place creates an irresistible 'honey pot' for attackers.
 
@@ -76,8 +76,6 @@ In all of these cases, having only one entity operating the system increases the
 Even when multiple parties provide verification services, centralization can emerge if there is too much friction against user switching between them. For example, if Web sites rather than end users select the verification service used, this does not create a market that respects end user preferences; it only respects the self-interest of sites.
 
 Finally, age restriction systems can also have secondary effects that lead to centralization. For example, if an age restriction system requires use of a particular Web browser (or a small number of them), that effectively distorts the market for Web browsers.
-
-Internet infrastructure is designed in a way to avoid centralization where it is technically possible, or to mitigate centralization risks where it is not. Since there is nothing inherently centralized about determining a person's age -- i.e., there are many ways to come to that conclusion -- centralization should be avoided, not merely mitigated, in these systems.
 
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
 
