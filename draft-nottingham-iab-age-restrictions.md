@@ -167,7 +167,7 @@ Access to more granular age information also heightens many risks, because it ma
 Therefore, age restriction systems that are intended to become part of Internet infrastructure MUST:
 
 * Make the use of age restrictions visible to end users
-* Have a structural disincentive for deployment of age-gated services online
+* Have a structural disincentive for indiscriminate use of age restriction
 
 
 # IANA Considerations
