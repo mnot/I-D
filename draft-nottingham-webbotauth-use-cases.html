@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Public API Principles</title>
+<title>Use Cases and Requirements for Cryptographic Authentication of Web Bots</title>
 <meta content="Mark Nottingham" name="author">
-<meta content='
-       This document introduces the concept of a "public API" -- one that is imposed upon the market by regulators -- and documents principles to help guide their development in order to assure that they genuinely serve the public. 
-    ' name="description">
+<meta content="
+       This draft outlines use cases and requirements for cryptographic authentication for bot clients on the Web. 
+    " name="description">
 <meta content="xml2rfc 3.31.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
-<meta content="draft-nottingham-public-apis-latest" name="ietf.draft">
+<meta content="draft-nottingham-webbotauth-use-cases-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.31.0
     Python 3.12.12
@@ -26,7 +26,7 @@
     requests 2.32.5
     wcwidth 0.2.14
 -->
-<link href="draft-nottingham-public-apis.xml" rel="alternate" type="application/rfc+xml">
+<link href="draft-nottingham-webbotauth-use-cases.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">@font-face {
   font-family: 'Lora';
@@ -1042,7 +1042,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
-<td class="center">Public API Principles</td>
+<td class="center">webbotauth usecases</td>
 <td class="right">December 2025</td>
 </tr></thead>
 <tfoot><tr>
@@ -1057,7 +1057,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">Network Working Group</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-nottingham-public-apis-latest</dd>
+<dd class="internet-draft">draft-nottingham-webbotauth-use-cases-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
 <time datetime="2025-12-02" class="published">2 December 2025</time>
@@ -1074,10 +1074,10 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </dd>
 </dl>
 </div>
-<h1 id="title">Public API Principles</h1>
+<h1 id="title">Use Cases and Requirements for Cryptographic Authentication of Web Bots</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">This document introduces the concept of a "public API" -- one that is imposed upon the market by regulators -- and documents principles to help guide their development in order to assure that they genuinely serve the public.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This draft outlines use cases and requirements for cryptographic authentication for bot clients on the Web.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1085,21 +1085,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
       </h2>
 <p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
 <p id="section-note.1-2">
-        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nottingham-public-apis/">https://datatracker.ietf.org/doc/draft-nottingham-public-apis/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nottingham-webbotauth-use-cases/">https://datatracker.ietf.org/doc/draft-nottingham-webbotauth-use-cases/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
 <p id="section-note.1-3">
          information can be found at <span><a href="https://mnot.github.io/I-D/">https://mnot.github.io/I-D/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
 <p id="section-note.1-4">Source for this draft and an issue tracker can be found at
-        <span><a href="https://github.com/mnot/I-D/labels/public-apis">https://github.com/mnot/I-D/labels/public-apis</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
-</section>
-<section class="note" id="section-note.2">
-      <h2 id="name-note-to-readers">
-<a href="#name-note-to-readers" class="section-name selfRef">Note to Readers</a>
-      </h2>
-<p id="section-note.2-1">This is a very preliminary document; it needs a considerable amount of additional content, examples, discussion, and refinement. At this point, feedback would be greatly appreciated on:
-* The general approach and suitability for purpose (as described in the introduction)
-* Whether the principles are at the appropriate level of abstraction
-* Major concepts or ideas that are missing
-Thank you for reading!<a href="#section-note.2-1" class="pilcrow">¶</a></p>
+        <span><a href="https://github.com/mnot/I-D/labels/webbotauth-use-cases">https://github.com/mnot/I-D/labels/webbotauth-use-cases</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1150,27 +1140,59 @@ Thank you for reading!<a href="#section-note.2-1" class="pilcrow">¶</a></p>
         </h2>
 <nav class="toc"><ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
-            <p id="section-toc.1-1.1.1"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-web-site-use-cases" class="internal xref">Web Site Use Cases</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
-                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-implementation-independence" class="internal xref">Implementation Independence</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-mitigating-volumetric-abuse" class="internal xref">Mitigating Volumetric Abuse by Bots</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
-                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-modularity" class="internal xref">Modularity</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1" class="keepWithNext"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-controlling-access-by-bots" class="internal xref">Controlling Access by Bots</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.3">
-                <p id="section-toc.1-1.1.2.3.1" class="keepWithNext"><a href="#section-1.3" class="auto internal xref">1.3</a>.  <a href="#name-stability" class="internal xref">Stability</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
+                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-providing-different-content" class="internal xref">Providing Different Content to Bots</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.4">
-                <p id="section-toc.1-1.1.2.4.1"><a href="#section-1.4" class="auto internal xref">1.4</a>.  <a href="#name-functionality" class="internal xref">Functionality</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4">
+                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="auto internal xref">2.4</a>.  <a href="#name-auditing-bot-behaviour" class="internal xref">Auditing Bot Behaviour</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.5">
+                <p id="section-toc.1-1.2.2.5.1"><a href="#section-2.5" class="auto internal xref">2.5</a>.  <a href="#name-classifying-traffic" class="internal xref">Classifying Traffic</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.6">
+                <p id="section-toc.1-1.2.2.6.1"><a href="#section-2.6" class="auto internal xref">2.6</a>.  <a href="#name-site-services" class="internal xref">Site Services</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.7">
+                <p id="section-toc.1-1.2.2.7.1"><a href="#section-2.7" class="auto internal xref">2.7</a>.  <a href="#name-next-steps" class="internal xref">Next Steps</a></p>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
-</li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-bot-differences" class="internal xref">Bot Differences</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#appendix-A.1" class="auto internal xref">A.1</a>.  <a href="#name-scope" class="internal xref">Scope</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#appendix-A.2" class="auto internal xref">A.2</a>.  <a href="#name-relationship" class="internal xref">Relationship</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
+                <p id="section-toc.1-1.5.2.3.1"><a href="#appendix-A.3" class="auto internal xref">A.3</a>.  <a href="#name-reputation" class="internal xref">Reputation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
+                <p id="section-toc.1-1.5.2.4.1"><a href="#appendix-A.4" class="auto internal xref">A.4</a>.  <a href="#name-agency" class="internal xref">Agency</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1181,95 +1203,254 @@ Thank you for reading!<a href="#section-note.2-1" class="pilcrow">¶</a></p>
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">To improve competitive conditions in Internet-related markets, legal regulators around the world are starting to require "big tech" companies, "gatekeepers", firms with "strategic market status" and similar to offer interfaces so that potential competitors can interoperate with them.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">This document captures a number of principles for such interfaces, which it refers to as "public APIs." It is drawn from the experience that the IETF community has in defining APIs for interoperation. In particular, it explores the factors that differentiate a cooperatively defined API (as is usually the case for standards-defined APIs) and those that are adversarial in nature -- in particular, when the requirement to offer an API is imposed upon a party.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">In doing so, it seeks to illustrate the properties of APIs that are more likely to offer genuine interoperability and thus combat not only anti-competitive abuses of power, but also other effects that can harm the Internet, such as centralization <span>[<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>.
-# The Public API Principles
-The following principles are widely observed in APIs that provide value to their users and the Internet ecosystem at large. While there is considerable latitude in how they are applied to a specific function that is exposed, they are considered to be invariant.
-## Simplicity
-A public API will require the least possible effort from clients that wish to engage with it. Typically, this means judicious reuse of existing, widely familiar and used "building block" technologies and following the best practices for those technologies, with the minimal amount of application-specific protocol elements being defined to achieve the goals of the API.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">For most applications, this means exposing an API over the HTTP protocol <span>[<a href="#RFC9110" class="cite xref">RFC9110</a>]</span>, following the Best Current Practices described in Building Protocols with HTTP <span>[<a href="#RFC9205" class="cite xref">RFC9205</a>]</span>. In cases where HTTP is not capable of meeting core goals of the application, other base protocols might be appropriate, but serious consideration should be given to the tradeoffs in doing so.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<div id="implementation-independence">
-<section id="section-1.1">
-        <h3 id="name-implementation-independence">
-<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-implementation-independence" class="section-name selfRef">Implementation Independence</a>
-        </h3>
-<p id="section-1.1-1">The interface provided by a Public API should be defined by a formal specification, not the behaviour of an implementation -- even if there is only one implementation.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
-<p id="section-1.1-2">Basing interoperability on a specification assures substitutability (because other parties can implement it on equal footing) and equal access to the features of the API (because they are all documented). Doing so also allows the application to evolve its implementation separately from the interface, promoting stability. Specification-based interoperability can promote the growth of a market, because interoperability is not a high-cost, pairwise effort.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
-<p id="section-1.1-3">In particular, the implementation of the API server should not be tightly coupled to the API's definition. Its documentation should be separate (ideally, an open standard), and should not refer to data structures, behaviours, or requirements that are specific to that implementation.<a href="#section-1.1-3" class="pilcrow">¶</a></p>
-<p id="section-1.1-4">Implementation independence is also important for consumers; requiring a particular client SDK, version of a particular piece of software, or a particular proprietary framework are all signs that the API is not implementation independent.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
-<p id="section-1.1-5">Where necessary, implementations should be encouraged (or required) to avoid the development of unintentional dependencies on their undocumented behaviour -- referred to in the industry as "Hyrum's Law," see <a href="https://www.hyrumslaw.com">https://www.hyrumslaw.com</a>. This can be achieved through judicious use of "greasing." <span>[<a href="#RFC9170" class="cite xref">RFC9170</a>]</span><a href="#section-1.1-5" class="pilcrow">¶</a></p>
+<p id="section-1-1">The Web Bot Auth (WebBotAuth) Working Group has been chartered to "standardize methods for cryptographically authenticating automated clients and providing additional information about their operators to Web sites."<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">Initial discussions in the group have revealed some disagreement about the scope and intent of the work. <a href="#site-usecase" class="auto internal xref">Section 2</a> explores the use cases for cryptographic authentication of non-browser clients, to help inform those discussions. <a href="#next" class="auto internal xref">Section 2.7</a> suggests some further questions for consideration.<a href="#section-1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="modularity">
-<section id="section-1.2">
-        <h3 id="name-modularity">
-<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-modularity" class="section-name selfRef">Modularity</a>
-        </h3>
-<p id="section-1.2-1">APIs seldom offer just one function or access to one type of data. To be useful, they usually have to offer access to many different types of data and behaviours, so that they can be used in concert to achieve more complex goals.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
-<p id="section-1.2-2">When this is the case, there should be well-defined boundaries between the different functions and data types, separated into distinct modules that can be used and evolve independently.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
-<p id="section-1.2-3">Doing so enhances the use of an API's capabilities for purposes that may not have been foreseen when it was created -- also known as unintended reuse. Enabling unintended reuse ensures that the API can serve users' needs, rather than the vendors' wishes to steer user activity.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
-<p id="section-1.2-4">The decision of where to draw boundaries between modules is a design issue; many factors can influence it. The motivation for these choices, however, should be centred on the users' needs.<a href="#section-1.2-4" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="stability">
-<section id="section-1.3">
-        <h3 id="name-stability">
-<a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-stability" class="section-name selfRef">Stability</a>
-        </h3>
-<p id="section-1.3-1">It is critical for public APIs to be stable over time; that is, to avoid capricious change. When an API changes, its consumers must also change, and updating disparate clients widely distributed by unrelated parties around the globe causes significant work, raises associated costs, and introduces risks those consumers.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
-<p id="section-1.3-2">One cause of instability is the introduction of needed changes to APIs, as their capabilities evolve and demands from users are revised. If such changes are "backwards compatible", they are made in such a way that clients that have not yet been updated can still interoperate, avoiding the nearly impossible task of a simultaneous update of all clients (a so-called "flag day").<a href="#section-1.3-2" class="pilcrow">¶</a></p>
-<p id="section-1.3-3">For an API to allow backwards compatible change, it must carefully document the behaviours that it guarantees will be invariant, and where clients should ignore unknown changes. Many standard Internet protocols and formats have conventions that enable this; for example, HTTP header fields can be introduced without breaking existing consumers. When present, these conventions should be honoured and leveraged by public APIs.<a href="#section-1.3-3" class="pilcrow">¶</a></p>
-<p id="section-1.3-4">At times, an API might need to make an incompatible change; for example, where there is a security or legal flaw. Such changes should be rare, and need to be advertised widely for a substantial amount of time before they are executed.<a href="#section-1.3-4" class="pilcrow">¶</a></p>
-<p id="section-1.3-5">A more abstract cause of instability is the ownership of the definition of an API by a single entity, both because they are able to introduce capricious change more easily, and because if that entity were to go away (for example, go out of business), its status becomes unclear.<a href="#section-1.3-5" class="pilcrow">¶</a></p>
-<p id="section-1.3-6">Because of this, public APIs should be defined by openly available specifications who are maintained by recognised community organisations -- typically, Standards Developing Organisations. These organisations have the expertise and processes in place to assure responsible stewardship and change control over these APIs.<a href="#section-1.3-6" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="functionality">
-<section id="section-1.4">
-        <h3 id="name-functionality">
-<a href="#section-1.4" class="section-number selfRef">1.4. </a><a href="#name-functionality" class="section-name selfRef">Functionality</a>
-        </h3>
-<p id="section-1.4-1">A public API needs to actually provide the full function desired by its users.<a href="#section-1.4-1" class="pilcrow">¶</a></p>
-<p id="section-1.4-2">Often, open APIs will stop short of the functionality necessary to fully recreate a product or service. This is especially true when the API's exposed features are chosen from the already-built product selectively, often using an adapter layer that is brittle and prone to mistranslation.<a href="#section-1.4-2" class="pilcrow">¶</a></p>
-<p id="section-1.4-3">One way to assure the functionality of a public API is to require "API-First Development" -- building the product offered by a company upon the APIs that it has exposed. Since doing so requires that all functionality is available in the APIs, there are no "hidden" features or low-fidelity capabilities.<a href="#section-1.4-3" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
-<div id="sec-informative-references">
+<div id="site-usecase">
 <section id="section-2">
-      <h2 id="name-informative-references">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+      <h2 id="name-web-site-use-cases">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-web-site-use-cases" class="section-name selfRef">Web Site Use Cases</a>
       </h2>
-<dl class="references">
-<dt id="RFC9110">[RFC9110]</dt>
-      <dd>
-<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC9170">[RFC9170]</dt>
-      <dd>
-<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">T. Pauly</span>, <span class="refTitle">"Long-Term Viability of Protocol Extension Mechanisms"</span>, <span class="seriesInfo">RFC 9170</span>, <span class="seriesInfo">DOI 10.17487/RFC9170</span>, <time datetime="2021-12" class="refDate">December 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9170">https://www.rfc-editor.org/rfc/rfc9170</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC9205">[RFC9205]</dt>
-      <dd>
-<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Building Protocols with HTTP"</span>, <span class="seriesInfo">BCP 56</span>, <span class="seriesInfo">RFC 9205</span>, <span class="seriesInfo">DOI 10.17487/RFC9205</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9205">https://www.rfc-editor.org/rfc/rfc9205</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC9518">[RFC9518]</dt>
-    <dd>
-<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Centralization, Decentralization, and Internet Standards"</span>, <span class="seriesInfo">RFC 9518</span>, <span class="seriesInfo">DOI 10.17487/RFC9518</span>, <time datetime="2023-12" class="refDate">December 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9518">https://www.rfc-editor.org/rfc/rfc9518</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-</dl>
+<p id="section-2-1">This section explores use cases that Web sites might have for authenticating bots, including a discussion of any current mechanisms that they use to meet the use case and how cryptographic authentication might help.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">Because there is some question about the "additional information" facility in the charter, each use case also assesses whether it's necessary to identify a real-world entity associated with the bot to meet the use case (since that is the most common use of such a facility).<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">Each use case also summarises how controversial addressing it is perceived to be.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<p id="section-2-4">Potential alternative solutions to the implied requirements are not considered here.<a href="#section-2-4" class="pilcrow">¶</a></p>
+<div id="abuse">
+<section id="section-2.1">
+        <h3 id="name-mitigating-volumetric-abuse">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-mitigating-volumetric-abuse" class="section-name selfRef">Mitigating Volumetric Abuse by Bots</a>
+        </h3>
+<p id="section-2.1-1">Some bots make requests at rates that cause operational issues for Web sites. This may be intentional (e.g., traffic from "botnets" and other attacks) or unintentional (due to overly simple or inconsiderate implementation). It appears that both the number of such bots and the rate at which they make requests are increasing.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.1-2">While sites can take measures to mitigate the impact (e.g., caching), these are only partially effective; some resources are uncacheable, and generating representations of some HTTP resources can incur much higher costs. In general, serving such great volumes of traffic can consume significant resources, in terms of both infrastructure and bandwidth.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
+<p id="section-2.1-3">Currently, a site that experiences such traffic most often blocks unwelcome clients by IP address. This has the effect of blocking other uses of that IP address, both at that time and into the indefinite future. It also offers little recourse for incorrectly blocked clients, since they have no information about why they were blocked or what they should do about it. Finally, address-based blocking is only somewhat effective; abusive bots tend to be highly mobile across IP addresses.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
+<p id="section-2.1-4">Cryptographic authentication of bots could allow a site that experiences abusive traffic to allow those automated clients that are authenticated and well-behaved, blocking any from the remaining who make more requests than a Web browser conceivably could.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
+<p id="section-2.1-5">This use case does not require identifying a specific bot or associating it with a real-world entity, provided that the site considers abusiveness a feature of behaviour, not identity. It also does not require discriminating between bots and non-bot users; only the problematic behaviour is targeted.<a href="#section-2.1-5" class="pilcrow">¶</a></p>
+<p id="section-2.1-6">Addressing this use case is not overly controversial, because a site needs to operate with reasonable efficiency to provide both its operators and its users a benefit. However, the efficacy of cryptographic authentication for this case has been questioned, since abusive bots cannot be forced to authenticate, and may still be able to impersonate browsers.<a href="#section-2.1-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="access">
+<section id="section-2.2">
+        <h3 id="name-controlling-access-by-bots">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-controlling-access-by-bots" class="section-name selfRef">Controlling Access by Bots</a>
+        </h3>
+<p id="section-2.2-1">Some sites wish to make access by bots to the resources they provided to browsers conditional upon the identity or features of the bot. This might be for a variety of reasons; they may wish to:<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.2-2.1">
+            <p id="section-2.2-2.1.1">Only allow access by bots on an allow list;<a href="#section-2.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-2.2">
+            <p id="section-2.2-2.2.1">Disallow access to bots on an explicit deny list;<a href="#section-2.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-2.3">
+            <p id="section-2.2-2.3.1">Condition access upon meeting some criteria (e.g., non-profit, certification by a third party);<a href="#section-2.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-2.4">
+            <p id="section-2.2-2.4.1">Condition access upon participation in some scheme or protocol (e.g., payment for access);<a href="#section-2.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-2.2-3">Note that the first two imply some notion of bots being tied to a real-world identity, whereas the remaining do not necessarily require it.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
+<p id="section-2.2-4">Currently, sites most often use a combination of the Robots Exclusion Protocol (including robots.txt) and IP address blocking to control access to bots.<a href="#section-2.2-4" class="pilcrow">¶</a></p>
+<p id="section-2.2-5">The Robots Exclusion Protocol provides a means for sites to communicate preferences to bots about their behaviour. Although this is a useful and sometimes necessary function, it does not allow for enforcement of those preferences.<a href="#section-2.2-5" class="pilcrow">¶</a></p>
+<p id="section-2.2-6">Enforcement is achieved primarily through blocking non-conforming clients. The limitations of IP address blocking are discussed in <a href="#abuse" class="auto internal xref">Section 2.1</a>.<a href="#section-2.2-6" class="pilcrow">¶</a></p>
+<p id="section-2.2-7">Cryptographic authentication of bots could allow for greater certainty in access control than is possible using IP addresses. It would also allow for more definite tying of roles to actors in protocols (e.g., in the Robots Exclusion Protocol and in any potential payment protocol).<a href="#section-2.2-7" class="pilcrow">¶</a></p>
+<p id="section-2.2-8">This use case has been disputed. While blocking certain bots by IP address is widespread in practice, concerns have been expressed that standardising an authentication mechanism for bots might result in a Web where all bots might need to authenticate, leading to increased difficulty in introducing new bots. In some markets, this outcome could create pressure towards centralisation, due to heightened barriers to entry.<a href="#section-2.2-8" class="pilcrow">¶</a></p>
+<p id="section-2.2-9">Another controversy is that giving sites more power to block bots that they perceive to be undesirable is a change in the balance of power on the Web. Some perceive that as justified, given the introduction of AI, what they perceive as an onslaught of bot traffic, and other factors. Others see it as an overreach that may impinge upon users' ability to consume content as they desire -- for example, using accessibility or agentic tools.<a href="#section-2.2-9" class="pilcrow">¶</a></p>
+<p id="section-2.2-10">Finally, some see bots as a way of keeping powerful sites in check, and therefore measures to curtail their activity is portrayed as concentrating that power. However, it should be noted that there are also powerful bots that can be seen to have disproportionate power over sites, and so there is not necessarily a clear bias here.<a href="#section-2.2-10" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="content">
+<section id="section-2.3">
+        <h3 id="name-providing-different-content">
+<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-providing-different-content" class="section-name selfRef">Providing Different Content to Bots</a>
+        </h3>
+<p id="section-2.3-1">Somes sites may wish to tailor the content they serve to bots (either selectively or overall), as compared to that they serve to browsers. In some cases, a site might wish to augment the information that they provide to a trusted bot. Conversely, a site might wish to reduce or modify the information that they provide to a bot that they do not trust.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
+<p id="section-2.3-2">Current practice is difficult to ascertain, but anecdotal evidence suggests that the latter case is more common than the former. For example, some sites do not wish for information that they consider to be commercially sensitive -- e.g., prices -- to be available to bots. In both cases, IP addresses and similar heuristics are used.<a href="#section-2.3-2" class="pilcrow">¶</a></p>
+<p id="section-2.3-3">Cryptographic authentication of bots could enable such discrimination in a manner much more reliable than using other techniques (such as IP addresses), provided that it also allowed identification of individual bots. In most cases, this use requires identifying a specific bot and associating it with a real-world entity (although there are exceptions, such as sites which want to treat all bots equally, or cases where it's possible to group bots without identifying specific ones).<a href="#section-2.3-3" class="pilcrow">¶</a></p>
+<p id="section-2.3-4">This use case is controversial in cases where the modifications are not consensual. Some espouse a site's right to control its own speech depending upon the audience it is speaking to, whereas others are concerned by the lack of transparency that might result -- particularly from powerful sites. Note that a bot that cannot be distinguished from a typical browser is still likely to be able to operate for such purposes.<a href="#section-2.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="audit">
+<section id="section-2.4">
+        <h3 id="name-auditing-bot-behaviour">
+<a href="#section-2.4" class="section-number selfRef">2.4. </a><a href="#name-auditing-bot-behaviour" class="section-name selfRef">Auditing Bot Behaviour</a>
+        </h3>
+<p id="section-2.4-1">Some sites may wish to understand how bots use them in detail. In particular, they might want to verify that a particular bot adheres to the preferences stated in robots.txt, or that they conform to some other protocol. They might also wish to have reliable metrics for how a bot behaves in terms of number of requests, timing of requests, and so forth to ascertain the bot's behaviour; this information might feed into other use cases, or be used independently.<a href="#section-2.4-1" class="pilcrow">¶</a></p>
+<p id="section-2.4-2">Currently, this use case is met through use of heuristics of information like IP address.<a href="#section-2.4-2" class="pilcrow">¶</a></p>
+<p id="section-2.4-3">Cryptographic authentication of bots could allow more accurate and reliable auditing of bot behaviour, due to the greater confidence it provides. It does not necessarily require identifying a specific bot or associating it with a real-world entity, but some (many?) of the downstream uses of the audit data may.<a href="#section-2.4-3" class="pilcrow">¶</a></p>
+<p id="section-2.4-4">This use case is not controversial, because bots being accountable for their behaviour is broadly seen as a reasonable goal.<a href="#section-2.4-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="classify">
+<section id="section-2.5">
+        <h3 id="name-classifying-traffic">
+<a href="#section-2.5" class="section-number selfRef">2.5. </a><a href="#name-classifying-traffic" class="section-name selfRef">Classifying Traffic</a>
+        </h3>
+<p id="section-2.5-1">Many sites make efforts to understand how browsers interact with them, so as to improve their services. This might be at the connection level (e.g., HTTP, TCP, and QUIC statistics), or it might be gathered in-browser (Real User Monitoring or RUM).<a href="#section-2.5-1" class="pilcrow">¶</a></p>
+<p id="section-2.5-2">When doing so, it is important for them to be able to distinguish between their target audience (people using browsers) and bots; if they cannot, the bot traffic will make the insights they gain less useful (or even useless).<a href="#section-2.5-2" class="pilcrow">¶</a></p>
+<p id="section-2.5-3">Currently, sites that perform such tasks use a variety of heuristics to identify and exclude bots from such measures. This is only partially effective; bots are increasingly difficult to classify, particularly as using 'headless browsers' becomes a norm for crawlers.<a href="#section-2.5-3" class="pilcrow">¶</a></p>
+<p id="section-2.5-4">Cryptographic authentication could be an aid to classification if it becomes a norm for bots to use it. Sites that wish to exclude non-human clients from their measurements would only need to use heuristics for bots that do not comply with the norm. It does not require identifying specific bots or associating them with real-world entities unless finer granularity of classification than "bot vs not" is desired.<a href="#section-2.5-4" class="pilcrow">¶</a></p>
+<p id="section-2.5-5">Addressing this use case is not seen as controversial, because an understanding of the nature of traffic that a site receives is important to its operation (provided that no personal information is involved and no tracking capability is introduced).<a href="#section-2.5-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="services">
+<section id="section-2.6">
+        <h3 id="name-site-services">
+<a href="#section-2.6" class="section-number selfRef">2.6. </a><a href="#name-site-services" class="section-name selfRef">Site Services</a>
+        </h3>
+<p id="section-2.6-1">Many sites use third-party tools to analyse, monitor, and provide their services. For example, health check services allow sites to understand their uptimes and receive notifications when there is a problem. Content Delivery Networks need to identify themselves to back-end origin servers.<a href="#section-2.6-1" class="pilcrow">¶</a></p>
+<p id="section-2.6-2">Currently, such services use a variety of means of authentication, including IP address allow lists, "magic" header fields, and ad hoc use of existing cryptographic mechanisms.<a href="#section-2.6-2" class="pilcrow">¶</a></p>
+<p id="section-2.6-3">A standard cryptographic authentication mechanism for bots could improve alignment of the mechanisms used and provide greater certainty in the face of operational changes (e.g., changes to the bot's IP addresses). This use case requires bot identity to be tied to authentication.<a href="#section-2.6-3" class="pilcrow">¶</a></p>
+<p id="section-2.6-4">Addressing this use case is not seen as controversial. However, it is not clear whether these use cases are within the scope of the Working Group's charter.<a href="#section-2.6-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="next">
+<section id="section-2.7">
+        <h3 id="name-next-steps">
+<a href="#section-2.7" class="section-number selfRef">2.7. </a><a href="#name-next-steps" class="section-name selfRef">Next Steps</a>
+        </h3>
+<p id="section-2.7-1">This section suggests questions for further investigation and discussion.<a href="#section-2.7-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-2.7-2">
+<li id="section-2.7-2.1">
+            <p id="section-2.7-2.1.1">What are the qualitative differences between current practice (e.g. ad hoc blocking by IP address) and cryptographic authentication of bots?<a href="#section-2.7-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-2.7-2.2">
+            <p id="section-2.7-2.2.1">User authentication is widespread and standards-supported on the Web; what makes bot authentication different?<a href="#section-2.7-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-2.7-2.3">
+            <p id="section-2.7-2.3.1">What levers do we have to prevent (or mitigate) an emerging default of requiring authentication for bots?<a href="#section-2.7-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-2.7-2.4">
+            <p id="section-2.7-2.4.1">Would a cryptographic authentication scheme without identity or association with real-world entities provide enough value to meet interesting use cases? If so, would the charter prohibition on "[t]racking or assigning reputation to particular bots" need to change?<a href="#section-2.7-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-2.7-2.5">
+            <p id="section-2.7-2.5.1">What is the threshold for being considered a bot? E.g., is request rate important? Associating with a specific human user in time and/or space?<a href="#section-2.7-2.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-2.7-2.6">
+            <p id="section-2.7-2.6.1">Are the resource requirements for cryptographic authentication reasonable for these use cases for all types of sites? At the meeting, it was asserted that it would disproportionately advantage already well-resourced entities.<a href="#section-2.7-2.6.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-2.7-2.7">
+            <p id="section-2.7-2.7.1">Are there alternative approaches to addressing some or all of these use cases? What properties do they have?<a href="#section-2.7-2.7.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+</section>
+</div>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-3">
+      <h2 id="name-iana-considerations">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-3-1">This draft has no actions for IANA.<a href="#section-3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-4">
+      <h2 id="name-security-considerations">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-4-1">Undoubtedly there are security considerations to a cryptographic authentication protocol, but they will be encountered and dealt with later than what's in scope for this draft.<a href="#section-4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="bots">
+<section id="appendix-A">
+      <h2 id="name-bot-differences">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-bot-differences" class="section-name selfRef">Bot Differences</a>
+      </h2>
+<p id="appendix-A-1">This section enumerates some of the ways that bots can differ.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<div id="scope">
+<section id="appendix-A.1">
+        <h3 id="name-scope">
+<a href="#appendix-A.1" class="section-number selfRef">A.1. </a><a href="#name-scope" class="section-name selfRef">Scope</a>
+        </h3>
+<p id="appendix-A.1-1">Bots have different scopes of activity:<a href="#appendix-A.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-A.1-2.1">
+            <p id="appendix-A.1-2.1.1">Some crawl the entire Web<a href="#appendix-A.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-2.2">
+            <p id="appendix-A.1-2.2.1">Some target a specific subset of the Web (e.g., by geography, language, industry)<a href="#appendix-A.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.1-2.3">
+            <p id="appendix-A.1-2.3.1">Some target specific sites or resources on sites (e.g., link checkers, linters)<a href="#appendix-A.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="relationship">
+<section id="appendix-A.2">
+        <h3 id="name-relationship">
+<a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-relationship" class="section-name selfRef">Relationship</a>
+        </h3>
+<p id="appendix-A.2-1">Bots have different relationships with sites:<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-A.2-2.1">
+            <p id="appendix-A.2-2.1.1">Some actively attempt to appear as Web browsers, so as to have the same relationship as an end user<a href="#appendix-A.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.2-2.2">
+            <p id="appendix-A.2-2.2.1">Some do not hide their nature as bots but do not have any pre-existing relationship with the site<a href="#appendix-A.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.2-2.3">
+            <p id="appendix-A.2-2.3.1">Some are implicitly or explicitly authorised by the site (e.g., through an advertised API)<a href="#appendix-A.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.2-2.4">
+            <p id="appendix-A.2-2.4.1">Some have a pre-existing relationship with the site (e.g., monitoring and other site services)<a href="#appendix-A.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="reputation">
+<section id="appendix-A.3">
+        <h3 id="name-reputation">
+<a href="#appendix-A.3" class="section-number selfRef">A.3. </a><a href="#name-reputation" class="section-name selfRef">Reputation</a>
+        </h3>
+<p id="appendix-A.3-1">Bots have different reputations in the larger community, which can change how they are perceived by sites:<a href="#appendix-A.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-A.3-2.1">
+            <p id="appendix-A.3-2.1.1">Some are well and widely-known (e.g., search engine crawlers, archivers)<a href="#appendix-A.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.3-2.2">
+            <p id="appendix-A.3-2.2.1">Some are relatively unknown (e.g., due to low traffic or recent introduction)<a href="#appendix-A.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.3-2.3">
+            <p id="appendix-A.3-2.3.1">Some are purposefully anonymous (e.g., price checkers, most malicious bots)<a href="#appendix-A.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="agency">
+<section id="appendix-A.4">
+        <h3 id="name-agency">
+<a href="#appendix-A.4" class="section-number selfRef">A.4. </a><a href="#name-agency" class="section-name selfRef">Agency</a>
+        </h3>
+<p id="appendix-A.4-1">Bots act with different relationships to their operator(s):<a href="#appendix-A.4-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-A.4-2.1">
+            <p id="appendix-A.4-2.1.1">Some are explicitly and exclusively associated with an end user (e.g., "agentic" bots)<a href="#appendix-A.4-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.4-2.2">
+            <p id="appendix-A.4-2.2.1">Some are acting on behalf of a group of end users<a href="#appendix-A.4-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.4-2.3">
+            <p id="appendix-A.4-2.3.1">Some are acting on behalf of another entity (e.g., corporation, government, civil society organisation)<a href="#appendix-A.4-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-A.4-2.4">
+            <p id="appendix-A.4-2.4.1">Some serve multiple constituencies<a href="#appendix-A.4-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
 </section>
 </div>
 <div id="authors-addresses">
-<section id="appendix-A">
+<section id="appendix-B">
       <h2 id="name-authors-address">
 <a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
       </h2>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Mark Nottingham</span></div>
-<div dir="auto" class="left"><span class="street-address">Prahran</span></div>
+<div dir="auto" class="left"><span class="street-address">Melbourne</span></div>
 <div dir="auto" class="left"><span class="country-name">Australia</span></div>
 <div class="email">
 <span>Email:</span>
