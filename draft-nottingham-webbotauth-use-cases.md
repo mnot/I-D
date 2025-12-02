@@ -142,7 +142,7 @@ A standard cryptographic authentication mechanism for bots could improve alignme
 Addressing this use case is not seen as controversial. However, it is not clear whether these use cases are within the scope of the Working Group's charter.
 
 
-## Next Steps {#next}
+# Next Steps {#next}
 
 This section suggests questions for further investigation and discussion.
 
