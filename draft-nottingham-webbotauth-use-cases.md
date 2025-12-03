@@ -50,7 +50,7 @@ This section explores use cases that Web sites might have for authenticating bot
 
 Because there is some question about the "additional information" facility in the charter, each use case also assesses whether it's necessary to identify a real-world entity associated with the bot to meet the use case (since that is the most common use of such a facility).
 
-Each use case also summarises how controversial addressing it is perceived to be.
+Each use case also summarises how controversial addressing it is perceived to be. This draft does not take a position on whether all of the use cases should be addressed by the group.
 
 Potential alternative solutions to the implied requirements are not considered here.
 
@@ -152,7 +152,8 @@ This section suggests questions for further investigation and discussion.
 4. Would a cryptographic authentication scheme without identity or association with real-world entities provide enough value to meet interesting use cases? If so, would the charter prohibition on "[t]racking or assigning reputation to particular bots" need to change?
 5. What is the threshold for being considered a bot? E.g., is request rate important? Associating with a specific human user in time and/or space?
 6. Are the resource requirements for cryptographic authentication reasonable for these use cases for all types of sites? At the meeting, it was asserted that it would disproportionately advantage already well-resourced entities.
-7. Are there alternative approaches to addressing some or all of these use cases? What properties do they have?
+7. What use cases should the group address and not address? Why?
+8. Are there alternative approaches to addressing some or all of these use cases? What properties do they have?
 
 
 # IANA Considerations
