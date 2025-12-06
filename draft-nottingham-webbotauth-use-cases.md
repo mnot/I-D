@@ -1,5 +1,5 @@
 ---
-title: Use Cases and Requirements for Cryptographic Authentication of Web Bots
+title: Use Cases for Cryptographic Authentication of Web Bots
 abbrev: webbotauth usecases
 docname: draft-nottingham-webbotauth-use-cases-latest
 date: {DATE}
@@ -32,7 +32,7 @@ author:
 
 --- abstract
 
-This draft outlines use cases and requirements for cryptographic authentication for bot clients on the Web.
+This draft outlines use cases for cryptographic authentication for bot clients on the Web.
 
 --- middle
 
