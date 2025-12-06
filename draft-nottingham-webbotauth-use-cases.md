@@ -50,24 +50,24 @@ This section explores use cases that Web sites might have for authenticating bot
 
 Because there is some question about the "additional information" facility in the charter, each use case also assesses whether it's necessary to identify a real-world entity associated with the bot to meet the use case (since that is the most common use of such a facility).
 
-Each use case also summarises how controversial addressing it is perceived to be. This draft does not take a position on whether all of the use cases should be addressed by the group.
+Each use case also summarises how controversial addressing it is perceived to be.
 
-Potential alternative solutions to the implied requirements are not considered here.
+This draft does not take a position on whether all of the use cases should be addressed by the group. Potential alternative solutions to the implied requirements are also not considered here.
 
 
 ## Mitigating Volumetric Abuse by Bots {#abuse}
 
 Some bots make requests at rates that cause operational issues for Web sites. This may be intentional (e.g., traffic from "botnets" and other attacks) or unintentional (due to overly simple or inconsiderate implementation). It appears that both the number of such bots and the rate at which they make requests are increasing.
 
-While sites can take measures to mitigate the impact (e.g., caching), these are only partially effective; some resources are uncacheable, and generating representations of some HTTP resources can incur much higher costs. In general, serving such great volumes of traffic can consume significant resources, in terms of both infrastructure and bandwidth.
+While sites can take measures to mitigate the impact of this traffic (e.g., caching), these are only partially effective; some resources are uncacheable, and generating representations of some HTTP resources can incur much higher costs. In general, serving such great volumes of traffic can consume significant resources, in terms of both infrastructure and bandwidth.
 
-Currently, a site that experiences such traffic most often blocks unwelcome clients by IP address. This has the effect of blocking other uses of that IP address, both at that time and into the indefinite future. It also offers little recourse for incorrectly blocked clients, since they have no information about why they were blocked or what they should do about it. Finally, address-based blocking is only somewhat effective; abusive bots tend to be highly mobile across IP addresses.
+Currently, a site that experiences such traffic most often blocks unwelcome clients by IP address. This has the effect of blocking other uses of that IP address, both at that time and into the indefinite future. It also offers little recourse for incorrectly blocked clients, since they have no information about why they were blocked or what they should do about it.
 
-Cryptographic authentication of bots could allow a site that experiences abusive traffic to allow those automated clients that are authenticated and well-behaved, blocking any from the remaining who make more requests than a Web browser conceivably could.
+Cryptographic authentication of bots could allow a site that experiences abusive traffic to allow those automated clients that are authenticated and well-behaved, blocking any from the remaining who make more requests than a Web browser conceivably could. Unlike IP-based blocking, cryptographic authentication is specific to the bot itself, limiting harmful effects to other users of the IP address (either concurrently or in the future). Because it is performed at the application layer, it gives the opportunity to convey additional information to the client (e.g., in a HTTP 403 or 429 response).
 
 This use case does not require identifying a specific bot or associating it with a real-world entity, provided that the site considers abusiveness a feature of behaviour, not identity. It also does not require discriminating between bots and non-bot users; only the problematic behaviour is targeted.
 
-Addressing this use case is not overly controversial, because a site needs to operate with reasonable efficiency to provide both its operators and its users a benefit. However, the efficacy of cryptographic authentication for this case has been questioned, since abusive bots cannot be forced to authenticate, and may still be able to impersonate browsers.
+Addressing this use case does not appear to be overly controversial, because it is widely recognised that a site needs to operate with reasonable efficiency to provide both its operators and its users a benefit.
 
 
 ## Controlling Access by Bots {#access}
@@ -81,7 +81,7 @@ Some sites wish to make access by bots to the resources they provided to browser
 
 Note that the first two imply some notion of bots being tied to a real-world identity, whereas the remaining do not necessarily require it.
 
-Currently, sites most often use a combination of the Robots Exclusion Protocol (including robots.txt) and IP address blocking to control access to bots.
+Currently, sites most often use a combination of the Robots Exclusion Protocol (including robots.txt) and IP address blocking to control access by bots.
 
 The Robots Exclusion Protocol provides a means for sites to communicate preferences to bots about their behaviour. Although this is a useful and sometimes necessary function, it does not allow for enforcement of those preferences.
 
@@ -91,7 +91,7 @@ Cryptographic authentication of bots could allow for greater certainty in access
 
 This use case has been disputed. While blocking certain bots by IP address is widespread in practice, concerns have been expressed that standardising an authentication mechanism for bots might result in a Web where all bots might need to authenticate, leading to increased difficulty in introducing new bots. In some markets, this outcome could create pressure towards centralisation, due to heightened barriers to entry.
 
-Another controversy is that giving sites more power to block bots that they perceive to be undesirable is a change in the balance of power on the Web. Some perceive that as justified, given the introduction of AI, what they perceive as an onslaught of bot traffic, and other factors. Others see it as an overreach that may impinge upon users' ability to consume content as they desire -- for example, using accessibility or agentic tools.
+Another controversy is that giving sites a more fine-grained capability to block bots is a change in the balance of power on the Web. Some perceive that as justified, given factors like the introduction of AI and what they perceive as an onslaught of bot traffic. Others see it as an overreach that may impinge upon users' ability to consume content as they desire -- for example, using accessibility or agentic tools.
 
 Finally, some see bots as a way of keeping powerful sites in check, and therefore measures to curtail their activity is portrayed as concentrating that power. However, it should be noted that there are also powerful bots that can be seen to have disproportionate power over sites, and so there is not necessarily a clear bias here.
 
@@ -102,9 +102,11 @@ Somes sites may wish to tailor the content they serve to bots (either selectivel
 
 Current practice is difficult to ascertain, but anecdotal evidence suggests that the latter case is more common than the former. For example, some sites do not wish for information that they consider to be commercially sensitive -- e.g., prices -- to be available to bots. In both cases, IP addresses and similar heuristics are used.
 
-Cryptographic authentication of bots could enable such discrimination in a manner much more reliable than using other techniques (such as IP addresses), provided that it also allowed identification of individual bots. In most cases, this use requires identifying a specific bot and associating it with a real-world entity (although there are exceptions, such as sites which want to treat all bots equally, or cases where it's possible to group bots without identifying specific ones).
+Cryptographic authentication of bots could enable such discrimination in a manner much more reliable than using other techniques (such as IP addresses), provided that it also allowed identification of individual bots.
 
-This use case is controversial in cases where the modifications are not consensual. Some espouse a site's right to control its own speech depending upon the audience it is speaking to, whereas others are concerned by the lack of transparency that might result -- particularly from powerful sites. Note that a bot that cannot be distinguished from a typical browser is still likely to be able to operate for such purposes.
+In most cases, this use requires identifying a specific bot and associating it with a real-world entity (although there are exceptions, such as sites which want to treat all bots equally, or cases where it's possible to group bots without identifying specific ones).
+
+This use case is likely to be controversial in cases where the modifications are not consensual. Some espouse a site's right to control its own speech depending upon the audience it is speaking to, whereas others are concerned by the lack of transparency that might result -- particularly from powerful sites. Note, however, that a bot that cannot be distinguished from a typical browser is still likely to be able to operate for such purposes.
 
 
 ## Auditing Bot Behaviour {#audit}
@@ -115,7 +117,7 @@ Currently, this use case is met through use of heuristics of information like IP
 
 Cryptographic authentication of bots could allow more accurate and reliable auditing of bot behaviour, due to the greater confidence it provides. It does not necessarily require identifying a specific bot or associating it with a real-world entity, but some (many?) of the downstream uses of the audit data may.
 
-This use case is not controversial, because bots being accountable for their behaviour is broadly seen as a reasonable goal.
+This use case does not appear controversial, because bots being accountable for their behaviour is broadly seen as a reasonable goal.
 
 
 ## Classifying Traffic {#classify}
@@ -126,9 +128,9 @@ When doing so, it is important for them to be able to distinguish between their 
 
 Currently, sites that perform such tasks use a variety of heuristics to identify and exclude bots from such measures. This is only partially effective; bots are increasingly difficult to classify, particularly as using 'headless browsers' becomes a norm for crawlers.
 
-Cryptographic authentication could be an aid to classification if it becomes a norm for bots to use it. Sites that wish to exclude non-human clients from their measurements would only need to use heuristics for bots that do not comply with the norm. It does not require identifying specific bots or associating them with real-world entities unless finer granularity of classification than "bot vs not" is desired.
+Cryptographic authentication could be an aid to classification if it becomes a norm for bots to use it. It does not require identifying specific bots or associating them with real-world entities unless finer granularity of classification than "bot vs not" is desired. However, sites that wish to exclude non-human clients from their measurements would still need to use heuristics for bots that do not comply with the norm.
 
-Addressing this use case is not seen as controversial, because an understanding of the nature of traffic that a site receives is important to its operation (provided that no personal information is involved and no tracking capability is introduced).
+Addressing this use case does not appear to be controversial, because an understanding of the nature of traffic that a site receives is important to its operation (provided that no personal information is involved and no tracking capability is introduced).
 
 
 ## Site Services {#services}
@@ -141,7 +143,7 @@ Site services often have higher requirements for reliability and security. A sit
 
 A standard cryptographic authentication mechanism for bots could improve security and reliability, and provide greater certainty in the face of operational changes (e.g., changes to the bot's IP addresses). This use case requires bot identity to be tied to authentication.
 
-Addressing this use case is not seen as controversial. However, it is not clear whether these use cases are within the scope of the Working Group's charter.
+Addressing this use case does not appear to be controversial. However, it is not clear whether these use cases are within the scope of the Working Group's charter.
 
 
 # Next Steps {#next}
@@ -150,8 +152,8 @@ This section suggests questions for further investigation and discussion.
 
 1. What are the qualitative differences between current practice (e.g. ad hoc blocking by IP address) and cryptographic authentication of bots?
 2. User authentication is widespread and standards-supported on the Web; what makes bot authentication different?
-3. What levers do we have to prevent (or mitigate) an emerging default of requiring authentication for bots?
-4. Would a cryptographic authentication scheme without identity or association with real-world entities provide enough value to meet interesting use cases? If so, would the charter prohibition on "[t]racking or assigning reputation to particular bots" need to change?
+3. What levers do we have to mitigate the harms associated with an emerging default of requiring authentication for bots? Does cryptographic authentication enhance or confound such efforts (as opposed to IP address blocking)?
+4. Would a cryptographic authentication scheme that does not allow association with real-world entities provide enough value to meet interesting use cases? If so, would the charter prohibition on "[t]racking or assigning reputation to particular bots" need to change?
 5. What is the threshold for being considered a bot? E.g., is request rate important? Associating with a specific human user in time and/or space?
 6. Are the resource requirements for cryptographic authentication reasonable for these use cases for all types of sites? At the meeting, it was asserted that it would disproportionately advantage already well-resourced entities.
 7. What use cases should the group address and not address? Why?
