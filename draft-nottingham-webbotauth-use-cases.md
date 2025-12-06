@@ -137,7 +137,9 @@ Many sites use third-party tools to analyse, monitor, and provide their services
 
 Currently, such services use a variety of means of authentication, including IP address allow lists, "magic" header fields, and ad hoc use of existing cryptographic mechanisms.
 
-A standard cryptographic authentication mechanism for bots could improve alignment of the mechanisms used and provide greater certainty in the face of operational changes (e.g., changes to the bot's IP addresses). This use case requires bot identity to be tied to authentication.
+Site services often have higher requirements for reliability and security. A site might not wish to grant access to a vulnerability scanner solely based upon its IP address, for example. Likewise, a health check needs to reliably bypass Web Application Firewalls to perform its function.
+
+A standard cryptographic authentication mechanism for bots could improve security and reliability, and provide greater certainty in the face of operational changes (e.g., changes to the bot's IP addresses). This use case requires bot identity to be tied to authentication.
 
 Addressing this use case is not seen as controversial. However, it is not clear whether these use cases are within the scope of the Working Group's charter.
 
