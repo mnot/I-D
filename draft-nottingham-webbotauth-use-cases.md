@@ -105,7 +105,7 @@ This use case is likely to be controversial in cases where the modifications are
 
 ## Auditing Bot Behaviour {#audit}
 
-Some sites may wish to understand how bots use them in detail. In particular, they might want to verify that a particular bot adheres to the preferences stated in robots.txt, or that they conform to some other protocol. They might also wish to have reliable metrics for how a bot behaves in terms of number of requests, timing of requests, and so forth to ascertain the bot's behaviour; this information might feed into other use cases, or be used independently.
+Some sites may wish to understand how bots use them in detail. In particular, they might want to verify that a bot adheres to the preferences stated in robots.txt, or that they conform to some other protocol. They might also wish to have reliable metrics for how a bot behaves in terms of number of requests, timing of requests, and so forth to ascertain the bot's behaviour; this information might feed into other use cases, or be used independently.
 
 Currently, this use case is met through use of heuristics of information like IP address. It does not necessarily require identifying a specific bot or associating it with a real-world entity, but some (many?) of the downstream uses of the audit data may.
 
