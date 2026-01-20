@@ -37,7 +37,7 @@ normative:
 
 --- abstract
 
-This document defines a way for sites to express preferences about how their content is handled by specific applications in their robots.txt files.
+This document defines a way for Web sites to express preferences about how their content is handled by specific applications in their robots.txt files.
 
 --- middle
 
@@ -46,11 +46,11 @@ This document defines a way for sites to express preferences about how their con
 
 The Robots Exclusion Protocol {{ROBOTS}} allows Web site owners to "control how content served by their services may be accessed, if at all, by automatic clients known as crawlers." While this provides an effective way to direct cooperating crawlers' behaviour when accessing a site, it does not consider what happens afterwards: in particular, what is done with the data that is obtained through crawling. This has created tensions, especially when crawlers have more than one purpose, or when a purpose changes (for example, a search engine changes its user interface in a way that's undesirable to the site).
 
-{{?I-D.ietf-aipref-vocab}} defines a universal vocabulary that describes how content should be handled by AI crawlers, and {{?I-D.ietf-aipref-attach}} describes how that vocabulary should be attached to content in robots.txt and through other means. This allows sites to specify how their data should be handled in a manner that's separate to the question of how crawlers show behave when the access the site.
+{{?I-D.ietf-aipref-vocab}} defines a universal vocabulary that describes how content should be handled for uses involving AI, and {{?I-D.ietf-aipref-attach}} describes how that vocabulary should be attached to content in robots.txt and through other means. This framework allows sites to specify how their data should be handled in a manner that's separate to the question of how crawlers show behave when the access the site.
 
-However, it has become apparent that defining such a universal vocabulary necessitates imprecision, so as to be broadly applicable across both different implementations as well as over time. As a result, sites may not have obvious ways state their preferences regarding specific behaviours.
+However, it has become apparent that defining such a universal vocabulary is difficult, because it requires broad agreement on sometimes hard-to-define concepts, and necessitates imprecision, so as to be broadly applicable across both different implementations as well as over time. As a result, sites may not have obvious ways state their preferences regarding specific behaviours.
 
-To address this shortcoming, this document defines a complementary mechanism: a robots.txt extension that allows sites to express preferences about how specific applications should behave in certain circumstances.
+To address this shortcoming, this document defines a complementary mechanism: a robots.txt extension that allows sites to express preferences about how specified applications should behave in certain circumstances.
 
 For example, a site might wish to express that it does not want ExampleSearch to use its content with ExampleSearch's new "Widgets" feature. ExampleSearch has registered a "widgets" control, so that the site can express this in its robots.txt file:
 
@@ -66,9 +66,9 @@ In this manner, sites can provide specific directives to applications that wish 
 
 To allow a site to express its preferences about how specific applications are to treat their content, an identifier for the application needs to be chosen (in the above example, 'examplesearch') and the syntax and semantics of its directives need to be defined (in the example above, 'widgets=?0' to enable or disable the 'widgets' feature).
 
-This specification creates an IANA registries for application identifiers and directives to facilitate easy discovery of these artefacts. It is expected that applications that consume data obtained by crawling the Web will register specific controls for their features (including but not limited to the entire application itself) in this registry.
+This specification creates IANA registries for application identifiers and directives to facilitate easy discovery of these artefacts. It is expected that applications that consume data obtained from the Web will register specific controls for their features (including but not limited to the entire application itself) in this registry.
 
-However, this specification does not mandate registration. It is expected that non-technical regulation (e.g., competition regulation) might play some role in encouraging or even requiring certain applications to register appropriate controls for their features.
+However, this specification does not mandate registration. It is anticipated that non-technical regulation (e.g., competition regulation) might play some role in encouraging or even requiring certain applications to register appropriate controls for their features.
 
 ## Interaction with AI Preferences
 
@@ -76,7 +76,7 @@ Application Directives are complimentary to the vocabulary described in {{?I-D.i
 
 In particular, AI Preferences are applicable even to unknown uses and consumers of content, whereas Application Directives do not apply to any application except the one nominated. Because of this, it is anticipated that they will often be used together: AI Preferences to set general policy about how content is treated, and Application Directives to fine-tune the behavior of specific applications.
 
-Because Application Directives are a more specific, targeted mechanism, they can be considered to override applicable AI preferences that are attached in the same robots.txt file, in the case of any conflict. Such override is only applicable, however, within the defined scope of the semantics of the give directive(s).
+Because Application Directives are a more specific, targeted mechanism, they can be considered to override applicable AI preferences that are attached in the same robots.txt file, in the case of any conflict. Such override is only applicable, however, within the defined scope of the semantics of the given directive(s).
 
 ## Interaction with the User-Agent Line
 
