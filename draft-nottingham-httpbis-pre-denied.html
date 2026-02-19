@@ -4,14 +4,15 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Best Practices for Blocking Clients by IP Address</title>
+<title>The Preliminary Request Denied HTTP Status Code</title>
 <meta content="Mark Nottingham" name="author">
 <meta content="
-       Blocking clients by IP address creates not only local availability problems for clients, but also can foster conditions that lead to systemic issues, such as centralization of Internet protocols. This document makes recommendations to mitigate these effects. 
+       This specification defines a HTTP status code to indicate that the server
+is denying a prefetch or preload request. 
     " name="description">
 <meta content="xml2rfc 3.31.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
-<meta content="draft-nottingham-blocking-best-practices-latest" name="ietf.draft">
+<meta content="draft-nottingham-httpbis-pre-denied-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.31.0
     Python 3.12.12
@@ -26,7 +27,7 @@
     requests 2.32.5
     wcwidth 0.3.0
 -->
-<link href="draft-nottingham-blocking-best-practices.xml" rel="alternate" type="application/rfc+xml">
+<link href="draft-nottingham-httpbis-pre-denied.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">@font-face {
   font-family: 'Lora';
@@ -1044,7 +1045,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
-<td class="center">Blocking by IP Address</td>
+<td class="center">The Preliminary Request Denied HTTP Stat</td>
 <td class="right">February 2026</td>
 </tr></thead>
 <tfoot><tr>
@@ -1059,27 +1060,29 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">Network Working Group</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-nottingham-blocking-best-practices-latest</dd>
+<dd class="internet-draft">draft-nottingham-httpbis-pre-denied-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
 <time datetime="2026-02-19" class="published">19 February 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
-<dd class="intended-status">Best Current Practice</dd>
+<dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
 <dd class="expires"><time datetime="2026-08-23">23 August 2026</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
       <div class="author-name">M. Nottingham</div>
+<div class="org">Cloudflare</div>
 </div>
 </dd>
 </dl>
 </div>
-<h1 id="title">Best Practices for Blocking Clients by IP Address</h1>
+<h1 id="title">The Preliminary Request Denied HTTP Status Code</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">Blocking clients by IP address creates not only local availability problems for clients, but also can foster conditions that lead to systemic issues, such as centralization of Internet protocols. This document makes recommendations to mitigate these effects.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This specification defines a HTTP status code to indicate that the server
+is denying a prefetch or preload request.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1087,11 +1090,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
       </h2>
 <p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
 <p id="section-note.1-2">
-        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nottingham-blocking-best-practices/">https://datatracker.ietf.org/doc/draft-nottingham-blocking-best-practices/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nottingham-httpbis-pre-denied/">https://datatracker.ietf.org/doc/draft-nottingham-httpbis-pre-denied/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
 <p id="section-note.1-3">
          information can be found at <span><a href="https://mnot.github.io/I-D/">https://mnot.github.io/I-D/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
 <p id="section-note.1-4">Source for this draft and an issue tracker can be found at
-        <span><a href="https://github.com/mnot/I-D/labels/blocking">https://github.com/mnot/I-D/labels/blocking</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+        <span><a href="https://github.com/mnot/I-D/labels/pre-denied">https://github.com/mnot/I-D/labels/pre-denied</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1150,21 +1153,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-best-practices-for-blocking" class="internal xref">Best Practices for Blocking Clients by IP Address</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
-                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-reasons-for-blocking" class="internal xref">Reasons for Blocking</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
-                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-blocking-duration" class="internal xref">Blocking Duration</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
-                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-blocking-scope" class="internal xref">Blocking Scope</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4">
-                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="auto internal xref">2.4</a>.  <a href="#name-client-recourse" class="internal xref">Client Recourse</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-the-4xx-preliminary-request" class="internal xref">The 4xx (Preliminary Request Denied) Status Code</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
             <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
@@ -1187,13 +1176,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Internet services block access from specific IP addresses, ranges of addresses, and addresses associated with attributes like geography in response to (or anticipation of) what is perceived as abusive or otherwise undesirable traffic.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">For example, blocking of source addresses in SMTP is a widespread practice to control unsolicited e-mail messages ("spam"). Web sites also block IP addresses from clients that make an unreasonable volume of requests, and/or those addresses that probe for vulnerabilities.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">While these practices might be necessary to operate and make services available to those clients that are not perceived as abusive, blocking clients by IP address can have longer-term systemic effects on the Internet that are undesirable.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">In particular, blocking IP addresses can over-capture clients that are not considered abusive, leading to legitimate clients being blocked. While some traffic from a given address might indeed be abusive, other clients that share that IP address -- for example, because it is reallocated to another entity, or shared between many clients -- are not necessarily to blame.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">When widespread, blocking can have systemic effects, as it becomes difficult to deploy clients on IP addresses that have been problematic in the past.<a href="#section-1-5" class="pilcrow">¶</a></p>
-<p id="section-1-6">For example, self-hosting an e-mail server has become difficult (and impractical for most) because blocking has become so prevalent in that ecosystem. The resulting pressure to use large, widely-recognised providers creates centralization risk in e-mail.<a href="#section-1-6" class="pilcrow">¶</a></p>
-<p id="section-1-7">This document promotes practices that are intended to mitigate some harmful effects of blocking clients by IP address. It does not address blocking through use of other identifiers, or blocking undesirable services.<a href="#section-1-7" class="pilcrow">¶</a></p>
+<p id="section-1-1"><span>[<a href="#FETCH" class="cite xref">FETCH</a>]</span> introduces a mechanism whereby HTTP <span>[<a href="#HTTP" class="cite xref">HTTP</a>]</span> user agents can speculatively request a representation of a resource, in order to improve perceived performance.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">In some circumstances, a server might have information that leads it to believe that sending a full
+response will not improve performance, and could have negative impacts.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">When this happens, it is common practice to use a 503 (Service Unavailable) status code. However, this has been shown to cause confusion: a server operator who sees a spike in that status code being sent tends to draw the conclusion that there is a server-side operational issue.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">While other status codes (e.g., 403 (Forbidden)) could be used, they can also suffer (to varying degrees) from the same problem: being confused with an error or operational problem.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">This specification defines a new status code to specifically address this situation.<a href="#section-1-5" class="pilcrow">¶</a></p>
 <div id="notational-conventions">
 <section id="section-1.1">
         <h3 id="name-notational-conventions">
@@ -1207,51 +1195,14 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 </div>
 </section>
 </div>
-<div id="best-practices-for-blocking-clients-by-ip-address">
+<div id="the-4xx-preliminary-request-denied-status-code">
 <section id="section-2">
-      <h2 id="name-best-practices-for-blocking">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-best-practices-for-blocking" class="section-name selfRef">Best Practices for Blocking Clients by IP Address</a>
+      <h2 id="name-the-4xx-preliminary-request">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-the-4xx-preliminary-request" class="section-name selfRef">The 4xx (Preliminary Request Denied) Status Code</a>
       </h2>
-<div id="reasons-for-blocking">
-<section id="section-2.1">
-        <h3 id="name-reasons-for-blocking">
-<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-reasons-for-blocking" class="section-name selfRef">Reasons for Blocking</a>
-        </h3>
-<p id="section-2.1-1">Services that are intended to be generally available on the Internet <span class="bcp14">MUST NOT</span> block clients by default (i.e., use an "allow list"), and <span class="bcp14">SHOULD NOT</span> block clients as a matter of course.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
-<p id="section-2.1-2">Before blocking by IP address, consider whether other, more precise mechanisms for identifying abusive traffic are available. Because there is not a one-to-one mapping between end users and IP addresses (due to IP address reuse, NATs, application-layer proxies, multi-user systems, and other causes), IP addresses are generally a poor identifier. Even when there is a one-to-one mapping, in some cases a user might not be in full control of their system (e.g., due to malware), causing it to emit abusive traffic without their knowledge.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
-<p id="section-2.1-3">Likewise, before blocking it is important to consider <em>all</em> traffic from the IP address, not only the volume of abusive traffic. What looks like a high amount of abusive traffic from one user could be in fact representing many hundred or even thousands of users. Tools that identify abusive traffic should take this into account, for example by making decisions based upon the proportion of abusive traffic, rather than just the volume.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
-<p id="section-2.1-4">Delegating a blocking decision to another entity -- for example, using a "block list" -- should be done with great care. When a blocking decision is delegated, that decision should be regularly reviewed, to verify that it is still appropriate and that the block list follows the guidance in this document.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
-<p id="section-2.1-5">Alternatives to blocking should also be considered. If traffic is suspicious, it could be separated from other traffic and handled by separate systems to contain its impact. Or, it could be subjected to extra processing to identify and weed out the abusers, such as is seen in "CAPTCHA" systems on the Web. This includes techniques that leverage protocol functionality, such as using "backscatter" in e-mail.<a href="#section-2.1-5" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="blocking-duration">
-<section id="section-2.2">
-        <h3 id="name-blocking-duration">
-<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-blocking-duration" class="section-name selfRef">Blocking Duration</a>
-        </h3>
-<p id="section-2.2-1">IP addresses <span class="bcp14">MUST NOT</span> be blocked indefinitely. As discussed above, permanent or even long-lived address-based blocking can have serious effects on not only the availability of specific services to legitimate clients, but also create more general systemic issues in the Internet.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
-<p id="section-2.2-2">Instead, when blocking is believed to be necessary, its duration <span class="bcp14">SHOULD</span> be proportional to the certainty that the client is still abusive. For example, a service might initially ban a problematic client for a few minutes. If there is still significant abusive traffic from the address after that period, the block period might be lengthened to an hour or two.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
-<p id="section-2.2-3">Depending on the nature of the service offered, IP-based blocking <span class="bcp14">SHOULD NOT</span> exceed a period of more than one month, and typically <span class="bcp14">SHOULD</span> be for much shorter periods. This approach allows the service to discard enough abusive traffic to operate with reasonable efficiency while lowering (but not eliminating) the impact of blocking any legitimate clients.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
-<p id="section-2.2-4">Tools that enable blocking by IP address through operator intervention -- for example, firewall rule engines, web portals for controlling traffic, and server configuration formats -- <span class="bcp14">SHOULD</span> promote this practice. For example, allowing a block to removed after a period of time has passed and promoting that with the period recommended above as a default is good practice.<a href="#section-2.2-4" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="blocking-scope">
-<section id="section-2.3">
-        <h3 id="name-blocking-scope">
-<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-blocking-scope" class="section-name selfRef">Blocking Scope</a>
-        </h3>
-<p id="section-2.3-1">When blocking by IP address, the scope <span class="bcp14">SHOULD</span> be as minimal as possible -- typically, limited to a single source address that has been abusive in the recent past. Anticipatory blocking by netblock is <span class="bcp14">NOT RECOMMENDED</span>, as it can have significant side effects.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
-<p id="section-2.3-2">Likewise, delegating blocking decisions to a third party based upon assigned attributes (e.g., "dial-up Internet") is <span class="bcp14">NOT RECOMMENDED</span>.<a href="#section-2.3-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="client-recourse">
-<section id="section-2.4">
-        <h3 id="name-client-recourse">
-<a href="#section-2.4" class="section-number selfRef">2.4. </a><a href="#name-client-recourse" class="section-name selfRef">Client Recourse</a>
-        </h3>
-<p id="section-2.4-1">Services that block clients by IP address <span class="bcp14">SHOULD</span> have some well-publicised mechanism for challenging a block. For example, an e-mail service's Web site could provide a form for submitting disputes.<a href="#section-2.4-1" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-2-1">The 4xx (Preliminary Request Denied) status code indicates that the server is refusing a preliminary request.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">A preliminary request is one that contains a Sec-Purpose header field <span>[<a href="#FETCH" class="cite xref">FETCH</a>]</span> with the value "prefetch".<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">This indication is only applicable to the associated request; future preliminary requests might or might not succeed.<a href="#section-2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-considerations">
@@ -1259,7 +1210,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
       <h2 id="name-iana-considerations">
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-3-1">This document has no actions for IANA.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-1"><em>TBD</em><a href="#section-3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="security-considerations">
@@ -1267,7 +1218,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
       <h2 id="name-security-considerations">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-4-1">Blocking is often used as a means of reducing the cost of processing traffic that is perceived to be abusive (and therefore a security risk) in order to improve availability for clients that are perceived as legitimate. It does not alleviate the need to secure systems or to make them scalable. Implementing the guidelines in this document should not impact security so long as the systems being protected are reasonably secure and scalable themselves.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-1">The security considerations of <span>[<a href="#HTTP" class="cite xref">HTTP</a>]</span> and <span>[<a href="#FETCH" class="cite xref">FETCH</a>]</span> apply. Conceivably, the use of this status code could leak information about the internal state of the server; caution should be exercised to assure that it does not.<a href="#section-4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-normative-references">
@@ -1276,6 +1227,14 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 <a href="#section-5" class="section-number selfRef">5. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
+<dt id="FETCH">[FETCH]</dt>
+      <dd>
+<span class="refAuthor">WHAT Working Group</span>, <span class="refTitle">"Fetch"</span>, <time datetime="2026" class="refDate">2026</time>, <span>&lt;<a href="https://fetch.spec.whatwg.org/">https://fetch.spec.whatwg.org/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="HTTP">[HTTP]</dt>
+      <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
       <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
@@ -1294,7 +1253,8 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
       </h2>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Mark Nottingham</span></div>
-<div dir="auto" class="left"><span class="street-address">Prahran</span></div>
+<div dir="auto" class="left"><span class="org">Cloudflare</span></div>
+<div dir="auto" class="left"><span class="street-address">Melbourne</span></div>
 <div dir="auto" class="left"><span class="country-name">Australia</span></div>
 <div class="email">
 <span>Email:</span>
