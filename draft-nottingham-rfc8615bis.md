@@ -45,7 +45,7 @@ informative:
 This memo defines a path prefix for "well-known locations", "/.well-known/", in selected Uniform
 Resource Identifier (URI) schemes.
 
-In doing so it obsoletes RFC 5785, and updates the URI schemes defined in RFC 7230 to reserve that
+In doing so, it obsoletes RFC 5785 and updates the URI schemes defined in RFC 7230 to reserve that
 space. It also updates RFC 7595 to track URI schemes that support well-known URIs in their
 registry.
 
