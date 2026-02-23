@@ -102,15 +102,15 @@ Table of Contents
    before making a request.  For example, the Robots Exclusion Protocol
    (http://www.robotstxt.org/ (http://www.robotstxt.org/)) specifies a
    way for automated processes to obtain permission to access resources;
-   likewise, the Platform for Privacy Preferences [P3P] tells user-
+   likewise, the Platform for Privacy Preferences [P3P] tells user
    agents how to discover privacy policy before interacting with an
    origin server.
 
    While there are several ways to access per-resource metadata (e.g.,
-   HTTP header fields, WebDAV's PROPFIND [RFC4918]), the perceived
-   overhead (either in terms of client-perceived latency and/or
-   deployment difficulties) associated with them often precludes their
-   use in these scenarios.
+   HTTP header fields, PROPFIND in Web Distributed Authoring and
+   Versioning (WebDAV) [RFC4918]), the perceived overhead (either in
+   terms of client-perceived latency and/or deployment difficulties)
+   associated with them often precludes their use in these scenarios.
 
    At the same time, it has become more popular to use HTTP as a
    substrate for non-Web protocols.  Sometimes, such protocols need a
@@ -121,14 +121,14 @@ Table of Contents
    it can be easily located.  However, this approach has the drawback of
    risking collisions, both with other such designated "well-known
    locations" and with resources that the origin has created (or wishes
-   to create).  Furthermore, defining well-known locations usurp's the
+   to create).  Furthermore, defining well-known locations usurps the
    origin's control over its own URI space [RFC7320].
 
    To address these uses, this memo reserves a path prefix in HTTP,
-   HTTPS, WS and WSS URIs for these "well-known locations", "/.well-
-   known/".  Future specifications that need to define a resource for
-   such metadata can register their use to avoid collisions and minimise
-   impingement upon origins' URI space.
+   HTTPS, WebSocket (WS) and Secure WebSocket (WSS) URIs for these
+   "well-known locations", "/.well-known/".  Future specifications that
+   need to define a resource for such metadata can register their use to
+   avoid collisions and minimise impingement upon origins' URI space.
 
    Well-known URIs can also be used with other URI schemes, but only
    when those schemes' definitions explicitly allow it.
@@ -154,15 +154,15 @@ Table of Contents
    This specification updates the "http" [RFC7230] and "https" [RFC7230]
    schemes to support well-known URIs.  Other existing schemes can use
    the appropriate process for updating their definitions; for example,
-   [RFC8307] does so for the "ws" and "wss" schemes.  The Uniform
-   Resource Identifier (URI) Schemes Registry tracks which schemes
+   [RFC8307] does so for the "ws" and "wss" schemes.  The "Uniform
+   Resource Identifier (URI) Schemes" registry tracks which schemes
    support well-known URIs; see Section 5.2.
 
    Applications that wish to mint new well-known URIs MUST register
    them, following the procedures in Section 5.1, subject to the
    following requirements.
 
-   Registered names MUST conform to the segment-nz production in
+   Registered names MUST conform to the "segment-nz" production in
    [RFC3986].  This means they cannot contain the "/" character.
 
    Registered names for a specific application SHOULD be correspondingly
@@ -182,7 +182,7 @@ Table of Contents
    specified by the application in question.
 
    Registrations MAY also contain additional information, such as the
-   syntax of additional path components, query strings and/or fragment
+   syntax of additional path components, query strings, and/or fragment
    identifiers to be appended to the well-known URI, or protocol-
    specific details (e.g., HTTP [RFC7231] method handling).
 
@@ -192,9 +192,9 @@ Table of Contents
    dereferencing the well-known URI; both should be defined by the
    application itself.
 
-   Also, this specification does not define a format or media-type for
-   the resource located at "/.well-known/" and clients should not expect
-   a resource to exist at that location.
+   Also, this specification does not define a format or media type for
+   the resource located at "/.well-known/", and clients should not
+   expect a resource to exist at that location.
 
    Well-known URIs are rooted in the top of the path's hierarchy; they
    are not well-known by definition in other parts of the path.  For
@@ -207,19 +207,20 @@ Table of Contents
 3.1.  Registering Well-Known URIs
 
    The "Well-Known URIs" registry is located at
-   "https://www.iana.org/assignments/well-known-uris/".  Registration
+   https://www.iana.org/assignments/well-known-uris/
+   (https://www.iana.org/assignments/well-known-uris/).  Registration
    requests can be made by following the instructions located there or
-   by sending an email to the "wellknown-uri-review@ietf.org" mailing
-   list.
+   by sending an email to the wellknown-uri-review@ietf.org
+   (mailto:wellknown-uri-review@ietf.org) mailing list.
 
    Registration requests consist of at least the following information:
 
    URI suffix:  The name requested for the well-known URI, relative to
       "/.well-known/"; e.g., "example".
 
-   Change controller:  For Standards-Track RFCs, state "IETF".  For
+   Change controller:  For Standards Track RFCs, state "IETF".  For
       others, give the name of the responsible party.  Other details
-      (e.g., e-mail address, home page URI) may also be included.
+      (e.g., email address, home page URI) may also be included.
 
    Specification document(s):  Reference to the document that specifies
       the field, preferably including a URI that can be used to retrieve
@@ -234,22 +235,23 @@ Table of Contents
    General requirements for registered values are described in
    Section 3.
 
-   Values defined by standards-track RFCs and other open standards (in
+   Values defined by Standards Track RFCs and other open standards (in
    the sense of [RFC2026], Section 7.1.1) have a status of "permanent".
    Other values can also be registered as permanent, if the Experts find
    that they are in use, in consultation with the community.  Other
    values should be registered as "provisional".
 
-   Provisional entries can be removed by the Experts if -- in
-   consultation with the community -- the Experts find that they are not
-   in use.  The Experts can change a provisional entry's status to
-   permanent; in doing so, the Experts should consider how widely used a
-   value is, and consult the community beforehand.
+   Provisional entries can be removed by the experts if -- in
+   consultation with the community -- the experts find that they are not
+   in use.  The experts can change a provisional entry's status to
+   permanent; in doing so, the experts should consider how widely used a
+   value is and consult the community beforehand.
 
-   Note that "consult with the community" above refers to those
-   responsible for the URI scheme(s) in question.  Generally, this would
-   take place on the mailing list(s) of the appropriate Working Group(s)
-   (possibly historical), or on art@ietf.org if no such list exists.
+   Note that "consult the community" above refers to those responsible
+   for the URI scheme(s) in question.  Generally, this would take place
+   on the mailing list(s) of the appropriate Working Group(s) (possibly
+   concluded), or on art@ietf.org (mailto:art@ietf.org) if no such list
+   exists.
 
    Well-known URIs can be registered by third parties (including the
    expert(s)), if the expert(s) determine that an unregistered well-
@@ -280,7 +282,7 @@ Table of Contents
    located on the same origin.  Even for origins that are controlled by
    and represent a single entity, due care should be taken to assure
    that write access to well-known locations is not granted unwittingly,
-   either externally through server configuration, or locally through
+   either externally through server configuration or locally through
    implementation permissions (e.g., on a filesystem).
 
 4.2.  Interaction with Web Browsing
@@ -294,23 +296,23 @@ Table of Contents
    known resource.
 
    HTTP and HTTPS also use origins as a security boundary for many other
-   mechanisms, including (but not limited to) Cookies [RFC6265], Web
-   Storage [WEBSTORAGE] and many capabilities.
+   mechanisms, including (but not limited to) cookies [RFC6265], Web
+   Storage [WEBSTORAGE], and various capabilities.
 
-   Applications defining well-known locations should not assume that
-   they have sole access to these mechanisms, or that they are the only
+   An application that defines well-known locations should not assume
+   that it has sole access to these mechanisms or that it is the only
    application using the origin.  Depending on the nature of the
    application, mitigations can include:
 
    *  Encrypting sensitive information
 
-   *  Allowing flexibility in the use of identifiers (e.g., Cookie
+   *  Allowing flexibility in the use of identifiers (e.g., cookie
       names) to avoid collisions with other applications
 
-   *  Using the 'HttpOnly' flag on Cookies to assure that cookies are
+   *  Using the 'HttpOnly' flag on cookies to assure that cookies are
       not exposed to browser scripting languages [RFC6265]
 
-   *  Using the 'Path' parameter on Cookies to assure that they are not
+   *  Using the 'Path' parameter on cookies to assure that they are not
       available to other parts of the origin [RFC6265]
 
    *  Using X-Content-Type-Options: nosniff [FETCH] to assure that
@@ -353,7 +355,8 @@ Table of Contents
    "https://example.com/.well-known/example" to apply policy to
    "https://department.example.com", "https://www.example.com" or even
    "https://www.example.com:8000" assumes a relationship between hosts
-   where there might be none, giving control to a potential attacker.
+   where there might be none, thereby giving control to a potential
+   attacker.
 
    Likewise, specifying that a well-known URI on a particular hostname
    is to be used to bootstrap a protocol can cause a large number of
@@ -366,7 +369,7 @@ Table of Contents
 4.4.  Hidden Capabilities
 
    Applications using well-known locations should consider that some
-   server administrators might be unaware of its existence (especially
+   server administrators might be unaware of their existence (especially
    on operating systems that hide directories whose names begin with
    ".").  This means that if an attacker has write access to the .well-
    known directory, they would be able to control its contents, possibly
@@ -382,7 +385,7 @@ Table of Contents
    Well-known URIs are registered on the advice of one or more Experts,
    with a Specification Required (using terminology from [RFC8126]).
 
-   The Experts' primary considerations in evaluating registration
+   The experts' primary considerations in evaluating registration
    requests are:
 
    *  Conformance to the requirements in Section 3
@@ -391,18 +394,22 @@ Table of Contents
 
    *  The considerations outlined in Section 4
 
-   IANA will direct any incoming requests regarding the registry to this
-   document and, if defined, the processes established by the expert(s);
-   typically, this will mean referring them to the registry Web page.
+   IANA will direct the senders of any incoming registry requests to
+   this document and, if defined, the processes established by the
+   expert(s); typically, this will mean referring them to the registry
+   Web page.
 
-   Upon publication, IANA should:
+   Per this document, IANA has:
 
-   *  Update the status of all existing registrations to "permanent".
+   *  Updated the registration procedure to Specification Required.
+
+   *  Added a "Status" column to the registry and marked all of the
+      existing registrations as "permanent".
 
 5.2.  The Uniform Resource Identifier (URI) Schemes Registry
 
    This specification adds a field to the registration template of the
-   Uniform Resource Identifier (URI) Schemes Registry, with the name
+   "Uniform Resource Identifier (URI) Schemes" registry, with the name
    "Well-Known URI Support" and a default value of "-".
 
    If a URI scheme explicitly has been specified to use well-known URIs
@@ -424,17 +431,17 @@ Table of Contents
                   +------------+------------------------+
                   | coaps+ws   | [RFC8323]              |
                   +------------+------------------------+
-                  | http       | [this document]        |
+                  | http       | [RFC8615]              |
                   +------------+------------------------+
-                  | https      | [this document]        |
+                  | https      | [RFC8615]              |
                   +------------+------------------------+
                   | ws         | [RFC8307]              |
                   +------------+------------------------+
                   | wss        | [RFC8307]              |
                   +------------+------------------------+
 
-                        Table 1: Rows in URI scheme
-                     registry with nonempty new column
+                        Table 1: Rows in URI Scheme
+                     Registry with Nonempty New Column
 
 6.  References
 
@@ -538,10 +545,10 @@ Appendix A.  Frequently Asked Questions
    Aren't well-known locations bad for the Web?  They are, but for
       various reasons -- both technical and social -- they are sometimes
       necessary.  This memo defines a "sandbox" for them, to reduce the
-      risks of collision and to minimise the impact upon pre-existing
+      risks of collision and to minimise the impact upon preexisting
       URIs on sites.
 
-   Why /.well-known?  It's short, descriptive, and according to search
+   Why "/.well-known"?  It's short, descriptive, and according to search
       indices, not widely used.
 
    What impact does this have on existing mechanisms, such as P3P and
@@ -550,20 +557,21 @@ Appendix A.  Frequently Asked Questions
    Why aren't per-directory well-known locations defined?  Allowing
       every URI path segment to have a well-known location (e.g.,
       "/images/.well-known/") would increase the risks of colliding with
-      a pre-existing URI on a site, and generally these solutions are
-      found not to scale well, because they're too "chatty".
+      a preexisting URI on a site, and generally these solutions are
+      found not to scale well because they're too "chatty".
 
 Appendix B.  Changes from RFC5785
 
-   *  Allow non-Web well-known locations
+   *  Allowed non-Web well-known locations
 
-   *  Adjust IANA instructions
+   *  Adjusted IANA instructions
 
-   *  Update references
+   *  Updated references
 
-   *  Various other clarifications
+   *  Made various other clarifications
 
-   *  Track supporting schemes in the URI Scheme registry
+   *  Tracked supporting schemes in the "Uniform Resource Identifier
+      (URI) Schemes" registry
 
 Author's Address
 

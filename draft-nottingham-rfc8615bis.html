@@ -1227,20 +1227,17 @@ registry.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
 (sometimes called "site-wide metadata") before making a request. For example, the Robots Exclusion
 Protocol (<a href="http://www.robotstxt.org/">http://www.robotstxt.org/</a>) specifies a way for automated processes to obtain permission
 to access resources; likewise, the Platform for Privacy Preferences <span>[<a href="#P3P" class="cite xref">P3P</a>]</span>
-tells user-agents how to discover privacy policy before interacting with an origin server.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">While there are several ways to access per-resource metadata (e.g., HTTP header fields, WebDAV's
-PROPFIND <span>[<a href="#RFC4918" class="cite xref">RFC4918</a>]</span>), the perceived overhead (either in terms of client-perceived latency and/or
-deployment difficulties) associated with them often precludes their use in these scenarios.<a href="#section-1-2" class="pilcrow">¶</a></p>
+tells user agents how to discover privacy policy before interacting with an origin server.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">While there are several ways to access per-resource metadata (e.g., HTTP header fields, PROPFIND in
+Web Distributed Authoring and Versioning (WebDAV) <span>[<a href="#RFC4918" class="cite xref">RFC4918</a>]</span>), the perceived overhead (either in
+terms of client-perceived latency and/or deployment difficulties) associated with them often precludes their use in these scenarios.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">At the same time, it has become more popular to use HTTP as a substrate for non-Web protocols. Sometimes, such protocols need a way to locate one or more resources on a given host.<a href="#section-1-3" class="pilcrow">¶</a></p>
 <p id="section-1-4">When this happens, one solution is to designate a "well-known location" for data or services related
 to the origin overall, so that it can be easily located. However, this approach has the drawback of
 risking collisions, both with other such designated "well-known locations" and with resources that
-the origin has created (or wishes to create). Furthermore, defining well-known locations usurp's
+the origin has created (or wishes to create). Furthermore, defining well-known locations usurps
 the origin's control over its own URI space <span>[<a href="#RFC7320" class="cite xref">RFC7320</a>]</span>.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">To address these uses, this memo reserves a path prefix in HTTP, HTTPS, WS and WSS URIs for these
-"well-known locations", "/.well-known/". Future specifications that need to define a resource for
-such metadata can register their use to avoid collisions and minimise impingement upon origins' URI
-space.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-5">To address these uses, this memo reserves a path prefix in HTTP, HTTPS, WebSocket (WS) and Secure WebSocket (WSS) URIs for these "well-known locations", "/.well-known/". Future specifications that need to define a resource for such metadata can register their use to avoid collisions and minimise impingement upon origins' URI space.<a href="#section-1-5" class="pilcrow">¶</a></p>
 <p id="section-1-6">Well-known URIs can also be used with other URI schemes, but only when those schemes'
 definitions explicitly allow it.<a href="#section-1-6" class="pilcrow">¶</a></p>
 </section>
@@ -1267,12 +1264,12 @@ shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
 'http://www.example.com/' would be 'http://www.example.com/.well-known/example'.<a href="#section-3-2" class="pilcrow">¶</a></p>
 <p id="section-3-3">This specification updates the "http" <span>[<a href="#RFC7230" class="cite xref">RFC7230</a>]</span> and "https" <span>[<a href="#RFC7230" class="cite xref">RFC7230</a>]</span> schemes to support
 well-known URIs. Other existing schemes can use the appropriate process for updating their
-definitions; for example, <span>[<a href="#RFC8307" class="cite xref">RFC8307</a>]</span> does so for the "ws" and "wss" schemes. The Uniform Resource
-Identifier (URI) Schemes Registry tracks which schemes support well-known URIs; see
+definitions; for example, <span>[<a href="#RFC8307" class="cite xref">RFC8307</a>]</span> does so for the "ws" and "wss" schemes. The "Uniform Resource
+Identifier (URI) Schemes" registry tracks which schemes support well-known URIs; see
 <a href="#register-scheme" class="auto internal xref">Section 5.2</a>.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <p id="section-3-4">Applications that wish to mint new well-known URIs MUST register them, following the procedures in
 <a href="#register" class="auto internal xref">Section 5.1</a>, subject to the following requirements.<a href="#section-3-4" class="pilcrow">¶</a></p>
-<p id="section-3-5">Registered names MUST conform to the segment-nz production in <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span>. This means they cannot
+<p id="section-3-5">Registered names MUST conform to the "segment-nz" production in <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span>. This means they cannot
 contain the "/" character.<a href="#section-3-5" class="pilcrow">¶</a></p>
 <p id="section-3-6">Registered names for a specific application SHOULD be correspondingly precise; "squatting" on
 generic terms is not encouraged. For example, if the Example application wants a well-known
@@ -1285,13 +1282,13 @@ are assumed.<a href="#section-3-7" class="pilcrow">¶</a></p>
 <p id="section-3-8">Typically, applications will use the default port for the given scheme; if an alternative port is
 used, it MUST be explicitly specified by the application in question.<a href="#section-3-8" class="pilcrow">¶</a></p>
 <p id="section-3-9">Registrations MAY also contain additional information, such as the syntax of additional path
-components, query strings and/or fragment identifiers to be appended to the well-known URI, or
+components, query strings, and/or fragment identifiers to be appended to the well-known URI, or
 protocol-specific details (e.g., HTTP <span>[<a href="#RFC7231" class="cite xref">RFC7231</a>]</span> method handling).<a href="#section-3-9" class="pilcrow">¶</a></p>
 <p id="section-3-10">Note that this specification defines neither how to determine the hostname to use to find the
 well-known URI for a particular application, nor the scope of the metadata discovered by
 dereferencing the well-known URI; both should be defined by the application itself.<a href="#section-3-10" class="pilcrow">¶</a></p>
-<p id="section-3-11">Also, this specification does not define a format or media-type for the resource located at
-"/.well-known/" and clients should not expect a resource to exist at that location.<a href="#section-3-11" class="pilcrow">¶</a></p>
+<p id="section-3-11">Also, this specification does not define a format or media type for the resource located at
+"/.well-known/", and clients should not expect a resource to exist at that location.<a href="#section-3-11" class="pilcrow">¶</a></p>
 <p id="section-3-12">Well-known URIs are rooted in the top of the path's hierarchy; they are not well-known by
 definition in other parts of the path. For example, "/.well-known/example" is a well-known URI,
 whereas "/foo/.well-known/example" is not.<a href="#section-3-12" class="pilcrow">¶</a></p>
@@ -1301,9 +1298,9 @@ whereas "/foo/.well-known/example" is not.<a href="#section-3-12" class="pilcrow
         <h3 id="name-registering-well-known-uris">
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-registering-well-known-uris" class="section-name selfRef">Registering Well-Known URIs</a>
         </h3>
-<p id="section-3.1-1">The "Well-Known URIs" registry is located at "https://www.iana.org/assignments/well-known-uris/".
+<p id="section-3.1-1">The "Well-Known URIs" registry is located at <a href="https://www.iana.org/assignments/well-known-uris/">https://www.iana.org/assignments/well-known-uris/</a>.
 Registration requests can be made by following the instructions located there or by sending an
-email to the "wellknown-uri-review@ietf.org" mailing list.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+email to the <a href="mailto:wellknown-uri-review@ietf.org">wellknown-uri-review@ietf.org</a> mailing list.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 <p id="section-3.1-2">Registration requests consist of at least the following information:<a href="#section-3.1-2" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-3.1-3">
           <dt id="section-3.1-3.1">URI suffix:</dt>
@@ -1313,8 +1310,8 @@ email to the "wellknown-uri-review@ietf.org" mailing list.<a href="#section-3.1-
           <dd class="break"></dd>
 <dt id="section-3.1-3.3">Change controller:</dt>
           <dd style="margin-left: 1.5em" id="section-3.1-3.4">
-            <p id="section-3.1-3.4.1">For Standards-Track RFCs, state "IETF". For others, give the name of the responsible party. Other
-details (e.g., e-mail address, home page URI) may also be included.<a href="#section-3.1-3.4.1" class="pilcrow">¶</a></p>
+            <p id="section-3.1-3.4.1">For Standards Track RFCs, state "IETF". For others, give the name of the responsible party. Other
+details (e.g., email address, home page URI) may also be included.<a href="#section-3.1-3.4.1" class="pilcrow">¶</a></p>
 </dd>
           <dd class="break"></dd>
 <dt id="section-3.1-3.5">Specification document(s):</dt>
@@ -1336,14 +1333,14 @@ but is not required.<a href="#section-3.1-3.6.1" class="pilcrow">¶</a></p>
         <dd class="break"></dd>
 </dl>
 <p id="section-3.1-4">General requirements for registered values are described in <a href="#well-known" class="auto internal xref">Section 3</a>.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
-<p id="section-3.1-5">Values defined by standards-track RFCs and other open standards (in the sense of <span>[<a href="#RFC2026" class="cite xref">RFC2026</a>]</span>, Section 7.1.1) have a status of "permanent". Other values can also be registered as permanent, if the Experts find that they are in use, in consultation with the community. Other values should be registered as "provisional".<a href="#section-3.1-5" class="pilcrow">¶</a></p>
-<p id="section-3.1-6">Provisional entries can be removed by the Experts if -- in consultation with the community -- the
-Experts find that they are not in use. The Experts can change a provisional entry's status to
-permanent; in doing so, the Experts should consider how widely used a value is, and consult the
+<p id="section-3.1-5">Values defined by Standards Track RFCs and other open standards (in the sense of <span>[<a href="#RFC2026" class="cite xref">RFC2026</a>]</span>, Section 7.1.1) have a status of "permanent". Other values can also be registered as permanent, if the Experts find that they are in use, in consultation with the community. Other values should be registered as "provisional".<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.1-6">Provisional entries can be removed by the experts if -- in consultation with the community -- the
+experts find that they are not in use. The experts can change a provisional entry's status to
+permanent; in doing so, the experts should consider how widely used a value is and consult the
 community beforehand.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
-<p id="section-3.1-7">Note that "consult with the community" above refers to those responsible for the URI scheme(s) in
+<p id="section-3.1-7">Note that "consult the community" above refers to those responsible for the URI scheme(s) in
 question. Generally, this would take place on the mailing list(s) of the appropriate Working
-Group(s) (possibly historical), or on art@ietf.org if no such list exists.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+Group(s) (possibly concluded), or on <a href="mailto:art@ietf.org">art@ietf.org</a> if no such list exists.<a href="#section-3.1-7" class="pilcrow">¶</a></p>
 <p id="section-3.1-8">Well-known URIs can be registered by third parties (including the expert(s)), if the expert(s)
 determine that an unregistered well-known URI is widely deployed and not likely to be registered
 in a timely manner otherwise. Such registrations still are subject to the requirements defined,
@@ -1373,7 +1370,7 @@ application protocols and administrators deploying them.<a href="#section-4-2" c
 appropriately control the ability to write to them. This is especially true when more than one
 entity is co-located on the same origin. Even for origins that are controlled by and represent a
 single entity, due care should be taken to assure that write access to well-known locations is not
-granted unwittingly, either externally through server configuration, or locally through
+granted unwittingly, either externally through server configuration or locally through
 implementation permissions (e.g., on a filesystem).<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1388,22 +1385,21 @@ obtained from other parts of that origin. If an attacker is able to inject conte
 Cross-Site Scripting vulnerability), they will be able to make potentially arbitrary requests to
 the well-known resource.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 <p id="section-4.2-2">HTTP and HTTPS also use origins as a security boundary for many other mechanisms, including (but
-not limited to) Cookies <span>[<a href="#RFC6265" class="cite xref">RFC6265</a>]</span>, Web Storage <span>[<a href="#WEBSTORAGE" class="cite xref">WEBSTORAGE</a>]</span> and
-many capabilities.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
-<p id="section-4.2-3">Applications defining well-known locations should not assume that they have sole access to these
-mechanisms, or that they are the only application using the origin. Depending on the nature of the application, mitigations can include:<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+not limited to) cookies <span>[<a href="#RFC6265" class="cite xref">RFC6265</a>]</span>, Web Storage <span>[<a href="#WEBSTORAGE" class="cite xref">WEBSTORAGE</a>]</span>, and
+various capabilities.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2-3">An application that defines well-known locations should not assume that it has sole access to these mechanisms or that it is the only application using the origin. Depending on the nature of the application, mitigations can include:<a href="#section-4.2-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.2-4.1">
             <p id="section-4.2-4.1.1">Encrypting sensitive information<a href="#section-4.2-4.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.2-4.2">
-            <p id="section-4.2-4.2.1">Allowing flexibility in the use of identifiers (e.g., Cookie names) to avoid collisions with other applications<a href="#section-4.2-4.2.1" class="pilcrow">¶</a></p>
+            <p id="section-4.2-4.2.1">Allowing flexibility in the use of identifiers (e.g., cookie names) to avoid collisions with other applications<a href="#section-4.2-4.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.2-4.3">
-            <p id="section-4.2-4.3.1">Using the 'HttpOnly' flag on Cookies to assure that cookies are not exposed to browser scripting languages <span>[<a href="#RFC6265" class="cite xref">RFC6265</a>]</span><a href="#section-4.2-4.3.1" class="pilcrow">¶</a></p>
+            <p id="section-4.2-4.3.1">Using the 'HttpOnly' flag on cookies to assure that cookies are not exposed to browser scripting languages <span>[<a href="#RFC6265" class="cite xref">RFC6265</a>]</span><a href="#section-4.2-4.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.2-4.4">
-            <p id="section-4.2-4.4.1">Using the 'Path' parameter on Cookies to assure that they are not available to other parts of the origin <span>[<a href="#RFC6265" class="cite xref">RFC6265</a>]</span><a href="#section-4.2-4.4.1" class="pilcrow">¶</a></p>
+            <p id="section-4.2-4.4.1">Using the 'Path' parameter on cookies to assure that they are not available to other parts of the origin <span>[<a href="#RFC6265" class="cite xref">RFC6265</a>]</span><a href="#section-4.2-4.4.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-4.2-4.5">
             <p id="section-4.2-4.5.1">Using X-Content-Type-Options: nosniff <span>[<a href="#FETCH" class="cite xref">FETCH</a>]</span> to assure that content under attacker control can't be coaxed into a form that is interpreted as active content by a Web browser<a href="#section-4.2-4.5.1" class="pilcrow">¶</a></p>
@@ -1440,7 +1436,7 @@ applications.<a href="#section-4.3-2" class="pilcrow">¶</a></p>
 same origin risks administrative as well as security issues. For example, allowing
 "https://example.com/.well-known/example" to apply policy to "https://department.example.com",
 "https://www.example.com" or even "https://www.example.com:8000" assumes a relationship between
-hosts where there might be none, giving control to a potential attacker.<a href="#section-4.3-3" class="pilcrow">¶</a></p>
+hosts where there might be none, thereby giving control to a potential attacker.<a href="#section-4.3-3" class="pilcrow">¶</a></p>
 <p id="section-4.3-4">Likewise, specifying that a well-known URI on a particular hostname is to be used to bootstrap a
 protocol can cause a large number of undesired requests. For example, if a well-known HTTPS URI is
 used to find policy about a separate service such as e-mail, it can result in a flood of requests
@@ -1454,7 +1450,7 @@ resemble a denial-of-services attack.<a href="#section-4.3-4" class="pilcrow">¶
 <a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-hidden-capabilities" class="section-name selfRef">Hidden Capabilities</a>
         </h3>
 <p id="section-4.4-1">Applications using well-known locations should consider that some server administrators might be
-unaware of its existence (especially on operating systems that hide directories whose names begin
+unaware of their existence (especially on operating systems that hide directories whose names begin
 with "."). This means that if an attacker has write access to the .well-known directory, they would
 be able to control its contents, possibly without the administrator realising it.<a href="#section-4.4-1" class="pilcrow">¶</a></p>
 </section>
@@ -1474,7 +1470,7 @@ be able to control its contents, possibly without the administrator realising it
 <p id="section-5.1-1">This specification updates the registration procedures for the "Well-Known URI" registry, first
 defined in <span>[<a href="#RFC5785" class="cite xref">RFC5785</a>]</span>; see <a href="#procedure" class="auto internal xref">Section 3.1</a>.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <p id="section-5.1-2">Well-known URIs are registered on the advice of one or more Experts, with a Specification Required (using terminology from <span>[<a href="#RFC8126" class="cite xref">RFC8126</a>]</span>).<a href="#section-5.1-2" class="pilcrow">¶</a></p>
-<p id="section-5.1-3">The Experts' primary considerations in evaluating registration requests are:<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+<p id="section-5.1-3">The experts' primary considerations in evaluating registration requests are:<a href="#section-5.1-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1-4.1">
             <p id="section-5.1-4.1.1">Conformance to the requirements in <a href="#well-known" class="auto internal xref">Section 3</a><a href="#section-5.1-4.1.1" class="pilcrow">¶</a></p>
@@ -1486,13 +1482,14 @@ defined in <span>[<a href="#RFC5785" class="cite xref">RFC5785</a>]</span>; see 
             <p id="section-5.1-4.3.1">The considerations outlined in <a href="#sec" class="auto internal xref">Section 4</a><a href="#section-5.1-4.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-5.1-5">IANA will direct any incoming requests regarding the registry to this document and, if defined, the
-processes established by the expert(s); typically, this will mean referring them to the registry
-Web page.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
-<p id="section-5.1-6">Upon publication, IANA should:<a href="#section-5.1-6" class="pilcrow">¶</a></p>
+<p id="section-5.1-5">IANA will direct the senders of any incoming registry requests to this document and, if defined, the processes established by the expert(s); typically, this will mean referring them to the registry Web page.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
+<p id="section-5.1-6">Per this document, IANA has:<a href="#section-5.1-6" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-5.1-7.1">
-            <p id="section-5.1-7.1.1">Update the status of all existing registrations to "permanent".<a href="#section-5.1-7.1.1" class="pilcrow">¶</a></p>
+            <p id="section-5.1-7.1.1">Updated the registration procedure to Specification Required.<a href="#section-5.1-7.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.1-7.2">
+            <p id="section-5.1-7.2.1">Added a "Status" column to the registry and marked all of the existing registrations as "permanent".<a href="#section-5.1-7.2.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
@@ -1502,8 +1499,8 @@ Web page.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
         <h3 id="name-the-uniform-resource-identi">
 <a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-the-uniform-resource-identi" class="section-name selfRef">The Uniform Resource Identifier (URI) Schemes Registry</a>
         </h3>
-<p id="section-5.2-1">This specification adds a field to the registration template of the Uniform Resource Identifier
-(URI) Schemes Registry, with the name "Well-Known URI Support" and a default value of "-".<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2-1">This specification adds a field to the registration template of the "Uniform Resource Identifier
+(URI) Schemes" registry, with the name "Well-Known URI Support" and a default value of "-".<a href="#section-5.2-1" class="pilcrow">¶</a></p>
 <p id="section-5.2-2">If a URI scheme explicitly has been specified to use well-known URIs as per <a href="#well-known" class="auto internal xref">Section 3</a>, the
 value changes to a reference to that specification. Initial values not equal to "-" are given in
 <a href="#tab-initial" class="auto internal xref">Table 1</a>.<a href="#section-5.2-2" class="pilcrow">¶</a></p>
@@ -1511,7 +1508,7 @@ value changes to a reference to that specification. Initial values not equal to 
 <table class="center" id="table-1">
           <caption>
 <a href="#table-1" class="selfRef">Table 1</a>:
-<a href="#name-rows-in-uri-scheme-registry" class="selfRef">Rows in URI scheme registry with nonempty new column</a>
+<a href="#name-rows-in-uri-scheme-registry" class="selfRef">Rows in URI Scheme Registry with Nonempty New Column</a>
           </caption>
 <thead>
             <tr>
@@ -1546,11 +1543,11 @@ value changes to a reference to that specification. Initial values not equal to 
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">http</td>
-              <td class="text-left" rowspan="1" colspan="1">[this document]</td>
+              <td class="text-left" rowspan="1" colspan="1">[RFC8615]</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">https</td>
-              <td class="text-left" rowspan="1" colspan="1">[this document]</td>
+              <td class="text-left" rowspan="1" colspan="1">[RFC8615]</td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">ws</td>
@@ -1686,10 +1683,10 @@ value changes to a reference to that specification. Initial values not equal to 
         <dd style="margin-left: 1.5em" id="appendix-A-1.2">
           <p id="appendix-A-1.2.1">They are, but for various reasons -- both technical and social -- they are sometimes necessary.
 This memo defines a "sandbox" for them, to reduce the risks of collision and to minimise the impact
-upon pre-existing URIs on sites.<a href="#appendix-A-1.2.1" class="pilcrow">¶</a></p>
+upon preexisting URIs on sites.<a href="#appendix-A-1.2.1" class="pilcrow">¶</a></p>
 </dd>
         <dd class="break"></dd>
-<dt id="appendix-A-1.3">Why /.well-known?</dt>
+<dt id="appendix-A-1.3">Why "/.well-known"?</dt>
         <dd style="margin-left: 1.5em" id="appendix-A-1.4">
           <p id="appendix-A-1.4.1">It's short, descriptive, and according to search indices, not widely used.<a href="#appendix-A-1.4.1" class="pilcrow">¶</a></p>
 </dd>
@@ -1702,8 +1699,8 @@ upon pre-existing URIs on sites.<a href="#appendix-A-1.2.1" class="pilcrow">¶</
 <dt id="appendix-A-1.7">Why aren't per-directory well-known locations defined?</dt>
         <dd style="margin-left: 1.5em" id="appendix-A-1.8">
           <p id="appendix-A-1.8.1">Allowing every URI path segment to have a well-known location (e.g., "/images/.well-known/") would
-increase the risks of colliding with a pre-existing URI on a site, and generally these solutions
-are found not to scale well, because they're too "chatty".<a href="#appendix-A-1.8.1" class="pilcrow">¶</a></p>
+increase the risks of colliding with a preexisting URI on a site, and generally these solutions
+are found not to scale well because they're too "chatty".<a href="#appendix-A-1.8.1" class="pilcrow">¶</a></p>
 </dd>
       <dd class="break"></dd>
 </dl>
@@ -1716,19 +1713,19 @@ are found not to scale well, because they're too "chatty".<a href="#appendix-A-1
       </h2>
 <ul class="normal">
 <li class="normal" id="appendix-B-1.1">
-          <p id="appendix-B-1.1.1">Allow non-Web well-known locations<a href="#appendix-B-1.1.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-1.1.1">Allowed non-Web well-known locations<a href="#appendix-B-1.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-B-1.2">
-          <p id="appendix-B-1.2.1">Adjust IANA instructions<a href="#appendix-B-1.2.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-1.2.1">Adjusted IANA instructions<a href="#appendix-B-1.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-B-1.3">
-          <p id="appendix-B-1.3.1">Update references<a href="#appendix-B-1.3.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-1.3.1">Updated references<a href="#appendix-B-1.3.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-B-1.4">
-          <p id="appendix-B-1.4.1">Various other clarifications<a href="#appendix-B-1.4.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-1.4.1">Made various other clarifications<a href="#appendix-B-1.4.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-B-1.5">
-          <p id="appendix-B-1.5.1">Track supporting schemes in the URI Scheme registry<a href="#appendix-B-1.5.1" class="pilcrow">¶</a></p>
+          <p id="appendix-B-1.5.1">Tracked supporting schemes in the "Uniform Resource Identifier (URI) Schemes" registry<a href="#appendix-B-1.5.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 </section>
