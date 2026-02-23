@@ -19,6 +19,7 @@ github-issue-label: pre-denied
 
 entity:
   SELF: "RFC nnnn"
+  CODE: "4xx"
 
 author:
  -
@@ -67,9 +68,9 @@ This specification defines a new status code to specifically address this situat
 
 {::boilerplate bcp14-tagged}
 
-# The 4xx (Preliminary Request Denied) Status Code
+# The {{&CODE}} (Preliminary Request Denied) Status Code
 
-The 4xx (Preliminary Request Denied) status code indicates that the server is refusing a preliminary request.
+The {{&CODE}} (Preliminary Request Denied) status code indicates that the server is refusing a preliminary request.
 
 A preliminary request is one that contains a Sec-Purpose header field {{FETCH}} with the value "prefetch".
 
@@ -79,7 +80,7 @@ This indication is only applicable to the associated request; future preliminary
 
 The following entry should be registered in the "HTTP Status Codes" registry:
 
-* Code: 4xx
+* Code: {{&CODE}}
 * Description: Preliminary Request Denied
 * Specification: {{&SELF}} (this document)
 
