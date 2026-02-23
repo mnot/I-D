@@ -307,6 +307,7 @@ value changes to a reference to that specification. Initial values not equal to 
 
 # Frequently Asked Questions
 
+{: newline="true"}
 Aren't well-known locations bad for the Web?
 
 : They are, but for various reasons -- both technical and social -- they are sometimes necessary.
