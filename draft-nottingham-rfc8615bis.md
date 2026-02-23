@@ -320,7 +320,7 @@ Aren't well-known locations bad for the Web?
 This memo defines a "sandbox" for them, to reduce the risks of collision and to minimise the impact
 upon preexisting URIs on sites.
 
-Why "/.well-known"?
+Why "/.well-known?"
 
 : It's short, descriptive, and according to search indices, not widely used.
 
