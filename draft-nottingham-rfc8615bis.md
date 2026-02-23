@@ -46,14 +46,14 @@ informative:
 This memo defines a path prefix for "well-known locations", \\
 "/.well-known/", in selected Uniform Resource Identifier (URI) schemes.
 
-In doing so, it obsoletes RFC 5785 and updates the URI schemes defined in RFC 7230 to reserve that space. It also updates RFC 7595 to track URI schemes that support well-known URIs in their registry.
+In doing so, it obsoletes RFC 8615.
 
 
 --- middle
 
 # Introduction
 
-Some applications on the Web require the discovery of information about an origin {{!RFC6454}} (sometimes called "site-wide metadata") before making a request. For example, the Robots Exclusion Protocol (http://www.robotstxt.org) specifies a way for automated processes to obtain permission to access resources; likewise, the Platform for Privacy Preferences {{?P3P=W3C.REC-P3P-20020416}} tells user agents how to discover privacy policy before interacting with an origin server.
+Some applications on the Web require the discovery of information about an origin {{!RFC6454}} (sometimes called "site-wide metadata") before making a request. For example, the Robots Exclusion Protocol {{?RFC9309}} specifies a way for automated processes to obtain permission to access resources; likewise, the Platform for Privacy Preferences {{?P3P=W3C.REC-P3P-20020416}} tells user agents how to discover privacy policy before interacting with an origin server.
 
 While there are several ways to access per-resource metadata (e.g., HTTP header fields, PROPFIND in Web Distributed Authoring and Versioning (WebDAV) {{?RFC4918}}), the perceived overhead (either in terms of client-perceived latency and/or deployment difficulties) associated with them often precludes their use in these scenarios.
 
@@ -61,7 +61,7 @@ At the same time, it has become more popular to use HTTP as a substrate for non-
 
 When this happens, one solution is to designate a "well-known location" for data or services related to the origin overall, so that it can be easily located. However, this approach has the drawback of risking collisions, both with other such designated "well-known locations" and with resources that the origin has created (or wishes to create). Furthermore, defining well-known locations usurps the origin's control over its own URI space {{?RFC7320}}.
 
-To address these uses, this memo reserves a path prefix in HTTP, HTTPS, WebSocket (WS), and Secure WebSocket (WSS) URIs for these "well-known locations", "/.well-known/". Future specifications that need to define a resource for such metadata can register their use to avoid collisions and minimise impingement upon origins' URI space.
+To address these uses, this memo reserves a path prefix in nominated URI schemes for these "well-known locations", "/.well-known/". Future specifications that need to define a resource for such metadata can register their use to avoid collisions and minimise impingement upon origins' URI space.
 
 Well-known URIs can also be used with other URI schemes, but only when those schemes' definitions explicitly allow it.
 
@@ -77,7 +77,7 @@ A well-known URI is a URI {{!RFC3986}} whose path component begins with the char
 
 For example, if an application registers the name 'example', the corresponding well-known URI on 'http://www.example.com/' would be 'http://www.example.com/.well-known/example'.
 
-This specification updates the "http" {{!RFC7230}} and "https" {{!RFC7230}} schemes to support well-known URIs. Other existing schemes can use the appropriate process for updating their definitions; for example, {{?RFC8307}} does so for the "ws" and "wss" schemes. The "Uniform Resource Identifier (URI) Schemes" registry tracks which schemes support well-known URIs; see {{register-scheme}}.
+Previous revisions of this specification updated the "http" {{!RFC9110}} and "https" {{!RFC9110}} schemes to support well-known URIs. Other existing schemes can use the appropriate process for updating their definitions; for example, {{?RFC8307}} does so for the "ws" and "wss" schemes. The "Uniform Resource Identifier (URI) Schemes" registry tracks which schemes support well-known URIs.
 
 Applications that wish to mint new well-known URIs MUST register them, following the procedures in {{register}}, subject to the following requirements.
 
@@ -89,7 +89,7 @@ At a minimum, a registration will reference a specification that defines the for
 
 Typically, applications will use the default port for the given scheme; if an alternative port is used, it MUST be explicitly specified by the application in question.
 
-Registrations MAY also contain additional information, such as the syntax of additional path components, query strings, and/or fragment identifiers to be appended to the well-known URI, or protocol-specific details (e.g., HTTP {{?RFC7231}} method handling).
+Registrations MAY also contain additional information, such as the syntax of additional path components, query strings, and/or fragment identifiers to be appended to the well-known URI, or protocol-specific details (e.g., HTTP {{?RFC9110}} method handling).
 
 Note that this specification defines neither how to determine the hostname to use to find the well-known URI for a particular application, nor the scope of the metadata discovered by dereferencing the well-known URI; both should be defined by the application itself.
 
@@ -201,32 +201,6 @@ The experts' primary considerations in evaluating registration requests are:
 
 IANA will direct the senders of any incoming registry requests to this document and, if defined, the processes established by the expert(s); typically, this will mean referring them to the registry Web page.
 
-Per this document, IANA has:
-
- * Updated the registration procedure to Specification Required.
- * Added a "Status" column to the registry and marked all of the existing registrations as "permanent".
-
-## The Uniform Resource Identifier (URI) Schemes Registry {#register-scheme}
-
-This specification adds a field to the registration template of the "Uniform Resource Identifier (URI) Schemes" registry, with the name "Well-Known URI Support" and a default value of "-".
-
-If a URI scheme explicitly has been specified to use well-known URIs as per {{well-known}}, the value changes to a reference to that specification. Initial values not equal to "-" are given in {{tab-initial}}.
-
-| URI Scheme | Well-Known URI Support |
-|:-----------|:-----------------------|
-| coap       | [RFC7252]              |
-| coap+tcp   | [RFC8323]              |
-| coap+ws    | [RFC8323]              |
-| coaps      | [RFC7252]              |
-| coaps+tcp  | [RFC8323]              |
-| coaps+ws   | [RFC8323]              |
-| http       | [RFC8615]              |
-| https      | [RFC8615]              |
-| ws         | [RFC8307]              |
-| wss        | [RFC8307]              |
-{: #tab-initial title="Rows in URI Scheme Registry with Nonempty New Column"}
-
-
 --- back
 
 
@@ -252,10 +226,6 @@ Why aren't per-directory well-known locations defined?
 
 
 
-# Changes from RFC 5785
+# Changes from RFC 8615
 
-* Allowed non-Web well-known locations
-* Adjusted IANA instructions
-* Updated references
-* Made various other clarifications
-* Tracked supporting schemes in the "Uniform Resource Identifier (URI) Schemes" registry
+TBD
