@@ -9,7 +9,7 @@
 <meta content='
        This memo defines a path prefix for "well-known locations",  
 "/.well-known/", in selected Uniform Resource Identifier (URI) schemes. 
-       In doing so, it obsoletes RFC 5785 and updates the URI schemes defined in RFC 7230 to reserve that space. It also updates RFC 7595 to track URI schemes that support well-known URIs in their registry. 
+       In doing so, it obsoletes RFC 8615. 
     ' name="description">
 <meta content="xml2rfc 3.31.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
@@ -1086,7 +1086,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">This memo defines a path prefix for "well-known locations", <br>
 "/.well-known/", in selected Uniform Resource Identifier (URI) schemes.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
-<p id="section-abstract-2">In doing so, it obsoletes RFC 5785 and updates the URI schemes defined in RFC 7230 to reserve that space. It also updates RFC 7595 to track URI schemes that support well-known URIs in their registry.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">In doing so, it obsoletes RFC 8615.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1173,9 +1173,6 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
                 <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-the-well-known-uri-registry" class="internal xref">The Well-Known URI Registry</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
-                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-the-uniform-resource-identi" class="internal xref">The Uniform Resource Identifier (URI) Schemes Registry</a></p>
-</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
@@ -1193,7 +1190,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
             <p id="section-toc.1-1.7.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-frequently-asked-questions" class="internal xref">Frequently Asked Questions</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-changes-from-rfc-5785" class="internal xref">Changes from RFC 5785</a></p>
+            <p id="section-toc.1-1.8.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-changes-from-rfc-8615" class="internal xref">Changes from RFC 8615</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
             <p id="section-toc.1-1.9.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
@@ -1207,11 +1204,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Some applications on the Web require the discovery of information about an origin <span>[<a href="#RFC6454" class="cite xref">RFC6454</a>]</span> (sometimes called "site-wide metadata") before making a request. For example, the Robots Exclusion Protocol (http://www.robotstxt.org) specifies a way for automated processes to obtain permission to access resources; likewise, the Platform for Privacy Preferences <span>[<a href="#P3P" class="cite xref">P3P</a>]</span> tells user agents how to discover privacy policy before interacting with an origin server.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1">Some applications on the Web require the discovery of information about an origin <span>[<a href="#RFC6454" class="cite xref">RFC6454</a>]</span> (sometimes called "site-wide metadata") before making a request. For example, the Robots Exclusion Protocol <span>[<a href="#RFC9309" class="cite xref">RFC9309</a>]</span> specifies a way for automated processes to obtain permission to access resources; likewise, the Platform for Privacy Preferences <span>[<a href="#P3P" class="cite xref">P3P</a>]</span> tells user agents how to discover privacy policy before interacting with an origin server.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">While there are several ways to access per-resource metadata (e.g., HTTP header fields, PROPFIND in Web Distributed Authoring and Versioning (WebDAV) <span>[<a href="#RFC4918" class="cite xref">RFC4918</a>]</span>), the perceived overhead (either in terms of client-perceived latency and/or deployment difficulties) associated with them often precludes their use in these scenarios.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">At the same time, it has become more popular to use HTTP as a substrate for non-Web protocols. Sometimes, such protocols need a way to locate one or more resources on a given host.<a href="#section-1-3" class="pilcrow">¶</a></p>
 <p id="section-1-4">When this happens, one solution is to designate a "well-known location" for data or services related to the origin overall, so that it can be easily located. However, this approach has the drawback of risking collisions, both with other such designated "well-known locations" and with resources that the origin has created (or wishes to create). Furthermore, defining well-known locations usurps the origin's control over its own URI space <span>[<a href="#RFC7320" class="cite xref">RFC7320</a>]</span>.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">To address these uses, this memo reserves a path prefix in HTTP, HTTPS, WebSocket (WS), and Secure WebSocket (WSS) URIs for these "well-known locations", "/.well-known/". Future specifications that need to define a resource for such metadata can register their use to avoid collisions and minimise impingement upon origins' URI space.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-5">To address these uses, this memo reserves a path prefix in nominated URI schemes for these "well-known locations", "/.well-known/". Future specifications that need to define a resource for such metadata can register their use to avoid collisions and minimise impingement upon origins' URI space.<a href="#section-1-5" class="pilcrow">¶</a></p>
 <p id="section-1-6">Well-known URIs can also be used with other URI schemes, but only when those schemes' definitions explicitly allow it.<a href="#section-1-6" class="pilcrow">¶</a></p>
 </section>
 </div>
@@ -1230,13 +1227,13 @@ svg :is([fill="white"], [fill^="#fff"]) {
       </h2>
 <p id="section-3-1">A well-known URI is a URI <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span> whose path component begins with the characters "/.well-known/", provided that the scheme is explicitly defined to support well-known URIs.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <p id="section-3-2">For example, if an application registers the name 'example', the corresponding well-known URI on 'http://www.example.com/' would be 'http://www.example.com/.well-known/example'.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<p id="section-3-3">This specification updates the "http" <span>[<a href="#RFC7230" class="cite xref">RFC7230</a>]</span> and "https" <span>[<a href="#RFC7230" class="cite xref">RFC7230</a>]</span> schemes to support well-known URIs. Other existing schemes can use the appropriate process for updating their definitions; for example, <span>[<a href="#RFC8307" class="cite xref">RFC8307</a>]</span> does so for the "ws" and "wss" schemes. The "Uniform Resource Identifier (URI) Schemes" registry tracks which schemes support well-known URIs; see <a href="#register-scheme" class="auto internal xref">Section 5.2</a>.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-3">Previous revisions of this specification updated the "http" <span>[<a href="#RFC9110" class="cite xref">RFC9110</a>]</span> and "https" <span>[<a href="#RFC9110" class="cite xref">RFC9110</a>]</span> schemes to support well-known URIs. Other existing schemes can use the appropriate process for updating their definitions; for example, <span>[<a href="#RFC8307" class="cite xref">RFC8307</a>]</span> does so for the "ws" and "wss" schemes. The "Uniform Resource Identifier (URI) Schemes" registry tracks which schemes support well-known URIs.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <p id="section-3-4">Applications that wish to mint new well-known URIs MUST register them, following the procedures in <a href="#register" class="auto internal xref">Section 5.1</a>, subject to the following requirements.<a href="#section-3-4" class="pilcrow">¶</a></p>
 <p id="section-3-5">Registered names MUST conform to the "segment-nz" production in <span>[<a href="#RFC3986" class="cite xref">RFC3986</a>]</span>. This means they cannot contain the "/" character.<a href="#section-3-5" class="pilcrow">¶</a></p>
 <p id="section-3-6">Registered names for a specific application SHOULD be correspondingly precise; "squatting" on generic terms is not encouraged. For example, if the Example application wants a well-known location for metadata, an appropriate registered name might be "example-metadata" or even "example.com-metadata", not "metadata".<a href="#section-3-6" class="pilcrow">¶</a></p>
 <p id="section-3-7">At a minimum, a registration will reference a specification that defines the format and associated media type(s) to be obtained by dereferencing the well-known URI, along with the URI scheme(s) that the well-known URI can be used with. If no URI schemes are explicitly specified, "http" and "https" are assumed.<a href="#section-3-7" class="pilcrow">¶</a></p>
 <p id="section-3-8">Typically, applications will use the default port for the given scheme; if an alternative port is used, it MUST be explicitly specified by the application in question.<a href="#section-3-8" class="pilcrow">¶</a></p>
-<p id="section-3-9">Registrations MAY also contain additional information, such as the syntax of additional path components, query strings, and/or fragment identifiers to be appended to the well-known URI, or protocol-specific details (e.g., HTTP <span>[<a href="#RFC7231" class="cite xref">RFC7231</a>]</span> method handling).<a href="#section-3-9" class="pilcrow">¶</a></p>
+<p id="section-3-9">Registrations MAY also contain additional information, such as the syntax of additional path components, query strings, and/or fragment identifiers to be appended to the well-known URI, or protocol-specific details (e.g., HTTP <span>[<a href="#RFC9110" class="cite xref">RFC9110</a>]</span> method handling).<a href="#section-3-9" class="pilcrow">¶</a></p>
 <p id="section-3-10">Note that this specification defines neither how to determine the hostname to use to find the well-known URI for a particular application, nor the scope of the metadata discovered by dereferencing the well-known URI; both should be defined by the application itself.<a href="#section-3-10" class="pilcrow">¶</a></p>
 <p id="section-3-11">Also, this specification does not define a format or media type for the resource located at "/.well-known/", and clients should not expect a resource to exist at that location.<a href="#section-3-11" class="pilcrow">¶</a></p>
 <p id="section-3-12">Well-known URIs are rooted in the top of the path's hierarchy; they are not well-known by definition in other parts of the path. For example, "/.well-known/example" is a well-known URI, whereas "/foo/.well-known/example" is not.<a href="#section-3-12" class="pilcrow">¶</a></p>
@@ -1392,96 +1389,6 @@ co-located on the same origin. Even for origins that are controlled by and repre
 </li>
         </ul>
 <p id="section-5.1-5">IANA will direct the senders of any incoming registry requests to this document and, if defined, the processes established by the expert(s); typically, this will mean referring them to the registry Web page.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
-<p id="section-5.1-6">Per this document, IANA has:<a href="#section-5.1-6" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-5.1-7.1">
-            <p id="section-5.1-7.1.1">Updated the registration procedure to Specification Required.<a href="#section-5.1-7.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-5.1-7.2">
-            <p id="section-5.1-7.2.1">Added a "Status" column to the registry and marked all of the existing registrations as "permanent".<a href="#section-5.1-7.2.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-</section>
-</div>
-<div id="register-scheme">
-<section id="section-5.2">
-        <h3 id="name-the-uniform-resource-identi">
-<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-the-uniform-resource-identi" class="section-name selfRef">The Uniform Resource Identifier (URI) Schemes Registry</a>
-        </h3>
-<p id="section-5.2-1">This specification adds a field to the registration template of the "Uniform Resource Identifier (URI) Schemes" registry, with the name "Well-Known URI Support" and a default value of "-".<a href="#section-5.2-1" class="pilcrow">¶</a></p>
-<p id="section-5.2-2">If a URI scheme explicitly has been specified to use well-known URIs as per <a href="#well-known" class="auto internal xref">Section 3</a>, the value changes to a reference to that specification. Initial values not equal to "-" are given in <a href="#tab-initial" class="auto internal xref">Table 1</a>.<a href="#section-5.2-2" class="pilcrow">¶</a></p>
-<span id="name-rows-in-uri-scheme-registry"></span><div id="tab-initial">
-<table class="center" id="table-1">
-          <caption>
-<a href="#table-1" class="selfRef">Table 1</a>:
-<a href="#name-rows-in-uri-scheme-registry" class="selfRef">Rows in URI Scheme Registry with Nonempty New Column</a>
-          </caption>
-<thead>
-            <tr>
-              <th class="text-left" rowspan="1" colspan="1">URI Scheme</th>
-              <th class="text-left" rowspan="1" colspan="1">Well-Known URI Support</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">coap</td>
-              <td class="text-left" rowspan="1" colspan="1">
-                <span>[<a href="#RFC7252" class="cite xref">RFC7252</a>]</span>
-</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">coap+tcp</td>
-              <td class="text-left" rowspan="1" colspan="1">
-                <span>[<a href="#RFC8323" class="cite xref">RFC8323</a>]</span>
-</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">coap+ws</td>
-              <td class="text-left" rowspan="1" colspan="1">
-                <span>[<a href="#RFC8323" class="cite xref">RFC8323</a>]</span>
-</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">coaps</td>
-              <td class="text-left" rowspan="1" colspan="1">
-                <span>[<a href="#RFC7252" class="cite xref">RFC7252</a>]</span>
-</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">coaps+tcp</td>
-              <td class="text-left" rowspan="1" colspan="1">
-                <span>[<a href="#RFC8323" class="cite xref">RFC8323</a>]</span>
-</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">coaps+ws</td>
-              <td class="text-left" rowspan="1" colspan="1">
-                <span>[<a href="#RFC8323" class="cite xref">RFC8323</a>]</span>
-</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">http</td>
-              <td class="text-left" rowspan="1" colspan="1">[RFC8615]</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">https</td>
-              <td class="text-left" rowspan="1" colspan="1">[RFC8615]</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">ws</td>
-              <td class="text-left" rowspan="1" colspan="1">
-                <span>[<a href="#RFC8307" class="cite xref">RFC8307</a>]</span>
-</td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">wss</td>
-              <td class="text-left" rowspan="1" colspan="1">
-                <span>[<a href="#RFC8307" class="cite xref">RFC8307</a>]</span>
-</td>
-            </tr>
-          </tbody>
-        </table>
-</div>
 </section>
 </div>
 </section>
@@ -1509,17 +1416,17 @@ co-located on the same origin. Even for origins that are controlled by and repre
         <dd>
 <span class="refAuthor">Barth, A.</span>, <span class="refTitle">"The Web Origin Concept"</span>, <span class="seriesInfo">RFC 6454</span>, <span class="seriesInfo">DOI 10.17487/RFC6454</span>, <time datetime="2011-12" class="refDate">December 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6454">https://www.rfc-editor.org/rfc/rfc6454</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC7230">[RFC7230]</dt>
-        <dd>
-<span class="refAuthor">Fielding, R., Ed.</span> and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing"</span>, <span class="seriesInfo">RFC 7230</span>, <span class="seriesInfo">DOI 10.17487/RFC7230</span>, <time datetime="2014-06" class="refDate">June 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7230">https://www.rfc-editor.org/rfc/rfc7230</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC8126">[RFC8126]</dt>
         <dd>
 <span class="refAuthor">Cotton, M.</span>, <span class="refAuthor">Leiba, B.</span>, and <span class="refAuthor">T. Narten</span>, <span class="refTitle">"Guidelines for Writing an IANA Considerations Section in RFCs"</span>, <span class="seriesInfo">BCP 26</span>, <span class="seriesInfo">RFC 8126</span>, <span class="seriesInfo">DOI 10.17487/RFC8126</span>, <time datetime="2017-06" class="refDate">June 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8126">https://www.rfc-editor.org/rfc/rfc8126</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9110">[RFC9110]</dt>
+      <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -1570,10 +1477,6 @@ co-located on the same origin. Even for origins that are controlled by and repre
         <dd>
 <span class="refAuthor">Barth, A.</span>, <span class="refTitle">"HTTP State Management Mechanism"</span>, <span class="seriesInfo">RFC 6265</span>, <span class="seriesInfo">DOI 10.17487/RFC6265</span>, <time datetime="2011-04" class="refDate">April 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6265">https://www.rfc-editor.org/rfc/rfc6265</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="RFC7231">[RFC7231]</dt>
-        <dd>
-<span class="refAuthor">Fielding, R., Ed.</span> and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content"</span>, <span class="seriesInfo">RFC 7231</span>, <span class="seriesInfo">DOI 10.17487/RFC7231</span>, <time datetime="2014-06" class="refDate">June 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7231">https://www.rfc-editor.org/rfc/rfc7231</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC7252">[RFC7252]</dt>
         <dd>
 <span class="refAuthor">Shelby, Z.</span>, <span class="refAuthor">Hartke, K.</span>, and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"The Constrained Application Protocol (CoAP)"</span>, <span class="seriesInfo">RFC 7252</span>, <span class="seriesInfo">DOI 10.17487/RFC7252</span>, <time datetime="2014-06" class="refDate">June 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7252">https://www.rfc-editor.org/rfc/rfc7252</a>&gt;</span>. </dd>
@@ -1589,6 +1492,10 @@ co-located on the same origin. Even for origins that are controlled by and repre
 <dt id="RFC8323">[RFC8323]</dt>
         <dd>
 <span class="refAuthor">Bormann, C.</span>, <span class="refAuthor">Lemay, S.</span>, <span class="refAuthor">Tschofenig, H.</span>, <span class="refAuthor">Hartke, K.</span>, <span class="refAuthor">Silverajan, B.</span>, and <span class="refAuthor">B. Raymor, Ed.</span>, <span class="refTitle">"CoAP (Constrained Application Protocol) over TCP, TLS, and WebSockets"</span>, <span class="seriesInfo">RFC 8323</span>, <span class="seriesInfo">DOI 10.17487/RFC8323</span>, <time datetime="2018-02" class="refDate">February 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8323">https://www.rfc-editor.org/rfc/rfc8323</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9309">[RFC9309]</dt>
+        <dd>
+<span class="refAuthor">Koster, M.</span>, <span class="refAuthor">Illyes, G.</span>, <span class="refAuthor">Zeller, H.</span>, and <span class="refAuthor">L. Sassman</span>, <span class="refTitle">"Robots Exclusion Protocol"</span>, <span class="seriesInfo">RFC 9309</span>, <span class="seriesInfo">DOI 10.17487/RFC9309</span>, <time datetime="2022-09" class="refDate">September 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9309">https://www.rfc-editor.org/rfc/rfc9309</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="WEBSTORAGE">[WEBSTORAGE]</dt>
       <dd>
@@ -1628,28 +1535,12 @@ co-located on the same origin. Even for origins that are controlled by and repre
 </dl>
 </section>
 </div>
-<div id="changes-from-rfc-5785">
+<div id="changes-from-rfc-8615">
 <section id="appendix-B">
-      <h2 id="name-changes-from-rfc-5785">
-<a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-changes-from-rfc-5785" class="section-name selfRef">Changes from RFC 5785</a>
+      <h2 id="name-changes-from-rfc-8615">
+<a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-changes-from-rfc-8615" class="section-name selfRef">Changes from RFC 8615</a>
       </h2>
-<ul class="normal">
-<li class="normal" id="appendix-B-1.1">
-          <p id="appendix-B-1.1.1">Allowed non-Web well-known locations<a href="#appendix-B-1.1.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="appendix-B-1.2">
-          <p id="appendix-B-1.2.1">Adjusted IANA instructions<a href="#appendix-B-1.2.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="appendix-B-1.3">
-          <p id="appendix-B-1.3.1">Updated references<a href="#appendix-B-1.3.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="appendix-B-1.4">
-          <p id="appendix-B-1.4.1">Made various other clarifications<a href="#appendix-B-1.4.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="appendix-B-1.5">
-          <p id="appendix-B-1.5.1">Tracked supporting schemes in the "Uniform Resource Identifier (URI) Schemes" registry<a href="#appendix-B-1.5.1" class="pilcrow">¶</a></p>
-</li>
-      </ul>
+<p id="appendix-B-1">TBD<a href="#appendix-B-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="authors-addresses">

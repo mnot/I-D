@@ -18,9 +18,7 @@ Abstract
    "/.well-known/", in selected Uniform Resource Identifier (URI)
    schemes.
 
-   In doing so, it obsoletes RFC 5785 and updates the URI schemes
-   defined in RFC 7230 to reserve that space.  It also updates RFC 7595
-   to track URI schemes that support well-known URIs in their registry.
+   In doing so, it obsoletes RFC 8615.
 
 Status of This Memo
 
@@ -66,12 +64,11 @@ Table of Contents
      4.4.  Hidden Capabilities
    5.  IANA Considerations
      5.1.  The Well-Known URI Registry
-     5.2.  The Uniform Resource Identifier (URI) Schemes Registry
    6.  References
      6.1.  Normative References
      6.2.  Informative References
    Appendix A.  Frequently Asked Questions
-   Appendix B.  Changes from RFC 5785
+   Appendix B.  Changes from RFC 8615
    Author's Address
 
 1.  Introduction
@@ -79,10 +76,10 @@ Table of Contents
    Some applications on the Web require the discovery of information
    about an origin [RFC6454] (sometimes called "site-wide metadata")
    before making a request.  For example, the Robots Exclusion Protocol
-   (http://www.robotstxt.org) specifies a way for automated processes to
-   obtain permission to access resources; likewise, the Platform for
-   Privacy Preferences [P3P] tells user agents how to discover privacy
-   policy before interacting with an origin server.
+   [RFC9309] specifies a way for automated processes to obtain
+   permission to access resources; likewise, the Platform for Privacy
+   Preferences [P3P] tells user agents how to discover privacy policy
+   before interacting with an origin server.
 
    While there are several ways to access per-resource metadata (e.g.,
    HTTP header fields, PROPFIND in Web Distributed Authoring and
@@ -102,11 +99,11 @@ Table of Contents
    to create).  Furthermore, defining well-known locations usurps the
    origin's control over its own URI space [RFC7320].
 
-   To address these uses, this memo reserves a path prefix in HTTP,
-   HTTPS, WebSocket (WS), and Secure WebSocket (WSS) URIs for these
-   "well-known locations", "/.well-known/".  Future specifications that
-   need to define a resource for such metadata can register their use to
-   avoid collisions and minimise impingement upon origins' URI space.
+   To address these uses, this memo reserves a path prefix in nominated
+   URI schemes for these "well-known locations", "/.well-known/".
+   Future specifications that need to define a resource for such
+   metadata can register their use to avoid collisions and minimise
+   impingement upon origins' URI space.
 
    Well-known URIs can also be used with other URI schemes, but only
    when those schemes' definitions explicitly allow it.
@@ -129,12 +126,12 @@ Table of Contents
    corresponding well-known URI on 'http://www.example.com/' would be
    'http://www.example.com/.well-known/example'.
 
-   This specification updates the "http" [RFC7230] and "https" [RFC7230]
-   schemes to support well-known URIs.  Other existing schemes can use
-   the appropriate process for updating their definitions; for example,
-   [RFC8307] does so for the "ws" and "wss" schemes.  The "Uniform
-   Resource Identifier (URI) Schemes" registry tracks which schemes
-   support well-known URIs; see Section 5.2.
+   Previous revisions of this specification updated the "http" [RFC9110]
+   and "https" [RFC9110] schemes to support well-known URIs.  Other
+   existing schemes can use the appropriate process for updating their
+   definitions; for example, [RFC8307] does so for the "ws" and "wss"
+   schemes.  The "Uniform Resource Identifier (URI) Schemes" registry
+   tracks which schemes support well-known URIs.
 
    Applications that wish to mint new well-known URIs MUST register
    them, following the procedures in Section 5.1, subject to the
@@ -162,7 +159,7 @@ Table of Contents
    Registrations MAY also contain additional information, such as the
    syntax of additional path components, query strings, and/or fragment
    identifiers to be appended to the well-known URI, or protocol-
-   specific details (e.g., HTTP [RFC7231] method handling).
+   specific details (e.g., HTTP [RFC9110] method handling).
 
    Note that this specification defines neither how to determine the
    hostname to use to find the well-known URI for a particular
@@ -375,41 +372,6 @@ Table of Contents
    expert(s); typically, this will mean referring them to the registry
    Web page.
 
-   Per this document, IANA has:
-
-   *  Updated the registration procedure to Specification Required.
-
-   *  Added a "Status" column to the registry and marked all of the
-      existing registrations as "permanent".
-
-5.2.  The Uniform Resource Identifier (URI) Schemes Registry
-
-   This specification adds a field to the registration template of the
-   "Uniform Resource Identifier (URI) Schemes" registry, with the name
-   "Well-Known URI Support" and a default value of "-".
-
-   If a URI scheme explicitly has been specified to use well-known URIs
-   as per Section 3, the value changes to a reference to that
-   specification.  Initial values not equal to "-" are given in Table 1.
-
-                  +------------+------------------------+
-                  | URI Scheme | Well-Known URI Support |
-                  +------------+------------------------+
-                  | coap       | [RFC7252]              |
-                  | coap+tcp   | [RFC8323]              |
-                  | coap+ws    | [RFC8323]              |
-                  | coaps      | [RFC7252]              |
-                  | coaps+tcp  | [RFC8323]              |
-                  | coaps+ws   | [RFC8323]              |
-                  | http       | [RFC8615]              |
-                  | https      | [RFC8615]              |
-                  | ws         | [RFC8307]              |
-                  | wss        | [RFC8307]              |
-                  +------------+------------------------+
-
-                        Table 1: Rows in URI Scheme
-                     Registry with Nonempty New Column
-
 6.  References
 
 6.1.  Normative References
@@ -428,11 +390,6 @@ Table of Contents
               DOI 10.17487/RFC6454, December 2011,
               <https://www.rfc-editor.org/rfc/rfc6454>.
 
-   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <https://www.rfc-editor.org/rfc/rfc7230>.
-
    [RFC8126]  Cotton, M., Leiba, B., and T. Narten, "Guidelines for
               Writing an IANA Considerations Section in RFCs", BCP 26,
               RFC 8126, DOI 10.17487/RFC8126, June 2017,
@@ -441,6 +398,11 @@ Table of Contents
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [RFC9110]  Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "HTTP Semantics", STD 97, RFC 9110,
+              DOI 10.17487/RFC9110, June 2022,
+              <https://www.rfc-editor.org/rfc/rfc9110>.
 
 6.2.  Informative References
 
@@ -488,11 +450,6 @@ Table of Contents
               DOI 10.17487/RFC6265, April 2011,
               <https://www.rfc-editor.org/rfc/rfc6265>.
 
-   [RFC7231]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Semantics and Content", RFC 7231,
-              DOI 10.17487/RFC7231, June 2014,
-              <https://www.rfc-editor.org/rfc/rfc7231>.
-
    [RFC7252]  Shelby, Z., Hartke, K., and C. Bormann, "The Constrained
               Application Protocol (CoAP)", RFC 7252,
               DOI 10.17487/RFC7252, June 2014,
@@ -511,6 +468,11 @@ Table of Contents
               Application Protocol) over TCP, TLS, and WebSockets",
               RFC 8323, DOI 10.17487/RFC8323, February 2018,
               <https://www.rfc-editor.org/rfc/rfc8323>.
+
+   [RFC9309]  Koster, M., Illyes, G., Zeller, H., and L. Sassman,
+              "Robots Exclusion Protocol", RFC 9309,
+              DOI 10.17487/RFC9309, September 2022,
+              <https://www.rfc-editor.org/rfc/rfc9309>.
 
    [WEBSTORAGE]
               Hickson, I., Ed., "Web Storage (Second Edition)", W3C REC 
@@ -541,18 +503,9 @@ Appendix A.  Frequently Asked Questions
       solutions are found not to scale well because they're too
       "chatty".
 
-Appendix B.  Changes from RFC 5785
+Appendix B.  Changes from RFC 8615
 
-   *  Allowed non-Web well-known locations
-
-   *  Adjusted IANA instructions
-
-   *  Updated references
-
-   *  Made various other clarifications
-
-   *  Tracked supporting schemes in the "Uniform Resource Identifier
-      (URI) Schemes" registry
+   TBD
 
 Author's Address
 
