@@ -46,23 +46,7 @@ space. It also updates RFC 7595 to track URI schemes that support well-known URI
 registry.
 
 
---- note_Note_to_Readers
-
-*RFC EDITOR: please remove this section before publication*
-
-This draft is a proposed revision of RFC5875.
-
-The issues list for this draft can be found at <https://github.com/mnot/I-D/labels/rfc5785bis>.
-
-The most recent (often, unpublished) draft is at <https://mnot.github.io/I-D/rfc5785bis/>.
-
-Recent changes are listed at <https://github.com/mnot/I-D/commits/gh-pages/rfc5785bis>.
-
-See also the draft's current status in the IETF datatracker, at
-<https://datatracker.ietf.org/doc/draft-nottingham-rfc5785bis/>.
-
 --- middle
-
 
 # Introduction
 
