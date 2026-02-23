@@ -144,7 +144,8 @@ Applications minting new well-known URIs, as well as administrators deploying th
 
 ## Protecting Well-Known Resources
 
-Because well-known locations effectively represent the entire origin, server operators should appropriately control the ability to write to them. This is especially true when more than one entity is co-located on the same origin. Even for origins that are controlled by and represent a single entity, due care should be taken to assure that write access to well-known locations is not granted unwittingly, either externally through server configuration or locally through implementation permissions (e.g., on a filesystem).
+Because well-known locations effectively represent the entire origin, server operators should appropriately control the ability to write to them. This is especially true when more than one entity is co-located\\
+on the same origin. Even for origins that are controlled by and represent a single entity, due care should be taken to assure that write access to well-known locations is not granted unwittingly, either externally through server configuration or locally through implementation permissions (e.g., on a filesystem).
 
 
 ## Interaction with Web Browsing
@@ -180,7 +181,8 @@ Likewise, specifying that a well-known URI on a particular hostname is to be use
 
 ## Hidden Capabilities
 
-Applications using well-known locations should consider that some server administrators might be unaware of their existence (especially on operating systems that hide directories whose names begin with "."). This means that if an attacker has write access to the .well-known directory, they would be able to control its contents, possibly without the administrator realising it.
+Applications using well-known locations should consider that some server administrators might be unaware of their existence (especially on operating systems that hide directories whose names begin with "."). This means that if an attacker has write access to the \\
+.well-known directory, they would be able to control its contents, possibly without the administrator realising it.
 
 
 # IANA Considerations
