@@ -55,7 +55,7 @@ registry.
 
 Some applications on the Web require the discovery of information about an origin {{!RFC6454}}
 (sometimes called "site-wide metadata") before making a request. For example, the Robots Exclusion
-Protocol (\<http://www.robotstxt.org/>) specifies a way for automated processes to obtain permission
+Protocol (http://www.robotstxt.org) specifies a way for automated processes to obtain permission
 to access resources; likewise, the Platform for Privacy Preferences {{?P3P=W3C.REC-P3P-20020416}}
 tells user agents how to discover privacy policy before interacting with an origin server.
 
