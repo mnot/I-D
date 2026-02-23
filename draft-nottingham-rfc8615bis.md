@@ -173,7 +173,7 @@ community beforehand.
 
 Note that "consult the community" above refers to those responsible for the URI scheme(s) in
 question. Generally, this would take place on the mailing list(s) of the appropriate Working
-Group(s) (possibly concluded), or on <art@ietf.org> if no such list exists.
+Group(s) (possibly concluded), or on \<art@ietf.org> if no such list exists.
 
 Well-known URIs can be registered by third parties (including the expert(s)), if the expert(s)
 determine that an unregistered well-known URI is widely deployed and not likely to be registered
