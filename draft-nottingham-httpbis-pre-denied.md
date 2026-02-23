@@ -17,6 +17,9 @@ venue:
 
 github-issue-label: pre-denied
 
+entity:
+  SELF: "RFC nnnn"
+
 author:
  -
     ins: M. Nottingham
@@ -56,7 +59,7 @@ response will not improve performance, and could have negative impacts.
 
 When this happens, it is common practice to use a 503 (Service Unavailable) status code. However, this has been shown to cause confusion: a server operator who sees a spike in that status code being sent tends to draw the conclusion that there is a server-side operational issue.
 
-While other status codes (e.g., 403 (Forbidden)) could be used, they can also suffer (to varying degrees) from the same problem: being confused with an error or operational problem.
+While other status codes (e.g., 403 (Forbidden)) could be used, they can also suffer (to varying degrees) from the same problem: being confused with an error, operational problem, or other condition.
 
 This specification defines a new status code to specifically address this situation.
 
@@ -74,7 +77,11 @@ This indication is only applicable to the associated request; future preliminary
 
 # IANA Considerations
 
-*TBD*
+The following entry should be registered in the "HTTP Status Codes" registry:
+
+Code: 4xx
+Description: Preliminary Request Denied
+Specification: {{&SELF}} (this document)
 
 # Security Considerations
 
