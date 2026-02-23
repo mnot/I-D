@@ -1,0 +1,414 @@
+
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                          23 February 2026
+Intended status: Standards Track                                        
+Expires: 27 August 2026
+
+
+                    HTTP Gateway Description Format
+              draft-nottingham-gateway-description-latest
+
+Abstract
+
+   This document specifies a format for describing the capabilities and
+   configuration of a HTTP gateway (such as a content delivery network)
+   to the origin server and any software on it (such as a content
+   management system).
+
+About This Document
+
+   This note is to be removed before publishing as an RFC.
+
+   Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-nottingham-gateway-
+   description/.
+
+   information can be found at https://mnot.github.io/I-D/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/mnot/I-D/labels/gateway-description.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 27 August 2026.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+     1.1.  Notational Conventions
+   2.  Gateway Description Format
+   3.  Gateway Descriptors
+     3.1.  Site
+     3.2.  Gateway Source Address Lists
+     3.3.  Gateway Header Authentication
+     3.4.  Forwarded Host
+     3.5.  HTTP Methods Allowed
+     3.6.  Targeted Cache Control
+     3.7.  Invalidation API
+     3.8.  API Authentication
+     3.9.  Vendor Extensions
+   4.  IANA Considerations
+   5.  Security Considerations
+   6.  Normative References
+   Author's Address
+
+1.  Introduction
+
+   To allow origin servers and tools that they use to be easily
+   configured, this document defines a Gateway Description Format that
+   describes the configuration of an HTTP gateway (commonly, a "reverse
+   proxy" or content delivery network).  It is intended to be generated
+   by gateways and made available out-of-band to origin servers using
+   them.
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+2.  Gateway Description Format
+
+   The Gateway Description Format is a JSON [JSON] document.  The root
+   object SHOULD contain members with the following names and values:
+
+   *  "generated": a string containing the date that the description was
+      generated, in the Internet Date/Time Format described in Section 5
+      of [RFC3339]
+
+   *  "description": a string containing a human-readable description of
+      the gateway
+
+   For example, a very simple (and not very helpful) description
+   document:
+
+   {
+     "description": "The Example CDN configuration for example.com",
+     "generated": "2023-08-21T23:20:50.52Z"
+   }
+
+   Processors SHOULD NOT fail if these members are not present.
+
+   Additionally, the root object MAY contain any number of gateway
+   descriptors; see Section 3.
+
+   Unrecognised members of the root object MUST be ignored.
+
+3.  Gateway Descriptors
+
+   The following subsections list OPTIONAL information that may be
+   included in the root object of a gateway description document.
+
+   New gateway descriptors may be introduced by updating this
+   specification.
+
+3.1.  Site
+
+   The "site" descriptor is a JSON object containing information about
+   the HTTP server that the gateway exposes on behalf of the origin.  It
+   is a JSON object that contains zero or more of the following members:
+
+   *  "exposed-origins": an array of strings containing Unicode
+      serializations of origins (Section 6.1 of [RFC6454]) that are
+      exposed by the gateway
+
+   *  "backend-origins": an array of strings containing Unicode
+      serializations of origins that the gateway uses as origin
+      server(s) for the exposed origin(s)
+
+   For example:
+
+   {
+     "description": "The Example CDN configuration for example.com",
+     "generated": "2023-08-21T23:20:50.52Z",
+     "site": {
+       "exposed-origins": ["https://www.example.com", "https://www.example.com"],
+       "backend-origins": ["https://backend1.example.com", "https://backend2.example.com"]
+     }
+   }
+
+   Note that this descriptor allows but is not sufficient to describe
+   more complex arrangements; for example, different backend-origins for
+   different URL path locations, or when one exposed-origin redirects
+   all requests to the other.
+
+3.2.  Gateway Source Address Lists
+
+   The "gateway-sourcelists" descriptor is a JSON array of strings
+   containing one or more URLs that can be used to fetch gateway source
+   address lists.
+
+   Their URLs MUST have a scheme of "https".  If multiple URLs are
+   listed, their contents are combined to reconstruct the full list of
+   source IP addresses for the gateway.  Consumers SHOULD respect HTTP
+   caching rules when fetching lists, refreshing their contents as
+   necessary once they become stale.
+
+   For example:
+
+   {
+     "description": "The Example CDN configuration for example.com",
+     "generated": "2023-08-21T23:20:50.52Z",
+     "gateway-sourcelists": [
+       "https://cdn.example.com/source-addresess/ipv4",
+       "https://cdn.example.com/source-addresses/ipv6"
+     ]
+   }
+
+   Gateway source address lists are textual documents (with a
+   RECOMMENDED media type of "text/plain") whose format is one entry per
+   line, with all whitespace being ignored and all content on a line
+   after the "#" being ignored.  Each entry contains an IPv4 or IPv6
+   address block, using "/" notation.
+
+   For example:
+
+   # My IP addresses
+   192.0.2.0/24
+     198.51.100.0/24   # TEST-NET-2
+
+   2001:db8::/32
+
+   ... contains three entries, "192.0.2.0/24", "198.51.100.0/24", and
+   "2001:db8::/32".
+
+3.3.  Gateway Header Authentication
+
+   The "gateway-header-auth" descriptor is a JSON array of two strings
+   representing a HTTP header field name and value that it will send in
+   all HTTP requests to the origin, allowing the origin to discriminate
+   them from other requests.
+
+   For example:
+
+   {
+     "description": "The Example CDN configuration for example.com",
+     "generated": "2023-08-21T23:20:50.52Z",
+     "gateway-header-auth": ["Secret", "my$ecret"]
+   }
+
+   would imply that the gateway would send this HTTP header field in all
+   requests to the origin:
+
+   Secret: my$ecret
+
+3.4.  Forwarded Host
+
+   The "forwarded-host" descriptor is a boolean that indicates whether
+   the Host request header field sent by the gateway is that which it
+   received (one of the exposed origins) if true, or that of the backend
+   origin selected if false.
+
+   For example:
+
+   {
+     "description": "The Example CDN configuration for example.com",
+     "generated": "2023-08-21T23:20:50.52Z",
+     "forwarded-host": false
+   }
+
+   would imply that the gateway has rewritten the Host request header
+   field will be rewritten to be that of the backend origin.
+
+3.5.  HTTP Methods Allowed
+
+   The "methods-allow" descriptor is a JSON array of case-sensitive
+   strings that indicate the HTTP methods that the gateway will accept
+   in requests, forwarding them to the backend origin or handling them
+   locally as appropriate.
+
+   The value "*" indicates that unrecognised methods are forwarded to
+   the backend origin server.
+
+   For example:
+
+   {
+     "description": "The Example CDN configuration for example.com",
+     "generated": "2023-08-21T23:20:50.52Z",
+     "methods-allow": ["GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"]
+   }
+
+3.6.  Targeted Cache Control
+
+   The "targeted-cc" descriptor is a JSON array of strings indicating
+   the targeted cache-control header field(s) [TARGETED] supported by
+   the gateway, in order of precedence (i.e., first entry overrides
+   later entries)
+
+   For example:
+
+   {
+     "description": "The Example CDN configuration for example.com",
+     "generated": "2023-08-21T23:20:50.52Z",
+     "targeted-cc": [
+       "ExampleCDN-Cache-Control",
+       "CDN-Cache-Control"
+     ]
+   }
+
+3.7.  Invalidation API
+
+   The "invalidation-api" descriptor is a JSON object that contains
+   information about the gateway's deployment of [INVALIDATION].
+
+   These objects can contain the following members and values:
+
+   *  "uri": a string conveying the URI of the Invalidation Resource
+      (Section 2 of [INVALIDATION])
+
+   *  "selectors": an array of strings indicating the selectors
+      (Section 3.1 of [INVALIDATION]) that the Invalidation Resource
+      supports
+
+   *  "purge": a boolean indicating whether the Invalidation Resource
+      supports the "purge" member in requests (see Section 3 of
+      [INVALIDATION])
+
+   *  "p95-latency": an integer indicating the number of milliseconds
+      that 95% of invalidation requests should be fully applied to the
+      scope indicated by the description.
+
+   For example:
+
+   {
+     "description": "The Example CDN configuration for example.com",
+     "generated": "2023-08-21T23:20:50.52Z",
+     "invalidation-api": {
+       "uri": "https://api.cdn.example.com/invalidate",
+       "selectors": ["uri", "uri-prefix", "group"],
+       "purge": true,
+       "p95-latency": 2000
+     }
+   }
+
+   If the "api-auth" descriptor (Section 3.8) is present, the
+   authentication details there SHOULD be sent on all requests to the
+   invalidation API.
+
+3.8.  API Authentication
+
+   The "api-auth" descriptor is a string representing a Bearer HTTP
+   authentication (Section 2.1 of [BEARER]) to be used to authenticate
+   the backend origin in interaction with Gateway APIs.
+
+   For example:
+
+   {
+     "description": "The Example CDN configuration for example.com",
+     "generated": "2023-08-21T23:20:50.52Z",
+     "api-auth": "mF_9.B5f-4.1JqM"
+   }
+
+3.9.  Vendor Extensions
+
+   The "vendor" descriptor is a JSON object that can be use for gateway-
+   and vendor-specific extensions to the format.  Its members' names
+   MUST be in internet hostname format, associating a name associated
+   with the gateway and/or its vendor.  The contents of member values
+   are under the control of that party.
+
+   For example:
+
+   {
+     "description": "The Example CDN configuration for example.com",
+     "generated": "2023-08-21T23:20:50.52Z",
+     "vendor": {
+       "cdn.example.com": {
+         "foo": "bar",
+         "1": 2
+       }
+     }
+   }
+
+4.  IANA Considerations
+
+   TBD
+
+5.  Security Considerations
+
+   TBD
+
+6.  Normative References
+
+   [BEARER]   Jones, M. and D. Hardt, "The OAuth 2.0 Authorization
+              Framework: Bearer Token Usage", RFC 6750,
+              DOI 10.17487/RFC6750, October 2012,
+              <https://www.rfc-editor.org/rfc/rfc6750>.
+
+   [HTTP]     Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "HTTP Semantics", STD 97, RFC 9110,
+              DOI 10.17487/RFC9110, June 2022,
+              <https://www.rfc-editor.org/rfc/rfc9110>.
+
+   [INVALIDATION]
+              Nottingham, M., "An HTTP Cache Invalidation API", Work in
+              Progress, Internet-Draft, draft-nottingham-http-
+              invalidation-01, 21 August 2023,
+              <https://datatracker.ietf.org/doc/html/draft-nottingham-
+              http-invalidation-01>.
+
+   [JSON]     Bray, T., Ed., "The JavaScript Object Notation (JSON) Data
+              Interchange Format", STD 90, RFC 8259,
+              DOI 10.17487/RFC8259, December 2017,
+              <https://www.rfc-editor.org/rfc/rfc8259>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC3339]  Klyne, G. and C. Newman, "Date and Time on the Internet:
+              Timestamps", RFC 3339, DOI 10.17487/RFC3339, July 2002,
+              <https://www.rfc-editor.org/rfc/rfc3339>.
+
+   [RFC6454]  Barth, A., "The Web Origin Concept", RFC 6454,
+              DOI 10.17487/RFC6454, December 2011,
+              <https://www.rfc-editor.org/rfc/rfc6454>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [TARGETED] Ludin, S., Nottingham, M., and Y. Wu, "Targeted HTTP Cache
+              Control", RFC 9213, DOI 10.17487/RFC9213, June 2022,
+              <https://www.rfc-editor.org/rfc/rfc9213>.
+
+Author's Address
+
+   Mark Nottingham
+   Prahran
+   Australia
+   Email: mnot@mnot.net
+   URI:   https://www.mnot.net/
