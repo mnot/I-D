@@ -246,7 +246,7 @@ Likewise, specifying that a well-known URI on a particular hostname is to be use
 protocol can cause a large number of undesired requests. For example, if a well-known HTTPS URI is
 used to find policy about a separate service such as e-mail, it can result in a flood of requests
 to Web servers, even if they don't implement the well-known URI. Such undesired requests can
-resemble a denial-of-services attack.
+resemble a denial-of-service attack.
 
 ## Hidden Capabilities
 
