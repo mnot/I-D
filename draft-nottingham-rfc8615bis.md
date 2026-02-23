@@ -14,6 +14,9 @@ keyword: Internet-Draft
 stand_alone: yes
 pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
+v3xml2rfc:
+  table_borders: light
+
 author:
  -
     ins: M. Nottingham
@@ -288,6 +291,7 @@ value changes to a reference to that specification. Initial values not equal to 
 {{tab-initial}}.
 
 | URI Scheme | Well-Known URI Support |
+|:-----------|:----------------------:|
 | coap       | [RFC7252]              |
 | coap+tcp   | [RFC8323]              |
 | coap+ws    | [RFC8323]              |
