@@ -39,6 +39,7 @@ informative:
      -
         org: WHATWG
   RFC8323:
+  RFC7252:
 
 --- abstract
 
