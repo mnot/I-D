@@ -79,9 +79,9 @@ This indication is only applicable to the associated request; future preliminary
 
 The following entry should be registered in the "HTTP Status Codes" registry:
 
-Code: 4xx
-Description: Preliminary Request Denied
-Specification: {{&SELF}} (this document)
+* Code: 4xx
+* Description: Preliminary Request Denied
+* Specification: {{&SELF}} (this document)
 
 # Security Considerations
 
