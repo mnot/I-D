@@ -71,7 +71,7 @@ risking collisions, both with other such designated "well-known locations" and w
 the origin has created (or wishes to create). Furthermore, defining well-known locations usurps
 the origin's control over its own URI space {{?RFC7320}}.
 
-To address these uses, this memo reserves a path prefix in HTTP, HTTPS, WebSocket (WS) and Secure WebSocket (WSS) URIs for these "well-known locations", "/.well-known/". Future specifications that need to define a resource for such metadata can register their use to avoid collisions and minimise impingement upon origins' URI space.
+To address these uses, this memo reserves a path prefix in HTTP, HTTPS, WebSocket (WS), and Secure WebSocket (WSS) URIs for these "well-known locations", "/.well-known/". Future specifications that need to define a resource for such metadata can register their use to avoid collisions and minimise impingement upon origins' URI space.
 
 Well-known URIs can also be used with other URI schemes, but only when those schemes'
 definitions explicitly allow it.
