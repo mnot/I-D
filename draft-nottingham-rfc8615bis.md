@@ -330,7 +330,7 @@ are found not to scale well because they're too "chatty".
 
 
 
-# Changes from RFC5785
+# Changes from RFC 5785
 
 * Allowed non-Web well-known locations
 * Adjusted IANA instructions
