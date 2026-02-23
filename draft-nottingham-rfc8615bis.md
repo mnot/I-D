@@ -38,6 +38,7 @@ informative:
     author:
      -
         org: WHATWG
+  RFC8323:
 
 --- abstract
 
@@ -242,12 +243,12 @@ applications.
 Applying metadata discovered in a well-known URI to resources other than those co-located on the
 same origin risks administrative as well as security issues. For example, allowing
 "https://example.com/.well-known/example" to apply policy to "https://department.example.com",
-"https://www.example.com" or even "https://www.example.com:8000" assumes a relationship between
+"https://www.example.com", or even "https://www.example.com:8000" assumes a relationship between
 hosts where there might be none, thereby giving control to a potential attacker.
 
 Likewise, specifying that a well-known URI on a particular hostname is to be used to bootstrap a
 protocol can cause a large number of undesired requests. For example, if a well-known HTTPS URI is
-used to find policy about a separate service such as e-mail, it can result in a flood of requests
+used to find policy about a separate service such as email, it can result in a flood of requests
 to Web servers, even if they don't implement the well-known URI. Such undesired requests can
 resemble a denial-of-service attack.
 
@@ -266,7 +267,7 @@ be able to control its contents, possibly without the administrator realising it
 This specification updates the registration procedures for the "Well-Known URI" registry, first
 defined in {{?RFC5785}}; see {{procedure}}.
 
-Well-known URIs are registered on the advice of one or more Experts, with a Specification Required (using terminology from {{!RFC8126}}).
+Well-known URIs are registered on the advice of one or more experts, with a Specification Required (using terminology from {{!RFC8126}}).
 
 The experts' primary considerations in evaluating registration requests are:
 
@@ -291,7 +292,7 @@ value changes to a reference to that specification. Initial values not equal to 
 {{tab-initial}}.
 
 | URI Scheme | Well-Known URI Support |
-|:-----------|:----------------------:|
+|:-----------|:-----------------------|
 | coap       | [RFC7252]              |
 | coap+tcp   | [RFC8323]              |
 | coap+ws    | [RFC8323]              |
