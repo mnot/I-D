@@ -107,7 +107,7 @@ The "Well-Known URIs" registry is located at \<https://www.iana.org/assignments/
 Registration requests consist of at least the following information:
 
 URI suffix:
-: The name requested for the well-known URI, relative to "/.well-known/"; e.g., "example".
+: The name requested for the well-known URI, relative to "/.well-known/"; e.g., "example". Syntactic requirements are described in {{well-known}}.
 
 Change controller:
 : For Standards Track RFCs, state "IETF". For others, give the name of the responsible party. Other
@@ -116,23 +116,31 @@ details (e.g., email address, home page URI) may also be included.
 Specification document(s):
 : Reference to the document that specifies the field, preferably including a URI that can be used
 to retrieve a copy of the document. An indication of the relevant sections may also be included,
-but is not required.
+but is not required. Specification documents are expected to address the security considerations in {{sec}}.
 
 Status:
-: One of "permanent" or "provisional". See guidance below.
+: One of "permanent", "provisional", "obsoleted", or "deprecated". See guidance below.
 
 Related information:
 : Optionally, citations to additional documents containing further relevant information.
 
-General requirements for registered values are described in {{well-known}}.
+Values defined by Standards Track RFCs and other open standards (in the sense of {{?RFC2026}}, Section 7.1.1) can be registered with a status of "permanent".
 
-Values defined by Standards Track RFCs and other open standards (in the sense of {{?RFC2026}}, Section 7.1.1) have a status of "permanent". Other values can also be registered as permanent, if the experts find that they are in use, in consultation with the community. Other values should be registered as "provisional".
+The change controller of a permanent registration MUST be the responsible party for the specification document(s). The change controller of a permanent registration can request that its status be changed to "obsoleted" or "deprecated" as circumstances require. If a change controller becomes defunct or cannot be contacted, the experts can change a registration's status as required, in consultation with the community.
 
-Provisional entries can be removed by the experts if -- in consultation with the community -- the experts find that they are not in use. The experts can change a provisional entry's status to permanent; in doing so, the experts should consider how widely used a value is and consult the community beforehand.
+Values not defined by open standards processes can be registered with a status of "provisional".
+
+A request for provisional registration can be denied by the experts if they find that it uses a URI suffix that is overly generic or of potential community value in the future. For example, a provisional registration request for a commonly used term can be denied on the basis that it could preempt a future standards effort's use of the term, even if no such effort is yet in progress.
+
+Provisional entries can be promoted to "permanent" by the experts if -- in consultation with the community -- the experts find they are in broad use.
+
+Provisional entries can be removed by the experts if -- in consultation with the community -- the experts find that they are not in broad use one year or more after registration.
+
+Provisional entries can be removed by the experts at any time if the specification document(s) become unavailable, deprecated, obsoleted, or similar. In the case that a document becomes unavailable, the experts must attempt contact with the change controller to clarify its status first.
 
 Note that "consult the community" above refers to those responsible for the URI scheme(s) in question. Generally, this would take place on the mailing list(s) of the appropriate Working Group(s) (possibly concluded), or on \<art@ietf.org> if no such list exists.
 
-Well-known URIs can be registered by third parties (including the expert(s)), if the expert(s) determine that an unregistered well-known URI is widely deployed and not likely to be registered in a timely manner otherwise. Such registrations still are subject to the requirements defined, including the need to reference a specification.
+The experts will keep public records of their decisions. Decisions by the experts can be appealed to the IESG.
 
 
 # Security Considerations {#sec}
@@ -189,15 +197,11 @@ Applications using well-known locations should consider that some server adminis
 
 ## The Well-Known URI Registry {#register}
 
-This specification updates the registration procedures for the "Well-Known URI" registry, first defined in {{?RFC5785}}; see {{procedure}}.
+This specification updates the registration procedures for the "Well-Known URI" registry, first defined in {{?RFC5785}}.
 
 Well-known URIs are registered on the advice of one or more experts, with a Specification Required (using terminology from {{!RFC8126}}).
 
-The experts' primary considerations in evaluating registration requests are:
-
- * Conformance to the requirements in {{well-known}}
- * The availability and stability of the specifying document
- * The considerations outlined in {{sec}}
+See {{procedure}} for the registration request procedure.
 
 IANA will direct the senders of any incoming registry requests to this document and, if defined, the processes established by the expert(s); typically, this will mean referring them to the registry Web page.
 
@@ -228,4 +232,4 @@ Why aren't per-directory well-known locations defined?
 
 # Changes from RFC 8615
 
-TBD
+* Updated registration guidelines
