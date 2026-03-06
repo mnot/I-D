@@ -34,6 +34,9 @@ normative:
   URI: RFC3986
   ROBOTS: RFC9309
   FIELDS: RFC9651
+informative:
+  CENTRALIZATION: RFC9518
+  AIPREFS: I-D.ietf-aipref-vocab
 
 --- abstract
 
@@ -44,13 +47,15 @@ This document defines a way for Web sites to express preferences about how their
 
 # Introduction
 
-The Robots Exclusion Protocol {{ROBOTS}} allows Web site owners to "control how content served by their services may be accessed, if at all, by automatic clients known as crawlers." While this provides an effective way to direct cooperating crawlers' behaviour when accessing a site, it does not consider what happens afterwards: in particular, what is done with the data that is obtained through crawling. This has created tensions, especially when crawlers have more than one purpose, or when a purpose changes (for example, a search engine changes its user interface in a way that's undesirable to the site).
+When proprietary platforms are built on top of the Internet, they often form choke points. As discussed in {{CENTRALIZATION}}, the concentration of power thus formed is often difficult to mitigate using only technical mechanisms, but might be more effectively addressed through other means (e.g., legal regulation) with the assistance of technical accommodations. This document defines one such accommodation.
 
-{{?I-D.ietf-aipref-vocab}} defines a universal vocabulary that describes how content should be handled for uses involving AI, and {{?I-D.ietf-aipref-attach}} describes how that vocabulary should be attached to content in robots.txt and through other means. This framework allows sites to specify how their data should be handled in a manner that's separate to the question of how crawlers show behave when the access the site.
+The Robots Exclusion Protocol {{ROBOTS}} allows Web site owners to "control how content served by their services may be accessed, if at all, by automatic clients known as crawlers." While this provides an effective way to direct cooperating crawlers' behaviour when accessing a site, it does not consider what is done with the data that is obtained through crawling.
 
-However, it has become apparent that defining such a universal vocabulary is difficult, because it requires broad agreement on sometimes hard-to-define concepts, and necessitates imprecision, so as to be broadly applicable across both different implementations as well as over time. As a result, sites may not have obvious ways state their preferences regarding specific behaviours.
+Experience has shown that while crawling a substantial portion of the Web does not tend to form a choke point, specific uses of crawled data can. In particular, Web search services can act in ways that are beneficial to the sites that they draw data from, directing traffic to them and thus promoting a healthy ecosystem, or they can be more extractive and use crawled data to create resources without reference to the sources of their responses.
 
-To address this shortcoming, this document defines a complementary mechanism: a robots.txt extension that allows sites to express preferences about how specified applications should behave in certain circumstances.
+This document defines a common mechanism for sites to express their preferences regarding specific uses of their data by consuming services. Unlike {{AIPREFS}}, it does not define a universal vocabulary; instead, it allows each consuming service to define its own bespoke controls, allowing greater precision and avoiding the definitional issues involved.
+
+This mechanism is defined as a robots.txt extension. Its operation is separate from the control of crawling behaviour; it only controls the use of data once it is crawled.
 
 For example, a site might wish to express that it does not want ExampleSearch to use its content with ExampleSearch's new "Widgets" feature. ExampleSearch has registered a "widgets" control, so that the site can express this in its robots.txt file:
 
@@ -60,21 +65,21 @@ Allow: /
 App-Directives: examplesearch;widgets=?0
 ~~~
 
-In this manner, sites can provide specific directives to applications that wish to use their data.
+In this manner, sites can provide specific directives to applications that wish to use their data, and legal regulators that wish to direct the behaviour of choke point services can mandate that they define appropriate directives for use by sites.
 
 ## Creating New Application Directives
 
 To allow a site to express its preferences about how specific applications are to treat their content, an identifier for the application needs to be chosen (in the above example, 'examplesearch') and the syntax and semantics of its directives need to be defined (in the example above, 'widgets=?0' to enable or disable the 'widgets' feature).
 
-This specification creates IANA registries for application identifiers and directives to facilitate easy discovery of these artefacts. It is expected that applications that consume data obtained from the Web will register specific controls for their features (including but not limited to the entire application itself) in this registry.
+This specification creates IANA registries for application identifiers and directives to avoid collisions and facilitate easy discovery of these artefacts. It is expected that some, but not all, applications that consume data obtained from the Web will register specific controls for their features (including but not limited to the entire application itself) in this registry.
 
-However, this specification does not mandate registration. It is anticipated that non-technical regulation (e.g., competition regulation) might play some role in encouraging or even requiring certain applications to register appropriate controls for their features.
+However, this specification does not mandate registration. It is anticipated that legal regulation (especially, competition regulation) might play some role in encouraging or even requiring certain applications to register appropriate controls for their features.
 
 ## Interaction with AI Preferences
 
-Application Directives are complimentary to the vocabulary described in {{?I-D.ietf-aipref-vocab}}. Whereas the AI Preferences vocabulary are generic and potentially applicable to any application consuming a given piece of content, Application Directives are tightly scoped to the application and semantics defined in the appropriate registry entry.
+Application Directives are complimentary to the vocabulary described in {{AIPREFS}}. Whereas the AI Preferences vocabulary are generic and potentially applicable to any application consuming a given piece of content, Application Directives are tightly scoped to the application and semantics defined in the appropriate registry entry.
 
-In particular, AI Preferences are applicable even to unknown uses and consumers of content, whereas Application Directives do not apply to any application except the one nominated. Because of this, it is anticipated that they will often be used together: AI Preferences to set general policy about how content is treated, and Application Directives to fine-tune the behavior of specific applications.
+In particular, AI Preferences are applicable even to unknown uses and consumers of content, whereas Application Directives do not apply to any application except the one nominated. Because of this, it is anticipated that they will often be used together: AI Preferences to set general policy about how content is treated (especially for cases like AI training), and Application Directives to fine-tune the behavior of specific applications.
 
 Because Application Directives are a more specific, targeted mechanism, they can be considered to override applicable AI preferences that are attached in the same robots.txt file, in the case of any conflict. Such override is only applicable, however, within the defined scope of the semantics of the given directive(s).
 
