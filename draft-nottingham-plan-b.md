@@ -73,11 +73,13 @@ To allow a site to express its preferences about how specific applications are t
 
 This specification creates IANA registries for application identifiers and directives to avoid collisions and facilitate easy discovery of these artefacts. It is expected that some, but not all, applications that consume data obtained from the Web will register specific controls for their features (including but not limited to the entire application itself) in this registry.
 
-However, this specification does not mandate registration. It is anticipated that legal regulation (especially, competition regulation) might play some role in encouraging or even requiring certain applications to register appropriate controls for their features.
+However, this specification does not mandate registration. It is anticipated that legal authorities (especially, competition regulators) could encourage or require certain applications to register appropriate directives for their features and then enforce their application.
+
+This specification does not address what an appropriate directive for a given feature might be; it only provides a framework to facilitate their expression.
 
 ## Interaction with AI Preferences
 
-Application Directives are complimentary to the vocabulary described in {{AIPREFS}}. Whereas the AI Preferences vocabulary are generic and potentially applicable to any application consuming a given piece of content, Application Directives are tightly scoped to the application and semantics defined in the appropriate registry entry.
+Application Directives are complimentary to the vocabulary described in {{AIPREFS}}. Whereas the AI Preferences vocabulary are generic and potentially applicable to any non-browser consumer of a given piece of content, Application Directives are tightly scoped to the application and semantics defined in the appropriate registry entry.
 
 In particular, AI Preferences are applicable even to unknown uses and consumers of content, whereas Application Directives do not apply to any application except the one nominated. Because of this, it is anticipated that they will often be used together: AI Preferences to set general policy about how content is treated (especially for cases like AI training), and Application Directives to fine-tune the behavior of specific applications.
 
