@@ -75,7 +75,7 @@ This specification creates IANA registries for application identifiers and direc
 
 However, this specification does not mandate registration. It is anticipated that legal authorities (especially, competition regulators) could encourage or require certain applications to register appropriate directives for their features and then enforce their application.
 
-This specification does not address what an appropriate directive for a given feature might be; it only provides a framework to facilitate their expression.
+This specification does not address what an appropriate directive for a given feature might be, nor what process should be used to determine that; it only provides a framework to facilitate their expression.
 
 ## Interaction with AI Preferences
 
