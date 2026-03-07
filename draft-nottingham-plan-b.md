@@ -47,17 +47,17 @@ This document defines a way for Web sites to express preferences about how their
 
 # Introduction
 
-When proprietary platforms are built on top of the Internet, they often form choke points. As discussed in {{CENTRALIZATION}}, the concentration of power thus formed is often difficult to mitigate using only technical mechanisms, but might be more effectively addressed through other means (e.g., legal regulation) with the assistance of technical accommodations. This document defines one such accommodation.
+Proprietary platforms built on the Internet often create choke points. As discussed in {{CENTRALIZATION}}, the concentration of power thus formed is often difficult to mitigate using only technical mechanisms, but might be more effectively addressed through other means (e.g., legal regulation) with the assistance of technical accommodations. This document defines one such accommodation.
 
-The Robots Exclusion Protocol {{ROBOTS}} allows Web site owners to "control how content served by their services may be accessed, if at all, by automatic clients known as crawlers." While this provides an effective way to direct cooperating crawlers' behaviour when accessing a site, it does not consider what is done with the data that is obtained through crawling.
+The Robots Exclusion Protocol {{ROBOTS}} allows Web site owners to "control how content served by their services may be accessed, if at all, by automatic clients known as crawlers." While this effectively directs cooperating crawlers' behavior when accessing a site, it does not address the use of the data obtained through crawling.
 
-Experience has shown that while crawling a substantial portion of the Web does not tend to form a choke point, specific uses of crawled data can. In particular, Web search services can act in ways that are beneficial to the sites that they draw data from, directing traffic to them and thus promoting a healthy ecosystem, or they can be more extractive and use crawled data to create resources without reference to the sources of their responses.
+Experience has shown that while crawling a substantial portion of the Web does not tend to form a choke point, specific uses of crawled data can. In particular, Web search services can act in ways that are beneficial to the sites that they draw data from, directing traffic to them and thus promoting a healthy ecosystem, or they can be extractive, using crawled data to create resources without reference to the original sources.
 
-This document defines a common mechanism for sites to express their preferences regarding specific uses of their data by consuming services. Unlike {{AIPREFS}}, it does not define a universal vocabulary; instead, it allows each consuming service to define its own bespoke controls, allowing greater precision and avoiding the definitional issues involved.
+This document defines a common mechanism for sites to express preferences for specific uses of their data by consuming services. Unlike {{AIPREFS}}, it does not define a universal vocabulary; instead, it allows each consuming service to define its own bespoke controls, offering greater precision and avoiding definitional issues.
 
 This mechanism is defined as a robots.txt extension. Its operation is separate from the control of crawling behaviour; it only controls the use of data once it is crawled.
 
-For example, a site might wish to express that it does not want ExampleSearch to use its content with ExampleSearch's new "Widgets" feature. ExampleSearch has registered a "widgets" control, so that the site can express this in its robots.txt file:
+For example, a site might wish to express that it does not want ExampleSearch to use its content with ExampleSearch's new "Widgets" feature. ExampleSearch has registered a "widgets" control, allowing the site to express this in its robots.txt file:
 
 ~~~
 User-Agent: *
@@ -65,29 +65,29 @@ Allow: /
 App-Directives: examplesearch;widgets=?0
 ~~~
 
-In this manner, sites can provide specific directives to applications that wish to use their data, and legal regulators that wish to direct the behaviour of choke point services can mandate that they define appropriate directives for use by sites.
+In this manner, sites can provide specific directives to applications that use their data, and legal regulators that wish to direct the behaviour of choke point services can mandate that they define appropriate directives for sites to use.
 
 ## Creating New Application Directives
 
-To allow a site to express its preferences about how specific applications are to treat their content, an identifier for the application needs to be chosen (in the above example, 'examplesearch') and the syntax and semantics of its directives need to be defined (in the example above, 'widgets=?0' to enable or disable the 'widgets' feature).
+To allow a site to express its content treatment preferences for specific applications, an identifier for the application needs to be chosen (in the above example, 'examplesearch') and the syntax and semantics of its directives need to be defined (in the example above, 'widgets=?0' to enable or disable the 'widgets' feature).
 
-This specification creates IANA registries for application identifiers and directives to avoid collisions and facilitate easy discovery of these artefacts. It is expected that some, but not all, applications that consume data obtained from the Web will register specific controls for their features (including but not limited to the entire application itself) in this registry.
+This specification creates IANA registries for application identifiers and directives to avoid collisions and facilitate easy discovery. Some, but not all, applications that consume data obtained from the Web are expected to register specific controls for their features (including but not limited to the entire application itself) in this registry.
 
-However, this specification does not mandate registration. It is anticipated that legal authorities (especially, competition regulators) could encourage or require certain applications to register appropriate directives for their features and then enforce their application.
+However, this specification does not mandate registration. It is anticipated that legal authorities (especially competition regulators) could encourage or require certain applications to register appropriate directives for their features and then enforce their application.
 
-This specification does not address what an appropriate directive for a given feature might be, nor what process should be used to determine that; it only provides a framework to facilitate their expression.
+This specification does not address what an appropriate directive might be, nor the process for determining it; it only provides a framework for their expression.
 
 ## Interaction with AI Preferences
 
-Application Directives are complimentary to the vocabulary described in {{AIPREFS}}. Whereas the AI Preferences vocabulary are generic and potentially applicable to any non-browser consumer of a given piece of content, Application Directives are tightly scoped to the application and semantics defined in the appropriate registry entry.
+Application Directives compliment the vocabulary described in {{AIPREFS}}. While AI Preferences are generic and potentially applicable to any non-browser content consumer, Application Directives are tightly scoped to the application and semantics defined in the appropriate registry entry.
 
-In particular, AI Preferences are applicable even to unknown uses and consumers of content, whereas Application Directives do not apply to any application except the one nominated. Because of this, it is anticipated that they will often be used together: AI Preferences to set general policy about how content is treated (especially for cases like AI training), and Application Directives to fine-tune the behavior of specific applications.
+AI Preferences apply even to unknown content uses and consumers, while Application Directives only apply to the nominated application. Therefore, they are anticipated to be used together: AI Preferences to set general policy (especially for cases like AI training), and Application Directives to fine-tune the behavior of specific applications.
 
-Because Application Directives are a more specific, targeted mechanism, they can be considered to override applicable AI preferences that are attached in the same robots.txt file, in the case of any conflict. Such override is only applicable, however, within the defined scope of the semantics of the given directive(s).
+Because Application Directives are a more specific, targeted mechanism, they can be considered to override applicable AI preferences that are attached in the same robots.txt file, in the case of any conflict. However, such an override is only applicable within the defined scope of the given directive(s)' semantics.
 
 ## Interaction with the User-Agent Line
 
-Because the robots.txt format requires that all extensions be scoped to a User-Agent line, it is possible for nonsensical things to be expressed. For example:
+Because the robots.txt format requires all extensions to be scoped to a User-Agent line, nonsensical configurations are possible. For example:
 
 ~~~
 User-Agent: ExampleSearch/1.0
@@ -95,9 +95,9 @@ Allow: /
 App-Directives: someothersearch;foo=bar
 ~~~
 
-Here, directives for SomeOtherSearch are limited to content retrieved by the ExampleSearch crawler, and so are unlikely to be applied by SomeOtherSearch.
+Here, directives for SomeOtherSearch are limited to content retrieved by the ExampleSearch crawler and are thus unlikely to be applied by SomeOtherSearch.
 
-Therefore, it is RECOMMENDED that App-Directives extensions always occur in a group with "User-Agent: *", so that they are most broadly applicable.
+Therefore, it is RECOMMENDED that App-Directives extensions always occur in a group with "User-Agent: *", for broadest applicability.
 
 ## Notational Conventions
 
@@ -144,7 +144,7 @@ App-Directives: examplesearch;widgets=?0,someothersearch;foo=bar
 
 Application directives apply solely to the applications that they identify; their presence or absence does not communicate or imply anything about the behaviour of other applications, and likewise makes no statements about the behavior of crawlers.
 
-When applying directives from a robots.txt file, an application MUST merge identical groups (per {{Section 2.2.1 of ROBOTS}} and choose either the (possibly merged) group that matches its registered product token. If there is no matching group, the application MUST use the (possibly merged) group identified with "*".
+When applying directives, an application MUST merge identical groups (per {{Section 2.2.1 of ROBOTS}} and choose the (possibly merged) group that matches its registered product token. If no group matches, the application MUST use the (possibly merged) group identified with "*".
 
 When applying directives from a chosen group, an application MUST use those associated with the longest matching path-pattern, using the same path prefix matching rules as defined for Allow and Disallow. That is, the path prefix length is determined by counting the number of bytes in the encoded path.
 
