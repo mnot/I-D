@@ -14,7 +14,8 @@ Expires: 4 October 2026
 Abstract
 
    This draft outlines use cases for authentication for bot clients on
-   the Web.
+   the Web, to help inform discussions regarding the scope and intent of
+   the WebBotAuth Working Group.
 
 About This Document
 
@@ -70,9 +71,14 @@ Table of Contents
      2.4.  Auditing Bot Behaviour
      2.5.  Classifying Traffic
      2.6.  Authenticating Site Services
-   3.  Next Steps
-   4.  IANA Considerations
-   5.  Security Considerations
+   3.  Bot Use Cases
+     3.1.  IP Address Mobility
+     3.2.  Sharing IP Addresses
+     3.3.  Robots.txt Alignment
+     3.4.  Conveying Contextual Information
+   4.  Next Steps
+   5.  IANA Considerations
+   6.  Security Considerations
    Appendix A.  Bot Differences
      A.1.  Scope
      A.2.  Relationship
@@ -87,11 +93,10 @@ Table of Contents
    clients and providing additional information about their operators to
    Web sites."
 
-   Initial discussions in the group have revealed some disagreement
-   about the scope and intent of the work.  Section 2 explores the use
-   cases for authentication of non-browser clients, to help inform those
-   discussions.  Section 3 suggests some further questions for
-   consideration.
+   Initial discussions have revealed some disagreement about the group's
+   scope.  Section 2 explores the use cases for authentication of non-
+   browser clients, to help inform those discussions.  Section 4
+   suggests some further questions for consideration.
 
 2.  Web Site Use Cases
 
@@ -123,9 +128,10 @@ Table of Contents
    While sites can take measures to mitigate the impact of this traffic
    (e.g., caching), these are only partially effective; some resources
    are uncacheable, and generating representations of some HTTP
-   resources can incur much higher costs.  In general, serving such
-   great volumes of traffic can consume significant resources, in terms
-   of both infrastructure and bandwidth.
+   resources can incur much higher costs -- both in terms of computation
+   and economics.  In general, serving such great volumes of traffic can
+   consume significant resources, in terms of both infrastructure and
+   bandwidth.
 
    Currently, a site that experiences such traffic most often blocks
    unwelcome clients by IP address.  This has the effect of blocking
@@ -192,7 +198,7 @@ Table of Contents
    introduction of AI and what they perceive as an onslaught of bot
    traffic.  Others see it as an overreach that may impinge upon users'
    ability to consume content as they desire -- for example, using
-   accessibility or agentic tools.
+   accessibility tools or autonomous agents.
 
    Finally, some see bots as a way of keeping powerful sites in check,
    and therefore measures to curtail their activity is portrayed as
@@ -202,7 +208,7 @@ Table of Contents
 
 2.3.  Providing Different Content to Bots
 
-   Somes sites may wish to tailor the content they serve to bots (either
+   Some sites may wish to tailor the content they serve to bots (either
    selectively or overall), as compared to that they serve to browsers.
    In some cases, a site might wish to augment the information that they
    provide to a trusted bot.  Conversely, a site might wish to reduce or
@@ -301,7 +307,67 @@ Table of Contents
    However, it is not clear whether these use cases are within the scope
    of the Working Group's charter.
 
-3.  Next Steps
+3.  Bot Use Cases
+
+   This section explores use cases that Bots might have for being
+   authenticated by sites, focusing on improvements over current
+   mechanisms that sites use.
+
+3.1.  IP Address Mobility
+
+   User-Agent headers can be descriptive, but are also trivially
+   spoofed.  As a result, most bots are associated most strongly with
+   the IP addresses they use.
+
+   Bots that do not fully control the IP addresses they use (e.g., those
+   using cloud or other hosting infrastructure) are disadvantaged: if
+   they need to change the addresses they use (e.g., due to operational
+   issues, economic incentives, or changes by their provider), they lose
+   any reputation built and effectively start from scratch.
+
+   As a result, long-term stability of the IP address is necessary to
+   build a reputation for that IP address.  Sites often use static allow
+   and block lists of IP addresses, so updating them is painful.
+
+   Identifying a bot using a factor other than IP address would decouple
+   its reputation from the infrastructure identifier -- its IP address
+   -- and allow greater mobility, levelling the playing field for bots
+   that do not fully control their infrastructure.
+
+3.2.  Sharing IP Addresses
+
+   Similarly, bots that share an IP address with other processes --
+   either simultaneously or over time -- are disadvantaged because their
+   reputation with sites might be affected by other uses of the IP
+   address.  Unless they have rigid control of all requests emitted from
+   that IP address over a long period of time, that identifier might be
+   added to block lists.
+
+   Identifying a bot using a factor other than IP address would allow
+   sites to discriminate between different uses of that identifier.
+   This would allow bots to operate without a dedicated IP address,
+   further levelling the playing field for small bots.
+
+3.3.  Robots.txt Alignment
+
+   The robots.txt format identifies bots by their User-Agent string, but
+   this is easily spoofable on the wire.  As a result, a bot might be
+   punished by sites that block that identifier based upon fraudulent
+   use.
+
+   Identifying a bot in a more reliable fashion in robots.txt would
+   avoid this misattribution.
+
+3.4.  Conveying Contextual Information
+
+   Bots have an incentive to be transparent about their operation, so as
+   to encourage sites to allow their operation.  Although there are ad
+   hoc mechanisms for doing this (e.g., a link to HTML in the User-Agent
+   string), a standard, machine-readable means of conveying
+   authenticated information about a bot's operation could lower
+   barriers to conveying this information.
+
+4.  Next Steps
 
    This section suggests questions for further investigation and
    discussion.
@@ -328,20 +394,20 @@ Table of Contents
        in time and/or space?
 
    6.  Are the resource requirements for authentication proposals
-       reasonable for these use cases for all types of sites?  At the
-       meeting, it was asserted that it would disproportionately
-       advantage already well-resourced entities.
+       reasonable for these use cases for all types of sites?  At IETF
+       124, it was asserted that it would disproportionately advantage
+       already well-resourced entities.
 
    7.  What use cases should the group address and not address?  Why?
 
    8.  Are there alternative approaches to addressing some or all of
        these use cases?  What properties do they have?
 
-4.  IANA Considerations
+5.  IANA Considerations
 
    This draft has no actions for IANA.
 
-5.  Security Considerations
+6.  Security Considerations
 
    Undoubtedly there are security considerations to any authentication
    protocol, but they will be encountered and dealt with later than
@@ -406,6 +472,8 @@ A.4.  Agency
       government, civil society organisation)
 
    *  Some serve multiple constituencies
+
+   Portraying "bot vs. human" is likely an unhelpful binary.
 
 Author's Address
 
