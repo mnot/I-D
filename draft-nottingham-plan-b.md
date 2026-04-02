@@ -51,13 +51,13 @@ Proprietary platforms built on the Internet often create choke points. As discus
 
 The Robots Exclusion Protocol {{ROBOTS}} allows Web site owners to "control how content served by their services may be accessed, if at all, by automatic clients known as crawlers." While this effectively directs cooperating crawlers' behavior when accessing a site, it does not address the use of the data obtained through crawling.
 
-Experience has shown that while crawling a substantial portion of the Web does not tend to form a choke point, specific uses of crawled data can. In particular, Web search services can act in ways that are beneficial to the sites that they draw data from, directing traffic to them and thus promoting a healthy ecosystem, or they can be extractive, using crawled data to create resources without reference to the original sources.
+Experience has shown that while crawling a substantial portion of the Web does not tend to form a choke point, specific uses of crawled data can. For example, Web search applications can act in ways that are beneficial to the sites that they draw data from, directing traffic to them and thus promoting a healthy ecosystem, or they can be extractive, using crawled data to create resources without reference to the original sources.
 
-This document defines a common mechanism for sites to express preferences for specific uses of their data by consuming services. Unlike {{AIPREFS}}, it does not define a universal vocabulary; instead, it allows each consuming service to define its own bespoke controls, offering greater precision and avoiding definitional issues.
+This document defines a common mechanism for Web sites to express preferences for specific uses of their data by consuming applications. Unlike {{AIPREFS}}, it does not define a universal vocabulary; instead, it allows each consuming application to define its own bespoke controls, offering greater precision and avoiding definitional issues.
 
-This mechanism is defined as a robots.txt extension. Its operation is separate from the control of crawling behaviour; it only controls the use of data once it is crawled.
+Enabling the expression of such preferences in a standards-defined way gives legal regulators the opportunity to direct the behaviour of choke point services by mandating that they define appropriate directives for sites to use.
 
-For example, a site might wish to express that it does not want ExampleSearch to use its content with ExampleSearch's new "Widgets" feature. ExampleSearch has registered a "widgets" control, allowing the site to express this in its robots.txt file:
+This mechanism is defined as a robots.txt extension. Its operation is separate from the control of crawling behaviour; it only controls the use of data once it is crawled. For example, a site might wish to express that it does not want ExampleSearch to use its content with ExampleSearch's new "Widgets" feature. ExampleSearch has registered a "widgets" control, allowing the site to express this in its robots.txt file:
 
 ~~~
 User-Agent: *
@@ -65,7 +65,6 @@ Allow: /
 App-Directives: examplesearch;widgets=?0
 ~~~
 
-In this manner, sites can provide specific directives to applications that use their data, and legal regulators that wish to direct the behaviour of choke point services can mandate that they define appropriate directives for sites to use.
 
 ## Creating New Application Directives
 
