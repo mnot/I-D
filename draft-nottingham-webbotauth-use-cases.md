@@ -32,7 +32,7 @@ author:
 
 --- abstract
 
-This draft outlines use cases for authentication for bot clients on the Web.
+This draft outlines use cases for authentication for bot clients on the Web, to help inform discussions regarding the scope and intent of the WebBotAuth Working Group.
 
 --- middle
 
@@ -41,7 +41,7 @@ This draft outlines use cases for authentication for bot clients on the Web.
 
 The Web Bot Auth (WebBotAuth) Working Group has been chartered to "standardize methods for cryptographically authenticating automated clients and providing additional information about their operators to Web sites."
 
-Initial discussions in the group have revealed some disagreement about the scope and intent of the work. {{site-usecase}} explores the use cases for authentication of non-browser clients, to help inform those discussions. {{next}} suggests some further questions for consideration.
+Initial discussions have revealed some disagreement about the group's scope. {{site-usecase}} explores the use cases for authentication of non-browser clients, to help inform those discussions. {{next}} suggests some further questions for consideration.
 
 
 # Web Site Use Cases {#site-usecase}
@@ -59,7 +59,7 @@ This draft does not take a position on whether all of the use cases should be ad
 
 Some bots make requests at rates that cause operational issues for Web sites. This may be intentional (e.g., traffic from "botnets" and other attacks) or unintentional (due to overly simple or inconsiderate implementation). It appears that both the number of such bots and the rate at which they make requests are increasing.
 
-While sites can take measures to mitigate the impact of this traffic (e.g., caching), these are only partially effective; some resources are uncacheable, and generating representations of some HTTP resources can incur much higher costs. In general, serving such great volumes of traffic can consume significant resources, in terms of both infrastructure and bandwidth.
+While sites can take measures to mitigate the impact of this traffic (e.g., caching), these are only partially effective; some resources are uncacheable, and generating representations of some HTTP resources can incur much higher costs -- both in terms of computation and economics. In general, serving such great volumes of traffic can consume significant resources, in terms of both infrastructure and bandwidth.
 
 Currently, a site that experiences such traffic most often blocks unwelcome clients by IP address. This has the effect of blocking other uses of that IP address, both at that time and into the indefinite future. It also offers little recourse for incorrectly blocked clients, since they have no information about why they were blocked or what they should do about it.
 
@@ -87,14 +87,14 @@ Enforcement is achieved primarily through blocking non-conforming clients. The l
 
 This use case has been disputed. While blocking certain bots by IP address is widespread in practice, concerns have been expressed that standardising an authentication mechanism for bots might result in a Web where all bots might need to authenticate, leading to increased difficulty in introducing new bots. In some markets, this outcome could create pressure towards centralisation, due to heightened barriers to entry.
 
-Another controversy is that giving sites a more fine-grained capability to block bots is a change in the balance of power on the Web. Some perceive that as justified, given factors like the introduction of AI and what they perceive as an onslaught of bot traffic. Others see it as an overreach that may impinge upon users' ability to consume content as they desire -- for example, using accessibility or agentic tools.
+Another controversy is that giving sites a more fine-grained capability to block bots is a change in the balance of power on the Web. Some perceive that as justified, given factors like the introduction of AI and what they perceive as an onslaught of bot traffic. Others see it as an overreach that may impinge upon users' ability to consume content as they desire -- for example, using accessibility tools or autonomous agents.
 
 Finally, some see bots as a way of keeping powerful sites in check, and therefore measures to curtail their activity is portrayed as concentrating that power. However, it should be noted that there are also powerful bots that can be seen to have disproportionate power over sites, and so there is not necessarily a clear bias here.
 
 
 ## Providing Different Content to Bots {#content}
 
-Somes sites may wish to tailor the content they serve to bots (either selectively or overall), as compared to that they serve to browsers. In some cases, a site might wish to augment the information that they provide to a trusted bot. Conversely, a site might wish to reduce or modify the information that they provide to a bot that they do not trust.
+Some sites may wish to tailor the content they serve to bots (either selectively or overall), as compared to that they serve to browsers. In some cases, a site might wish to augment the information that they provide to a trusted bot. Conversely, a site might wish to reduce or modify the information that they provide to a bot that they do not trust.
 
 Current practice is difficult to ascertain, but anecdotal evidence suggests that the latter case is more common than the former. For example, some sites do not wish for information that they consider to be commercially sensitive -- e.g., prices -- to be available to bots. In both cases, IP addresses and similar heuristics are used.
 
@@ -138,6 +138,37 @@ This use case requires bot identity to be tied to authentication.
 Addressing this use case does not appear to be controversial. However, it is not clear whether these use cases are within the scope of the Working Group's charter.
 
 
+# Bot Use Cases {#bot}
+
+This section explores use cases that Bots might have for being authenticated by sites, focusing on improvements over current mechanisms that sites use.
+
+## IP Address Mobility
+
+User-Agent headers can be descriptive, but are also trivially spoofed. As a result, most bots are associated most strongly with the IP addresses they use.
+
+Bots that do not fully control the IP addresses they use (e.g., those using cloud or other hosting infrastructure) are disadvantaged: if they need to change the addresses they use (e.g., due to operational issues, economic incentives, or changes by their provider), they lose any reputation built and effectively start from scratch.
+
+As a result, long-term stability of the IP address is necessary to build a reputation for that IP address. Sites often use static allow and block lists of IP addresses, so updating them is painful.
+
+Identifying a bot using a factor other than IP address would decouple its reputation from the infrastructure identifier -- its IP address -- and allow greater mobility, levelling the playing field for bots that do not fully control their infrastructure.
+
+## Sharing IP Addresses
+
+Similarly, bots that share an IP address with other processes -- either simultaneously or over time -- are disadvantaged because their reputation with sites might be affected by other uses of the IP address. Unless they have rigid control of all requests emitted from that IP address over a long period of time, that identifier might be added to block lists.
+
+Identifying a bot using a factor other than IP address would allow sites to discriminate between different uses of that identifier. This would allow bots to operate without a dedicated IP address, further levelling the playing field for small bots.
+
+## Robots.txt Alignment
+
+The robots.txt format identifies bots by their User-Agent string, but this is easily spoofable on the wire. As a result, a bot might be punished by sites that block that identifier based upon fraudulent use.
+
+Identifying a bot in a more reliable fashion in robots.txt would avoid this misattribution.
+
+## Conveying Contextual Information
+
+Bots have an incentive to be transparent about their operation, so as to encourage sites to allow their operation. Although there are ad hoc mechanisms for doing this (e.g., a link to HTML in the User-Agent string), a standard, machine-readable means of conveying authenticated information about a bot's operation could lower barriers to conveying this information.
+
+
 # Next Steps {#next}
 
 This section suggests questions for further investigation and discussion.
@@ -147,7 +178,7 @@ This section suggests questions for further investigation and discussion.
 3. What levers do we have to mitigate the harms associated with an emerging default of requiring authentication for bots? Does authentication enhance or confound such efforts (as opposed to IP address blocking)?
 4. Would an authentication scheme that does not allow association with real-world entities provide enough value to meet interesting use cases? If so, would the charter prohibition on "[t]racking or assigning reputation to particular bots" need to change?
 5. What is the threshold for being considered a bot? E.g., is request rate important? Associating with a specific human user in time and/or space?
-6. Are the resource requirements for authentication proposals reasonable for these use cases for all types of sites? At the meeting, it was asserted that it would disproportionately advantage already well-resourced entities.
+6. Are the resource requirements for authentication proposals reasonable for these use cases for all types of sites? At IETF 124, it was asserted that it would disproportionately advantage already well-resourced entities.
 7. What use cases should the group address and not address? Why?
 8. Are there alternative approaches to addressing some or all of these use cases? What properties do they have?
 
@@ -199,3 +230,5 @@ Bots act with different relationships to their operator(s):
 * Some are acting on behalf of a group of end users
 * Some are acting on behalf of another entity (e.g., corporation, government, civil society organisation)
 * Some serve multiple constituencies
+
+Portraying "bot vs. human" is likely an unhelpful binary.
