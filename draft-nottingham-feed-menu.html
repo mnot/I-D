@@ -4,15 +4,14 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Requirements for Paid Web Crawling</title>
+<title>Feed Menus</title>
 <meta content="Mark Nottingham" name="author">
-<meta content="Simon Newton" name="author">
 <meta content="
-       This document suggests requirements (and non-requirements) for paid Web crawling protocols. 
+       This specification defines Feed Menus, a simplified means of discovering the feeds (e.g., RSS or Atom) offered by a Web site. 
     " name="description">
 <meta content="xml2rfc 3.33.0" name="generator">
 <meta content="Internet-Draft" name="keyword">
-<meta content="draft-nottingham-paid-crawl-reqs-latest" name="ietf.draft">
+<meta content="draft-nottingham-feed-menu-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.33.0
     Python 3.12.13
@@ -27,7 +26,7 @@
     requests 2.32.5
     wcwidth 0.6.0
 -->
-<link href="draft-nottingham-paid-crawl-reqs.xml" rel="alternate" type="application/rfc+xml">
+<link href="draft-nottingham-feed-menu.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">@font-face {
   font-family: 'Lora';
@@ -1045,11 +1044,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
-<td class="center">Requirements for Paid Web Crawling</td>
+<td class="center">Feed Menus</td>
 <td class="right">April 2026</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Nottingham &amp; Newton</td>
+<td class="left">Nottingham</td>
 <td class="center">Expires 25 October 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
@@ -1060,7 +1059,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">Network Working Group</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-nottingham-paid-crawl-reqs-latest</dd>
+<dd class="internet-draft">draft-nottingham-feed-menu-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
 <time datetime="2026-04-23" class="published">23 April 2026</time>
@@ -1069,23 +1068,30 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
 <dd class="expires"><time datetime="2026-10-25">25 October 2026</time></dd>
-<dt class="label-authors">Authors:</dt>
+<dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
       <div class="author-name">M. Nottingham</div>
-<div class="org">Cloudflare</div>
-</div>
-<div class="author">
-      <div class="author-name">S. Newton</div>
-<div class="org">Cloudflare</div>
 </div>
 </dd>
 </dl>
 </div>
-<h1 id="title">Requirements for Paid Web Crawling</h1>
+<h1 id="title">Feed Menus</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">This document suggests requirements (and non-requirements) for paid Web crawling protocols.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This specification defines Feed Menus, a simplified means of discovering the feeds (e.g., RSS or Atom) offered by a Web site.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nottingham-feed-menu/">https://datatracker.ietf.org/doc/draft-nottingham-feed-menu/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+         information can be found at <span><a href="https://mnot.github.io/I-D/">https://mnot.github.io/I-D/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/mnot/I-D/labels/feed-menu">https://github.com/mnot/I-D/labels/feed-menu</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1139,75 +1145,52 @@ svg :is([fill="white"], [fill^="#fff"]) {
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
-                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-the-paid-web-crawling-use-c" class="internal xref">The Paid Web Crawling Use Case</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
-                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-notational-conventions" class="internal xref">Notational Conventions</a></p>
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-notational-conventions" class="internal xref">Notational Conventions</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-requirements" class="internal xref">Requirements</a></p>
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-feed-menu-documents" class="internal xref">Feed Menu Documents</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
-                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-avoid-centralization" class="internal xref">Avoid Centralization</a></p>
+                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-menu-objects" class="internal xref">Menu Objects</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
-                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-lower-deployment-costs" class="internal xref">Lower Deployment Costs</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
-                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-be-extensible" class="internal xref">Be Extensible</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4">
-                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="auto internal xref">2.4</a>.  <a href="#name-minimise-information-disclo" class="internal xref">Minimise Information Disclosure</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.5">
-                <p id="section-toc.1-1.2.2.5.1"><a href="#section-2.5" class="auto internal xref">2.5</a>.  <a href="#name-allow-granularity" class="internal xref">Allow Granularity</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.6">
-                <p id="section-toc.1-1.2.2.6.1"><a href="#section-2.6" class="auto internal xref">2.6</a>.  <a href="#name-facilitate-negotiation" class="internal xref">Facilitate Negotiation</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.7">
-                <p id="section-toc.1-1.2.2.7.1"><a href="#section-2.7" class="auto internal xref">2.7</a>.  <a href="#name-allow-enforcement" class="internal xref">Allow Enforcement</a></p>
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-feed-objects" class="internal xref">Feed Objects</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-non-requirements" class="internal xref">Non-Requirements</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
-                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-standalone-deployment" class="internal xref">Standalone Deployment</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
-                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-real-time-operation" class="internal xref">Real-Time Operation</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
-                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-controlling-content" class="internal xref">Controlling Content</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
-                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-preventing-bad-faith" class="internal xref">Preventing Bad Faith</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-publishing-feed-menus" class="internal xref">Publishing Feed Menus</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-processing-feed-menus" class="internal xref">Processing Feed Menus</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-references" class="internal xref">References</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
-                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
-                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-json-schema" class="internal xref">JSON Schema</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-implementation-status" class="internal xref">Implementation Status</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1218,232 +1201,358 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Automated web clients, or "crawlers," have increasingly dominated website traffic, leading to increased operational costs and new technical and economic risks.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">Historically, websites have borne these costs and risks because they believed they received value in return. For instance, crawling to build web search indices exposed sites to increased "referral" traffic when search engine users clicked links to those sites.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">However, this balance has been disrupted by an increase in web traffic without any corresponding benefit to websites. Crawling to train Large Language Models ("AI") not only burdens site infrastructure but also creates value for the LLM vendor without compensation to the content owner.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">An Internet protocol to facilitate payments from crawlers to websites could help address this imbalance. This document outlines the use case in <a href="#usecase" class="auto internal xref">Section 1.1</a>, specifies requirements in <a href="#reqs" class="auto internal xref">Section 2</a>, and identifies non-requirements in <a href="#nonreqs" class="auto internal xref">Section 3</a>.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<div id="usecase">
-<section id="section-1.1">
-        <h3 id="name-the-paid-web-crawling-use-c">
-<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-the-paid-web-crawling-use-c" class="section-name selfRef">The Paid Web Crawling Use Case</a>
-        </h3>
-<p id="section-1.1-1">A Web site "S" wants to be financially compensated for a Web client "C"'s access to its resources. This might be facilitated by a payment processor, "P".<a href="#section-1.1-1" class="pilcrow">¶</a></p>
-<p id="section-1.1-2">For purposes of this use case, we assume:<a href="#section-1.1-2" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-1.1-3.1">
-            <p id="section-1.1-3.1.1">C is <em>not</em> a Web browser with a human behind it; it is a machine-driven process that is collecting Web content for some other purpose (colloquially, "crawling" the Web). Note that that process might (or might not) use a "headless" browser as part of its operation.<a href="#section-1.1-3.1.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-1.1-3.2">
-            <p id="section-1.1-3.2.1">There are a diverse set of C in the world, but the total set of C that a site will interact with is reasonably bounded (i.e., there will not be thousands of C accessing a given site with this protocol, but there may be twenty or more).<a href="#section-1.1-3.2.1" class="pilcrow">¶</a></p>
-</li>
-          <li class="normal" id="section-1.1-3.3">
-            <p id="section-1.1-3.3.1">S has some means of cryptographically identifying C. See <a href="https://datatracker.ietf.org/wg/webbotauth/about/">https://datatracker.ietf.org/wg/webbotauth/about/</a>.<a href="#section-1.1-3.3.1" class="pilcrow">¶</a></p>
-</li>
-        </ul>
-<p id="section-1.1-4">Note that this use case is not uniformly applied to all Web crawlers; the intent is not to preclude or require payment for all crawlers, but instead to address situations where there is an economic imbalance.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
-</section>
-</div>
+<p id="section-1-1">Autodiscovery of Web feeds (in formats such as RSS <span>[<a href="#RSS" class="cite xref">RSS</a>]</span> and Atom <span>[<a href="#ATOM" class="cite xref">ATOM</a>]</span>) using link relations in HTML <span>[<a href="#DISCOVERY" class="cite xref">DISCOVERY</a>]</span> is widely supported both by consuming software (e.g., feed readers) and Web sites (including in many content management systems).<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">Deployment of autodiscovery has uncovered significant issues with this approach.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">Because feed links are specific to a page, they are only apparent to software that can take advantage of them (for example, to show a 'subscribe' button) when that page is being viewed. This means that sites need to repeat the relevant feeds in the headmatter of all pages on a site to assure that they are viewable, creating overhead both in effort (to organise the pages) and bandwidth (to serve them).<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">Practically, this means that it is often necessary to hunt around the pages of a site to find all of the relevant feeds, since sites are unwilling to repeat them on every page.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">Furthermore, because many content management systems automatically create this metadata, in practice many feeds that are advertised using autodiscovery are not actually functional -- site owners do not realise that the feeds are being advertised and do not check the feeds for quality and relevance.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">Finally, there are no existant best practices for naming or assigning metadata to feeds (for example, their format), leading to confusing user experiences. For example, because many sites make both RSS and Atom feeds available, there are often duplicate entries in the autodiscovery metadata.<a href="#section-1-6" class="pilcrow">¶</a></p>
+<p id="section-1-7">This specification documents a different mechanism for discovering the feeds relevant to a Web site. By defining a single, well-known location <span>[<a href="#WELL-KNOWN" class="cite xref">WELL-KNOWN</a>]</span> that describes a site's feeds, it encourages a more curated, usable directory of the site's feeds for easy discovery and consumption by clients.<a href="#section-1-7" class="pilcrow">¶</a></p>
+<p id="section-1-8"><a href="#format" class="auto internal xref">Section 2</a> describes this format; <a href="#publishing" class="auto internal xref">Section 3</a> recommends practices for publishers that wish to use it, and <a href="#processing" class="auto internal xref">Section 4</a> provides guidance to clients for processing it.<a href="#section-1-8" class="pilcrow">¶</a></p>
 <div id="notational-conventions">
-<section id="section-1.2">
+<section id="section-1.1">
         <h3 id="name-notational-conventions">
-<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-notational-conventions" class="section-name selfRef">Notational Conventions</a>
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-notational-conventions" class="section-name selfRef">Notational Conventions</a>
         </h3>
-<p id="section-1.2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+<p id="section-1.1-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
 "<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
 described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
-appear in all capitals, as shown here.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
-<div id="reqs">
+<div id="format">
 <section id="section-2">
-      <h2 id="name-requirements">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-requirements" class="section-name selfRef">Requirements</a>
+      <h2 id="name-feed-menu-documents">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-feed-menu-documents" class="section-name selfRef">Feed Menu Documents</a>
       </h2>
-<p id="section-2-1">The following sections propose requirements for a protocol that facilitates payment by crawlers to Web sites.<a href="#section-2-1" class="pilcrow">¶</a></p>
-<div id="central">
+<p id="section-2-1">A feed menu document is a JSON <span>[<a href="#JSON" class="cite xref">JSON</a>]</span> format whose root is an menu object (<a href="#menu-object" class="auto internal xref">Section 2.1</a>).<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">For example, a minimal feed menu document:<a href="#section-2-2" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-2-3">
+<pre>
+{
+  "feed-menu": "The Astor Theatre",
+  "items": [
+    {
+      "feed-title": "Upcoming Shows",
+      "rss": "/shows/upcoming.xml"
+    }
+  ]
+}
+</pre><a href="#section-2-3" class="pilcrow">¶</a>
+</div>
+<div id="menu-object">
 <section id="section-2.1">
-        <h3 id="name-avoid-centralization">
-<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-avoid-centralization" class="section-name selfRef">Avoid Centralization</a>
+        <h3 id="name-menu-objects">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-menu-objects" class="section-name selfRef">Menu Objects</a>
         </h3>
-<p id="section-2.1-1">A crawl payment protocol <span class="bcp14">MUST NOT</span> have a single or constrained number of "choke point" or "gatekeeper" roles. It <span class="bcp14">MUST</span> be possible for new payment processors to be introduced into the ecosystem with reasonable effort. In particular, attention needs to be paid to mitigating factors such as network effects.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
-<p id="section-2.1-2">Furthermore, a crawl payment protocol <span class="bcp14">SHOULD NOT</span> have secondary effects that encourage centralization in either clients (e.g., allowing advantages to accrue to a small number of well-known crawlers) or servers (e.g., creating significant barriers to deploying new Web sites that compete with well-known ones). Where they are unavoidable, these effects <span class="bcp14">SHOULD</span> be mitigated if at all possible.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
-<p id="section-2.1-3">Similarly, a crawl payment protocol <span class="bcp14">MUST NOT</span> "bundle" other capabilities unless absolutely necessary to achieve its goals. For example, it <span class="bcp14">SHOULD NOT</span> require the payment processor to be co-located with the server, or with the party providing access control to the server.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
-<p id="section-2.1-4">See <span>[<a href="#CENTRALIZATION" class="cite xref">CENTRALIZATION</a>]</span> for further discussion.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
+<p id="section-2.1-1">A menu object is a JSON object with a "feed-menu" member. Its potential members are:<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.1-2.1">
+            <p id="section-2.1-2.1.1">"feed-menu": A short human readable title for the menu (<span class="bcp14">REQUIRED</span>)<a href="#section-2.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.1-2.2">
+            <p id="section-2.1-2.2.1">"items": An array of menu objects and feed objects.<a href="#section-2.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-2.1-3">Menu objects <span class="bcp14">MAY</span> contain other members, to be defined by updates to this specification. Likewise, the items array <span class="bcp14">MAY</span> contain other types of objects, to be defined by updates to this specification.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
+<p id="section-2.1-4">Menu objects can contain other menu objects to represent a nested structure. For example:<a href="#section-2.1-4" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-2.1-5">
+<pre>
+{
+  "feed-menu": "Analog:Shift",
+  "items": [
+    {
+      "feed-title": "Analog:Shift News",
+      "rss": "/news.xml"
+    },
+    {
+      "feed-menu": "Watches for Sale",
+      "items": [
+        {
+          "feed-title": "All Watches",
+          "rss": "/collections/watches/all.xml"
+        },
+        {
+          "feed-title": "Vintage Watches",
+          "rss": "/collections/watches/vintage.xml"
+        },
+        {
+          "feed-title": "Neo-Vintage Watches",
+          "rss": "/collections/watches/neovintage.xml"
+        },
+        {
+          "feed-title": "Contemporary Watches",
+          "rss": "/collections/watches/contemporary.xml"
+        }
+      ]
+    }
+  ]
+}
+</pre><a href="#section-2.1-5" class="pilcrow">¶</a>
+</div>
 </section>
 </div>
-<div id="lower-deployment-costs">
+<div id="feed-object">
 <section id="section-2.2">
-        <h3 id="name-lower-deployment-costs">
-<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-lower-deployment-costs" class="section-name selfRef">Lower Deployment Costs</a>
+        <h3 id="name-feed-objects">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-feed-objects" class="section-name selfRef">Feed Objects</a>
         </h3>
-<p id="section-2.2-1">A crawl payment protocol <span class="bcp14">MUST</span> be reasonable to deploy in a variety of systems. In particular, it <span class="bcp14">SHOULD NOT</span> incur significant processing, network, or storage overheads on the servers that wish to require payment. It <span class="bcp14">SHOULD</span> be compatible with common techniques for efficient Web sites, such as caching, serving from a filesystem, and in particular <span class="bcp14">SHOULD NOT</span> incur significant per-request overhead, unless absolutely necessary to meet the goals of the protocol.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
-<p id="section-2.2-2">It is acknowledged that "significant" is in the eye of the beholder, and can vary based upon the resources available to a system. Here, the intent is to allow deployment on a diversity of systems, thereby helping to avoid the centralization risks described in <a href="#central" class="auto internal xref">Section 2.1</a>. Thus, a successful crawl payment protocol <span class="bcp14">SHOULD</span> be deployable on a reasonable variety of systems that include at least one maintained by a single person on commodity hardware, but might not reach to some more specialised systems, such as a low-power embedded server.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
-</section>
+<p id="section-2.2-1">A feed object is a JSON object with a "feed-title" member. Its potential members are:<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-2.2-2.1">
+            <p id="section-2.2-2.1.1">"feed-title": A short human readable title for the feed (<span class="bcp14">REQUIRED</span>)<a href="#section-2.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-2.2">
+            <p id="section-2.2-2.2.1">"description": A potentially longer human readable description of the feed's purpose or content (<span class="bcp14">OPTIONAL</span>)<a href="#section-2.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-2.3">
+            <p id="section-2.2-2.3.1">"rss": A URL to retrieve a RSS representation of the feed (see below)<a href="#section-2.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-2.4">
+            <p id="section-2.2-2.4.1">"atom": A URL to retrieve an Atom representation of the feed (see below)<a href="#section-2.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-2.2-3">One of "rss" or "atom" is <span class="bcp14">REQUIRED</span>; both <span class="bcp14">MAY</span> be present.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
+<p id="section-2.2-4">URLs in "rss" and "atom" values <span class="bcp14">MAY</span> be relative, and <span class="bcp14">MUST</span> be resolved relative to the feed document's URL without a path. For example, if a feed document is located at "https://example.net/.well-known/feed-menu.json" and the "rss" member contains "feed.xml", the resulting RSS feed URL would be "https://example.net/feed.xml".<a href="#section-2.2-4" class="pilcrow">¶</a></p>
+<p id="section-2.2-5">Feed objects <span class="bcp14">MAY</span> contain other members, to be defined by updates to this specification.<a href="#section-2.2-5" class="pilcrow">¶</a></p>
+<p id="section-2.2-6">For example, a feed menu document with a more elaborate feed object:<a href="#section-2.2-6" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-2.2-7">
+<pre>
+{
+  "feed-menu": "The Astor Theatre",
+  "items": [
+    {
+      "feed-title": "Upcoming Shows",
+      "rss": "/shows/upcoming.xml"
+    }
+  ]
+}
+</pre><a href="#section-2.2-7" class="pilcrow">¶</a>
 </div>
-<div id="be-extensible">
-<section id="section-2.3">
-        <h3 id="name-be-extensible">
-<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-be-extensible" class="section-name selfRef">Be Extensible</a>
-        </h3>
-<p id="section-2.3-1">One of the core requirements for Internet protocols is the ability to evolve -- to incorporate new use cases as well as changes in their context and use. Because the Internet is a distributed system, we cannot call a "flag day" where everyone changes at once; instead, changes are accommodated through explicit extensibility mechanisms. See <span>[<a href="#EXTENSIBILITY" class="cite xref">EXTENSIBILITY</a>]</span> for more discussion.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
-<p id="section-2.3-2">Therefore, a crawl payment protocol <span class="bcp14">MUST</span> allow a variety of payment schemes to be used with it, and <span class="bcp14">MUST</span> allow introduction of new capabilities.<a href="#section-2.3-2" class="pilcrow">¶</a></p>
-<p id="section-2.3-3">Particular attention will need to be paid to the deployability of such extensions. If a small set of payment schemes is deployed, it may be difficult for sites to introduce a new one without protocol support (e.g., fallback mechanisms).<a href="#section-2.3-3" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="private">
-<section id="section-2.4">
-        <h3 id="name-minimise-information-disclo">
-<a href="#section-2.4" class="section-number selfRef">2.4. </a><a href="#name-minimise-information-disclo" class="section-name selfRef">Minimise Information Disclosure</a>
-        </h3>
-<p id="section-2.4-1">A crawl payment protocol <span class="bcp14">SHOULD NOT</span> expose more information about either party than is necessary to complete the payment. Note that legal requirements in some jurisdictions and payment regimes may require exposure of such information, but it <span class="bcp14">SHOULD</span> be limited to that which is required.<a href="#section-2.4-1" class="pilcrow">¶</a></p>
-<p id="section-2.4-2">Furthermore, a crawl payment protocol <span class="bcp14">MUST NOT</span> expose additional information about the parties publicly.<a href="#section-2.4-2" class="pilcrow">¶</a></p>
-<p id="section-2.4-3">This requirement extends to the terms of the payment itself: some parties may not wish to make the amount they are paying or being paid for crawling public information.<a href="#section-2.4-3" class="pilcrow">¶</a></p>
-<p id="section-2.4-4">See <span>[<a href="#PRIVACY" class="cite xref">PRIVACY</a>]</span> for more considerations regarding privacy in protocol design.<a href="#section-2.4-4" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="allow-granularity">
-<section id="section-2.5">
-        <h3 id="name-allow-granularity">
-<a href="#section-2.5" class="section-number selfRef">2.5. </a><a href="#name-allow-granularity" class="section-name selfRef">Allow Granularity</a>
-        </h3>
-<p id="section-2.5-1">A crawl payment protocol <span class="bcp14">SHOULD</span> allow sites to have separate payment agreements for different sets of content on them. This reflects the nature of content: some of it is more valuable or more expensive to produce.<a href="#section-2.5-1" class="pilcrow">¶</a></p>
-<p id="section-2.5-2">Note that this is not an absolute requirement: granularity often comes at a cost of complexity and protocol "chattiness," which are in tension with other requirements.<a href="#section-2.5-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="facilitate-negotiation">
-<section id="section-2.6">
-        <h3 id="name-facilitate-negotiation">
-<a href="#section-2.6" class="section-number selfRef">2.6. </a><a href="#name-facilitate-negotiation" class="section-name selfRef">Facilitate Negotiation</a>
-        </h3>
-<p id="section-2.6-1">A crawl payment protocol <span class="bcp14">SHOULD</span> allow the parties to negotiate over time, so that they can converge on a payment that is agreeable to both of them. However, because negotiation adds complexity to the protocol (and therefore implementation and deployment burden), it <span class="bcp14">SHOULD</span> be optional to use for both parties; i.e. either party could make a "take it or leave it" offer.<a href="#section-2.6-1" class="pilcrow">¶</a></p>
-<p id="section-2.6-2">Likewise, a crawl payment protocol <span class="bcp14">MAY</span> consider providing some level of price transparency either directly or indirectly (e.g., through intermediarie), provided that the privacy requirements in <a href="#private" class="auto internal xref">Section 2.4</a> are met.<a href="#section-2.6-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="allow-enforcement">
-<section id="section-2.7">
-        <h3 id="name-allow-enforcement">
-<a href="#section-2.7" class="section-number selfRef">2.7. </a><a href="#name-allow-enforcement" class="section-name selfRef">Allow Enforcement</a>
-        </h3>
-<p id="section-2.7-1">A crawl payment protocol <span class="bcp14">SHOULD</span> allow intermediaries acting on behalf of the origin server to verify payment status, so that they can impose policy.<a href="#section-2.7-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
-<div id="nonreqs">
+<div id="publishing">
 <section id="section-3">
-      <h2 id="name-non-requirements">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-non-requirements" class="section-name selfRef">Non-Requirements</a>
+      <h2 id="name-publishing-feed-menus">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-publishing-feed-menus" class="section-name selfRef">Publishing Feed Menus</a>
       </h2>
-<p id="section-3-1">To clarify the scope of work, the following items are considered as NOT being requirements for a successful crawl payment protocol.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">Note that in each case, this does not preclude a successful protocol from accommodating the non-requirement, or require the protocol to preclude that end: it only implies that the non-requirement is not a design goal that the effort will actively seek.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<div id="standalone-deployment">
-<section id="section-3.1">
-        <h3 id="name-standalone-deployment">
-<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-standalone-deployment" class="section-name selfRef">Standalone Deployment</a>
-        </h3>
-<p id="section-3.1-1">While we wish to avoid centralization (see <a href="#central" class="auto internal xref">Section 2.1</a>), it is not a requirement to facilitate full deployment of the protocol exclusively on a single Web server, without external dependencies.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.1-2">This non-requirement reflects the nature of payment systems, which typically use intermediaries to provide useful services such as chargebacks, reputation management, and compliance with legal requirements.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
-<p id="section-3.1-3">The implication is that where payment intermediaries are used in the protocol, they should be as interchangeable as possible, to promote an ecosystem whereby both servers and crawlers have choices regarding which intermediaries they support.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<p id="section-3-1">Feed menu documents are published at the "feed-menu.json" well-known URI <span>[<a href="#WELL-KNOWN" class="cite xref">WELL-KNOWN</a>]</span> for a given Web site. For example:<a href="#section-3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3-2">
+<pre>
+https://www.example.com/.well-known/feed-menu.json
+</pre><a href="#section-3-2" class="pilcrow">¶</a>
+</div>
+<p id="section-3-3">If the Web site supports multiple languages, publishers can use HTTP proactive negotiation to make different languages available to processors. Publishers generally <span class="bcp14">SHOULD NOT</span> mix languages in the same feed menu document, although there may be cases where this is done intentionally.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">It is <span class="bcp14">RECOMMENDED</span> that feed-titles be no longer than 50 characters, and that descriptions be no longer than 140 characters. However, processors <span class="bcp14">SHOULD NOT</span> strictly enforce these limits, although they may take measures to deal with long values.<a href="#section-3-4" class="pilcrow">¶</a></p>
+<p id="section-3-5">Publishing software (for example, content management systems) <span class="bcp14">SHOULD NOT</span> automatically create feed menu documents, unless they have a high degree of certainty that the publisher is aware and that doing so is intentional.<a href="#section-3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="real-time-operation">
-<section id="section-3.2">
-        <h3 id="name-real-time-operation">
-<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-real-time-operation" class="section-name selfRef">Real-Time Operation</a>
-        </h3>
-<p id="section-3.2-1">It is not a requirement for the protocol to facilitate immediate payment at request time, though the protocol may allow for this. Crawlers are not like Web browsers: they are long-running processes that aren't constrained by the responsiveness requirements of human users, and can reconcile asynchronous operations.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="controlling-content">
-<section id="section-3.3">
-        <h3 id="name-controlling-content">
-<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-controlling-content" class="section-name selfRef">Controlling Content</a>
-        </h3>
-<p id="section-3.3-1">It is not a requirement to provide a technical means of controlling the use of content once it has been crawled; this is not a Digital Rights Management scheme.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="preventing-bad-faith">
-<section id="section-3.4">
-        <h3 id="name-preventing-bad-faith">
-<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-preventing-bad-faith" class="section-name selfRef">Preventing Bad Faith</a>
-        </h3>
-<p id="section-3.4-1">Some crawlers will attempt to crawl without using a payment protocol (e.g., by masquerading as browsers). It is not a requirement of a crawl payment protocol to prevent such misuse. Instead, we expect other interventions -- including blocking of misbehaving crawlers -- to disincent such behaviour.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
-<p id="section-3.4-2">Some crawlers might even use contents for purposes other than what they negotiate. Likewise, some sites might renege on their agreements and refuse access to content that a crawler has paid for. It is not a requirement to technically prevent these situations. We expect such cases to be addressed by other mechanisms, such as legal intervention.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
-<div id="iana-considerations">
+<div id="processing">
 <section id="section-4">
-      <h2 id="name-iana-considerations">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      <h2 id="name-processing-feed-menus">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-processing-feed-menus" class="section-name selfRef">Processing Feed Menus</a>
       </h2>
-<p id="section-4-1">This document has no tasks for IANA.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-1">Processors <span class="bcp14">MUST</span> only request feed menu documents from the "feed-menu.json" well-known URI.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">When requesting feed menu documents, processors <span class="bcp14">SHOULD</span> negotiate for content language using proactive negotiation; see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-12.5.4" class="relref">Section 12.5.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-3">Processors <span class="bcp14">SHOULD</span> follow redirects when requesting feed menu documents, subject to limits on loop, abuse, and similar error handling.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4">Processors <span class="bcp14">MUST</span> ignore unrecognised members of menu and feed objects. Likewise, they <span class="bcp14">MUST</span> ignore unrecognised objects in the menu object's items array.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-5">Processors <span class="bcp14">SHOULD</span> make menu object items available to users in the order they appear in the array. For example, a visual interface might make them available as a list. In some cases, however, they may be made available in another ordering (for example, a search interface).<a href="#section-4-5" class="pilcrow">¶</a></p>
+<p id="section-4-6">Processors <span class="bcp14">SHOULD NOT</span> display feed objects that do not have a link that they are able to follow -- for example, those using unsupported URI schemes. In some cases, this may be difficult for implementations to conform to; for example, if feed links are dispatched to separate software.<a href="#section-4-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana">
+<section id="section-5">
+      <h2 id="name-iana-considerations">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-5-1">IANA should register the following Well-Known URI:<a href="#section-5-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5-2.1">
+          <p id="section-5-2.1.1">URI Suffix: feed-menu.json<a href="#section-5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-2.2">
+          <p id="section-5-2.2.1">Change Controller: IETF<a href="#section-5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-2.3">
+          <p id="section-5-2.3.1">Specification document(s): [this document]<a href="#section-5-2.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
 </section>
 </div>
 <div id="security-considerations">
-<section id="section-5">
+<section id="section-6">
       <h2 id="name-security-considerations">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-5-1">Payment mechanisms for Web crawling undoubtedly have security implications and considerations, but beyond the aspects captured above, it is premature to characterise their nature.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-6-1">A malicious actor who gains write access to the well-known location can effectively hijack the subscription list for an entire site's audience.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-2">Clients that automatically fetch the feed menu document leak the fact that the user is interested in subscribing to feeds. In some views this might be a feature; it creates evidence that providing feeds would be beneficial to a publisher's audience. However, it is also a privacy risk.<a href="#section-6-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-combined-references">
-<section id="section-6">
+<section id="section-7">
       <h2 id="name-references">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-references" class="section-name selfRef">References</a>
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
 <div id="sec-normative-references">
-<section id="section-6.1">
+<section id="section-7.1">
         <h3 id="name-normative-references">
-<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
+<dt id="ATOM">[ATOM]</dt>
+        <dd>
+<span class="refAuthor">Nottingham, M., Ed.</span> and <span class="refAuthor">R. Sayre, Ed.</span>, <span class="refTitle">"The Atom Syndication Format"</span>, <span class="seriesInfo">RFC 4287</span>, <span class="seriesInfo">DOI 10.17487/RFC4287</span>, <time datetime="2005-12" class="refDate">December 2005</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4287">https://www.rfc-editor.org/rfc/rfc4287</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="HTTP">[HTTP]</dt>
+        <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="JSON">[JSON]</dt>
+        <dd>
+<span class="refAuthor">Bray, T., Ed.</span>, <span class="refTitle">"The JavaScript Object Notation (JSON) Data Interchange Format"</span>, <span class="seriesInfo">STD 90</span>, <span class="seriesInfo">RFC 8259</span>, <span class="seriesInfo">DOI 10.17487/RFC8259</span>, <time datetime="2017-12" class="refDate">December 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8259">https://www.rfc-editor.org/rfc/rfc8259</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RSS">[RSS]</dt>
+        <dd>
+<span class="refTitle">"RSS 2.0 Specification"</span>, <time datetime="2009-03" class="refDate">March 2009</time>, <span>&lt;<a href="https://www.rssboard.org/rss-specification">https://www.rssboard.org/rss-specification</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="WELL-KNOWN">[WELL-KNOWN]</dt>
+      <dd>
+<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Well-Known Uniform Resource Identifiers (URIs)"</span>, <span class="seriesInfo">RFC 8615</span>, <span class="seriesInfo">DOI 10.17487/RFC8615</span>, <time datetime="2019-05" class="refDate">May 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8615">https://www.rfc-editor.org/rfc/rfc8615</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
 </div>
 <div id="sec-informative-references">
-<section id="section-6.2">
+<section id="section-7.2">
         <h3 id="name-informative-references">
-<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
-<dt id="CENTRALIZATION">[CENTRALIZATION]</dt>
-        <dd>
-<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Centralization, Decentralization, and Internet Standards"</span>, <span class="seriesInfo">RFC 9518</span>, <span class="seriesInfo">DOI 10.17487/RFC9518</span>, <time datetime="2023-12" class="refDate">December 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9518">https://www.rfc-editor.org/rfc/rfc9518</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="EXTENSIBILITY">[EXTENSIBILITY]</dt>
-        <dd>
-<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">T. Pauly</span>, <span class="refTitle">"Long-Term Viability of Protocol Extension Mechanisms"</span>, <span class="seriesInfo">RFC 9170</span>, <span class="seriesInfo">DOI 10.17487/RFC9170</span>, <time datetime="2021-12" class="refDate">December 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9170">https://www.rfc-editor.org/rfc/rfc9170</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="PRIVACY">[PRIVACY]</dt>
+<dt id="DISCOVERY">[DISCOVERY]</dt>
       <dd>
-<span class="refAuthor">Cooper, A.</span>, <span class="refAuthor">Tschofenig, H.</span>, <span class="refAuthor">Aboba, B.</span>, <span class="refAuthor">Peterson, J.</span>, <span class="refAuthor">Morris, J.</span>, <span class="refAuthor">Hansen, M.</span>, and <span class="refAuthor">R. Smith</span>, <span class="refTitle">"Privacy Considerations for Internet Protocols"</span>, <span class="seriesInfo">RFC 6973</span>, <span class="seriesInfo">DOI 10.17487/RFC6973</span>, <time datetime="2013-07" class="refDate">July 2013</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6973">https://www.rfc-editor.org/rfc/rfc6973</a>&gt;</span>. </dd>
+<span class="refAuthor">WHATWG</span>, <span class="refTitle">"Feed Autodiscovery"</span>, <time datetime="2006-12" class="refDate">December 2006</time>, <span>&lt;<a href="https://blog.whatwg.org/feed-autodiscovery">https://blog.whatwg.org/feed-autodiscovery</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
 </div>
 </section>
 </div>
-<div id="authors-addresses">
+<div id="schema">
 <section id="appendix-A">
-      <h2 id="name-authors-addresses">
-<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      <h2 id="name-json-schema">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-json-schema" class="section-name selfRef">JSON Schema</a>
+      </h2>
+<div class="breakable lang-json sourcecode" id="appendix-A-1">
+<pre>
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Feed Menu Document",
+  "description": "Strict validation schema for draft-nottingham-feed-menu.md",
+  "type": "object",
+  "$ref": "#/$defs/menuObject",
+  "$defs": {
+    "menuObject": {
+      "type": "object",
+      "required": [
+        "feed-menu",
+        "items"
+      ],
+      "properties": {
+        "feed-menu": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/menuObject"
+              },
+              {
+                "$ref": "#/$defs/feedObject"
+              }
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "feedObject": {
+      "type": "object",
+      "required": [
+        "feed-title"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "rss"
+          ]
+        },
+        {
+          "required": [
+            "atom"
+          ]
+        }
+      ],
+      "properties": {
+        "feed-title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "rss": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "atom": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
+</pre><a href="#appendix-A-1" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="implementation">
+<section id="appendix-B">
+      <h2 id="name-implementation-status">
+<a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-implementation-status" class="section-name selfRef">Implementation Status</a>
+      </h2>
+<p id="appendix-B-1">A Web browser extension for presenting feed menus is available for Safari, Firefox, and Chrome here:
+  https://github.com/mnot/feedmenu-extension<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">The following Web site(s) have a demonstration feed menu:<a href="#appendix-B-2" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-B-3.1">
+          <p id="appendix-B-3.1.1">https://www.mnot.net/<a href="#appendix-B-3.1.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="appendix-B-4">(other implementations can be listed as the appear; please contact me)<a href="#appendix-B-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-C">
+      <h2 id="name-authors-address">
+<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
       </h2>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Mark Nottingham</span></div>
-<div dir="auto" class="left"><span class="org">Cloudflare</span></div>
 <div dir="auto" class="left"><span class="street-address">Melbourne</span></div>
 <div dir="auto" class="left"><span class="country-name">Australia</span></div>
 <div class="email">
@@ -1453,16 +1562,6 @@ appear in all capitals, as shown here.<a href="#section-1.2-1" class="pilcrow">�
 <div class="url">
 <span>URI:</span>
 <a href="https://www.mnot.net/" class="url">https://www.mnot.net/</a>
-</div>
-</address>
-<address class="vcard">
-        <div dir="auto" class="left"><span class="fn nameRole">Simon Newton</span></div>
-<div dir="auto" class="left"><span class="org">Cloudflare</span></div>
-<div dir="auto" class="left"><span class="street-address">Cambridge</span></div>
-<div dir="auto" class="left"><span class="country-name">United Kingdom</span></div>
-<div class="email">
-<span>Email:</span>
-<a href="mailto:rfc@simonnewton.com" class="email">rfc@simonnewton.com</a>
 </div>
 </address>
 </section>
