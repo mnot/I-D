@@ -147,7 +147,7 @@ Menu objects can contain other menu objects to represent a nested structure. For
 A feed object is a JSON object with a "feed-title" member. Its potential members are:
 
 * "feed-title": A short human readable title for the feed (REQUIRED)
-* "description": A potentially longer human readable description of the feed's purpose or content (OPTIONAL)
+* "description": A potentially longer human readable description of the feed's purpose or content; can further explain or augment the title (OPTIONAL)
 * "rss": A URL to retrieve a RSS representation of the feed (see below)
 * "atom": A URL to retrieve an Atom representation of the feed (see below)
 
@@ -161,11 +161,13 @@ For example, a feed menu document with a more elaborate feed object:
 
 ~~~json
 {
-  "feed-menu": "The Astor Theatre",
+  "feed-menu": "Australian Senate",
   "items": [
     {
-      "feed-title": "Upcoming Shows",
-      "rss": "/shows/upcoming.xml"
+      "feed-title": "Upcoming Senate Committee Inquiries",
+      "description": "Newly announced inquiries; includes calls for submissions",
+      "rss": "/inquiries/upcoming.rss",
+      "atom": "/inquiries/upcoming.atom"
     }
   ]
 }
