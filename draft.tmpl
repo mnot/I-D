@@ -24,7 +24,7 @@ author:
     name: Mark Nottingham
     organization:
     postal:
-      - Prahran
+      - Melbourne
     country: Australia
     email: mnot@mnot.net
     uri: https://www.mnot.net/
