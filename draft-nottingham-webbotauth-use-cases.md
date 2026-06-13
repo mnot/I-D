@@ -27,7 +27,7 @@ author:
       - Melbourne
     country: Australia
     email: mnot@mnot.net
-    uri: https://www.mnot.net/
+    uri: https://mnot.net/
 
 
 --- abstract

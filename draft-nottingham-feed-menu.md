@@ -27,7 +27,7 @@ author:
       - Melbourne
     country: Australia
     email: mnot@mnot.net
-    uri: https://www.mnot.net/
+    uri: https://mnot.net/
 
 normative:
   ATOM: RFC4287
@@ -302,7 +302,7 @@ A Web browser extension for presenting feed menus is available for Safari, Firef
 
 The following Web site(s) have a demonstration feed menu:
 
-* https://www.mnot.net/
+* https://mnot.net/
 
 (other implementations can be listed as the appear; please contact me)
 
