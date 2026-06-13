@@ -67,7 +67,7 @@ For a sub-policy to take effect, a given registry would need to opt into its use
 
 The "Standards" sub-policy of Specification Required adds a requirement that the cited specification(s) MUST be under the control of and published by an organization listed in the "IESG-Recognized Standards-Related Organizations" registry described in {{Section 3 of !I-D.ietf-ianabis-rfc7120bis}}.
 
-This sub-policy explicitly precludes registrations using Internet-Drafts as the basis of a registration. However, IETF efforts are still eligible for early allocation, per {{I-D.ietf-ianabis-rfc7120bis}}
+This sub-policy explicitly precludes registrations using Internet-Drafts as the basis of a registration. However, IETF efforts are still eligible for early allocation, per {{I-D.ietf-ianabis-rfc7120bis}}.
 
 Likewise, specifications from recognized organizations do not qualify for registration until they have completed the relevant processes there. However, preliminary and in-progress specifications might qualify for early allocation, per {{I-D.ietf-ianabis-rfc7120bis}}.
 
