@@ -32,7 +32,7 @@ author:
 
 --- abstract
 
-This document suggests sub-policies that refine the Specification Required registry policy in RFC 8126.
+This document defines sub-policies that refine the Specification Required registry policy in RFC 8126.
 
 --- middle
 
@@ -47,7 +47,7 @@ This document suggests sub-policies that refine the Specification Required regis
 
 {{Section 4.6.1 of I-D.ietf-ianabis-rfc8126bis}} goes on to enumerate common issues encountered in use of Specification Required, including use of Internet-Drafts as the citation, purchase-only specifications, and citing non-IETF standards.
 
-While this text offers improved clarity over the currently in-force specification, it does not address specifications that are defined outside formal standards processes. In some registries, it is increasingly common for registration requests to come from Open Source projects, community groups and non-profits, and motivated individuals.
+While this text offers improved clarity over the currently in-force guidance, it does not address specifications that are defined outside formal standards processes. In some registries, it is increasingly common for registration requests to come from Open Source projects, community groups and non-profits, and motivated individuals.
 
 At the same time, "permanent and readily available" is now arguably achievable for even the most ephemeral resource, thanks to cheap perpetual Web hosting (e.g., on GitHub) and archiving services (such as archive.org).
 
@@ -76,7 +76,7 @@ Organizations that appear in the "IESG-Recognized Standards-Related Organization
 
 ## Specification Required (Community) {#sp-community}
 
-The "Community" sub-policy of Specification Required adds a requirement that the cited specification(s) MUST either qualify under the Stadards sub-policy ({{sp-standards}}), or in the opinion of the Expert(s) be the product of a significant community effort.
+The "Community" sub-policy of Specification Required adds a requirement that the cited specification(s) MUST either qualify under the Standards sub-policy ({{sp-standards}}), or in the opinion of the Expert(s) be the product of a significant community effort.
 
 The Expert(s) SHOULD take the following factors into consideration when determining whether a specification is the product of a significant community effort:
 
@@ -85,9 +85,9 @@ The Expert(s) SHOULD take the following factors into consideration when determin
    *  The specification is not tied to or heavily associated with one implementation
    *  The use case addressed by the specification is using the registry's extension point appropriately
    *  The requested value is appropriate to the use case, and not so generic that it may be considered 'squatting'
-   *  There are multiple interoperable implementations of the specification, or they are likely to emerge
+   *  There are multiple interoperable implementations of the specification, or such implementations are likely to emerge
    *  There is evidence of broad adoption
-   *  There is no likely conflict with IETF work or known work at other recognised SDOs (present or future)
+   *  There is no likely conflict with IETF work or known work at other recognized SDOs (present or future)
 
 The Expert(s) have discretion in applying these criteria; in some cases, they might judge it best to register an entry that fails one or more.  The intent is to assure that successfully deployed community efforts have registered code points.  As such, the criteria above are designed to preclude anticipatory registrations.
 
@@ -98,14 +98,16 @@ Specifications whose registration is deemed to be the product of a significant c
 ## Specification Required (Permissive) {#sp-permissive}
 
 The "Permissive" sub-policy of Specification Required explicitly allows registration of
-any specification, regardless of who publishes it, that meets the "permanent and readily available" set by {{Section 4.6 of I-D.ietf-ianabis-rfc8126bis}}. This includes but is not limited to:
+any specification, regardless of who publishes it, that meets the "permanent and readily available" requirement set by {{Section 4.6 of I-D.ietf-ianabis-rfc8126bis}}. This includes but is not limited to:
 
 * Archived Internet-Drafts
-* Github repositories and similar data stores
+* GitHub repositories and similar data stores
 * Personal Web sites
 * Publicly available archive services
 
 The Expert(s) MAY define additional guidance and criteria for managing the name space of the registry (e.g., to avoid "squatting" on code points that are likely to be standardized).
+
+When this sub-policy is in effect, only registrations that qualify under the Standards sub-policy ({{sp-standards}}) are eligible for early allocation.
 
 
 # IANA Considerations
