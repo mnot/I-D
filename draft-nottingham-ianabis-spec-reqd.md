@@ -102,8 +102,9 @@ any specification, regardless of who publishes it, that meets the "permanent and
 
 * Archived Internet-Drafts
 * GitHub repositories and similar data stores
-* Personal Web sites
 * Publicly available archive services
+
+To qualify as "permanent and readily available", a specification SHOULD NOT be able to be made unavailable by the arbitrary decision or action of a single person. This precludes, for example, personal Web sites and personal GitHub repositories as suitable specification references, but MAY permit those operated by groups of people. Note that this requirement only applies to provision of the specification, not authorship.
 
 The Expert(s) MAY define additional guidance and criteria for managing the name space of the registry (e.g., to avoid "squatting" on code points that are likely to be standardized).
 
