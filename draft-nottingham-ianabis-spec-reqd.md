@@ -69,7 +69,7 @@ The "Standards" sub-policy of Specification Required adds a requirement that the
 
 This sub-policy explicitly precludes registrations using Internet-Drafts as the basis of a registration. However, IETF efforts are still eligible for early allocation, per {{I-D.ietf-ianabis-rfc7120bis}}.
 
-Likewise, specifications from recognized organizations do not qualify for registration until they have completed the relevant processes there. However, preliminary and in-progress specifications might qualify for early allocation, per {{I-D.ietf-ianabis-rfc7120bis}}.
+Likewise, specifications from recognized organizations do not qualify for registration until they have completed the relevant approval processes in those organizations. However, preliminary and in-progress specifications might qualify for early allocation, per {{I-D.ietf-ianabis-rfc7120bis}}.
 
 Organizations that appear in the "IESG-Recognized Standards-Related Organizations" registry are assumed to have met the "permanent and readily available" requirement for the purposes of this sub-policy, even if they charge for access to the specification. However, such organizations MUST provide a free copy to the Expert(s) for review.
 
