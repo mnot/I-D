@@ -81,24 +81,23 @@ The "Community" sub-policy of Specification Required adds a requirement that the
 The Expert(s) SHOULD take the following factors into consideration when determining whether a specification is the product of a significant community effort:
 
    *  The specification is well-defined and complete
-   *  The specification is freely available at a stable location
+   *  The specification is freely available to the public at a permanent and readily available location
    *  The specification is not tied to or heavily associated with one implementation
-   *  The use case addressed by the specification is using the registry's extension point appropriately
-   *  The requested value is appropriate to the use case, and not so generic that it may be considered 'squatting'
    *  There are multiple interoperable implementations of the specification, or such implementations are likely to emerge
    *  There is evidence of broad adoption
-   *  There is no likely conflict with IETF work or known work at other recognized SDOs (present or future)
+   *  The use case addressed by the specification is using the registry's extension point appropriately
+   *  The requested value is appropriate to the use case, and not so generic that it may be considered 'squatting'
 
-The Expert(s) have discretion in applying these criteria; in some cases, they might judge it best to register an entry that fails one or more.  The intent is to assure that successfully deployed community efforts have registered code points.  As such, the criteria above are designed to preclude anticipatory registrations.
+The Expert(s) have discretion in applying these criteria; in some cases, they might judge it best to register a value that fails one or more. The intent is to assure that successfully deployed community efforts have registered values. As such, the criteria above are designed to preclude anticipatory registrations.
 
-In addition, the Expert(s) MAY define additional guidance and criteria for managing the name space of the registry (e.g., to avoid "squatting" on code points that are likely to be standardized).
+In addition, the Expert(s) MAY define additional guidance and criteria for managing the name space of the registry (e.g., to avoid "squatting" on values that are likely to be standardized).
 
 Specifications whose registration is deemed to be the product of a significant community effort are not eligible for early allocation.
 
 ## Specification Required (Permissive) {#sp-permissive}
 
 The "Permissive" sub-policy of Specification Required explicitly allows registration of
-any specification, regardless of who publishes it, that meets the "permanent and readily available" requirement set by {{Section 4.6 of I-D.ietf-ianabis-rfc8126bis}}. This includes but is not limited to:
+a specification, regardless of who publishes it, that meets the requirements set by {{Section 4.6 of I-D.ietf-ianabis-rfc8126bis}}. This includes but is not limited to:
 
 * Archived Internet-Drafts
 * GitHub repositories and similar data stores
@@ -106,7 +105,9 @@ any specification, regardless of who publishes it, that meets the "permanent and
 
 To qualify as "permanent and readily available", a specification SHOULD NOT be able to be made unavailable by the arbitrary decision or action of a single person. This precludes, for example, personal Web sites and personal GitHub repositories as suitable specification references, but MAY permit those operated by groups of people. Note that this requirement only applies to provision of the specification, not authorship.
 
-The Expert(s) MAY define additional guidance and criteria for managing the name space of the registry (e.g., to avoid "squatting" on code points that are likely to be standardized).
+Note that {Section 4.6 of I-D.ietf-ianabis-rfc8126bis}} also requires a specification to be 'in sufficient detail so that interoperability between independent implementations is possible.' The Expert(s) determine this on a case-by-case basis, using any guidance available in the document(s) establishing the registry.
+
+The Expert(s) MAY define additional guidance and criteria for managing the name space of the registry (e.g., to avoid "squatting" on values that are likely to be standardized).
 
 When this sub-policy is in effect, only registrations that qualify under the Standards sub-policy ({{sp-standards}}) are eligible for early allocation.
 
