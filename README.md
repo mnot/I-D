@@ -1,6 +1,6 @@
 <!-- regenerate: on (set to off if you edit this file) -->
 
-# Internet Drafts
+# BINARY Drafts
 
 This is the working area for individual Internet-Drafts.
 
@@ -18,12 +18,12 @@ This is the working area for individual Internet-Drafts.
 * [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-blocking-best-practices)
 * [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-blocking-best-practices.diff)
 
-## HTTP Gateway Description Format
+## Feed Menus
 
-* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-gateway-description.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-gateway-description)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-gateway-description)
-* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-gateway-description.diff)
+* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-feed-menu.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-feed-menu)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-feed-menu)
+* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-feed-menu.diff)
 
 ## HTTP Availability Hints
 
@@ -39,19 +39,12 @@ This is the working area for individual Internet-Drafts.
 * [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-http-invalidation)
 * [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-http-invalidation.diff)
 
-## The Preliminary Request Denied HTTP Status Code
+## Specification Required Sub-Policies
 
-* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-httpbis-pre-denied.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-httpbis-pre-denied)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-httpbis-pre-denied)
-* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-httpbis-pre-denied.diff)
-
-## Architectural Considerations of Age Restriction
-
-* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-iab-age-restrictions.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-iab-age-restrictions)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-iab-age-restrictions)
-* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-iab-age-restrictions.diff)
+* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-ianabis-spec-reqd.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-ianabis-spec-reqd)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-ianabis-spec-reqd)
+* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-ianabis-spec-reqd.diff)
 
 ## Home Documents for HTTP APIs
 
@@ -60,33 +53,12 @@ This is the working area for individual Internet-Drafts.
 * [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-json-home)
 * [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-json-home.diff)
 
-## Requirements for Paid Web Crawling
-
-* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-paid-crawl-reqs.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-paid-crawl-reqs)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-paid-crawl-reqs)
-* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-paid-crawl-reqs.diff)
-
 ## Application Directives in robots.txt
 
 * [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-plan-b.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-plan-b)
 * [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-plan-b)
 * [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-plan-b.diff)
-
-## Public API Principles
-
-* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-public-apis.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-public-apis)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-public-apis)
-* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-public-apis.diff)
-
-## Well-Known Uniform Resource Identifiers (URIs)
-
-* [Editor's Copy](https://mnot.github.io/I-D/#go.draft-nottingham-rfc8615bis.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-nottingham-rfc8615bis)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-nottingham-rfc8615bis)
-* [Compare Editor's Copy to Individual Draft](https://mnot.github.io/I-D/#go.draft-nottingham-rfc8615bis.diff)
 
 ## Use Cases for Authentication of Web Bots
 
