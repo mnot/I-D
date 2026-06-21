@@ -102,6 +102,20 @@ View [saved issues](issues.html), or the latest GitHub [issues](https://github.c
 ||| [HTTP Availability Hints](draft-nottingham-ianabis-spec-reqd-00/draft-nottingham-http-availability-hints.html "HTTP Availability Hints (HTML)") | [plain text](draft-nottingham-ianabis-spec-reqd-00/draft-nottingham-http-availability-hints.txt "HTTP Availability Hints (Text)") | same as main |
 ||| [Specification Required Sub-Policies](draft-nottingham-ianabis-spec-reqd-00/draft-nottingham-ianabis-spec-reqd.html "Specification Required Sub-Policies (HTML)") | [plain text](draft-nottingham-ianabis-spec-reqd-00/draft-nottingham-ianabis-spec-reqd.txt "Specification Required Sub-Policies (Text)") | [diff with main](https://author-tools.ietf.org/api/iddiff?url_1=https://mnot.github.io/I-D/draft-nottingham-ianabis-spec-reqd.txt&url_2=https://mnot.github.io/I-D/draft-nottingham-ianabis-spec-reqd-00/draft-nottingham-ianabis-spec-reqd.txt) |
 
+## Preview for branch [draft-nottingham-ianabis-spec-reqd-02](draft-nottingham-ianabis-spec-reqd-02)
+
+| Draft |     |     |     |
+| ----- | --- | --- | --- |
+| [Application Directives in robots.txt](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-plan-b.html "Application Directives in robots.txt (HTML)") | [plain text](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-plan-b.txt "Application Directives in robots.txt (Text)") | same as main |
+| [Feed Menus](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-feed-menu.html "Feed Menus (HTML)") | [plain text](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-feed-menu.txt "Feed Menus (Text)") | same as main |
+| [Binary Structured HTTP Field Values](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-binary-structured-headers.html "Binary Structured HTTP Field Values (HTML)") | [plain text](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-binary-structured-headers.txt "Binary Structured HTTP Field Values (Text)") | same as main |
+| [An HTTP Cache Invalidation API](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-http-invalidation.html "An HTTP Cache Invalidation API (HTML)") | [plain text](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-http-invalidation.txt "An HTTP Cache Invalidation API (Text)") | same as main |
+| [Home Documents for HTTP APIs](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-json-home.html "Home Documents for HTTP APIs (HTML)") | [plain text](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-json-home.txt "Home Documents for HTTP APIs (Text)") | same as main |
+| [webbotauth usecases](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-webbotauth-use-cases.html "Use Cases for Authentication of Web Bots (HTML)") | [plain text](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-webbotauth-use-cases.txt "Use Cases for Authentication of Web Bots (Text)") | same as main |
+| [Blocking by IP Address](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-blocking-best-practices.html "Best Practices for Blocking Clients by IP Address (HTML)") | [plain text](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-blocking-best-practices.txt "Best Practices for Blocking Clients by IP Address (Text)") | same as main |
+| [HTTP Availability Hints](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-http-availability-hints.html "HTTP Availability Hints (HTML)") | [plain text](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-http-availability-hints.txt "HTTP Availability Hints (Text)") | same as main |
+| [Specification Required Sub-Policies](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-ianabis-spec-reqd.html "Specification Required Sub-Policies (HTML)") | [plain text](draft-nottingham-ianabis-spec-reqd-02/draft-nottingham-ianabis-spec-reqd.txt "Specification Required Sub-Policies (Text)") | same as main |
+
 ## Preview for branch [draft-nottingham-feed-menu-00](draft-nottingham-feed-menu-00)
 
 | Draft |     |     |     |
