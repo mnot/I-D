@@ -105,7 +105,7 @@ a specification, regardless of who publishes it, that meets the requirements set
 
 To qualify as "permanent and readily available", a specification SHOULD NOT be able to be made unavailable by the arbitrary decision or action of a single person. This precludes, for example, personal Web sites and personal GitHub repositories as suitable specification references, but MAY permit those operated by groups of people. Note that this requirement only applies to provision of the specification, not authorship.
 
-Note that {Section 4.6 of I-D.ietf-ianabis-rfc8126bis}} also requires a specification to be 'in sufficient detail so that interoperability between independent implementations is possible.' The Expert(s) determine this on a case-by-case basis, using any guidance available in the document(s) establishing the registry.
+Note that {{Section 4.6 of I-D.ietf-ianabis-rfc8126bis}} also requires a specification to be 'in sufficient detail so that interoperability between independent implementations is possible.' The Expert(s) determine this on a case-by-case basis, using any guidance available in the document(s) establishing the registry.
 
 The Expert(s) MAY define additional guidance and criteria for managing the name space of the registry (e.g., to avoid "squatting" on values that are likely to be standardized).
 
