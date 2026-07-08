@@ -103,6 +103,7 @@ A menu object is a JSON object with a "feed-menu" member. Its potential members 
 
 * "feed-menu": A short human readable title for the menu (REQUIRED)
 * "items": An array of menu objects and feed items.
+* "lang": The natural language of the intended audience of the menu, expressed as a Language-Tag {{!RFC5646}}The natural language of the intended audience of the feed item, expressed as a Language-Tag {{RFC5646}}
 
 Menu objects MAY contain other members, to be defined by updates to this specification. Likewise, the items array MAY contain other types of objects, to be defined by updates to this specification.
 
@@ -150,6 +151,7 @@ A feed item is a JSON object with a "feed-title" member. Its potential members a
 * "description": A potentially longer human readable description of the feed item's purpose or content; can further explain or augment the title (OPTIONAL)
 * "rss": A URL to retrieve a RSS representation of the feed item (see below)
 * "atom": A URL to retrieve an Atom representation of the feed item (see below)
+* "lang": The natural language of the intended audience of the feed item, expressed as a Language-Tag {{RFC5646}}
 
 One of "rss" or "atom" is REQUIRED; both MAY be present.
 
@@ -166,6 +168,7 @@ For example, a feed menu document with a more elaborate feed item:
     {
       "feed-title": "Upcoming Senate Committee Inquiries",
       "description": "Newly announced inquiries; includes calls for submissions",
+      "lang": "en",
       "rss": "/inquiries/upcoming.rss",
       "atom": "/inquiries/upcoming.atom"
     }
@@ -181,7 +184,40 @@ Feed menu documents are published at the "feed-menu.json" well-known URI {{WELL-
 https://www.example.com/.well-known/feed-menu.json
 ~~~
 
-If the Web site supports multiple languages, publishers can use HTTP proactive negotiation to make different languages available to processors. Publishers generally SHOULD NOT mix languages in the same feed menu document, although there may be cases where this is done intentionally.
+If the Web site supports multiple languages, its publisher can:
+
+1. Use HTTP proactive negotiation {{Section 12.1 of HTTP}} to server different feed menu documents to clients depending upon the Accept-Language request header field, and/or
+2. Publish a feed menu document with menu objects and/or feed items that declare their language.
+
+For example, the latter might look like:
+
+~~~json
+{
+  "feed-menu": "Special Broadcasting Service",
+  "items": [
+    {
+      "feed-menu": "SBS - English",
+      "lang": "en",
+      "items": [
+        {
+          "feed-title": "News",
+          "rss": "/en/news/feed.xml"
+        }
+      ]
+    },
+    {
+      "feed-menu": "SBS - O'zbekcha",
+      "lang": "uz",
+      "items": [
+        {
+          "feed-title": "Yangiliklar",
+          "rss": "/uz/news/feed.xml"
+        }
+      ]
+    }
+  ]
+}
+~~~
 
 It is RECOMMENDED that feed-titles be no longer than 50 characters, and that descriptions be no longer than 140 characters. However, processors SHOULD NOT strictly enforce these limits, although they may take measures to deal with long values.
 
@@ -192,7 +228,7 @@ Publishing software (for example, content management systems) SHOULD NOT automat
 
 Processors MUST only request feed menu documents from the "feed-menu.json" well-known URI.
 
-When requesting feed menu documents, processors SHOULD negotiate for content language using proactive negotiation; see {{Section 12.5.4 of HTTP}}.
+When requesting feed menu documents, processors SHOULD negotiate for content language using proactive negotiation; see {{Section 12.5.4 of HTTP}}. If the languages understood by the user is known to the processor, it SHOULD suppress any menu objects and feed items that declare a "lang" member that does not match.
 
 Processors SHOULD follow redirects when requesting feed menu documents, subject to limits on loop, abuse, and similar error handling.
 
