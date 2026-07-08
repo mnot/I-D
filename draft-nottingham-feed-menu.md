@@ -149,8 +149,8 @@ A feed item is a JSON object with a "feed-title" member. Its potential members a
 
 * "feed-title": A short human readable title for the feed item (REQUIRED)
 * "description": A potentially longer human readable description of the feed item's purpose or content; can further explain or augment the title (OPTIONAL)
-* "rss": A URL to retrieve a RSS representation of the feed item (see below)
-* "atom": A URL to retrieve an Atom representation of the feed item (see below)
+* "rss": A URL to retrieve a RSS {{RSS}} representation of the feed item (see below)
+* "atom": A URL to retrieve an Atom {{ATOM}} representation of the feed item (see below)
 * "lang": The natural language of the intended audience of the feed item, expressed as a Language-Tag {{RFC5646}}
 
 One of "rss" or "atom" is REQUIRED; both MAY be present.
