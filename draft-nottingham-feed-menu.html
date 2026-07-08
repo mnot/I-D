@@ -25,7 +25,7 @@
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.1
+    wcwidth 0.8.2
 -->
 <link href="draft-nottingham-feed-menu.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1044,11 +1044,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Feed Menus</td>
-<td class="right">June 2026</td>
+<td class="right">July 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Nottingham</td>
-<td class="center">Expires 23 December 2026</td>
+<td class="center">Expires 9 January 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1061,12 +1061,12 @@ svg {
 <dd class="internet-draft">draft-nottingham-feed-menu-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-06-21" class="published">21 June 2026</time>
+<time datetime="2026-07-08" class="published">8 July 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-12-23">23 December 2026</time></dd>
+<dd class="expires"><time datetime="2027-01-09">9 January 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1111,7 +1111,7 @@ svg {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 23 December 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 9 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1155,7 +1155,7 @@ svg {
                 <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-menu-objects" class="internal xref">Menu Objects</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
-                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-feed-objects" class="internal xref">Feed Objects</a></p>
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-feed-items" class="internal xref">Feed Items</a></p>
 </li>
             </ul>
 </li>
@@ -1200,7 +1200,7 @@ svg {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Autodiscovery of Web feeds (in formats such as RSS <span>[<a href="#RSS" class="cite xref">RSS</a>]</span> and Atom <span>[<a href="#ATOM" class="cite xref">ATOM</a>]</span>) using link relations in HTML <span>[<a href="#DISCOVERY" class="cite xref">DISCOVERY</a>]</span> is widely supported both by consuming software (e.g., feed readers) and Web sites (including in many content management systems).<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1">Automatic discovery of Web feeds (in formats such as RSS <span>[<a href="#RSS" class="cite xref">RSS</a>]</span> and Atom <span>[<a href="#ATOM" class="cite xref">ATOM</a>]</span>) using link relations in HTML <span>[<a href="#DISCOVERY" class="cite xref">DISCOVERY</a>]</span> is widely supported both by consuming software (e.g., feed readers) and Web sites (including in many content management systems).<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">Deployment of autodiscovery has uncovered significant issues with this approach.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">Because feed links are specific to a page, they are only apparent to software that can take advantage of them (for example, to show a 'subscribe' button) when that page is being viewed. This means that sites need to repeat the relevant feeds in the headmatter of all pages on a site to assure that they are viewable, creating overhead both in effort (to organise the pages) and bandwidth (to serve them).<a href="#section-1-3" class="pilcrow">¶</a></p>
 <p id="section-1-4">Practically, this means that it is often necessary to hunt around the pages of a site to find all of the relevant feeds, since sites are unwilling to repeat them on every page.<a href="#section-1-4" class="pilcrow">¶</a></p>
@@ -1252,7 +1252,10 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
             <p id="section-2.1-2.1.1">"feed-menu": A short human readable title for the menu (<span class="bcp14">REQUIRED</span>)<a href="#section-2.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-2.1-2.2">
-            <p id="section-2.1-2.2.1">"items": An array of menu objects and feed objects.<a href="#section-2.1-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-2.1-2.2.1">"items": An array of menu objects and feed items.<a href="#section-2.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.1-2.3">
+            <p id="section-2.1-2.3.1">"lang": The natural language of the intended audience of the menu, expressed as a Language-Tag <span>[<a href="#RFC5646" class="cite xref">RFC5646</a>]</span>The natural language of the intended audience of the feed item, expressed as a Language-Tag <span>[<a href="#RFC5646" class="cite xref">RFC5646</a>]</span><a href="#section-2.1-2.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-2.1-3">Menu objects <span class="bcp14">MAY</span> contain other members, to be defined by updates to this specification. Likewise, the items array <span class="bcp14">MAY</span> contain other types of objects, to be defined by updates to this specification.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
@@ -1295,28 +1298,31 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 </div>
 <div id="feed-object">
 <section id="section-2.2">
-        <h3 id="name-feed-objects">
-<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-feed-objects" class="section-name selfRef">Feed Objects</a>
+        <h3 id="name-feed-items">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-feed-items" class="section-name selfRef">Feed Items</a>
         </h3>
-<p id="section-2.2-1">A feed object is a JSON object with a "feed-title" member. Its potential members are:<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.2-1">A feed item is a JSON object with a "feed-title" member. Its potential members are:<a href="#section-2.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-2.2-2.1">
-            <p id="section-2.2-2.1.1">"feed-title": A short human readable title for the feed (<span class="bcp14">REQUIRED</span>)<a href="#section-2.2-2.1.1" class="pilcrow">¶</a></p>
+            <p id="section-2.2-2.1.1">"feed-title": A short human readable title for the feed item (<span class="bcp14">REQUIRED</span>)<a href="#section-2.2-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-2.2-2.2">
-            <p id="section-2.2-2.2.1">"description": A potentially longer human readable description of the feed's purpose or content; can further explain or augment the title (<span class="bcp14">OPTIONAL</span>)<a href="#section-2.2-2.2.1" class="pilcrow">¶</a></p>
+            <p id="section-2.2-2.2.1">"description": A potentially longer human readable description of the feed item's purpose or content; can further explain or augment the title (<span class="bcp14">OPTIONAL</span>)<a href="#section-2.2-2.2.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-2.2-2.3">
-            <p id="section-2.2-2.3.1">"rss": A URL to retrieve a RSS representation of the feed (see below)<a href="#section-2.2-2.3.1" class="pilcrow">¶</a></p>
+            <p id="section-2.2-2.3.1">"rss": A URL to retrieve a RSS representation of the feed item (see below)<a href="#section-2.2-2.3.1" class="pilcrow">¶</a></p>
 </li>
           <li class="normal" id="section-2.2-2.4">
-            <p id="section-2.2-2.4.1">"atom": A URL to retrieve an Atom representation of the feed (see below)<a href="#section-2.2-2.4.1" class="pilcrow">¶</a></p>
+            <p id="section-2.2-2.4.1">"atom": A URL to retrieve an Atom representation of the feed item (see below)<a href="#section-2.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-2.2-2.5">
+            <p id="section-2.2-2.5.1">"lang": The natural language of the intended audience of the feed item, expressed as a Language-Tag <span>[<a href="#RFC5646" class="cite xref">RFC5646</a>]</span><a href="#section-2.2-2.5.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 <p id="section-2.2-3">One of "rss" or "atom" is <span class="bcp14">REQUIRED</span>; both <span class="bcp14">MAY</span> be present.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
 <p id="section-2.2-4">URLs in "rss" and "atom" values <span class="bcp14">MAY</span> be relative, and <span class="bcp14">MUST</span> be resolved relative to the feed document's URL without a path. For example, if a feed document is located at "https://example.net/.well-known/feed-menu.json" and the "rss" member contains "feed.xml", the resulting RSS feed URL would be "https://example.net/feed.xml".<a href="#section-2.2-4" class="pilcrow">¶</a></p>
-<p id="section-2.2-5">Feed objects <span class="bcp14">MAY</span> contain other members, to be defined by updates to this specification.<a href="#section-2.2-5" class="pilcrow">¶</a></p>
-<p id="section-2.2-6">For example, a feed menu document with a more elaborate feed object:<a href="#section-2.2-6" class="pilcrow">¶</a></p>
+<p id="section-2.2-5">Feed items <span class="bcp14">MAY</span> contain other members, to be defined by updates to this specification.<a href="#section-2.2-5" class="pilcrow">¶</a></p>
+<p id="section-2.2-6">For example, a feed menu document with a more elaborate feed item:<a href="#section-2.2-6" class="pilcrow">¶</a></p>
 <div class="lang-json sourcecode" id="section-2.2-7">
 <pre>
 {
@@ -1325,6 +1331,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
     {
       "feed-title": "Upcoming Senate Committee Inquiries",
       "description": "Newly announced inquiries; includes calls for submissions",
+      "lang": "en",
       "rss": "/inquiries/upcoming.rss",
       "atom": "/inquiries/upcoming.atom"
     }
@@ -1347,9 +1354,47 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 https://www.example.com/.well-known/feed-menu.json
 </pre><a href="#section-3-2" class="pilcrow">¶</a>
 </div>
-<p id="section-3-3">If the Web site supports multiple languages, publishers can use HTTP proactive negotiation to make different languages available to processors. Publishers generally <span class="bcp14">SHOULD NOT</span> mix languages in the same feed menu document, although there may be cases where this is done intentionally.<a href="#section-3-3" class="pilcrow">¶</a></p>
-<p id="section-3-4">It is <span class="bcp14">RECOMMENDED</span> that feed-titles be no longer than 50 characters, and that descriptions be no longer than 140 characters. However, processors <span class="bcp14">SHOULD NOT</span> strictly enforce these limits, although they may take measures to deal with long values.<a href="#section-3-4" class="pilcrow">¶</a></p>
-<p id="section-3-5">Publishing software (for example, content management systems) <span class="bcp14">SHOULD NOT</span> automatically create feed menu documents, unless they have a high degree of certainty that the publisher is aware and that doing so is intentional.<a href="#section-3-5" class="pilcrow">¶</a></p>
+<p id="section-3-3">If the Web site supports multiple languages, its publisher can:<a href="#section-3-3" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3-4">
+<li id="section-3-4.1">
+          <p id="section-3-4.1.1">Use HTTP proactive negotiation <span><a href="https://rfc-editor.org/rfc/rfc9110#section-12.1" class="relref">Section 12.1</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span> to server different feed menu documents to clients depending upon the Accept-Language request header field, and/or<a href="#section-3-4.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-3-4.2">
+          <p id="section-3-4.2.1">Publish a feed menu document with menu objects and/or feed items that declare their language.<a href="#section-3-4.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-3-5">For example, the latter might look like:<a href="#section-3-5" class="pilcrow">¶</a></p>
+<div class="lang-json sourcecode" id="section-3-6">
+<pre>
+{
+  "feed-menu": "Special Broadcasting Service",
+  "items": [
+    {
+      "feed-menu": "SBS - English",
+      "lang": "en",
+      "items": [
+        {
+          "feed-title": "News",
+          "rss": "/en/news/feed.xml"
+        }
+      ]
+    },
+    {
+      "feed-menu": "SBS - O'zbekcha",
+      "lang": "uz",
+      "items": [
+        {
+          "feed-title": "Yangiliklar",
+          "rss": "/uz/news/feed.xml"
+        }
+      ]
+    }
+  ]
+}
+</pre><a href="#section-3-6" class="pilcrow">¶</a>
+</div>
+<p id="section-3-7">It is <span class="bcp14">RECOMMENDED</span> that feed-titles be no longer than 50 characters, and that descriptions be no longer than 140 characters. However, processors <span class="bcp14">SHOULD NOT</span> strictly enforce these limits, although they may take measures to deal with long values.<a href="#section-3-7" class="pilcrow">¶</a></p>
+<p id="section-3-8">Publishing software (for example, content management systems) <span class="bcp14">SHOULD NOT</span> automatically create feed menu documents, unless they have a high degree of certainty that the publisher is aware and that doing so is intentional.<a href="#section-3-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="processing">
@@ -1358,11 +1403,11 @@ https://www.example.com/.well-known/feed-menu.json
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-processing-feed-menus" class="section-name selfRef">Processing Feed Menus</a>
       </h2>
 <p id="section-4-1">Processors <span class="bcp14">MUST</span> only request feed menu documents from the "feed-menu.json" well-known URI.<a href="#section-4-1" class="pilcrow">¶</a></p>
-<p id="section-4-2">When requesting feed menu documents, processors <span class="bcp14">SHOULD</span> negotiate for content language using proactive negotiation; see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-12.5.4" class="relref">Section 12.5.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-2">When requesting feed menu documents, processors <span class="bcp14">SHOULD</span> negotiate for content language using proactive negotiation; see <span><a href="https://rfc-editor.org/rfc/rfc9110#section-12.5.4" class="relref">Section 12.5.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>. If the languages understood by the user is known to the processor, it <span class="bcp14">SHOULD</span> suppress any menu objects and feed items that declare a "lang" member that does not match.<a href="#section-4-2" class="pilcrow">¶</a></p>
 <p id="section-4-3">Processors <span class="bcp14">SHOULD</span> follow redirects when requesting feed menu documents, subject to limits on loop, abuse, and similar error handling.<a href="#section-4-3" class="pilcrow">¶</a></p>
-<p id="section-4-4">Processors <span class="bcp14">MUST</span> ignore unrecognised members of menu and feed objects. Likewise, they <span class="bcp14">MUST</span> ignore unrecognised objects in the menu object's items array.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-4">Processors <span class="bcp14">MUST</span> ignore unrecognised members of menu and feed items. Likewise, they <span class="bcp14">MUST</span> ignore unrecognised objects in the menu object's items array.<a href="#section-4-4" class="pilcrow">¶</a></p>
 <p id="section-4-5">Processors <span class="bcp14">SHOULD</span> make menu object items available to users in the order they appear in the array. For example, a visual interface might make them available as a list. In some cases, however, they may be made available in another ordering (for example, a search interface).<a href="#section-4-5" class="pilcrow">¶</a></p>
-<p id="section-4-6">Processors <span class="bcp14">SHOULD NOT</span> display feed objects that do not have a link that they are able to follow -- for example, those using unsupported URI schemes. In some cases, this may be difficult for implementations to conform to; for example, if feed links are dispatched to separate software.<a href="#section-4-6" class="pilcrow">¶</a></p>
+<p id="section-4-6">Processors <span class="bcp14">SHOULD NOT</span> display feed items that do not have a link that they are able to follow -- for example, those using unsupported URI schemes. In some cases, this may be difficult for implementations to conform to; for example, if feed links are dispatched to separate software.<a href="#section-4-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana">
@@ -1419,6 +1464,10 @@ https://www.example.com/.well-known/feed-menu.json
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5646">[RFC5646]</dt>
+        <dd>
+<span class="refAuthor">Phillips, A., Ed.</span> and <span class="refAuthor">M. Davis, Ed.</span>, <span class="refTitle">"Tags for Identifying Languages"</span>, <span class="seriesInfo">BCP 47</span>, <span class="seriesInfo">RFC 5646</span>, <span class="seriesInfo">DOI 10.17487/RFC5646</span>, <time datetime="2009-09" class="refDate">September 2009</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5646">https://www.rfc-editor.org/rfc/rfc5646</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
         <dd>
