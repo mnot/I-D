@@ -58,7 +58,7 @@ This specification defines Feed Menus, a simplified means of discovering the fee
 
 # Introduction
 
-Autodiscovery of Web feeds (in formats such as RSS {{RSS}} and Atom {{ATOM}}) using link relations in HTML {{DISCOVERY}} is widely supported both by consuming software (e.g., feed readers) and Web sites (including in many content management systems).
+Automatic discovery of Web feeds (in formats such as RSS {{RSS}} and Atom {{ATOM}}) using link relations in HTML {{DISCOVERY}} is widely supported both by consuming software (e.g., feed readers) and Web sites (including in many content management systems).
 
 Deployment of autodiscovery has uncovered significant issues with this approach.
 
@@ -102,7 +102,7 @@ For example, a minimal feed menu document:
 A menu object is a JSON object with a "feed-menu" member. Its potential members are:
 
 * "feed-menu": A short human readable title for the menu (REQUIRED)
-* "items": An array of menu objects and feed objects.
+* "items": An array of menu objects and feed items.
 
 Menu objects MAY contain other members, to be defined by updates to this specification. Likewise, the items array MAY contain other types of objects, to be defined by updates to this specification.
 
@@ -142,22 +142,22 @@ Menu objects can contain other menu objects to represent a nested structure. For
 ~~~
 
 
-## Feed Objects {#feed-object}
+## Feed Items {#feed-object}
 
-A feed object is a JSON object with a "feed-title" member. Its potential members are:
+A feed item is a JSON object with a "feed-title" member. Its potential members are:
 
-* "feed-title": A short human readable title for the feed (REQUIRED)
-* "description": A potentially longer human readable description of the feed's purpose or content; can further explain or augment the title (OPTIONAL)
-* "rss": A URL to retrieve a RSS representation of the feed (see below)
-* "atom": A URL to retrieve an Atom representation of the feed (see below)
+* "feed-title": A short human readable title for the feed item (REQUIRED)
+* "description": A potentially longer human readable description of the feed item's purpose or content; can further explain or augment the title (OPTIONAL)
+* "rss": A URL to retrieve a RSS representation of the feed item (see below)
+* "atom": A URL to retrieve an Atom representation of the feed item (see below)
 
 One of "rss" or "atom" is REQUIRED; both MAY be present.
 
 URLs in "rss" and "atom" values MAY be relative, and MUST be resolved relative to the feed document's URL without a path. For example, if a feed document is located at "https://example.net/.well-known/feed-menu.json" and the "rss" member contains "feed.xml", the resulting RSS feed URL would be "https://example.net/feed.xml".
 
-Feed objects MAY contain other members, to be defined by updates to this specification.
+Feed items MAY contain other members, to be defined by updates to this specification.
 
-For example, a feed menu document with a more elaborate feed object:
+For example, a feed menu document with a more elaborate feed item:
 
 ~~~json
 {
@@ -196,11 +196,11 @@ When requesting feed menu documents, processors SHOULD negotiate for content lan
 
 Processors SHOULD follow redirects when requesting feed menu documents, subject to limits on loop, abuse, and similar error handling.
 
-Processors MUST ignore unrecognised members of menu and feed objects. Likewise, they MUST ignore unrecognised objects in the menu object's items array.
+Processors MUST ignore unrecognised members of menu and feed items. Likewise, they MUST ignore unrecognised objects in the menu object's items array.
 
 Processors SHOULD make menu object items available to users in the order they appear in the array. For example, a visual interface might make them available as a list. In some cases, however, they may be made available in another ordering (for example, a search interface).
 
-Processors SHOULD NOT display feed objects that do not have a link that they are able to follow -- for example, those using unsupported URI schemes. In some cases, this may be difficult for implementations to conform to; for example, if feed links are dispatched to separate software.
+Processors SHOULD NOT display feed items that do not have a link that they are able to follow -- for example, those using unsupported URI schemes. In some cases, this may be difficult for implementations to conform to; for example, if feed links are dispatched to separate software.
 
 
 # IANA Considerations {#iana}
