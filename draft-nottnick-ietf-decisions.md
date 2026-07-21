@@ -19,7 +19,7 @@ pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
 
 venue:
   home: "https://projects.mnot.net/I-D/"
-  repo: "https://github.com/mnot/I-D/labels/SHORT"
+  repo: "https://github.com/mnot/I-D/labels/ietf-decisions"
 
 github-issue-label: ietf-decisions
 
