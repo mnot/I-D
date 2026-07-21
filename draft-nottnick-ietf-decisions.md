@@ -107,7 +107,7 @@ Decisions that require rough consensus MUST fulfil these requirements, as expand
 
 Only the consensus caller can determine consensus; participants cannot declare consensus, and should avoid attempting to characterise consensus before it is established.
 
-Working Groups are required to establish rough consensus to progress a document out of Working Group Last Call. Some groups only formally declare consensus on a document's content at that time; others make calls for consensus on selected decisions to establish agreement on parts of the design earlier in the process.
+Working Groups are required to establish rough consensus to progress a document in the process. Some groups only formally declare consensus on a document's content with a Working Group Last Call; others make calls for consensus on selected decisions to establish agreement on parts of the design earlier in the process.
 
 Consensus callers can informally determine consensus -- i.e., characterise the consensus of a group without a formal call or determination -- but this is necessarily more open to contestation than formally determined consensus.
 
@@ -136,13 +136,13 @@ support may be present, but the consensus caller should consider its strength. D
 
 If support is indicated for a proposal but there are objections, those objections need to be handled according to {{handling}}. These two evaluations are iterative, not sequential. Addressing an objection often alters the proposal, which then needs to be re-checked for support; a revised proposal may attract fresh objections. The consensus caller repeats both assessments until the proposal has substantial support with all objections handled.
 
-When determining support for a proposal, a consensus caller MAY give weight to interest by implementers or potential implementers, or lack thereof.
+When determining support for a technical proposal, a consensus caller MAY give weight to interest by implementers or potential implementers, or lack thereof.
 
-Authority is also bounded by decisions already settled at a broader level. The IETF reaches consensus on matters that apply across its work — architectural principles, and positions such as the treatment of pervasive monitoring as an attack {{?BCP188}}. Where such a decision applies, a g cannot set it aside by reaching its own local consensus; the broader decision is not within the group's authority to overturn. A group may apply a settled principle to its particular circumstances, and may surface genuinely new information that bears on it (which is grounds to revisit the broader decision through the appropriate body, not to depart from it locally). But local consensus does not override wider consensus.
+Authority is also bounded by decisions already settled at a broader level. The IETF reaches consensus on matters that apply across its work — architectural principles, and positions such as the treatment of pervasive monitoring as an attack {{?BCP188}}. Where such a decision applies, a group cannot set it aside by reaching its own local consensus; the broader decision is not within the group's authority to overturn. A group may apply a settled principle to its particular circumstances, and may surface genuinely new information that bears on it (which is grounds to revisit the broader decision through the appropriate body, not to depart from it locally). But local consensus does not override wider consensus.
 
 ## Handling Objections {#handling}
 
-Objections to a proposal that otherwise are first considered by the consensus caller. Trivial and off-topic objections can be discarded outright. Objections that have already been handled can be satisfied by a reference to the previously handled objection, so long as they are comparable.
+Objections to a proposal are first considered by the consensus caller. Trivial and off-topic objections can be discarded outright. Objections that have already been handled can be satisfied by a reference to the previously handled objection, so long as they are comparable.
 
 Substantial and new objections need to be understood fully by the group. This puts a burden on the party making the objection to explain its nature and relevance, and on the group to appreciate and consider it. Successful objection handling is characterised by dialogue and introspection by all parties, with the goal of achieving a consensus that produces the best outcome for the Internet's users.
 
@@ -165,7 +165,7 @@ Likewise, establishing the time and location of an interim meeting does not requ
 
 Many decisions are characterised as "editorial" -- that is, they are about how a design is documented, encompassing style, phrasing, organisation of the document and similar issues. Subjecting such decisions to the consensus process is not a good use of the group's time.
 
-Not requiring consensus does not mean that these decisions can be made unilaterally or without consultation. A draft that has little chance of gaining consensus is a waste of the group's time, and a meeting scheduled at a time or place that makes it impossible for contributors to attend is unlikely to be productive. In some cases, editorial decisions do have impact on adoption and implementation (for example, naming of protocol elements). Objections to these decisions SHOULD be considered, but need not be handled according to the consensus process. Instead, we rely upon other checks and balances to assure good outcomes.
+Not requiring consensus does not mean that these decisions can be made unilaterally or without consultation. Adopting a draft that has little chance of gaining consensus is a waste of the group's time, and a meeting scheduled at a time or place that makes it impossible for contributors to attend is unlikely to be productive. In some cases, editorial decisions do have impact on adoption and implementation (for example, naming of protocol elements). Objections to these decisions SHOULD be considered, but need not be handled according to the consensus process. Instead, we rely upon other checks and balances to assure good outcomes.
 
 Specifically, non-consensus decisions can also be appealed (see {{Section 6.5 of RFC2026}}); however, lack of consensus is not a valid basis.
 
