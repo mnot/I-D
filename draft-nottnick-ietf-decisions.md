@@ -1,7 +1,7 @@
 ---
 title: Making Decisions in the IETF
 abbrev:
-docname: draft-nottingham-ietf-decisions-latest
+docname: draft-nottnick-ietf-decisions-latest
 date: {DATE}
 category: bcp
 updates: 2418
