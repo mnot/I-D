@@ -145,7 +145,7 @@ When determining support for a technical proposal, a consensus caller MAY give w
 
 Objections to a proposal are first considered by the consensus caller. Trivial and off-topic objections can be discarded outright. Objections that have already been handled can be satisfied by a reference to the previously handled objection, so long as they are comparable.
 
-Substantial and new objections need to be understood fully by the group. This puts a burden on the party making the objection to explain its nature and relevance, and on the group to appreciate and consider it. Successful objection handling is characterised by dialogue and introspection by all parties, with the goal of achieving a consensus that produces the best outcome for the Internet's users.
+Substantial new objections need to be understood fully by the group. This puts a burden on the party making the objection to explain its nature and relevance, and on the group to appreciate and consider it. Successful objection handling is characterised by dialogue and introspection by all parties, with the goal of achieving a consensus that produces the best outcome for the Internet's users.
 
 If an objection nevertheless persists after full consideration, the consensus caller should make a determination of its disposition.
 
