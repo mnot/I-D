@@ -121,6 +121,8 @@ All decisions MUST be within the authority of the body making them. For Working 
 
 This does not mean that a charter needs to enumerate all questions that a group makes decisions upon; assuring authority is a necessarily interpretive act. When there is a dispute about the authority to make a given decision, the consensus caller will make a determination. Like all decisions, this is appealable.
 
+Authority is also bounded by decisions already settled at a broader level. The IETF reaches consensus on matters that apply across its work — architectural principles, and positions such as the treatment of pervasive monitoring as an attack {{?BCP188}}. Where such a decision applies, a group cannot set it aside by reaching its own local consensus; the broader decision is not within the group's authority to overturn. A group may apply a settled principle to its particular circumstances, and may surface genuinely new information that bears on it (which is grounds to revisit the broader decision through the appropriate body, not to depart from it locally). But local consensus does not override wider consensus.
+
 ## Determining Support
 
 All decisions MUST demonstrate substantial support within the group for the outcome.
@@ -138,7 +140,6 @@ If support is indicated for a proposal but there are objections, those objection
 
 When determining support for a technical proposal, a consensus caller MAY give weight to interest by implementers or potential implementers, or lack thereof.
 
-Authority is also bounded by decisions already settled at a broader level. The IETF reaches consensus on matters that apply across its work — architectural principles, and positions such as the treatment of pervasive monitoring as an attack {{?BCP188}}. Where such a decision applies, a group cannot set it aside by reaching its own local consensus; the broader decision is not within the group's authority to overturn. A group may apply a settled principle to its particular circumstances, and may surface genuinely new information that bears on it (which is grounds to revisit the broader decision through the appropriate body, not to depart from it locally). But local consensus does not override wider consensus.
 
 ## Handling Objections {#handling}
 
