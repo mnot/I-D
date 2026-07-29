@@ -1,5 +1,5 @@
 ---
-title: Making Decisions in the IETF
+title: Making Decisions in IETF Working Groups
 abbrev:
 docname: draft-nottnick-ietf-decisions-latest
 date: {DATE}
@@ -46,7 +46,7 @@ author:
 
 --- abstract
 
-This document specifies Best Current Practice for making decisions within the IETF process.
+This document specifies Best Current Practice for making decisions in IETF Working Groups.
 
 It updates {{Section 3.3 of ?RFC2418}}.
 
@@ -55,7 +55,7 @@ It updates {{Section 3.3 of ?RFC2418}}.
 
 # Introduction
 
-The IETF guides its decisions with "rough consensus and running code." However, {{?BCP9}} does not explicitly define how consensus is achieved; it only highlights the importants of "broad" consensus.
+The IETF guides its decisions with "rough consensus and running code." However, {{?BCP9}} does not explicitly define how that consensus is achieved; it only highlights the importants of "broad" consensus.
 
 {{Section 3.3 of ?RFC2418}} is more detailed:
 
@@ -71,7 +71,7 @@ The IETF guides its decisions with "rough consensus and running code." However, 
     better than rough.  It is up to the Chair to determine if rough
     consensus has been reached.
 
-While this guidance has served the IETF well for more than thirty years, the IETF community has grown, and the decisions we make are more relevant than ever to society. To help both participants and those who use our standards understand our process, this document outlines the procedures we use to make decisions in more detail. It is not intended to establish new policy, only articulate existing practices more carefully.
+While this guidance has served the IETF well for more than thirty years, the IETF community has grown, and the decisions we make are more relevant than ever to society. To help both participants and those who use our standards understand our process, this document outlines the procedures we use to make Working Group decisions in more detail. It is not intended to establish new policy, only articulate existing practices more carefully.
 
 {{principles}} outlines the principles that guide the rest of this document. {{consensus}} provides guidelines for making decisions that require consensus; {{non-consensus}} notes the kinds of decisions that do not require consensus.
 
