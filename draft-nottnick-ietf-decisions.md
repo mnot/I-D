@@ -103,7 +103,7 @@ Decisions that require rough consensus MUST fulfil these requirements, as expand
 
 0. The decision is within the authority of the body
 1. The outcome has sufficient support
-2. Any objections have been handled
+2. Any objections have been addressed
 
 Only the consensus caller can determine consensus; participants cannot declare consensus, and should avoid attempting to characterise consensus before it is established.
 
@@ -113,7 +113,7 @@ Consensus callers can informally determine consensus -- i.e., characterise the c
 
 Once rough consensus is established and documented, it can only be reconsidered if genuinely new information becomes available. The consensus caller determines whether this bar is met; like other decisions, that determination is appealable.
 
-To avoid confusion, make our process and the status of decisions legible to newcomers, and facilitate review, groups SHOULD maintain a record of decisions, including characterisation of support and any objections indicating the disposition of their handling. This might be in e-mail, a publicly available document, or an issues list.
+To avoid confusion, make our process and the status of decisions legible to newcomers, and facilitate review, groups SHOULD maintain a record of decisions, including characterisation of support and any objections indicating their disposition. This might be in e-mail, a publicly available document, or an issues list.
 
 ## Assuring Authority
 
@@ -136,25 +136,25 @@ If a significant number participants indicate support for a proposal and there a
 If a small number of partipants indicate support for a proposal and there are no objections,
 support may be present, but the consensus caller should consider its strength. Depending on the nature of the decision, more time or another call for consensus may be necessary. Again, "small" is contextual and requires interpretation by the consensus caller.
 
-If support is indicated for a proposal but there are objections, those objections need to be handled according to {{handling}}. These two evaluations are iterative, not sequential. Addressing an objection often alters the proposal, which then needs to be re-checked for support; a revised proposal may attract fresh objections. The consensus caller repeats both assessments until the proposal has substantial support with all objections handled.
+If support is indicated for a proposal but there are objections, those objections need to be addressed according to {{handling}}. These two evaluations are iterative, not sequential. Addressing an objection often alters the proposal, which then needs to be re-checked for support; a revised proposal may attract fresh objections. The consensus caller repeats both assessments until the proposal has substantial support with all objections addressed.
 
 When determining support for a technical proposal, a consensus caller MAY give weight to interest by implementers or potential implementers, or lack thereof.
 
 
-## Handling Objections {#handling}
+## Addressing Objections {#handling}
 
-Objections to a proposal are first considered by the consensus caller. Trivial and off-topic objections can be discarded outright. Objections that have already been handled can be satisfied by a reference to the previously handled objection, so long as they are comparable.
+Objections to a proposal are first considered by the consensus caller. Trivial and off-topic objections can be discarded outright. Objections that have already been addressed can be satisfied by a reference to the previously addressed objection, so long as they are comparable.
 
-Substantial new objections need to be understood fully by the group. This puts a burden on the party making the objection to explain its nature and relevance, and on the group to appreciate and consider it. Successful objection handling is characterised by dialogue and introspection by all parties, with the goal of achieving a consensus that produces the best outcome for the Internet's users.
+Substantial new objections need to be understood fully by the group. This puts a burden on the party making the objection to explain its nature and relevance, and on the group to appreciate and consider it. Successfully addressing an objection is characterised by dialogue and introspection by all parties, with the goal of achieving a consensus that produces the best outcome for the Internet's users.
 
 If an objection nevertheless persists after full consideration, the consensus caller should make a determination of its disposition.
 
 A persistent objection has one of two dispositions. It is upheld when the consensus caller finds it coherent and on the merits, and not addressed by the group. An upheld objection means rough consensus has not been reached for the proposal as it stands; the proposal must be revised, the objection otherwise addressed, or the decision deferred.
 
-It is discounted when, after full consideration, the consensus caller finds it does not bear on the merits — for instance, it is incoherent, cannot be explained by the person raising it, restates an already-handled objection without new grounds, or has been answered by the group without substantive reply. A discounted objection does not prevent a finding of rough consensus.
+It is discounted when, after full consideration, the consensus caller finds it does not bear on the merits — for instance, it is incoherent, cannot be explained by the person raising it, restates an already-addressed objection without new grounds, or has been answered by the group without substantive reply. A discounted objection does not prevent a finding of rough consensus.
 The consensus caller records the disposition and its basis. Either determination can be appealed."
 
-As with other aspects of decision making in the IETF, objection handling can be appealed; see {{Section 6.5 of RFC2026}}.
+As with other aspects of decision making in the IETF, how an objection is addressed can be appealed; see {{Section 6.5 of RFC2026}}.
 
 # Non-Consensus Decisions {#non-consensus}
 
@@ -166,7 +166,7 @@ Likewise, establishing the time and location of an interim meeting does not requ
 
 Many decisions are characterised as "editorial" -- that is, they are about how a design is documented, encompassing style, phrasing, organisation of the document and similar issues. Subjecting such decisions to the consensus process is not a good use of the group's time.
 
-Not requiring consensus does not mean that these decisions can be made unilaterally or without consultation. Adopting a draft that has little chance of gaining consensus is a waste of the group's time, and a meeting scheduled at a time or place that makes it impossible for contributors to attend is unlikely to be productive. In some cases, editorial decisions do have impact on adoption and implementation (for example, naming of protocol elements). Objections to these decisions SHOULD be considered, but need not be handled according to the consensus process. Instead, we rely upon other checks and balances to assure good outcomes.
+Not requiring consensus does not mean that these decisions can be made unilaterally or without consultation. Adopting a draft that has little chance of gaining consensus is a waste of the group's time, and a meeting scheduled at a time or place that makes it impossible for contributors to attend is unlikely to be productive. In some cases, editorial decisions do have impact on adoption and implementation (for example, naming of protocol elements). Objections to these decisions SHOULD be considered, but need not be addressed according to the consensus process. Instead, we rely upon other checks and balances to assure good outcomes.
 
 Specifically, non-consensus decisions can also be appealed (see {{Section 6.5 of RFC2026}}); however, lack of consensus is not a valid basis.
 
