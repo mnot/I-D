@@ -168,6 +168,8 @@ An objection might be invalid if it is trivial, nonsensical, poorly described, o
 
 Provided they are not invalid, objections need to be understood fully by the group. This puts a burden on the party making the objection to explain its nature and relevance, and on the group to appreciate and consider it. Successfully addressing an objection is characterised by dialogue and introspection by all parties, with the goal of achieving a consensus that produces the best outcome for the Internet's users.
 
+Consensus callers manage the discussion; they can ask that a well-worn argument not be repeated, or that a call for consensus collect positions rather than restart the debate. Doing so does not dispose of any objection -- only the outcomes listed above do that.
+
 Once an objection is understood and has been discussed by the group, the consensus caller weighs the arguments.
 
 The best outcome is one that is, after discussion, palatable to all; often, this is determined through polls that ask if participants "can live with" that outcome. When successful, this removes the objection, but the consensus caller is still required to determine a sufficient level of support for that resolution; see {{support}}.
