@@ -93,7 +93,7 @@ Our work must also conclude. We use "rough consensus" because requiring unanimit
 
 We do not recognise authorities. An objection is not accepted merely on the basis of the title or purported expertise of the person(s) making it. This is especially true of an objection put forward by the consensus caller themself. The objection must stand or fall on its own merits. Certainly a consensus caller may be inclined to exercise more diligence if someone with relevant expertise has made the objection, but that is no substitute for actually making the judgement of whether the objection has been heard, understood, and addressed.
 
-We do not allow ballot stuffing. As a corollary to the above, even an overwhelming majority of voices simply stating an objection does not necessarily indicate a lack of consensus. If the people making those objections are not making a coherent claim, cannot explain the reasoning behind their objections, or cannot explain why the group's answers to their objections are inadequate, such objections can be dismissed on the merits.
+We do not allow ballot stuffing. Volume does not decide in either direction: a large number of voices simply stating an objection does not establish a lack of consensus, and a large number simply stating support does not establish its presence. In both cases the consensus caller weighs what was said, not how many said it.
 
 ## Notational Conventions
 
