@@ -129,6 +129,8 @@ This does not mean that a charter needs to enumerate all questions that a group 
 
 Authority is also bounded by decisions already settled at a broader level. The IETF reaches consensus on matters that apply across its work -- architectural principles, and positions such as the treatment of pervasive monitoring as an attack {{?BCP188}}. Where such a decision applies, a group cannot set it aside by reaching its own local consensus; the broader decision is not within the group's authority to overturn. A group may apply a settled principle to its particular circumstances, and may surface genuinely new information that bears on it (which is grounds to revisit the broader decision through the appropriate body, not to depart from it locally). But local consensus does not override wider consensus.
 
+Whether a broader decision applies at all is a separate question, and one the group can legitimately decide. For example, {{?BCP41}} gives strong guidance about congestion control, but a group might determine that the only environment its protocol can be deployed in is one where that guidance does not apply. Such a determination is itself a decision subject to this document: the reasoning for it needs to be stated explicitly and recorded, and like any other decision it is open to objection and appeal.
+
 ## Determining Support {#support}
 
 All consensus decisions MUST demonstrate substantial support within the group for the outcome.
