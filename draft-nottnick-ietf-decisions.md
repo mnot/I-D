@@ -206,7 +206,7 @@ When declaring the outcome of a consensus call, the consensus caller SHOULD expl
 * the options considered and the trade-offs between them, including the use cases weighed against each other;
 * what would constitute grounds to revisit the decision, if that is not obvious.
 
-Consensus decisions MUST be recorded; this might be in e-mail, a publicly available document, or an issues list. Such a record need not be formal.
+Consensus decisions MUST be recorded; this might be in e-mail, a publicly available document, or an issues list. Such a record need not be formal, but the consensus caller remains responsible for being able to cite their determinations.
 
 
 # Non-Consensus Decisions {#non-consensus}
