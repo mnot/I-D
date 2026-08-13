@@ -205,7 +205,7 @@ When declaring the outcome of a consensus call, the consensus caller SHOULD expl
 * the options considered and the trade-offs between them, including the use cases weighed against each other;
 * what would constitute grounds to revisit the decision, if that is not obvious.
 
-The more contested a decision, the more its declaration needs to explain itself. When participants ask how a determination was reached, answering generally serves the decision: an explanation is what allows those who disagree to see that their objections were weighed rather than counted, and a determination that cannot be explained invites appeal.
+The more contested a decision, the more its declaration needs to explain itself. A good explanation allows those who disagree to see that their objections were weighed rather than counted.
 
 Consensus decisions can be recorded in e-mail, a publicly available document, or an issues list. Such a record need not be formal, but the consensus caller remains responsible for being able to cite their determinations.
 
