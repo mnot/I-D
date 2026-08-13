@@ -121,6 +121,8 @@ To avoid confusion, make our process and the status of decisions legible to newc
 
 Once rough consensus is established and documented, it can only be reconsidered if genuinely new information becomes available. The consensus caller determines whether this bar is met; like other decisions, that determination is appealable.
 
+A call that does not establish consensus does not settle the question, and the consensus caller may make a further call. There are good reasons to do so: the proposal may have changed, more time may be needed, or a heated discussion may benefit from a pause. What a further call cannot do is establish consensus by attrition. Where the objections are unchanged and unaddressed, repeating the call does not address them.
+
 ## Assuring Authority {#authority}
 
 All consensus decisions MUST be within the authority of the body making them. For Working Groups, this means that they are required to be within the declared scope of the group's charter.
