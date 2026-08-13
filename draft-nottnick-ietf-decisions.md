@@ -95,7 +95,7 @@ We do not recognise authorities. An objection is not accepted merely on the basi
 
 We do not weigh the person. Participation is open and participants act as individuals, so a person's history with the group, their affiliation, and their reputation are not inputs to a determination. What is evaluated is what was said, not who said it.
 
-We do not allow ballot stuffing. Volume does not decide in either direction: a large number of voices simply stating an objection does not establish a lack of consensus, and a large number simply stating support does not establish its presence. In both cases the consensus caller weighs what was said, not how many said it.
+We do not allow ballot stuffing. Volume does not decide in either direction: a large number of voices simply stating an objection does not establish a lack of consensus, and a large number simply stating support does not establish its presence. In both cases the consensus caller weighs what was said, not how many said it. Where the people objecting are not making a coherent claim, cannot explain the reasoning behind their objections, or cannot explain why the group's answers to them are inadequate, those objections can be dismissed on the merits.
 
 ## Notational Conventions
 
