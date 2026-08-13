@@ -119,11 +119,11 @@ Consensus callers can informally determine consensus -- i.e., characterise the c
 
 Once rough consensus is established and documented, it can only be reconsidered if genuinely new information becomes available. The consensus caller determines whether this bar is met; like other decisions, that determination is appealable.
 
-To avoid confusion, make our process and the status of decisions legible to newcomers, and facilitate review, groups MUST maintain a record of decisions, including characterisation of support and any objections indicating their disposition. This might be in e-mail, a publicly available document, or an issues list.
+To avoid confusion, make our process and the status of decisions legible to newcomers, and facilitate review, groups record their consensus decisions; see {{communicating}}.
 
 ## Assuring Authority {#authority}
 
-All decisions MUST be within the authority of the body making them. For Working Groups, this means that they are required to be within the declared scope of the group's charter.
+All consensus decisions MUST be within the authority of the body making them. For Working Groups, this means that they are required to be within the declared scope of the group's charter.
 
 This does not mean that a charter needs to enumerate all questions that a group makes decisions upon; assuring authority is a necessarily interpretive act. When there is a dispute about the authority to make a given decision, the consensus caller will make a determination. Like all decisions, this is appealable.
 
@@ -131,7 +131,7 @@ Authority is also bounded by decisions already settled at a broader level. The I
 
 ## Determining Support {#support}
 
-All decisions MUST demonstrate substantial support within the group for the outcome.
+All consensus decisions MUST demonstrate substantial support within the group for the outcome.
 
 How support is determined is contextual. For uncontroversial topics that are uninteresting to many participants, expressed support may be sparse. Conversely, controversial topics may attract both strong support and opposition.
 
@@ -163,7 +163,7 @@ An objection to a decision is disposed of when:
 
 All but the third of these mean the objection has been addressed, and so does not prevent a finding of rough consensus.
 
-An objection might be invalid if it is trivial, nonsensical, poorly described, off-topic, out of charter, or already addressed. Invalid objections do not prevent a finding of rough consensus.
+An objection might be invalid if it is trivial, nonsensical, poorly described, off-topic, purely editorial, out of charter, or already addressed. Invalid objections do not prevent a finding of rough consensus.
 
 Provided they are not invalid, objections need to be understood fully by the group. This puts a burden on the party making the objection to explain its nature and relevance, and on the group to appreciate and consider it. Successfully addressing an objection is characterised by dialogue and introspection by all parties, with the goal of achieving a consensus that produces the best outcome for the Internet's users.
 
@@ -185,7 +185,7 @@ As with other aspects of decision making in the IETF, how an objection is addres
 
 ## Deciding Trade-offs {#tradeoffs}
 
-Some decisions have no option that is free of well-founded objections. Upholding every such objection would prevent the group from deciding anything. Here the consensus caller needs to weigh the options against each other.
+Some consensus decisions have no option that is free of well-founded objections. Upholding every such objection would prevent the group from deciding anything. Here the consensus caller needs to weigh the options against each other.
 
 Evaluating a trade-off requires being concrete about who is affected and how. Use cases are the usual vehicle for this: they make the consequences of each option legible, and an objection that cannot be tied to any use case is difficult to weigh. An objection is not weakened by raising a use case that the group had not previously considered; the group should determine whether that use case is within its scope, and if it is, weigh it alongside the others.
 
@@ -203,6 +203,8 @@ When declaring the outcome of a consensus call, the consensus caller SHOULD expl
 * the significant objections raised and their disposition;
 * the options considered and the trade-offs between them, including the use cases weighed against each other;
 * what would constitute grounds to revisit the decision, if that is not obvious.
+
+Consensus decisions MUST be recorded; this might be in e-mail, a publicly available document, or an issues list. Such a record need not be formal.
 
 
 # Non-Consensus Decisions {#non-consensus}
