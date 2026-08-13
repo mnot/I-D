@@ -55,7 +55,7 @@ It updates {{Section 3.3 of ?RFC2418}}.
 
 # Introduction
 
-The IETF guides its decisions with "rough consensus and running code." However, {{?BCP9}} does not explicitly define how that consensus is achieved; it only highlights the importants of "broad" consensus.
+The IETF guides its decisions with "rough consensus and running code." However, {{?BCP9}} does not explicitly define how that consensus is achieved; it only highlights the importance of "broad" consensus.
 
 {{Section 3.3 of ?RFC2418}} is more detailed:
 
@@ -71,9 +71,9 @@ The IETF guides its decisions with "rough consensus and running code." However, 
     better than rough.  It is up to the Chair to determine if rough
     consensus has been reached.
 
-While this guidance has served the IETF well for more than thirty years, the IETF community has grown, and the decisions we make are more relevant than ever to society. To help both participants and those who use our standards understand our process, this document outlines the procedures we use to make Working Group decisions in more detail. It is not intended to establish new policy, only articulate existing practices more carefully, including where those practices have diverged from the way {{?RFC2418}} described them.
+While this guidance has served the IETF well for more than thirty years, the IETF community has grown, and our decisions increasingly affect people who do not participate in them. To help both participants and those who use our standards understand our process, this document outlines the procedures we use to make Working Group decisions in more detail. It is not intended to establish new policy, only articulate existing practices more carefully.
 
-This document replaces {{Section 3.3 of ?RFC2418}}. Most of that text remains accurate, but three aspects of it have proven misleading and are not carried forward. Consensus is not determined by the "dominant view" prevailing; objections are disposed of on their merits, and the number of participants holding a view is not what settles the question. A show of hands, a hum, or a poll does not determine consensus; such mechanisms gauge support, which is one input to a determination made by the consensus caller (see {{support}}). And no proportion of the group -- neither 51% nor 99% -- establishes or fails to establish rough consensus, because it is not a vote.
+This document replaces {{Section 3.3 of ?RFC2418}}. Most of that text remains accurate. Three aspects of it, however, are not carried forward: practice has diverged from them, and they have proven misleading. Consensus is not determined by the "dominant view" prevailing; objections are disposed of on their merits, and the number of participants holding a view is not what settles the question. A show of hands, a hum, or a poll does not determine consensus; such mechanisms gauge support, which is one input to a determination made by the consensus caller (see {{support}}). And no proportion of the group -- neither 51% nor 99% -- establishes or fails to establish rough consensus, because it is not a vote.
 
 {{principles}} outlines the principles that guide the rest of this document. {{consensus}} provides guidelines for making decisions that require consensus; {{non-consensus}} notes the kinds of decisions that do not require consensus.
 
@@ -93,7 +93,7 @@ Our work must also conclude. We use "rough consensus" because requiring unanimit
 
 We do not recognise authorities. An objection is not accepted merely on the basis of the title or purported expertise of the person(s) making it. This is especially true of an objection put forward by the consensus caller themself. The objection must stand or fall on its own merits. Certainly a consensus caller may be inclined to exercise more diligence if someone with relevant expertise has made the objection, but that is no substitute for actually making the judgement of whether the objection has been heard, understood, and addressed.
 
-We do not allow ballot stuffing. As a corollary to the above, even an overwhelming majority of voices simply stating an objection does not necessarily indicate a lack of consensus. If the people making those objections are not making a coherent claim, cannot explain the reasoning behind their objections, or cannot explain why the answers to their objections are valid after given answers by the rest of the group, such objections can be dismissed on the merits.
+We do not allow ballot stuffing. As a corollary to the above, even an overwhelming majority of voices simply stating an objection does not necessarily indicate a lack of consensus. If the people making those objections are not making a coherent claim, cannot explain the reasoning behind their objections, or cannot explain why the group's answers to their objections are inadequate, such objections can be dismissed on the merits.
 
 ## Notational Conventions
 
@@ -111,15 +111,15 @@ Decisions that require rough consensus MUST fulfil these requirements, as expand
 1. The outcome has sufficient support
 2. Any objections have been addressed
 
-Only the consensus caller can determine consensus; participants cannot declare consensus, and should avoid attempting to characterise consensus before it is established.
+Only the consensus caller can determine consensus; participants cannot declare consensus, and should not characterise it before it is established.
 
 Working Groups are required to establish rough consensus to progress a document in the process. Some groups only formally declare consensus on a document's content with a Working Group Last Call; others make calls for consensus on selected decisions to establish agreement on parts of the design earlier in the process.
 
-Consensus callers can informally determine consensus -- i.e., characterise the consensus of a group without a formal call or determination -- but this is necessarily more open to contestation than formally determined consensus.
+Consensus callers can make an informal determination -- i.e., characterise the consensus of a group without a formal call -- but this is necessarily more open to contestation than a formal declaration.
+
+To avoid confusion, make our process and the status of decisions legible to newcomers, and facilitate review, groups MUST record their consensus decisions; see {{communicating}}. A failure to record a decision does not by itself invalidate it; the remedy is to produce the record.
 
 Once rough consensus is established and documented, it can only be reconsidered if genuinely new information becomes available. The consensus caller determines whether this bar is met; like other decisions, that determination is appealable.
-
-To avoid confusion, make our process and the status of decisions legible to newcomers, and facilitate review, groups record their consensus decisions; see {{communicating}}.
 
 ## Assuring Authority {#authority}
 
@@ -127,7 +127,7 @@ All consensus decisions MUST be within the authority of the body making them. Fo
 
 This does not mean that a charter needs to enumerate all questions that a group makes decisions upon; assuring authority is a necessarily interpretive act. When there is a dispute about the authority to make a given decision, the consensus caller will make a determination. Like all decisions, this is appealable.
 
-Authority is also bounded by decisions already settled at a broader level. The IETF reaches consensus on matters that apply across its work -- architectural principles, and positions such as the treatment of pervasive monitoring as an attack {{?BCP188}}. Where such a decision applies, a group cannot set it aside by reaching its own local consensus; the broader decision is not within the group's authority to overturn. A group may apply a settled principle to its particular circumstances, and may surface genuinely new information that bears on it (which is grounds to revisit the broader decision through the appropriate body, not to depart from it locally). But local consensus does not override wider consensus.
+Authority is also bounded by decisions already settled at a broader level. The IETF reaches consensus on matters that apply across its work -- architectural principles, and positions such as the treatment of pervasive monitoring as an attack {{?BCP188}}. Where such a decision applies, a group cannot set it aside by reaching its own local consensus; the broader decision is not within the group's authority to overturn. A group may apply a settled principle to its particular circumstances, and may raise genuinely new information that bears on it (which is grounds to revisit the broader decision through the appropriate body, not to depart from it locally). But local consensus does not override wider consensus.
 
 Whether a broader decision applies at all is a separate question, and one the group can legitimately decide. For example, {{?BCP41}} gives strong guidance about congestion control, but a group might determine that the only environment its protocol can be deployed in is one where that guidance does not apply. Such a determination is itself a decision subject to this document: the reasoning for it needs to be stated explicitly and recorded, and like any other decision it is open to objection and appeal. A determination of this kind usually rests on an assumption about the environment the protocol will be deployed in, and such assumptions have often proven wrong over time. Such determinations warrant caution.
 
@@ -139,12 +139,9 @@ How support is determined is contextual. For uncontroversial topics that are uni
 
 Often, the group will have two (or more) competing proposals under consideration. When this happens, relative support can be determined through mechanisms like polls.
 
-There is no exact proportion of the group that is required to demonstrate support in order for a proposal to be successful, because determining support is not a voting process.
-
 If a significant number of participants indicate support for a proposal and there are no objections, there is clearly support for that proposal. Here "significant" is contextual -- the consensus caller needs to consider how many participants have been active in the discussion, how long they have had to consider the proposal, and how likely objections are.
 
-If a small number of participants indicate support for a proposal and there are no objections,
-support may be present, but the consensus caller should consider its strength. Depending on the nature of the decision, more time or another call for consensus may be necessary. Again, "small" is contextual and requires interpretation by the consensus caller.
+If a small number of participants indicate support for a proposal and there are no objections, support may be present, but the consensus caller should consider its strength. Depending on the nature of the decision, more time or another call for consensus may be necessary. Again, "small" is contextual and requires interpretation by the consensus caller.
 
 If a proposal is determined to have support but there are objections, those objections need to be addressed according to {{handling}}. These two evaluations are iterative, not sequential. Addressing an objection often alters the proposal, which then needs to be re-checked for support; a revised proposal may attract fresh objections. The consensus caller repeats both assessments until the proposal has substantial support with all objections addressed.
 
@@ -163,13 +160,13 @@ An objection to a decision is disposed of when:
 4. The consensus caller rejects the objection
 5. The consensus caller finds it outweighed
 
-All but the third of these mean the objection has been addressed, and so does not prevent a finding of rough consensus.
+Except where the objection is upheld, all of these mean that the objection has been addressed, and so do not prevent a finding of rough consensus.
 
 An objection might be invalid if it is trivial, nonsensical, poorly described, off-topic, purely editorial, out of charter, or already addressed. Invalid objections do not prevent a finding of rough consensus.
 
 Provided they are not invalid, objections need to be understood fully by the group. This puts a burden on the party making the objection to explain its nature and relevance, and on the group to appreciate and consider it. Successfully addressing an objection is characterised by dialogue and introspection by all parties, with the goal of achieving a consensus that produces the best outcome for the Internet's users.
 
-Once an objection is understood and has been discussed by the group, the consensus caller considers the totality of arguments.
+Once an objection is understood and has been discussed by the group, the consensus caller weighs the arguments.
 
 The best outcome is one that is, after discussion, palatable to all; often, this is determined through polls that ask if participants "can live with" that outcome. When successful, this removes the objection, but the consensus caller is still required to determine a sufficient level of support for that resolution; see {{support}}.
 
@@ -189,7 +186,7 @@ As with other aspects of decision making in the IETF, how an objection is addres
 
 Some consensus decisions have no option that is free of well-founded objections. Upholding every such objection would prevent the group from deciding anything. Here the consensus caller needs to weigh the options against each other.
 
-Evaluating a trade-off requires being concrete about who is affected and how. Use cases are the usual vehicle for this: they make the consequences of each option legible, and an objection that cannot be tied to any use case is difficult to weigh. An objection is not weakened by raising a use case that the group had not previously considered; the group should determine whether that use case is within its scope, and if it is, weigh it alongside the others.
+Evaluating a trade-off requires being concrete about who is affected and how. Use cases are the usual vehicle for this: they make the consequences of each option explicit, and an objection that cannot be tied to any use case is difficult to weigh. An objection is not weakened by raising a use case that the group had not previously considered; the group should determine whether that use case is within its scope, and if it is, weigh it alongside the others.
 
 The alternatives to be weighed always include leaving the disputed element out and deferring the decision.
 
@@ -206,14 +203,14 @@ When declaring the outcome of a consensus call, the consensus caller SHOULD expl
 * the options considered and the trade-offs between them, including the use cases weighed against each other;
 * what would constitute grounds to revisit the decision, if that is not obvious.
 
-Consensus decisions MUST be recorded; this might be in e-mail, a publicly available document, or an issues list. Such a record need not be formal, but the consensus caller remains responsible for being able to cite their determinations.
+Consensus decisions can be recorded in e-mail, a publicly available document, or an issues list. Such a record need not be formal, but the consensus caller remains responsible for being able to cite their determinations.
 
 
 # Non-Consensus Decisions {#non-consensus}
 
 Some IETF decisions do not require a consensus process. In general, these can be characterised as administrative decisions that often have other established procedural requirements.
 
-For example, a Working Group chair does not need to establish consensus to adopt a draft as a work item, because that would necessitate going through the full process in {{consensus}} for the draft's content, effectively making it ready for publication.
+For example, a Working Group chair does not need to establish consensus to adopt a draft as a work item, because that would require the full process in {{consensus}} for the draft's content, effectively making it ready for publication.
 
 Likewise, establishing the time and location of an interim meeting does not require consensus, as doing so would introduce unreasonable overhead and endanger the group's work.
 
@@ -221,7 +218,9 @@ Many decisions are characterised as "editorial" -- that is, they are about how a
 
 Deciding the names of protocol elements can become contentious, but making them consensus decisions is rarely a good use of a group's time. Usually, they are best treated as editorial decisions taken with consultation.
 
-Not requiring consensus does not mean that these decisions can be made unilaterally or without consultation. Adopting a draft that has little chance of gaining consensus is a waste of the group's time, and a meeting scheduled at a time or place that makes it impossible for contributors to attend is unlikely to be productive. In some cases, editorial decisions do have impact on adoption and implementation (for example, naming of protocol elements). Objections to these decisions SHOULD be considered, but need not be addressed according to the consensus process. Instead, we rely upon other checks and balances to assure good outcomes.
+Decisions that do not require consensus still cannot be made unilaterally or without consultation. Adopting a draft that has little chance of gaining consensus is a waste of the group's time, and a meeting scheduled at a time or place that makes it impossible for contributors to attend is unlikely to be productive.
+
+In some cases, editorial decisions do have impact on adoption and implementation. Objections to these decisions SHOULD be considered, but need not be addressed according to the consensus process.
 
 Specifically, non-consensus decisions can also be appealed (see {{Section 6.5 of RFC2026}}); however, lack of consensus is not a valid basis.
 
@@ -231,7 +230,7 @@ This document has no considerations for IANA.
 
 # Security Considerations
 
-The consensus process is critical to Internet security overall -- it helps to assure that the protocols we build provide the properties that end users rely upon are present.
+The consensus process is critical to Internet security overall -- it helps assure that the protocols we build have the properties end users rely upon.
 
 --- back
 
