@@ -219,6 +219,8 @@ Likewise, establishing the time and location of an interim meeting does not requ
 
 Many decisions are characterised as "editorial" -- that is, they are about how a design is documented, encompassing style, phrasing, organisation of the document and similar issues. Subjecting such decisions to the consensus process is not a good use of the group's time.
 
+Deciding the names of protocol elements can become contentious, but experience shows that making them consensus decisions is rarely a good use of a group's time. Often, they are handled as editorial decisions, but ones that are taken with consultation, and objections to these decisions should be considered.
+
 Not requiring consensus does not mean that these decisions can be made unilaterally or without consultation. Adopting a draft that has little chance of gaining consensus is a waste of the group's time, and a meeting scheduled at a time or place that makes it impossible for contributors to attend is unlikely to be productive. In some cases, editorial decisions do have impact on adoption and implementation (for example, naming of protocol elements). Objections to these decisions SHOULD be considered, but need not be addressed according to the consensus process. Instead, we rely upon other checks and balances to assure good outcomes.
 
 Specifically, non-consensus decisions can also be appealed (see {{Section 6.5 of RFC2026}}); however, lack of consensus is not a valid basis.
