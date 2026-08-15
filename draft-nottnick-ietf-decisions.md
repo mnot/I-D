@@ -97,6 +97,12 @@ We do not weigh the person. Participation is open and participants act as indivi
 
 We do not allow ballot stuffing. Volume does not decide in either direction: a large number of voices simply stating an objection does not establish a lack of consensus, and a large number simply stating support does not establish its presence. In both cases the consensus caller weighs what was said, not how many said it. Where the people objecting are not making a coherent claim, cannot explain the reasoning behind their objections, or cannot explain why the group's answers to them are inadequate, those objections can be dismissed on the merits.
 
+We assume good faith. The process requires participants to state the reasons they actually hold, to consider the answers they are given, and to be open to persuasion; it works because most people do this. Someone participating strategically -- objecting to delay a decision, or restating a position without engaging with the response to it -- can stall a group indefinitely.
+
+The remedy is not to diagnose motive. An accusation of bad faith is rarely provable, and treating a sincere objection as insincere denies the objector the consideration this process exists to provide. The mechanisms here address the conduct without requiring a judgement about what lies behind it: an objection whose basis cannot be explained, or that does not engage with the group's answers, can be dismissed on the merits regardless of why it was raised (see {{handling}}), and a failed call cannot be made into consensus by repetition (see {{consensus}}).
+
+Where the problem is a participant's conduct rather than any particular objection, it is not a matter for the consensus process; see {{?BCP54}}.
+
 ## Notational Conventions
 
 {::boilerplate bcp14-tagged}
