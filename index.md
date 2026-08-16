@@ -30,6 +30,23 @@ View [saved issues](issues.html), or the latest GitHub [issues](https://github.c
 | [Blocking by IP Address](mnot-patch-1-2/draft-nottingham-blocking-best-practices.html "Best Practices for Blocking Clients by IP Address (HTML)") | [plain text](mnot-patch-1-2/draft-nottingham-blocking-best-practices.txt "Best Practices for Blocking Clients by IP Address (Text)") | same as main |
 | [Specification Required Sub-Policies](mnot-patch-1-2/draft-nottingham-ianabis-spec-reqd.html "Specification Required Sub-Policies (HTML)") | [plain text](mnot-patch-1-2/draft-nottingham-ianabis-spec-reqd.txt "Specification Required Sub-Policies (Text)") | same as main |
 
+## Preview for branch [mnot](mnot)
+
+## Preview for branch [mnot/simplify-objections](mnot/simplify-objections)
+
+| Draft |     |     |     |
+| ----- | --- | --- | --- |
+| [HTTP Availability Hints](mnot/simplify-objections/draft-nottingham-http-availability-hints.html "HTTP Availability Hints (HTML)") | [plain text](mnot/simplify-objections/draft-nottingham-http-availability-hints.txt "HTTP Availability Hints (Text)") | same as main |
+| [Application Directives in robots.txt](mnot/simplify-objections/draft-nottingham-plan-b.html "Application Directives in robots.txt (HTML)") | [plain text](mnot/simplify-objections/draft-nottingham-plan-b.txt "Application Directives in robots.txt (Text)") | same as main |
+| [webbotauth usecases](mnot/simplify-objections/draft-nottingham-webbotauth-use-cases.html "Use Cases for Authentication of Web Bots (HTML)") | [plain text](mnot/simplify-objections/draft-nottingham-webbotauth-use-cases.txt "Use Cases for Authentication of Web Bots (Text)") | same as main |
+| [Home Documents for HTTP APIs](mnot/simplify-objections/draft-nottingham-json-home.html "Home Documents for HTTP APIs (HTML)") | [plain text](mnot/simplify-objections/draft-nottingham-json-home.txt "Home Documents for HTTP APIs (Text)") | same as main |
+| [An HTTP Cache Invalidation API](mnot/simplify-objections/draft-nottingham-http-invalidation.html "An HTTP Cache Invalidation API (HTML)") | [plain text](mnot/simplify-objections/draft-nottingham-http-invalidation.txt "An HTTP Cache Invalidation API (Text)") | same as main |
+| [Feed Menus](mnot/simplify-objections/draft-nottingham-feed-menu.html "Feed Menus (HTML)") | [plain text](mnot/simplify-objections/draft-nottingham-feed-menu.txt "Feed Menus (Text)") | same as main |
+| [Making Decisions in IETF Working Groups](mnot/simplify-objections/draft-nottnick-ietf-decisions.html "Making Decisions in IETF Working Groups (HTML)") | [plain text](mnot/simplify-objections/draft-nottnick-ietf-decisions.txt "Making Decisions in IETF Working Groups (Text)") | [diff with main](https://author-tools.ietf.org/api/iddiff?url_1=https://mnot.github.io/I-D/draft-nottnick-ietf-decisions.txt&url_2=https://mnot.github.io/I-D/mnot/simplify-objections/draft-nottnick-ietf-decisions.txt) |
+| [Binary Structured HTTP Field Values](mnot/simplify-objections/draft-nottingham-binary-structured-headers.html "Binary Structured HTTP Field Values (HTML)") | [plain text](mnot/simplify-objections/draft-nottingham-binary-structured-headers.txt "Binary Structured HTTP Field Values (Text)") | same as main |
+| [Blocking by IP Address](mnot/simplify-objections/draft-nottingham-blocking-best-practices.html "Best Practices for Blocking Clients by IP Address (HTML)") | [plain text](mnot/simplify-objections/draft-nottingham-blocking-best-practices.txt "Best Practices for Blocking Clients by IP Address (Text)") | same as main |
+| [Specification Required Sub-Policies](mnot/simplify-objections/draft-nottingham-ianabis-spec-reqd.html "Specification Required Sub-Policies (HTML)") | [plain text](mnot/simplify-objections/draft-nottingham-ianabis-spec-reqd.txt "Specification Required Sub-Policies (Text)") | same as main |
+
 ## Preview for branch [mnot-patch-1](mnot-patch-1)
 
 | Draft |     |     |     |
