@@ -155,7 +155,7 @@ If a small number of participants indicate support for a proposal and there are 
 
 If a proposal is determined to have support but there are objections, those objections need to be addressed according to {{handling}}. These two evaluations are iterative, not sequential. Addressing an objection often alters the proposal, which then needs to be re-checked for support; a revised proposal may attract fresh objections. The consensus caller repeats both assessments until the proposal has substantial support with all objections addressed.
 
-When determining support for a technical proposal, a consensus caller MAY give weight to interest by implementers or potential implementers, or lack thereof. This is evidence about whether the proposal will be deployed, not standing given to the people expressing it.
+When determining support for a technical proposal, a consensus caller MAY give weight to interest by implementers or potential implementers, or lack thereof. This is evidence about whether the proposal will be deployed, not standing given to the people expressing it. A statement of intent to implement is weaker evidence than running code: existing implementations, interoperability results and deployment experience. {{?RFC7942}} describes one way for a document to record them.
 
 
 ## Addressing Objections {#handling}
