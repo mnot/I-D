@@ -4,7 +4,7 @@ abbrev:
 docname: draft-nottnick-ietf-decisions-latest
 date: {DATE}
 category: bcp
-updates: 2418
+updates: [2418, 7221]
 
 ipr: trust200902
 keyword:
@@ -48,7 +48,7 @@ author:
 
 This document specifies Best Current Practice for making decisions in IETF Working Groups.
 
-It updates {{Section 3.3 of ?RFC2418}}.
+It updates {{Section 3.3 of ?RFC2418}} and one aspect of {{?RFC7221}}.
 
 --- middle
 
@@ -224,7 +224,9 @@ Consensus decisions can be recorded in e-mail, a publicly available document, or
 
 Some IETF decisions do not require a consensus process. In general, these can be characterised as administrative decisions that often have other established procedural requirements.
 
-For example, a Working Group chair does not need to establish consensus to adopt a draft as a work item, because that would require the full process in {{consensus}} for the draft's content, effectively making it ready for publication.
+For example, a Working Group chair does not need to establish consensus to adopt a draft as a work item. Adoption commits the group's time rather than its agreement: the group takes on the problem and accepts the draft as a starting point, and its content remains entirely open. Requiring consensus to adopt would let objections stop the work before the discussion that would address them has begun.
+
+{{Section 1.1 of ?RFC7221}} describes adoption as needing Working Group rough consensus. Practice has diverged: chairs issue a call for adoption and read the response as an indication of interest and willingness to contribute, not as agreement to be determined under {{consensus}}. What constrains the decision instead is that it cannot be made without consultation, that it is appealable, and that a working group is not obliged to keep a draft it has adopted ({{Section 5.2 of ?RFC7221}}).
 
 Likewise, establishing the time and location of an interim meeting does not require consensus, as doing so would introduce unreasonable overhead and endanger the group's work.
 
