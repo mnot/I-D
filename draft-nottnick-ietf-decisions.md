@@ -73,7 +73,7 @@ The IETF guides its decisions with "rough consensus and running code." However, 
 
 While this guidance has served the IETF well for more than thirty years, the IETF community has grown, and our decisions increasingly affect people who do not participate in them. To help both participants and those who use our standards understand our process, this document outlines the procedures we use to make Working Group decisions in more detail. It is not intended to establish new policy, only articulate existing practices more carefully.
 
-Every document published in the IETF Stream carries a claim of IETF rough consensus {{?RFC8789}}. Working Group decisions are where most of that consensus is built, and this document describes how they are made.
+Every document published in the IETF Stream carries a claim of IETF rough consensus; see {{Section 3 of RFC8789}}. Working Group decisions are where most of that consensus is built, and this document describes how they are made.
 
 This document replaces {{Section 3.3 of ?RFC2418}}. Most of that text remains accurate. Three aspects of it, however, are not carried forward: practice has diverged from them, and they have proven misleading. Consensus is not determined by the "dominant view" prevailing; objections are disposed of on their merits, and the number of participants holding a view is not what settles the question. A show of hands, a hum, or a poll does not determine consensus; such mechanisms gauge support, which is one input to a determination made by the consensus caller (see {{support}}). And no proportion of the group -- neither 51% nor 99% -- establishes or fails to establish rough consensus, because it is not a vote.
 
