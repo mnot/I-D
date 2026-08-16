@@ -131,7 +131,7 @@ Once rough consensus is established and documented, it can only be reconsidered 
 
 A call that does not establish consensus does not settle the question, and the consensus caller may make a further call. There are good reasons to do so: the proposal may have changed, more time may be needed, or a heated discussion may benefit from a pause. What a further call cannot do is establish consensus by attrition. Where the objections are unchanged and unaddressed, repeating the call does not address them.
 
-Deferring a decision is a legitimate outcome, and sometimes the right one -- where a revised proposal, further background work, or more time to consider the options would change the discussion. Where nothing will be different when the question returns, deferring it postpones the work rather than advancing it.
+Deferring a decision is a legitimate outcome, and sometimes the right one -- where a revised proposal, further background work, or more time to consider the options would change the discussion. 
 
 ## Assuring Authority {#authority}
 
