@@ -73,6 +73,8 @@ The IETF guides its decisions with "rough consensus and running code." However, 
 
 While this guidance has served the IETF well for more than thirty years, the IETF community has grown, and our decisions increasingly affect people who do not participate in them. To help both participants and those who use our standards understand our process, this document outlines the procedures we use to make Working Group decisions in more detail. It is not intended to establish new policy, only articulate existing practices more carefully.
 
+Every document published in the IETF Stream carries a claim of IETF rough consensus {{?RFC8789}}. Working Group decisions are where most of that consensus is built, and this document describes how they are made.
+
 This document replaces {{Section 3.3 of ?RFC2418}}. Most of that text remains accurate. Three aspects of it, however, are not carried forward: practice has diverged from them, and they have proven misleading. Consensus is not determined by the "dominant view" prevailing; objections are disposed of on their merits, and the number of participants holding a view is not what settles the question. A show of hands, a hum, or a poll does not determine consensus; such mechanisms gauge support, which is one input to a determination made by the consensus caller (see {{support}}). And no proportion of the group -- neither 51% nor 99% -- establishes or fails to establish rough consensus, because it is not a vote.
 
 {{principles}} outlines the principles that guide the rest of this document. {{consensus}} provides guidelines for making decisions that require consensus; {{non-consensus}} notes the kinds of decisions that do not require consensus.
@@ -95,7 +97,7 @@ We do not recognise authorities. An objection is not accepted merely on the basi
 
 We do not weigh the person. Participation is open and participants act as individuals, so a person's history with the group, their affiliation, and their reputation are not inputs to a determination. What is evaluated is what was said, not who said it.
 
-We do not allow ballot stuffing. Volume does not decide in either direction: a large number of voices simply stating an objection does not establish a lack of consensus, and a large number simply stating support does not establish its presence. In both cases the consensus caller weighs what was said, not how many said it. Where the people objecting are not making a coherent claim, cannot explain the reasoning behind their objections, or cannot explain why the group's answers to them are inadequate, those objections can be dismissed on the merits.
+We do not allow ballot stuffing. Volume does not decide in either direction: a large number of voices simply stating an objection does not establish a lack of consensus, and a large number simply stating support does not establish its presence. In both cases the consensus caller weighs what was said, not how many said it. This is also what prevents any single person, company or interest group from dominating a decision: because volume carries no weight, nothing is gained by bringing more people.
 
 We assume good faith. The process requires participants to state the reasons they actually hold, to consider the answers they are given, and to be open to persuasion; it works because most people do this. Someone participating strategically -- objecting to delay a decision, or restating a position without engaging with the response to it -- can stall a group indefinitely.
 
