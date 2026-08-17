@@ -248,3 +248,10 @@ The consensus process is critical to Internet security overall -- it helps assur
 
 --- back
 
+# Other Definitions of Consensus
+
+Standards bodies elsewhere define consensus as general agreement characterised by the absence of sustained opposition on substantial issues from any important part of the concerned interests, arrived at by a process that seeks to take account of all views and to reconcile conflicting arguments. That wording is ISO/IEC's; it is reproduced in European standardisation law and echoed in the principles agreed by the WTO Committee on Technical Barriers to Trade.
+
+Most of this document maps onto it. An objection that stands under {{handling}} is sustained opposition on a substantial issue, and rough consensus has not been reached. Objections that are accommodated, retracted, or found not to bear on the merits are not sustained opposition, because the group has taken account of them and either satisfied them or shown that they do not bear on the decision.
+
+Two differences do not. Where an objection is found to be outweighed, this document permits a decision over an objection that is both maintained and well-founded; a body applying the definition above would find no consensus. And because the IETF has no membership, support is not measured against a defined body of concerned interests; see {{support}}.
