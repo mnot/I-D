@@ -145,7 +145,11 @@ Whether a broader decision applies at all is a separate question, and one the gr
 
 ## Determining Support {#support}
 
-All consensus decisions MUST demonstrate substantial support within the group for the outcome.
+All consensus decisions MUST demonstrate substantial support among those who have engaged with the question.
+
+Support functions as a threshold. It establishes that enough people have engaged with the question for the group to decide it; it does not establish that the outcome is correct, and it does not dispose of any objection -- objections are addressed on their merits under {{handling}}, whatever the level of support for the proposal they are raised against.
+
+Because participation is open and there is no membership, support is not a proportion of any defined body. What the consensus caller assesses is whether those who engaged with the question expressed enough support to proceed. This guards against a decision taken amid general indifference, where a proposal advances because few were paying attention rather than because the group agreed.
 
 How support is determined is contextual. For uncontroversial topics that are uninteresting to many participants, expressed support may be sparse. Conversely, controversial topics may attract both strong support and opposition.
 
@@ -154,6 +158,8 @@ Often, the group will have two (or more) competing proposals under consideration
 If a significant number of participants indicate support for a proposal and there are no objections, there is clearly support for that proposal. Here "significant" is contextual -- the consensus caller needs to consider how many participants have been active in the discussion, how long they have had to consider the proposal, and how likely objections are.
 
 If a small number of participants indicate support for a proposal and there are no objections, support may be present, but the consensus caller should consider its strength. Depending on the nature of the decision, more time or another call for consensus may be necessary. Again, "small" is contextual and requires interpretation by the consensus caller.
+
+Where a proposal has not been contested, silence can be taken as assent, provided participants had adequate notice and time to respond. Where views have conflicted, it cannot: an objection is not withdrawn by failing to repeat it, and the consensus caller needs to ask those who disagreed whether they can live with the outcome (see {{handling}}).
 
 If a proposal is determined to have support but there are objections, those objections need to be addressed according to {{handling}}. These two evaluations are iterative, not sequential. Addressing an objection often alters the proposal, which then needs to be re-checked for support; a revised proposal may attract fresh objections. The consensus caller repeats both assessments until the proposal has substantial support with all objections addressed.
 
