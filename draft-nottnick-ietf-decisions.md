@@ -184,6 +184,8 @@ Where an objection is neither accommodated nor retracted, and the consensus call
 
 Not every objection requires the group's full engagement. One that is trivial, nonsensical, poorly described, off-topic, purely editorial, out of charter, or already answered can be set aside by the consensus caller without further discussion, on the ground that it does not bear on the merits.
 
+Some objections are directed at whether a question should be decided at all. Where the objection is that the decision is outside the group's authority, it is determined under {{authority}}. Otherwise it is weighed against a concrete proposal rather than in advance of one: the merits of such an objection depend on what is proposed.
+
 Otherwise, objections need to be understood fully by the group. This puts a burden on the party making the objection to explain its nature and relevance, and on the group to appreciate and consider it. Successfully addressing an objection is characterised by dialogue and introspection by all parties, with the goal of achieving a consensus that produces the best outcome for the Internet's users.
 
 Consensus callers manage the discussion; they can ask that a well-worn argument not be repeated, or that a call for consensus collect positions rather than restart the debate. Doing so does not address any objection -- only the outcomes above do that.
