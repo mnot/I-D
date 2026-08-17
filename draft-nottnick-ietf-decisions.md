@@ -93,7 +93,7 @@ As a result, the number of people supporting or objecting on any given issue is 
 
 Our work must also conclude. We use "rough consensus" because requiring unanimity would allow any single objection to stop the work. An outstanding objection is not sufficient on its own to show lack of rough consensus. If the objection has been heard, understood, and addressed (even if not accommodated), rough consensus can still be declared.
 
-We do not recognise authorities. An objection is not accepted merely on the basis of the title or purported expertise of the person(s) making it. This is especially true of an objection put forward by the consensus caller themself. The objection must stand or fall on its own merits. Certainly a consensus caller may be inclined to exercise more diligence if someone with relevant expertise has made the objection, but that is no substitute for actually making the judgement of whether the objection has been heard, understood, and addressed.
+We do not recognise authorities. A statement of support or an objection is not accepted merely on the basis of the title or purported expertise of the person(s) making it. This is especially true of an objection put forward by the consensus caller themself, or of a position they have argued for. Each must stand or fall on its own merits. Certainly a consensus caller may be inclined to exercise more diligence if someone with relevant expertise has offered their view, but that is no substitute for determining whether the outcome has sufficient support and whether objections have been heard, understood, and addressed.
 
 We do not weigh the person. Participation is open and participants act as individuals, so a person's history with the group, their affiliation, and their reputation are not inputs to a determination. What is evaluated is what was said, not who said it.
 
@@ -121,7 +121,7 @@ Decisions that require rough consensus MUST fulfil these requirements, as expand
 1. The outcome has sufficient support
 2. Any objections have been addressed
 
-Only the consensus caller can determine consensus; participants cannot declare consensus, and should not characterise it before it is established.
+Only the consensus caller can determine consensus; participants cannot declare consensus, and should not characterise it before it is established. A consensus caller SHOULD NOT determine consensus on a document they author, or on a proposal they have put forward themselves. Where the group has other Chairs, one of them makes the determination; otherwise, the responsible Area Director can be asked to.
 
 Working Groups are required to establish rough consensus to progress a document in the process. Some groups only formally declare consensus on a document's content with a Working Group Last Call; others make calls for consensus on selected decisions to establish agreement on parts of the design earlier in the process.
 
