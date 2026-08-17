@@ -75,7 +75,7 @@ While this guidance has served the IETF well for more than thirty years, the IET
 
 Every document published in the IETF Stream carries a claim of IETF rough consensus; see {{Section 3 of RFC8789}}. Working Group decisions are where most of that consensus is built, and this document describes how they are made.
 
-This document replaces {{Section 3.3 of ?RFC2418}}. Most of that text remains accurate. Three aspects of it, however, are not carried forward: practice has diverged from them, and they have proven misleading. Consensus is not determined by the "dominant view" prevailing; objections are disposed of on their merits, and the number of participants holding a view is not what settles the question. A show of hands, a hum, or a poll does not determine consensus; such mechanisms gauge support, which is one input to a determination made by the consensus caller (see {{support}}). And no proportion of the group -- neither 51% nor 99% -- establishes or fails to establish rough consensus, because it is not a vote.
+This document replaces {{Section 3.3 of ?RFC2418}}. Most of that text remains accurate. Three aspects of it, however, are not carried forward: practice has diverged from them, and they have proven misleading. Consensus is not determined by the "dominant view" prevailing; objections are addressed on their merits, and the number of participants holding a view is not what settles the question. A show of hands, a hum, or a poll does not determine consensus; such mechanisms gauge support, which is one input to a determination made by the consensus caller (see {{support}}). And no proportion of the group -- neither 51% nor 99% -- establishes or fails to establish rough consensus, because it is not a vote.
 
 {{principles}} outlines the principles that guide the rest of this document. {{consensus}} provides guidelines for making decisions that require consensus; {{non-consensus}} notes the kinds of decisions that do not require consensus.
 
@@ -97,11 +97,11 @@ We do not recognise authorities. A statement of support or an objection is not a
 
 We do not weigh the person. Participation is open and participants act as individuals, so a person's history with the group, their affiliation, and their reputation are not inputs to a determination. What is evaluated is what was said, not who said it.
 
-We do not allow ballot stuffing. Volume does not decide in either direction: a large number of voices simply stating an objection does not establish a lack of consensus, and a large number simply stating support does not establish its presence. In both cases the consensus caller weighs what was said, not how many said it. This is also what prevents any single person, company or interest group from dominating a decision: because volume carries no weight, nothing is gained by bringing more people.
+We do not allow ballot stuffing. Volume does not decide in either direction: a large number of voices simply stating an objection does not establish a lack of consensus, and a large number simply stating support does not establish its presence. In both cases the consensus caller weighs what was said, not how many said it. Where the people objecting are not making a coherent claim, cannot explain the reasoning behind their objections, or cannot explain why the group's answers to them are inadequate, those objections can be addressed on the merits.
 
 We assume good faith. The process requires participants to state the reasons they actually hold, to consider the answers they are given, and to be open to persuasion; it works because most people do this. Someone participating strategically -- objecting to delay a decision, or restating a position without engaging with the response to it -- can stall a group indefinitely.
 
-The remedy is not to diagnose motive. An accusation of bad faith is rarely provable, and treating a sincere objection as insincere denies the objector the consideration this process exists to provide. The mechanisms here address the conduct without requiring a judgement about what lies behind it: an objection whose basis cannot be explained, or that does not engage with the group's answers, can be dismissed on the merits regardless of why it was raised (see {{handling}}), and a failed call cannot be made into consensus by repetition (see {{consensus}}).
+The remedy is not to diagnose motive. An accusation of bad faith is rarely provable, and treating a sincere objection as insincere denies the objector the consideration this process exists to provide. The mechanisms here address the conduct without requiring a judgement about what lies behind it: an objection whose basis cannot be explained, or that does not engage with the group's answers, can be addressed on the merits regardless of why it was raised (see {{handling}}), and a failed call cannot be made into consensus by repetition (see {{consensus}}).
 
 Where the problem is a participant's conduct rather than any particular objection, it is not a matter for the consensus process; see {{?BCP54}}.
 
@@ -111,7 +111,7 @@ Where the problem is a participant's conduct rather than any particular objectio
 
 This document uses the term "consensus caller" to indicate the person(s) making the determination of consensus. In Working Groups, this will be the Chair(s).
 
-Following {{?RFC7282}}, this document distinguishes between an objection being *addressed* and being *accommodated*. An objection is accommodated when the proposal is changed to satisfy it. An objection is addressed when it has been heard, understood, and disposed of without blocking the decision, whether or not the proposal changes as a result; {{handling}} sets out the ways this can occur. Rough consensus requires that objections be addressed; it does not require that they be accommodated.
+Following {{?RFC7282}}, this document distinguishes between an objection being *addressed* and being *accommodated*. An objection is accommodated when the proposal is changed to satisfy it. An objection is addressed when it has been heard, understood, and no longer blocks the decision, whether or not the proposal changes as a result; {{handling}} sets out the ways this can occur. Rough consensus requires that objections be addressed; it does not require that they be accommodated.
 
 # Consensus Decisions {#consensus}
 
@@ -170,49 +170,49 @@ When determining support for a technical proposal, a consensus caller MAY give w
 
 ## Addressing Objections {#handling}
 
-Most feedback on a proposal is handled by the document's editor(s). Feedback becomes an objection when it is raised against a decision and maintained after the group and the editors have responded to it; only then does it require disposition by the consensus caller.
+Most feedback on a proposal is handled by the document's editor(s). Feedback becomes an objection when it is raised against a decision and maintained after the group and the editors have responded to it; only then does it require a determination by the consensus caller.
 
-An objection to a decision is disposed of when:
+An objection is addressed when:
 
-1. The consensus caller declares it to be invalid
-2. The objection is removed by a negotiated resolution
-3. The consensus caller upholds the objection
-4. The consensus caller rejects the objection
-5. The consensus caller finds it outweighed
+1. It is accommodated -- the proposal is changed to satisfy it;
+2. It is retracted -- the objector withdraws it or declines to press it further, whether or not the proposal has changed; or
+3. The consensus caller determines that it does not bear on the merits of the decision, or that it identifies a genuine problem which is outweighed by the weaknesses of the alternatives.
 
-Except where the objection is upheld, all of these mean that the objection has been addressed, and so do not prevent a finding of rough consensus.
+Only the third case calls for a judgement by the consensus caller. An addressed objection does not prevent a finding of rough consensus.
 
-An objection might be invalid if it is trivial, nonsensical, poorly described, off-topic, purely editorial, out of charter, or already addressed. Invalid objections do not prevent a finding of rough consensus.
+Where an objection is neither accommodated nor retracted, and the consensus caller can make neither of the findings in the third case, the objection stands. Rough consensus has not been reached for the proposal as it is: the proposal must be revised, the objection otherwise addressed, or the decision deferred.
 
-Provided they are not invalid, objections need to be understood fully by the group. This puts a burden on the party making the objection to explain its nature and relevance, and on the group to appreciate and consider it. Successfully addressing an objection is characterised by dialogue and introspection by all parties, with the goal of achieving a consensus that produces the best outcome for the Internet's users.
+Not every objection requires the group's full engagement. One that is trivial, nonsensical, poorly described, off-topic, purely editorial, out of charter, or already answered can be set aside by the consensus caller without further discussion, on the ground that it does not bear on the merits.
 
-Consensus callers manage the discussion; they can ask that a well-worn argument not be repeated, or that a call for consensus collect positions rather than restart the debate. Doing so does not dispose of any objection -- only the outcomes listed above do that.
+Otherwise, objections need to be understood fully by the group. This puts a burden on the party making the objection to explain its nature and relevance, and on the group to appreciate and consider it. Successfully addressing an objection is characterised by dialogue and introspection by all parties, with the goal of achieving a consensus that produces the best outcome for the Internet's users.
+
+Consensus callers manage the discussion; they can ask that a well-worn argument not be repeated, or that a call for consensus collect positions rather than restart the debate. Doing so does not address any objection -- only the outcomes above do that.
 
 Once an objection is understood and has been discussed by the group, the consensus caller weighs the arguments.
 
-The best outcome is one that is, after discussion, palatable to all; often, this is determined through polls that ask if participants "can live with" that outcome. When successful, this removes the objection, but the consensus caller is still required to determine a sufficient level of support for that resolution; see {{support}}.
+The best outcome is one that is, after discussion, palatable to all; often, this is determined through polls that ask if participants "can live with" that outcome. When successful, this accommodates or retracts the objection, but the consensus caller is still required to determine a sufficient level of support for the result; see {{support}}.
 
-If such an outcome cannot be negotiated in a reasonable timeframe, the consensus caller will determine if the objection is upheld, rejected, or outweighed. This determination is made on the merits of the objection; how many people support an objection is not relevant.
+If such an outcome cannot be negotiated in a reasonable timeframe, the consensus caller determines whether the objection is addressed under the third case, or whether it stands. This determination is made on the merits of the objection; how many people support an objection is not relevant.
 
-Arguments that rely on already established IETF consensus (as recorded in IETF stream RFCs) will be substantiated, if necessary by consulting the IESG. Per {{authority}}, objections to decisions that are determined to contradict IETF consensus will be upheld.
+An objection does not bear on the merits when, after full consideration by the group, the consensus caller finds that it does not identify a problem with the decision -- because the reasoning behind it cannot be explained, because it does not engage with the group's answers to it, or because the concern it raises is not one the decision affects.
 
-An upheld objection means rough consensus has not been reached for the proposal as it stands; the proposal must be revised, the objection otherwise addressed, or the decision deferred.
+An objection is outweighed when it identifies a genuine problem, but accommodating it would cause greater harm than leaving it unaccommodated, because the alternatives have worse weaknesses of their own. This arises where a decision involves a trade-off and every available option attracts well-founded objections. The group compares the options according to {{tradeoffs}}; the consensus caller finds that the alternatives were before the group and that the objection was weighed against them.
 
-An objection is rejected when, after full consideration by the group, the consensus caller finds it does not bear on the merits. A rejected objection does not prevent a finding of rough consensus.
+Where the consensus caller makes either finding after the group has fully considered the objection, the declaration MUST state the reasoning for it; where the objection was found to be outweighed, the declaration MUST also identify the alternatives that were weighed against it. An objection set aside without further discussion, as described above, is not subject to this requirement.
 
-An objection is outweighed when the consensus caller finds that it identifies a genuine problem, but that accommodating it would cause greater harm than leaving it unaccommodated -- because the alternatives have worse weaknesses of their own, or because no alternative has been identified. This arises where a decision involves a trade-off and every available option attracts well-founded objections; see {{tradeoffs}}. An outweighed objection does not prevent a finding of rough consensus, but the consensus caller needs to be satisfied that the group weighed it against the alternatives.
+Arguments that rely on already established IETF consensus (as recorded in IETF stream RFCs) will be substantiated, if necessary by consulting the IESG. Per {{authority}}, where a decision is determined to contradict IETF consensus, an objection on that basis stands; the decision is not within the group's authority to make.
 
 As with other aspects of decision making in the IETF, how an objection is addressed can be appealed; see {{Section 6.5 of RFC2026}}.
 
 ## Deciding Trade-offs {#tradeoffs}
 
-Some consensus decisions have no option that is free of well-founded objections. Upholding every such objection would prevent the group from deciding anything. Here the consensus caller needs to weigh the options against each other.
+Some consensus decisions have no option that is free of well-founded objections. Letting every such objection stand would prevent the group from deciding anything. Here the group needs to weigh the options against each other.
 
 Evaluating a trade-off requires being concrete about who is affected and how. Use cases are the usual vehicle for this: they make the consequences of each option explicit, and an objection that cannot be tied to any use case is difficult to weigh. An objection is not weakened by raising a use case that the group had not previously considered; the group should determine whether that use case is within its scope, and if it is, weigh it alongside the others.
 
 The alternatives to be weighed always include leaving the disputed element out and deferring the decision.
 
-Options are not compared by counting use cases, because use cases do not carry equal weight. {{?RFC8890}} counsels that where interests conflict, those of end users be given priority. In general, a group should prefer an option under which every use case in scope can achieve a useful -- even if not optimal -- result, over one that serves some optimally while leaving others severely harmed.
+Options are not compared by counting use cases, because use cases do not carry equal weight. {{?RFC8890}} counsels that where interests conflict, those of end users be given priority. In general, a group should prefer an option under which every use case in scope can achieve a useful -- even if not optimal -- result, over one that serves some optimally while leaving others severely harmed. A group should also prefer the option that attracts the weakest objections; the option with the widest support is not necessarily that option.
 
 The resulting document SHOULD describe the trade-off that was made and the reasoning behind it.
 
@@ -221,7 +221,7 @@ The resulting document SHOULD describe the trade-off that was made and the reaso
 When declaring the outcome of a consensus call, the consensus caller SHOULD explain how the determination was reached. In simple cases this can be very brief. Where the decision was contested or involved a trade-off, a useful declaration includes:
 
 * what was decided, stated precisely enough to act upon;
-* the significant objections raised and their disposition;
+* the objections the consensus caller addressed under {{handling}};
 * the options considered and the trade-offs between them, including the use cases weighed against each other;
 * what would constitute grounds to revisit the decision, if that is not obvious.
 
