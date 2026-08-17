@@ -127,7 +127,7 @@ Consensus callers can make an informal determination -- i.e., characterise the c
 
 To avoid confusion, make our process and the status of decisions legible to newcomers, and facilitate review, groups MUST record their consensus decisions; see {{communicating}}. A failure to record a decision does not by itself invalidate it; the remedy is to produce the record.
 
-Once rough consensus is established and documented, it can only be reconsidered if genuinely new information becomes available. The consensus caller determines whether this bar is met; like other decisions, that determination is appealable.
+Once rough consensus is established and documented, it can only be reconsidered if genuinely new information becomes available. A change in the circumstances the decision relied upon is new information; a participant who was not part of the discussion is not. The consensus caller determines whether this bar is met, and for a contested case may put the question of reopening to the group; see {{Section 4.1.3 of ?RFC8874}}. Like other decisions, that determination is appealable.
 
 A call that does not establish consensus does not settle the question, and the consensus caller may make a further call. There are good reasons to do so: the proposal may have changed, more time may be needed, or a heated discussion may benefit from a pause. What a further call cannot do is establish consensus by attrition. Where the objections are unchanged and unaddressed, repeating the call does not address them.
 
