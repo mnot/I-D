@@ -73,6 +73,8 @@ The IETF guides its decisions with "rough consensus and running code." However, 
 
 While this guidance has served the IETF well for more than thirty years, the IETF community has grown, and our decisions increasingly affect people who do not participate in them. To help both participants and those who use our standards understand our process, this document outlines the procedures we use to make Working Group decisions in more detail. It is not intended to establish new policy, only articulate existing practices more carefully.
 
+Every document published in the IETF Stream carries a claim of IETF rough consensus; see {{Section 3 of RFC8789}}. Working Group decisions are where most of that consensus is built, and this document describes how they are made.
+
 This document replaces {{Section 3.3 of ?RFC2418}}. Most of that text remains accurate. Three aspects of it, however, are not carried forward: practice has diverged from them, and they have proven misleading. Consensus is not determined by the "dominant view" prevailing; objections are addressed on their merits, and the number of participants holding a view is not what settles the question. A show of hands, a hum, or a poll does not determine consensus; such mechanisms gauge support, which is one input to a determination made by the consensus caller (see {{support}}). And no proportion of the group -- neither 51% nor 99% -- establishes or fails to establish rough consensus, because it is not a vote.
 
 {{principles}} outlines the principles that guide the rest of this document. {{consensus}} provides guidelines for making decisions that require consensus; {{non-consensus}} notes the kinds of decisions that do not require consensus.
@@ -91,7 +93,7 @@ As a result, the number of people supporting or objecting on any given issue is 
 
 Our work must also conclude. We use "rough consensus" because requiring unanimity would allow any single objection to stop the work. An outstanding objection is not sufficient on its own to show lack of rough consensus. If the objection has been heard, understood, and addressed (even if not accommodated), rough consensus can still be declared.
 
-We do not recognise authorities. An objection is not accepted merely on the basis of the title or purported expertise of the person(s) making it. This is especially true of an objection put forward by the consensus caller themself. The objection must stand or fall on its own merits. Certainly a consensus caller may be inclined to exercise more diligence if someone with relevant expertise has made the objection, but that is no substitute for actually making the judgement of whether the objection has been heard, understood, and addressed.
+We do not recognise authorities. A statement of support or an objection is not accepted merely on the basis of the title or purported expertise of the person(s) making it. This is especially true of an objection put forward by the consensus caller themself, or of a position they have argued for. Each must stand or fall on its own merits. Certainly a consensus caller may be inclined to exercise more diligence if someone with relevant expertise has offered their view, but that is no substitute for determining whether the outcome has sufficient support and whether objections have been heard, understood, and addressed.
 
 We do not weigh the person. Participation is open and participants act as individuals, so a person's history with the group, their affiliation, and their reputation are not inputs to a determination. What is evaluated is what was said, not who said it.
 
@@ -119,7 +121,7 @@ Decisions that require rough consensus MUST fulfil these requirements, as expand
 1. The outcome has sufficient support
 2. Any objections have been addressed
 
-Only the consensus caller can determine consensus; participants cannot declare consensus, and should not characterise it before it is established.
+Only the consensus caller can determine consensus; participants cannot declare consensus, and should not characterise it before it is established. A consensus caller SHOULD NOT determine consensus on a document they author, or on a proposal they have put forward themselves. Where the group has other Chairs, one of them makes the determination; otherwise, the responsible Area Director can be asked to.
 
 Working Groups are required to establish rough consensus to progress a document in the process. Some groups only formally declare consensus on a document's content with a Working Group Last Call; others make calls for consensus on selected decisions to establish agreement on parts of the design earlier in the process.
 
@@ -127,9 +129,11 @@ Consensus callers can make an informal determination -- i.e., characterise the c
 
 To avoid confusion, make our process and the status of decisions legible to newcomers, and facilitate review, groups MUST record their consensus decisions; see {{communicating}}. A failure to record a decision does not by itself invalidate it; the remedy is to produce the record.
 
-Once rough consensus is established and documented, it can only be reconsidered if genuinely new information becomes available. The consensus caller determines whether this bar is met; like other decisions, that determination is appealable.
+Once rough consensus is established and documented, it can only be reconsidered if genuinely new information becomes available. A change in the circumstances the decision relied upon is new information; a participant who was not part of the discussion is not. The consensus caller determines whether this bar is met, and for a contested case may put the question of reopening to the group; see {{Section 4.1.3 of ?RFC8874}}. Like other decisions, that determination is appealable.
 
 A call that does not establish consensus does not settle the question, and the consensus caller may make a further call. There are good reasons to do so: the proposal may have changed, more time may be needed, or a heated discussion may benefit from a pause. What a further call cannot do is establish consensus by attrition. Where the objections are unchanged and unaddressed, repeating the call does not address them.
+
+Deferring a decision is a legitimate outcome, and sometimes the right one -- where a revised proposal, further background work, or more time to consider the options would change the discussion.
 
 ## Assuring Authority {#authority}
 
@@ -143,7 +147,11 @@ Whether a broader decision applies at all is a separate question, and one the gr
 
 ## Determining Support {#support}
 
-All consensus decisions MUST demonstrate substantial support within the group for the outcome.
+All consensus decisions MUST demonstrate substantial support among those who have engaged with the question.
+
+Support functions as a threshold. It establishes that enough people have engaged with the question for the group to decide it; it does not establish that the outcome is correct, and it does not dispose of any objection -- objections are addressed on their merits under {{handling}}, whatever the level of support for the proposal they are raised against.
+
+Because participation is open and there is no membership, support is not a proportion of any defined body. What the consensus caller assesses is whether those who engaged with the question expressed enough support to proceed. This guards against a decision taken amid general indifference, where a proposal advances because few were paying attention rather than because the group agreed.
 
 How support is determined is contextual. For uncontroversial topics that are uninteresting to many participants, expressed support may be sparse. Conversely, controversial topics may attract both strong support and opposition.
 
@@ -153,9 +161,11 @@ If a significant number of participants indicate support for a proposal and ther
 
 If a small number of participants indicate support for a proposal and there are no objections, support may be present, but the consensus caller should consider its strength. Depending on the nature of the decision, more time or another call for consensus may be necessary. Again, "small" is contextual and requires interpretation by the consensus caller.
 
+Where a proposal has not been contested, silence can be taken as assent, provided participants had adequate notice and time to respond. Where views have conflicted, it cannot: an objection is not withdrawn by failing to repeat it, and the consensus caller needs to ask those who disagreed whether they can live with the outcome (see {{handling}}).
+
 If a proposal is determined to have support but there are objections, those objections need to be addressed according to {{handling}}. These two evaluations are iterative, not sequential. Addressing an objection often alters the proposal, which then needs to be re-checked for support; a revised proposal may attract fresh objections. The consensus caller repeats both assessments until the proposal has substantial support with all objections addressed.
 
-When determining support for a technical proposal, a consensus caller MAY give weight to interest by implementers or potential implementers, or lack thereof. This is evidence about whether the proposal will be deployed, not standing given to the people expressing it.
+When determining support for a technical proposal, a consensus caller MAY give weight to interest by implementers or potential implementers, or lack thereof. This is evidence about whether the proposal will be deployed, not standing given to the people expressing it. A statement of intent to implement is weaker evidence than running code: existing implementations, interoperability results and deployment experience. {{?RFC7942}} describes one way for a document to record them.
 
 
 ## Addressing Objections {#handling}
@@ -248,3 +258,10 @@ The consensus process is critical to Internet security overall -- it helps assur
 
 --- back
 
+# Other Definitions of Consensus
+
+Standards bodies elsewhere define consensus as general agreement characterised by the absence of sustained opposition on substantial issues from any important part of the concerned interests, arrived at by a process that seeks to take account of all views and to reconcile conflicting arguments. That wording is ISO/IEC's; it is reproduced in European standardisation law and echoed in the principles agreed by the WTO Committee on Technical Barriers to Trade.
+
+Most of this document maps onto it. An objection that stands under {{handling}} is sustained opposition on a substantial issue, and rough consensus has not been reached. Objections that are accommodated, retracted, or found not to bear on the merits are not sustained opposition, because the group has taken account of them and either satisfied them or shown that they do not bear on the decision.
+
+Two differences do not. Where an objection is found to be outweighed, this document permits a decision over an objection that is both maintained and well-founded; a body applying the definition above would find no consensus. And because the IETF has no membership, support is not measured against a defined body of concerned interests; see {{support}}.
