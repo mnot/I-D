@@ -53,15 +53,16 @@ At the same time, "permanent and readily available" is now arguably achievable f
 
 {{subpolicies}} suggests sub-policies of the Specification Required policy, with the aim of clarifying these situations.
 
-For a sub-policy to take effect, a given registry would need to opt into its use; note that there is no default, as existing registries may have already established relevant practices. Future revisions of this document might explore the mechanics of how a registry adopts a sub-policy (e.g., whether a revision of the registry specification is necessary, vs. an IESG or Expert declaration).
-
-
 ## Notational Conventions
 
 {::boilerplate bcp14-tagged}
 
 
 # Specification Required Sub-Policies {#subpolicies}
+
+For a sub-policy to take effect, a given registry needs to opt into its use; note that there is no default, as existing registries may have already established relevant practices.
+
+Documents that define new registries and redefine existing ones can explicitly nominate a sub-policy. However, such action is not necessary; in consultation with the relevant Expert(s), the IESG may deem a registry to be covered by a sub-policy.
 
 ## Specification Required (Standards) {#sp-standards}
 
@@ -114,7 +115,7 @@ When this sub-policy is in effect, only registrations that qualify under the Sta
 
 # IANA Considerations
 
-This document has no direct tasks for IANA, but will need to be operationalised by them.
+When a registry has a defined sub-policy, IANA should record it in the registry's "Registration Procedure(s)" field, and if applicable a reference to the artefact that enables it.
 
 # Security Considerations
 
