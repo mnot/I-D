@@ -22,7 +22,7 @@ author:
  -
     ins: M. Nottingham
     name: Mark Nottingham
-    organization:
+    organization: Cloudflare
     postal:
       - Melbourne
     country: Australia
