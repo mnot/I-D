@@ -2,7 +2,7 @@
 title: Feed Menus
 abbrev:
 docname: draft-nottingham-feed-menu-latest
-date: {DATE}
+date: draft-nottingham-feed-menu-date
 category: std
 
 ipr: trust200902

@@ -2,7 +2,7 @@
 title: HTTP Availability Hints
 abbrev:
 docname: draft-nottingham-http-availability-hints-latest
-date: {DATE}
+date: draft-nottingham-http-availability-hints-date
 category: std
 
 ipr: trust200902

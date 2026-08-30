@@ -2,7 +2,7 @@
 title: An HTTP Cache Invalidation API
 abbrev:
 docname: draft-nottingham-http-invalidation-latest
-date: {DATE}
+date: draft-nottingham-http-invalidation-date
 category: std
 
 ipr: trust200902

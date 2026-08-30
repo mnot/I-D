@@ -2,7 +2,7 @@
 title: Application Directives in robots.txt
 abbrev:
 docname: draft-nottingham-plan-b-latest
-date: {DATE}
+date: draft-nottingham-plan-b-date
 category: std
 updates: 9309
 

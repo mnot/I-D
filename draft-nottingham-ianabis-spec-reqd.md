@@ -2,7 +2,7 @@
 title: Specification Required Sub-Policies
 abbrev:
 docname: draft-nottingham-ianabis-spec-reqd-latest
-date: {DATE}
+date: draft-nottingham-ianabis-spec-reqd-date
 category: bcp
 
 ipr: trust200902
