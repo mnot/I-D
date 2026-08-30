@@ -1,0 +1,131 @@
+---
+title: Embargoing Archive Publication using robots.txt
+abbrev: Archive-Embargo
+docname: draft-nottingham-archive-embargo-latest
+date: {DATE}
+category: std
+updates: 9309
+
+ipr: trust200902
+keyword: Internet-Draft
+
+stand_alone: yes
+smart_quotes: no
+pi: [toc, tocindent, sortrefs, symrefs, strict, compact, comments, inline]
+
+venue:
+  home: "https://projects.mnot.net/I-D/"
+  repo: "https://github.com/mnot/I-D/labels/embargo"
+
+github-issue-label: embargo
+
+author:
+ -
+    ins: M. Nottingham
+    name: Mark Nottingham
+    organization:
+    postal:
+      - Melbourne
+    country: Australia
+    email: mnot@mnot.net
+    uri: https://mnot.net/
+ -
+    ins: M. Thomson
+    name: Martin Thomson
+    organization:
+    postal:
+      - Sydney
+    country: Australia
+    email: mt@lowentropy.net
+
+normative:
+  ROBOTS: RFC9309
+  HTTP: RFC9110
+
+
+--- abstract
+
+Web sites often block archiving crawlers because they host time-sensitive information. This
+specification documents a robots.txt extension, "Archive-Embargo", that indicates that such
+crawlers should delay publication of information.
+
+--- middle
+
+
+# Introduction
+
+## Notational Conventions
+
+{::boilerplate bcp14-tagged}
+
+# The "Archive-Embargo" Rule
+
+This document adds a new rule that associates an embargo period with a group.
+
+Its value indicates the length of the embargo period, measured from the earliest of the HTTP response's Last-Modified value (when present and parseable; see {{Section 8.8.2 of HTTP}}) and the time when the content was first observed. The following values (along with their associated embargo periods) are supported:
+
+* "w" - 7 days
+* "m" - 31 days
+* "q" - 90 days
+
+During an embargo period, crawled response content MUST NOT be republished in a public archive. Its existence MAY be indicated in a public archive (e.g. by a "tombstone" entry that includes the URL, response header fields, and/or a cryptographic digest of the content) so long as the response body is not included.
+
+The rule ABNF pattern from {{Section 2.2 of ROBOTS}} is extended as shown in Figure 1.
+
+~~~ abnf
+rule =/ embargo
+
+archive-embargo = *WS "archive-embargo" *WS ":" *WS embargo-period EOL
+
+embargo-period = "w" / "m" / "q"
+~~~
+
+# The "Embargo-Allow" Rule
+
+Sites wishing to set archive embargos without knowledge of whether a particular crawler supports this protocol extension need a way to predicate an 'allow' rule on support for it. The "Embargo-Allow" rule serves this function.
+
+Its semantics are identical to the "allow" rule in {{Section 2.2.2 of ROBOTS}}, except that it is only applicable when the crawler supports and honours the "Archive-Embargo" rule.
+
+The rule ABNF pattern from {{Section 2.2 of ROBOTS}} is extended as shown in Figure 1.
+
+~~~ abnf
+rule =/ embargo-allow
+
+embargo-allow = *WS "embargo-allow" *WS ":" *WS
+                (path-pattern / empty-pattern) EOL
+~~~
+
+
+# Examples
+
+The following illustrates use of a group that allows the specified crawler to access content under the /news path, so long as it embargos publication of that content for a calendar quarter.
+
+This requires knowledge that the specified crawler supports this specification.
+
+~~~
+User-Agent: ExampleBot
+Archive-Embargo: q
+allow: /news
+~~~
+
+The example below illustrates a group that allows any crawler that supports and honours this specification to crawl resources under the /news path, so long as they embargo that content for one month.
+
+~~~
+User-Agent: *
+Archive-Embargo: m
+Embargo-Allow: /news
+disallow: /
+~~~
+
+
+# IANA Considerations
+
+This document has no actions for IANA.
+
+# Security Considerations
+
+Embargoing is not a security mechanism; it relies upon crawlers to honour the embargo.
+
+
+--- back
+
