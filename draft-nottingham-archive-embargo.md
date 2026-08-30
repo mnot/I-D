@@ -2,7 +2,7 @@
 title: Embargoing Archive Publication using robots.txt
 abbrev: Archive-Embargo
 docname: draft-nottingham-archive-embargo-latest
-date: draft-nottingham-archive-embargo-date
+date: {DATE}
 category: std
 updates: 9309
 
@@ -39,6 +39,7 @@ author:
     email: mt@lowentropy.net
 
 normative:
+  ABNF: RFC5234
   ROBOTS: RFC9309
   HTTP: RFC9110
 
@@ -70,7 +71,7 @@ Its value indicates the length of the embargo period, measured from the earliest
 
 During an embargo period, crawled response content MUST NOT be republished in an archive. Its existence MAY be indicated in an archive (e.g. by a "tombstone" entry that includes the URL, response header fields, and/or a cryptographic digest of the content) so long as the response body is not included.
 
-The rule ABNF pattern from {{Section 2.2 of ROBOTS}} is extended as shown in Figure 1.
+The rule ABNF {{ABNF}} pattern from {{Section 2.2 of ROBOTS}} is extended as shown in {{f-abnf-embargo}}.
 
 ~~~ abnf
 rule =/ embargo
@@ -79,6 +80,7 @@ archive-embargo = *WS "archive-embargo" *WS ":" *WS embargo-period EOL
 
 embargo-period = "w" / "m" / "q"
 ~~~
+{: #f-abnf-embargo title="ABNF for Archive-Embargo line"}
 
 # The "Embargo-Allow" Rule
 
@@ -86,7 +88,7 @@ Sites wishing to set archive embargos without knowledge of whether a particular 
 
 Its semantics are identical to the "allow" rule in {{Section 2.2.2 of ROBOTS}}, except that it is only applicable when the crawler supports and honours the "Archive-Embargo" rule.
 
-The rule ABNF pattern from {{Section 2.2 of ROBOTS}} is extended as shown in Figure 1.
+The rule ABNF pattern from {{Section 2.2 of ROBOTS}} is extended as shown in {{f-abnf-allow}}.
 
 ~~~ abnf
 rule =/ embargo-allow
@@ -94,27 +96,28 @@ rule =/ embargo-allow
 embargo-allow = *WS "embargo-allow" *WS ":" *WS
                 (path-pattern / empty-pattern) EOL
 ~~~
+{: #f-abnf-allow title="ABNF for Embargo-Allow line"}
 
 
 # Examples
 
-The following illustrates use of a group that allows the specified crawler to access content under the /news path, so long as it embargos publication of that content for a calendar quarter.
+The following illustrates use of a group that allows the specified crawler to access content under the `/news` path, so long as it embargoes publication of that content for a calendar quarter.
 
-This requires knowledge that the specified crawler supports this specification.
+This depends on knowing that the specified crawler supports this specification.
 
 ~~~
 User-Agent: ExampleBot
 Archive-Embargo: q
-allow: /news
+Allow: /news
 ~~~
 
-The example below illustrates a group that allows any crawler that supports and honours this specification to crawl resources under the /news path, so long as they embargo that content for one month.
+The example below illustrates a group that allows any crawler that supports and honours this specification to crawl resources under the `/news` path, so long as they embargo that content for one month.
 
 ~~~
 User-Agent: *
 Archive-Embargo: m
 Embargo-Allow: /news
-disallow: /
+Disallow: /
 ~~~
 
 
