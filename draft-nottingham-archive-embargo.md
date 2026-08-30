@@ -140,9 +140,12 @@ Disallow: /
 
 This document has no actions for IANA.
 
-# Security Considerations
+# Security Considerations {#security}
 
 Embargoing is not a security mechanism; it relies upon crawlers to honour the embargo.
+
+This mechanism cannot be used to request that the existence of resources be hidden
+or that an embargo is in force; see {{archive-embargo}}.
 
 
 --- back
