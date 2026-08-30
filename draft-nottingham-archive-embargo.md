@@ -47,8 +47,8 @@ normative:
 --- abstract
 
 Web sites often block archiving crawlers because they host time-sensitive information. This
-specification documents a robots.txt extension, "Archive-Embargo", that indicates that such
-crawlers should delay publication of information.
+specification documents a robots.txt extension, "Archive-Embargo", that can be used to request
+that such crawlers delay publication of information.
 
 --- middle
 
