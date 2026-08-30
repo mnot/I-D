@@ -108,14 +108,16 @@ Table of Contents
    header fields, and/or a cryptographic digest of the content) so long
    as the response body is not included.
 
-   The rule ABNF pattern from Section 2.2 of [ROBOTS] is extended as
-   shown in Figure 1.
+   The rule ABNF [ABNF] pattern from Section 2.2 of [ROBOTS] is extended
+   as shown in Figure 1.
 
    rule =/ embargo
 
    archive-embargo = *WS "archive-embargo" *WS ":" *WS embargo-period EOL
 
    embargo-period = "w" / "m" / "q"
+
+                  Figure 1: ABNF for Archive-Embargo line
 
 3.  The "Embargo-Allow" Rule
 
@@ -129,25 +131,27 @@ Table of Contents
    and honours the "Archive-Embargo" rule.
 
    The rule ABNF pattern from Section 2.2 of [ROBOTS] is extended as
-   shown in Figure 1.
+   shown in Figure 2.
 
    rule =/ embargo-allow
 
    embargo-allow = *WS "embargo-allow" *WS ":" *WS
                    (path-pattern / empty-pattern) EOL
 
+                   Figure 2: ABNF for Embargo-Allow line
+
 4.  Examples
 
    The following illustrates use of a group that allows the specified
    crawler to access content under the /news path, so long as it
-   embargos publication of that content for a calendar quarter.
+   embargoes publication of that content for a calendar quarter.
 
-   This requires knowledge that the specified crawler supports this
+   This depends on knowing that the specified crawler supports this
    specification.
 
    User-Agent: ExampleBot
    Archive-Embargo: q
-   allow: /news
+   Allow: /news
 
    The example below illustrates a group that allows any crawler that
    supports and honours this specification to crawl resources under the
@@ -156,7 +160,7 @@ Table of Contents
    User-Agent: *
    Archive-Embargo: m
    Embargo-Allow: /news
-   disallow: /
+   Disallow: /
 
 5.  IANA Considerations
 
@@ -168,6 +172,11 @@ Table of Contents
    honour the embargo.
 
 7.  Normative References
+
+   [ABNF]     Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax
+              Specifications: ABNF", STD 68, RFC 5234,
+              DOI 10.17487/RFC5234, January 2008,
+              <https://www.rfc-editor.org/rfc/rfc5234>.
 
    [HTTP]     Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
               Ed., "HTTP Semantics", STD 97, RFC 9110,

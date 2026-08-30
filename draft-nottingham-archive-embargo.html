@@ -1221,15 +1221,21 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 </li>
       </ul>
 <p id="section-2-4">During an embargo period, crawled response content <span class="bcp14">MUST NOT</span> be republished in an archive. Its existence <span class="bcp14">MAY</span> be indicated in an archive (e.g. by a "tombstone" entry that includes the URL, response header fields, and/or a cryptographic digest of the content) so long as the response body is not included.<a href="#section-2-4" class="pilcrow">¶</a></p>
-<p id="section-2-5">The rule ABNF pattern from <span><a href="https://rfc-editor.org/rfc/rfc9309#section-2.2" class="relref">Section 2.2</a> of [<a href="#ROBOTS" class="cite xref">ROBOTS</a>]</span> is extended as shown in Figure 1.<a href="#section-2-5" class="pilcrow">¶</a></p>
-<div class="lang-abnf sourcecode" id="section-2-6">
+<p id="section-2-5">The rule ABNF <span>[<a href="#ABNF" class="cite xref">ABNF</a>]</span> pattern from <span><a href="https://rfc-editor.org/rfc/rfc9309#section-2.2" class="relref">Section 2.2</a> of [<a href="#ROBOTS" class="cite xref">ROBOTS</a>]</span> is extended as shown in <a href="#f-abnf-embargo" class="auto internal xref">Figure 1</a>.<a href="#section-2-5" class="pilcrow">¶</a></p>
+<span id="name-abnf-for-archive-embargo-li"></span><div id="f-abnf-embargo">
+<figure id="figure-1">
+        <div class="lang-abnf sourcecode" id="section-2-6.1">
 <pre>
 rule =/ embargo
 
 archive-embargo = *WS "archive-embargo" *WS ":" *WS embargo-period EOL
 
 embargo-period = "w" / "m" / "q"
-</pre><a href="#section-2-6" class="pilcrow">¶</a>
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-abnf-for-archive-embargo-li" class="selfRef">ABNF for Archive-Embargo line</a>
+        </figcaption></figure>
 </div>
 </section>
 </div>
@@ -1240,14 +1246,20 @@ embargo-period = "w" / "m" / "q"
       </h2>
 <p id="section-3-1">Sites wishing to set archive embargos without knowledge of whether a particular crawler supports this protocol extension need a way to predicate an 'allow' rule on support for it. The "Embargo-Allow" rule serves this function.<a href="#section-3-1" class="pilcrow">¶</a></p>
 <p id="section-3-2">Its semantics are identical to the "allow" rule in <span><a href="https://rfc-editor.org/rfc/rfc9309#section-2.2.2" class="relref">Section 2.2.2</a> of [<a href="#ROBOTS" class="cite xref">ROBOTS</a>]</span>, except that it is only applicable when the crawler supports and honours the "Archive-Embargo" rule.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<p id="section-3-3">The rule ABNF pattern from <span><a href="https://rfc-editor.org/rfc/rfc9309#section-2.2" class="relref">Section 2.2</a> of [<a href="#ROBOTS" class="cite xref">ROBOTS</a>]</span> is extended as shown in Figure 1.<a href="#section-3-3" class="pilcrow">¶</a></p>
-<div class="lang-abnf sourcecode" id="section-3-4">
+<p id="section-3-3">The rule ABNF pattern from <span><a href="https://rfc-editor.org/rfc/rfc9309#section-2.2" class="relref">Section 2.2</a> of [<a href="#ROBOTS" class="cite xref">ROBOTS</a>]</span> is extended as shown in <a href="#f-abnf-allow" class="auto internal xref">Figure 2</a>.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<span id="name-abnf-for-embargo-allow-line"></span><div id="f-abnf-allow">
+<figure id="figure-2">
+        <div class="lang-abnf sourcecode" id="section-3-4.1">
 <pre>
 rule =/ embargo-allow
 
 embargo-allow = *WS "embargo-allow" *WS ":" *WS
                 (path-pattern / empty-pattern) EOL
-</pre><a href="#section-3-4" class="pilcrow">¶</a>
+</pre>
+</div>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-abnf-for-embargo-allow-line" class="selfRef">ABNF for Embargo-Allow line</a>
+        </figcaption></figure>
 </div>
 </section>
 </div>
@@ -1256,22 +1268,22 @@ embargo-allow = *WS "embargo-allow" *WS ":" *WS
       <h2 id="name-examples">
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
       </h2>
-<p id="section-4-1">The following illustrates use of a group that allows the specified crawler to access content under the /news path, so long as it embargos publication of that content for a calendar quarter.<a href="#section-4-1" class="pilcrow">¶</a></p>
-<p id="section-4-2">This requires knowledge that the specified crawler supports this specification.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-1">The following illustrates use of a group that allows the specified crawler to access content under the <code>/news</code> path, so long as it embargoes publication of that content for a calendar quarter.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">This depends on knowing that the specified crawler supports this specification.<a href="#section-4-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4-3">
 <pre>
 User-Agent: ExampleBot
 Archive-Embargo: q
-allow: /news
+Allow: /news
 </pre><a href="#section-4-3" class="pilcrow">¶</a>
 </div>
-<p id="section-4-4">The example below illustrates a group that allows any crawler that supports and honours this specification to crawl resources under the /news path, so long as they embargo that content for one month.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-4">The example below illustrates a group that allows any crawler that supports and honours this specification to crawl resources under the <code>/news</code> path, so long as they embargo that content for one month.<a href="#section-4-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4-5">
 <pre>
 User-Agent: *
 Archive-Embargo: m
 Embargo-Allow: /news
-disallow: /
+Disallow: /
 </pre><a href="#section-4-5" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1298,6 +1310,10 @@ disallow: /
 <a href="#section-7" class="section-number selfRef">7. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
       </h2>
 <dl class="references">
+<dt id="ABNF">[ABNF]</dt>
+      <dd>
+<span class="refAuthor">Crocker, D., Ed.</span> and <span class="refAuthor">P. Overell</span>, <span class="refTitle">"Augmented BNF for Syntax Specifications: ABNF"</span>, <span class="seriesInfo">STD 68</span>, <span class="seriesInfo">RFC 5234</span>, <span class="seriesInfo">DOI 10.17487/RFC5234</span>, <time datetime="2008-01" class="refDate">January 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5234">https://www.rfc-editor.org/rfc/rfc5234</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="HTTP">[HTTP]</dt>
       <dd>
 <span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
