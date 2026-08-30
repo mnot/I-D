@@ -129,3 +129,36 @@ Embargoing is not a security mechanism; it relies upon crawlers to honour the em
 
 --- back
 
+# Implementing Embargoes in Archives
+
+How archives provide access to their contents
+will constrain how they might implement embargoes.
+This section considers archives that provide
+access to content from individual resources
+and archives that provide bulk snapshots
+that contain content from many resources.
+
+Both types of archive need to have a way to store or reconstruct an embargo date
+along with each representation that it stores.
+
+An archive that provides access to single items of content
+is simple:
+access to content can be limited until its embargo date.
+
+Managing access to archives that provide bulk access to content
+is more complex.
+To ensure that embargoed content is not included in archives,
+a complete and inaccessible repository containing all archived content.
+Periodically, content that has passed its embargo date
+can be copied to accessible versions of the repository.
+
+For large archives,
+this sort of update process could be time-consuming,
+so updates might only be applied periodically.
+For that reason, content might not be available immediately
+after the embargo date passes.
+Techniques like sharding of archives
+or maintaining a sorted index of embargo dates
+could make the update process more efficient
+or reduce the time between the embargo date passing
+and the content being available.
