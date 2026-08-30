@@ -78,7 +78,7 @@ Its value indicates the length of the embargo period, measured from the earliest
 
 Any other value is unsupported and results in the rule being ignored. Note that the embargo period uses case-insensitive matching, so that "Q" and "q" both indicate 90 days.
 
-During an embargo period, crawled response content MUST NOT be republished in an archive. Its existence MAY be indicated in an archive (e.g. by a "tombstone" entry that includes the URL, response header fields, and/or a cryptographic digest of the content) so long as the response body is not included.
+During an embargo period, a crawler MUST NOT allow covered content to be republished in an archive. Its existence MAY be indicated in an archive (e.g. by a "tombstone" entry that includes the URL, response header fields, and/or a cryptographic digest of the content) so long as the response body is not included.
 
 The rule ABNF {{ABNF}} pattern from {{Section 2.2 of ROBOTS}} is extended as shown in {{f-abnf-embargo}}.
 
