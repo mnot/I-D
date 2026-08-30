@@ -2,7 +2,7 @@
 title: Embargoing Archive Publication using robots.txt
 abbrev: Archive-Embargo
 docname: draft-nottingham-archive-embargo-latest
-date: {DATE}
+date: draft-nottingham-archive-embargo-date
 category: std
 updates: 9309
 
