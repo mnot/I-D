@@ -96,7 +96,9 @@ embargo-period = "w" / "m" / "q"
 
 Sites wishing to set archive embargoes without knowledge of whether a particular crawler supports this protocol extension need a way to predicate an 'allow' rule on support for it. The "Embargo-Allow" rule serves this function.
 
-Its semantics are identical to the "allow" rule in {{Section 2.2.2 of ROBOTS}}, except that it is only applicable when the crawler supports and honours the "Archive-Embargo" rule. If there is no valid value for "Archive-Embargo" in the group, the "Embargo-Allow" rule MUST be ignored.
+Its semantics are identical to the "Allow" rule in {{Section 2.2.2 of ROBOTS}}, except that it is only applicable when the crawler supports and honours the "Archive-Embargo" rule.  This includes having "Embargo-Allow" override an identical-length "Disallow".
+
+This rule has no effect on its own.  If there is no valid value for "Archive-Embargo" in the group, the "Embargo-Allow" rule MUST be ignored.
 
 The rule ABNF pattern from {{Section 2.2 of ROBOTS}} is extended as shown in {{f-abnf-allow}}.
 
