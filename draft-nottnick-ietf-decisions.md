@@ -2,7 +2,7 @@
 title: Making Decisions in IETF Working Groups
 abbrev:
 docname: draft-nottnick-ietf-decisions-latest
-date: {DATE}
+date: draft-nottnick-ietf-decisions-date
 category: bcp
 updates: 2418
 

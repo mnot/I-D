@@ -2,7 +2,7 @@
 title: Use Cases for Authentication of Web Bots
 abbrev: webbotauth usecases
 docname: draft-nottingham-webbotauth-use-cases-latest
-date: {DATE}
+date: draft-nottingham-webbotauth-use-cases-date
 category: std
 
 ipr: trust200902

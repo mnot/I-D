@@ -2,7 +2,7 @@
 title: Binary Structured HTTP Field Values
 abbrev:
 docname: draft-nottingham-binary-structured-headers-latest
-date: {DATE}
+date: draft-nottingham-binary-structured-headers-date
 category: std
 
 ipr: trust200902

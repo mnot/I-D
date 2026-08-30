@@ -2,7 +2,7 @@
 title: Best Practices for Blocking Clients by IP Address
 abbrev: Blocking by IP Address
 docname: draft-nottingham-blocking-best-practices-latest
-date: {DATE}
+date: draft-nottingham-blocking-best-practices-date
 category: bcp
 
 ipr: trust200902
