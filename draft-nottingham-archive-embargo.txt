@@ -1,0 +1,202 @@
+
+
+
+
+Network Working Group                                      M. Nottingham
+Internet-Draft                                                          
+Updates: 9309 (if approved)                                   M. Thomson
+Intended status: Standards Track                          30 August 2026
+Expires: 3 March 2027
+
+
+            Embargoing Archive Publication using robots.txt
+                draft-nottingham-archive-embargo-latest
+
+Abstract
+
+   Web sites often block archiving crawlers because they host time-
+   sensitive information.  This specification documents a robots.txt
+   extension, "Archive-Embargo", that indicates that such crawlers
+   should delay publication of information.
+
+About This Document
+
+   This note is to be removed before publishing as an RFC.
+
+   Status information for this document may be found at
+   https://datatracker.ietf.org/doc/draft-nottingham-archive-embargo/.
+
+   information can be found at https://projects.mnot.net/I-D/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/mnot/I-D/labels/embargo.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 3 March 2027.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+     1.1.  Notational Conventions
+   2.  The "Archive-Embargo" Rule
+   3.  The "Embargo-Allow" Rule
+   4.  Examples
+   5.  IANA Considerations
+   6.  Security Considerations
+   7.  Normative References
+   Authors' Addresses
+
+1.  Introduction
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+2.  The "Archive-Embargo" Rule
+
+   This document adds a new rule that associates an embargo period with
+   a group.
+
+   Its value indicates the length of the embargo period, measured from
+   the earliest of the HTTP response's Last-Modified value (when present
+   and parseable; see Section 8.8.2 of [HTTP]) and the time when the
+   content was first observed.  The following values (along with their
+   associated embargo periods) are supported:
+
+   *  "w" - 7 days
+
+   *  "m" - 31 days
+
+   *  "q" - 90 days
+
+   During an embargo period, crawled response content MUST NOT be
+   republished in a public archive.  Its existence MAY be indicated in a
+   public archive (e.g. by a "tombstone" entry that includes the URL,
+   response header fields, and/or a cryptographic digest of the content)
+   so long as the response body is not included.
+
+   The rule ABNF pattern from Section 2.2 of [ROBOTS] is extended as
+   shown in Figure 1.
+
+   rule =/ embargo
+
+   archive-embargo = *WS "archive-embargo" *WS ":" *WS embargo-period EOL
+
+   embargo-period = "w" / "m" / "q"
+
+3.  The "Embargo-Allow" Rule
+
+   Sites wishing to set archive embargos without knowledge of whether a
+   particular crawler supports this protocol extension need a way to
+   predicate an 'allow' rule on support for it.  The "Embargo-Allow"
+   rule serves this function.
+
+   Its semantics are identical to the "allow" rule in Section 2.2.2 of
+   [ROBOTS], except that it is only applicable when the crawler supports
+   and honours the "Archive-Embargo" rule.
+
+   The rule ABNF pattern from Section 2.2 of [ROBOTS] is extended as
+   shown in Figure 1.
+
+   rule =/ embargo-allow
+
+   embargo-allow = *WS "embargo-allow" *WS ":" *WS
+                   (path-pattern / empty-pattern) EOL
+
+4.  Examples
+
+   The following illustrates use of a group that allows the specified
+   crawler to access content under the /news path, so long as it
+   embargos publication of that content for a calendar quarter.
+
+   This requires knowledge that the specified crawler supports this
+   specification.
+
+   User-Agent: ExampleBot
+   Archive-Embargo: q
+   allow: /news
+
+   The example below illustrates a group that allows any crawler that
+   supports and honours this specification to crawl resources under the
+   /news path, so long as they embargo that content for one month.
+
+   User-Agent: *
+   Archive-Embargo: m
+   Embargo-Allow: /news
+   disallow: /
+
+5.  IANA Considerations
+
+   This document has no actions for IANA.
+
+6.  Security Considerations
+
+   Embargoing is not a security mechanism; it relies upon crawlers to
+   honour the embargo.
+
+7.  Normative References
+
+   [HTTP]     Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke,
+              Ed., "HTTP Semantics", STD 97, RFC 9110,
+              DOI 10.17487/RFC9110, June 2022,
+              <https://www.rfc-editor.org/rfc/rfc9110>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+   [ROBOTS]   Koster, M., Illyes, G., Zeller, H., and L. Sassman,
+              "Robots Exclusion Protocol", RFC 9309,
+              DOI 10.17487/RFC9309, September 2022,
+              <https://www.rfc-editor.org/rfc/rfc9309>.
+
+Authors' Addresses
+
+   Mark Nottingham
+   Melbourne
+   Australia
+   Email: mnot@mnot.net
+   URI:   https://mnot.net/
+
+
+   Martin Thomson
+   Sydney
+   Australia
+   Email: mt@lowentropy.net
