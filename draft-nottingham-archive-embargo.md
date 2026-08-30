@@ -57,10 +57,13 @@ This document updates RFC 9309 to add two directives that support embargoes.
 
 # Introduction
 
-This document updates RFC 9309 {{ROBOTS}} to add
-an "Archive-Embargo" rule ({{archive-embargo}}) that sets the embargo period and
-an "Embargo-Allow" rule ({{embargo-allow}}) that conditionally allows access to resources
-for crawlers that respect embargoes.
+Many Web publishers choose not allow their content to be publicly archived, by disallowing archiving crawlers in robots.txt {{ROBOTS}}. Archiving is widely seen as a public good, enhancing the value of the Internet both for current and future users.
+
+In some cases, publishers are amenable to archiving in the long term, but sensitive (for various reasons, including commercial considerations) to immediate republication of content in an archive.
+
+This document proposes updates to {{ROBOTS}} to address this concern by allowing publishers to state an embargo period for content on their sites.
+
+{{archive-embargo}} adds an "Archive-Embargo" rule that sets an embargo period. {{embargo-allow}} defines an "Embargo-Allow" rule that conditionally allows access to resources for crawlers that respect embargos.
 
 ## Notational Conventions
 
