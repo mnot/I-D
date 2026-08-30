@@ -82,6 +82,9 @@ embargo-period = "w" / "m" / "q"
 ~~~
 {: #f-abnf-embargo title="ABNF for Archive-Embargo line"}
 
+Note that the embargo period uses case-insensitive matching,
+so that "Q" and "q" both indicate 90 days.
+
 # The "Embargo-Allow" Rule
 
 Sites wishing to set archive embargos without knowledge of whether a particular crawler supports this protocol extension need a way to predicate an 'allow' rule on support for it. The "Embargo-Allow" rule serves this function.
