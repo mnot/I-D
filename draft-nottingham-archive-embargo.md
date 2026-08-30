@@ -50,16 +50,23 @@ Web sites often block archiving crawlers because they host time-sensitive inform
 specification documents a robots.txt extension, "Archive-Embargo", that indicates that such
 crawlers should delay publication of information.
 
+This document updates RFC 9309 to add two directives that support embargoes.
+
 --- middle
 
 
 # Introduction
 
+This document updates RFC 9309 {{ROBOTS}} to add
+an "Archive-Embargo" rule ({{archive-embargo}}) that sets the embargo period and
+an "Embargo-Allow" rule ({{embargo-allow}}) that conditionally allows access to resources
+for crawlers that respect embargoes.
+
 ## Notational Conventions
 
 {::boilerplate bcp14-tagged}
 
-# The "Archive-Embargo" Rule
+# The "Archive-Embargo" Rule {#archive-embargo}
 
 This document adds a new rule that associates an embargo period with a group.
 
@@ -82,7 +89,7 @@ embargo-period = "w" / "m" / "q"
 ~~~
 {: #f-abnf-embargo title="ABNF for Archive-Embargo line"}
 
-# The "Embargo-Allow" Rule
+# The "Embargo-Allow" Rule {#embargo-allow}
 
 Sites wishing to set archive embargos without knowledge of whether a particular crawler supports this protocol extension need a way to predicate an 'allow' rule on support for it. The "Embargo-Allow" rule serves this function.
 
