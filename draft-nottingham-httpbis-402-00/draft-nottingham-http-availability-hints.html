@@ -4,30 +4,30 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Best Practices for Blocking Clients by IP Address</title>
+<title>HTTP Availability Hints</title>
 <meta content="Mark Nottingham" name="author">
 <meta content="
-       Blocking clients by IP address creates not only local availability problems for clients, but also can foster conditions that lead to systemic issues, such as centralization of Internet protocols. This document makes recommendations to mitigate these effects. 
+       This specification defines availability hints, a new class of HTTP responses headers that augment the information in the Vary header field. 
     " name="description">
-<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="xml2rfc 3.34.1" name="generator">
 <meta content="Internet-Draft" name="keyword">
-<meta content="draft-nottingham-blocking-best-practices-latest" name="ietf.draft">
+<meta content="draft-nottingham-http-availability-hints-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.0
-    Python 3.14.7
-    ConfigArgParse 1.7.5
+  xml2rfc 3.34.1
+    Python 3.14.8
+    ConfigArgParse 1.8.0
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.11.5
+    platformdirs 4.12.2
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.2
+    wcwidth 0.9.1
 -->
-<link href="draft-nottingham-blocking-best-practices.xml" rel="alternate" type="application/rfc+xml">
+<link href="draft-nottingham-http-availability-hints.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
 <style type="text/css">@font-face {
   font-family: 'Lora';
@@ -1040,12 +1040,12 @@ svg {
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
-<td class="center">Blocking by IP Address</td>
-<td class="right">August 2026</td>
+<td class="center">HTTP Availability Hints</td>
+<td class="right">October 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Nottingham</td>
-<td class="center">Expires 3 March 2027</td>
+<td class="center">Expires 21 April 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1055,15 +1055,15 @@ svg {
 <dt class="label-workgroup">Workgroup:</dt>
 <dd class="workgroup">Network Working Group</dd>
 <dt class="label-internet-draft">Internet-Draft:</dt>
-<dd class="internet-draft">draft-nottingham-blocking-best-practices-latest</dd>
+<dd class="internet-draft">draft-nottingham-http-availability-hints-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-08-30" class="published">30 August 2026</time>
+<time datetime="2026-10-18" class="published">18 October 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
-<dd class="intended-status">Best Current Practice</dd>
+<dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-03-03">3 March 2027</time></dd>
+<dd class="expires"><time datetime="2027-04-21">21 April 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1072,10 +1072,10 @@ svg {
 </dd>
 </dl>
 </div>
-<h1 id="title">Best Practices for Blocking Clients by IP Address</h1>
+<h1 id="title">HTTP Availability Hints</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">Blocking clients by IP address creates not only local availability problems for clients, but also can foster conditions that lead to systemic issues, such as centralization of Internet protocols. This document makes recommendations to mitigate these effects.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">This specification defines availability hints, a new class of HTTP responses headers that augment the information in the Vary header field.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <section class="note rfcEditorRemove" id="section-note.1">
       <h2 id="name-about-this-document">
@@ -1083,11 +1083,11 @@ svg {
       </h2>
 <p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
 <p id="section-note.1-2">
-        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nottingham-blocking-best-practices/">https://datatracker.ietf.org/doc/draft-nottingham-blocking-best-practices/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nottingham-http-availability-hints/">https://datatracker.ietf.org/doc/draft-nottingham-http-availability-hints/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
 <p id="section-note.1-3">
          information can be found at <span><a href="https://mnot.github.io/I-D/">https://mnot.github.io/I-D/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
 <p id="section-note.1-4">Source for this draft and an issue tracker can be found at
-        <span><a href="https://github.com/mnot/I-D/labels/blocking">https://github.com/mnot/I-D/labels/blocking</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+        <span><a href="https://github.com/mnot/I-D/labels/availability-hints">https://github.com/mnot/I-D/labels/availability-hints</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1108,7 +1108,7 @@ svg {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 3 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 21 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1146,33 +1146,47 @@ svg {
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
-            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-best-practices-for-blocking" class="internal xref">Best Practices for Blocking Clients by IP Address</a></p>
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-defining-availability-hints" class="internal xref">Defining Availability Hints</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-calculating-cache-keys-with" class="internal xref">Calculating Cache Keys with Availability Hints</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-availability-hint-definitio" class="internal xref">Availability Hint Definitions</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
-                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-reasons-for-blocking" class="internal xref">Reasons for Blocking</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-content-encoding" class="internal xref">Content Encoding</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
-                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-blocking-duration" class="internal xref">Blocking Duration</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-content-format" class="internal xref">Content Format</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
-                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-blocking-scope" class="internal xref">Blocking Scope</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-content-language" class="internal xref">Content Language</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4">
-                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="auto internal xref">2.4</a>.  <a href="#name-client-recourse" class="internal xref">Client Recourse</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.4">
+                <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="auto internal xref">4.4</a>.  <a href="#name-cookie" class="internal xref">Cookie</a></p>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
-</li>
-          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
-</li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
 </li>
         </ul>
 </nav>
@@ -1183,13 +1197,32 @@ svg {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Internet services block access from specific IP addresses, ranges of addresses, and addresses associated with attributes like geography in response to (or anticipation of) what is perceived as abusive or otherwise undesirable traffic.<a href="#section-1-1" class="pilcrow">¶</a></p>
-<p id="section-1-2">For example, blocking of source addresses in SMTP is a widespread practice to control unsolicited e-mail messages ("spam"). Web sites also block IP addresses from clients that make an unreasonable volume of requests, and/or those addresses that probe for vulnerabilities.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">While these practices might be necessary to operate and make services available to those clients that are not perceived as abusive, blocking clients by IP address can have longer-term systemic effects on the Internet that are undesirable.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">In particular, blocking IP addresses can over-capture clients that are not considered abusive, leading to legitimate clients being blocked. While some traffic from a given address might indeed be abusive, other clients that share that IP address -- for example, because it is reallocated to another entity, or shared between many clients -- are not necessarily to blame.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">When widespread, blocking can have systemic effects, as it becomes difficult to deploy clients on IP addresses that have been problematic in the past.<a href="#section-1-5" class="pilcrow">¶</a></p>
-<p id="section-1-6">For example, self-hosting an e-mail server has become difficult (and impractical for most) because blocking has become so prevalent in that ecosystem. The resulting pressure to use large, widely-recognised providers creates centralization risk in e-mail.<a href="#section-1-6" class="pilcrow">¶</a></p>
-<p id="section-1-7">This document promotes practices that are intended to mitigate some harmful effects of blocking clients by IP address. It does not address blocking through use of other identifiers, or blocking undesirable services.<a href="#section-1-7" class="pilcrow">¶</a></p>
+<p id="section-1-1">The HTTP Vary header field (<span><a href="https://rfc-editor.org/rfc/rfc9110#section-12.5.5" class="relref">Section 12.5.5</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>) allows an origin server to describe what aspects of requests affect the content of its responses. This information is useful in many ways: most prominently, downstream caches can use it to select the correct stored response for a given request (<span><a href="https://rfc-editor.org/rfc/rfc9111#section-4.1" class="relref">Section 4.1</a> of [<a href="#HTTP-CACHING" class="cite xref">HTTP-CACHING</a>]</span>).<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">However, the information conveyed by Vary is limited. If the request headers enumerated in it are considered as a n-dimensional space with each field representing an axis, this response header:<a href="#section-1-2" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-1-3">
+<pre>
+Vary: Accept-Encoding, Accept-Language, ECT
+</pre><a href="#section-1-3" class="pilcrow">¶</a>
+</div>
+<p id="section-1-4">indicates that there is a three-dimensional space of potential responses that could be sent, but nothing more is conveyed. The number and nature of the entries on each axis are not available, leaving caches and other downstream consumers none the wiser as to how broad this space is, or how to navigate it.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">This design makes using Vary difficult. A cache doesn't have enough information available to decide whether one of its stored responses is the best to satisfy a given request in all but the most simple circumstances.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-6">For example, if a request indicates that the client prefers responses in the French language, but will also accept English, and the cache has a stored English response, what is the appropriate action? Should it serve the English response, or should it make a request to the server for a French response and hope that one might be available -- adding significant latency if it is not?<a href="#section-1-6" class="pilcrow">¶</a></p>
+<p id="section-1-7">This specification defines a new type of HTTP header field -- an <em>availability hint</em> -- that augments the information on a single axis of content negotiation, by describing the selection of responses that a server has available along that axis. So, our example above could have three availability hints added to it:<a href="#section-1-7" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-1-8">
+<pre>
+Vary: Accept-Encoding, Accept-Language, ECT
+Avail-Encoding: gzip, br
+Avail-Language: fr, en;d
+Avail-ECT: ("slow-2g" "2g" "3g"), ("4g");d
+</pre><a href="#section-1-8" class="pilcrow">¶</a>
+</div>
+<p id="section-1-9">This says that there are two encodings available -- gzip and brotli -- beyond the mandatory "identity" encoding; that both French and English are available, but English is the default; and that there are two different representations available depending on the Effective Connection Type that the client advertises, with "4g" being the default. (note that because it it not yet standardised, this specification does not define the Avail-ECT header field; it is only used as an example above).<a href="#section-1-9" class="pilcrow">¶</a></p>
+<p id="section-1-10">Caches and other clients can use this information to determine when a request can be satisfied by a stored response, and what other options might be available. Using the example above, we can know that the response to a request an ECT of "2g" can also be used for a request with "3g".<a href="#section-1-10" class="pilcrow">¶</a></p>
+<p id="section-1-11">Availability hints have some limitations. While a server's preferences along a single axis of negotiation can be conveyed by the corresponding availability hint, its relative preferences between multiple axes are not. In the example above, it isn't possible to know whether the server prefers that downstream caches and clients use the brotli-encoded French version over the gzip-encoded English version.<a href="#section-1-11" class="pilcrow">¶</a></p>
+<p id="section-1-12">Likewise, it is't possible to convey "holes" in the dimensional space described by Vary. For example, a gzip-encoded French response may not be available from the server. This specification does not attempt to address this shortcoming.<a href="#section-1-12" class="pilcrow">¶</a></p>
+<p id="section-1-13">Availability hints do not specify exactly how caches should behave in all circumstances. Because they operate as an optimisation, they often have different behaviours based upon the specific requirements of their deployment. Availability hints are designed to better inform their operation, not constrain it.<a href="#section-1-13" class="pilcrow">¶</a></p>
+<p id="section-1-14">Finally, availability hints need to be defined for each axis of content negotiation in use, and the recipient (such as a cache) needs to understand that type of availability hint. If either condition is not true, that axis of negotiation will fall back to the behaviour specified by Vary.<a href="#section-1-14" class="pilcrow">¶</a></p>
+<p id="section-1-15"><a href="#define" class="auto internal xref">Section 2</a> describes how availability hints are defined. <a href="#process" class="auto internal xref">Section 3</a> specifies how availability hints are processed, with respect to the Vary header field. <a href="#definitions" class="auto internal xref">Section 4</a> defines a number of availability hints for existing HTTP content negotiation mechanisms.<a href="#section-1-15" class="pilcrow">¶</a></p>
 <div id="notational-conventions">
 <section id="section-1.1">
         <h3 id="name-notational-conventions">
@@ -1203,84 +1236,268 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
 </div>
 </section>
 </div>
-<div id="best-practices-for-blocking-clients-by-ip-address">
+<div id="define">
 <section id="section-2">
-      <h2 id="name-best-practices-for-blocking">
-<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-best-practices-for-blocking" class="section-name selfRef">Best Practices for Blocking Clients by IP Address</a>
+      <h2 id="name-defining-availability-hints">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-defining-availability-hints" class="section-name selfRef">Defining Availability Hints</a>
       </h2>
-<div id="reasons-for-blocking">
-<section id="section-2.1">
-        <h3 id="name-reasons-for-blocking">
-<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-reasons-for-blocking" class="section-name selfRef">Reasons for Blocking</a>
-        </h3>
-<p id="section-2.1-1">Services that are intended to be generally available on the Internet <span class="bcp14">MUST NOT</span> block clients by default (i.e., use an "allow list"), and <span class="bcp14">SHOULD NOT</span> block clients as a matter of course.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
-<p id="section-2.1-2">Before blocking by IP address, consider whether other, more precise mechanisms for identifying abusive traffic are available. Because there is not a one-to-one mapping between end users and IP addresses (due to IP address reuse, NATs, application-layer proxies, multi-user systems, and other causes), IP addresses are generally a poor identifier. Even when there is a one-to-one mapping, in some cases a user might not be in full control of their system (e.g., due to malware), causing it to emit abusive traffic without their knowledge.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
-<p id="section-2.1-3">Likewise, before blocking it is important to consider <em>all</em> traffic from the IP address, not only the volume of abusive traffic. What looks like a high amount of abusive traffic from one user could be in fact representing many hundred or even thousands of users. Tools that identify abusive traffic should take this into account, for example by making decisions based upon the proportion of abusive traffic, rather than just the volume.<a href="#section-2.1-3" class="pilcrow">¶</a></p>
-<p id="section-2.1-4">Delegating a blocking decision to another entity -- for example, using a "block list" -- should be done with great care. When a blocking decision is delegated, that decision should be regularly reviewed, to verify that it is still appropriate and that the block list follows the guidance in this document.<a href="#section-2.1-4" class="pilcrow">¶</a></p>
-<p id="section-2.1-5">Alternatives to blocking should also be considered. If traffic is suspicious, it could be separated from other traffic and handled by separate systems to contain its impact. Or, it could be subjected to extra processing to identify and weed out the abusers, such as is seen in "CAPTCHA" systems on the Web. This includes techniques that leverage protocol functionality, such as using "backscatter" in e-mail.<a href="#section-2.1-5" class="pilcrow">¶</a></p>
+<p id="section-2-1">An availability hint applies to a single axis of HTTP proactive content negotiation; for example, that enabled by the <code>Accept-Encoding</code> request header field.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">A specification for an availability hint needs to convey the following information:<a href="#section-2-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-2-3">
+<li id="section-2-3.1">
+          <p id="section-2-3.1.1">The definition of a response header field that describes the available responses along that axis of content negotiation. By convention, these header fields typically begin with "Avail-".<a href="#section-2-3.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-2-3.2">
+          <p id="section-2-3.2.1">An algorithm or guidelines for using that information to determine whether a stored response can be selected for a presented request (per <span><a href="https://rfc-editor.org/rfc/rfc9111#section-4.1" class="relref">Section 4.1</a> of [<a href="#HTTP-CACHING" class="cite xref">HTTP-CACHING</a>]</span>).<a href="#section-2-3.2.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-2-4">The response header field should be defined as a Structured Field <span>[<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>.<a href="#section-2-4" class="pilcrow">¶</a></p>
+<p id="section-2-5">It is recommended that the selection algorithm operate solely using information in the stored responses and presented request, if possible. If the selection algorithm can return multiple available responses, they should indicate an order of preference.<a href="#section-2-5" class="pilcrow">¶</a></p>
+<p id="section-2-6">Either the response header field or the algorithm should indicate which of the available responses is the default -- i.e., which is used if none match.<a href="#section-2-6" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="blocking-duration">
-<section id="section-2.2">
-        <h3 id="name-blocking-duration">
-<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-blocking-duration" class="section-name selfRef">Blocking Duration</a>
-        </h3>
-<p id="section-2.2-1">IP addresses <span class="bcp14">MUST NOT</span> be blocked indefinitely. As discussed above, permanent or even long-lived address-based blocking can have serious effects on not only the availability of specific services to legitimate clients, but also create more general systemic issues in the Internet.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
-<p id="section-2.2-2">Instead, when blocking is believed to be necessary, its duration <span class="bcp14">SHOULD</span> be proportional to the certainty that the client is still abusive. For example, a service might initially ban a problematic client for a few minutes. If there is still significant abusive traffic from the address after that period, the block period might be lengthened to an hour or two.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
-<p id="section-2.2-3">Depending on the nature of the service offered, IP-based blocking <span class="bcp14">SHOULD NOT</span> exceed a period of more than one month, and typically <span class="bcp14">SHOULD</span> be for much shorter periods. This approach allows the service to discard enough abusive traffic to operate with reasonable efficiency while lowering (but not eliminating) the impact of blocking any legitimate clients.<a href="#section-2.2-3" class="pilcrow">¶</a></p>
-<p id="section-2.2-4">Tools that enable blocking by IP address through operator intervention -- for example, firewall rule engines, web portals for controlling traffic, and server configuration formats -- <span class="bcp14">SHOULD</span> promote this practice. For example, allowing a block to removed after a period of time has passed and promoting that with the period recommended above as a default is good practice.<a href="#section-2.2-4" class="pilcrow">¶</a></p>
+<div id="process">
+<section id="section-3">
+      <h2 id="name-calculating-cache-keys-with">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-calculating-cache-keys-with" class="section-name selfRef">Calculating Cache Keys with Availability Hints</a>
+      </h2>
+<p id="section-3-1">When a cache is presented with a response that has both a Vary header field and one or more availability hints, this specification augments the process defined in <span><a href="https://rfc-editor.org/rfc/rfc9111#section-4.1" class="relref">Section 4.1</a> of [<a href="#HTTP-CACHING" class="cite xref">HTTP-CACHING</a>]</span>.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">While Vary processing is defined in terms of whether the header fields from two requests match, availability hints invoke a different processing model. When they are present, the set of stored responses that can be used to satisfy a presented request is found by following these steps:<a href="#section-3-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3-3">
+<li id="section-3-3.1">
+          <p id="section-3-3.1.1">Determine the Vary header field and availability hints present for the requested URL. They <span class="bcp14">SHOULD</span> be obtained from the most recently obtained response for that URL (per <span><a href="https://rfc-editor.org/rfc/rfc9111#section-4" class="relref">Section 4</a> of [<a href="#HTTP-CACHING" class="cite xref">HTTP-CACHING</a>]</span>, but without applying the Vary header field per <span><a href="https://rfc-editor.org/rfc/rfc9111#section-4.1" class="relref">Section 4.1</a> of [<a href="#HTTP-CACHING" class="cite xref">HTTP-CACHING</a>]</span>), although they <span class="bcp14">MAY</span> be obtained from any response allowed to be used for that URL.<a href="#section-3-3.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="section-3-3.2">
+          <p id="section-3-3.2.1">For each content negotiation axis in the Vary header field, determine which stored responses can be selected by running the corresponding selection algorithm, as defined by the associated availability hint.<a href="#section-3-3.2.1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-3-3.2.2">
+<li id="section-3-3.2.2.1">
+              <p id="section-3-3.2.2.1.1">If an axis of content negotiation is not recognised or implemented by the cache, fall back to selecting available responses for that axis using the rules described in <span><a href="https://rfc-editor.org/rfc/rfc9111#section-4.1" class="relref">Section 4.1</a> of [<a href="#HTTP-CACHING" class="cite xref">HTTP-CACHING</a>]</span>.<a href="#section-3-3.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+          </ol>
+</li>
+        <li id="section-3-3.3">
+          <p id="section-3-3.3.1">Return the intersection of the results of (2).<a href="#section-3-3.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="section-3-4">This specification does not define how to select the most appropriate response when more than one is returned, but it is <span class="bcp14">RECOMMENDED</span> that client preferences be observed when expressed.<a href="#section-3-4" class="pilcrow">¶</a></p>
+<p id="section-3-5">If a received availability hint does not conform to the data structure defined in its specification (for example, a Structured Fields List of Strings is anticipated, but one item in the List is an Integer), that field <span class="bcp14">SHOULD</span> be ignored (with the implication that processing for that axis of content negotiation will fall back to Vary behavior). Note that unrecognised Parameters on Structured Fields are ignored and therefore do not trigger this fallback, unless explicitly specified otherwise.<a href="#section-3-5" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="blocking-scope">
-<section id="section-2.3">
-        <h3 id="name-blocking-scope">
-<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-blocking-scope" class="section-name selfRef">Blocking Scope</a>
+<div id="definitions">
+<section id="section-4">
+      <h2 id="name-availability-hint-definitio">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-availability-hint-definitio" class="section-name selfRef">Availability Hint Definitions</a>
+      </h2>
+<p id="section-4-1">The following subsections define availability hints for a selection of existing content negotiation mechanisms.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="avail-encoding">
+<section id="section-4.1">
+        <h3 id="name-content-encoding">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-content-encoding" class="section-name selfRef">Content Encoding</a>
         </h3>
-<p id="section-2.3-1">When blocking by IP address, the scope <span class="bcp14">SHOULD</span> be as minimal as possible -- typically, limited to a single source address that has been abusive in the recent past. Anticipatory blocking by netblock is <span class="bcp14">NOT RECOMMENDED</span>, as it can have significant side effects.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
-<p id="section-2.3-2">Likewise, delegating blocking decisions to a third party based upon assigned attributes (e.g., "dial-up Internet") is <span class="bcp14">NOT RECOMMENDED</span>.<a href="#section-2.3-2" class="pilcrow">¶</a></p>
+<p id="section-4.1-1">The Avail-Encoding response header field is the availability hint for content negotiation using the Accept-Encoding request header field defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-12.5.3" class="relref">Section 12.5.3</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>. For example:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-4.1-2">
+<pre>
+Vary: Accept-Encoding
+Avail-Encoding: gzip, br
+</pre><a href="#section-4.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.1-3">Avail-Encoding is a Structured Field, whose value is a List (<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.1" class="relref">Section 3.1</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>) of Tokens (<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.3.4" class="relref">Section 3.3.4</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>). Each list item indicates a content-coding that is available for the resource. Additionally, the "identity" encoding is always considered to be available, and is the default encoding.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+<p id="section-4.1-4">The selection algorithm for this axis of content negotiation is described in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-12.5.3" class="relref">Section 12.5.3</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-4.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="client-recourse">
-<section id="section-2.4">
-        <h3 id="name-client-recourse">
-<a href="#section-2.4" class="section-number selfRef">2.4. </a><a href="#name-client-recourse" class="section-name selfRef">Client Recourse</a>
+<div id="avail-format">
+<section id="section-4.2">
+        <h3 id="name-content-format">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-content-format" class="section-name selfRef">Content Format</a>
         </h3>
-<p id="section-2.4-1">Services that block clients by IP address <span class="bcp14">SHOULD</span> have some well-publicised mechanism for challenging a block. For example, an e-mail service's Web site could provide a form for submitting disputes.<a href="#section-2.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.2-1">The Avail-Format response header field is the availability hint for content negotiation using the Accept request header field defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-12.5.1" class="relref">Section 12.5.1</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>. For example:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-4.2-2">
+<pre>
+Vary: Accept
+Avail-Format: image/png, image/gif;d
+</pre><a href="#section-4.2-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.2-3">Avail-Format is a Structured Field, whose value is a List (<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.1" class="relref">Section 3.1</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>) of Tokens (<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.3.4" class="relref">Section 3.3.4</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>). Each list item indicates a media type ("type/subtype") that is available for the resource.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.2-4">A single member of the List <span class="bcp14">MAY</span> have the "d" parameter, which indicates that member is the default format.<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+<p id="section-4.2-5">The selection algorithm for this axis of content negotiation is described in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-12.5.1" class="relref">Section 12.5.1</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-4.2-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="avail-language">
+<section id="section-4.3">
+        <h3 id="name-content-language">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-content-language" class="section-name selfRef">Content Language</a>
+        </h3>
+<p id="section-4.3-1">The Avail-Language response header field is the availability hint for content negotiation using the Accept-Language request header field defined in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-12.5.4" class="relref">Section 12.5.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>. For example:<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-4.3-2">
+<pre>
+Vary: Accept-Language
+Avail-Language: en-uk, en-us;d, fr, de
+</pre><a href="#section-4.3-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.3-3">Avail-Format is a Structured Field, whose value is a List (<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.1" class="relref">Section 3.1</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>) of Tokens (<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.3.4" class="relref">Section 3.3.4</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>). Each list item indicates a language tag that is available for the resource.<a href="#section-4.3-3" class="pilcrow">¶</a></p>
+<p id="section-4.3-4">A single member of the List <span class="bcp14">MAY</span> have the "d" parameter, which indicates that member is the default language.<a href="#section-4.3-4" class="pilcrow">¶</a></p>
+<p id="section-4.3-5">The selection algorithm for this axis of content negotiation is described in <span><a href="https://rfc-editor.org/rfc/rfc9110#section-12.5.4" class="relref">Section 12.5.4</a> of [<a href="#HTTP" class="cite xref">HTTP</a>]</span>.<a href="#section-4.3-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="cookie-indices">
+<section id="section-4.4">
+        <h3 id="name-cookie">
+<a href="#section-4.4" class="section-number selfRef">4.4. </a><a href="#name-cookie" class="section-name selfRef">Cookie</a>
+        </h3>
+<p id="section-4.4-1">The Cookie-Indices response header field is the availability hint for content negotiation using the Cookie request header field defined in <span>[<a href="#RFC6265" class="cite xref">RFC6265</a>]</span>. For example:<a href="#section-4.4-1" class="pilcrow">¶</a></p>
+<div class="lang-http-message sourcecode" id="section-4.4-2">
+<pre>
+Vary: Cookie
+Cookie-Indices: "id", "sid"
+</pre><a href="#section-4.4-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.4-3">Cookie-Indices is a Structured Field, whose value is a List (<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.1" class="relref">Section 3.1</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>) of Strings (<span><a href="https://rfc-editor.org/rfc/rfc9651#section-3.3.3" class="relref">Section 3.3.3</a> of [<a href="#STRUCTURED-FIELDS" class="cite xref">STRUCTURED-FIELDS</a>]</span>). Each list item indicates a cookie name whose value is to be considered when selecting responses. Unlisted cookies are, by implication, ignored for that purpose.<a href="#section-4.4-3" class="pilcrow">¶</a></p>
+<p id="section-4.4-4">The selection algorithm for Cookie-Indices, given a set of stored_responses a presented_request, and the value of Cookie-Indices:<a href="#section-4.4-4" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-4.4-5">
+<li id="section-4.4-5.1">
+            <p id="section-4.4-5.1.1">Let available_responses be an empty set.<a href="#section-4.4-5.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-4.4-5.2">
+            <p id="section-4.4-5.2.1">For each stored_response in stored_responses:<a href="#section-4.4-5.2.1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-4.4-5.2.2">
+<li id="section-4.4-5.2.2.1">
+                <p id="section-4.4-5.2.2.1.1">For each cookie_index in Cookie-Indices:<a href="#section-4.4-5.2.2.1.1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-4.4-5.2.2.1.2">
+<li id="section-4.4-5.2.2.1.2.1">
+                    <p id="section-4.4-5.2.2.1.2.1.1">Let presented_values be a list of the values of the cookies with the name cookie_index in presented_request, lexicographically sorted. If no cookie with the name cookie_index is present in presented_request, let presented_values be an empty list.<a href="#section-4.4-5.2.2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+                  <li id="section-4.4-5.2.2.1.2.2">
+                    <p id="section-4.4-5.2.2.1.2.2.1">Let stored_values be a list of the values of the cookies with the name cookie_index in stored_response, lexicographically sorted. If no cookie with the name cookie_index is present in stored_response, let stored_values be an empty list.<a href="#section-4.4-5.2.2.1.2.2.1" class="pilcrow">¶</a></p>
+</li>
+                  <li id="section-4.4-5.2.2.1.2.3">
+                    <p id="section-4.4-5.2.2.1.2.3.1">If presented_values does not equal stored_values, continue to the next stored_response.<a href="#section-4.4-5.2.2.1.2.3.1" class="pilcrow">¶</a></p>
+</li>
+                </ol>
+</li>
+              <li id="section-4.4-5.2.2.2">
+                <p id="section-4.4-5.2.2.2.1">Add stored_response to available_responses.<a href="#section-4.4-5.2.2.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ol>
+</li>
+          <li id="section-4.4-5.3">
+            <p id="section-4.4-5.3.1">Return available_responses.<a href="#section-4.4-5.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-4.4-6">Note that this algorithm requires storing the cookies from the associated request with each response.<a href="#section-4.4-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="iana-considerations">
-<section id="section-3">
+<section id="section-5">
       <h2 id="name-iana-considerations">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
       </h2>
-<p id="section-3-1">This document has no actions for IANA.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-5-1">IANA is asked to update the "Hypertext Transfer Protocol (HTTP) Field Name Registry" registry
+according as follows:<a href="#section-5-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+        <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+          <tr>
+            <th class="text-left" rowspan="1" colspan="1">Field Name</th>
+            <th class="text-left" rowspan="1" colspan="1">Status</th>
+            <th class="text-left" rowspan="1" colspan="1">Structured Type</th>
+            <th class="text-left" rowspan="1" colspan="1">Reference</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">Avail-Encoding</td>
+            <td class="text-left" rowspan="1" colspan="1">permanent</td>
+            <td class="text-left" rowspan="1" colspan="1">List</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <a href="#avail-encoding" class="auto internal xref">Section 4.1</a>
+</td>
+          </tr>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">Avail-Format</td>
+            <td class="text-left" rowspan="1" colspan="1">permanent</td>
+            <td class="text-left" rowspan="1" colspan="1">List</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <a href="#avail-format" class="auto internal xref">Section 4.2</a>
+</td>
+          </tr>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">Avail-Language</td>
+            <td class="text-left" rowspan="1" colspan="1">permanent</td>
+            <td class="text-left" rowspan="1" colspan="1">List</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <a href="#avail-language" class="auto internal xref">Section 4.3</a>
+</td>
+          </tr>
+          <tr>
+            <td class="text-left" rowspan="1" colspan="1">Cookie-Indices</td>
+            <td class="text-left" rowspan="1" colspan="1">permanent</td>
+            <td class="text-left" rowspan="1" colspan="1">List</td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <a href="#cookie-indices" class="auto internal xref">Section 4.4</a>
+</td>
+          </tr>
+        </tbody>
+      </table>
 </section>
 </div>
 <div id="security-considerations">
-<section id="section-4">
+<section id="section-6">
       <h2 id="name-security-considerations">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-4-1">Blocking is often used as a means of reducing the cost of processing traffic that is perceived to be abusive (and therefore a security risk) in order to improve availability for clients that are perceived as legitimate. It does not alleviate the need to secure systems or to make them scalable. Implementing the guidelines in this document should not impact security so long as the systems being protected are reasonably secure and scalable themselves.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-6-1">Availability hints reveal information about the state of the server, and therefore could help an attacker understand better how to bypass defenses. For example, Cookie-Indices reveals information about what cookies might affect the content of responses.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-2">Recipients of availability hints should not assume that the information within them are complete or correct.<a href="#section-6-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="sec-normative-references">
-<section id="section-5">
-      <h2 id="name-normative-references">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+<div id="sec-combined-references">
+<section id="section-7">
+      <h2 id="name-references">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-references" class="section-name selfRef">References</a>
       </h2>
+<div id="sec-normative-references">
+<section id="section-7.1">
+        <h3 id="name-normative-references">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
 <dl class="references">
+<dt id="HTTP">[HTTP]</dt>
+        <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="HTTP-CACHING">[HTTP-CACHING]</dt>
+        <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Caching"</span>, <span class="seriesInfo">STD 98</span>, <span class="seriesInfo">RFC 9111</span>, <span class="seriesInfo">DOI 10.17487/RFC9111</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9111">https://www.rfc-editor.org/rfc/rfc9111</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8174">[RFC8174]</dt>
-    <dd>
+        <dd>
 <span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="STRUCTURED-FIELDS">[STRUCTURED-FIELDS]</dt>
+      <dd>
+<span class="refAuthor">Nottingham, M.</span> and <span class="refAuthor">P. Kamp</span>, <span class="refTitle">"Structured Field Values for HTTP"</span>, <span class="seriesInfo">RFC 9651</span>, <span class="seriesInfo">DOI 10.17487/RFC9651</span>, <time datetime="2024-09" class="refDate">September 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9651">https://www.rfc-editor.org/rfc/rfc9651</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 </dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-7.2">
+        <h3 id="name-informative-references">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC6265">[RFC6265]</dt>
+      <dd>
+<span class="refAuthor">Barth, A.</span>, <span class="refTitle">"HTTP State Management Mechanism"</span>, <span class="seriesInfo">RFC 6265</span>, <span class="seriesInfo">DOI 10.17487/RFC6265</span>, <time datetime="2011-04" class="refDate">April 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6265">https://www.rfc-editor.org/rfc/rfc6265</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
 </section>
 </div>
 <div id="authors-addresses">
@@ -1290,7 +1507,7 @@ appear in all capitals, as shown here.<a href="#section-1.1-1" class="pilcrow">�
       </h2>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Mark Nottingham</span></div>
-<div dir="auto" class="left"><span class="street-address">Prahran</span></div>
+<div dir="auto" class="left"><span class="street-address">Melbourne</span></div>
 <div dir="auto" class="left"><span class="country-name">Australia</span></div>
 <div class="email">
 <span>Email:</span>
