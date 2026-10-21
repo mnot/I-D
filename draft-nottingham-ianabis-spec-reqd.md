@@ -85,6 +85,8 @@ Documents that define new registries and redefine existing ones can explicitly n
 
 The "Standards" sub-policy of Specification Required adds a requirement that the cited specification(s) MUST be under the control of and published by an organization listed in the "IESG-Recognized Standards-Related Organizations" registry described in {{Section 3.2 of !I-D.ietf-ianabis-rfc7120bis}}.
 
+This sub-policy is appropriate for managing extension points that require careful coordination and thoughtful design.
+
 This sub-policy explicitly precludes registrations using Internet-Drafts as the basis of a registration. However, IETF efforts are still eligible for early allocation, per {{I-D.ietf-ianabis-rfc7120bis}}.
 
 Likewise, specifications from recognized organizations do not qualify for registration until they have completed the relevant approval processes in those organizations. However, preliminary and in-progress specifications might qualify for early allocation, per {{I-D.ietf-ianabis-rfc7120bis}}.
@@ -96,6 +98,8 @@ Registrations under this sub-policy are also subject to {{common}}.
 ## Specification Required (Community) {#sp-community}
 
 The "Community" sub-policy of Specification Required adds a requirement that the cited specification(s) MUST either qualify under the Standards sub-policy ({{sp-standards}}), or in the opinion of the Expert(s) be the product of a community effort (a "community specification"), as evidenced by the indicators below.
+
+This sub-policy is appropriate for managing extension points that are widely used, but that require adoption by many parties to be valuable. For example, many Well-Known URIs {{?RFC8615}} can be trivially implemented on deployed Web sites, but only provide value when there is a community that deploys and uses them across many sites.
 
 The Expert(s) SHOULD consider the following indicators when determining whether a specification is the product of a community effort:
 
@@ -122,6 +126,8 @@ The "Permissive" sub-policy of Specification Required explicitly allows registra
 * Archived Internet-Drafts
 * GitHub repositories and similar data stores
 * Publicly available archive services
+
+This sub-policy is appropriate for extension points that want to encourage prolific registration, but still require an Expert to vet registration requests.
 
 When this sub-policy is in effect, only registrations that qualify under the Standards sub-policy ({{sp-standards}}) are eligible for early allocation.
 
