@@ -165,14 +165,14 @@ A Member Key is at least one octet long. Its first octet MUST be a lowercase let
 
 ## Inner Lists {#inner-list}
 
-An Inner List ({{Section 3.1.1 of STRUCTURED-FIELDS}}) has a payload consisting of a Member Count field (using the variable-length encoding from {{Section 16 of QUIC}}), followed by one or more fields representing the members of the list.
+An Inner List ({{Section 3.1.1 of STRUCTURED-FIELDS}}) uses two of its Flags to carry a Short Member Count, in the same way as a List: if it is zero, the Member Count follows the header octet, represented using the variable-length encoding from {{Section 16 of QUIC}}; otherwise, it is the Member Count itself. Unlike a List, an Inner List can be empty ({{Section 3.1.1 of STRUCTURED-FIELDS}}), which is sent with a Short Member Count of zero and a Member Count of zero. The members follow.
 
 ~~~
 Inner List {
   Type (5) = 3,
   Parameters (1),
-  Unused Flags (2),
-  Member Count (i),
+  Short Member Count (2),
+  [ Member Count (i) ],
   Binary Structured Type (..) ...
   [Parameters (..)]
 }
@@ -444,5 +444,6 @@ Each new draft adds a section here, above the existing ones, as part of the chan
 * Corrected the RETROFIT reference to its Section 3, where the mapped fields are defined.
 * The Sign flag is set for negative values, so the common case has all flags clear, and zero is never signed.
 * Clarified that the Member Count of a List or Dictionary follows the header octet, and that neither is ever empty (the field is omitted, as in the textual form).
+* Inner Lists carry a Short Member Count in their flags, as Lists do, and the text no longer requires them to have members.
 * Fixed typos, and type numbers that were wrong in the text.
 
