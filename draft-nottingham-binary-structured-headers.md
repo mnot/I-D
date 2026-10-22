@@ -49,13 +49,13 @@ This specification defines a binary serialisation of Structured Field Values for
 
 --- middle
 
-# Introduction
+# Introduction {#intro}
 
 Structured Field Values for HTTP {{!STRUCTURED-FIELDS}} offers a set of data types for use by HTTP fields, along with a serialisation of them in a familiar textual syntax.
 
 {{fields}} defines an alternative, binary serialisation of those structures, and {{negotiate}} defines a mechanism for using that serialisation in HTTP/2.
 
-The primary goal of this specification is to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.
+The primary goal of this specification is to reduce parsing overhead and associated costs, as compared to the textual representation of Structured Fields. The saving is expected to be largest for Byte Sequences (such as signatures and digests), which need no base64 decoding, and for Strings that need unescaping; it is expected to be small for short Tokens and Dictionaries. A secondary goal is a more compact wire format in common situations. An additional goal is to enable future work on more granular field compression mechanisms.
 
 
 ## Notational Conventions
@@ -440,5 +440,6 @@ Each new draft adds a section here, above the existing ones, as part of the chan
 * Decimals are a Mantissa and a Scale in a single integer, rather than a dividend and a divisor ({{decimal}}).
 * Made the representation (binary or textual) a property of each table entry, so frames with and without the BINARY_STRUCTURED flag can refer to each other's entries, and static table values are textual ({{flag}}).
 * Strings, Tokens, Display Strings, Literal Values and keys are String Literals, so the sender can Huffman-code each one ({{fields}}).
+* Narrowed the stated motivation to the fields where binary parsing is expected to save the most ({{intro}}).
 * Fixed typos, and type numbers that were wrong in the text.
 
