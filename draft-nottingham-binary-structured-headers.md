@@ -428,11 +428,10 @@ One mitigation to this risk is the strictness of parsing for both non-binary and
 # Changes from Previous Drafts
 {:removeInRFC="true"}
 
-Each new draft adds a section here, above the existing ones, as part of the change that makes the difference.
-
 ## Since draft-nottingham-binary-structured-headers-03
 
 * Moved the Structured Fields reference to RFC 9651, and added Date (type 11) and Display String (type 12).
+* Integers use the RFC 7541 prefix integer representation instead of QUIC's variable-length integer, leaving one integer encoding in the draft.
 * Added recipient validation for each type ({{validation}}).
 * Defined malformed Binary Structured Field Values, and how a recipient handles them ({{malformed}}).
 * Made duplicate Dictionary and Parameter keys last-wins, as in the textual form.
@@ -441,11 +440,8 @@ Each new draft adds a section here, above the existing ones, as part of the chan
 * Made the representation (binary or textual) a property of each table entry, so frames with and without the BINARY_STRUCTURED flag can refer to each other's entries, and static table values are textual ({{flag}}).
 * Strings, Tokens, Display Strings, Literal Values and keys are String Literals, so the sender can Huffman-code each one ({{fields}}).
 * Narrowed the stated motivation to the fields where binary parsing is expected to save the most ({{intro}}).
-* Corrected the RETROFIT reference to its Section 3, where the mapped fields are defined.
 * The Sign flag is set for negative values, so the common case has all flags clear, and zero is never signed.
 * Clarified that the Member Count of a List or Dictionary follows the header octet, and that neither is ever empty (the field is omitted, as in the textual form).
 * Inner Lists carry a Short Member Count in their flags, as Lists do, and the text no longer requires them to have members.
 * Stated that extensions negotiated through the setting can give meaning to unused flags.
-* Integers use the RFC 7541 prefix integer representation instead of QUIC's variable-length integer, leaving one integer encoding in the draft.
-* Fixed typos, and type numbers that were wrong in the text.
 
