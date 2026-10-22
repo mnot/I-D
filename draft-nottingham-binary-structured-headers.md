@@ -64,6 +64,8 @@ The primary goal of this specification is to reduce parsing overhead and associa
 
 This specification describes wire formats using the convention described in {{Section 1.3 of QUIC}}.
 
+Several types carry text as a *String Literal*, which is the String Literal Representation defined in {{Section 5.2 of RFC7541}}: an H flag, a Length encoded as an integer with a 7-bit prefix ({{Section 5.1 of RFC7541}}), and that many octets of data. If H is set, the data is Huffman-coded, as the sender chooses for each string. Every constraint that this specification places on such a string applies to its octets after any Huffman decoding. Other integers use the variable-length encoding from {{Section 16 of QUIC}}.
+
 
 # Binary Structured Types {#fields}
 
@@ -89,7 +91,7 @@ Use of each flag may not be specified by all types. When this is the case, gener
 A recipient of a Binary Structured Field Value MUST check it against the constraints in this section, which carry over the restrictions that {{!STRUCTURED-FIELDS}} places on the textual form. The sections for each type state the checks on its payload. Checks that apply to the value as a whole are:
 
 * Every Type is defined by this specification, or by an extension that the recipient supports (see {{setting}}).
-* No Member Count, Parameter Count, Length or Key Length reaches past the end of the field value, and no octets remain after the top-level type and any Parameters that follow it.
+* No Member Count, Parameter Count or Length (including the Length of a String Literal) reaches past the end of the field value, and no octets remain after the top-level type and any Parameters that follow it.
 * Each type appears only where {{!STRUCTURED-FIELDS}} allows that data type: the top-level type is a List, a Dictionary or an Item; the members of Lists and Dictionaries are Items or Inner Lists; the members of Inner Lists and the values of Parameters are Items.
 * The Parameters Flag is never set on the value of a Parameter ({{parameter}}).
 
@@ -102,18 +104,17 @@ A recipient that skipped these checks could accept values that the textual form 
 
 A Literal Value is a special type that carries the string value of a field; they are used to carry field values that are not structured using the data types defined in {{Section 3 of STRUCTURED-FIELDS}}. This might be because the field is not recognised as a Structured Field, or it might be because a field that is understood to be a Structured Field cannot be parsed successfully as one.
 
-A literal value's payload consists of an integer Length field (using the variable-length encoding from {{Section 16 of QUIC}}), followed by that many octets of the field value. They are functionally equivalent to String Literal Representations in {{Section 5.2 of RFC7541}}.
+A literal value's payload is a String Literal holding the field value, so a Literal Value costs one octet more than the String Literal Representation it replaces in {{RFC7541}}.
 
 ~~~
 Literal Value {
   Type (5) = 0,
   Unused Flags (3) = 0,
-  Length (i),
-  Payload (..)
+  String Literal (..)
 }
 ~~~
 
-A recipient MUST apply the field value validation in {{Section 8.2.1 of HTTP2}} to the payload.
+A recipient MUST apply the field value validation in {{Section 8.2.1 of HTTP2}} to the string.
 
 
 ## Lists
@@ -149,12 +150,11 @@ Dictionary {
 }
 ~~~
 
-Each Dictionary member is represented by a length, followed by that many bytes of the member-key, followed by the Binary Structured Type(s) representing the member-value.
+Each Dictionary member is represented by a String Literal holding the member-key, followed by the Binary Structured Type(s) representing the member-value.
 
 ~~~
 Dictionary Member {
-  Key Length (i),
-  Member Key (..),
+  Member Key (String Literal),
   Binary Structured Type (..),
 }
 
@@ -200,16 +200,14 @@ Each Parameter conveys a key and a value:
 
 ~~~
 Parameter {
-  Parameter Key Length (i),
-  Parameter Key (..),
+  Parameter Key (String Literal),
   Binary Structured Type (..)
 }
 ~~~
 
 A parameter's fields are:
 
-* Parameter Key Length: The number of octets used for the parameter-key (using the variable-length encoding from {{Section 16 of QUIC}})
-* Parameter Key: Parameter Key Length octets of the parameter-key
+* Parameter Key: A String Literal holding the parameter-key
 * Binary Structured Type: The parameter value
 
 The Binary Structured Type in a Parameter is an Item; it MUST NOT be an Inner List, and its Parameters Flag MUST NOT be set.
@@ -258,40 +256,38 @@ Generators MUST use the smallest Scale that represents the value exactly, so tha
 
 ### Strings
 
-A String ({{Section 3.3.3 of STRUCTURED-FIELDS}}) has a payload consisting of an integer Length field (using the variable-length encoding from {{Section 16 of QUIC}}), followed by that many octets of payload.
+A String ({{Section 3.3.3 of STRUCTURED-FIELDS}}) has a payload that is a String Literal.
 
 ~~~
 String {
   Type (5) = 7,
   Parameters (1),
   Unused Flags (2) = 0,
-  Length (i),
-  Payload (..)
+  String Literal (..)
 }
 ~~~
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
-Its payload is Length octets long, and each octet MUST be in the range 0x20 to 0x7E (inclusive), as in {{Section 3.3.3 of STRUCTURED-FIELDS}}. A recipient MUST treat a String that contains any other octet as malformed.
+Each octet of the string MUST be in the range 0x20 to 0x7E (inclusive), as in {{Section 3.3.3 of STRUCTURED-FIELDS}}. A recipient MUST treat a String that contains any other octet as malformed.
 
 
 ### Tokens {#token}
 
-A Token ({{Section 3.3.4 of STRUCTURED-FIELDS}}) has a payload consisting of an integer Length field (using the variable-length encoding from {{Section 16 of QUIC}}), followed by that many octets of payload.
+A Token ({{Section 3.3.4 of STRUCTURED-FIELDS}}) has a payload that is a String Literal.
 
 ~~~
 Token {
   Type (5) = 8,
   Parameters (1),
   Unused Flags (2) = 0,
-  Length (i),
-  Payload (..)
+  String Literal (..)
 }
 ~~~
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
-Its payload is Length octets long. The first octet MUST be a letter (0x41 to 0x5A or 0x61 to 0x7A) or "\*", and each following octet MUST be a "tchar" ({{Section 5.6.2 of HTTP}}), ":" or "/" (see {{Section 3.3.4 of STRUCTURED-FIELDS}}). A recipient MUST treat a Token that is empty, or that contains any other octet, as malformed.
+The first octet of the string MUST be a letter (0x41 to 0x5A or 0x61 to 0x7A) or "\*", and each following octet MUST be a "tchar" ({{Section 5.6.2 of HTTP}}), ":" or "/" (see {{Section 3.3.4 of STRUCTURED-FIELDS}}). A recipient MUST treat a Token that is empty, or that contains any other octet, as malformed.
 
 
 ### Byte Sequences
@@ -352,21 +348,20 @@ A recipient MUST treat a Date whose payload exceeds 999,999,999,999,999 as malfo
 
 ### Display Strings
 
-A Display String ({{Section 3.3.8 of STRUCTURED-FIELDS}}) has a payload consisting of an integer Length field (using the variable-length encoding from {{Section 16 of QUIC}}), followed by that many octets of payload.
+A Display String ({{Section 3.3.8 of STRUCTURED-FIELDS}}) has a payload that is a String Literal.
 
 ~~~
 Display String {
   Type (5) = 12,
   Parameters (1),
   Unused Flags (2) = 0,
-  Length (i),
-  Payload (..)
+  String Literal (..)
 }
 ~~~
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
-Its payload is Length octets long and UTF-8 encoded ({{UTF8}}). Unlike the textual form, it is not percent-encoded. A recipient MUST treat a payload that is not valid UTF-8 as malformed.
+Its string is UTF-8 encoded ({{UTF8}}). Unlike the textual form, it is not percent-encoded. A recipient MUST treat a string that is not valid UTF-8 as malformed.
 
 
 # Using Binary Structured Fields in HTTP/2 {#negotiate}
@@ -399,7 +394,7 @@ This flag indicates that the HEADERS frame containing it and subsequent CONTINUA
 
 In such frames, every field value that is carried in a literal representation MUST be sent as a Binary Structured Field Value. Note that this includes Binary Literals ({{literal}}) for those field values that are not recognised as Structured Fields, as well as textual values that cannot be successfully parsed as Structured Fields. Implementations MAY also send a field value as a Binary Literal even when it is possible to represent it as a Structured Field (e.g., for efficiency purposes).
 
-Binary Structured Field Values are stored in the HPACK {{RFC7541}} dynamic table, and their lengths are used for the purposes of maintaining dynamic table size (see {{RFC7541, Section 4}}).
+Binary Structured Field Values are stored in the HPACK {{RFC7541}} dynamic table, and their lengths are used for the purposes of maintaining dynamic table size (see {{RFC7541, Section 4}}). As in {{Section 4.1 of RFC7541}}, the length of a Binary Structured Field Value is calculated without any Huffman encoding applied to its String Literals.
 
 Each entry in the dynamic table has a representation: Binary if its value was inserted by a frame with the BINARY_STRUCTURED flag, and Textual otherwise. Entries in the static table are Textual. A recipient MUST record the representation with each dynamic table entry.
 
@@ -414,7 +409,7 @@ A Binary Structured Field Value that fails a check in {{validation}} makes the m
 
 The recipient MUST NOT stop decoding the field block at the malformed value, because HPACK decoder state would then diverge from the sender's. It completes decoding, and then handles the malformed message as {{Section 8.1.1 of HTTP2}} requires: as a stream error of type PROTOCOL_ERROR, without forwarding it.
 
-If a value is malformed in a way that prevents the recipient from determining where it ends, the field block cannot be decoded. That is a decoding error, and the recipient MUST treat it as a connection error of type COMPRESSION_ERROR ({{Section 4.3 of HTTP2}}).
+If a value is malformed in a way that prevents the recipient from determining where it ends, the field block cannot be decoded. That is a decoding error, and the recipient MUST treat it as a connection error of type COMPRESSION_ERROR ({{Section 4.3 of HTTP2}}). A String Literal that cannot be Huffman decoded is a decoding error ({{Section 5.2 of RFC7541}}), and is handled in the same way.
 
 
 # IANA Considerations
@@ -444,5 +439,6 @@ Each new draft adds a section here, above the existing ones, as part of the chan
 * Parameters are no longer a Binary Structured Type; they follow their Item or Inner List as a Parameter Count and the Parameters ({{parameter}}). Type 4 is unassigned.
 * Decimals are a Mantissa and a Scale in a single integer, rather than a dividend and a divisor ({{decimal}}).
 * Made the representation (binary or textual) a property of each table entry, so frames with and without the BINARY_STRUCTURED flag can refer to each other's entries, and static table values are textual ({{flag}}).
+* Strings, Tokens, Display Strings, Literal Values and keys are String Literals, so the sender can Huffman-code each one ({{fields}}).
 * Fixed typos, and type numbers that were wrong in the text.
 
