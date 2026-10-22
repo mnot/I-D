@@ -235,7 +235,7 @@ A recipient MUST treat an Integer whose payload exceeds 999,999,999,999,999 (the
 
 ### Decimals {#decimal}
 
-A Decimal ({{Section 3.3.2 of STRUCTURED-FIELDS}}) has a payload consisting of two integers (using the variable-length encoding from {{Section 16 of QUIC}}) that are divided to convey the decimal value. The Sign flag conveys whether the value is positive (1) or negative (0).
+A Decimal ({{Section 3.3.2 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}) that carries a Scale and a Mantissa, as described below. The Sign flag conveys whether the value is positive (1) or negative (0).
 
 ~~~
 Decimal {
