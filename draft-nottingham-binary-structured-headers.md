@@ -64,7 +64,7 @@ The primary goal of this specification is to reduce parsing overhead and associa
 
 This specification describes wire formats using the convention described in {{Section 1.3 of QUIC}}.
 
-Several types carry text as a *String Literal*, which is the String Literal Representation defined in {{Section 5.2 of RFC7541}}: an H flag, a Length encoded as an integer with a 7-bit prefix ({{Section 5.1 of RFC7541}}), and that many octets of data. If H is set, the data is Huffman-coded, as the sender chooses for each string. Every constraint that this specification places on such a string applies to its octets after any Huffman decoding. Other integers use the variable-length encoding from {{Section 16 of QUIC}}.
+Several types carry text as a *String Literal*, which is the String Literal Representation defined in {{Section 5.2 of RFC7541}}: an H flag, a Length encoded as an integer with a 7-bit prefix ({{Section 5.1 of RFC7541}}), and that many octets of data. If H is set, the data is Huffman-coded, as the sender chooses for each string. Every constraint that this specification places on such a string applies to its octets after any Huffman decoding. Other integers, written (i) in the diagrams, use the integer representation from {{Section 5.1 of RFC7541}} with an 8-bit prefix, so a value below 255 takes one octet. This is not the variable-length integer that {{Section 1.3 of QUIC}} denotes with the same notation. A recipient MUST treat an integer greater than 2^62 - 1 as malformed.
 
 
 # Binary Structured Types {#fields}
@@ -121,7 +121,7 @@ A recipient MUST apply the field value validation in {{Section 8.2.1 of HTTP2}} 
 
 A List ({{Section 3.1 of STRUCTURED-FIELDS}}) uses its Flags to carry a Short Member Count as three bits.
 
-If the Short Member Count is zero, the Member Count follows the header octet, represented using the variable-length encoding from {{Section 16 of QUIC}}. Otherwise, the Short Member Count is the Member Count itself. This allows a List of up to seven members to be encoded without an extra octet for its length.
+If the Short Member Count is zero, the Member Count follows the header octet. Otherwise, the Short Member Count is the Member Count itself. This allows a List of up to seven members to be encoded without an extra octet for its length.
 
 In either case, the count is the number of List members that follow. A List MUST have at least one member: as in {{Section 4.1 of STRUCTURED-FIELDS}}, a field whose value would be an empty List is not sent. A recipient MUST treat a List with a Member Count of zero as malformed.
 
@@ -165,7 +165,7 @@ A Member Key is at least one octet long. Its first octet MUST be a lowercase let
 
 ## Inner Lists {#inner-list}
 
-An Inner List ({{Section 3.1.1 of STRUCTURED-FIELDS}}) uses two of its Flags to carry a Short Member Count, in the same way as a List: if it is zero, the Member Count follows the header octet, represented using the variable-length encoding from {{Section 16 of QUIC}}; otherwise, it is the Member Count itself. Unlike a List, an Inner List can be empty ({{Section 3.1.1 of STRUCTURED-FIELDS}}), which is sent with a Short Member Count of zero and a Member Count of zero. The members follow.
+An Inner List ({{Section 3.1.1 of STRUCTURED-FIELDS}}) uses two of its Flags to carry a Short Member Count, in the same way as a List: if it is zero, the Member Count follows the header octet; otherwise, it is the Member Count itself. Unlike a List, an Inner List can be empty ({{Section 3.1.1 of STRUCTURED-FIELDS}}), which is sent with a Short Member Count of zero and a Member Count of zero. The members follow.
 
 ~~~
 Inner List {
@@ -216,7 +216,7 @@ A Parameter Key is validated in the same way as a Member Key (see {{dictionary}}
 
 ## Integers
 
-An Integer ({{Section 3.3.1 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}). The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
+An Integer ({{Section 3.3.1 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer. The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
 
 ~~~
 Integer {
@@ -230,12 +230,12 @@ Integer {
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
-A recipient MUST treat an Integer whose payload exceeds 999,999,999,999,999 (the range limit in {{Section 3.3.1 of STRUCTURED-FIELDS}}) as malformed, even though the variable-length encoding can carry larger values.
+A recipient MUST treat an Integer whose payload exceeds 999,999,999,999,999 (the range limit in {{Section 3.3.1 of STRUCTURED-FIELDS}}) as malformed, even though the integer representation can carry larger values.
 
 
 ## Decimals {#decimal}
 
-A Decimal ({{Section 3.3.2 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}) that carries a Scale and a Mantissa, as described below. The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
+A Decimal ({{Section 3.3.2 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer that carries a Scale and a Mantissa, as described below. The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
 
 ~~~
 Decimal {
@@ -292,7 +292,7 @@ The first octet of the string MUST be a letter (0x41 to 0x5A or 0x61 to 0x7A) or
 
 ## Byte Sequences
 
-A Byte Sequence ({{Section 3.3.5 of STRUCTURED-FIELDS}}) has a payload consisting of an integer Length field (using the variable-length encoding from {{Section 16 of QUIC}}), followed by that many octets of payload.
+A Byte Sequence ({{Section 3.3.5 of STRUCTURED-FIELDS}}) has a payload consisting of an integer Length field, followed by that many octets of payload.
 
 ~~~
 Byte Sequence {
@@ -329,7 +329,7 @@ The Parameters Flag indicates whether the value is followed by Parameters (see {
 
 ## Dates
 
-A Date ({{Section 3.3.7 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}), conveying the number of seconds since 1970-01-01T00:00:00Z, excluding leap seconds. The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
+A Date ({{Section 3.3.7 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer, conveying the number of seconds since 1970-01-01T00:00:00Z, excluding leap seconds. The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
 
 ~~~
 Date {
@@ -446,5 +446,6 @@ Each new draft adds a section here, above the existing ones, as part of the chan
 * Clarified that the Member Count of a List or Dictionary follows the header octet, and that neither is ever empty (the field is omitted, as in the textual form).
 * Inner Lists carry a Short Member Count in their flags, as Lists do, and the text no longer requires them to have members.
 * Stated that extensions negotiated through the setting can give meaning to unused flags.
+* Integers use the RFC 7541 prefix integer representation instead of QUIC's variable-length integer, leaving one integer encoding in the draft.
 * Fixed typos, and type numbers that were wrong in the text.
 
