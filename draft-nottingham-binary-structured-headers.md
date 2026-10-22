@@ -397,9 +397,13 @@ When a peer has indicated that it supports this specification as per {{setting}}
 
 This flag indicates that the HEADERS frame containing it and subsequent CONTINUATION frames on the same stream use the Binary Structured Types defined in {{fields}} instead of the String Literal Representation defined in {{Section 5.2 of RFC7541}} to represent all field values. Field names are still serialised as String Literal Representations.
 
-In such frames, all field values MUST be sent as Binary Structured Field Values. Note that this includes Binary Literals ({{literal}}) for those field values that are not recognised as Structured Fields, as well as textual values that cannot be successfully parsed as Structured Fields. Implementations MAY also send a field value as a Binary Literal even when it is possible to represent it as a Structured Field (e.g., for efficiency purposes).
+In such frames, every field value that is carried in a literal representation MUST be sent as a Binary Structured Field Value. Note that this includes Binary Literals ({{literal}}) for those field values that are not recognised as Structured Fields, as well as textual values that cannot be successfully parsed as Structured Fields. Implementations MAY also send a field value as a Binary Literal even when it is possible to represent it as a Structured Field (e.g., for efficiency purposes).
 
 Binary Structured Field Values are stored in the HPACK {{RFC7541}} dynamic table, and their lengths are used for the purposes of maintaining dynamic table size (see {{RFC7541, Section 4}}).
+
+Each entry in the dynamic table has a representation: Binary if its value was inserted by a frame with the BINARY_STRUCTURED flag, and Textual otherwise. Entries in the static table are Textual. A recipient MUST record the representation with each dynamic table entry.
+
+The representation belongs to the entry, not to the frame that refers to it. An indexed field representation obtains the entry's value in the entry's representation, whether or not the referring frame has the flag. A Textual value obtained in a frame with the flag is the value of an ordinary HTTP/2 field; it is not a Binary Literal. A Binary value obtained in a frame without the flag is a Binary Structured Field Value, and is serialised as text when its textual form is needed (see {{setting}}). A literal representation that refers to an entry only for its name is unaffected, because names are always String Literal Representations.
 
 Note that HEADERS frames with and without the BINARY_STRUCTURED flag MAY be mixed on the same connection, depending on the requirements of the sender.
 
@@ -439,5 +443,6 @@ Each new draft adds a section here, above the existing ones, as part of the chan
 * Made duplicate Dictionary and Parameter keys last-wins, as in the textual form.
 * Parameters are no longer a Binary Structured Type; they follow their Item or Inner List as a Parameter Count and the Parameters ({{parameter}}). Type 4 is unassigned.
 * Decimals are a Mantissa and a Scale in a single integer, rather than a dividend and a divisor ({{decimal}}).
+* Made the representation (binary or textual) a property of each table entry, so frames with and without the BINARY_STRUCTURED flag can refer to each other's entries, and static table values are textual ({{flag}}).
 * Fixed typos, and type numbers that were wrong in the text.
 
