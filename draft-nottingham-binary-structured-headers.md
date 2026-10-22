@@ -68,7 +68,7 @@ This section defines a binary serialisation for Structured Field Values as defin
 
 A Structured Field Value can be a singular Item (such as a String, an Integer, or a Boolean, possibly with parameters), or it can be a compound type, such as a Dictionary or List, whose members are composed of those Item types.
 
-When a field value is serialised as a Binary Structured Field, each of these types is preceded by an header octet that indicates the relevant type, along with some type-specific flags. The type then determines how the value is serialised in the following octet(s).
+When a field value is serialised as a Binary Structured Field, each of these types is preceded by a header octet that indicates the relevant type, along with some type-specific flags. The type then determines how the value is serialised in the following octet(s).
 
 ~~~
 Binary Structured Type {
@@ -142,12 +142,12 @@ Dictionary Member {
 
 ~~~
 
-A Dictionary Member MUST NOT be a Parameters (0x2).
+A Dictionary Member MUST NOT be a Parameters (type 4).
 
 
 ## Inner Lists {#inner-list}
 
-An Inner List ({{Section 3.1.1 of STRUCTURED-FIELDS}}) has a payload consisting a Member Count field (using the variable-length encoding from {{Section 16 of QUIC}}), followed by one or more fields representing the members of the list.
+An Inner List ({{Section 3.1.1 of STRUCTURED-FIELDS}}) has a payload consisting of a Member Count field (using the variable-length encoding from {{Section 16 of QUIC}}), followed by one or more fields representing the members of the list.
 
 ~~~
 Inner List {
@@ -194,7 +194,7 @@ A parameter's fields are:
 * Parameter Key: Parameter Key Length octets of the parameter-key
 * Binary Structured Type: The parameter value
 
-The Binary Structured Type in a Parameter MUST NOT be an Inner List (0x1) or Parameters (0x2).
+The Binary Structured Type in a Parameter MUST NOT be an Inner List (type 3) or Parameters (type 4).
 
 Parameters are always associated with the Binary Structured Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Binary Structured Type in a Binary Structured Field Value, and MUST NOT follow another Parameters.
 
@@ -288,14 +288,14 @@ Byte Sequence {
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
-The payload is is Length octets long, containing the raw octets of the byte sequence.
+The payload is Length octets long, containing the raw octets of the byte sequence.
 
 
 ### Booleans
 
-A String ({{Section 3.3.6 of STRUCTURED-FIELDS}}) uses the Payload flag to indicate its value; if Payload is 0, the value is False; if Payload is 1, the value is True.
+A Boolean ({{Section 3.3.6 of STRUCTURED-FIELDS}}) uses the Payload flag to indicate its value; if Payload is 0, the value is False; if Payload is 1, the value is True.
 
-The Boolean data type (type=0x8) carries its payload in the Payload Flag:
+The Boolean data type carries its payload in the Payload Flag:
 
 ~~~
 Boolean {
@@ -323,7 +323,7 @@ Advertising support for Binary Structured Fields is accomplished using a HTTP/2 
 Receiving SETTINGS_BINARY_STRUCTURED_FIELDS with a non-zero value from a peer indicates that:
 
 1. The peer supports all of the Binary Structured Types defined in {{fields}}.
-2. The peer will process the BINARY_STRUCTRED HEADERS flag as defined in {{flag}}.
+2. The peer will process the BINARY_STRUCTURED HEADERS flag as defined in {{flag}}.
 3. When passing the message to a downstream consumer (whether on the network or not) who does not support this extension or otherwise explicitly negotiate an equivalent mechanism, the peer will:
    1. Transform all fields defined as Mapped Fields in Section 1.3 of {{RETROFIT}} into their unmapped forms, removing the mapped fields.
    2. Serialize all fields into the appropriate form for that peer (e.g., the textual representation of Structured Fields data types defined in {{!STRUCTURED-FIELDS}}).
@@ -331,7 +331,7 @@ Receiving SETTINGS_BINARY_STRUCTURED_FIELDS with a non-zero value from a peer in
 The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0, whereas a value of 1 indicates that this specification is supported with no further extensions. Future specifications might use values greater than one to indicate support for extensions.
 
 
-## The BINARY_STRUCTRED HEADERS Flag {#flag}
+## The BINARY_STRUCTURED HEADERS Flag {#flag}
 
 When a peer has indicated that it supports this specification as per {{setting}}, a sender can send the BINARY_STRUCTURED flag (0xTODO) on the HEADERS frame.
 
