@@ -380,7 +380,7 @@ Receiving SETTINGS_BINARY_STRUCTURED_FIELDS with a non-zero value from a peer in
 1. The peer supports all of the Binary Structured Types defined in {{fields}}.
 2. The peer will process the BINARY_STRUCTURED HEADERS flag as defined in {{flag}}.
 3. When passing the message to a downstream consumer (whether on the network or not) who does not support this extension or otherwise explicitly negotiate an equivalent mechanism, the peer will:
-   1. Transform all fields defined as Mapped Fields in Section 1.3 of {{RETROFIT}} into their unmapped forms, removing the mapped fields.
+   1. Transform all fields defined as Mapped Fields in {{Section 3 of RETROFIT}} into their unmapped forms, removing the mapped fields.
    2. Serialize all fields into the appropriate form for that peer (e.g., the textual representation of Structured Fields data types defined in {{!STRUCTURED-FIELDS}}).
 
 The default value of SETTINGS_BINARY_STRUCTURED_FIELDS is 0, whereas a value of 1 indicates that this specification is supported with no further extensions. Future specifications might use values greater than one to indicate support for extensions.
@@ -441,5 +441,6 @@ Each new draft adds a section here, above the existing ones, as part of the chan
 * Made the representation (binary or textual) a property of each table entry, so frames with and without the BINARY_STRUCTURED flag can refer to each other's entries, and static table values are textual ({{flag}}).
 * Strings, Tokens, Display Strings, Literal Values and keys are String Literals, so the sender can Huffman-code each one ({{fields}}).
 * Narrowed the stated motivation to the fields where binary parsing is expected to save the most ({{intro}}).
+* Corrected the RETROFIT reference to its Section 3, where the mapped fields are defined.
 * Fixed typos, and type numbers that were wrong in the text.
 
