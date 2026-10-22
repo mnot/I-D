@@ -83,7 +83,7 @@ Binary Structured Type {
 }
 ~~~
 
-Use of each flag may not be specified by all types. When this is the case, generators MUST send 0 for them, and recipients MUST ignore them.
+Use of each flag may not be specified by all types. When this is the case, generators MUST send 0 for them, and recipients MUST ignore them. An extension that is negotiated with a larger value of SETTINGS_BINARY_STRUCTURED_FIELDS ({{setting}}) can give them meaning.
 
 
 ## Recipient Validation {#validation}
@@ -445,5 +445,6 @@ Each new draft adds a section here, above the existing ones, as part of the chan
 * The Sign flag is set for negative values, so the common case has all flags clear, and zero is never signed.
 * Clarified that the Member Count of a List or Dictionary follows the header octet, and that neither is ever empty (the field is omitted, as in the textual form).
 * Inner Lists carry a Short Member Count in their flags, as Lists do, and the text no longer requires them to have members.
+* Stated that extensions negotiated through the setting can give meaning to unused flags.
 * Fixed typos, and type numbers that were wrong in the text.
 
