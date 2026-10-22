@@ -121,9 +121,9 @@ A recipient MUST apply the field value validation in {{Section 8.2.1 of HTTP2}} 
 
 A List ({{Section 3.1 of STRUCTURED-FIELDS}}) uses its Flags to carry a Short Member Count as three bits.
 
-If the Short Member Count is zero, it indicates that the next byte is the Member Count, represented using the variable-length encoding from {{Section 16 of QUIC}}. Otherwise, it indicates the Member Count itself. This allows a small list to be encoded without using an extra byte for its length.
+If the Short Member Count is zero, the Member Count follows the header octet, represented using the variable-length encoding from {{Section 16 of QUIC}}. Otherwise, the Short Member Count is the Member Count itself. This allows a List of up to seven members to be encoded without an extra octet for its length.
 
-In either case, the payload indicates the number of List members that follow.
+In either case, the count is the number of List members that follow. A List MUST have at least one member: as in {{Section 4.1 of STRUCTURED-FIELDS}}, a field whose value would be an empty List is not sent. A recipient MUST treat a List with a Member Count of zero as malformed.
 
 ~~~
 List {
@@ -139,7 +139,7 @@ List {
 
 ## Dictionaries {#dictionary}
 
-A Dictionary ({{Section 3.2 of STRUCTURED-FIELDS}}) uses its Flags to indicate its number of members, in a fashion similar to Lists.
+A Dictionary ({{Section 3.2 of STRUCTURED-FIELDS}}) uses its Flags to indicate its number of members, in a fashion similar to Lists. A Dictionary MUST have at least one member, for the same reason.
 
 ~~~
 Dictionary {
@@ -443,5 +443,6 @@ Each new draft adds a section here, above the existing ones, as part of the chan
 * Narrowed the stated motivation to the fields where binary parsing is expected to save the most ({{intro}}).
 * Corrected the RETROFIT reference to its Section 3, where the mapped fields are defined.
 * The Sign flag is set for negative values, so the common case has all flags clear, and zero is never signed.
+* Clarified that the Member Count of a List or Dictionary follows the header octet, and that neither is ever empty (the field is omitted, as in the textual form).
 * Fixed typos, and type numbers that were wrong in the text.
 
