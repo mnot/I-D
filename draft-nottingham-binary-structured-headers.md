@@ -91,7 +91,7 @@ A recipient of a Binary Structured Field Value MUST check it against the constra
 * Every Type is defined by this specification, or by an extension that the recipient supports (see {{setting}}).
 * No Member Count, Parameter Count, Length or Key Length reaches past the end of the field value, and no octets remain after the top-level type and any Parameters that follow it.
 * Each type appears only where {{!STRUCTURED-FIELDS}} allows that data type: the top-level type is a List, a Dictionary or an Item; the members of Lists and Dictionaries are Items or Inner Lists; the members of Inner Lists and the values of Parameters are Items.
-* Parameters appear only where {{parameter}} allows them, and a Parameters Flag that is set is followed by Parameters.
+* The Parameters Flag is never set on the value of a Parameter ({{parameter}}).
 
 A value that fails any of these checks is malformed; see {{malformed}}.
 
@@ -160,8 +160,6 @@ Dictionary Member {
 
 ~~~
 
-A Dictionary Member MUST NOT be a Parameters (type 4).
-
 A Member Key is at least one octet long. Its first octet MUST be a lowercase letter (0x61 to 0x7A) or "\*", and each following octet MUST be a lowercase letter, a digit, or one of "\_", "-", "." and "\*" (see {{Section 4.2.3.3 of STRUCTURED-FIELDS}}). If a Member Key occurs more than once in a Dictionary, the last value overwrites the earlier ones, and the key keeps the position of its first occurrence (see {{Section 4.2.2 of STRUCTURED-FIELDS}}).
 
 
@@ -182,21 +180,21 @@ Inner List {
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
-Parameters on the Inner List itself, if present, are serialised in a following Parameter type ({{parameter}}); they do not form part of the payload of the Inner List (and therefore are not counted in Member Count).
+Parameters on the Inner List itself, if present, follow its last member ({{parameter}}); they do not form part of the payload of the Inner List (and therefore are not counted in Member Count).
 
 
 ### Parameters {#parameter}
 
-Parameters ({{Section 3.1.2 of STRUCTURED-FIELDS}}) uses its Flags to indicate its number of members, in a fashion similar to Lists.
+Parameters ({{Section 3.1.2 of STRUCTURED-FIELDS}}) are not a Binary Structured Type of their own. An Item or Inner List whose Parameters Flag is set is followed by Parameters, in this form:
 
 ~~~
 Parameters {
-  Type (5) = 4,
-  Short Parameter Count (3),
-  [ Parameter Count (i) ],
+  Parameter Count (i),
   Parameter (..) ...
 }
 ~~~
+
+A recipient MUST treat a Parameter Count of zero as malformed, because the textual form cannot express a set of Parameters with no members.
 
 Each Parameter conveys a key and a value:
 
@@ -214,12 +212,9 @@ A parameter's fields are:
 * Parameter Key: Parameter Key Length octets of the parameter-key
 * Binary Structured Type: The parameter value
 
-The Binary Structured Type in a Parameter MUST NOT be an Inner List (type 3) or Parameters (type 4).
+The Binary Structured Type in a Parameter is an Item; it MUST NOT be an Inner List, and its Parameters Flag MUST NOT be set.
 
 A Parameter Key is validated in the same way as a Member Key (see {{dictionary}}). Duplicates are handled as for Member Keys (see {{Section 4.2.3.2 of STRUCTURED-FIELDS}}).
-
-Parameters are always associated with the Binary Structured Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Binary Structured Type in a Binary Structured Field Value, and MUST NOT follow another Parameters.
-
 
 ### Integers
 
