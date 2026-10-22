@@ -216,7 +216,7 @@ A Parameter Key is validated in the same way as a Member Key (see {{dictionary}}
 
 ### Integers
 
-An Integer ({{Section 3.3.1 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}). The Sign flag conveys whether the value is positive (1) or negative (0).
+An Integer ({{Section 3.3.1 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}). The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
 
 ~~~
 Integer {
@@ -235,7 +235,7 @@ A recipient MUST treat an Integer whose payload exceeds 999,999,999,999,999 (the
 
 ### Decimals {#decimal}
 
-A Decimal ({{Section 3.3.2 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}) that carries a Scale and a Mantissa, as described below. The Sign flag conveys whether the value is positive (1) or negative (0).
+A Decimal ({{Section 3.3.2 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}) that carries a Scale and a Mantissa, as described below. The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
 
 ~~~
 Decimal {
@@ -249,7 +249,7 @@ Decimal {
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
-The two low-order bits of the payload are the Scale, which is the number of digits after the decimal point (0 to 3). The remaining bits are the Mantissa, so the value is the Mantissa divided by 10 to the power of the Scale. For example, 4.5 has a Mantissa of 45 and a Scale of 1, so its payload is 181 (45 \* 4 + 1); -0.25 has a Mantissa of 25, a Scale of 2, a payload of 102, and the Sign flag set to negative. A Scale of 0 is a Decimal whose fractional part is zero; it is still a Decimal, not an Integer, and the textual form serialises it with a ".0".
+The two low-order bits of the payload are the Scale, which is the number of digits after the decimal point (0 to 3). The remaining bits are the Mantissa, so the value is the Mantissa divided by 10 to the power of the Scale. For example, 4.5 has a Mantissa of 45 and a Scale of 1, so its payload is 181 (45 \* 4 + 1); -0.25 has a Mantissa of 25, a Scale of 2, a payload of 102, and the Sign flag set. A Scale of 0 is a Decimal whose fractional part is zero; it is still a Decimal, not an Integer, and the textual form serialises it with a ".0".
 
 Generators MUST use the smallest Scale that represents the value exactly, so that each value has one encoding. A recipient MUST treat a Decimal whose Mantissa is 10 to the power of (12 + Scale) or greater as malformed, because its integer component would have more than twelve digits ({{Section 3.3.2 of STRUCTURED-FIELDS}}).
 
@@ -329,7 +329,7 @@ The Parameters Flag indicates whether the value is followed by Parameters (see {
 
 ### Dates
 
-A Date ({{Section 3.3.7 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}), conveying the number of seconds since 1970-01-01T00:00:00Z, excluding leap seconds. The Sign flag conveys whether the value is positive (1) or negative (0).
+A Date ({{Section 3.3.7 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}), conveying the number of seconds since 1970-01-01T00:00:00Z, excluding leap seconds. The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
 
 ~~~
 Date {
@@ -442,5 +442,6 @@ Each new draft adds a section here, above the existing ones, as part of the chan
 * Strings, Tokens, Display Strings, Literal Values and keys are String Literals, so the sender can Huffman-code each one ({{fields}}).
 * Narrowed the stated motivation to the fields where binary parsing is expected to save the most ({{intro}}).
 * Corrected the RETROFIT reference to its Section 3, where the mapped fields are defined.
+* The Sign flag is set for negative values, so the common case has all flags clear, and zero is never signed.
 * Fixed typos, and type numbers that were wrong in the text.
 
