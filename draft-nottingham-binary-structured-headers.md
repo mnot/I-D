@@ -32,7 +32,10 @@ author:
 normative:
   RFC2119:
   RFC7541:
-  STRUCTURED-FIELDS: RFC8941
+  STRUCTURED-FIELDS: RFC9651
+  HTTP: RFC9110
+  HTTP2: RFC9113
+  UTF8: RFC3629
   QUIC: RFC9000
   RETROFIT: I-D.ietf-httpbis-retrofit
 
@@ -81,6 +84,19 @@ Binary Structured Type {
 Use of each flag may not be specified by all types. When this is the case, generators MUST send 0 for them, and recipients MUST ignore them.
 
 
+## Recipient Validation {#validation}
+
+A recipient of a Binary Structured Field Value MUST check it against the constraints in this section, which carry over the restrictions that {{!STRUCTURED-FIELDS}} places on the textual form. The sections for each type state the checks on its payload. Checks that apply to the value as a whole are:
+
+* Every Type is defined by this specification, or by an extension that the recipient supports (see {{setting}}).
+* No Member Count, Parameter Count, Length or Key Length reaches past the end of the field value, and no octets remain after the top-level type and any Parameters that follow it.
+* Each type appears only where {{!STRUCTURED-FIELDS}} allows that data type: the top-level type is a List, a Dictionary or an Item; the members of Lists and Dictionaries are Items or Inner Lists; the members of Inner Lists and the values of Parameters are Items.
+* Parameters appear only where {{parameter}} allows them, and a Parameters Flag that is set is followed by Parameters.
+
+A value that fails any of these checks is malformed; see {{malformed}}.
+
+A recipient that skipped these checks could accept values that the textual form cannot express, and then be unable to serialise them for a peer that does not support this specification (see {{setting}}).
+
 
 ## Literal Values {#literal}
 
@@ -96,6 +112,8 @@ Literal Value {
   Payload (..)
 }
 ~~~
+
+A recipient MUST apply the field value validation in {{Section 8.2.1 of HTTP2}} to the payload.
 
 
 ## Lists
@@ -118,7 +136,7 @@ List {
 
 
 
-## Dictionaries
+## Dictionaries {#dictionary}
 
 A Dictionary ({{Section 3.2 of STRUCTURED-FIELDS}}) uses its Flags to indicate its number of members, in a fashion similar to Lists.
 
@@ -143,6 +161,8 @@ Dictionary Member {
 ~~~
 
 A Dictionary Member MUST NOT be a Parameters (type 4).
+
+A Member Key is at least one octet long. Its first octet MUST be a lowercase letter (0x61 to 0x7A) or "\*", and each following octet MUST be a lowercase letter, a digit, or one of "\_", "-", "." and "\*" (see {{Section 4.2.3.3 of STRUCTURED-FIELDS}}). If a Member Key occurs more than once in a Dictionary, the last value overwrites the earlier ones, and the key keeps the position of its first occurrence (see {{Section 4.2.2 of STRUCTURED-FIELDS}}).
 
 
 ## Inner Lists {#inner-list}
@@ -196,6 +216,8 @@ A parameter's fields are:
 
 The Binary Structured Type in a Parameter MUST NOT be an Inner List (type 3) or Parameters (type 4).
 
+A Parameter Key is validated in the same way as a Member Key (see {{dictionary}}). Duplicates are handled as for Member Keys (see {{Section 4.2.3.2 of STRUCTURED-FIELDS}}).
+
 Parameters are always associated with the Binary Structured Type that immediately preceded them. Therefore, Parameters MUST NOT be the first Binary Structured Type in a Binary Structured Field Value, and MUST NOT follow another Parameters.
 
 
@@ -215,6 +237,8 @@ Integer {
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
+A recipient MUST treat an Integer whose payload exceeds 999,999,999,999,999 (the range limit in {{Section 3.3.1 of STRUCTURED-FIELDS}}) as malformed, even though the variable-length encoding can carry larger values.
+
 
 ### Decimals
 
@@ -233,6 +257,8 @@ Decimal {
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
+A recipient MUST treat a Decimal whose Divisor is zero as malformed, as well as one whose value has an integer component of more than twelve digits ({{Section 3.3.2 of STRUCTURED-FIELDS}}). A value with more than three fractional digits is rounded as described in {{Section 4.1.5 of STRUCTURED-FIELDS}}.
+
 
 ### Strings
 
@@ -250,7 +276,7 @@ String {
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
-Its payload is Length octets long and ASCII-encoded.
+Its payload is Length octets long, and each octet MUST be in the range 0x20 to 0x7E (inclusive), as in {{Section 3.3.3 of STRUCTURED-FIELDS}}. A recipient MUST treat a String that contains any other octet as malformed.
 
 
 ### Tokens {#token}
@@ -269,7 +295,7 @@ Token {
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
-Its payload is Length octets long and ASCII-encoded.
+Its payload is Length octets long. The first octet MUST be a letter (0x41 to 0x5A or 0x61 to 0x7A) or "\*", and each following octet MUST be a "tchar" ({{Section 5.6.2 of HTTP}}), ":" or "/" (see {{Section 3.3.4 of STRUCTURED-FIELDS}}). A recipient MUST treat a Token that is empty, or that contains any other octet, as malformed.
 
 
 ### Byte Sequences
@@ -309,6 +335,44 @@ Boolean {
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
 
+### Dates
+
+A Date ({{Section 3.3.7 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}), conveying the number of seconds since 1970-01-01T00:00:00Z, excluding leap seconds. The Sign flag conveys whether the value is positive (1) or negative (0).
+
+~~~
+Date {
+  Type (5) = 11,
+  Parameters (1),
+  Sign (1),
+  Unused Flag (1) = 0,
+  Payload (i)
+}
+~~~
+
+The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
+
+A recipient MUST treat a Date whose payload exceeds 999,999,999,999,999 as malformed, as for an Integer.
+
+
+### Display Strings
+
+A Display String ({{Section 3.3.8 of STRUCTURED-FIELDS}}) has a payload consisting of an integer Length field (using the variable-length encoding from {{Section 16 of QUIC}}), followed by that many octets of payload.
+
+~~~
+Display String {
+  Type (5) = 12,
+  Parameters (1),
+  Unused Flags (2) = 0,
+  Length (i),
+  Payload (..)
+}
+~~~
+
+The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
+
+Its payload is Length octets long and UTF-8 encoded ({{UTF8}}). Unlike the textual form, it is not percent-encoded. A recipient MUST treat a payload that is not valid UTF-8 as malformed.
+
+
 # Using Binary Structured Fields in HTTP/2 {#negotiate}
 
 When both peers on a connection support this specification, they can negotiate to serialise fields that they know to be Structured Fields as binary data, rather than strings.
@@ -344,6 +408,15 @@ Binary Structured Field Values are stored in the HPACK {{RFC7541}} dynamic table
 Note that HEADERS frames with and without the BINARY_STRUCTURED flag MAY be mixed on the same connection, depending on the requirements of the sender.
 
 
+## Malformed Binary Structured Field Values {#malformed}
+
+A Binary Structured Field Value that fails a check in {{validation}} makes the message that contains it malformed ({{Section 8.1.1 of HTTP2}}). {{Section 4.2 of STRUCTURED-FIELDS}} allows a failed parse to either ignore the field or make the message malformed; this specification requires the latter. A sender that cannot produce a valid Structured Field can send a Binary Literal ({{literal}}) instead, so an invalid value indicates a faulty sender.
+
+The recipient MUST NOT stop decoding the field block at the malformed value, because HPACK decoder state would then diverge from the sender's. It completes decoding, and then handles the malformed message as {{Section 8.1.1 of HTTP2}} requires: as a stream error of type PROTOCOL_ERROR, without forwarding it.
+
+If a value is malformed in a way that prevents the recipient from determining where it ends, the field block cannot be decoded. That is a decoding error, and the recipient MUST treat it as a connection error of type COMPRESSION_ERROR ({{Section 4.3 of HTTP2}}).
+
+
 # IANA Considerations
 
 * ISSUE: todo
@@ -352,7 +425,7 @@ Note that HEADERS frames with and without the BINARY_STRUCTURED flag MAY be mixe
 
 As is so often the case, having alternative representations of data brings the potential for security weaknesses, when attackers exploit the differences between those representations and their handling.
 
-One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Fields data types, along with the "escape valve" of Binary Literals ({{literal}}). Therefore, implementation divergence from this strictness can have security impact.
+One mitigation to this risk is the strictness of parsing for both non-binary and binary Structured Fields data types ({{validation}}), along with the "escape valve" of Binary Literals ({{literal}}). Therefore, implementation divergence from this strictness can have security impact.
 
 
 --- back
