@@ -183,7 +183,7 @@ The Parameters Flag indicates whether the value is followed by Parameters (see {
 Parameters on the Inner List itself, if present, follow its last member ({{parameter}}); they do not form part of the payload of the Inner List (and therefore are not counted in Member Count).
 
 
-### Parameters {#parameter}
+## Parameters {#parameter}
 
 Parameters ({{Section 3.1.2 of STRUCTURED-FIELDS}}) are not a Binary Structured Type of their own. An Item or Inner List whose Parameters Flag is set is followed by Parameters, in this form:
 
@@ -214,7 +214,7 @@ The Binary Structured Type in a Parameter is an Item; it MUST NOT be an Inner Li
 
 A Parameter Key is validated in the same way as a Member Key (see {{dictionary}}). Duplicates are handled as for Member Keys (see {{Section 4.2.3.2 of STRUCTURED-FIELDS}}).
 
-### Integers
+## Integers
 
 An Integer ({{Section 3.3.1 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}). The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
 
@@ -233,7 +233,7 @@ The Parameters Flag indicates whether the value is followed by Parameters (see {
 A recipient MUST treat an Integer whose payload exceeds 999,999,999,999,999 (the range limit in {{Section 3.3.1 of STRUCTURED-FIELDS}}) as malformed, even though the variable-length encoding can carry larger values.
 
 
-### Decimals {#decimal}
+## Decimals {#decimal}
 
 A Decimal ({{Section 3.3.2 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}) that carries a Scale and a Mantissa, as described below. The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
 
@@ -254,7 +254,7 @@ The two low-order bits of the payload are the Scale, which is the number of digi
 Generators MUST use the smallest Scale that represents the value exactly, so that each value has one encoding. A recipient MUST treat a Decimal whose Mantissa is 10 to the power of (12 + Scale) or greater as malformed, because its integer component would have more than twelve digits ({{Section 3.3.2 of STRUCTURED-FIELDS}}).
 
 
-### Strings
+## Strings
 
 A String ({{Section 3.3.3 of STRUCTURED-FIELDS}}) has a payload that is a String Literal.
 
@@ -272,7 +272,7 @@ The Parameters Flag indicates whether the value is followed by Parameters (see {
 Each octet of the string MUST be in the range 0x20 to 0x7E (inclusive), as in {{Section 3.3.3 of STRUCTURED-FIELDS}}. A recipient MUST treat a String that contains any other octet as malformed.
 
 
-### Tokens {#token}
+## Tokens {#token}
 
 A Token ({{Section 3.3.4 of STRUCTURED-FIELDS}}) has a payload that is a String Literal.
 
@@ -290,7 +290,7 @@ The Parameters Flag indicates whether the value is followed by Parameters (see {
 The first octet of the string MUST be a letter (0x41 to 0x5A or 0x61 to 0x7A) or "\*", and each following octet MUST be a "tchar" ({{Section 5.6.2 of HTTP}}), ":" or "/" (see {{Section 3.3.4 of STRUCTURED-FIELDS}}). A recipient MUST treat a Token that is empty, or that contains any other octet, as malformed.
 
 
-### Byte Sequences
+## Byte Sequences
 
 A Byte Sequence ({{Section 3.3.5 of STRUCTURED-FIELDS}}) has a payload consisting of an integer Length field (using the variable-length encoding from {{Section 16 of QUIC}}), followed by that many octets of payload.
 
@@ -309,7 +309,7 @@ The Parameters Flag indicates whether the value is followed by Parameters (see {
 The payload is Length octets long, containing the raw octets of the byte sequence.
 
 
-### Booleans
+## Booleans
 
 A Boolean ({{Section 3.3.6 of STRUCTURED-FIELDS}}) uses the Payload flag to indicate its value; if Payload is 0, the value is False; if Payload is 1, the value is True.
 
@@ -327,7 +327,7 @@ Boolean {
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
 
-### Dates
+## Dates
 
 A Date ({{Section 3.3.7 of STRUCTURED-FIELDS}}) has a payload consisting of a single integer (using the variable-length encoding from {{Section 16 of QUIC}}), conveying the number of seconds since 1970-01-01T00:00:00Z, excluding leap seconds. The Sign flag is set (1) if the value is negative, and clear (0) otherwise; a generator MUST NOT set it for zero, so that each value has one encoding.
 
@@ -346,7 +346,7 @@ The Parameters Flag indicates whether the value is followed by Parameters (see {
 A recipient MUST treat a Date whose payload exceeds 999,999,999,999,999 as malformed, as for an Integer.
 
 
-### Display Strings
+## Display Strings
 
 A Display String ({{Section 3.3.8 of STRUCTURED-FIELDS}}) has a payload that is a String Literal.
 
