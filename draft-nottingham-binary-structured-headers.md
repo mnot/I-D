@@ -235,7 +235,7 @@ The Parameters Flag indicates whether the value is followed by Parameters (see {
 A recipient MUST treat an Integer whose payload exceeds 999,999,999,999,999 (the range limit in {{Section 3.3.1 of STRUCTURED-FIELDS}}) as malformed, even though the variable-length encoding can carry larger values.
 
 
-### Decimals
+### Decimals {#decimal}
 
 A Decimal ({{Section 3.3.2 of STRUCTURED-FIELDS}}) has a payload consisting of two integers (using the variable-length encoding from {{Section 16 of QUIC}}) that are divided to convey the decimal value. The Sign flag conveys whether the value is positive (1) or negative (0).
 
@@ -245,14 +245,15 @@ Decimal {
   Parameters (1),
   Sign (1),
   Unused Flag (1) = 0,
-  Dividend (i),
-  Divisor (i)
+  Payload (i)
 }
 ~~~
 
 The Parameters Flag indicates whether the value is followed by Parameters (see {{parameter}}).
 
-A recipient MUST treat a Decimal whose Divisor is zero as malformed, as well as one whose value has an integer component of more than twelve digits ({{Section 3.3.2 of STRUCTURED-FIELDS}}). A value with more than three fractional digits is rounded as described in {{Section 4.1.5 of STRUCTURED-FIELDS}}.
+The two low-order bits of the payload are the Scale, which is the number of digits after the decimal point (0 to 3). The remaining bits are the Mantissa, so the value is the Mantissa divided by 10 to the power of the Scale. For example, 4.5 has a Mantissa of 45 and a Scale of 1, so its payload is 181 (45 \* 4 + 1); -0.25 has a Mantissa of 25, a Scale of 2, a payload of 102, and the Sign flag set to negative. A Scale of 0 is a Decimal whose fractional part is zero; it is still a Decimal, not an Integer, and the textual form serialises it with a ".0".
+
+Generators MUST use the smallest Scale that represents the value exactly, so that each value has one encoding. A recipient MUST treat a Decimal whose Mantissa is 10 to the power of (12 + Scale) or greater as malformed, because its integer component would have more than twelve digits ({{Section 3.3.2 of STRUCTURED-FIELDS}}).
 
 
 ### Strings
@@ -437,5 +438,6 @@ Each new draft adds a section here, above the existing ones, as part of the chan
 * Defined malformed Binary Structured Field Values, and how a recipient handles them ({{malformed}}).
 * Made duplicate Dictionary and Parameter keys last-wins, as in the textual form.
 * Parameters are no longer a Binary Structured Type; they follow their Item or Inner List as a Parameter Count and the Parameters ({{parameter}}). Type 4 is unassigned.
+* Decimals are a Mantissa and a Scale in a single integer, rather than a dividend and a divisor ({{decimal}}).
 * Fixed typos, and type numbers that were wrong in the text.
 
