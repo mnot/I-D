@@ -425,3 +425,17 @@ One mitigation to this risk is the strictness of parsing for both non-binary and
 
 --- back
 
+# Changes from Previous Drafts
+{:removeInRFC="true"}
+
+Each new draft adds a section here, above the existing ones, as part of the change that makes the difference.
+
+## Since draft-nottingham-binary-structured-headers-03
+
+* Moved the Structured Fields reference to RFC 9651, and added Date (type 11) and Display String (type 12).
+* Added recipient validation for each type ({{validation}}).
+* Defined malformed Binary Structured Field Values, and how a recipient handles them ({{malformed}}).
+* Made duplicate Dictionary and Parameter keys last-wins, as in the textual form.
+* Parameters are no longer a Binary Structured Type; they follow their Item or Inner List as a Parameter Count and the Parameters ({{parameter}}). Type 4 is unassigned.
+* Fixed typos, and type numbers that were wrong in the text.
+
