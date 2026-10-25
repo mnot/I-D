@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-09-01T04:52:14.737404+00:00",
+  "timestamp": "2026-10-25T04:24:59.838616+00:00",
   "repo": "mnot/I-D",
   "labels": [
     {
@@ -14967,6 +14967,32 @@
       "mergeCommit": {
         "oid": "db731a96733d351abb1f383d7ac8b056a5fabf6a"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 383,
+      "id": "PR_kwDOAAx9P88AAAABJ_h1EA",
+      "title": "Binary structured headers: work through design feedback",
+      "url": "https://github.com/mnot/I-D/pull/383",
+      "state": "OPEN",
+      "author": "mnot",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Works through the design feedback on the 2026-10-21 build of draft-nottingham-binary-structured-headers. The wire format changes in several places, so this is worth reading as a whole rather than commit by commit (though each commit does one thing).\n\n**Wire format**\n\n* Integers are RFC 7541 prefix integers with an 8-bit prefix, not QUIC varints. Once String Literals came in, implementations needed the prefix-integer decoder anyway.\n* Strings, Tokens, Display Strings, Literal Values and keys are RFC 7541 String Literals, so the sender chooses Huffman per string. A Literal Value costs one octet more than today's string literal. Byte Sequences stay raw.\n* Parameters are no longer a type. An Item or Inner List with its Parameters Flag set is followed by a Parameter Count and the Parameters. Type 4 is unassigned. This doesn't save an octet (the count that was in the old header octet is now a one-octet integer); it removes the type and three `MUST NOT`s.\n* Decimals are a Mantissa and a Scale in one integer (Scale in the two low bits), with the smallest Scale required.\n* The Sign flag is set for negative values; zero is never signed.\n* Inner Lists carry a two-bit Short Member Count, and empty Inner Lists are allowed (they were excluded by the text but are valid Structured Fields).\n* Added Date (type 11) and Display String (type 12); the reference moves to RFC 9651.\n\n**Semantics**\n\n* Recipients validate each type against the RFC 9651 character sets and ranges, and against where each type may appear.\n* A value that fails validation makes the message malformed (RFC 9113 8.1.1), after the field block is fully decoded so HPACK state stays in sync. If the value's end can't be found, or a Huffman string doesn't decode, it's a `COMPRESSION_ERROR` connection error.\n* Duplicate Dictionary and Parameter keys are last-wins, as in the textual form.\n* Lists and Dictionaries are never empty; the field is omitted, as in RFC 9651 4.1.\n* Each dynamic table entry records whether it's binary or textual, so frames with and without the flag can refer to each other's entries. The flag and mixing stay.\n\n**Also**\n\n* The introduction says where the parsing saving is expected, without numbers.\n* The RETROFIT citation now points at Section 3 (there was no Section 1.3).\n* A \"Changes from Previous Drafts\" section is added.\n\n**Not done / open**\n\n* RETROFIT is still a normative reference to an expired draft, so publication waits on it.\n* The claim about where parsing saves most comes from the reviewer's informal benchmark, which hasn't been reproduced.\n* No implementation or interop testing; the render and HTTP lint pass on every commit.\n* The \"downstream consumer (whether on the network or not)\" wording in 3.1 is unchanged.\n\n---\n\nAI-generated: Claude Code wrote the text from the design feedback, with Mark deciding each design question as it came up (the flag stays, Huffman per string, prefix integers, last-wins duplicates, malformed handling). It's a working draft, not a reviewed one.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n",
+      "createdAt": "2026-10-22T10:01:16Z",
+      "updatedAt": "2026-10-22T10:01:16Z",
+      "baseRepository": "mnot/I-D",
+      "baseRefName": "main",
+      "baseRefOid": "719e3980329b5b02d2a3847b721e29ef1f050c15",
+      "headRepository": "mnot/I-D",
+      "headRefName": "claude/binary-structured-headers-feedback-55d519",
+      "headRefOid": "0b2cb7d2e2f704ebec5df526bf22a0949b2955af",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
