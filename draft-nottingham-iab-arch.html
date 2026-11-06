@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>More Architectural Principles of the Internet</title>
+<meta content="Mark Nottingham" name="author">
+<meta content="
+       This document continues, in the tradition of RFC 1958 and RFC 3439, to document some aspects of the Internet's architecture that have been proven to be important to consider when designing protocols for it. 
+       It also explains why these principles are important to the continued success of the Internet. 
+    " name="description">
+<meta content="xml2rfc 3.35.0" name="generator">
+<meta content="Internet-Draft" name="keyword">
+<meta content="draft-nottingham-iab-arch-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.35.0
+    Python 3.14.10
+    ConfigArgParse 1.9.0
+    google-i18n-address 3.1.1
+    intervaltree 3.2.1
+    Jinja2 3.1.6
+    lxml 6.1.1
+    natsort 8.4.0
+    platformdirs 4.14.3
+    pycountry 24.6.1
+    PyYAML 6.0.3
+    requests 2.33.1
+    wcwidth 0.9.4
+-->
+<link href="draft-nottingham-iab-arch.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1 {
+  &#title {
+    font-size: 32px;
+    line-height: 40px;
+    clear: both;
+    margin: 1.5em 0 0.2em;
+  }
+  &#rfcnum {
+    margin: 1.5em 0 0.2em;
+    & + h1#title {
+      margin: 0.2em 0;
+    }
+  }
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+  & code, & samp, & tt {
+    font-size: 16px;
+    line-height: 0;
+  }
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    margin: 0;
+    float: right;
+    clear: both;
+  }
+  & > *:nth-child(2) {
+    clear: both;
+    display: block;
+    border: none;
+  }
+}
+svg {
+  display: block;
+  /* font-family isn't space-separated, but =~ will have to do */
+  &[font-family~="monospace" i], & [font-family~="monospace" i] {
+    font-family: var(--font-mono);
+  }
+}
+.alignCenter {
+  margin: 1em 0;
+  &.art-text {
+    background-color: var(--highlight-color);
+    border: 1px solid var(--line-color);
+    border-radius: 3px;
+    padding: 0.5em 1em 0;
+    margin-bottom: 0.5em;
+    & pre {
+      padding: 0;
+      width: auto;
+    }
+  }
+  & > *:first-child {
+    border: none;
+    /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+       support flexbox yet.
+    */
+    display: table;
+    margin: 0 auto;
+  }
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+      float: none;
+    }
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+
+  &:not(.dlNewline) > dt {
+    float: left;
+    margin-right: 2ch;
+    min-width: 8ch;
+  }
+  & > dd {
+    margin-bottom: .8em;
+    margin-left: var(--indent) !important; /* stupid element overrides */
+    min-height: 2ex;
+  }
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a {
+  text-decoration: none;
+  &[href] {
+    color: var(--link-color);
+    &:hover { text-decoration: underline; }
+    &.selfRef {
+      color: var(--text-color);
+      &:hover {
+        text-decoration: none;
+        background-color: var(--highlight-color);
+      }
+    }
+  }
+}
+.iref + a[href].internal {
+  color: var(--text-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+  & blockquote {
+    margin: 0.8em 0.4em 0.4em;
+  }
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) {
+    & p {
+      margin: -2px 0;
+      max-height: 0;
+      transition: max-height 2s ease, margin 0.5s ease 0.5s;
+      overflow: hidden;
+    }
+    &:hover p,
+    & h2:target ~ p {
+      margin: 0.5em 0;
+      max-height: 500px;
+      overflow: auto;
+    }
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+  border-left: 2px var(--pilcrow-strong) solid;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  &.right { margin-left: auto; }
+  &.center { margin-left: auto; margin-right: auto; }
+  &.left { margin-right: auto; }
+  & .text-left { text-align: left; }
+  & .text-center { text-align: center; }
+  & .text-right { text-align: right; }
+  & caption {
+    margin: 0;
+    padding: 3px 0 3px 1em;
+  }
+  & p { margin: 0; }
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+  @media not print {
+    :hover > &, &:focus {
+      opacity: 1;
+    }
+    &[href]:hover {
+      color: var(--pilcrow-strong);
+      background-color: transparent;
+    }
+  }
+  @media print {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+  & .prepared {
+    float: right;
+  }
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses {
+    & > section {
+      column-count: 2;
+      column-gap: 20px;
+    }
+    & > section > h2 {
+      column-span: all;
+    }
+    /* hack for break-inside: avoid-column */
+    & address {
+      display: inline-block;
+      break-inside: avoid-column;
+    }
+  }
+}
+
+/* Comments */
+.rfcEditorRemove {
+  & p:first-of-type {
+    font-style: italic;
+  }
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc {
+    & nav {
+      font-family: var(--font-title);
+      font-weight: 360;
+      & > ul { margin-bottom: 2em; }
+      & ul {
+        margin: 0 0 0 4px;
+        & :is(p, li) {
+          margin: 2px 0;
+        }
+      }
+    }
+    & a.toplink {
+      float: right;
+    }
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+    & h2 {
+      margin: 0;
+      padding: 2px 0 2px 6px;
+      padding-right: 1em;
+      font-size: 18px;
+      line-height: 24px;
+      min-width: 190px;
+      text-align: right;
+      background-color: #444;
+      color: white;
+      cursor: pointer;
+      &::before { /* css hamburger */
+        float: right;
+        position: relative;
+        width: 1em;
+        height: 1px;
+        left: -164px;
+        margin: 8px 0 0 0;
+        background: white none repeat scroll 0 0;
+        box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+        content: "";
+      }
+    }
+    & nav {
+      display: none;
+      background-color: var(--background-color);
+      padding: 0.5em 1em 1em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      height: calc(100vh - 48px);
+      border-left: 1px solid #ddd;
+    }
+    &.active {
+      opacity: 1;
+      & nav { display: block; }
+    }
+    /* Make the collapsed ToC header render white on gray also when it's a link */
+    & h2 a,
+    & h2 a:is(:link, :focus, :hover),
+    & a.toplink,
+    & a.toplink:hover {
+      color: white;
+      background-color: #444;
+      text-decoration: none;
+    }
+    & a.toplink {
+      margin: 2px 0.5em 0;
+    }
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+    & h2 {
+      margin: 0;
+      padding: 0.25em 1em 1em 0;
+    }
+    & nav {
+      display: block;
+      height: calc(90vh - 84px);
+      bottom: 0;
+      padding: 0.5em 0 2em;
+      overflow: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+    & a.toplink {
+      margin: 8px 0.5em 0;
+    }
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc {
+    page-break-before: always;
+    border-top: none;
+    padding-top: 0;
+  }
+  #n-introduction {
+    page-break-before: always;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg {
+  & :is([stroke="black"], [stroke^="#000"]) {
+    stroke: var(--text-color);
+  }
+  & :is([stroke="white"], [stroke^="#fff"]) {
+    stroke: var(--background-color);
+  }
+  & :is([fill="black"], [fill^="#000"], :not([fill], [fill] *)) {
+    fill: var(--text-color);
+  }
+  & :is([fill="white"], [fill^="#fff"]) {
+    fill: var(--background-color);
+  }
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">More Architectural Principles of the Int</td>
+<td class="right">November 2026</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Nottingham</td>
+<td class="center">Expires 10 May 2027</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">Network Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-nottingham-iab-arch-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2026-11-06" class="published">6 November 2026</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2027-05-10">10 May 2027</time></dd>
+<dt class="label-authors">Author:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">M. Nottingham</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">More Architectural Principles of the Internet</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document continues, in the tradition of RFC 1958 and RFC 3439, to document some aspects of the Internet's architecture that have been proven to be important to consider when designing protocols for it.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">It also explains why these principles are important to the continued success of the Internet.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-nottingham-iab-arch/">https://datatracker.ietf.org/doc/draft-nottingham-iab-arch/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+         information can be found at <span><a href="https://projects.mnot.net/I-D/">https://projects.mnot.net/I-D/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/mnot/I-D/labels/arch">https://github.com/mnot/I-D/labels/arch</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 10 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-open" class="internal xref">Open</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-decentralized" class="internal xref">Decentralized</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-trusted" class="internal xref">Trusted</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-secure" class="internal xref">Secure</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-user-focused" class="internal xref">User-Focused</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-layered" class="internal xref">Layered</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-end-to-end" class="internal xref">End-to-End</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-interoperable" class="internal xref">Interoperable</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-evolvable" class="internal xref">Evolvable</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">The Internet works as it does because of certain architectural principles. They guide the engineers who design its protocols, and they bear on the choices of others who shape the Internet. This document describes them and points to the specifications behind them.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">These principles can influence more than technical designs; social and policy goals can be achieved through application of the law, social norms, and markets, alongside the architecture of the Internet itself. The purpose of this document is to show how the principles support those goals. It also aims to help policymakers understand how the Internet is built (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-4.1" class="relref">Section 4.1</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>), so that their work can build on it where appropriate and avoid unintended harm to the Internet and the benefits it brings society.<a href="#section-1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="open">
+<section id="section-2">
+      <h2 id="name-open">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-open" class="section-name selfRef">Open</a>
+      </h2>
+<p id="section-2-1">The Internet is an <em>open system</em>. Its boundaries are not fixed: no party can list everyone on the Internet, or all of the ways they use it. Anyone can connect to it, and anyone can introduce a new application without coordination (so-called 'permissionless innovation'). The breadth and depth of the Internet's impact -- including all of the associated social, economic, and cultural benefits -- can be directly attributed to its openness.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">In contrast, consider a closed system, such as the pre-Internet telephone system in many countries. In those systems, it was common to have tight restrictions not only on what a telephone could be used for, but even what equipment could be connected to the network. Such barriers to participation and reuse may make operation of the system more predictable, but they also constrain innovation; requiring permission (and often, certification and licensing) had the effect of delaying new, innovative uses of the network.<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">Closed systems can still work at global scale: the international postal and telephone systems are reliable, and they can be closed because their services change little and new participants join on one side only, as end users.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<p id="section-2-4">The Internet is not like that; its value comes from admitting new participants of all kinds and sizes -- such as publishers, services, and infrastructure -- not just end users. Low barriers to entry also give businesses of any size access to a global market. Requiring permission to use the Internet discourages new applications, and tends to concentrate power in large organizations that are better able to navigate the hurdles.<a href="#section-2-4" class="pilcrow">¶</a></p>
+<p id="section-2-5">Some harms associated with the Internet are harder to fight due to its openness: low barriers to entry invite abuse such as spam, and fighting it without a gatekeeper, with each participant seeing only part of the system, is a much harder design problem than excluding bad actors from a closed one.<a href="#section-2-5" class="pilcrow">¶</a></p>
+<p id="section-2-6">Building closed systems on top of the Internet is a reasonable response to that tradeoff, and doing so is not, in itself, against the Internet's nature. A limited, closed system built on top of the Internet can fail without threatening the entire infrastructure, and can be replaced by other systems -- open or closed. However, once a system (e.g., a given application, infrastructure component or other facility) becomes so important to people's experience of the Internet or its operation that it cannot practically be replaced, its enclosure should be questioned (see <span><a href="https://rfc-editor.org/rfc/rfc9518#section-2.2" class="relref">Section 2.2</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>).<a href="#section-2-6" class="pilcrow">¶</a></p>
+<p id="section-2-7">Consider the 'app store' approach to controlling what applications are available on some platforms (including many mobile phones). While control points like these create an opportunity to refuse applications that are security threats, poorly conceived, or against policy objectives such as child protection, they also raise governance questions, create security and reliability vulnerabilities, and, often, impose questionable economic arrangements that constrain innovation on that platform.<a href="#section-2-7" class="pilcrow">¶</a></p>
+<p id="section-2-8">Building such control points into the Internet itself by requiring permission to deploy or use applications would also be ineffective, because the permission has to be enforced somewhere. Enforcing it at the source needs authority over everyone who might deploy an application, which no party has, because the system spans many jurisdictions. Enforcing it in the middle means blocking, which is often easy to evade and harms services it did not target because the layers of the Internet depend on each other (<span><a href="https://rfc-editor.org/rfc/rfc7754#section-4.1" class="relref">Section 4.1</a> of [<a href="#RFC7754" class="cite xref">RFC7754</a>]</span>).<a href="#section-2-8" class="pilcrow">¶</a></p>
+<p id="section-2-9">Social and policy goals -- competition, safety, inclusion, resilience -- can be pursued without closing the infrastructure. They are best met where the responsible party can be identified and held to account, which means the applications, hosts, and commercial entities built on top of the Internet. Because the infrastructure stays open, alternatives remain free to emerge and displace a system that has become difficult to replace.<a href="#section-2-9" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="decentralized">
+<section id="section-3">
+      <h2 id="name-decentralized">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-decentralized" class="section-name selfRef">Decentralized</a>
+      </h2>
+<p id="section-3-1">If an architecture is to be open, it must also be <em>decentralized</em> -- it must not have 'choke points' where a single party or small group can observe, control, or extract rent from communication between others.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">Permissionless innovation depends on decentralization. If one party sits in the path of every application, coordinating with them becomes a barrier to entry. They need not refuse anyone for the effect to be felt; the mere capability can shape what people attempt. Where a function has no substitute, its operator can also extract rent from everyone who relies on it, and use what it sees to improve its own offerings while denying that data to others (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-2.1" class="relref">Section 2.1</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>).<a href="#section-3-2" class="pilcrow">¶</a></p>
+<p id="section-3-3">The same position gives that party -- and any state with authority over it -- the means to observe what people do and to deny or shape it. <span>[<a href="#RFC9518" class="cite xref">RFC9518</a>]</span> calls these the 'panopticon' and 'chokepoint' effects, and they are available for coercion whether or not the party ever intends to use them that way.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4">Open, secure, and reliable connectivity is necessary, though not sufficient, to exercise rights such as freedom of expression and freedom of association (<span><a href="https://rfc-editor.org/rfc/rfc8280#section-1" class="relref">Section 1</a> of [<a href="#RFC8280" class="cite xref">RFC8280</a>]</span>). Political centralization, where one country can control how a function is supplied across the whole Internet, is as much a concern as commercial concentration (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-2" class="relref">Section 2</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>). A jurisdiction's goals for its own territory can be met by acting on the parties within it.<a href="#section-3-4" class="pilcrow">¶</a></p>
+<p id="section-3-5">Centralization also concentrates failure. When one provider's outage disrupts a large part of the Internet, or a single codebase or algorithm replicates one flaw everywhere it runs, the impact is out of proportion to the size of the fault. A monoculture of this kind is a systemic cybersecurity risk, and a single content recommendation algorithm can have severe social impact for the same reason (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-2.1" class="relref">Section 2.1</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>). Many independent operators and implementations tend to keep failures local and leave users somewhere else to go.<a href="#section-3-5" class="pilcrow">¶</a></p>
+<p id="section-3-6">Some centralization cannot be avoided. A function that needs one globally agreed answer is centralized by nature: the root of the Domain Name System, which turns names into addresses consistently everywhere; the allocation of IP addresses, which must be unique; and the certificate authorities that let browsers know they have reached the right website. The Internet's answer has been to govern the choke point: ICANN oversees the name space, and the CA/Browser Forum oversees the Web's certificates (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-3.1.3" class="relref">Section 3.1.3</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>).<a href="#section-3-6" class="pilcrow">¶</a></p>
+<p id="section-3-7">Decentralized standards are necessary but not sufficient to avoid centralization (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-1" class="relref">Section 1</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>). Email lets anyone run a mail server, yet the cost of getting other servers to accept its mail has contributed to concentration in a small number of large providers (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-3.1.1" class="relref">Section 3.1.1</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>). Standards are voluntary, and much centralization has non-technical causes that no specification can prevent.<a href="#section-3-7" class="pilcrow">¶</a></p>
+<p id="section-3-8">Decentralization serves goals that public policy also pursues -- competition and consumer choice, the resilience of services that society depends on, and protection from undue surveillance and coercion. Protocols that keep it possible and cheap to choose give those goals a foundation to build on (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-4.3" class="relref">Section 4.3</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>).<a href="#section-3-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="trusted">
+<section id="section-4">
+      <h2 id="name-trusted">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-trusted" class="section-name selfRef">Trusted</a>
+      </h2>
+<p id="section-4-1">Internet protocols divide the work of a communication into distinct roles, and constrain what each role can do, so that the interests of the parties involved check one another and the outcomes people need can be achieved without anyone being trusted with everything. Third parties are most often added to a communication as intermediaries or in designated agent roles, and constraints on those roles can prevent at least the most egregious abuses of their power (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-4.5" class="relref">Section 4.5</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>).<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">The IAB has argued that the trust relationships among a protocol's elements should be defined before the protocol is designed, with boundaries drawn between the elements that share one; those boundaries then determine what is communicated across them and what protection that needs (<span><a href="https://rfc-editor.org/rfc/rfc3724#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#RFC3724" class="cite xref">RFC3724</a>]</span>). Distinct roles also make it possible to ask who is responsible for what, which supports accountability and consumer protection: a relying party, a certificate authority, or a relay each has a defined function that can be examined.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-3">Trust has two objects: the counterparty and the infrastructure. For example, a user visiting a website trusts the site to some degree, but also the browser acting on their behalf and the system that lets the browser know the site is what it claims to be, which is what allows commerce with parties a user has never met.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4">Standards define the browser as a distinct role: it stands between the user and the site, limiting what the site can reach on the user's system, and so removes the need to trust every site completely. It represents its user imperfectly, since a few browsers serve a diverse population (<span><a href="https://rfc-editor.org/rfc/rfc8890#section-4.2" class="relref">Section 4.2</a> of [<a href="#RFC8890" class="cite xref">RFC8890</a>]</span>).<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-5">On the Web, browsers, as relying parties, have strong incentives to protect users' privacy and security, and certificate authorities, as trust anchors, have a strong incentive to be included in browsers' trust stores. The CA/Browser Forum brings both into a body that sets operational and security requirements for the authorities. The protocols leave this governance unspecified; operators apply it on top, using protocol features that allow it to be imposed. Its legitimacy is difficult to establish and maintain, and it is vulnerable to capture by the interests being governed (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-3.1.3" class="relref">Section 3.1.3</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>).<a href="#section-4-5" class="pilcrow">¶</a></p>
+<p id="section-4-6">The same technique applies to privacy. Encryption protects a communication from outsiders but not from the party at the other end, which can often learn who the user is and what they do. Partitioning splits the roles so that no single party other than the user sees both, a technical form of data minimization (<span><a href="https://rfc-editor.org/rfc/rfc9614#section-1" class="relref">Section 1</a> of [<a href="#RFC9614" class="cite xref">RFC9614</a>]</span>) that delivers privacy goals by design. Data protection law relies on the same principle. In Oblivious HTTP, a relay knows who is making a request but not its content, and a gateway knows the content but not who sent it (<span><a href="https://rfc-editor.org/rfc/rfc9614#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC9614" class="cite xref">RFC9614</a>]</span>).<a href="#section-4-6" class="pilcrow">¶</a></p>
+<p id="section-4-7">Here too, the parties constrain one another only while their interests stay apart: partitioning depends on non-collusion, which cannot be guaranteed by technical means. The mitigations are agreements that are audited, protocol requirements that make sharing harder, and more partitions (<span><a href="https://rfc-editor.org/rfc/rfc9614#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC9614" class="cite xref">RFC9614</a>]</span>). Privacy is best protected by combining the two: the protocol limits what each party can learn, and audited agreements address what it cannot rule out. The privacy gained also grows with the number of users behind each intermediary, which encourages their concentration (<span><a href="https://rfc-editor.org/rfc/rfc9614#section-6" class="relref">Section 6</a> of [<a href="#RFC9614" class="cite xref">RFC9614</a>]</span>).<a href="#section-4-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="secure">
+<section id="section-5">
+      <h2 id="name-secure">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-secure" class="section-name selfRef">Secure</a>
+      </h2>
+<p id="section-5-1">Internet protocols are designed to protect the parties to a communication from attackers external to it. Without that protection, communication that must remain confidential or unaltered, including commercial transactions, could not safely use the Internet (<span>[<a href="#RFC1984" class="cite xref">RFC1984</a>]</span>). Secure protocols are also the technical basis for cybersecurity more broadly: protecting critical infrastructure and limiting fraud and other cybercrime. No central authority is responsible for security across the Internet, so protection has to be provided by the communicating parties and the protocols they use (<span><a href="https://rfc-editor.org/rfc/rfc3365#section-1" class="relref">Section 1</a> of [<a href="#RFC3365" class="cite xref">RFC3365</a>]</span>).<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">Protocol designers therefore assume a hostile network. An attacker positioned on the path between the parties is assumed able to read any message, and to remove, alter, or inject others, including messages that appear to originate from a trusted party (<span><a href="https://rfc-editor.org/rfc/rfc3552#section-3" class="relref">Section 3</a> of [<a href="#RFC3552" class="cite xref">RFC3552</a>]</span>). The protections that result are separable: confidentiality, integrity, and authentication. Not every application requires all three; some may require integrity and authentication while confidentiality is not immediately necessary (<span><a href="https://rfc-editor.org/rfc/rfc3365#section-8" class="relref">Section 8</a> of [<a href="#RFC3365" class="cite xref">RFC3365</a>]</span>).<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">The environment in which a protocol will be deployed cannot be predicted, and a protocol designed for a protected environment has tended to end up in an unprotected one, by which time it is too late to add security (<span><a href="https://rfc-editor.org/rfc/rfc3365#section-6" class="relref">Section 6</a> of [<a href="#RFC3365" class="cite xref">RFC3365</a>]</span>). The IAB therefore urges that protocols be designed for confidential operation by default (<span><a href="https://rfc-editor.org/rfc/rfc8558#section-4" class="relref">Section 4</a> of [<a href="#RFC8558" class="cite xref">RFC8558</a>]</span>). Security by default also serves goals such as protecting critical services, personal data, and commerce, because protection does not depend on each deployer choosing to turn it on.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-4">Pervasive monitoring is treated as an attack, regardless of who carries it out or why. Nation states, commercial enterprises, and criminals use the same techniques, so a protocol cannot defend against some while permitting others (<span><a href="https://rfc-editor.org/rfc/rfc7258#section-1" class="relref">Section 1</a> of [<a href="#RFC7258" class="cite xref">RFC7258</a>]</span>). Monitoring for legitimate purposes, such as network management and spam filtering, is not the target, and protocol design is expected to find the balance as real cases are considered (<span><a href="https://rfc-editor.org/rfc/rfc7258#section-2" class="relref">Section 2</a> of [<a href="#RFC7258" class="cite xref">RFC7258</a>]</span>).<a href="#section-5-4" class="pilcrow">¶</a></p>
+<p id="section-5-5">Protocols cannot prevent pervasive monitoring, but mitigation raises its cost, forces what was covert to be overt, or increases the likelihood of detection (<span><a href="https://rfc-editor.org/rfc/rfc7258#section-2" class="relref">Section 2</a> of [<a href="#RFC7258" class="cite xref">RFC7258</a>]</span>). In practice, mitigation has meant encrypting more of what network observers could previously read, including the establishment of secure connections and DNS queries, and reducing the long-term identifiers that allow a device to be tracked. It also changes who is able to observe and control traffic, which is one reason it has been contested (<span><a href="https://rfc-editor.org/rfc/rfc9446#section-3" class="relref">Section 3</a> of [<a href="#RFC9446" class="cite xref">RFC9446</a>]</span>).<a href="#section-5-5" class="pilcrow">¶</a></p>
+<p id="section-5-6">Public safety, including the protection of children, and national security rely on the same secure infrastructure as everything else: it keeps critical services running and makes commerce and communication safe to conduct. The IETF takes no position on whether a given act of surveillance is justified, because that is a legal and moral question and not a technical one (<span><a href="https://rfc-editor.org/rfc/rfc2804#section-3" class="relref">Section 3</a> of [<a href="#RFC2804" class="cite xref">RFC2804</a>]</span>, <span><a href="https://rfc-editor.org/rfc/rfc2804#section-4" class="relref">Section 4</a> of [<a href="#RFC2804" class="cite xref">RFC2804</a>]</span>), and it considers itself the wrong forum for features that address the laws of individual countries, which vary widely (<span><a href="https://rfc-editor.org/rfc/rfc2804#section-1" class="relref">Section 1</a> of [<a href="#RFC2804" class="cite xref">RFC2804</a>]</span>).<a href="#section-5-6" class="pilcrow">¶</a></p>
+<p id="section-5-7">What protocols can offer is a secure baseline that works the same everywhere. A mechanism that lets a third party read protected communications without the sender's knowledge cannot also guarantee privacy against anyone else who finds or misuses it, and it lowers the security of the system even when it is never exercised (<span><a href="https://rfc-editor.org/rfc/rfc2804#section-6" class="relref">Section 6</a> of [<a href="#RFC2804" class="cite xref">RFC2804</a>]</span>). Where endpoints protect their communications, the IETF sees no engineering solution that preserves that protection and also allows interception (<span><a href="https://rfc-editor.org/rfc/rfc2804#section-1" class="relref">Section 1</a> of [<a href="#RFC2804" class="cite xref">RFC2804</a>]</span>), so investigative goals can be pursued where the information is held: at the endpoints, and through cooperation between providers and governments (<span><a href="https://rfc-editor.org/rfc/rfc7754#section-6" class="relref">Section 6</a> of [<a href="#RFC7754" class="cite xref">RFC7754</a>]</span>).<a href="#section-5-7" class="pilcrow">¶</a></p>
+<p id="section-5-8">Encryption between the communicating parties provides no protection against one of them disclosing its keys or data, whether willingly or because it has been compromised (<span><a href="https://rfc-editor.org/rfc/rfc7624#section-5.1" class="relref">Section 5.1</a> of [<a href="#RFC7624" class="cite xref">RFC7624</a>]</span>). Whether a party merits trust is a separate question (see Trusted).<a href="#section-5-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="user-focused">
+<section id="section-6">
+      <h2 id="name-user-focused">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-user-focused" class="section-name selfRef">User-Focused</a>
+      </h2>
+<p id="section-6-1">Internet protocols are meant to serve the people who use them. Technical decisions afford some uses and discourage others, so they define what is possible on the Internet, and the IETF has said that it is not neutral about the Internet's purpose (<span><a href="https://rfc-editor.org/rfc/rfc3935#section-4.1" class="relref">Section 4.1</a> of [<a href="#RFC3935" class="cite xref">RFC3935</a>]</span>). As the Internet mediates more of society's essential functions, those decisions have social and political consequences (<span><a href="https://rfc-editor.org/rfc/rfc8890#section-1" class="relref">Section 1</a> of [<a href="#RFC8890" class="cite xref">RFC8890</a>]</span>).<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-2">Standards are not a zero-sum game, and a successful specification benefits all of the relevant parties, governments among them (<span><a href="https://rfc-editor.org/rfc/rfc8890#section-1" class="relref">Section 1</a> of [<a href="#RFC8890" class="cite xref">RFC8890</a>]</span>). The IAB has argued that where the interests of an end user conflict with those of another party, the IETF should favor the end user (<span>[<a href="#RFC8890" class="cite xref">RFC8890</a>]</span>).<a href="#section-6-2" class="pilcrow">¶</a></p>
+<p id="section-6-3">Here an <em>end user</em> is a human whose activities a protocol supports, even indirectly: the end user of a protocol for managing routers is the person using the network, not its administrator. The term includes people with an interest in a system they do not use directly, such as a person who appears in a photograph that the system processes, or the parent or guardian of a child using a browser (<span><a href="https://rfc-editor.org/rfc/rfc8890#section-2" class="relref">Section 2</a> of [<a href="#RFC8890" class="cite xref">RFC8890</a>]</span>).<a href="#section-6-3" class="pilcrow">¶</a></p>
+<p id="section-6-4">Conflict of this kind is routine. Users deal with sellers, advertisers, network operators, and the vendors of the software they run, whose interests differ from theirs. Clark et al. call the resulting contest the 'tussle' (<span>[<a href="#TUSSLE" class="cite xref">TUSSLE</a>]</span>): parties with adverse interests adapt their mechanisms, and others adapt theirs in response. No protocol ends the tussle; a design can leave room for variation in outcome, so that the contest plays out within the design (<span><a href="https://rfc-editor.org/rfc/rfc7452#section-5" class="relref">Section 5</a> of [<a href="#RFC7452" class="cite xref">RFC7452</a>]</span>). Rights can also conflict with one another, as freedom of expression and privacy can, and then have to be balanced (<span><a href="https://rfc-editor.org/rfc/rfc8280#section-1" class="relref">Section 1</a> of [<a href="#RFC8280" class="cite xref">RFC8280</a>]</span>).<a href="#section-6-4" class="pilcrow">¶</a></p>
+<p id="section-6-5">Harm to users is not limited to attacks on the connection. Data collection by applications inside otherwise secure connections is a major problem, and protocol design may influence the concentration of power. Intrusive sharing of people's data for advertising is one example of a harm that protocols alone cannot mitigate (<span><a href="https://rfc-editor.org/rfc/rfc9446#section-3" class="relref">Section 3</a> of [<a href="#RFC9446" class="cite xref">RFC9446</a>]</span>).<a href="#section-6-5" class="pilcrow">¶</a></p>
+<p id="section-6-6">Because the Internet spans many jurisdictions, a decision that benefits users in one place at the cost of potential harm elsewhere is not a good trade-off. Protective measures that act at the endpoint have effects that are usually local in scope (<span><a href="https://rfc-editor.org/rfc/rfc7754#section-4.4.1" class="relref">Section 4.4.1</a> of [<a href="#RFC7754" class="cite xref">RFC7754</a>]</span>), which lets a jurisdiction protect its users without exporting the cost. The IAB's stance is to design for the worst-case environment, on the basis that a user who can be harmed probably will be, somewhere (<span><a href="https://rfc-editor.org/rfc/rfc8890#section-4.4" class="relref">Section 4.4</a> of [<a href="#RFC8890" class="cite xref">RFC8890</a>]</span>).<a href="#section-6-6" class="pilcrow">¶</a></p>
+<p id="section-6-7">The IETF has no unique insight into what is good for end users, and cannot assume that its participants' experience of the Internet is theirs; it has to consult those affected. A claim of harm to users needs argument behind it. <span>[<a href="#RFC8890" class="cite xref">RFC8890</a>]</span> places end users above internal concerns, including architectural purity for its own sake.<a href="#section-6-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="layered">
+<section id="section-7">
+      <h2 id="name-layered">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-layered" class="section-name selfRef">Layered</a>
+      </h2>
+<p id="section-7-1">Internet protocols are layered. Each layer has a distinct responsibility and relies on the layers beneath it without depending on how they work. Because the Internet's core protocol is independent of the underlying hardware, any new transmission technology can be used to carry it (<span><a href="https://rfc-editor.org/rfc/rfc1958#section-2.2" class="relref">Section 2.2</a> of [<a href="#RFC1958" class="cite xref">RFC1958</a>]</span>), and the same independence applies higher up: a layer can change, and have competing implementations, as long as its interface to its neighbors holds. Modularity of this kind multiplies the design options available and disperses them, so that many parties can adopt them without the permission of a central architect (<span>[<a href="#DESIGN-RULES" class="cite xref">DESIGN-RULES</a>]</span>).<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">Applications rely on the networks beneath them, which gives the operators of those networks some power over every service above: a network provider can block, slow, or alter a service for financial, political, operational, or criminal reasons (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-4.6" class="relref">Section 4.6</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>). How network operators treat the traffic of the services above them therefore bears directly on competition and innovation among those services.<a href="#section-7-2" class="pilcrow">¶</a></p>
+<p id="section-7-3">Interventions at a lower layer are also blunt. Many specialized applications depend on the same generic functions, such as routing and naming, so an action there to restrict one application affects every application that relies on those functions (<span><a href="https://rfc-editor.org/rfc/rfc7754#section-4.1.2" class="relref">Section 4.1.2</a> of [<a href="#RFC7754" class="cite xref">RFC7754</a>]</span>). Understanding the layers helps pursue goals such as safety or competition without unintended harm to other services, by acting at the layer, and on the party, best placed to address the problem.<a href="#section-7-3" class="pilcrow">¶</a></p>
+<p id="section-7-4">Layering is not rigid. Protocols in different layers interact in complex ways, and practical designs sometimes depart from strict layering (<span><a href="https://rfc-editor.org/rfc/rfc1122#section-1.3.1" class="relref">Section 1.3.1</a> of [<a href="#RFC1122" class="cite xref">RFC1122</a>]</span>); each additional layer also adds dependencies and complexity (<span><a href="https://rfc-editor.org/rfc/rfc3439#section-3" class="relref">Section 3</a> of [<a href="#RFC3439" class="cite xref">RFC3439</a>]</span>).<a href="#section-7-4" class="pilcrow">¶</a></p>
+<p id="section-7-5">Networks have often inferred information from traffic that was not intended for them. Firewalls, for example, read the messages that set up a TCP connection to decide what to permit. When a protocol encrypts that information, the inference stops working. The IAB's advice is to avoid implicit signals, and to expose information to the network only where its sender intends the network to use it (<span><a href="https://rfc-editor.org/rfc/rfc8558#section-4" class="relref">Section 4</a> of [<a href="#RFC8558" class="cite xref">RFC8558</a>]</span>).<a href="#section-7-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="end-to-end">
+<section id="section-8">
+      <h2 id="name-end-to-end">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-end-to-end" class="section-name selfRef">End-to-End</a>
+      </h2>
+<p id="section-8-1">The end-to-end principle places functionality at the edges. The devices and software at each end of a communication -- the <em>endpoints</em> -- are responsible for making it succeed, and the network between them moves the data. The principle determines whose cooperation a new service requires: a service in the endpoints can be offered by anyone who can distribute software, while one that needs the network to change requires the agreement of the operators involved (<span><a href="https://rfc-editor.org/rfc/rfc3724#section-4.1.1" class="relref">Section 4.1.1</a> of [<a href="#RFC3724" class="cite xref">RFC3724</a>]</span>). Deploying without asking network operators is permissionless innovation in practice.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2">Goals such as safety and competition can be pursued at the applications and devices without giving up the innovation and user control that the principle protects, because the network stays free for new services. <span>[<a href="#RFC3724" class="cite xref">RFC3724</a>]</span> argues that the properties that have grown out of the principle matter at least as much as the principle itself (<span><a href="https://rfc-editor.org/rfc/rfc3724#section-6" class="relref">Section 6</a> of [<a href="#RFC3724" class="cite xref">RFC3724</a>]</span>).<a href="#section-8-2" class="pilcrow">¶</a></p>
+<p id="section-8-3">The principle has a technical basis: some functions can be performed correctly only by the endpoints, and the network can at best help (<span><a href="https://rfc-editor.org/rfc/rfc3724#section-2.1" class="relref">Section 2.1</a> of [<a href="#RFC3724" class="cite xref">RFC3724</a>]</span>). It extends to state. Information about a conversation is kept in the endpoints, so that it is lost only if an endpoint itself fails (<em>fate-sharing</em>), and conversations survive partial network failures (<span><a href="https://rfc-editor.org/rfc/rfc1958#section-2.3" class="relref">Section 2.3</a> of [<a href="#RFC1958" class="cite xref">RFC1958</a>]</span>).<a href="#section-8-3" class="pilcrow">¶</a></p>
+<p id="section-8-4">The principle has never been absolute, because parties in the middle have reasons to be there, some more benign than others (<span><a href="https://rfc-editor.org/rfc/rfc3724#section-3" class="relref">Section 3</a> of [<a href="#RFC3724" class="cite xref">RFC3724</a>]</span>). Some of these conflicts cannot be settled technically. They involve social and legal choices that standards bodies are not empowered to make, and they play out on the architecture that results (<span><a href="https://rfc-editor.org/rfc/rfc3724#section-5" class="relref">Section 5</a> of [<a href="#RFC3724" class="cite xref">RFC3724</a>]</span>).<a href="#section-8-4" class="pilcrow">¶</a></p>
+<p id="section-8-5">A service in the network is consistent with the principle when the endpoints are aware of it and involved where the service needs them to be, and it is for the endpoints to decide which third parties to trust (<span><a href="https://rfc-editor.org/rfc/rfc3724#section-4.2" class="relref">Section 4.2</a> of [<a href="#RFC3724" class="cite xref">RFC3724</a>]</span>, <span><a href="https://rfc-editor.org/rfc/rfc3724#section-3.1" class="relref">Section 3.1</a> of [<a href="#RFC3724" class="cite xref">RFC3724</a>]</span>). The same logic applies to controls on content: where filtering is done at all, the endpoint is the least damaging place for it, although that depends on the endpoint's cooperation (<span><a href="https://rfc-editor.org/rfc/rfc7754#section-4.4.6" class="relref">Section 4.4.6</a> of [<a href="#RFC7754" class="cite xref">RFC7754</a>]</span>). Measures that protect children, such as filtering and parental controls, are among those that can act at the endpoint.<a href="#section-8-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="interoperable">
+<section id="section-9">
+      <h2 id="name-interoperable">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-interoperable" class="section-name selfRef">Interoperable</a>
+      </h2>
+<p id="section-9-1">Internet protocols are <em>interoperable</em>: systems built and run by different parties work together because they follow shared specifications, with no one coordinating or approving each combination. Interoperability is what makes openness usable. Anyone can build a new browser, mail server, or application and have it work with what already exists, and users can move to another product or provider when one fails them. Without that ability, users cannot exercise choice or fully realize the value of their efforts (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-4.4" class="relref">Section 4.4</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>).<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-2">The benefit extends beyond the individual user or newcomer. New implementations are key to a protocol's continued viability, and are often where new capabilities originate, so a protocol that is costly to implement for the first time loses a source of improvement (<span><a href="https://rfc-editor.org/rfc/rfc9413#section-4.2" class="relref">Section 4.2</a> of [<a href="#RFC9413" class="cite xref">RFC9413</a>]</span>).<a href="#section-9-2" class="pilcrow">¶</a></p>
+<p id="section-9-3">A specification alone does not provide interoperability. Specifications are never perfect, so deployed software meets cases they did not anticipate, and the long-standing practice (the 'robustness principle') has been for software to tolerate them. Tolerated faults become the practice that later products must copy, and the cost of compatibility accumulates and falls on newcomers, which erodes the openness that interoperability exists to serve.<a href="#section-9-3" class="pilcrow">¶</a></p>
+<p id="section-9-4">The alternative to tolerating faults is continued maintenance, in which specification and software are corrected together as problems surface. Maintenance depends on deployed software being updatable, and it sometimes means excluding products that will not change, a choice that should be deliberate (<span>[<a href="#RFC9413" class="cite xref">RFC9413</a>]</span>).<a href="#section-9-4" class="pilcrow">¶</a></p>
+<p id="section-9-5">Interoperability serves competition, consumer choice, and resilience. It is increasingly proposed as a remedy for concentration, and it delivers when a specification is precise enough for products to replace one another, more than one party implements it, and a community maintains it as problems surface. Standards bodies can supply those conditions, and liaison with those who set policy helps it deliver what is expected of it (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-4.3" class="relref">Section 4.3</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>).<a href="#section-9-5" class="pilcrow">¶</a></p>
+<p id="section-9-6">Extensibility lets a protocol outlive its designers' foresight (<span><a href="https://rfc-editor.org/rfc/rfc5218#section-2.2.1" class="relref">Section 2.2.1</a> of [<a href="#RFC5218" class="cite xref">RFC5218</a>]</span>), but each extension point is also a place where compatibility can break and where control can be captured. The flexibility of SOAP, a Web services framework, combined with its lack of standalone value, allowed vendors to require their preferred extensions, favoring those with the most market power (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-4.7" class="relref">Section 4.7</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>). Completeness has its own limit: a standard has to be precise enough for products to replace one another, but if it becomes so complex that a complete implementation is prohibitively costly, few will attempt one, as with Web browsers (<span><a href="https://rfc-editor.org/rfc/rfc9518#section-4.4" class="relref">Section 4.4</a> of [<a href="#RFC9518" class="cite xref">RFC9518</a>]</span>).<a href="#section-9-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="evolvable">
+<section id="section-10">
+      <h2 id="name-evolvable">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-evolvable" class="section-name selfRef">Evolvable</a>
+      </h2>
+<p id="section-10-1">Protocols have to change while they are in use, because the Internet cannot be stopped and upgraded. No party can list everyone who participates in it, so no party can coordinate a change across all of them; changes have to be deployable by some participants without breaking the others. Protocols that can be deployed piecemeal and remain compatible with older software have a better chance of success than those that need everyone to change at once (<span><a href="https://rfc-editor.org/rfc/rfc5218#section-2.1.2" class="relref">Section 2.1.2</a> of [<a href="#RFC5218" class="cite xref">RFC5218</a>]</span>). Such flag days are possible but costly (<span><a href="https://rfc-editor.org/rfc/rfc9170#section-3.5" class="relref">Section 3.5</a> of [<a href="#RFC9170" class="cite xref">RFC9170</a>]</span>).<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-2">In HTTP, clients and servers generally ignore the header fields -- labeled items of information attached to a message -- that they do not understand, so new ones can be deployed without waiting for the rest of the Internet (<span><a href="https://rfc-editor.org/rfc/rfc9170#section-3.4" class="relref">Section 3.4</a> of [<a href="#RFC9170" class="cite xref">RFC9170</a>]</span>).<a href="#section-10-2" class="pilcrow">¶</a></p>
+<p id="section-10-3">The ability to change has to be kept in use. Extension and version-negotiation mechanisms that go unexercised tend to fail when they are needed, and a protocol whose installed base mishandles anything new is said to have <em>ossified</em> (<span>[<a href="#RFC9170" class="cite xref">RFC9170</a>]</span>).<a href="#section-10-3" class="pilcrow">¶</a></p>
+<p id="section-10-4">Parties in the middle of a communication can prevent change, deliberately or not: devices that apply policies prohibiting unknown capabilities make new features unusable on the paths through them, and encryption reduces the number of parties able to influence whether a feature can be used (<span><a href="https://rfc-editor.org/rfc/rfc9170#section-2" class="relref">Section 2</a> of [<a href="#RFC9170" class="cite xref">RFC9170</a>]</span>, <span><a href="https://rfc-editor.org/rfc/rfc9170#section-4.3" class="relref">Section 4.3</a> of [<a href="#RFC9170" class="cite xref">RFC9170</a>]</span>). Where the network has a legitimate need for information, such as for network management, an explicit signal that the endpoints choose to send (see Layered) can meet it without freezing the protocol.<a href="#section-10-4" class="pilcrow">¶</a></p>
+<p id="section-10-5">Goals such as keeping users secure and critical infrastructure current depend on protocols being able to change, and on changes being adopted. Adoption depends on incentives as well as design: transitions are easiest when the benefits accrue to those who bear the costs, a condition that policy-making bodies such as the regional Internet registries and ICANN can help bring about (<span><a href="https://rfc-editor.org/rfc/rfc8170#section-1" class="relref">Section 1</a> of [<a href="#RFC8170" class="cite xref">RFC8170</a>]</span>).<a href="#section-10-5" class="pilcrow">¶</a></p>
+<p id="section-10-6">Change also depends on deployed software being updatable, which is how security fixes and every later improvement reach users (<span><a href="https://rfc-editor.org/rfc/rfc9413#section-3" class="relref">Section 3</a> of [<a href="#RFC9413" class="cite xref">RFC9413</a>]</span>). For connected devices this makes updatability a consumer protection matter, since a solid software update mechanism is needed to fix security bugs (<span><a href="https://rfc-editor.org/rfc/rfc7452#section-5" class="relref">Section 5</a> of [<a href="#RFC7452" class="cite xref">RFC7452</a>]</span>).<a href="#section-10-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-11">
+      <h2 id="name-iana-considerations">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-11-1">This document has no actions for IANA.<a href="#section-11-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-12">
+      <h2 id="name-security-considerations">
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+    </h2>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-13">
+      <h2 id="name-informative-references">
+<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+      </h2>
+<dl class="references">
+<dt id="DESIGN-RULES">[DESIGN-RULES]</dt>
+      <dd>
+<span class="refAuthor">Baldwin, C. Y.</span> and <span class="refAuthor">K. B. Clark</span>, <span class="refTitle">"Design Rules, Vol. 1: The Power of Modularity"</span>, <span class="refContent">MIT Press</span>, <time datetime="2000" class="refDate">2000</time>, <span>&lt;<a href="https://direct.mit.edu/books/book/1856/Design-RulesThe-Power-of-Modularity">https://direct.mit.edu/books/book/1856/Design-RulesThe-Power-of-Modularity</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC1122">[RFC1122]</dt>
+      <dd>
+<span class="refAuthor">Braden, R., Ed.</span>, <span class="refTitle">"Requirements for Internet Hosts - Communication Layers"</span>, <span class="seriesInfo">STD 3</span>, <span class="seriesInfo">RFC 1122</span>, <span class="seriesInfo">DOI 10.17487/RFC1122</span>, <time datetime="1989-10" class="refDate">October 1989</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc1122">https://www.rfc-editor.org/rfc/rfc1122</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC1958">[RFC1958]</dt>
+      <dd>
+<span class="refAuthor">Carpenter, B., Ed.</span>, <span class="refTitle">"Architectural Principles of the Internet"</span>, <span class="seriesInfo">RFC 1958</span>, <span class="seriesInfo">DOI 10.17487/RFC1958</span>, <time datetime="1996-06" class="refDate">June 1996</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc1958">https://www.rfc-editor.org/rfc/rfc1958</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC1984">[RFC1984]</dt>
+      <dd>
+<span class="refAuthor">IAB</span> and <span class="refAuthor">IESG</span>, <span class="refTitle">"IAB and IESG Statement on Cryptographic Technology and the Internet"</span>, <span class="seriesInfo">BCP 200</span>, <span class="seriesInfo">RFC 1984</span>, <span class="seriesInfo">DOI 10.17487/RFC1984</span>, <time datetime="1996-08" class="refDate">August 1996</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc1984">https://www.rfc-editor.org/rfc/rfc1984</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2804">[RFC2804]</dt>
+      <dd>
+<span class="refAuthor">IAB</span> and <span class="refAuthor">IESG</span>, <span class="refTitle">"IETF Policy on Wiretapping"</span>, <span class="seriesInfo">RFC 2804</span>, <span class="seriesInfo">DOI 10.17487/RFC2804</span>, <time datetime="2000-05" class="refDate">May 2000</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2804">https://www.rfc-editor.org/rfc/rfc2804</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3365">[RFC3365]</dt>
+      <dd>
+<span class="refAuthor">Schiller, J.</span>, <span class="refTitle">"Strong Security Requirements for Internet Engineering Task Force Standard Protocols"</span>, <span class="seriesInfo">BCP 61</span>, <span class="seriesInfo">RFC 3365</span>, <span class="seriesInfo">DOI 10.17487/RFC3365</span>, <time datetime="2002-08" class="refDate">August 2002</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3365">https://www.rfc-editor.org/rfc/rfc3365</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3439">[RFC3439]</dt>
+      <dd>
+<span class="refAuthor">Bush, R.</span> and <span class="refAuthor">D. Meyer</span>, <span class="refTitle">"Some Internet Architectural Guidelines and Philosophy"</span>, <span class="seriesInfo">RFC 3439</span>, <span class="seriesInfo">DOI 10.17487/RFC3439</span>, <time datetime="2002-12" class="refDate">December 2002</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3439">https://www.rfc-editor.org/rfc/rfc3439</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3552">[RFC3552]</dt>
+      <dd>
+<span class="refAuthor">Rescorla, E.</span> and <span class="refAuthor">B. Korver</span>, <span class="refTitle">"Guidelines for Writing RFC Text on Security Considerations"</span>, <span class="seriesInfo">BCP 72</span>, <span class="seriesInfo">RFC 3552</span>, <span class="seriesInfo">DOI 10.17487/RFC3552</span>, <time datetime="2003-07" class="refDate">July 2003</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3552">https://www.rfc-editor.org/rfc/rfc3552</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3724">[RFC3724]</dt>
+      <dd>
+<span class="refAuthor">Kempf, J., Ed.</span>, <span class="refAuthor">Austein, R., Ed.</span>, and <span class="refAuthor">IAB</span>, <span class="refTitle">"The Rise of the Middle and the Future of End-to-End: Reflections on the Evolution of the Internet Architecture"</span>, <span class="seriesInfo">RFC 3724</span>, <span class="seriesInfo">DOI 10.17487/RFC3724</span>, <time datetime="2004-03" class="refDate">March 2004</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3724">https://www.rfc-editor.org/rfc/rfc3724</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC3935">[RFC3935]</dt>
+      <dd>
+<span class="refAuthor">Alvestrand, H.</span>, <span class="refTitle">"A Mission Statement for the IETF"</span>, <span class="seriesInfo">BCP 95</span>, <span class="seriesInfo">RFC 3935</span>, <span class="seriesInfo">DOI 10.17487/RFC3935</span>, <time datetime="2004-10" class="refDate">October 2004</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc3935">https://www.rfc-editor.org/rfc/rfc3935</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5218">[RFC5218]</dt>
+      <dd>
+<span class="refAuthor">Thaler, D.</span> and <span class="refAuthor">B. Aboba</span>, <span class="refTitle">"What Makes for a Successful Protocol?"</span>, <span class="seriesInfo">RFC 5218</span>, <span class="seriesInfo">DOI 10.17487/RFC5218</span>, <time datetime="2008-07" class="refDate">July 2008</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5218">https://www.rfc-editor.org/rfc/rfc5218</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7258">[RFC7258]</dt>
+      <dd>
+<span class="refAuthor">Farrell, S.</span> and <span class="refAuthor">H. Tschofenig</span>, <span class="refTitle">"Pervasive Monitoring Is an Attack"</span>, <span class="seriesInfo">BCP 188</span>, <span class="seriesInfo">RFC 7258</span>, <span class="seriesInfo">DOI 10.17487/RFC7258</span>, <time datetime="2014-05" class="refDate">May 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7258">https://www.rfc-editor.org/rfc/rfc7258</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7452">[RFC7452]</dt>
+      <dd>
+<span class="refAuthor">Tschofenig, H.</span>, <span class="refAuthor">Arkko, J.</span>, <span class="refAuthor">Thaler, D.</span>, and <span class="refAuthor">D. McPherson</span>, <span class="refTitle">"Architectural Considerations in Smart Object Networking"</span>, <span class="seriesInfo">RFC 7452</span>, <span class="seriesInfo">DOI 10.17487/RFC7452</span>, <time datetime="2015-03" class="refDate">March 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7452">https://www.rfc-editor.org/rfc/rfc7452</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7624">[RFC7624]</dt>
+      <dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Schneier, B.</span>, <span class="refAuthor">Jennings, C.</span>, <span class="refAuthor">Hardie, T.</span>, <span class="refAuthor">Trammell, B.</span>, <span class="refAuthor">Huitema, C.</span>, and <span class="refAuthor">D. Borkmann</span>, <span class="refTitle">"Confidentiality in the Face of Pervasive Surveillance: A Threat Model and Problem Statement"</span>, <span class="seriesInfo">RFC 7624</span>, <span class="seriesInfo">DOI 10.17487/RFC7624</span>, <time datetime="2015-08" class="refDate">August 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7624">https://www.rfc-editor.org/rfc/rfc7624</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7754">[RFC7754]</dt>
+      <dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Cooper, A.</span>, <span class="refAuthor">Kolkman, O.</span>, <span class="refAuthor">Thaler, D.</span>, and <span class="refAuthor">E. Nordmark</span>, <span class="refTitle">"Technical Considerations for Internet Service Blocking and Filtering"</span>, <span class="seriesInfo">RFC 7754</span>, <span class="seriesInfo">DOI 10.17487/RFC7754</span>, <time datetime="2016-03" class="refDate">March 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7754">https://www.rfc-editor.org/rfc/rfc7754</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8170">[RFC8170]</dt>
+      <dd>
+<span class="refAuthor">Thaler, D., Ed.</span>, <span class="refTitle">"Planning for Protocol Adoption and Subsequent Transitions"</span>, <span class="seriesInfo">RFC 8170</span>, <span class="seriesInfo">DOI 10.17487/RFC8170</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8170">https://www.rfc-editor.org/rfc/rfc8170</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8280">[RFC8280]</dt>
+      <dd>
+<span class="refAuthor">ten Oever, N.</span> and <span class="refAuthor">C. Cath</span>, <span class="refTitle">"Research into Human Rights Protocol Considerations"</span>, <span class="seriesInfo">RFC 8280</span>, <span class="seriesInfo">DOI 10.17487/RFC8280</span>, <time datetime="2017-10" class="refDate">October 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8280">https://www.rfc-editor.org/rfc/rfc8280</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8558">[RFC8558]</dt>
+      <dd>
+<span class="refAuthor">Hardie, T., Ed.</span>, <span class="refTitle">"Transport Protocol Path Signals"</span>, <span class="seriesInfo">RFC 8558</span>, <span class="seriesInfo">DOI 10.17487/RFC8558</span>, <time datetime="2019-04" class="refDate">April 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8558">https://www.rfc-editor.org/rfc/rfc8558</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8890">[RFC8890]</dt>
+      <dd>
+<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"The Internet is for End Users"</span>, <span class="seriesInfo">RFC 8890</span>, <span class="seriesInfo">DOI 10.17487/RFC8890</span>, <time datetime="2020-08" class="refDate">August 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8890">https://www.rfc-editor.org/rfc/rfc8890</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9170">[RFC9170]</dt>
+      <dd>
+<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">T. Pauly</span>, <span class="refTitle">"Long-Term Viability of Protocol Extension Mechanisms"</span>, <span class="seriesInfo">RFC 9170</span>, <span class="seriesInfo">DOI 10.17487/RFC9170</span>, <time datetime="2021-12" class="refDate">December 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9170">https://www.rfc-editor.org/rfc/rfc9170</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9413">[RFC9413]</dt>
+      <dd>
+<span class="refAuthor">Thomson, M.</span> and <span class="refAuthor">D. Schinazi</span>, <span class="refTitle">"Maintaining Robust Protocols"</span>, <span class="seriesInfo">RFC 9413</span>, <span class="seriesInfo">DOI 10.17487/RFC9413</span>, <time datetime="2023-06" class="refDate">June 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9413">https://www.rfc-editor.org/rfc/rfc9413</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9446">[RFC9446]</dt>
+      <dd>
+<span class="refAuthor">Farrell, S.</span>, <span class="refAuthor">Badii, F.</span>, <span class="refAuthor">Schneier, B.</span>, and <span class="refAuthor">S. M. Bellovin</span>, <span class="refTitle">"Reflections on Ten Years Past the Snowden Revelations"</span>, <span class="seriesInfo">RFC 9446</span>, <span class="seriesInfo">DOI 10.17487/RFC9446</span>, <time datetime="2023-07" class="refDate">July 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9446">https://www.rfc-editor.org/rfc/rfc9446</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9518">[RFC9518]</dt>
+      <dd>
+<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Centralization, Decentralization, and Internet Standards"</span>, <span class="seriesInfo">RFC 9518</span>, <span class="seriesInfo">DOI 10.17487/RFC9518</span>, <time datetime="2023-12" class="refDate">December 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9518">https://www.rfc-editor.org/rfc/rfc9518</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9614">[RFC9614]</dt>
+      <dd>
+<span class="refAuthor">Kühlewind, M.</span>, <span class="refAuthor">Pauly, T.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Partitioning as an Architecture for Privacy"</span>, <span class="seriesInfo">RFC 9614</span>, <span class="seriesInfo">DOI 10.17487/RFC9614</span>, <time datetime="2024-07" class="refDate">July 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9614">https://www.rfc-editor.org/rfc/rfc9614</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="TUSSLE">[TUSSLE]</dt>
+    <dd>
+<span class="refAuthor">Clark, D.</span>, <span class="refAuthor">Wroclawski, J.</span>, <span class="refAuthor">Sollins, K.</span>, and <span class="refAuthor">R. Braden</span>, <span class="refTitle">"Tussle in Cyberspace: Defining Tomorrow's Internet"</span>, <span class="seriesInfo">DOI 10.1145/633025.633059</span>, <time datetime="2002-08" class="refDate">August 2002</time>, <span>&lt;<a href="https://groups.csail.mit.edu/ana/Publications/PubPDFs/Tussle2002.pdf">https://groups.csail.mit.edu/ana/Publications/PubPDFs/Tussle2002.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-A">
+      <h2 id="name-authors-address">
+<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Mark Nottingham</span></div>
+<div dir="auto" class="left"><span class="street-address">Melbourne</span></div>
+<div dir="auto" class="left"><span class="country-name">Australia</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:mnot@mnot.net" class="email">mnot@mnot.net</a>
+</div>
+<div class="url">
+<span>URI:</span>
+<a href="https://mnot.net/" class="url">https://mnot.net/</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
