@@ -83,16 +83,15 @@ informative:
 
 This document continues, in the tradition of RFC 1958 and RFC 3439, to document some aspects of the Internet's architecture that have been proven to be important to consider when designing protocols for it.
 
-It also explains why these properties are important to the continued success of the Internet.
+It also explains why these principles are important to the continued success of the Internet.
 
 --- middle
 
-
 # Introduction
 
+The Internet works as it does because of certain architectural principles. They guide the engineers who design its protocols, and they bear on the choices of others who shape the Internet. This document describes them and points to the specifications behind them.
 
-
-
+These principles can influence more than technical designs; social and policy goals can be achieved through application of the law, social norms, and markets, alongside the architecture of the Internet itself. The purpose of this document is to show how the principles support those goals. It also aims to help policymakers understand how the Internet is built ({{Section 4.1 of RFC9518}}), so that their work can build on it where appropriate and avoid unintended harm to the Internet and the benefits it brings society.
 
 
 # Open
