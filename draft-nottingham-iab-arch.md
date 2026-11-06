@@ -243,11 +243,6 @@ Goals such as keeping users secure and critical infrastructure current depend on
 Change also depends on deployed software being updatable, which is how security fixes and every later improvement reach users ({{Section 3 of RFC9413}}). For connected devices this makes updatability a consumer protection matter, since a solid software update mechanism is needed to fix security bugs ({{Section 5 of RFC7452}}).
 
 
-# IANA Considerations
-
-This document has no actions for IANA.
-
-# Security Considerations
 
 
 --- back
