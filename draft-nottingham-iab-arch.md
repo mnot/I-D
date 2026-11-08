@@ -38,6 +38,7 @@ informative:
   RFC3724:
   RFC3935:
   RFC5218:
+  RFC6973:
   RFC7258:
   RFC7452:
   RFC7624:
@@ -131,22 +132,25 @@ Decentralized standards are necessary but not sufficient to avoid centralization
 
 Decentralization serves competition and consumer choice, the resilience of services that society depends on, and protection from undue surveillance and coercion. Protocols that keep it possible and cheap to choose give those goals a foundation to build on ({{Section 4.3 of RFC9518}}).
 
-
 # Trusted
 
-Internet protocols divide the work of a communication into distinct roles, and constrain what each role can do, so that the interests of the parties involved check one another and the outcomes people need can be achieved without anyone being trusted with everything. Third parties are most often added to a communication as intermediaries or in designated agent roles, and constraints on those roles can prevent at least the most egregious abuses of their power ({{Section 4.5 of RFC9518}}).
+The Internet's users depend on infrastructure they rarely inspect, and so they need to be able to trust that it is working in their interests: that it will not snoop on them, track them, or report on them. This is true even when untested, because the possibility of surveillance can be enough to change how people behave ({{Section 5.1.1 of RFC6973}}).
 
-The IAB has argued that trust relationships should be defined before a protocol is designed, with boundaries drawn between the elements that share them ({{Section 4.1.2 of RFC3724}}). Distinct roles also make it possible to ask who is responsible for what, which supports accountability and consumer protection: a relying party, a certificate authority, or a relay each has a defined function that can be examined.
+Protocols support that trust by dividing the work of a communication into distinct roles and constraining what each role can do, so that the interests of the parties involved check one another. Third parties are most often added to a communication as intermediaries or in designated agent roles, and constraints on those roles can prevent the most egregious abuses of their power ({{Section 4.5 of RFC9518}}). The IAB has argued that trust relationships should be defined before a protocol is designed, with boundaries drawn between the elements that share them ({{Section 4.1.2 of RFC3724}}).
 
-A user visiting a website trusts not only the site but also the browser acting on their behalf and the system that lets the browser know the site is what it claims to be, which is what allows commerce with parties a user has never met.
+Distinct roles also support accountability and consumer protection: a relying party, a certificate authority, or a relay each has a defined function that can be examined for how well it operates -- not only technically, but also in terms of political economy.
 
-Standards define the browser as a distinct role: it stands between the user and the site, limiting what the site can reach on the user's system, and so removes the need to trust every site completely. It represents its user imperfectly, since a few browsers serve a diverse population ({{Section 4.2 of RFC8890}}).
+A user visiting a website trusts not only the site but also the browser acting on their behalf and the system that lets the browser know the site is what it claims to be, which is what allows commerce with parties a user has never met. Critically, the browser's interests need to be separate from those of the sites being accessed for this to occur.
 
-On the Web, browsers, as relying parties, have strong incentives to protect users' privacy and security, and certificate authorities, as trust anchors, have a strong incentive to be included in browsers' trust stores. The CA/Browser Forum brings both into a body that sets operational and security requirements for the authorities. The protocols leave this governance unspecified; it is applied on top of them. Its legitimacy is difficult to establish and maintain, and it is vulnerable to capture by the interests being governed ({{Section 3.1.3 of RFC9518}}).
+Standards define the browser as a distinct role: it stands between the user and the site, limiting what the site can reach on the user's system, and so removes the need to trust every site completely. Competition between browsers gives their makers a reason to work for their users, although a browser represents its user imperfectly, since a few browsers serve a diverse population ({{Section 4.2 of RFC8890}}).
 
-The same technique applies to privacy. Encryption protects a communication from outsiders but not from the party at the other end, which can often learn who the user is and what they do. Partitioning splits the roles so that no single party other than the user sees both, a technical form of data minimization ({{Section 1 of RFC9614}}) that delivers privacy goals by design. Data protection law relies on the same principle. In Oblivious HTTP, a relay knows who is making a request but not its content, and a gateway knows the content but not who sent it ({{Section 5.1 of RFC9614}}).
+On the Web, browsers have strong incentives to protect users' privacy and security. Certificate authorities have a strong incentive to be included in browsers' trust stores. The CA/Browser Forum brings both into a body that sets operational and security requirements for the authorities. The protocols do not define this governance; it is applied on top of them. Its legitimacy is difficult to establish and maintain, and it is vulnerable to capture by the interests being governed ({{Section 3.1.3 of RFC9518}}).
 
-Here too, the parties constrain one another only while their interests stay apart: partitioning depends on non-collusion, which technical means cannot guarantee. Audited agreements, protocol requirements that make sharing harder, and further partitions reduce the risk, and privacy is best protected by combining them with the architecture ({{Section 5.1 of RFC9614}}). The privacy gained also grows with the number of users behind each intermediary, which encourages their concentration ({{Section 6 of RFC9614}}).
+The strongest infrastructure is that which cannot snoop, track, or report because it cannot see. Encryption protects communication from outsiders but not from the party at the other end. When the roles of the service being accessed can be partitioned, no single party other than the user sees the totality of communication, a technical form of data minimization ({{Section 1 of RFC9614}}) that delivers privacy goals by design. Data protection law relies on the same principle.
+
+Partitioning protects users only while the parties remain apart: it depends on their not colluding, which technical means cannot guarantee. Audited agreements, protocol requirements that make sharing harder, and further partitions reduce the risk ({{Section 5.1 of RFC9614}}).
+
+What a party does with data it can see, such as secondary use, is largely beyond what protocols control ({{Section 5.2.3 of RFC6973}}), so users' confidence also rests on law, norms, and the commitments parties make.
 
 
 # Secure
