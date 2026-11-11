@@ -88,9 +88,9 @@ It also explains why these principles are important to the continued success of 
 
 # Introduction
 
-The Internet works as it does because of certain architectural principles. They guide the engineers who design its protocols, and they bear on the choices of others who shape the Internet. This document describes them and points to the specifications behind them.
+The Internet works as it does because of certain architectural principles that have, over time, proven to be significant contributors to its success. Experience suggests that technical proposals for changes to the Internet that align with them are more likely to be deployable. These principles can also influence more than technical designs: social and policy goals can be achieved not only through application of the law, social norms, and markets, but also by the architecture of the Internet itself.
 
-These principles can influence more than technical designs; social and policy goals can be achieved through application of the law, social norms, and markets, alongside the architecture of the Internet itself. The purpose of this document is to show how the principles support those goals. It also aims to help policymakers understand how the Internet is built ({{Section 4.1 of RFC9518}}), so that their work can build on it where appropriate and avoid unintended harm to the Internet and the benefits it brings society.
+The sections below document some of these principles and show how they support these goals. This document aims to help those who shape the Internet understand these principles, so that their work can build on them where appropriate and avoid unintended harm to the Internet and the benefits it brings society.
 
 
 # Open
