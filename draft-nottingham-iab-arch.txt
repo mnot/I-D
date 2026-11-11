@@ -3,9 +3,9 @@
 
 
 Network Working Group                                      M. Nottingham
-Internet-Draft                                           8 November 2026
+Internet-Draft                                          11 November 2026
 Intended status: Informational                                          
-Expires: 12 May 2027
+Expires: 15 May 2027
 
 
              More Architectural Principles of the Internet
@@ -48,7 +48,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 May 2027.
+   This Internet-Draft will expire on 15 May 2027.
 
 Copyright Notice
 
@@ -69,7 +69,7 @@ Table of Contents
    1.  Introduction
    2.  Open
    3.  Decentralized
-   4.  Trusted
+   4.  Trustworthy
    5.  Secure
    6.  User-Focused
    7.  Layered
@@ -82,18 +82,19 @@ Table of Contents
 1.  Introduction
 
    The Internet works as it does because of certain architectural
-   principles.  They guide the engineers who design its protocols, and
-   they bear on the choices of others who shape the Internet.  This
-   document describes them and points to the specifications behind them.
+   principles that have, over time, proven to be significant
+   contributors to its success.  Experience suggests that technical
+   proposals for changes to the Internet that align with them are more
+   likely to be deployable.  These principles can also influence more
+   than technical designs: social and policy goals can be achieved not
+   only through application of the law, social norms, and markets, but
+   also by the architecture of the Internet itself.
 
-   These principles can influence more than technical designs; social
-   and policy goals can be achieved through application of the law,
-   social norms, and markets, alongside the architecture of the Internet
-   itself.  The purpose of this document is to show how the principles
-   support those goals.  It also aims to help policymakers understand
-   how the Internet is built (Section 4.1 of [RFC9518]), so that their
-   work can build on it where appropriate and avoid unintended harm to
-   the Internet and the benefits it brings society.
+   The sections below document some of these principles and show how
+   they support these goals.  This document aims to help those who shape
+   the Internet understand these principles, so that their work can
+   build on them where appropriate and avoid unintended harm to the
+   Internet and the benefits it brings society.
 
 2.  Open
 
@@ -127,11 +128,11 @@ Table of Contents
    tends to concentrate power in large organizations that are better
    able to navigate the hurdles.
 
-   Some harms associated with the Internet are harder to fight due to
-   its openness: low barriers to entry invite abuse such as spam, and
-   fighting it without a gatekeeper, with each participant seeing only
-   part of the system, is a much harder design problem than excluding
-   bad actors from a closed one.
+   It is true that some harms associated with the Internet are harder to
+   fight due to its openness: low barriers to entry invite abuse such as
+   spam, and fighting it without a gatekeeper, with each participant
+   seeing only part of the system, is a much harder design problem than
+   excluding bad actors from a closed one.
 
    Building closed systems on top of the Internet is a reasonable
    response to that tradeoff, and doing so is not, in itself, against
@@ -156,7 +157,7 @@ Table of Contents
    permission to deploy or use applications would also be ineffective,
    because the permission has to be enforced somewhere.  Enforcing it at
    the source needs authority over everyone who might deploy an
-   application, which no party has, because the system spans many
+   application, which no party has, because the Internet spans many
    jurisdictions.  Enforcing it in the middle means blocking, which is
    often easy to evade and harms services it did not target because the
    layers of the Internet depend on each other (Section 4.1 of
@@ -189,16 +190,15 @@ Table of Contents
    The same position gives that party -- and any state with authority
    over it -- the means to observe what people do and to deny or shape
    it, which are available for coercion whether or not they are ever
-   used that way (Section 2.1 of [RFC9518]).
+   used that way.
 
    Open, secure, and reliable connectivity is necessary, though not
    sufficient, to exercise rights such as freedom of expression and
    freedom of association (Section 1 of [RFC8280]).  Political
    centralization, where one country can control how a function is
    supplied across the whole Internet, is as much a concern as
-   commercial concentration (Section 2 of [RFC9518]).  A jurisdiction's
-   goals for its own territory can be met by acting on the parties
-   within it.
+   commercial concentration.  A jurisdiction's goals for its own
+   territory can be met by acting on the parties within it.
 
    Centralization also concentrates failure.  When one provider's outage
    disrupts a large part of the Internet, or a single codebase or
@@ -233,14 +233,14 @@ Table of Contents
    cheap to choose give those goals a foundation to build on
    (Section 4.3 of [RFC9518]).
 
-4.  Trusted
+4.  Trustworthy
 
    The Internet's users depend on infrastructure they rarely inspect,
    and so they need to be able to trust that it is working in their
    interests: that it will not snoop on them, track them, or report on
-   them.  This is true even when untested, because the possibility of
-   surveillance can be enough to change how people behave (Section 5.1.1
-   of [RFC6973]).
+   them.  The Internet must be trustworthy infrastructure because even
+   the possibility of surveillance can be enough to change how people
+   behave (Section 5.1.1 of [RFC6973]).
 
    Protocols support that trust by dividing the work of a communication
    into distinct roles and constraining what each role can do, so that
@@ -252,48 +252,41 @@ Table of Contents
    a protocol is designed, with boundaries drawn between the elements
    that share them (Section 4.1.2 of [RFC3724]).
 
-   Distinct roles also support accountability and consumer protection: a
-   relying party, a certificate authority, or a relay each has a defined
-   function that can be examined for how well it operates -- not only
-   technically, but also in terms of political economy.
+   For example, a user visiting a website trusts not only the site but
+   also the browser acting on their behalf and the system that lets the
+   browser know the site is what it claims to be, which is what allows
+   commerce between parties who have never met.  Critically, the
+   browser's interests need to be separate from those of the sites being
+   accessed for this to occur.
 
-   A user visiting a website trusts not only the site but also the
-   browser acting on their behalf and the system that lets the browser
-   know the site is what it claims to be, which is what allows commerce
-   with parties a user has never met.  Critically, the browser's
-   interests need to be separate from those of the sites being accessed
-   for this to occur.
+   The Web's architecture supports that separation by defining distinct
+   roles for the browser, which stands between the user and the site,
+   and the certificate authorities, who vouch for the identities of
+   sites.  Browsers have strong incentives to protect users' privacy and
+   security, while certificate authorities have a strong incentive to be
+   included in browsers' trust stores, thereby aligning each with its
+   users.
 
-   Standards define the browser as a distinct role: it stands between
-   the user and the site, limiting what the site can reach on the user's
-   system, and so removes the need to trust every site completely.
-   Competition between browsers gives their makers a reason to work for
-   their users, although a browser represents its user imperfectly,
-   since a few browsers serve a diverse population (Section 4.2 of
-   [RFC8890]).
-
-   On the Web, browsers have strong incentives to protect users' privacy
-   and security.  Certificate authorities have a strong incentive to be
-   included in browsers' trust stores.  The CA/Browser Forum brings both
-   into a body that sets operational and security requirements for the
-   authorities.  The protocols do not define this governance; it is
-   applied on top of them.  Its legitimacy is difficult to establish and
-   maintain, and it is vulnerable to capture by the interests being
-   governed (Section 3.1.3 of [RFC9518]).
+   Distinct roles also make it possible to ask who is answerable when
+   something goes wrong, which increases accountability.  For example, a
+   certificate authority that issues a certificate it should not have
+   can be identified and distrusted by browsers.  Distinct roles allow
+   the incentives and market power of those who fill them to be
+   examined, so that law and markets have something to act upon.
 
    The strongest infrastructure is that which cannot snoop, track, or
-   report because it cannot see.  Encryption protects communication from
-   outsiders but not from the party at the other end.  When the roles of
-   the service being accessed can be partitioned, no single party other
-   than the user sees the totality of communication, a technical form of
-   data minimization (Section 1 of [RFC9614]) that delivers privacy
+   report because it cannot see.  Encryption keeps communication from
+   outsiders but not from the party at the other end.  Dividing the
+   roles of a service so that no single party other than the user sees
+   the whole of a communication -- partitioning -- is a technical form
+   of data minimization (Section 1 of [RFC9614]) that delivers privacy
    goals by design.  Data protection law relies on the same principle.
 
-   Partitioning protects users only while the parties remain apart: it
-   depends on their not colluding, which technical means cannot
-   guarantee.  Audited agreements, protocol requirements that make
-   sharing harder, and further partitions reduce the risk (Section 5.1
-   of [RFC9614]).
+   Like the checks between roles described above, partitioning protects
+   users only while the parties’ interests stay apart: it depends on
+   their not colluding, which technical means cannot guarantee.  Audited
+   agreements, protocol requirements that make sharing harder, and
+   further partitions reduce the risk (Section 5.1 of [RFC9614]).
 
    What a party does with data it can see, such as secondary use, is
    largely beyond what protocols control (Section 5.2.3 of [RFC6973]),
