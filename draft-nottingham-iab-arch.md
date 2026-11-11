@@ -155,7 +155,7 @@ What a party does with data it can see, such as secondary use, is largely beyond
 
 Internet protocols are designed to protect the parties to a communication from attackers external to it. Without that protection, communication that must remain confidential or unaltered, including commercial transactions, could not safely use the Internet ({{RFC1984}}). Secure protocols are also the technical basis for cybersecurity more broadly: protecting critical infrastructure and limiting fraud and other cybercrime. No central authority is responsible for security across the Internet, so protection has to be provided by the communicating parties and the protocols they use ({{Section 1 of RFC3365}}).
 
-Protocol designers therefore assume a hostile network. An attacker positioned on the path between the parties is assumed able to read any message, and to remove, alter, or inject others, including messages that appear to originate from a trusted party ({{Section 3 of RFC3552}}). The protections that result are separable: confidentiality, integrity, and authentication. Not every application requires all three; some need integrity and authentication without confidentiality ({{Section 8 of RFC3365}}).
+Protocol designers therefore assume a hostile network. An attacker positioned on the path between the parties is assumed able to read any message, and to remove, alter, or inject others, including messages that appear to originate from a trusted party ({{Section 3 of RFC3552}}). The protections that follow are confidentiality, integrity, and authentication.
 
 The environment in which a protocol will be deployed cannot be predicted, and a protocol designed for a protected environment has tended to end up in an unprotected one, by which time it is too late to add security ({{Section 6 of RFC3365}}). The IAB therefore urges that protocols be designed for confidential operation by default ({{Section 4 of RFC8558}}). Security by default also means that protection does not depend on each deployer choosing to turn it on.
 
@@ -167,7 +167,7 @@ Public safety, including the protection of children, and national security rely 
 
 What protocols can offer is a secure baseline that works the same everywhere. A mechanism that lets a third party read protected communications without the sender's knowledge cannot also guarantee privacy against anyone else who finds or misuses it, and it lowers the security of the system even when it is never exercised ({{Section 6 of RFC2804}}). Where endpoints protect their communications, the IETF sees no engineering solution that preserves that protection and also allows interception ({{Section 1 of RFC2804}}), so investigative goals can be pursued where the information is held: at the endpoints, and through cooperation between providers and governments ({{Section 6 of RFC7754}}).
 
-Encryption between the communicating parties provides no protection against one of them disclosing its keys or data, whether willingly or because it has been compromised ({{Section 5.1 of RFC7624}}). Whether a party merits trust is a separate question (see Trusted).
+Encryption between the communicating parties provides no protection against one of them disclosing its keys or data, whether willingly or because it has been compromised ({{Section 5.1 of RFC7624}}). Whether a party merits trust is a separate question (see Trustworthy).
 
 
 # User-Focused
