@@ -38,7 +38,7 @@ author:
     name: Pete Resnick
     organization:
     postal:
-     - Urbana
+     - Urbana, IL
     country: USA
     email: resnick@episteme.net
     uri: https://episteme.net/
@@ -57,7 +57,7 @@ It updates {{Section 3.3 of ?RFC2418}}.
 
 The IETF guides its decisions with "rough consensus and running code." However, {{?BCP9}} does not explicitly define how that consensus is achieved; it only highlights the importance of "broad" consensus.
 
-{{Section 3.3 of ?RFC2418}} is more detailed:
+{{Section 3.3 of ?RFC2418}} is more detailed, albeit still quite general:
 
     Working groups make decisions through a "rough consensus" process.
     IETF consensus does not require that all participants agree although
@@ -71,7 +71,7 @@ The IETF guides its decisions with "rough consensus and running code." However, 
     better than rough.  It is up to the Chair to determine if rough
     consensus has been reached.
 
-While this guidance has served the IETF well for more than thirty years, the IETF community has grown, and our decisions increasingly affect people who do not participate in them. To help both participants and those who use our standards understand our process, this document outlines the procedures we use to make Working Group decisions in more detail. It is not intended to establish new policy, only articulate existing practices more carefully.
+While this guidance has served the IETF well for more than thirty years, the IETF community has grown: Not only do we have new participants, we also have working group chairs who are newer to the community, and our decisions increasingly affect people who do not participate in them. To help chairs, participants, and those who use our standards understand our process, this document outlines the procedures we use to make Working Group decisions in more detail. It is not intended to establish new policy, but only to articulate existing practices more carefully.
 
 Every document published in the IETF Stream carries a claim of IETF rough consensus; see {{Section 3 of RFC8789}}. Working Group decisions are where most of that consensus is built, and this document describes how they are made.
 
